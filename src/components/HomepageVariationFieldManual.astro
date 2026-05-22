@@ -49,15 +49,16 @@ const atlasColumns = serviceCategoryOrder
     <section class="field-hero">
       <div class="field-hero__copy">
         <div class="field-hero__meta">
-          <span class="field-stamp">Core Google Cloud services</span>
+          <span class="field-stamp">Free for developers</span>
         </div>
 
         <h1 class="field-hero__headline">
           <span class="field-hero__headline-main">Google Cloud</span>
           <span class="field-hero__headline-tag">In-a-Box.</span>
         </h1>
+
         <p class="field-intro">
-          Run most Google cloud services on your laptop.
+          Run Google cloud services on your laptop.
         </p>
         <p class="field-intro">
           Same SDK and CLI works without any code change.
@@ -123,23 +124,23 @@ const atlasColumns = serviceCategoryOrder
 
     <section class="field-ribbon">
       <article class="field-ribbon__item">
-        <span class="field-kicker">Zero Code Changes</span>
-        <strong>Use the same Google Cloud SDKs and CLI, redirect them to local with ENV variables.</strong>
+        <span class="field-stamp">Zero Code Changes</span>
+        <div>Use the same Google Cloud SDKs and CLI, redirect them to local with ENV variables.</div>
       </article>
       <article class="field-ribbon__item">
-        <span class="field-kicker">Fast Development & Testing</span>
-        <strong>Stay local while you shape the app, then switch back to shared Google Cloud environments when you are ready.</strong>
+        <span class="field-stamp">Fast Development & Testing</span>
+        <div>Stay local while you shape the app, then switch back to shared Google Cloud environments when you are ready.</div>
       </article>
       <article class="field-ribbon__item">
-        <span class="field-kicker">Operational Visibility </span>
-        <strong>Console, health, env export, and seeded sample data make the runtime inspectable immediately.</strong>
+        <span class="field-stamp">Operational Visibility </span>
+        <div>Console, health, env export, and seeded sample data make the runtime inspectable immediately.</div>
       </article>
     </section>
 
     <section class="field-atlas">
       <div class="field-section-heading">
-        <span class="field-kicker">Service Catalog</span>
-        <h2>LocalCloud Services:</h2>
+        <!--<span class="field-kicker">Service Catalog</span>-->
+        <h3>Service Catalog:</h3>
       </div>
 
       <div class="field-atlas__grid">
@@ -195,26 +196,26 @@ const atlasColumns = serviceCategoryOrder
 
 <style>
   .field-home {
-    --field-bg: #edf4ff;
-    --field-paper: #f8fbff;
-    --field-paper-2: #eef4ff;
-    --field-panel: #fbfdff;
-    --field-ink: #13233d;
-    --field-muted: #5c6f89;
-    --field-line: rgba(102, 128, 173, 0.18);
-    --field-line-strong: rgba(102, 128, 173, 0.3);
-    --field-accent: #2d6cdf;
-    --field-accent-strong: #1d56ba;
-    --field-accent-soft: rgba(45, 108, 223, 0.12);
+    --field-bg: #f8f9fa;
+    --field-paper: #ffffff;
+    --field-paper-2: #f1f3f4;
+    --field-panel: #ffffff;
+    --field-ink: #202124;
+    --field-muted: #5f6368;
+    --field-line: #dadce0;
+    --field-line-strong: #dadce0;
+    --field-accent: #1a73e8;
+    --field-accent-strong: #1557b0;
+    --field-accent-soft: #e8f0fe;
     --field-moss: #147d72;
     --field-moss-soft: rgba(20, 125, 114, 0.12);
     --field-sky: #315f8f;
     --field-sky-soft: rgba(49, 95, 143, 0.12);
-    --field-deep: #18263b;
-    --field-shadow: 0 24px 60px -32px rgba(48, 73, 122, 0.24);
-    --font-border: rgba(112, 136, 176, 0.35);
-    --border: rgba(188, 210, 242, 0.82);
-    --border-hover: rgba(45, 108, 223, 0.5);
+    --field-deep: #202124;
+    --field-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.12);
+    --font-border: rgba(0, 0, 0, 0.12);
+    --border: #dadce0;
+    --border-hover: rgba(26, 115, 232, 0.45);
     --text: var(--field-ink);
     --text-3: var(--field-muted);
     padding: 1.5rem 0 3rem;
@@ -228,8 +229,8 @@ const atlasColumns = serviceCategoryOrder
     border: 1px solid var(--field-line-strong);
     border-radius: 2rem;
     background:
-      linear-gradient(180deg, rgba(251, 253, 255, 0.96), rgba(237, 244, 255, 0.94)),
-      linear-gradient(90deg, rgba(45, 108, 223, 0.04), rgba(20, 125, 114, 0.03));
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 249, 250, 0.94)),
+      linear-gradient(90deg, rgba(26, 115, 232, 0.03), rgba(20, 125, 114, 0.02));
     box-shadow: var(--field-shadow);
     position: relative;
     overflow: hidden;
@@ -240,8 +241,8 @@ const atlasColumns = serviceCategoryOrder
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(96, 122, 165, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(96, 122, 165, 0.045) 1px, transparent 1px);
+      linear-gradient(rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
     background-size: 2rem 2rem;
     pointer-events: none;
     mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 92%);
@@ -290,13 +291,29 @@ const atlasColumns = serviceCategoryOrder
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.4rem;
     width: fit-content;
     padding: 0.55rem 0.9rem;
-    border: 1px solid rgba(45, 108, 223, 0.35);
+    border: 1px solid rgba(26, 115, 232, 0.35);
     border-radius: 999px;
-    background: rgba(45, 108, 223, 0.08);
+    background: rgba(26, 115, 232, 0.08);
     color: var(--field-accent-strong);
     font-size: 0.72rem;
+  }
+
+  .field-stamp::before {
+    content: "✓";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 999px;
+    background: var(--field-accent);
+    color: #ffffff;
+    font-size: 0.5rem;
+    font-weight: 700;
+    line-height: 1;
   }
 
   .field-ledger,
@@ -315,7 +332,7 @@ const atlasColumns = serviceCategoryOrder
   .field-section-heading h2,
   .field-quickstart h2,
   .field-cta h2 {
-    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    font-family: "Roboto", system-ui, sans-serif;
     letter-spacing: -0.045em;
     line-height: 0.95;
     color: var(--field-ink);
@@ -386,13 +403,13 @@ const atlasColumns = serviceCategoryOrder
 
   .field-button--primary {
     background: linear-gradient(135deg, var(--field-accent-strong), var(--field-accent));
-    color: #f5f9ff;
-    box-shadow: 0 14px 24px -18px rgba(29, 86, 186, 0.72);
+    color: #ffffff;
+    box-shadow: 0 14px 24px -18px rgba(21, 87, 176, 0.72);
   }
 
   .field-button--secondary {
     border-color: var(--field-line-strong);
-    background: rgba(251, 253, 255, 0.9);
+    background: rgba(255, 255, 255, 0.9);
     color: var(--field-ink);
   }
 
@@ -410,7 +427,7 @@ const atlasColumns = serviceCategoryOrder
     padding: 1rem;
     border: 1px solid var(--field-line);
     border-radius: 1.1rem;
-    background: rgba(251, 253, 255, 0.8);
+    background: rgba(255, 255, 255, 0.8);
   }
 
   .field-signal__value {
@@ -432,18 +449,17 @@ const atlasColumns = serviceCategoryOrder
     padding: 1.2rem;
     border: 1px solid var(--field-line);
     border-radius: 1.75rem;
-    background: linear-gradient(180deg, rgba(248, 251, 255, 0.96), rgba(235, 243, 255, 0.94));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 243, 244, 0.94));
   }
 
   .field-board__figure {
     margin: 0;
     width: min(100%, 39rem);
     justify-self: end;
-    border: 1px solid rgba(188, 210, 242, 0.8);
     border-radius: 1.35rem;
     overflow: hidden;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 248, 255, 0.96));
-    box-shadow: 0 24px 50px -34px rgba(48, 73, 122, 0.28);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 249, 250, 0.96));
+    box-shadow: 0 24px 50px -34px rgba(0, 0, 0, 0.28);
   }
 
   .field-board__image {
@@ -461,7 +477,7 @@ const atlasColumns = serviceCategoryOrder
     padding: 1rem 1.05rem;
     border: 1px solid var(--field-line);
     border-radius: 1.1rem;
-    background: rgba(251, 253, 255, 0.9);
+    background: rgba(255, 255, 255, 0.9);
   }
 
   .field-board__summary-card strong {
@@ -514,7 +530,7 @@ const atlasColumns = serviceCategoryOrder
     place-items: center;
     border: 1px solid rgba(122, 163, 251, 0.2);
     border-radius: 1rem;
-    background: rgba(248, 252, 255, 0.96);
+    background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 10px 30px -16px rgba(19, 28, 39, 0.8);
     animation: field-float 6.8s ease-in-out infinite;
   }
@@ -618,10 +634,10 @@ const atlasColumns = serviceCategoryOrder
 
   .field-board__tag {
     padding: 0.45rem 0.75rem;
-    border: 1px solid rgba(222, 232, 255, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 999px;
-    background: rgba(243, 249, 255, 0.08);
-    color: #deedff;
+    background: rgba(255, 255, 255, 0.08);
+    color: #e8eaed;
     font-family: var(--font-mono);
     font-size: 0.7rem;
     letter-spacing: 0.12em;
@@ -648,7 +664,7 @@ const atlasColumns = serviceCategoryOrder
   }
 
   .field-board__screen {
-    border: 1px solid rgba(214, 228, 247, 0.26);
+    border: 1px solid rgba(255, 255, 255, 0.26);
     border-radius: 1rem 1rem 0.55rem 0.55rem;
     background: #0e1621;
     padding: 0.85rem;
@@ -676,7 +692,7 @@ const atlasColumns = serviceCategoryOrder
   .field-board__status-list {
     display: grid;
     gap: 0.55rem;
-    color: #d3e3ff;
+    color: #9aa0a6;
     font-size: 0.82rem;
     line-height: 1.6;
   }
@@ -708,21 +724,21 @@ const atlasColumns = serviceCategoryOrder
     width: min(38vw, 13rem);
     padding: 0.9rem;
     border-radius: 1rem;
-    border: 1px solid rgba(222, 232, 255, 0.15);
-    background: rgba(243, 249, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
     box-shadow: 0 20px 30px -28px rgba(0, 0, 0, 0.9);
   }
 
   .field-board__note strong {
     display: block;
     margin-top: 0.3rem;
-    color: #f7fbff;
+    color: #e8eaed;
     font-size: 0.98rem;
   }
 
   .field-board__note p {
     margin-top: 0.4rem;
-    color: rgba(214, 228, 247, 0.78);
+    color: rgba(255, 255, 255, 0.78);
     font-size: 0.88rem;
     line-height: 1.6;
   }
@@ -770,19 +786,35 @@ const atlasColumns = serviceCategoryOrder
 
   .field-card--terminal {
     background: linear-gradient(180deg, rgba(30, 37, 48, 0.98), rgba(22, 28, 38, 0.98));
-    color: #eef4ff;
+    color: #e8eaed;
+    position: relative;
   }
 
   .field-terminal__head {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    gap: 0.5rem;
     margin-bottom: 1rem;
   }
 
+  .field-terminal__head::before {
+    content: "";
+    display: flex;
+    gap: 0.45rem;
+    background:
+      radial-gradient(circle at 0.35rem 0.35rem, #ff5f57 0.35rem, transparent 0.35rem),
+      radial-gradient(circle at 1.15rem 0.35rem, #febc2e 0.35rem, transparent 0.35rem),
+      radial-gradient(circle at 1.95rem 0.35rem, #28c840 0.35rem, transparent 0.35rem);
+    width: 2.5rem;
+    height: 0.7rem;
+  }
+
+  .field-terminal__head :global(.copy-btn) {
+    margin-left: auto;
+  }
+
   .field-terminal__head p {
-    color: rgba(214, 228, 247, 0.7);
+    color: rgba(255, 255, 255, 0.7);
     font-size: 0.92rem;
     line-height: 1.55;
   }
@@ -792,7 +824,7 @@ const atlasColumns = serviceCategoryOrder
     padding: 0.85rem 1rem;
     border-left: 3px solid var(--field-accent);
     border-radius: 0.5rem;
-    background: rgba(45, 108, 223, 0.06);
+    background: rgba(26, 115, 232, 0.06);
     font-size: 0.92rem;
     line-height: 1.6;
   }
@@ -867,19 +899,19 @@ const atlasColumns = serviceCategoryOrder
     width: 2rem;
     height: 2rem;
     border-radius: 999px;
-    background: rgba(45, 108, 223, 0.08);
+    background: rgba(26, 115, 232, 0.08);
     color: var(--field-accent-strong);
     font-family: var(--font-mono);
     font-size: 0.72rem;
   }
 
   .field-card pre {
-    border: 1px solid rgba(214, 228, 247, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(12, 18, 27, 0.75);
   }
 
   .field-card pre > code {
-    color: #e4efff;
+    color: #9aa0a6;
   }
 
   .field-ribbon {
@@ -889,7 +921,7 @@ const atlasColumns = serviceCategoryOrder
   .field-ribbon__item,
   .field-story__card {
     padding: 1.15rem 1.2rem;
-    background: rgba(251, 253, 255, 0.86);
+    background: rgba(255, 255, 255, 0.86);
   }
 
   .field-ribbon__item strong,
@@ -914,11 +946,11 @@ const atlasColumns = serviceCategoryOrder
 
   .field-column {
     padding: 1.2rem;
-    background: rgba(251, 253, 255, 0.86);
+    background: rgba(255, 255, 255, 0.86);
   }
 
   .field-column--sky {
-    background: linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(237, 244, 255, 0.94));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(241, 243, 244, 0.94));
   }
 
   .field-column--sage {
@@ -926,7 +958,16 @@ const atlasColumns = serviceCategoryOrder
   }
 
   .field-column--ember {
-    background: linear-gradient(180deg, rgba(246, 249, 255, 0.98), rgba(236, 243, 255, 0.94));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(241, 243, 244, 0.94));
+  }
+
+  .field-column__head {
+    margin-bottom: 0.25rem;
+  }
+
+  .field-column__head .field-kicker {
+    font-weight: 700;
+    color: var(--field-ink);
   }
 
   .field-column__list {
@@ -943,7 +984,7 @@ const atlasColumns = serviceCategoryOrder
 
   .field-service {
     padding: 0.95rem;
-    border: 1px solid rgba(102, 128, 173, 0.14);
+    border: 1px solid rgba(0, 0, 0, 0.14);
     border-radius: 1.15rem;
     background: rgba(255, 255, 255, 0.62);
     transition: border-color 180ms ease, box-shadow 180ms ease;
@@ -951,7 +992,7 @@ const atlasColumns = serviceCategoryOrder
 
   .field-service:hover {
     border-color: var(--border-hover);
-    box-shadow: 0 4px 16px -8px rgba(45, 108, 223, 0.18);
+    box-shadow: 0 4px 16px -8px rgba(26, 115, 232, 0.18);
   }
 
   .field-service__main {
@@ -968,7 +1009,7 @@ const atlasColumns = serviceCategoryOrder
     height: 3.35rem;
     border-radius: 1rem;
     background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(102, 128, 173, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.12);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
   }
 
@@ -997,9 +1038,9 @@ const atlasColumns = serviceCategoryOrder
     align-items: center;
     justify-content: center;
     padding: 0.35rem 0.6rem;
-    border: 1px solid rgba(102, 128, 173, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 999px;
-    background: rgba(251, 253, 255, 0.8);
+    background: rgba(255, 255, 255, 0.8);
     color: var(--field-muted);
     font-family: var(--font-mono);
     font-size: 0.67rem;
@@ -1030,7 +1071,7 @@ const atlasColumns = serviceCategoryOrder
   .field-cta h2,
   .field-cta p,
   .field-cta .field-kicker {
-    color: #f6efe4;
+    color: #e8eaed;
   }
 
   .field-cta p {
