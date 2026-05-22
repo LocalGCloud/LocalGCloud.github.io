@@ -55,7 +55,7 @@ The site SHALL have a fixed navigation header with: logo/wordmark (left), naviga
 - **THEN** navigation links are hidden behind a hamburger menu icon that toggles a mobile menu
 
 ### Requirement: Footer
-The landing page SHALL include a footer with: project links (Docs, GitHub, License), the Apache-2.0 license badge, and author attribution. The footer SHALL span the full width of the page.
+The landing page SHALL include a footer with: project links (Docs, GitHub, License), the Proprietary — free for personal/evaluation use license text, and author attribution. The footer SHALL span the full width of the page.
 
 #### Scenario: Footer links work
 - **WHEN** a user clicks "GitHub" in the footer

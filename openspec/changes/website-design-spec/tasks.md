@@ -28,7 +28,7 @@
 
 - [x] 4.1 Build site header with logo/wordmark, nav links (Features, Services, Docs, GitHub), and frosted glass backdrop-blur styling
 - [x] 4.2 Implement mobile hamburger menu with animated toggle and slide-out nav
-- [x] 4.3 Build footer component with project links, Apache-2.0 license badge, and author attribution
+- [x] 4.3 Build footer component with project links, Proprietary license text, and author attribution
 - [x] 4.4 Create marketing page layout (full-width sections, 1280px content max-width)
 - [x] 4.5 Create documentation page layout with sidebar navigation (960px content max-width)
 

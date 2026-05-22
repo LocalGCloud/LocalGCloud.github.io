@@ -639,6 +639,16 @@ img {
   font-size: 0.74rem;
 }
 
+.site-footer__legal-links a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 180ms ease;
+}
+
+.site-footer__legal-links a:hover {
+  color: var(--accent);
+}
+
 .docs-shell {
   display: grid;
   grid-template-columns: minmax(15rem, 17rem) minmax(0, 1fr);
