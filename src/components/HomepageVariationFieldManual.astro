@@ -65,8 +65,8 @@ const atlasColumns = serviceCategoryOrder
         </p>
 
         <div class="field-actions">
-          <a href="#manual-quickstart" class="field-button field-button--primary">Open the Quick Start</a>
-          <a href={`${base}docs/`} class="field-button field-button--secondary">Read the Docs</a>
+          <a href="#manual-quickstart" class="site-button site-button--primary">Open the Quick Start</a>
+          <a href={`${base}docs/`} class="site-button site-button--secondary">Read the Docs</a>
         </div>
 
         <ul class="field-signal-strip">
@@ -187,8 +187,8 @@ const atlasColumns = serviceCategoryOrder
       </div>
 
       <div class="field-cta__actions">
-        <a href={`${base}docs/`} class="field-button field-button--secondary">Open Documentation</a>
-        <a href={`${base}services/`} class="field-button field-button--primary">Open Service Catalog</a>
+        <a href={`${base}docs/`} class="site-button site-button--secondary">Open Documentation</a>
+        <a href={`${base}services/`} class="site-button site-button--primary">Open Service Catalog</a>
       </div>
     </section>
   </div>
@@ -196,30 +196,9 @@ const atlasColumns = serviceCategoryOrder
 
 <style>
   .field-home {
-    --field-bg: #f8f9fa;
-    --field-paper: #ffffff;
-    --field-paper-2: #f1f3f4;
-    --field-panel: #ffffff;
-    --field-ink: #202124;
-    --field-muted: #5f6368;
-    --field-line: #dadce0;
-    --field-line-strong: #dadce0;
-    --field-accent: #1a73e8;
-    --field-accent-strong: #1557b0;
-    --field-accent-soft: #e8f0fe;
     --field-moss: #147d72;
-    --field-moss-soft: rgba(20, 125, 114, 0.12);
-    --field-sky: #315f8f;
-    --field-sky-soft: rgba(49, 95, 143, 0.12);
-    --field-deep: #202124;
-    --field-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.12);
-    --font-border: rgba(0, 0, 0, 0.12);
-    --border: #dadce0;
-    --border-hover: rgba(26, 115, 232, 0.45);
-    --text: var(--field-ink);
-    --text-3: var(--field-muted);
     padding: 1.5rem 0 3rem;
-    color: var(--field-ink);
+    color: var(--text);
   }
 
   .field-home__shell {
@@ -280,7 +259,7 @@ const atlasColumns = serviceCategoryOrder
     border: 1px solid rgba(26, 115, 232, 0.3);
     border-radius: 999px;
     background: rgba(26, 115, 232, 0.06);
-    color: var(--field-accent-strong);
+    color: var(--accent-strong);
     font-size: 0.68rem;
   }
 
@@ -292,7 +271,7 @@ const atlasColumns = serviceCategoryOrder
     width: 0.7rem;
     height: 0.7rem;
     border-radius: 999px;
-    background: var(--field-accent);
+    background: var(--accent);
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") center/contain no-repeat;
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") center/contain no-repeat;
   }
@@ -301,7 +280,7 @@ const atlasColumns = serviceCategoryOrder
   .field-kicker,
   .field-signal__label,
   .field-overline {
-    color: var(--field-muted);
+    color: var(--text-2);
     font-size: 0.72rem;
   }
 
@@ -316,7 +295,7 @@ const atlasColumns = serviceCategoryOrder
     font-family: "Roboto", system-ui, sans-serif;
     letter-spacing: -0.045em;
     line-height: 0.95;
-    color: var(--field-ink);
+    color: var(--text);
   }
 
   .field-hero h1 {
@@ -355,7 +334,7 @@ const atlasColumns = serviceCategoryOrder
   .field-column__head p,
   .field-story__card p,
   .field-cta p {
-    color: var(--field-muted);
+    color: var(--text-2);
     font-size: 0.98rem;
     line-height: 1.65;
   }
@@ -363,35 +342,6 @@ const atlasColumns = serviceCategoryOrder
   .field-actions {
     grid-template-columns: repeat(2, max-content);
     margin-top: 1.2rem;
-  }
-
-  .field-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 2.75rem;
-    padding: 0 1.1rem;
-    border-radius: 0.75rem;
-    border: 1px solid transparent;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, color 180ms ease;
-  }
-
-  .field-button:hover {
-    transform: translateY(-1px);
-  }
-
-  .field-button--primary {
-    background: linear-gradient(135deg, var(--field-accent-strong), var(--field-accent));
-    color: #ffffff;
-    box-shadow: 0 12px 20px -16px rgba(21, 87, 176, 0.6);
-  }
-
-  .field-button--secondary {
-    border-color: var(--field-line-strong);
-    background: oklch(from var(--field-panel) l c h / 0.9);
-    color: var(--field-ink);
   }
 
   .field-signal-strip {
@@ -406,21 +356,21 @@ const atlasColumns = serviceCategoryOrder
     gap: 0.75rem;
     align-items: start;
     padding: 0.85rem;
-    border: 1px solid var(--field-line);
+    border: 1px solid var(--line);
     border-radius: 0.85rem;
-    background: oklch(from var(--field-panel) l c h / 0.8);
+    background: oklch(from var(--surface) l c h / 0.8);
   }
 
   .field-signal__value {
     font-size: 1.8rem;
     font-weight: 700;
     line-height: 1;
-    color: var(--field-ink);
+    color: var(--text);
   }
 
   .field-signal__note {
     margin-top: 0.15rem;
-    color: var(--field-muted);
+    color: var(--text-2);
     font-size: 0.9rem;
   }
 
@@ -428,7 +378,7 @@ const atlasColumns = serviceCategoryOrder
     display: grid;
     gap: 1rem;
     padding: 1.2rem;
-    border: 1px solid var(--field-line);
+    border: 1px solid var(--line);
     border-radius: 1.75rem;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 243, 244, 0.94));
   }
@@ -456,7 +406,7 @@ const atlasColumns = serviceCategoryOrder
 
   .field-board__summary-card {
     padding: 1rem 1.05rem;
-    border: 1px solid var(--field-line);
+    border: 1px solid var(--line);
     border-radius: 1.1rem;
     background: rgba(255, 255, 255, 0.9);
   }
@@ -464,7 +414,7 @@ const atlasColumns = serviceCategoryOrder
   .field-board__summary-card strong {
     display: block;
     margin-top: 0.4rem;
-    color: var(--field-ink);
+    color: var(--text);
     font-size: 0.98rem;
     line-height: 1.55;
   }
@@ -739,9 +689,9 @@ const atlasColumns = serviceCategoryOrder
   .field-column,
   .field-story__card,
   .field-cta {
-    border: 1px solid var(--field-line);
+    border: 1px solid var(--line);
     border-radius: 1rem;
-    box-shadow: var(--field-shadow);
+    box-shadow: var(--shadow-md);
   }
 
   .field-quickstart {
@@ -804,7 +754,7 @@ const atlasColumns = serviceCategoryOrder
   .field-callout {
     margin: 0.85rem 0;
     padding: 0.75rem 0.85rem;
-    border-left: 3px solid var(--field-accent);
+    border: 1px solid rgba(26, 115, 232, 0.15);
     border-radius: 0.5rem;
     background: rgba(26, 115, 232, 0.06);
     font-size: 0.88rem;
@@ -814,7 +764,7 @@ const atlasColumns = serviceCategoryOrder
   .field-callout strong {
     display: block;
     margin-bottom: 0.25rem;
-    color: var(--field-accent-strong);
+    color: var(--accent-strong);
     font-family: var(--font-mono);
     font-size: 0.75rem;
     letter-spacing: 0.12em;
@@ -823,7 +773,7 @@ const atlasColumns = serviceCategoryOrder
 
   .field-callout p {
     margin: 0;
-    color: var(--field-muted);
+    color: var(--text-2);
     font-size: 0.92rem;
     line-height: 1.6;
   }
@@ -833,7 +783,7 @@ const atlasColumns = serviceCategoryOrder
     padding: 0.7rem 1rem;
     border-radius: 0.5rem;
     background: rgba(20, 125, 114, 0.07);
-    color: var(--field-muted);
+    color: var(--text-2);
     font-size: 0.85rem;
     line-height: 1.55;
   }
@@ -865,8 +815,8 @@ const atlasColumns = serviceCategoryOrder
     gap: 0.7rem;
     align-items: start;
     padding: 0.8rem 0;
-    border-top: 1px dashed var(--field-line-strong);
-    color: var(--field-ink);
+    border-top: 1px dashed var(--line);
+    color: var(--text);
     line-height: 1.65;
   }
 
@@ -882,7 +832,7 @@ const atlasColumns = serviceCategoryOrder
     height: 2rem;
     border-radius: 999px;
     background: rgba(26, 115, 232, 0.08);
-    color: var(--field-accent-strong);
+    color: var(--accent-strong);
     font-family: var(--font-mono);
     font-size: 0.72rem;
   }
@@ -912,7 +862,7 @@ const atlasColumns = serviceCategoryOrder
   .field-story__card h3 {
     display: block;
     margin-top: 0.45rem;
-    color: var(--field-ink);
+    color: var(--text);
     font-size: 1.05rem;
     line-height: 1.5;
   }
@@ -931,7 +881,7 @@ const atlasColumns = serviceCategoryOrder
   .field-column {
     padding: 1rem;
     background: rgba(255, 255, 255, 0.86);
-    border: 1px solid var(--field-line);
+    border: 1px solid var(--line);
     border-radius: 1rem;
   }
 
@@ -953,7 +903,7 @@ const atlasColumns = serviceCategoryOrder
 
   .field-column__head .field-kicker {
     font-weight: 700;
-    color: var(--field-ink);
+    color: var(--text);
   }
 
   .field-column__list {
@@ -970,9 +920,9 @@ const atlasColumns = serviceCategoryOrder
 
   .field-service {
     padding: 0.85rem;
-    border: 1px solid var(--field-line);
+    border: 1px solid var(--line);
     border-radius: 0.85rem;
-    background: oklch(from var(--field-panel) l c h / 0.6);
+    background: oklch(from var(--surface) l c h / 0.6);
     transition: border-color 180ms ease, box-shadow 180ms ease;
   }
 
@@ -995,18 +945,18 @@ const atlasColumns = serviceCategoryOrder
     height: 3rem;
     border-radius: 0.75rem;
     background: rgba(255, 255, 255, 0.9);
-    border: 1px solid var(--field-line);
+    border: 1px solid var(--line);
   }
 
   .field-service strong {
     display: block;
-    color: var(--field-ink);
+    color: var(--text);
     font-size: 1rem;
   }
 
   .field-service p {
     margin-top: 0.25rem;
-    color: var(--field-muted);
+    color: var(--text-2);
     font-size: 0.9rem;
     line-height: 1.6;
   }
@@ -1023,10 +973,10 @@ const atlasColumns = serviceCategoryOrder
     align-items: center;
     justify-content: center;
     padding: 0.25rem 0.5rem;
-    border: 1px solid var(--field-line);
+    border: 1px solid var(--line);
     border-radius: 999px;
-    background: oklch(from var(--field-panel) l c h / 0.8);
-    color: var(--field-muted);
+    background: oklch(from var(--surface) l c h / 0.8);
+    color: var(--text-2);
     font-family: var(--font-mono);
     font-size: 0.62rem;
     letter-spacing: 0.06em;

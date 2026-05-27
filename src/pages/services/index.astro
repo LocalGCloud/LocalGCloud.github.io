@@ -42,6 +42,32 @@ const catalogStats = [
   <Header />
 
   <main id="main-content" class="site-page">
+    <!-- Service filter bar -->
+    <section class="site-section site-section--tight" style="padding-bottom: 0;">
+      <div class="container">
+        <div class="service-filter" data-service-filter>
+          <div class="service-filter__search">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: 0 0 auto; color: var(--text-3);">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+            <input
+              type="search"
+              class="service-filter__input"
+              placeholder="Filter services…"
+              autocomplete="off"
+              data-filter-input
+            />
+          </div>
+          <div class="service-filter__toggles">
+            <button type="button" class="service-filter__toggle is-active" data-filter-status="all">All</button>
+            <button type="button" class="service-filter__toggle" data-filter-status="enabled">Default-on</button>
+            <button type="button" class="service-filter__toggle" data-filter-status="optin">Opt-in</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     {categoryGroups.map((group) => (
       <section class="site-section site-section--tight">
         <div class="container">
@@ -55,6 +81,10 @@ const catalogStats = [
             {group.items.map((service) => (
               <a
                 href={`${base}services/${service.slug}/`}
+                data-service-name={service.name.toLowerCase()}
+                data-service-desc={service.description.toLowerCase()}
+                data-service-enabled={String(service.enabled)}
+                data-service-category={group.id}
                 class:list={[
                   'site-panel reveal p-5 transition-transform hover:-translate-y-0.5',
                   !service.enabled && 'site-panel--soft',
@@ -115,6 +145,55 @@ const catalogStats = [
     </section>
 
   </main>
+
+  <script>
+    (function() {
+      var filterInput = document.querySelector('[data-filter-input]');
+      var filterToggles = document.querySelectorAll('[data-filter-status]');
+      var currentStatus = 'all';
+
+      function updateFilter() {
+        var query = (filterInput?.value || '').toLowerCase().trim();
+        var sections = document.querySelectorAll('[data-service-section]');
+
+        sections.forEach(function(section) {
+          var cards = section.querySelectorAll('[data-service-name]');
+          var visibleCount = 0;
+
+          cards.forEach(function(card) {
+            var name = card.dataset.serviceName || '';
+            var desc = card.dataset.serviceDesc || '';
+            var enabled = card.dataset.serviceEnabled === 'true';
+
+            var matchesSearch = !query || name.includes(query) || desc.includes(query);
+            var matchesStatus = currentStatus === 'all' ||
+              (currentStatus === 'enabled' && enabled) ||
+              (currentStatus === 'optin' && !enabled);
+
+            if (matchesSearch && matchesStatus) {
+              card.style.display = '';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          section.style.display = visibleCount > 0 ? '' : 'none';
+        });
+      }
+
+      filterInput?.addEventListener('input', updateFilter);
+
+      filterToggles.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          filterToggles.forEach(function(b) { b.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+          currentStatus = btn.dataset.filterStatus || 'all';
+          updateFilter();
+        });
+      });
+    })();
+  </script>
 
   <Footer />
 </BaseLayout>
