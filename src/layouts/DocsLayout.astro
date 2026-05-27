@@ -12,11 +12,6 @@ interface Props {
     title?: string;
     description?: string;
   };
-  headings?: Array<{
-    depth: number;
-    slug: string;
-    text: string;
-  }>;
 }
 
 const frontmatter = Astro.props.frontmatter ?? {};
@@ -25,6 +20,7 @@ const description = Astro.props.description ?? frontmatter.description;
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const currentPath = Astro.url.pathname;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const sidebarSections = [
   { title: 'Getting Started', items: [
@@ -33,7 +29,7 @@ const sidebarSections = [
   ]},
   { title: 'Services', items: [{ label: 'Overview', href: `${base}docs/services-overview/` }] },
   { title: 'Comparisons', items: [
-    { label: 'LocalCloud vs Individual Emulators', href: `${base}docs/localcloud-vs-individual-emulators/` },
+    { label: 'LocalCloud vs Google Emulators', href: `${base}docs/localcloud-vs-google-emulators/` },
   ]},
   { title: 'Reference', items: [
     { label: 'Configuration', href: `${base}docs/configuration/` },
@@ -67,10 +63,29 @@ const currentIndex = allLinks.findIndex((item) => normalizePath(item.href) === n
 const currentItem = currentIndex >= 0 ? allLinks[currentIndex] : undefined;
 const previousItem = currentIndex > 0 ? allLinks[currentIndex - 1] : undefined;
 const nextItem = currentIndex >= 0 && currentIndex < allLinks.length - 1 ? allLinks[currentIndex + 1] : undefined;
-const tocItems = (Astro.props.headings ?? []).filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+
 ---
 
 <BaseLayout title={`${title} — LocalCloud Docs`} description={description}>
+  <script type="application/ld+json" slot="head" set:html={`{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "${title}",
+    "description": "${description || ''}",
+    "url": "${canonicalURL}",
+    "author": {
+      "@type": "Organization",
+      "name": "LocalCloud"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "LocalCloud",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://local.cloud/brand/localcloud-mark.svg"
+      }
+    }
+  }`} />
   <Header />
 
   <main id="main-content" class="site-page docs-page">
@@ -107,7 +122,7 @@ const tocItems = (Astro.props.headings ?? []).filter((heading) => heading.depth 
           ))}
         </div>
 
-        <div class:list={['docs-shell', tocItems.length > 0 && 'docs-shell--with-toc']}>
+        <div class="docs-shell">
           <aside class="site-panel docs-sidebar">
             <div class="docs-sidebar__intro">
               <span class="site-kicker">Documentation</span>
@@ -176,22 +191,7 @@ const tocItems = (Astro.props.headings ?? []).filter((heading) => heading.depth 
             </div>
           </article>
 
-          {tocItems.length > 0 && (
-            <aside class="site-panel docs-toc">
-              <div class="docs-toc__inner">
-                <span class="site-kicker">On This Page</span>
-                <ul class="docs-toc__list">
-                  {tocItems.map((item) => (
-                    <li class:list={['docs-toc__item', item.depth === 3 && 'is-nested']}>
-                      <a href={`#${item.slug}`} class="docs-toc__link">
-                        {item.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </aside>
-          )}
+
         </div>
       </div>
     </section>

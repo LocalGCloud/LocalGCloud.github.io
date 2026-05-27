@@ -6,14 +6,16 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  noindex?: boolean;
 }
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const {
   title,
-  description = 'Run 20+ Google Cloud services locally in one Docker container. Same SDKs, same APIs, zero code changes, no cloud costs. Free for developers.',
+  description = 'LocalCloud is a GCP emulator that runs 20+ Google Cloud services locally in one Docker container. Perfect for local development, testing, and CI/CD. Same SDKs, same APIs, zero code changes, no cloud costs. Free for developers.',
   ogImage = `${base}brand/localcloud-social-card.svg`,
+  noindex = false,
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(ogImage, Astro.site);
@@ -25,6 +27,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" href={`${base}brand/localcloud-mark.svg`} type="image/svg+xml" />
     <meta name="theme-color" content="#eaf2ff" />

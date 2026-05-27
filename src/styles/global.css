@@ -656,10 +656,6 @@ img {
   align-items: start;
 }
 
-.docs-shell--with-toc {
-  grid-template-columns: minmax(15rem, 17rem) minmax(0, 1fr) minmax(12.5rem, 14rem);
-}
-
 .docs-page {
   padding-top: 0.1rem;
 }
@@ -827,40 +823,6 @@ img {
   font-size: 0.72rem;
 }
 
-.docs-toc {
-  position: sticky;
-  top: 6rem;
-  padding: 0.9rem;
-}
-
-.docs-toc__inner {
-  display: grid;
-  gap: 0.7rem;
-}
-
-.docs-toc__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.3rem;
-}
-
-.docs-toc__item.is-nested {
-  padding-left: 0.8rem;
-}
-
-.docs-toc__link {
-  display: block;
-  color: var(--text-3);
-  font-size: 0.84rem;
-  line-height: 1.45;
-}
-
-.docs-toc__link:hover {
-  color: var(--text);
-}
-
 .docs-pagination {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -904,7 +866,28 @@ img {
 }
 
 .prose-site {
-  max-width: 45rem;
+  max-width: none;
+}
+
+.comp-dot-okay {
+  color: #c9cd62;
+  font-size: 1.4em;
+  line-height: 1;
+}
+.comp-dot-yes {
+  color: #16a34a;
+  font-size: 1.4em;
+  line-height: 1;
+}
+.comp-dot-no {
+  color: #dc2626;
+  font-size: 1.4em;
+  line-height: 1;
+}
+
+.tbl-icon {
+  vertical-align: middle;
+  margin-right: 0.3rem;
 }
 
 .prose-site h1 {
@@ -1189,10 +1172,6 @@ img {
   }
 
   .docs-sidebar {
-    display: none;
-  }
-
-  .docs-toc {
     display: none;
   }
 

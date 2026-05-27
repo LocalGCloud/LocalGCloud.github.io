@@ -1,20 +1,47 @@
-# Pricing — LocalCloud
+# LocalCloud Pricing
 
-LocalCloud is a local Google Cloud runtime that brings the major GCP services into a single Docker container.
+## Free for Developers
+**Price:** $0/month
+**Who:** Individual developers, hobbyists, students, open-source contributors
+**Includes:**
+- All 20+ GCP service emulators
+- Built-in web console
+- SDK examples and documentation
+- Community support (GitHub Issues)
 
-## Individual Developer — Free
-- Price: $0
-- Who it's for: Individual developers for evaluation, personal projects, learning, testing, and academic research
-- Limits: None on services or usage
-- What's included: All 20+ GCP service emulators (BigQuery, Spanner, Bigtable, Storage, Pub/Sub, Firestore, Memorystore, Secret Manager, Cloud Tasks, Cloud Logging, Cloud Monitoring, Cloud Workflows, and more), built-in web console, seed data support, Terraform integration, SDK examples for Python, Node.js, Go, Java
-- What's not included: Commercial use, production use, redistribution
+## Pro
+**Price:** $49/month per developer (billed annually) or $59/month (billed monthly)
+**Who:** Professional developers and small teams
+**Includes:**
+- Everything in Free
+- Priority support (48-hour response)
+- Advanced Terraform integration
+- Custom seed data templates
+- Team license management
 
-## Commercial Use — Contact Us
-- Price: Custom
-- Who it's for: Teams and organizations using LocalCloud for internal development workflows on commercial products
-- What's included: Commercial license, same full feature set
+## Team
+**Price:** $199/month for up to 10 developers
+**Who:** Engineering teams and startups
+**Includes:**
+- Everything in Pro
+- Shared team configurations
+- CI/CD pipeline optimization
+- Dedicated support channel
+- Usage analytics dashboard
 
-## Licensing Summary
-- Free for individual developers: personal projects, learning, evaluation, academic research
-- Not free for: commercial use, production use, redistribution as part of a commercial product
-- Full license: https://github.com/LocalGCloud/LocalGCloud.github.io/blob/main/LICENSE
+## Enterprise
+**Price:** Custom pricing — contact sales@local.cloud
+**Who:** Large organizations with custom requirements
+**Includes:**
+- Everything in Team
+- SSO and SAML integration
+- Custom emulator extensions
+- On-premise deployment option
+- SLA and dedicated account manager
+- Security audit and compliance documentation
+
+---
+
+**All plans include:** Single Docker container, same SDKs, zero code changes, localhost APIs, built-in console, ARM64 native support.
+
+**Questions?** See our [Licensing FAQ](/docs/licensing/) or [contact us](https://github.com/LocalGCloud/LocalGCloud.github.io/issues).

@@ -1,0 +1,181 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: LocalCloud vs Google Emulators
+description: Compare LocalCloud's all-in-one GCP emulator with Google's individual official emulators. See coverage, setup time, and why teams choose one container over many.
+---
+
+# LocalCloud vs Google Emulators
+
+Google provides individual emulators for Pub/Sub, Firestore, and Spanner. For everything else - BigQuery, Bigtable, Cloud Storage, and 15 more services - there is no official local option.
+
+LocalCloud is a single Docker container that bundles official emulators with custom and third-party ones to give you a complete Google Cloud local development environment.
+
+## Service Coverage & Fidelity
+
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Google Emulator</th>
+      <th>LocalCloud</th>
+      <th>Why LocalCloud?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="/icons/pubsub.svg" alt="" width="20" height="20" class="tbl-icon" />Pub/Sub</td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td>Provides persistence + console UI operations.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/firestore.svg" alt="" width="20" height="20" class="tbl-icon" />Firestore</td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td>Directly bundled; no fidelity loss.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/spanner.svg" alt="" width="20" height="20" class="tbl-icon" />Spanner</td>
+      <td><span class="comp-dot-okay">●</span> <span>(In-Memory only)</span></td>
+      <td><span class="comp-dot-yes">●</span> <span>(Persisted data / Extended features)</span></td>
+      <td>More closer to Spanner production, compare to Spanner emulator</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/bigquery.svg" alt="" width="20" height="20" class="tbl-icon" />BigQuery</td>
+      <td><span class="comp-dot-no">●</span></td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td>~96% BigQuery SQL coverage, DDL/DML, scripting, REST + gRPC Storage APIs.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/bigtable.svg" alt="" width="20" height="20" class="tbl-icon" />Bigtable</td>
+      <td><span class="comp-dot-okay">●</span> <span>(In-Memory only)</span></td>
+      <td><span class="comp-dot-yes">●</span> <span>(Persisted data + Extended features)</span></td>
+      <td>Extends Google's Bigtable emulator with PostgreSQL-backed persistence and a console data browser.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/gcs.svg" alt="" width="20" height="20" class="tbl-icon" />Cloud Storage</td>
+      <td><span class="comp-dot-no">●</span></td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td>Bucket and object CRUD, metadata, multipart uploads via <code>fake-gcs-server</code>.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/memorystore.svg" alt="" width="20" height="20" class="tbl-icon" />Memorystore (Redis)</td>
+      <td><span class="comp-dot-no">●</span></td>
+      <td><span class="comp-dot-okay">●</span></td>
+      <td>Key operations, hashes, sets. Pub/Sub, Lua, streams, and MULTI/EXEC not yet supported.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/secretmanager.svg" alt="" width="20" height="20" class="tbl-icon" />Secret Manager</td>
+      <td><span class="comp-dot-no">●</span></td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td>Create, read, update, delete secrets. Rotation and CMEK not emulated.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/cloudtasks.svg" alt="" width="20" height="20" class="tbl-icon" />Cloud Tasks</td>
+      <td><span class="comp-dot-no">●</span></td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td>Task creation, dispatch, and queue management.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/workflows.svg" alt="" width="20" height="20" class="tbl-icon" />Cloud Workflows</td>
+      <td><span class="comp-dot-no">●</span></td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td>Full workflow execution with standard library.</td>
+    </tr>
+    <tr>
+      <td>Cloud Scheduler</td>
+      <td><span class="comp-dot-no">●</span></td>
+      <td><span class="comp-dot-yes">●</span></td>
+      <td>Job CRUD and cron firing.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/logging.svg" alt="" width="20" height="20" class="tbl-icon" />Cloud Logging</td>
+      <td><span class="comp-dot-no">●</span></td>
+      <td><span class="comp-dot-okay">●</span></td>
+      <td>Log ingestion and query. Metrics, sinks, exclusions, and audit logs not yet emulated.</td>
+    </tr>
+    <tr>
+      <td><img src="/icons/monitoring.svg" alt="" width="20" height="20" class="tbl-icon" />Cloud Monitoring</td>
+      <td><span class="comp-dot-no">●</span></td>
+      <td><span class="comp-dot-okay">●</span></td>
+      <td>Custom metrics and descriptor management. Alerting, uptime checks, and dashboards not yet emulated.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Why BigQuery Matters
+
+There is no official BigQuery emulator. Teams either pay for real queries during development or skip local testing entirely.
+
+LocalCloud's BigQuery emulator runs on DuckDB and covers ~96% of standard SQL, DDL, DML, scripting, and `INFORMATION_SCHEMA`. It exposes both REST and gRPC Storage APIs so your existing Python, Go, and Java SDKs work unchanged.
+
+## Built-In Web Console
+
+Google's emulators are terminal-only. LocalCloud includes a full web console at `http://localhost:8080`:
+
+| Feature | What It Does |
+|---|---|
+| **Dashboard** | Health status, uptime, and request counts for all 23 services in one view. |
+| **Data Browser** | Preview and mutate data across BigQuery, Cloud Storage, Spanner, Firestore, Pub/Sub, Memorystore, and Secret Manager. |
+| **SQL Editor** | Run BigQuery and Spanner queries directly in the browser with results in a table grid. |
+| **Logs** | Real-time request logs with filtering and auto-tail — no `docker logs` needed. |
+| **Usage Metrics** | API call counts per service and estimated GCP cost savings from staying local. |
+| **Settings** | One-click export of environment variables as shell, Terraform, or Docker Compose formats. |
+
+This removes the context switching between terminals, SDK scripts, and cloud consoles during daily development.
+
+## When to Use Google Emulators
+
+Choose Google's individual emulators when:
+
+- You need only Pub/Sub or Firestore in isolation.
+- Maximum fidelity for those specific services is critical.
+- You prefer managing infrastructure manually.
+
+## When to Use LocalCloud
+
+Choose LocalCloud when:
+
+- Your stack uses 3+ GCP services.
+- You need **BigQuery**, **Bigtable**, or **Cloud Storage** locally.
+- You want a unified web console and single environment export.
+- You run integration tests in CI/CD and prefer one service container.
+- Your team wants one onboarding command instead of per-service docs.
+
+## The Setup Difference
+
+**Google emulators** require the Cloud SDK, separate binaries, and per-service startup:
+
+```bash
+# Pub/Sub
+gcloud components install pubsub-emulator
+gcloud beta emulators pubsub start --host-port=localhost:8085
+
+# Firestore
+gcloud beta emulators firestore start --host-port=localhost:8086
+
+# Spanner
+gcloud components install spanner-emulator
+gcloud emulators spanner start --host-port=localhost:9010
+```
+
+You manage ports, environment variables, and health checks for each process.
+
+**LocalCloud** is one command:
+
+```bash
+docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
+  -p 9010:9010 -p 9020:9020 -p 9050:9050 -p 9060:9060 \
+  -p 6379:6379 -m 4g --name localcloud \
+  jaysen2apache/localcloud
+
+eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
+```
+
+One container exports every emulator host automatically.
+
+## Next Steps
+
+- [Get started in 1 minute](/docs/)
+- [Explore the service catalog](/services/)
+- [Read the architecture overview](/docs/architecture/)

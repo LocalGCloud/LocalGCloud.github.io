@@ -24,7 +24,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const categoryLabel = getServiceCategoryLabel(service);
 ---
 
-<BaseLayout title={`${service.name} — LocalCloud`} description={service.description}>
+<BaseLayout title={`${service.name} Local Emulator — LocalCloud`} description={`Run ${service.name} locally with LocalCloud. ${service.description} Part of a single Docker container with 20+ GCP emulators.`}>
   <!-- JSON-LD BreadcrumbList -->
   <script type="application/ld+json" set:html={`{
     "@context": "https://schema.org",

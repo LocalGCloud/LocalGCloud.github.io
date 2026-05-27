@@ -135,7 +135,7 @@ const atlasColumns = serviceCategoryOrder
     <section class="field-atlas">
       <div class="field-section-heading">
         <!--<span class="field-kicker">Service Catalog</span>-->
-        <h3>Service Catalog:</h3>
+        <h2>Service Catalog:</h2>
       </div>
 
       <div class="field-atlas__grid">
@@ -169,6 +169,33 @@ const atlasColumns = serviceCategoryOrder
             </div>
           </article>
         ))}
+      </div>
+    </section>
+
+    <section class="field-blog">
+      <div class="field-section-heading">
+        <span class="field-kicker">From the Blog</span>
+        <h3>Guides for Google Cloud local development.</h3>
+      </div>
+
+      <div class="field-blog__grid">
+        <article class="field-story__card">
+          <span class="field-kicker">Comparison</span>
+          <h3><a href={`${base}docs/localcloud-vs-google-emulators/`}>LocalCloud vs Google Emulators</a></h3>
+          <p>Why teams switch from individual emulators to one container — coverage, setup time, and the BigQuery gap.</p>
+        </article>
+
+        <article class="field-story__card">
+          <span class="field-kicker">Guide</span>
+          <h3><a href={`${base}docs/bigquery-emulator-features/`}>How to Run BigQuery Locally</a></h3>
+          <p>Develop and test BigQuery pipelines with zero cloud cost using LocalCloud's DuckDB-based emulator.</p>
+        </article>
+
+        <article class="field-story__card">
+          <span class="field-kicker">CI / CD</span>
+          <h3><a href={`${base}docs/terraform/`}>Cut CI Costs 90% with Local Emulation</a></h3>
+          <p>Run Terraform and integration tests against emulated GCP services in a single Docker container.</p>
+        </article>
       </div>
     </section>
 
@@ -694,6 +721,25 @@ const atlasColumns = serviceCategoryOrder
     letter-spacing: -0.03em;
   }
 
+  .field-blog {
+    margin-top: 2.5rem;
+    padding: 0 1rem;
+  }
+
+  .field-blog__grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .field-blog a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .field-blog a:hover {
+    text-decoration: underline;
+  }
+
   .field-cta {
     display: grid;
     gap: 1rem;
@@ -743,6 +789,10 @@ const atlasColumns = serviceCategoryOrder
     .field-cta {
       grid-template-columns: minmax(0, 1.04fr) minmax(28rem, 0.9fr);
       align-items: center;
+    }
+
+    .field-blog__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .field-card--paper {

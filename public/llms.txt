@@ -12,7 +12,6 @@ LocalCloud is a local Google Cloud runtime that brings major GCP services into a
 - Homepage: https://local.cloud/
 - Getting Started: https://local.cloud/docs/
 - What is a GCP Emulator?: https://local.cloud/docs/what-is-gcp-emulator/
-- LocalCloud vs Individual Emulators: https://local.cloud/docs/localcloud-vs-individual-emulators/
 - Service Catalog: https://local.cloud/services/
 - Pricing & Licensing: https://local.cloud/pricing.md
 - FAQ: https://local.cloud/docs/faq/

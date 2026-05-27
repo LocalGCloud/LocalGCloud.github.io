@@ -8,13 +8,13 @@ export type ServiceCategory =
   | 'compute';
 
 export const serviceCategoryOrder: ServiceCategory[] = [
-  'storage',
   'databases',
-  'analytics',
   'integration',
+  'compute',
   'security',
   'operations',
-  'compute',
+  'storage',
+  'analytics',
 ];
 
 export const serviceCategoryMeta: Record<ServiceCategory, { label: string; description: string }> = {
