@@ -14,14 +14,16 @@ mkdir -p ~/.localcloud/data
 
 docker run -d \\
   -p 8080:8080 -p 4443:4443 \\
-  -p 8085-8087:8085-8087 \\
-  -p 9010:9010 -p 9020:9020 \\
-  -p 9050:9050 -p 9060:9060 -p 6379:6379 \\
   -m 4g --name localcloud \\
   -v ~/.localcloud/data:/var/lib/localcloud \\
   jaysen2apache/localcloud
 
-eval "$(curl -s localhost:8080/_localcloud/env?format=shell)"`;
+# Sets env vars
+eval "$(curl -s localhost:8080/_localcloud/env?format=shell)"
+
+# Use local Google Object Storage from Local FileSystem
+gcloud storage ls gs://
+`;
 
 const heroSignals = [
   { value: '1', label: 'Docker container', note: 'No cloud account or access required for the team' },
@@ -48,20 +50,13 @@ const atlasColumns = serviceCategoryOrder
   <div class="field-home__shell">
     <section class="field-hero">
       <div class="field-hero__copy">
-        <div class="field-hero__meta">
-          <span class="field-stamp">Free for developers</span>
-        </div>
-
         <h1 class="field-hero__headline">
           <span class="field-hero__headline-main">Google Cloud</span>
           <span class="field-hero__headline-tag">In-a-Box.</span>
         </h1>
 
         <p class="field-intro">
-          Run 20 GCP services locally in one Docker container.
-        </p>
-        <p class="field-intro">
-          Same SDKs, same APIs, zero code changes.
+          Run 20+ GCP services locally in one Docker container. Same SDKs, same APIs, zero code changes, zero cloud costs.
         </p>
 
         <div class="field-actions">
@@ -97,10 +92,10 @@ const atlasColumns = serviceCategoryOrder
           <span class="field-kicker">Quick Start</span>
 
           <div class="field-callout">
-            <strong>Free for Developer Use</strong>
+            <strong>Free for Developers !</strong>
             <!--<p>LocalCloud is free for individual developers for evaluation, personal projects, learning, and testing. Not licensed for commercial or production use. <a href="/docs/licensing/">Learn more</a>.</p>-->
           </div>
-          <h2>Up and running in under a minute.</h2>
+          <h2>Up and running in a minute.</h2>
           <ol class="field-steps">
             <li><span>01</span> Pull and run the Docker image.</li>
             <li><span>02</span> Open the console at localhost:8080 to check service health.</li>
@@ -226,7 +221,6 @@ const atlasColumns = serviceCategoryOrder
     padding: 1.5rem 0 2rem;
   }
 
-  .field-hero__meta,
   .field-actions,
   .field-signal-strip,
   .field-board__title,
@@ -374,15 +368,6 @@ const atlasColumns = serviceCategoryOrder
     font-size: 0.9rem;
   }
 
-  .field-board {
-    display: grid;
-    gap: 1rem;
-    padding: 1.2rem;
-    border: 1px solid var(--line);
-    border-radius: 1.75rem;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 243, 244, 0.94));
-  }
-
   .field-board__figure {
     margin: 0;
     width: min(100%, 38rem);
@@ -397,291 +382,6 @@ const atlasColumns = serviceCategoryOrder
     display: block;
     width: 100%;
     height: auto;
-  }
-
-  .field-board__summary {
-    display: grid;
-    gap: 0.9rem;
-  }
-
-  .field-board__summary-card {
-    padding: 1rem 1.05rem;
-    border: 1px solid var(--line);
-    border-radius: 1.1rem;
-    background: rgba(255, 255, 255, 0.9);
-  }
-
-  .field-board__summary-card strong {
-    display: block;
-    margin-top: 0.4rem;
-    color: var(--text);
-    font-size: 0.98rem;
-    line-height: 1.55;
-  }
-
-  .field-board__surface {
-    position: relative;
-    min-height: 34rem;
-    overflow: hidden;
-    border: 1px solid rgba(120, 98, 69, 0.16);
-    border-radius: 1.4rem;
-    background:
-      radial-gradient(circle at top, rgba(255, 255, 255, 0.45), transparent 35%),
-      linear-gradient(180deg, rgba(34, 42, 53, 0.95), rgba(27, 31, 39, 0.98));
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  }
-
-  .field-board__rings {
-    position: absolute;
-    inset: 10% 11%;
-    border: 1px solid rgba(122, 163, 251, 0.14);
-    border-radius: 50%;
-  }
-
-  .field-board__rings::before,
-  .field-board__rings::after {
-    content: "";
-    position: absolute;
-    inset: 15%;
-    border-radius: 50%;
-    border: 1px dashed rgba(122, 163, 251, 0.16);
-  }
-
-  .field-board__rings::after {
-    inset: 31%;
-    border-style: solid;
-    border-color: rgba(76, 210, 168, 0.12);
-  }
-
-  .field-orbit {
-    position: absolute;
-    width: 3.4rem;
-    height: 3.4rem;
-    display: grid;
-    place-items: center;
-    border: 1px solid rgba(122, 163, 251, 0.2);
-    border-radius: 1rem;
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 10px 30px -16px rgba(19, 28, 39, 0.8);
-    animation: field-float 6.8s ease-in-out infinite;
-  }
-
-  .field-orbit__icon {
-    display: grid;
-    place-items: center;
-  }
-
-  .field-board__cube {
-    position: absolute;
-    left: 27%;
-    top: 25%;
-    width: 15rem;
-    display: grid;
-    justify-items: center;
-    gap: 0.9rem;
-  }
-
-  .field-board__cube-shell {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 1.5rem;
-    border: 1px solid rgba(122, 163, 251, 0.46);
-    background:
-      linear-gradient(135deg, rgba(102, 183, 255, 0.18), rgba(47, 108, 99, 0.08)),
-      linear-gradient(180deg, rgba(238, 247, 255, 0.16), rgba(11, 14, 21, 0.12));
-    box-shadow:
-      inset 0 0 0 1px rgba(225, 243, 255, 0.14),
-      0 0 50px -24px rgba(73, 138, 232, 0.75);
-    backdrop-filter: blur(10px);
-    display: grid;
-    place-items: center;
-    position: relative;
-  }
-
-  .field-board__cube-shell::before,
-  .field-board__cube-shell::after {
-    content: "";
-    position: absolute;
-    border-radius: 1.15rem;
-    border: 1px solid rgba(144, 197, 255, 0.22);
-  }
-
-  .field-board__cube-shell::before {
-    inset: 1rem;
-  }
-
-  .field-board__cube-shell::after {
-    inset: 2rem;
-  }
-
-  .field-board__cylinders {
-    display: flex;
-    gap: 0.85rem;
-    align-items: end;
-  }
-
-  .field-board__cylinders span {
-    width: 1.9rem;
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgba(165, 214, 255, 0.95), rgba(65, 120, 200, 0.42));
-    box-shadow: 0 0 18px -8px rgba(108, 180, 255, 0.9);
-  }
-
-  .field-board__cylinders span:nth-child(1) {
-    height: 4.9rem;
-  }
-
-  .field-board__cylinders span:nth-child(2) {
-    height: 6.4rem;
-  }
-
-  .field-board__cylinders span:nth-child(3) {
-    height: 4.1rem;
-  }
-
-  .field-board__routes {
-    position: absolute;
-    inset: auto 1.5rem 1.25rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-  }
-
-  .field-board__routes i {
-    display: block;
-    height: 0.32rem;
-    border-radius: 999px;
-    background: linear-gradient(90deg, rgba(97, 216, 160, 0.14), rgba(97, 216, 160, 0.88), rgba(97, 216, 160, 0.14));
-    animation: field-pulse 2.6s ease-in-out infinite;
-  }
-
-  .field-board__routes i:nth-child(2) {
-    animation-delay: 0.6s;
-  }
-
-  .field-board__routes i:nth-child(3) {
-    animation-delay: 1.2s;
-  }
-
-  .field-board__tag {
-    padding: 0.45rem 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #e8eaed;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .field-board__cable {
-    position: absolute;
-    left: 52%;
-    top: 57%;
-    width: 18%;
-    height: 0.45rem;
-    border-radius: 999px;
-    background: linear-gradient(90deg, rgba(122, 163, 251, 0.1), rgba(122, 163, 251, 0.95), rgba(97, 216, 160, 0.35));
-    transform: rotate(8deg);
-    box-shadow: 0 0 20px -8px rgba(97, 216, 160, 0.8);
-  }
-
-  .field-board__laptop {
-    position: absolute;
-    right: 7%;
-    bottom: 14%;
-    width: 31%;
-  }
-
-  .field-board__screen {
-    border: 1px solid rgba(255, 255, 255, 0.26);
-    border-radius: 1rem 1rem 0.55rem 0.55rem;
-    background: #0e1621;
-    padding: 0.85rem;
-    box-shadow: 0 20px 35px -28px rgba(9, 14, 24, 0.9);
-  }
-
-  .field-board__screen-top {
-    display: flex;
-    gap: 0.45rem;
-    margin-bottom: 0.8rem;
-  }
-
-  .field-board__screen-top span {
-    width: 0.52rem;
-    height: 0.52rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.28);
-  }
-
-  .field-board__screen-top span:nth-child(3) {
-    background: rgba(97, 216, 160, 0.9);
-    box-shadow: 0 0 12px -2px rgba(97, 216, 160, 0.85);
-  }
-
-  .field-board__status-list {
-    display: grid;
-    gap: 0.55rem;
-    color: #9aa0a6;
-    font-size: 0.82rem;
-    line-height: 1.6;
-  }
-
-  .field-board__status-list div {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-  }
-
-  .field-board__status-list b {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    background: #61d8a0;
-    box-shadow: 0 0 12px -2px rgba(97, 216, 160, 0.82);
-  }
-
-  .field-board__base {
-    width: 113%;
-    height: 0.8rem;
-    margin: -0.05rem auto 0;
-    border-radius: 0 0 1.2rem 1.2rem;
-    background: linear-gradient(180deg, #dfe6ef, #acb6c5);
-  }
-
-  .field-board__note {
-    position: absolute;
-    width: min(38vw, 13rem);
-    padding: 0.9rem;
-    border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 20px 30px -28px rgba(0, 0, 0, 0.9);
-  }
-
-  .field-board__note strong {
-    display: block;
-    margin-top: 0.3rem;
-    color: #e8eaed;
-    font-size: 0.98rem;
-  }
-
-  .field-board__note p {
-    margin-top: 0.4rem;
-    color: rgba(255, 255, 255, 0.78);
-    font-size: 0.88rem;
-    line-height: 1.6;
-  }
-
-  .field-board__note--left {
-    left: 4%;
-    bottom: 7%;
-  }
-
-  .field-board__note--right {
-    right: 4%;
-    top: 11%;
   }
 
   .field-card,
@@ -1025,30 +725,6 @@ const atlasColumns = serviceCategoryOrder
     color: rgba(228, 239, 255, 0.82);
   }
 
-  @keyframes field-float {
-    0%,
-    100% {
-      transform: translateY(0px);
-    }
-
-    50% {
-      transform: translateY(-8px);
-    }
-  }
-
-  @keyframes field-pulse {
-    0%,
-    100% {
-      opacity: 0.5;
-      transform: scaleX(0.94);
-    }
-
-    50% {
-      opacity: 1;
-      transform: scaleX(1);
-    }
-  }
-
   @media (min-width: 760px) {
     .field-ribbon,
     .field-story,
@@ -1082,22 +758,6 @@ const atlasColumns = serviceCategoryOrder
     }
   }
 
-  @media (max-width: 979px) {
-    .field-board__surface {
-      min-height: 32rem;
-    }
-
-    .field-board__cube {
-      left: 24%;
-      top: 22%;
-      width: 14rem;
-    }
-
-    .field-board__laptop {
-      width: 35%;
-    }
-  }
-
   @media (max-width: 759px) {
     .field-home {
       padding-top: 0.75rem;
@@ -1111,42 +771,6 @@ const atlasColumns = serviceCategoryOrder
 
     .field-actions {
       grid-template-columns: 1fr;
-    }
-
-    .field-board__surface {
-      min-height: 28rem;
-    }
-
-    .field-orbit {
-      width: 3rem;
-      height: 3rem;
-    }
-
-    .field-board__cube {
-      left: 20%;
-      top: 21%;
-      width: 12rem;
-    }
-
-    .field-board__laptop {
-      right: 4%;
-      bottom: 10%;
-      width: 42%;
-    }
-
-    .field-board__note {
-      width: 11rem;
-      padding: 0.75rem;
-    }
-
-    .field-board__note--left {
-      left: 3%;
-      bottom: 4%;
-    }
-
-    .field-board__note--right {
-      right: 3%;
-      top: 7%;
     }
 
     .field-card,
@@ -1177,25 +801,6 @@ const atlasColumns = serviceCategoryOrder
     .field-hero__headline-tag {
       justify-self: start;
       padding-right: 0;
-    }
-
-    .field-board__surface {
-      min-height: 24rem;
-    }
-
-    .field-board__cube {
-      left: 17%;
-      top: 23%;
-      width: 10rem;
-    }
-
-    .field-board__laptop {
-      width: 48%;
-      bottom: 8%;
-    }
-
-    .field-board__note {
-      display: none;
     }
   }
 </style>
