@@ -1,0 +1,48 @@
+# LocalCloud
+
+LocalCloud is a local Google Cloud runtime that brings major GCP services into a single Docker container — no cloud account, no credentials, no cloud costs. Teams develop against real GCP APIs locally, then switch to production by unsetting emulator environment variables.
+
+## What It Is
+- A single Docker container running 20+ GCP service emulators
+- Same SDKs, same APIs, zero code changes
+- Free for individual developers (evaluation, learning, personal projects)
+- Built-in web console at localhost:8080 for inspecting service health and data
+
+## Key Pages
+- Homepage: https://local.cloud/
+- Getting Started: https://local.cloud/docs/
+- What is a GCP Emulator?: https://local.cloud/docs/what-is-gcp-emulator/
+- LocalCloud vs Individual Emulators: https://local.cloud/docs/localcloud-vs-individual-emulators/
+- Service Catalog: https://local.cloud/services/
+- Pricing & Licensing: https://local.cloud/pricing.md
+- FAQ: https://local.cloud/docs/faq/
+- SDK Examples: https://local.cloud/docs/sdk-examples/
+- Terraform Integration: https://local.cloud/docs/terraform/
+- Architecture: https://local.cloud/docs/architecture/
+- BigQuery Feature Comparison: https://local.cloud/docs/bigquery-feature-comparison/
+- BigQuery Coverage Gaps: https://local.cloud/docs/bigquery-coverage-gaps/
+
+## Services Provided
+- Cloud Storage, Pub/Sub, Firestore (official Google emulators)
+- BigQuery (custom DuckDB-based emulator, ~96% SQL coverage)
+- Spanner (extended official emulator with PostgreSQL interface)
+- Bigtable (custom emulator with change streams, materialized views)
+- Memorystore (Redis-compatible cache)
+- Secret Manager, Cloud Tasks, Cloud Logging, Cloud Monitoring (local facades)
+- Cloud Workflows (full stdlib, connector shims)
+- GKE, Compute Engine, Cloud Run (opt-in, Docker-backed)
+- Vertex AI, Cloud KMS, Cloud SQL (planned)
+
+## Quick Start
+```
+docker pull jaysen2apache/localcloud
+docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
+  -p 9010:9010 -p 9020:9020 -p 9050:9050 -p 9060:9060 -p 6379:6379 \
+  -m 4g --name localcloud \
+  -v ~/.localcloud/data:/var/lib/localcloud \
+  jaysen2apache/localcloud
+eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
+```
+
+## GitHub
+https://github.com/LocalGCloud/LocalGCloud.github.io

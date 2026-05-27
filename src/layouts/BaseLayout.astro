@@ -12,7 +12,7 @@ const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const {
   title,
-  description = 'LocalCloud — Google Cloud Platform in a box. Run major Google Cloud services locally in a single Docker container.',
+  description = 'Run 20+ Google Cloud services locally in one Docker container. Same SDKs, same APIs, zero code changes, no cloud costs. Free for developers.',
   ogImage = `${base}brand/localcloud-social-card.svg`,
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -28,6 +28,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" href={`${base}brand/localcloud-mark.svg`} type="image/svg+xml" />
     <meta name="theme-color" content="#eaf2ff" />
+    <meta name="author" content="LocalCloud" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -48,9 +49,30 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <title>{title}</title>
+
+    <!-- JSON-LD Organization Schema -->
+    <script type="application/ld+json" set:html={`{
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "LocalCloud",
+      "url": "https://local.cloud",
+      "logo": "https://local.cloud/brand/localcloud-mark.svg",
+      "description": "LocalCloud is a local Google Cloud runtime that brings major GCP services into a single Docker container — no cloud account, no credentials, no cloud costs.",
+      "sameAs": [
+        "https://github.com/LocalGCloud/LocalGCloud.github.io"
+      ]
+    }`} />
 
     <!-- PostHog Analytics -->
     <script is:inline>

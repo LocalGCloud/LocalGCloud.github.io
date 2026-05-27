@@ -1,0 +1,340 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: BigQuery Feature Comparison
+description: Comprehensive feature-by-feature comparison of Production BigQuery vs Go Emulator vs LocalCloud's Python/DuckDB Rewrite across DDL, DML, query language, window functions, scripting, data types, functions, and APIs.
+---
+
+# BigQuery Feature Comparison
+
+**Production BigQuery vs Go Emulator (goccy/bigquery-emulator) vs Python Rewrite (SQLGlot + DuckDB)**
+
+**Date:** 2026-04-20
+
+Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = Not Applicable
+
+---
+
+## Platform & Runtime
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| ARM64 / Apple Silicon (native) | — | **N** (go-zetasql is x86-64 only, requires QEMU) | **Y** (DuckDB native ARM64) |
+| Single binary / container | — | **Y** (Go static binary) | **Y** (Docker w/ Python) |
+| In-process testing (same process) | — | **Y** (Go httptest) | **Y** (Python fixture) |
+| Persistent storage | **Y** | **Y** (SQLite file) | **Y** (DuckDB file) |
+| In-memory mode | **Y** | **Y** | **Y** |
+
+---
+
+## DDL Statements
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| CREATE TABLE | **Y** | **Y** | **Y** |
+| CREATE TABLE IF NOT EXISTS | **Y** | **Y** | **Y** |
+| CREATE OR REPLACE TABLE | **Y** | **Y** | **Y** |
+| CREATE TEMP TABLE | **Y** | **Y** | **Y** |
+| CREATE TABLE LIKE / COPY / CLONE | **Y** | **N** | **N** (planned P2) |
+| CREATE TABLE with PARTITION BY | **Y** | **N** (issue #152) | **P** (DDL accepted, metadata stored; no physical partitioning) |
+| CREATE TABLE with CLUSTER BY | **Y** | **N** (issue #373, bug) | **P** (DDL accepted, metadata stored) |
+| CREATE TABLE with OPTIONS | **Y** | **P** | **P** (SQLGlot drops OPTIONS silently; must intercept pre-transpile) |
+| CREATE VIEW | **Y** | **Y** | **Y** |
+| CREATE MATERIALIZED VIEW | **Y** | **N** | **N** (planned P2) |
+| CREATE EXTERNAL TABLE | **Y** | **N** | **N** (planned P3) |
+| CREATE SCHEMA | **Y** | **N** | **Y** |
+| CREATE FUNCTION (SQL UDF) | **Y** | **Y** | **Y** (via DuckDB CREATE MACRO) |
+| CREATE TABLE FUNCTION | **Y** | **N** | **N** |
+| CREATE PROCEDURE | **Y** | **N** | **N** (planned P1, requires scripting interpreter) |
+| CREATE SNAPSHOT TABLE | **Y** | **N** | **N** (planned P3) |
+| CREATE ROW ACCESS POLICY | **Y** | **N** | **N** (stub) |
+| CREATE SEARCH INDEX | **Y** | **N** | **N** (stub) |
+| ALTER TABLE ADD COLUMN | **Y** | **N** (issue #412) | **Y** |
+| ALTER TABLE DROP COLUMN | **Y** | **N** | **Y** |
+| ALTER TABLE RENAME | **Y** | **N** | **Y** |
+| ALTER TABLE SET OPTIONS | **Y** | **N** | **P** (SQLGlot truncates OPTIONS) |
+| DROP TABLE / VIEW / FUNCTION / SCHEMA | **Y** | **P** (TABLE, VIEW, FUNCTION only) | **Y** |
+
+---
+
+## DML Statements
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| INSERT | **Y** | **Y** | **Y** |
+| UPDATE | **Y** | **P** (no UPDATE...FROM with joins, issue #310) | **Y** |
+| DELETE | **Y** | **Y** | **Y** |
+| TRUNCATE TABLE | **Y** | **Y** | **Y** |
+| MERGE | **Y** | **P** (parser accepts, execution buggy: issues #128, #163, #299) | **Y** (SQLGlot transpiles correctly) |
+| EXPORT DATA | **Y** | **N** (issue #418) | **N** (planned P3) |
+| LOAD DATA | **Y** | **N** | **N** (SQLGlot ParseError) |
+
+---
+
+## Query Language
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| SELECT * / EXCEPT / REPLACE | **Y** | **Y** | **Y** |
+| SELECT AS STRUCT / VALUE | **Y** | **Y** | **Y** |
+| INNER / LEFT / RIGHT / FULL / CROSS JOIN | **Y** | **Y** | **Y** |
+| Correlated subqueries | **Y** | **N** | **Y** |
+| Sequential JOINs | **Y** | **N** | **Y** |
+| Non-recursive CTEs (WITH) | **Y** | **Y** | **Y** |
+| Recursive CTEs (WITH RECURSIVE) | **Y** | **N** (issue #216) | **Y** (DuckDB native) |
+| UNION / INTERSECT / EXCEPT [ALL] | **Y** | **Y** | **Y** |
+| QUALIFY | **Y** | **Y** | **Y** (DuckDB native) |
+| PIVOT / UNPIVOT | **Y** | **Y** | **Y** (DuckDB native) |
+| TABLESAMPLE | **Y** | **N** | **P** (syntax differs; BERNOULLI→RESERVOIR semantic mismatch) |
+| ORDER BY NULLS FIRST/LAST | **Y** | **N** | **Y** (DuckDB native) |
+| UNNEST with WITH OFFSET | **Y** | **Y** | **Y** (→ WITH ORDINALITY) |
+| Implicit UNNEST | **Y** | **N** | **N** |
+| Pipe syntax (`\|>`) | **Y** | **N** | **P** (WHERE/SELECT/AGGREGATE/JOIN work; RENAME/CALL/SET/DROP/LIMIT crash) |
+| Wildcard tables / `_TABLE_SUFFIX` | **Y** | **Y** | **N** (SQLGlot quotes `*` as identifier; planned P1) |
+| Named parameters (`@param`) | **Y** | **Y** | **Y** (→ `$param`) |
+| Table decorators (`@timestamp`) | **Y** (Legacy SQL) | **N** | **N** |
+
+---
+
+## Window Functions
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| ROW_NUMBER / RANK / DENSE_RANK | **Y** | **Y** | **Y** |
+| LEAD / LAG | **Y** | **Y** | **Y** |
+| FIRST_VALUE / LAST_VALUE / NTH_VALUE | **Y** | **Y** | **Y** |
+| NTH_VALUE(x, n FROM LAST) | **Y** | **N** | **N** (SQLGlot ParseError) |
+| NTILE / CUME_DIST / PERCENT_RANK | **Y** | **Y** | **Y** |
+| PERCENTILE_CONT / PERCENTILE_DISC | **Y** | **P** (issue #205, inconsistent results) | **Y** |
+| Window over NULL partitions | **Y** | **N** (panic, issue #351) | **Y** |
+
+---
+
+## Scripting / Procedural Language
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| DECLARE / SET | **Y** | **N** (issue #344) | **P** (single statements transpile; blocks truncated by SQLGlot — requires custom interpreter) |
+| BEGIN...END | **Y** | **Y** | **P** (SQLGlot truncates after first statement) |
+| IF / ELSEIF / ELSE / END IF | **Y** | **Y** (basic) | **P** (SQLGlot truncates block) |
+| LOOP / WHILE / REPEAT / FOR...IN | **Y** | **N** | **N** (requires custom interpreter) |
+| BREAK / CONTINUE | **Y** | **N** | **N** |
+| RETURN | **Y** | **N** | **N** (SQLGlot ParseError) |
+| RAISE | **Y** | **N** | **N** (SQLGlot ParseError) |
+| CALL procedure | **Y** | **N** | **N** |
+| EXECUTE IMMEDIATE | **Y** | **N** | **N** |
+| BEGIN TRANSACTION / COMMIT | **Y** | **Y** | **Y** |
+| ROLLBACK | **Y** | **N** | **Y** |
+| BEGIN...EXCEPTION...END | **Y** | **N** | **N** |
+
+---
+
+## Data Types
+
+| Type | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| INT64 / FLOAT64 / BOOL | **Y** | **Y** | **Y** |
+| STRING | **Y** | **Y** | **Y** |
+| BYTES | **Y** | **Y** | **Y** (→ BLOB) |
+| NUMERIC / DECIMAL | **Y** | **Y** | **Y** |
+| BIGNUMERIC (76 digits) | **Y** | **Y** | **P** (DuckDB DECIMAL max 38 digits) |
+| DATE / TIME / DATETIME / TIMESTAMP | **Y** | **Y** (timezone bugs) | **Y** (DATETIME→TIMESTAMP, TIMESTAMP→TIMESTAMPTZ) |
+| INTERVAL | **Y** | **Y** | **Y** |
+| ARRAY | **Y** | **P** (blob encoding; NULL/nested bugs) | **Y** (→ LIST; must enforce no nested arrays) |
+| STRUCT / RECORD | **Y** | **P** (blob encoding; nested query bugs) | **Y** (→ STRUCT; no REQUIRED/REPEATED mode enforcement) |
+| JSON | **Y** | **P** (type works; function bugs) | **Y** |
+| GEOGRAPHY | **Y** | **N** (3 of ~60 ST_* functions) | **N** (DuckDB spatial is planar, not geodesic) |
+
+---
+
+## Functions
+
+### Core Function Categories
+
+| Category | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| Math functions (~30) | **Y** | **Y** | **Y** |
+| String functions (~50) | **Y** | **P** (CONTAINS_SUBSTR, COLLATE, EDIT_DISTANCE missing) | **Y** (most transpile; TO_CODE_POINTS, NORMALIZE pass through) |
+| Date/Time functions (~40) | **Y** | **Y** (edge-case bugs: DATE_TRUNC HOUR, DATETIME_DIFF off-by-one) | **Y** (TIMESTAMP(dt,tz) has reversed semantics) |
+| JSON functions (~15) | **Y** | **P** (multiple bugs: #357, #379, #389, #428) | **Y** (LAX_* functions pass through) |
+| Array functions (~15) | **Y** | **P** (crashes with length comparison, issue #410) | **Y** |
+| Aggregate functions (~20) | **Y** | **Y** (COVAR_POP bug; MAX_BY/MIN_BY missing) | **Y** (ARRAY_AGG IGNORE NULLS silently dropped) |
+| Approximate aggregates (~5) | **Y** | **Y** | **P** (APPROX_TOP_COUNT return type differs; APPROX_TOP_SUM missing) |
+| HLL_COUNT.* sketch functions | **Y** | **Y** | **N** (no sketch serialization in DuckDB) |
+| Window functions (~15) | **Y** | **P** (NULL partition crash; PERCENTILE_CONT inconsistency) | **Y** (NTH_VALUE FROM LAST is ParseError) |
+| Hash/UUID (MD5, SHA*, FARM_FINGERPRINT) | **Y** | **Y** | **Y** |
+
+### Specialized Function Categories
+
+| Category | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| NET.* (10 functions) | **Y** | **Y** | **N** (pass through; planned P1 via Python UDFs) |
+| Geography / ST_* (~60 functions) | **Y** | **N** (3 only) | **N** (DuckDB spatial is planar; planned P3) |
+| SAFE_CAST | **Y** | **Y** | **Y** (→ TRY_CAST) |
+| SAFE.* prefix (generic) | **Y** | **P** (named SAFE_DIVIDE etc. exist; generic prefix unclear) | **N** (no generic mechanism; planned P1) |
+| SAFE_DIVIDE / SAFE_ADD / etc. | **Y** | **Y** | **Y** (SQLGlot handles these) |
+| FORMAT() with %t/%T/%P | **Y** | **Y** | **N** (BQ-specific specifiers pass through) |
+| ERROR() | **Y** | **N** | **P** (DuckDB has error() — casing may differ) |
+| AEAD encryption (KEYS.*, AEAD.*) | **Y** | **N** | **N** |
+
+---
+
+## Partitioning & Clustering
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| Time-unit column partitioning | **Y** | **N** (issue #152) | **P** (DDL metadata stored; no physical partitioning) |
+| Ingestion-time partitioning | **Y** | **P** (issue #317) | **P** (metadata + pseudocolumn injection) |
+| Range partitioning | **Y** | **N** | **P** (metadata only) |
+| `_PARTITIONTIME` / `_PARTITIONDATE` pseudocolumns | **Y** | **N** | **P** (planned P0, injected by emulator) |
+| Partition pruning | **Y** | **N** | **P** (via DuckDB zonemap push-down) |
+| Partition expiration | **Y** | **N** | **P** (application-layer TTL) |
+| Required partition filter | **Y** | **N** | **P** (application-layer enforcement) |
+| CLUSTER BY (DDL) | **Y** | **N** (bug, issue #373) | **P** (DDL accepted, metadata stored) |
+| Cluster pruning | **Y** | **N** | **N** (DuckDB has no user-declared clustering) |
+
+---
+
+## INFORMATION_SCHEMA
+
+| View | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| TABLES | **Y** | **P** (basic, limited schema) | **P** (planned P0; synthesize from catalog) |
+| COLUMNS | **Y** | **P** (basic) | **P** (planned P0; synthesize) |
+| SCHEMATA | **Y** | **P** | **P** (planned P0) |
+| PARTITIONS | **Y** | **N** | **P** (planned P0; from partition metadata) |
+| ROUTINES / PARAMETERS | **Y** | **N** | **P** (planned P1) |
+| TABLE_STORAGE | **Y** | **N** | **P** (planned P2) |
+| JOBS / JOBS_BY_USER | **Y** | **N** | **P** (planned P2; from job log) |
+| VIEWS | **Y** | **N** | **P** (planned P1) |
+| OBJECT_PRIVILEGES | **Y** | **N** | **N** (stub) |
+| SEARCH_INDEXES / VECTOR_INDEXES | **Y** | **N** | **N** (stub) |
+| RESERVATIONS / BI_CAPACITIES | **Y** | **N** | **N** (not applicable) |
+| STREAMING_TIMELINE | **Y** | **N** | **N** (not applicable) |
+
+---
+
+## User-Defined Functions
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| SQL scalar UDFs | **Y** | **Y** | **Y** (→ CREATE MACRO) |
+| SQL table-valued functions | **Y** | **N** | **P** (→ CREATE MACRO ... AS TABLE) |
+| JavaScript UDFs | **Y** | **P** (basic cases; issue #337) | **N** (cannot execute JS) |
+| Python UDFs | **N** (remote functions only) | **N** | **Y** (via DuckDB Python API) |
+| User-defined aggregates (UDAFs) | **Y** | **N** | **N** |
+| Remote functions | **Y** | **N** | **N** |
+| Persistent UDFs (stored in dataset) | **Y** | **Y** | **Y** (DuckDB catalog) |
+| Temporary UDFs | **Y** | **Y** | **Y** |
+
+---
+
+## BigQuery ML
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| CREATE MODEL | **Y** | **N** | **N** (SQLGlot drops OPTIONS) |
+| ML.PREDICT / ML.EVALUATE | **Y** | **N** | **N** (SQLGlot ParseError) |
+| ML.GENERATE_TEXT | **Y** | **N** | **N** |
+| AI.FORECAST | **Y** | **N** | **N** (SQLGlot ParseError) |
+
+---
+
+## REST API
+
+| Endpoint | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| datasets.* (CRUD) | **Y** | **Y** | **Y** (planned) |
+| tables.* (CRUD) | **Y** | **Y** | **Y** (planned) |
+| tabledata.insertAll (streaming) | **Y** | **Y** | **Y** (planned) |
+| tabledata.list | **Y** | **Y** | **Y** (planned) |
+| jobs.query (synchronous) | **Y** | **Y** | **Y** (planned) |
+| jobs.insert (async) | **Y** | **Y** | **Y** (planned) |
+| jobs.get / list / cancel | **Y** | **Y** | **Y** (planned) |
+| projects.list | **Y** | **Y** | **Y** (planned) |
+| routines.* (CRUD) | **Y** | **Y** | **Y** (planned) |
+| models.* (metadata only) | **Y** | **Y** (stub) | **N** (stub) |
+| IAM (getIamPolicy, etc.) | **Y** | **N** (stub) | **N** (stub) |
+| Transfer API | **Y** | **N** | **N** |
+| Reservation API | **Y** | **N** | **N** |
+| Connection API | **Y** | **N** | **N** |
+
+---
+
+## gRPC Storage API
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| Read API (CreateReadSession) | **Y** | **P** (encoding bugs with arrays, nullable fields; issue #409) | **Y** (planned Phase 4) |
+| Avro format reads | **Y** | **P** (issue #398, schema bytes in data) | **Y** (planned) |
+| Arrow format reads | **Y** | **P** | **Y** (DuckDB native Arrow) |
+| Write API (default stream) | **Y** | **N** (issue #246) | **Y** (planned Phase 4) |
+| Write API (COMMITTED stream) | **Y** | **N** (issue #247) | **Y** (planned) |
+| Write API (PENDING stream) | **Y** | **P** (issue #342, stream not found) | **Y** (planned) |
+| BatchCommitWriteStreams | **Y** | **N** (issue #380, panic) | **Y** (planned) |
+| SSL/TLS on gRPC | **Y** | **N** (issue #259) | **Y** (planned) |
+
+---
+
+## Advanced Features
+
+| Feature | Production BQ | Go Emulator | Python Rewrite |
+|---------|:---:|:---:|:---:|
+| Materialized Views | **Y** | **N** | **N** (planned P2) |
+| External Tables | **Y** | **N** | **N** (planned P3) |
+| Table Snapshots / Clones | **Y** | **N** | **N** (planned P3) |
+| FOR SYSTEM_TIME AS OF (time travel) | **Y** | **N** | **N** (planned P3) |
+| Stored Procedures | **Y** | **N** | **N** (planned P1) |
+| Row-level access policies | **Y** | **N** | **N** (stub) |
+| Column-level security / policy tags | **Y** | **N** | **N** (stub) |
+| Search indexes / SEARCH() | **Y** | **N** | **N** (stub) |
+| Differential privacy aggregates | **Y** | **N** | **N** |
+| BI Engine acceleration | **Y** | **N** | — (DuckDB is in-memory) |
+| GCS integration (load/extract) | **Y** | **P** (CSV/JSON only) | **P** (planned; Parquet/CSV/JSON) |
+
+---
+
+## Summary Scorecard
+
+| Category | Go Emulator | Python Rewrite | Winner |
+|---------|:---:|:---:|:---:|
+| **ARM64 / Apple Silicon** | N | Y | Python |
+| **DDL (basic)** | Y | Y | Tie |
+| **DDL (ALTER TABLE)** | N | Y | Python |
+| **DDL (partitioning/clustering)** | N | P (metadata) | Python |
+| **DML (INSERT/UPDATE/DELETE)** | P (UPDATE joins broken) | Y | Python |
+| **DML (MERGE)** | P (buggy) | Y | Python |
+| **Core query language** | Y | Y | Tie |
+| **Correlated subqueries** | N | Y | Python |
+| **Recursive CTEs** | N | Y | Python |
+| **Window functions** | P (NULL crash) | Y | Python |
+| **Scripting** | N (~0%) | P (requires interpreter) | Python |
+| **INFORMATION_SCHEMA** | P (minimal) | P (synthesized, more planned) | Python |
+| **Math/String/Date functions** | Y | Y | Tie |
+| **JSON functions** | P (multiple bugs) | Y | Python |
+| **Array/Struct operations** | P (encoding bugs) | Y | Python |
+| **Geography / ST_*** | N (3 functions) | N (wrong model) | Tie (both bad) |
+| **NET.* functions** | Y | N (planned) | Go |
+| **HLL_COUNT.* sketches** | Y | N | Go |
+| **APPROX_* aggregates** | Y | P | Go |
+| **Wildcard tables / _TABLE_SUFFIX** | Y | N (planned) | Go |
+| **JavaScript UDFs** | P | N | Go |
+| **SAFE.* prefix** | P | N (planned) | Go |
+| **REST API** | Y (full) | Y (planned) | Tie |
+| **gRPC Storage Read API** | P (encoding bugs) | Y (planned, Arrow native) | Python |
+| **gRPC Storage Write API** | N (broken) | Y (planned) | Python |
+| **Type correctness (ARRAY/STRUCT/JSON)** | P (SQLite blob encoding) | Y (DuckDB native columnar) | Python |
+| **Semantic correctness** | P (many edge-case bugs) | P (TIMESTAMP tz reversed, IGNORE NULLS) | Tie (different bugs) |
+
+### Score Summary
+
+|  | Go Emulator | Python Rewrite |
+|--|:---:|:---:|
+| Categories where it wins | **5** (NET, HLL, APPROX, wildcards, JS UDFs) | **16** (ARM64, ALTER, MERGE, CTEs, correlated, etc.) |
+| Categories tied | **7** | **7** |
+| Categories where it loses | **16** | **5** |
+
+### Key Takeaway
+
+The **Go emulator** has a working REST API and covers some niche function categories (NET, HLL sketches, wildcards) that the Python rewrite will need to build. However, it has fundamental structural limitations — x86-64 only, SQLite blob encoding causing type bugs, broken MERGE/UPDATE, no ALTER TABLE, no partitioning, no scripting, broken gRPC Write API.
+
+The **Python rewrite** gains significant ground on SQL correctness (DuckDB's native columnar types vs SQLite blob encoding), modern SQL features (recursive CTEs, correlated subqueries), and ARM64 support. Its main gaps are features that need custom emulator-layer implementation: scripting interpreter, INFORMATION_SCHEMA synthesis, wildcard tables, SAFE.* prefix, and NET.* functions.

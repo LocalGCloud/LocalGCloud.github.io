@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://localstack-google.github.io',
+  site: 'https://local.cloud/',
   integrations: [mdx(), sitemap()],
   vite: {
     plugins: [tailwindcss()],

@@ -40,6 +40,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
         <li><a href={base}>Homepage</a></li>
         <li><a href={`${base}services/`}>Services</a></li>
         <li><a href={`${base}docs/console/`}>Web Console</a></li>
+        <li><a href={`${base}docs/what-is-gcp-emulator/`}>What is a GCP Emulator?</a></li>
       </ul>
     </div>
 
@@ -49,14 +50,16 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
         <li><a href={`${base}docs/`}>Getting Started</a></li>
         <li><a href={`${base}docs/architecture/`}>Architecture</a></li>
         <li><a href={`${base}docs/sdk-examples/`}>SDK Examples</a></li>
+        <li><a href={`${base}docs/localcloud-vs-individual-emulators/`}>vs Individual Emulators</a></li>
       </ul>
     </div>
 
     <div class="site-footer__group">
       <h4>Community</h4>
       <ul>
-        <li><a href="https://github.com/LocalStack-Google/localstack-google.github.io" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://github.com/LocalGCloud/LocalGCloud.github.io" target="_blank" rel="noopener noreferrer">GitHub</a></li>
         <li><a href={`${base}docs/faq/`}>FAQ</a></li>
+        <li><a href={`${base}docs/licensing/`}>Licensing</a></li>
       </ul>
     </div>
   </div>
@@ -65,6 +68,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
     <span>&copy; {new Date().getFullYear()} LocalCloud · Proprietary — free for personal/evaluation use</span>
     <span class="site-footer__legal-links">
       <a href={`${base}docs/licensing/`}>License</a>
+      <a href={`${base}docs/privacy/`}>Privacy</a>
     </span>
   </div>
 </footer>

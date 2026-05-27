@@ -27,8 +27,14 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const currentPath = Astro.url.pathname;
 
 const sidebarSections = [
-  { title: 'Getting Started', items: [{ label: 'Introduction', href: `${base}docs/` }] },
+  { title: 'Getting Started', items: [
+    { label: 'Introduction', href: `${base}docs/` },
+    { label: 'What is a GCP Emulator?', href: `${base}docs/what-is-gcp-emulator/` },
+  ]},
   { title: 'Services', items: [{ label: 'Overview', href: `${base}docs/services-overview/` }] },
+  { title: 'Comparisons', items: [
+    { label: 'LocalCloud vs Individual Emulators', href: `${base}docs/localcloud-vs-individual-emulators/` },
+  ]},
   { title: 'Reference', items: [
     { label: 'Configuration', href: `${base}docs/configuration/` },
     { label: 'Seed Data', href: `${base}docs/seed-data/` },
@@ -38,11 +44,14 @@ const sidebarSections = [
   { title: 'Learn', items: [
     { label: 'Architecture', href: `${base}docs/architecture/` },
     { label: 'BigQuery emulator features', href: `${base}docs/bigquery-emulator-features/` },
+    { label: 'BigQuery feature comparison', href: `${base}docs/bigquery-feature-comparison/` },
+    { label: 'BigQuery coverage gaps', href: `${base}docs/bigquery-coverage-gaps/` },
     { label: 'Bigtable emulator features', href: `${base}docs/bigtable-emulator-features/` },
     { label: 'Spanner emulator features', href: `${base}docs/spanner-emulator-features/` },
     { label: 'Web Console', href: `${base}docs/console/` },
     { label: 'FAQ', href: `${base}docs/faq/` },
     { label: 'Licensing', href: `${base}docs/licensing/` },
+    { label: 'Privacy', href: `${base}docs/privacy/` },
   ]},
 ];
 
@@ -80,7 +89,7 @@ const tocItems = (Astro.props.headings ?? []).filter((heading) => heading.depth 
 
           <div class="docs-toolbar__actions">
             <a href={`${base}services/`}>Service Catalog</a>
-            <a href="https://github.com/LocalStack-Google/localstack-google.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://github.com/LocalGCloud/LocalGCloud.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
         </div>
 
@@ -138,6 +147,10 @@ const tocItems = (Astro.props.headings ?? []).filter((heading) => heading.depth 
               <div class="prose-site">
                 <slot />
               </div>
+
+              <footer class="docs-article__meta">
+                <p class="text-sm text-[var(--text-3)]">Last updated: May 2025</p>
+              </footer>
 
               <DocFeedback />
 

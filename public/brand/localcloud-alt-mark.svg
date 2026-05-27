@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none" role="img" aria-labelledby="localcloud-alt-title localcloud-alt-desc">
+  <title id="localcloud-alt-title">LocalCloud alt mark</title>
+  <desc id="localcloud-alt-desc">Multi-colored C bracket with layered cloud slices.</desc>
+  <!-- Multi-colored 'C' Bracket -->
+  <path d="M300 80 H120 Q80 80 80 120" stroke="#4285F4" stroke-width="28" stroke-linecap="round" />
+  <path d="M80 120 V200" stroke="#EA4335" stroke-width="28" />
+  <path d="M80 200 V280" stroke="#FBBC04" stroke-width="28" />
+  <path d="M80 280 Q80 320 120 320 H300" stroke="#34A853" stroke-width="28" stroke-linecap="round" />
+  
+  <!-- Layered Cloud Slices (Centered) -->
+  <g transform="translate(130, 115)">
+    <rect x="45" y="0" width="80" height="28" rx="14" fill="#4285F4" />
+    <rect x="20" y="38" width="130" height="28" rx="14" fill="#EA4335" />
+    <rect x="5" y="76" width="160" height="28" rx="14" fill="#FBBC04" />
+    <rect x="15" y="114" width="140" height="28" rx="14" fill="#34A853" />
+  </g>
+</svg>

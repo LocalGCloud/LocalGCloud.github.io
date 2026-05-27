@@ -7,7 +7,7 @@ interface Props {
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
-const { size = 42, alt = '', class: className = '' } = Astro.props;
+const { size = 42, alt = 'LocalCloud', class: className = '' } = Astro.props;
 const decorative = alt.length === 0;
 ---
 

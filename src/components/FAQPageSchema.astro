@@ -1,0 +1,91 @@
+---
+// FAQPage JSON-LD schema — injected into the head of FAQ page
+---
+<script type="application/ld+json" is:inline>
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is LocalCloud?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "LocalCloud is a local Google Cloud runtime that brings the major Google Cloud services teams reach for first into a single Docker container. It gives you one boot path, one localhost handoff for SDKs, and a built-in console for inspecting the runtime locally."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is LocalCloud free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — LocalCloud is free for individual developers for evaluation, personal projects, learning, and testing. It is not licensed for commercial or production use."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is LocalCloud different from individual Google emulators?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Google provides some emulator paths, but you still have to run and manage them separately. LocalCloud wraps the major services developers need into one container."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to change my application code to use LocalCloud?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. LocalCloud works with standard GCP SDK and CLI clients. You only change environment variables to point service endpoints at localhost."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which SDK languages are supported?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Any language with GCP SDK support works: Python, Node.js, Go, Java, C#, Ruby, PHP, and more."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How complete is the BigQuery emulation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The BigQuery emulator provides ~96% SQL coverage, 818 functional tests, 200+ mapped functions and features."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use LocalCloud in CI/CD?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. LocalCloud runs in any environment with Docker support. Add it as a service in your CI pipeline."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much memory does LocalCloud need?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Recommended: 4GB. With fewer services enabled, 2GB may suffice."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does LocalCloud take to start?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The default boot path is designed to come up in less than 1 minute on a typical development machine."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is data persisted between restarts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, if you mount a Docker volume to /var/lib/localcloud. Without a volume, data is lost when the container stops."
+      }
+    }
+  ]
+}
+</script>

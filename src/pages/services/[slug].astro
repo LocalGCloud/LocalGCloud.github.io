@@ -25,6 +25,39 @@ const categoryLabel = getServiceCategoryLabel(service);
 ---
 
 <BaseLayout title={`${service.name} — LocalCloud`} description={service.description}>
+  <!-- JSON-LD BreadcrumbList -->
+  <script type="application/ld+json" set:html={`{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Services",
+        "item": "https://local.cloud/services/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "${service.name}"
+      }
+    ]
+  }`} />
+  <!-- JSON-LD SoftwareApplication -->
+  <script type="application/ld+json" set:html={`{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "LocalCloud ${service.name} Emulator",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Linux (Docker)",
+    "description": "${service.description}",
+    "url": "https://local.cloud/services/${service.slug}/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }`} />
   <Header />
 
   <main id="main-content" class="site-page">
@@ -103,7 +136,7 @@ const categoryLabel = getServiceCategoryLabel(service);
         <div class="grid gap-4 lg:grid-cols-2">
           <section class="site-panel p-6 reveal">
             <div class="flex items-center justify-between gap-3">
-              <h3>Supported Today</h3>
+              <h2 class="text-2xl font-semibold tracking-tight">Supported Today</h2>
               <span class="site-chip site-chip--success">{service.supported.length} items</span>
             </div>
             <ul class="site-list site-list--success mt-5">
@@ -115,7 +148,7 @@ const categoryLabel = getServiceCategoryLabel(service);
 
           <section class="site-panel site-panel--soft p-6 reveal">
             <div class="flex items-center justify-between gap-3">
-              <h3>Not Yet Supported</h3>
+              <h2 class="text-2xl font-semibold tracking-tight">Not Yet Supported</h2>
               <span class="site-chip site-chip--accent">{service.notSupported.length} items</span>
             </div>
             <ul class="site-list mt-5">
@@ -124,6 +157,32 @@ const categoryLabel = getServiceCategoryLabel(service);
               ))}
             </ul>
           </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="site-section">
+      <div class="container">
+        <div class="site-panel p-6 reveal">
+          <h2 class="text-2xl font-semibold tracking-tight mb-4">Learn More</h2>
+          <ul class="site-list">
+            <li><a href={`${base}docs/`}>Getting Started Guide</a> — set up LocalCloud in under a minute</li>
+            <li><a href={`${base}docs/sdk-examples/`}>SDK Examples</a> — copy-paste code for Python, Node.js, Go, Java</li>
+            <li><a href={`${base}docs/configuration/`}>Configuration</a> — environment variables and ports</li>
+            {service.slug === 'bigquery' && (
+              <>
+                <li><a href={`${base}docs/bigquery-emulator-features/`}>BigQuery Emulator Features</a> — detailed feature support and test coverage</li>
+                <li><a href={`${base}docs/bigquery-feature-comparison/`}>BigQuery Feature Comparison</a> — Production vs Go Emulator vs LocalCloud</li>
+                <li><a href={`${base}docs/bigquery-coverage-gaps/`}>BigQuery Coverage Gap Analysis</a> — deep-dive into emulator limitations</li>
+              </>
+            )}
+            {service.slug === 'spanner' && (
+              <li><a href={`${base}docs/spanner-emulator-features/`}>Spanner Emulator Features</a> — extended emulator with PGAdapter support</li>
+            )}
+            {service.slug === 'bigtable' && (
+              <li><a href={`${base}docs/bigtable-emulator-features/`}>Bigtable Emulator Features</a> — change streams, materialized views, persistence</li>
+            )}
+          </ul>
         </div>
       </div>
     </section>
