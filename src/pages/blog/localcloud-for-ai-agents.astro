@@ -1,0 +1,461 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import Callout from '../../components/Callout.astro';
+import {
+  createBreadcrumbSchema,
+  createSoftwareApplicationSchema,
+  productFacts,
+} from '../../data/productFacts';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const pageUrl = new URL('blog/localcloud-for-ai-agents/', productFacts.siteUrl).toString();
+const publishDate = '2026-06-24';
+
+const faqs = [
+  {
+    question: 'Can AI agents really use LocalCloud without human intervention?',
+    answer:
+      'Yes. LocalCloud starts from a single `docker run` command with no credentials, no cloud account, and no browser login required. An agent can pull the image, start the container, and begin testing GCP code in under two minutes — all deterministically and repeatably.',
+  },
+  {
+    question: 'Does LocalCloud require a LocalStack-style MCP server?',
+    answer:
+      'LocalCloud does not currently ship a dedicated MCP server. Agents interact with it the same way human developers do: through standard GCP SDKs pointed at localhost, the REST admin API at port 8080, and the built-in web console. The `llms.txt` file at local.cloud gives agents everything they need to discover and operate the platform.',
+  },
+  {
+    question: 'Is this safe for autonomous agent workflows?',
+    answer:
+      'LocalCloud runs entirely on localhost inside Docker. There is no cloud access, no credential leakage risk, and no cost regardless of how many times an agent tears down and rebuilds. Each run is isolated. Agents cannot accidentally spend money or impact shared infrastructure.',
+  },
+  {
+    question: 'Can agents validate Terraform configurations against LocalCloud?',
+    answer:
+      'Yes. LocalCloud emulators speak the same gRPC/REST protocols as real GCP services, so `terraform plan`, `apply`, and `destroy` all work against local endpoints. Agents can validate entire Infrastructure-as-Code stacks before any real cloud resources are touched.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+
+const structuredData = [
+  createSoftwareApplicationSchema(
+    pageUrl,
+    'LocalCloud is a local Google Cloud runtime for AI agent workflows — test, validate, and iterate on GCP code without credentials, cloud costs, or internet access.',
+  ),
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: 'LocalCloud for AI Agents', url: pageUrl },
+  ]),
+  faqSchema,
+];
+---
+
+<LandingLayout
+  title="LocalCloud for AI Agents — A Safe GCP Sandbox for Agentic Workflows"
+  description="AI agents building Google Cloud applications need a local sandbox that speaks real GCP protocols. LocalCloud gives agents 20 GCP services in one Docker container — no credentials, no cloud costs, no risk."
+  {structuredData}
+>
+  <!-- Hero -->
+  <section class="site-section site-section--hero">
+    <div class="container">
+      <div class="max-w-[52rem] reveal">
+        <span class="site-eyebrow">
+          <span class="site-eyebrow__pulse"></span>
+          {publishDate} &middot; Blog
+        </span>
+        <h1 class="mt-4">LocalCloud for AI Agents</h1>
+        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
+          AI agents building GCP code need a safe sandbox. Real Google Cloud costs money, requires credentials, and a single agent mistake can leave resources running. LocalCloud gives agents 20 GCP services in one Docker container — same SDKs, same APIs, zero risk.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3 text-sm text-[var(--text-3)]">
+          <span>4 min read</span>
+          <span>&middot;</span>
+          <span>AI Agents</span>
+          <span>&middot;</span>
+          <span>Developer Tools</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Problem -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <span class="site-kicker">The problem</span>
+        <h2 class="mt-4">Agents + real cloud = expensive uncertainty</h2>
+        <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
+          AI coding agents are increasingly writing and deploying cloud infrastructure. They generate Terraform configs, provision BigQuery datasets, wire up Pub/Sub topics, and configure Cloud Storage buckets. But when an agent's target is real Google Cloud, every iteration carries risk: leaked credentials, orphaned resources, surprise bills, and slow feedback loops waiting on cloud API latency.
+        </p>
+        <p class="mt-4 leading-7 text-[var(--text-2)]">
+          Teams have been solving this manually — spinning up individual Google emulators, managing separate processes, writing cleanup scripts. But Google only ships three official emulators (Pub/Sub, Firestore, Spanner). No BigQuery. No Bigtable. No Cloud Storage. And certainly no unified way for an agent to discover, start, and operate them all.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Solution -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <span class="site-kicker">The solution</span>
+        <h2 class="mt-4">One container, twenty services, zero credentials</h2>
+        <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
+          LocalCloud is a single Docker container that emulates 20 GCP services locally. Agents don't need GCP accounts, IAM roles, or billing setup. They pull one image, run one command, and get a full GCP development surface at localhost — speaking the same gRPC and REST protocols as the real cloud.
+        </p>
+      </div>
+
+      <div class="site-panel mt-8 p-6 reveal">
+        <p class="text-sm font-medium text-[var(--text-3)] mb-3">Agent prompt — give this to your agent:</p>
+        <pre class="overflow-x-auto rounded-md bg-[var(--surface-2)] p-4 text-sm"><code>Fetch https://local.cloud/llms.txt to learn about LocalCloud, then pull and start the
+Docker image. Point any GCP SDK code at the local emulator endpoints and
+validate it works before deploying to real Google Cloud.</code></pre>
+      </div>
+
+      <p class="mt-6 leading-7 text-[var(--text-2)] reveal">
+        That's it. The <code>llms.txt</code> file at <a href="https://local.cloud/llms.txt" class="text-[var(--accent-strong)]">local.cloud/llms.txt</a> is a structured, agent-readable document that describes every service, every port, the quick-start command, and the key pages an agent needs. It is designed to be the single entry point — no human explanation required.
+      </p>
+    </div>
+  </section>
+
+  <!-- Agent Setup Flow -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <span class="site-kicker">Agent setup flow</span>
+        <h2 class="mt-4">What the agent does, step by step</h2>
+      </div>
+
+      <div class="mt-8 grid gap-6 reveal">
+        <div class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/15 text-sm font-bold text-[var(--accent-strong)]">1</span>
+            <div>
+              <h3 class="text-lg font-semibold">Verify Docker</h3>
+              <p class="mt-2 leading-7 text-[var(--text-2)]">The agent checks that Docker is installed and running. If not, it directs the user to install it — or falls back to explaining the setup.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/15 text-sm font-bold text-[var(--accent-strong)]">2</span>
+            <div>
+              <h3 class="text-lg font-semibold">Pull and start LocalCloud</h3>
+              <p class="mt-2 leading-7 text-[var(--text-2)]">One <code>docker run</code> command starts all 20 services. BigQuery, Pub/Sub, Firestore, Spanner, Bigtable, Cloud Storage, Secret Manager, Cloud Tasks, and more — all listening on localhost. No account creation. No browser login. No auth token.</p>
+              <pre class="mt-3 overflow-x-auto rounded-md bg-[var(--surface-2)] p-3 text-xs"><code>docker pull jaysen2apache/localcloud
+docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
+  -p 9010:9010 -p 9020:9020 -p 9050:9050 -p 9060:9060 \
+  -p 6379:6379 -m 4g --name localcloud \
+  jaysen2apache/localcloud</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/15 text-sm font-bold text-[var(--accent-strong)]">3</span>
+            <div>
+              <h3 class="text-lg font-semibold">Export environment variables</h3>
+              <p class="mt-2 leading-7 text-[var(--text-2)]">The agent runs a single curl command to set all emulator endpoint variables. Standard GCP SDKs now point to localhost instead of googleapis.com.</p>
+              <pre class="mt-3 overflow-x-auto rounded-md bg-[var(--surface-2)] p-3 text-xs"><code>eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/15 text-sm font-bold text-[var(--accent-strong)]">4</span>
+            <div>
+              <h3 class="text-lg font-semibold">Develop, test, iterate</h3>
+              <p class="mt-2 leading-7 text-[var(--text-2)]">The agent writes GCP code using standard SDKs, runs it against local emulators with sub-millisecond latency, and validates behavior deterministically. Terraform configs, BigQuery SQL, Pub/Sub pipelines — all tested locally before touching real cloud.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/15 text-sm font-bold text-[var(--accent-strong)]">5</span>
+            <div>
+              <h3 class="text-lg font-semibold">Validate against real GCP (optional)</h3>
+              <p class="mt-2 leading-7 text-[var(--text-2)]">When ready, the agent unsets the emulator environment variables and the same code connects to real Google Cloud. Zero code changes. The local sandbox handled 95% of the development cycle; production gets the final validation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Agents Need This -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <span class="site-kicker">Why this matters</span>
+        <h2 class="mt-4">What agents get that humans have always wanted</h2>
+      </div>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 reveal">
+        <div class="site-panel p-6">
+          <h3 class="font-semibold">Zero cost, infinite retries</h3>
+          <p class="mt-2 leading-7 text-[var(--text-2)]">Agents can provision, destroy, and reprovision services thousands of times. No cloud bill. No rate limits. No quota exhaustion. Every run starts clean.</p>
+        </div>
+        <div class="site-panel p-6">
+          <h3 class="font-semibold">No credential surface</h3>
+          <p class="mt-2 leading-7 text-[var(--text-2)]">There are no GCP credentials to leak, no service accounts to misconfigure, no IAM policies to get wrong. LocalCloud runs entirely air-gapped inside Docker.</p>
+        </div>
+        <div class="site-panel p-6">
+          <h3 class="font-semibold">Deterministic state</h3>
+          <p class="mt-2 leading-7 text-[var(--text-2)]">Every agent run starts from identical state — or from seed data loaded on startup. No shared staging drift. No "it worked yesterday" mysteries.</p>
+        </div>
+        <div class="site-panel p-6">
+          <h3 class="font-semibold">Sub-millisecond latency</h3>
+          <p class="mt-2 leading-7 text-[var(--text-2)]">Cloud API calls that take 2–5 seconds round-trip execute in under 1ms locally. Agent feedback loops collapse from minutes to seconds.</p>
+        </div>
+        <div class="site-panel p-6">
+          <h3 class="font-semibold">Offline capable</h3>
+          <p class="mt-2 leading-7 text-[var(--text-2)]">No internet required. Agents running in air-gapped CI runners, conference demos, or on a plane work exactly the same as they do on a wired connection.</p>
+        </div>
+        <div class="site-panel p-6">
+          <h3 class="font-semibold">Full Terraform support</h3>
+          <p class="mt-2 leading-7 text-[var(--text-2)]">Agents generating Terraform can <code>plan</code>, <code>apply</code>, and <code>destroy</code> against local emulators. Same <code>.tf</code> files, same workflow — validated before real infrastructure is touched.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Available Services -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <span class="site-kicker">What's available</span>
+        <h2 class="mt-4">Twenty services an agent can use right now</h2>
+        <p class="mt-4 leading-7 text-[var(--text-2)]">
+          LocalCloud covers the services GCP developers actually need in the inner loop — including several where no official Google emulator exists.
+        </p>
+      </div>
+
+      <div class="site-panel mt-8 overflow-x-auto reveal">
+        <table class="min-w-[36rem] w-full text-left text-sm">
+          <thead class="border-b border-[var(--border)] text-[var(--text-3)]">
+            <tr>
+              <th class="p-4 font-medium">Service</th>
+              <th class="p-4 font-medium">Engine</th>
+              <th class="p-4 font-medium">Official emulator?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">BigQuery</td>
+              <td class="p-4 text-[var(--text-2)]">Custom DuckDB engine (~96% SQL coverage)</td>
+              <td class="p-4"><span class="text-xs font-medium text-[var(--brand-red)]">No</span></td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Pub/Sub</td>
+              <td class="p-4 text-[var(--text-2)]">Official Google emulator</td>
+              <td class="p-4"><span class="text-xs font-medium text-[var(--brand-green)]">Yes</span></td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Firestore</td>
+              <td class="p-4 text-[var(--text-2)]">Official Google emulator</td>
+              <td class="p-4"><span class="text-xs font-medium text-[var(--brand-green)]">Yes</span></td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Spanner</td>
+              <td class="p-4 text-[var(--text-2)]">Extended official emulator + PGAdapter</td>
+              <td class="p-4"><span class="text-xs font-medium text-[var(--brand-green)]">Yes</span></td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Bigtable</td>
+              <td class="p-4 text-[var(--text-2)]">Custom emulator (change streams, materialized views)</td>
+              <td class="p-4"><span class="text-xs font-medium text-[var(--brand-red)]">No</span></td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Cloud Storage</td>
+              <td class="p-4 text-[var(--text-2)]">Third-party emulator</td>
+              <td class="p-4"><span class="text-xs font-medium text-[var(--brand-red)]">No</span></td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Secret Manager</td>
+              <td class="p-4 text-[var(--text-2)]">In-process facade</td>
+              <td class="p-4"><span class="text-xs font-medium text-[var(--brand-red)]">No</span></td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Cloud Tasks</td>
+              <td class="p-4 text-[var(--text-2)]">In-process facade</td>
+              <td class="p-4"><span class="text-xs font-medium text-[var(--brand-red)]">No</span></td>
+            </tr>
+            <tr>
+              <td class="p-4 font-medium text-[var(--text)]">Cloud Logging, Monitoring, Workflows, Memorystore, GKE, Compute Engine, Cloud Run</td>
+              <td class="p-4 text-[var(--text-2)]">Facades, Docker-backed, or third-party</td>
+              <td class="p-4"><span class="text-xs font-medium text-[var(--text-3)]">Mixed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <Callout type="info" title="Agent-readable service catalog">
+        The full service catalog with implementation details, ports, and compatibility notes is at <a href={`${base}services/`} class="text-[var(--accent-strong)]">local.cloud/services/</a>. The <code>llms.txt</code> file includes a summary suitable for agent consumption.
+      </Callout>
+    </div>
+  </section>
+
+  <!-- How It Compares -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <span class="site-kicker">The landscape</span>
+        <h2 class="mt-4">Why this beats the alternatives for agentic workflows</h2>
+      </div>
+
+      <div class="site-panel mt-8 overflow-x-auto reveal">
+        <table class="min-w-[42rem] w-full text-left text-sm">
+          <thead class="border-b border-[var(--border)] text-[var(--text-3)]">
+            <tr>
+              <th class="p-4 font-medium"></th>
+              <th class="p-4 font-medium">Real GCP</th>
+              <th class="p-4 font-medium">Individual emulators</th>
+              <th class="p-4 font-medium">Mocking libraries</th>
+              <th class="p-4 font-medium">LocalCloud</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Agent-safe (no cost risk)</td>
+              <td class="p-4 text-[var(--brand-red)]">No</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Real GCP wire protocols</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+              <td class="p-4 text-[var(--brand-red)]">No</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Single-command start</td>
+              <td class="p-4 text-[var(--brand-red)]">No</td>
+              <td class="p-4 text-[var(--brand-red)]">No</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Services covered</td>
+              <td class="p-4 text-[var(--text)]">All</td>
+              <td class="p-4 text-[var(--text)]">3</td>
+              <td class="p-4 text-[var(--text)]">Varies</td>
+              <td class="p-4 text-[var(--text)]">20</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Credentials required</td>
+              <td class="p-4 text-[var(--brand-red)]">Yes</td>
+              <td class="p-4 text-[var(--brand-green)]">No</td>
+              <td class="p-4 text-[var(--brand-green)]">No</td>
+              <td class="p-4 text-[var(--brand-green)]">No</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <td class="p-4 font-medium text-[var(--text)]">Terraform support</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+              <td class="p-4 text-[var(--text-3)]">Partial</td>
+              <td class="p-4 text-[var(--brand-red)]">No</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+            </tr>
+            <tr>
+              <td class="p-4 font-medium text-[var(--text)]">Works offline</td>
+              <td class="p-4 text-[var(--brand-red)]">No</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+              <td class="p-4 text-[var(--brand-green)]">Yes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Agent Discoverability -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <span class="site-kicker">Discoverability</span>
+        <h2 class="mt-4">How agents find LocalCloud</h2>
+        <p class="mt-4 leading-7 text-[var(--text-2)]">
+          The <code>llms.txt</code> standard gives AI agents a structured, machine-readable entry point for any website. LocalCloud maintains a comprehensive <code>llms.txt</code> at the site root that includes:
+        </p>
+      </div>
+
+      <div class="mt-6 grid gap-3 reveal">
+        <div class="site-panel p-5">
+          <h3 class="font-semibold">Quick-start command</h3>
+          <p class="mt-1 leading-7 text-[var(--text-2)]">The exact <code>docker run</code> command with all port mappings and memory settings — copy-paste ready for any agent.</p>
+        </div>
+        <div class="site-panel p-5">
+          <h3 class="font-semibold">Service catalog</h3>
+          <p class="mt-1 leading-7 text-[var(--text-2)]">Every emulated service, its implementation engine, and key limitations — so agents know what's available and what has documented gaps.</p>
+        </div>
+        <div class="site-panel p-5">
+          <h3 class="font-semibold">Key documentation pages</h3>
+          <p class="mt-1 leading-7 text-[var(--text-2)]">Getting started, SDK examples, Terraform integration, architecture, licensing, and FAQ — all linked so agents can deep-dive into specific topics.</p>
+        </div>
+        <div class="site-panel p-5">
+          <h3 class="font-semibold">Environment export</h3>
+          <p class="mt-1 leading-7 text-[var(--text-2)]">The single <code>curl</code> command that sets all emulator endpoint variables — the bridge from "container running" to "SDK code working."</p>
+        </div>
+      </div>
+
+      <Callout type="tip" title="Try it with your agent">
+        Open a new conversation with your AI agent and paste: <code>Fetch https://local.cloud/llms.txt and set up LocalCloud on my machine. Then write a Python script that creates a BigQuery dataset and a Pub/Sub topic.</code> Watch the agent discover, install, and use LocalCloud without you explaining what it is.
+      </Callout>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <span class="site-kicker">Frequently asked questions</span>
+        <h2 class="mt-4">Agents, LocalCloud, and the inner loop</h2>
+      </div>
+      <div class="mt-6 grid gap-3 reveal">
+        {faqs.map((faq) => (
+          <details class="site-panel cursor-pointer p-5">
+            <summary class="text-[1.05rem] font-semibold text-[var(--text)]">{faq.question}</summary>
+            <p class="mt-3 leading-7 text-[var(--text-2)]">{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="site-section">
+    <div class="container">
+      <div class="site-panel grid items-center gap-6 p-8 xl:grid-cols-[1fr,auto] reveal">
+        <div>
+          <span class="site-kicker">Give it to your agent</span>
+          <h2 class="mt-3">One prompt. Twenty services. Zero cloud risk.</h2>
+          <p class="mt-3 max-w-[42rem] leading-7 text-[var(--text-2)]">
+            {productFacts.availabilityStatement} Pull the Docker image, start the container, and let your agent build GCP applications against real APIs — without real cloud consequences.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href={`${base}docs/`} class="site-button site-button--primary">Quick start</a>
+          <a href={`${base}services/`} class="site-button site-button--secondary">Browse services</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

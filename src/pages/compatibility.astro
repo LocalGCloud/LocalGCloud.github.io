@@ -1,0 +1,122 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import {
+  createBreadcrumbSchema,
+  createSoftwareApplicationSchema,
+  productFacts,
+} from '../data/productFacts';
+import { services } from '../data/services';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const pageUrl = new URL('compatibility/', productFacts.siteUrl).toString();
+const structuredData = [
+  createSoftwareApplicationSchema(
+    pageUrl,
+    'LocalCloud service compatibility and documented limitations for local Google Cloud development.',
+  ),
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Compatibility', url: pageUrl },
+  ]),
+];
+---
+
+<LandingLayout
+  title="LocalCloud Compatibility — Local GCP Emulator Coverage"
+  description="Review LocalCloud service coverage, documented limitations, and local-development boundaries before deciding which Google Cloud workflows to run locally."
+  {structuredData}
+>
+  <section class="site-section site-section--hero">
+    <div class="container">
+      <div class="max-w-[52rem] reveal">
+        <span class="site-eyebrow">
+          <span class="site-eyebrow__pulse"></span>
+          Evidence-backed local development
+        </span>
+        <h1 class="mt-4">LocalCloud compatibility and limitations</h1>
+        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
+          LocalCloud is built for local development, testing, CI, and demos. Use this page to understand the local service surface, check documented gaps, and decide where your workflow still needs real Google Cloud validation.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={`${base}services/`} class="site-button site-button--primary">Browse service details</a>
+          <a href={`${base}gcp-emulator/`} class="site-button site-button--secondary">GCP emulator overview</a>
+          <a href={`${base}docs/localcloud-vs-google-emulators/`} class="site-button site-button--secondary">Compare Google emulators</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <aside class="callout callout--warning" role="note" aria-label="Compatibility boundary">
+        <div class="callout__body">
+          <p class="callout__title">Use local emulation deliberately</p>
+          <div class="callout__content">
+            <p>{productFacts.productionBoundary} Supported capabilities below describe the LocalCloud runtime, not a claim of complete Google Cloud parity.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="container">
+      <div class="max-w-[48rem] reveal">
+        <span class="site-kicker">Current local surface</span>
+        <h2 class="mt-4">Service coverage is explicit about what works and what does not</h2>
+        <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
+          Each entry links to a service page with local connection details and capability boundaries. Default-on and opt-in describe LocalCloud startup behavior; they are not production support levels.
+        </p>
+      </div>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3 stagger">
+        {services.map((service) => (
+          <article class:list={['site-panel p-6 reveal', !service.enabled && 'site-panel--soft']}>
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <span class="site-kicker">{service.category}</span>
+                <h3 class="mt-2 text-2xl">{service.name}</h3>
+              </div>
+              <span class:list={['site-chip', service.enabled ? 'site-chip--success' : 'site-chip--warn']}>
+                {service.enabled ? 'Default-on' : 'Opt-in'}
+              </span>
+            </div>
+            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{service.description}</p>
+            <div class="mt-5">
+              <p class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Local coverage</p>
+              <ul class="mt-2 space-y-1 text-sm leading-6 text-[var(--text-2)]">
+                {service.supported.slice(0, 3).map((capability) => <li>✓ {capability}</li>)}
+              </ul>
+            </div>
+            <div class="mt-5">
+              <p class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--text-3)]">Known boundary</p>
+              <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">{service.notSupported[0] ?? 'Review the service detail page for current boundaries.'}</p>
+            </div>
+            <a href={`${base}services/${service.slug}/`} class="mt-6 inline-flex text-sm font-medium text-[var(--accent-strong)]">View {service.name} details</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="container grid gap-4 md:grid-cols-3">
+      <article class="site-panel p-6 reveal">
+        <span class="site-kicker">How to read this page</span>
+        <h2 class="mt-3 text-2xl">Start from the workflow</h2>
+        <p class="mt-3 leading-7 text-[var(--text-2)]">Check the service your application needs, then verify the exact API, query feature, or operational behavior in the service detail documentation.</p>
+      </article>
+      <article class="site-panel p-6 reveal">
+        <span class="site-kicker">Evidence</span>
+        <h2 class="mt-3 text-2xl">Prefer tested capability over broad claims</h2>
+        <p class="mt-3 leading-7 text-[var(--text-2)]">Detailed BigQuery, Bigtable, and Spanner pages document coverage and limitations. Keep an integration test against real Google Cloud for production-critical paths.</p>
+      </article>
+      <article class="site-panel p-6 reveal">
+        <span class="site-kicker">Review date</span>
+        <h2 class="mt-3 text-2xl">Facts are reviewed with the product</h2>
+        <p class="mt-3 leading-7 text-[var(--text-2)]">Current public availability and product boundaries were reviewed {productFacts.evidence.reviewedAt}. Service behavior evolves; consult linked detail pages before relying on a capability.</p>
+      </article>
+    </div>
+  </section>
+</LandingLayout>

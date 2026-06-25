@@ -1,40 +1,26 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Licensing
-description: LocalCloud licensing model — free for individual developer use, not licensed for commercial or production use.
+description: LocalCloud is free for developers. Review the repository license for the current terms.
+author: LocalCloud
+updated: 2026-06-22
+reviewed: 2026-06-22
 ---
 
 import Callout from '../../components/Callout.astro';
 
 # Licensing
 
-LocalCloud is **free for individual developers** for evaluation, personal projects, learning, and testing.
+LocalCloud is **free for developers**.
 
-## What's Allowed
+## Current Terms
 
-- **Personal projects** — building your own apps and side projects
-- **Learning & evaluation** — trying LocalCloud, exploring Google Cloud APIs locally, following tutorials
-- **Testing & experimentation** — non-commercial testing and prototyping
-- **Academic research** — educational and research use
+The [LICENSE](https://github.com/LocalGCloud/LocalGCloud.github.io/blob/main/LICENSE) in the project repository is the governing source for LocalCloud terms.
 
-## What's Not Allowed
+## Runtime Boundary
 
-- **Commercial use** — any use by or for a commercial entity, including internal development workflows for commercial products
-- **Production use** — running LocalCloud as part of a production system or serving production traffic
-- **Redistribution** — bundling LocalCloud into a commercial product or service
+LocalCloud is designed for local development, testing, CI, and demos. Validate against real Google Cloud before production deployment.
 
-<Callout type="warning" title="Need commercial use?">
-If your team or organization needs a commercial license, contact <a href="mailto:licensing@localcloud.dev">licensing@localcloud.dev</a>.
+<Callout type="info" title="Keep the inner loop local">
+Use LocalCloud to develop and test against local Google Cloud service behavior, then validate production-critical paths against real Google Cloud.
 </Callout>
-
-## How It Works
-
-LocalCloud includes a license-gate mechanism in the Docker image, but **enforcement is not active**. You can pull and run the image without any license key or registration. The gate infrastructure exists for future use but is currently disabled.
-
-## Full License
-
-The complete terms are in the [LICENSE](https://github.com/LocalGCloud/LocalGCloud.github.io/blob/main/LICENSE) file in the project repository.
-
-## Future Changes
-
-The licensing model may evolve over time. If a paid commercial tier becomes available in the future, individual developer use will remain free. Any changes will be communicated through the project channels.

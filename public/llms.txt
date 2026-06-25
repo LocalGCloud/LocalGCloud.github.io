@@ -5,7 +5,7 @@ LocalCloud is a local Google Cloud runtime that brings major GCP services into a
 ## What It Is
 - A single Docker container running 20+ GCP service emulators
 - Same SDKs, same APIs, zero code changes
-- Free for individual developers (evaluation, learning, personal projects)
+- Free for developers
 - Built-in web console at localhost:8080 for inspecting service health and data
 
 ## Key Pages
@@ -13,19 +13,42 @@ LocalCloud is a local Google Cloud runtime that brings major GCP services into a
 - Getting Started: https://local.cloud/docs/
 - What is a GCP Emulator?: https://local.cloud/docs/what-is-gcp-emulator/
 - Service Catalog: https://local.cloud/services/
-- Pricing & Licensing: https://local.cloud/pricing.md
+- Licensing: https://local.cloud/docs/licensing/
 - FAQ: https://local.cloud/docs/faq/
 - SDK Examples: https://local.cloud/docs/sdk-examples/
 - Terraform Integration: https://local.cloud/docs/terraform/
 - Architecture: https://local.cloud/docs/architecture/
+
+## SEO Landing Pages
+- GCP Emulator: https://local.cloud/gcp-emulator/
+- BigQuery Emulator: https://local.cloud/bigquery-emulator/
+- Pub/Sub Emulator: https://local.cloud/pubsub-emulator/
+- Firestore Emulator: https://local.cloud/firestore-emulator/
+- Spanner Emulator: https://local.cloud/spanner-emulator/
+- Bigtable Emulator: https://local.cloud/bigtable-emulator/
+- Cloud Storage Emulator: https://local.cloud/cloud-storage-emulator/
+
+## Use-Case Pages
+- GCP Integration Testing in CI/CD: https://local.cloud/gcp-integration-testing/
+- Reduce GCP Development Costs: https://local.cloud/reduce-gcp-dev-costs/
+- LocalStack for Google Cloud: https://local.cloud/localstack-for-google-cloud/
+- Compatibility & limitations: https://local.cloud/compatibility/
+
+## Comparisons
+- LocalCloud vs Google Emulators: https://local.cloud/docs/localcloud-vs-google-emulators/
 - BigQuery Feature Comparison: https://local.cloud/docs/bigquery-feature-comparison/
 - BigQuery Coverage Gaps: https://local.cloud/docs/bigquery-coverage-gaps/
 
+## Service Deep-Dives
+- BigQuery Emulator Features: https://local.cloud/docs/bigquery-emulator-features/
+- Bigtable Emulator Features: https://local.cloud/docs/bigtable-emulator-features/
+- Spanner Emulator Features: https://local.cloud/docs/spanner-emulator-features/
+
 ## Services Provided
 - Cloud Storage, Pub/Sub, Firestore (official Google emulators)
-- BigQuery (custom DuckDB-based emulator, ~96% SQL coverage)
-- Spanner (extended official emulator with PostgreSQL interface)
-- Bigtable (custom emulator with change streams, materialized views)
+- BigQuery (custom DuckDB-based emulator, ~96% SQL coverage, 936 collected tests)
+- Spanner (extended official emulator with PostgreSQL interface, PGAdapter)
+- Bigtable (custom emulator with change streams, materialized views, persistence)
 - Memorystore (Redis-compatible cache)
 - Secret Manager, Cloud Tasks, Cloud Logging, Cloud Monitoring (local facades)
 - Cloud Workflows (full stdlib, connector shims)

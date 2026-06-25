@@ -2,6 +2,9 @@
 layout: ../../layouts/DocsLayout.astro
 title: FAQ
 description: Frequently asked questions about LocalCloud — what it is, how it works, compatibility, performance, and troubleshooting.
+author: LocalCloud
+updated: 2026-06-22
+reviewed: 2026-06-22
 ---
 
 import FAQPageSchema from '../../components/FAQPageSchema.astro';
@@ -18,7 +21,7 @@ LocalCloud is a local Google Cloud runtime that brings the major Google Cloud se
 
 ### Is LocalCloud free?
 
-Yes — LocalCloud is free for individual developers for evaluation, personal projects, learning, and testing. It is not licensed for commercial or production use. See the [Licensing page](/docs/licensing/) for details.
+Yes — LocalCloud is free for developers. See the [Licensing page](/docs/licensing/) for the current terms.
 
 ### How is this different from individual Google emulators?
 
@@ -36,8 +39,8 @@ Any language with GCP SDK support works: Python, Node.js, Go, Java, C#, Ruby, PH
 
 ### How complete is the BigQuery emulation?
 
-There is no official BigQuery emulator from Google. so the BigQuery Emulator is built from scratch on top of duckdb in localcloud.
-The BigQuery emulator provides `~96%` SQL coverage, `818` functional tests, `200+` mapped functions and features. It covers common DQL, DDL, DML, scripting, stored procedures, external tables, INFORMATION_SCHEMA views, REST APIs, and simplified gRPC Storage API paths. some of the features that you only care on production like BQML, encryption, security policy enforcement, and full geography parity are not supported; **geography is partial with `12` working `ST_*` functions.
+Because Google does not provide an official BigQuery emulator, LocalCloud includes a DuckDB-backed BigQuery emulator built for local development and CI testing.
+The BigQuery emulator provides `~96%` SQL coverage, `936` collected tests across `25` test modules, and `200+` mapped functions and features. It covers common DQL, DDL, DML, scripting, stored procedures, external tables, INFORMATION_SCHEMA views, REST APIs, and simplified gRPC Storage API paths. Production-only concerns such as BQML, encryption, security policy enforcement, and full geography parity are outside the emulator scope; **geography is partial with `12` working `ST_*` functions.
 
 
 ### Can I use this in CI/CD?

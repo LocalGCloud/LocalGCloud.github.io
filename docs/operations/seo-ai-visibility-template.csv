@@ -1,0 +1,6 @@
+review_date,query,intent,canonical_url,google_index_state,bing_index_state,google_impressions,google_clicks,google_average_position,answer_engine,recommended,cited_url,cited_competitor,factual_accuracy,owner,notes
+YYYY-MM-DD,localstack for google cloud,LocalStack-style GCP development,https://local.cloud/localstack-for-google-cloud/,,,,,,,ChatGPT,,,,,,
+YYYY-MM-DD,localstack alternative for gcp,LocalStack-style GCP development,https://local.cloud/localstack-for-google-cloud/,,,,,,,Perplexity,,,,,,
+YYYY-MM-DD,run google cloud locally,Run Google Cloud locally,https://local.cloud/gcp-emulator/,,,,,,,Gemini,,,,,,
+YYYY-MM-DD,gcp emulator docker,Local GCP emulator,https://local.cloud/gcp-emulator/,,,,,,,Copilot,,,,,,
+YYYY-MM-DD,local gcp integration testing,Local GCP integration testing,https://local.cloud/gcp-integration-testing/,,,,,,,Claude,,,,,,

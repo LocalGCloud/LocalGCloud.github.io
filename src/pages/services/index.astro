@@ -42,6 +42,21 @@ const catalogStats = [
   <Header />
 
   <main id="main-content" class="site-page">
+    <section class="site-section site-section--hero" style="padding-bottom: 0;">
+      <div class="container">
+        <div class="max-w-[48rem] reveal">
+          <span class="site-eyebrow">
+            <span class="site-eyebrow__pulse"></span>
+            Local Google Cloud runtime
+          </span>
+          <h1 class="mt-4">LocalCloud GCP service catalog</h1>
+          <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
+            Browse the local Google Cloud services available in LocalCloud, then open each service page to review connection details, supported workflows, and documented boundaries.
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- Service filter bar -->
     <section class="site-section site-section--tight" style="padding-bottom: 0;">
       <div class="container">
@@ -69,7 +84,7 @@ const catalogStats = [
     </section>
 
     {categoryGroups.map((group) => (
-      <section class="site-section site-section--tight">
+      <section class="site-section site-section--tight" data-service-section>
         <div class="container">
           <div class="site-section-heading reveal">
             <span class="site-kicker">{group.title}</span>

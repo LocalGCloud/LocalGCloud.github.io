@@ -11,12 +11,18 @@ interface Props {
   frontmatter?: {
     title?: string;
     description?: string;
+    author?: string;
+    updated?: string;
+    reviewed?: string;
   };
 }
 
 const frontmatter = Astro.props.frontmatter ?? {};
 const title = Astro.props.title ?? frontmatter.title ?? 'Documentation';
 const description = Astro.props.description ?? frontmatter.description;
+const author = frontmatter.author ?? 'LocalCloud';
+const updated = frontmatter.updated;
+const reviewed = frontmatter.reviewed;
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const currentPath = Astro.url.pathname;
@@ -30,6 +36,8 @@ const sidebarSections = [
   { title: 'Services', items: [{ label: 'Overview', href: `${base}docs/services-overview/` }] },
   { title: 'Comparisons', items: [
     { label: 'LocalCloud vs Google Emulators', href: `${base}docs/localcloud-vs-google-emulators/` },
+    { label: 'LocalStack for Google Cloud', href: `${base}localstack-for-google-cloud/` },
+    { label: 'Compatibility & limitations', href: `${base}compatibility/` },
   ]},
   { title: 'Reference', items: [
     { label: 'Configuration', href: `${base}docs/configuration/` },
@@ -75,8 +83,9 @@ const nextItem = currentIndex >= 0 && currentIndex < allLinks.length - 1 ? allLi
     "url": "${canonicalURL}",
     "author": {
       "@type": "Organization",
-      "name": "LocalCloud"
+      "name": "${author}"
     },
+    ${updated ? `"dateModified": "${updated}",` : ''}
     "publisher": {
       "@type": "Organization",
       "name": "LocalCloud",
@@ -164,7 +173,9 @@ const nextItem = currentIndex >= 0 && currentIndex < allLinks.length - 1 ? allLi
               </div>
 
               <footer class="docs-article__meta">
-                <p class="text-sm text-[var(--text-3)]">Last updated: May 2025</p>
+                <p class="text-sm text-[var(--text-3)]">Maintained by {author}</p>
+                {updated && <p class="text-sm text-[var(--text-3)]">Last materially updated: {updated}</p>}
+                {reviewed && <p class="text-sm text-[var(--text-3)]">Evidence reviewed: {reviewed}</p>}
               </footer>
 
               <DocFeedback />

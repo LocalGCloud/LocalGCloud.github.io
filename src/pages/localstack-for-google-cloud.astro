@@ -1,0 +1,204 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import Callout from '../components/Callout.astro';
+import {
+  createBreadcrumbSchema,
+  createSoftwareApplicationSchema,
+  productFacts,
+} from '../data/productFacts';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const pageUrl = new URL('localstack-for-google-cloud/', productFacts.siteUrl).toString();
+
+const faqs = [
+  {
+    question: 'Is there a LocalStack-style option for Google Cloud?',
+    answer:
+      'Yes. LocalCloud is a local Google Cloud runtime for development, testing, CI, and demos. It runs major GCP services in Docker so applications can use local endpoints instead of real cloud services during the inner development loop.',
+  },
+  {
+    question: 'Is LocalCloud affiliated with LocalStack?',
+    answer:
+      'No. LocalCloud is an independent product focused on Google Cloud workflows. LocalStack is an AWS-focused local cloud development platform.',
+  },
+  {
+    question: 'Does LocalCloud replace Google Cloud in production?',
+    answer:
+      'No. LocalCloud is for local development, testing, CI, and demos. Validate behavior against real Google Cloud before production deployment.',
+  },
+  {
+    question: 'Can I use my existing Google Cloud SDK code?',
+    answer:
+      'LocalCloud is designed for standard Google Cloud SDK and API workflows. Configure local emulator endpoints for development, then remove those local settings when validating against real Google Cloud.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+
+const structuredData = [
+  createSoftwareApplicationSchema(
+    pageUrl,
+    'LocalCloud is a local Google Cloud runtime for development, testing, CI, and demos.',
+  ),
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'LocalStack for Google Cloud', url: pageUrl },
+  ]),
+  faqSchema,
+];
+---
+
+<LandingLayout
+  title="LocalStack for Google Cloud? Meet LocalCloud"
+  description="Looking for a LocalStack-style local development runtime for Google Cloud? LocalCloud runs major GCP services locally in Docker for development, testing, CI, and demos."
+  {structuredData}
+>
+  <section class="site-section site-section--hero">
+    <div class="container">
+      <div class="max-w-[52rem] reveal">
+        <span class="site-eyebrow">
+          <span class="site-eyebrow__pulse"></span>
+          Local Google Cloud development
+        </span>
+        <h1 class="mt-4">Looking for LocalStack for Google Cloud?</h1>
+        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
+          LocalCloud brings the local-development pattern GCP teams need to Google Cloud: major services in one Docker runtime, local SDK endpoints, and a built-in console for development, testing, CI, and demos.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={`${base}docs/`} class="site-button site-button--primary">Start with LocalCloud</a>
+          <a href={`${base}gcp-emulator/`} class="site-button site-button--secondary">Explore the GCP emulator</a>
+          <a href={`${base}compatibility/`} class="site-button site-button--secondary">Check compatibility</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <Callout type="info" title="Independent products, different cloud focus">
+        LocalCloud is not affiliated with LocalStack. LocalStack is for AWS workflows; LocalCloud is built for Google Cloud local development.
+      </Callout>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="container">
+      <div class="max-w-[48rem] reveal">
+        <span class="site-kicker">Choose the runtime that matches your cloud</span>
+        <h2 class="mt-4">AWS local workflows and GCP local workflows are different jobs</h2>
+        <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
+          LocalStack is designed around AWS service emulation. LocalCloud is the equivalent category for teams building on Google Cloud APIs: run local GCP services for the fast inner loop, then validate the same application against real Google Cloud before production.
+        </p>
+      </div>
+
+      <div class="site-panel mt-8 overflow-x-auto reveal">
+        <p class="px-4 pt-4 text-sm text-[var(--text-3)] md:hidden">Swipe horizontally to compare all columns.</p>
+        <table class="min-w-[42rem] w-full text-left text-sm">
+          <thead class="border-b border-[var(--border)] text-[var(--text-3)]">
+            <tr>
+              <th class="p-4 font-medium">Question</th>
+              <th class="p-4 font-medium">LocalStack</th>
+              <th class="p-4 font-medium">LocalCloud</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-[var(--border)]">
+              <th class="p-4 font-medium text-[var(--text)]">Primary cloud</th>
+              <td class="p-4 text-[var(--text-2)]">AWS workflows</td>
+              <td class="p-4 text-[var(--text-2)]">Google Cloud workflows</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <th class="p-4 font-medium text-[var(--text)]">Local development goal</th>
+              <td class="p-4 text-[var(--text-2)]">Develop and test AWS-connected applications locally</td>
+              <td class="p-4 text-[var(--text-2)]">Develop and test GCP-connected applications locally</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <th class="p-4 font-medium text-[var(--text)]">LocalCloud fit</th>
+              <td class="p-4 text-[var(--text-2)]">Not a substitute for AWS emulation</td>
+              <td class="p-4 text-[var(--text-2)]">GCP services, local endpoints, console, and CI workflows</td>
+            </tr>
+            <tr>
+              <th class="p-4 font-medium text-[var(--text)]">Production validation</th>
+              <td class="p-4 text-[var(--text-2)]">Validate against AWS before production</td>
+              <td class="p-4 text-[var(--text-2)]">Validate against Google Cloud before production</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="container grid gap-4 md:grid-cols-3">
+      <article class="site-panel p-6 reveal">
+        <span class="site-kicker">01</span>
+        <h2 class="mt-3 text-2xl">Run major GCP services locally</h2>
+        <p class="mt-3 leading-7 text-[var(--text-2)]">
+          Start one Docker runtime, inspect its local services in the console, and work without a shared cloud development project for every iteration.
+        </p>
+        <a href={`${base}services/`} class="mt-5 inline-flex text-sm font-medium text-[var(--accent-strong)]">Browse the service catalog</a>
+      </article>
+      <article class="site-panel p-6 reveal">
+        <span class="site-kicker">02</span>
+        <h2 class="mt-3 text-2xl">Keep the GCP SDK shape</h2>
+        <p class="mt-3 leading-7 text-[var(--text-2)]">
+          Point local development and test clients at emulator endpoints, then remove the local configuration when exercising real Google Cloud.
+        </p>
+        <a href={`${base}docs/sdk-examples/`} class="mt-5 inline-flex text-sm font-medium text-[var(--accent-strong)]">See SDK examples</a>
+      </article>
+      <article class="site-panel p-6 reveal">
+        <span class="site-kicker">03</span>
+        <h2 class="mt-3 text-2xl">Know the runtime boundary</h2>
+        <p class="mt-3 leading-7 text-[var(--text-2)]">
+          Service behavior varies. Review supported capabilities and documented gaps before deciding which tests can stay local.
+        </p>
+        <a href={`${base}compatibility/`} class="mt-5 inline-flex text-sm font-medium text-[var(--accent-strong)]">Review compatibility</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <span class="site-kicker">Frequently asked questions</span>
+        <h2 class="mt-4">Local GCP, without the cloud detour</h2>
+      </div>
+      <div class="mt-6 grid gap-3 reveal">
+        {faqs.map((faq) => (
+          <details class="site-panel cursor-pointer p-5">
+            <summary class="text-[1.05rem] font-semibold text-[var(--text)]">{faq.question}</summary>
+            <p class="mt-3 leading-7 text-[var(--text-2)]">{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="container">
+      <div class="site-panel grid items-center gap-6 p-8 xl:grid-cols-[1fr,auto] reveal">
+        <div>
+          <span class="site-kicker">Ready to test locally?</span>
+          <h2 class="mt-3">Start with the GCP services your application already uses.</h2>
+          <p class="mt-3 max-w-[42rem] leading-7 text-[var(--text-2)]">{productFacts.availabilityStatement} Review the licensing documentation and compatibility details before adopting it for a team workflow.</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href={`${base}docs/`} class="site-button site-button--primary">Open the quick start</a>
+          <a href={`${base}docs/licensing/`} class="site-button site-button--secondary">Read licensing</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

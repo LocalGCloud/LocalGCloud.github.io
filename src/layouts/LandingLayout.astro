@@ -1,0 +1,26 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import type { JsonLd } from '../data/productFacts';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  noindex?: boolean;
+  structuredData?: JsonLd[];
+}
+
+const { title, description, ogImage, noindex = false, structuredData = [] } = Astro.props;
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+---
+
+<BaseLayout {title} {description} {ogImage} {noindex} {structuredData}>
+  <Header />
+  <main id="main-content" class="site-page">
+    <slot />
+  </main>
+  <Footer />
+</BaseLayout>

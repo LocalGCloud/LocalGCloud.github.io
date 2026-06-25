@@ -12,8 +12,13 @@ const dockerCmd = `docker pull jaysen2apache/localcloud
 
 mkdir -p ~/.localcloud/data
 
-docker run -d \\
-  -p 8080:8080 -p 4443:4443 \\
+docker run -d --name localcloud \\
+  -p 127.0.0.1:8080:8080 \\
+  -p 127.0.0.1:4443:4443 \\
+  -p 127.0.0.1:9010:9010 \\
+  -p 127.0.0.1:9020:9020 \\
+  -p 127.0.0.1:9050:9050 \\
+  -p 127.0.0.1:9060:9060 \\
   -m 4g --name localcloud \\
   -v ~/.localcloud/data:/var/lib/localcloud \\
   jaysen2apache/localcloud

@@ -9,9 +9,10 @@
   "volta": {
     "node": "22.12.0"
   },
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node --experimental-strip-types scripts/verify-content-facts.mjs && pagefind --site dist",
     "preview": "astro preview"
   },
   "dependencies": {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GOROOT" url="file://$USER_HOME$/go/go1.19.4" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_24" default="true" project-jdk-name="openjdk-24" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="VgoProject">
+    <auto-vendoring-mode>false</auto-vendoring-mode>
+  </component>
+</project>

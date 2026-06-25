@@ -1,0 +1,14 @@
+{
+  "context_servers": {
+    "agentation": {
+      "source": "custom",
+      "command": "npx",
+      "args": [
+        "-y",
+        "agentation-mcp",
+        "server"
+      ],
+      "env": {}
+    }
+  }
+}
