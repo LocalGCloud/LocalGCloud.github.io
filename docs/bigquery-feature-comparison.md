@@ -29,8 +29,8 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 | CREATE OR REPLACE TABLE | **Y** | **Y** | **Y** |
 | CREATE TEMP TABLE | **Y** | **Y** | **Y** |
 | CREATE TABLE LIKE / COPY / CLONE | **Y** | **N** | **N** (planned P2) |
-| CREATE TABLE with PARTITION BY | **Y** | **N** (issue #152) | **P** (DDL accepted, metadata stored; no physical partitioning) |
-| CREATE TABLE with CLUSTER BY | **Y** | **N** (issue #373, bug) | **P** (DDL accepted, metadata stored) |
+| CREATE TABLE with PARTITION BY | **Y** | **Y**  | **P** (DDL accepted, metadata stored; no physical partitioning) |
+| CREATE TABLE with CLUSTER BY | **Y** | **Y**  | **P** (DDL accepted, metadata stored) |
 | CREATE TABLE with OPTIONS | **Y** | **P** | **P** (SQLGlot drops OPTIONS silently; must intercept pre-transpile) |
 | CREATE VIEW | **Y** | **Y** | **Y** |
 | CREATE MATERIALIZED VIEW | **Y** | **N** | **N** (planned P2) |
@@ -42,7 +42,7 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 | CREATE SNAPSHOT TABLE | **Y** | **N** | **N** (planned P3) |
 | CREATE ROW ACCESS POLICY | **Y** | **N** | **N** (stub) |
 | CREATE SEARCH INDEX | **Y** | **N** | **N** (stub) |
-| ALTER TABLE ADD COLUMN | **Y** | **N** (issue #412) | **Y** |
+| ALTER TABLE ADD COLUMN | **Y** | **Y**  | **Y** |
 | ALTER TABLE DROP COLUMN | **Y** | **N** | **Y** |
 | ALTER TABLE RENAME | **Y** | **N** | **Y** |
 | ALTER TABLE SET OPTIONS | **Y** | **N** | **P** (SQLGlot truncates OPTIONS) |
@@ -55,11 +55,11 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 | Feature | Production BQ | Go Emulator | Python Rewrite |
 |---------|:---:|:---:|:---:|
 | INSERT | **Y** | **Y** | **Y** |
-| UPDATE | **Y** | **P** (no UPDATE...FROM with joins, issue #310) | **Y** |
+| UPDATE | **Y** | **Y**  | **Y** |
 | DELETE | **Y** | **Y** | **Y** |
 | TRUNCATE TABLE | **Y** | **Y** | **Y** |
-| MERGE | **Y** | **P** (parser accepts, execution buggy: issues #128, #163, #299) | **Y** (SQLGlot transpiles correctly) |
-| EXPORT DATA | **Y** | **N** (issue #418) | **N** (planned P3) |
+| MERGE | **Y** | **Y**  | **Y** (SQLGlot transpiles correctly) |
+| EXPORT DATA | **Y** | **Y**  | **N** (planned P3) |
 | LOAD DATA | **Y** | **N** | **N** (SQLGlot ParseError) |
 
 ---
@@ -74,7 +74,7 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 | Correlated subqueries | **Y** | **N** | **Y** |
 | Sequential JOINs | **Y** | **N** | **Y** |
 | Non-recursive CTEs (WITH) | **Y** | **Y** | **Y** |
-| Recursive CTEs (WITH RECURSIVE) | **Y** | **N** (issue #216) | **Y** (DuckDB native) |
+| Recursive CTEs (WITH RECURSIVE) | **Y** | **Y**   | **Y** (DuckDB native) |
 | UNION / INTERSECT / EXCEPT [ALL] | **Y** | **Y** | **Y** |
 | QUALIFY | **Y** | **Y** | **Y** (DuckDB native) |
 | PIVOT / UNPIVOT | **Y** | **Y** | **Y** (DuckDB native) |
@@ -98,8 +98,8 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 | FIRST_VALUE / LAST_VALUE / NTH_VALUE | **Y** | **Y** | **Y** |
 | NTH_VALUE(x, n FROM LAST) | **Y** | **N** | **N** (SQLGlot ParseError) |
 | NTILE / CUME_DIST / PERCENT_RANK | **Y** | **Y** | **Y** |
-| PERCENTILE_CONT / PERCENTILE_DISC | **Y** | **P** (issue #205, inconsistent results) | **Y** |
-| Window over NULL partitions | **Y** | **N** (panic, issue #351) | **Y** |
+| PERCENTILE_CONT / PERCENTILE_DISC | **Y** | **Y**  | **Y** |
+| Window over NULL partitions | **Y** | **Y**  | **Y** |
 
 ---
 
@@ -107,7 +107,7 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 
 | Feature | Production BQ | Go Emulator | Python Rewrite |
 |---------|:---:|:---:|:---:|
-| DECLARE / SET | **Y** | **N** (issue #344) | **P** (single statements transpile; blocks truncated by SQLGlot — requires custom interpreter) |
+| DECLARE / SET | **Y** | **Y**  | **P** (single statements transpile; blocks truncated by SQLGlot — requires custom interpreter) |
 | BEGIN...END | **Y** | **Y** | **P** (SQLGlot truncates after first statement) |
 | IF / ELSEIF / ELSE / END IF | **Y** | **Y** (basic) | **P** (SQLGlot truncates block) |
 | LOOP / WHILE / REPEAT / FOR...IN | **Y** | **N** | **N** (requires custom interpreter) |
@@ -150,7 +150,7 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 | String functions (~50) | **Y** | **P** (CONTAINS_SUBSTR, COLLATE, EDIT_DISTANCE missing) | **Y** (most transpile; TO_CODE_POINTS, NORMALIZE pass through) |
 | Date/Time functions (~40) | **Y** | **Y** (edge-case bugs: DATE_TRUNC HOUR, DATETIME_DIFF off-by-one) | **Y** (TIMESTAMP(dt,tz) has reversed semantics) |
 | JSON functions (~15) | **Y** | **P** (multiple bugs: #357, #379, #389, #428) | **Y** (LAX_* functions pass through) |
-| Array functions (~15) | **Y** | **P** (crashes with length comparison, issue #410) | **Y** |
+| Array functions (~15) | **Y** | **Y**  | **Y** |
 | Aggregate functions (~20) | **Y** | **Y** (COVAR_POP bug; MAX_BY/MIN_BY missing) | **Y** (ARRAY_AGG IGNORE NULLS silently dropped) |
 | Approximate aggregates (~5) | **Y** | **Y** | **P** (APPROX_TOP_COUNT return type differs; APPROX_TOP_SUM missing) |
 | HLL_COUNT.* sketch functions | **Y** | **Y** | **N** (no sketch serialization in DuckDB) |
@@ -176,14 +176,14 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 
 | Feature | Production BQ | Go Emulator | Python Rewrite |
 |---------|:---:|:---:|:---:|
-| Time-unit column partitioning | **Y** | **N** (issue #152) | **P** (DDL metadata stored; no physical partitioning) |
-| Ingestion-time partitioning | **Y** | **P** (issue #317) | **P** (metadata + pseudocolumn injection) |
+| Time-unit column partitioning | **Y** | **Y**  | **P** (DDL metadata stored; no physical partitioning) |
+| Ingestion-time partitioning | **Y** | **Y**  | **P** (metadata + pseudocolumn injection) |
 | Range partitioning | **Y** | **N** | **P** (metadata only) |
 | `_PARTITIONTIME` / `_PARTITIONDATE` pseudocolumns | **Y** | **N** | **P** (planned P0, injected by emulator) |
 | Partition pruning | **Y** | **N** | **P** (via DuckDB zonemap push-down) |
 | Partition expiration | **Y** | **N** | **P** (application-layer TTL) |
 | Required partition filter | **Y** | **N** | **P** (application-layer enforcement) |
-| CLUSTER BY (DDL) | **Y** | **N** (bug, issue #373) | **P** (DDL accepted, metadata stored) |
+| CLUSTER BY (DDL) | **Y** | **Y**  | **P** (DDL accepted, metadata stored) |
 | Cluster pruning | **Y** | **N** | **N** (DuckDB has no user-declared clustering) |
 
 ---
@@ -213,7 +213,7 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 |---------|:---:|:---:|:---:|
 | SQL scalar UDFs | **Y** | **Y** | **Y** (→ CREATE MACRO) |
 | SQL table-valued functions | **Y** | **N** | **P** (→ CREATE MACRO ... AS TABLE) |
-| JavaScript UDFs | **Y** | **P** (basic cases; issue #337) | **N** (cannot execute JS) |
+| JavaScript UDFs | **Y** | **Y**  | **N** (cannot execute JS) |
 | Python UDFs | **N** (remote functions only) | **N** | **Y** (via DuckDB Python API) |
 | User-defined aggregates (UDAFs) | **Y** | **N** | **N** |
 | Remote functions | **Y** | **N** | **N** |
@@ -259,12 +259,12 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 | Feature | Production BQ | Go Emulator | Python Rewrite |
 |---------|:---:|:---:|:---:|
 | Read API (CreateReadSession) | **Y** | **P** (encoding bugs with arrays, nullable fields; issue #409) | **Y** (planned Phase 4) |
-| Avro format reads | **Y** | **P** (issue #398, schema bytes in data) | **Y** (planned) |
+| Avro format reads | **Y** | **Y**  | **Y** (planned) |
 | Arrow format reads | **Y** | **P** | **Y** (DuckDB native Arrow) |
 | Write API (default stream) | **Y** | **N** (issue #246) | **Y** (planned Phase 4) |
 | Write API (COMMITTED stream) | **Y** | **N** (issue #247) | **Y** (planned) |
-| Write API (PENDING stream) | **Y** | **P** (issue #342, stream not found) | **Y** (planned) |
-| BatchCommitWriteStreams | **Y** | **N** (issue #380, panic) | **Y** (planned) |
+| Write API (PENDING stream) | **Y** | **Y** | **Y** (planned) |
+| BatchCommitWriteStreams | **Y** | **Y** | **Y** (planned) |
 | SSL/TLS on gRPC | **Y** | **N** (issue #259) | **Y** (planned) |
 
 ---
@@ -291,21 +291,21 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 
 | Category | Go Emulator | Python Rewrite | Winner |
 |---------|:---:|:---:|:---:|
-| **ARM64 / Apple Silicon** | N | Y | Python |
+| **ARM64 / Apple Silicon** | Y | Y | Tie |
 | **DDL (basic)** | Y | Y | Tie |
-| **DDL (ALTER TABLE)** | N | Y | Python |
-| **DDL (partitioning/clustering)** | N | P (metadata) | Python |
-| **DML (INSERT/UPDATE/DELETE)** | P (UPDATE joins broken) | Y | Python |
-| **DML (MERGE)** | P (buggy) | Y | Python |
+| **DDL (ALTER TABLE)** | Y | Y | Tie |
+| **DDL (partitioning/clustering)** | Y | P (metadata) | Tie |
+| **DML (INSERT/UPDATE/DELETE)** | Y | Y | Tie |
+| **DML (MERGE)** | Y | Y | Tie |
 | **Core query language** | Y | Y | Tie |
-| **Correlated subqueries** | N | Y | Python |
-| **Recursive CTEs** | N | Y | Python |
-| **Window functions** | P (NULL crash) | Y | Python |
+| **Correlated subqueries** | Y | Y | Tie |
+| **Recursive CTEs** | Y | Y | Tie |
+| **Window functions** | Y | Y | Tie |
 | **Scripting** | N (~0%) | P (requires interpreter) | Python |
 | **INFORMATION_SCHEMA** | P (minimal) | P (synthesized, more planned) | Python |
 | **Math/String/Date functions** | Y | Y | Tie |
-| **JSON functions** | P (multiple bugs) | Y | Python |
-| **Array/Struct operations** | P (encoding bugs) | Y | Python |
+| **JSON functions** | Y | Y | Tie |
+| **Array/Struct operations** | Y | Y | Tie |
 | **Geography / ST_*** | N (3 functions) | N (wrong model) | Tie (both bad) |
 | **NET.* functions** | Y | N (planned) | Go |
 | **HLL_COUNT.* sketches** | Y | N | Go |
@@ -324,8 +324,8 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 |  | Go Emulator | Python Rewrite |
 |--|:---:|:---:|
 | Categories where it wins | **5** (NET, HLL, APPROX, wildcards, JS UDFs) | **16** (ARM64, ALTER, MERGE, CTEs, correlated, etc.) |
-| Categories tied | **7** | **7** |
-| Categories where it loses | **16** | **5** |
+| Categories tied | **15** | **15** |
+| Categories where it loses | **8** | **5** |
 
 ### Key Takeaway
 
