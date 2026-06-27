@@ -12,7 +12,6 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 
 | Feature | Production BQ | Go Emulator | Python Rewrite |
 |---------|:---:|:---:|:---:|
-| ARM64 / Apple Silicon (native) | — | **N** (go-zetasql is x86-64 only, requires QEMU) | **Y** (DuckDB native ARM64) |
 | Single binary / container | — | **Y** (Go static binary) | **Y** (Docker w/ Python) |
 | In-process testing (same process) | — | **Y** (Go httptest) | **Y** (Python fixture) |
 | Persistent storage | **Y** | **Y** (SQLite file) | **Y** (DuckDB file) |
