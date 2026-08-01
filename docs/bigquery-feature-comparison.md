@@ -12,7 +12,6 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 
 | Feature | Production BQ | Go Emulator | Python Rewrite |
 |---------|:---:|:---:|:---:|
-| ARM64 / Apple Silicon (native) | — | **N** (go-zetasql is x86-64 only, requires QEMU) | **Y** (DuckDB native ARM64) |
 | Single binary / container | — | **Y** (Go static binary) | **Y** (Docker w/ Python) |
 | In-process testing (same process) | — | **Y** (Go httptest) | **Y** (Python fixture) |
 | Persistent storage | **Y** | **Y** (SQLite file) | **Y** (DuckDB file) |
@@ -29,7 +28,7 @@ Legend: **Y** = Supported | **P** = Partial | **N** = Not Supported | **—** = 
 | CREATE OR REPLACE TABLE | **Y** | **Y** | **Y** |
 | CREATE TEMP TABLE | **Y** | **Y** | **Y** |
 | CREATE TABLE LIKE / COPY / CLONE | **Y** | **N** | **N** (planned P2) |
-| CREATE TABLE with PARTITION BY | **Y** | **N** (issue #152) | **P** (DDL accepted, metadata stored; no physical partitioning) |
+| CREATE TABLE with PARTITION BY | **Y** | **Y**  | **P** (DDL accepted, metadata stored; no physical partitioning) |
 | CREATE TABLE with CLUSTER BY | **Y** | **N** (issue #373, bug) | **P** (DDL accepted, metadata stored) |
 | CREATE TABLE with OPTIONS | **Y** | **P** | **P** (SQLGlot drops OPTIONS silently; must intercept pre-transpile) |
 | CREATE VIEW | **Y** | **Y** | **Y** |
