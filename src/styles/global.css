@@ -99,15 +99,15 @@ h6 {
 }
 
 h1 {
-  font-size: clamp(3rem, 7vw, 5.4rem);
+  font-size: clamp(2.5rem, 5vw + 1rem, 4.5rem);
 }
 
 h2 {
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(1.75rem, 3vw + 0.5rem, 2.75rem);
 }
 
 h3 {
-  font-size: clamp(1.2rem, 2.1vw, 1.65rem);
+  font-size: clamp(1.125rem, 1.5vw + 0.25rem, 1.5rem);
 }
 
 p,
@@ -122,11 +122,25 @@ pre {
 }
 
 pre {
+  max-width: 100%;
   overflow-x: auto;
   margin: 0;
   border-radius: 0.75rem;
   border: 1px solid var(--line);
   background: var(--surface-2);
+}
+
+.ai-service-matrix {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.ai-service-matrix table {
+  min-width: 44rem;
+}
+
+.agent-prompt-text {
+  overflow-wrap: anywhere;
 }
 
 pre > code {
@@ -1114,8 +1128,9 @@ img {
 
 .reveal-ready .reveal {
   opacity: 0;
-  transform: translateY(1rem);
-  transition: opacity 700ms var(--ease), transform 700ms var(--ease);
+  transform: translateY(0.5rem);
+  transition: opacity 500ms var(--ease), transform 500ms var(--ease);
+  will-change: opacity, transform;
 }
 
 .reveal-ready .reveal.visible {
@@ -1124,13 +1139,13 @@ img {
 }
 
 .reveal-ready .stagger > .reveal:nth-child(1) { transition-delay: 0ms; }
-.reveal-ready .stagger > .reveal:nth-child(2) { transition-delay: 70ms; }
-.reveal-ready .stagger > .reveal:nth-child(3) { transition-delay: 140ms; }
-.reveal-ready .stagger > .reveal:nth-child(4) { transition-delay: 210ms; }
-.reveal-ready .stagger > .reveal:nth-child(5) { transition-delay: 280ms; }
-.reveal-ready .stagger > .reveal:nth-child(6) { transition-delay: 350ms; }
-.reveal-ready .stagger > .reveal:nth-child(7) { transition-delay: 420ms; }
-.reveal-ready .stagger > .reveal:nth-child(8) { transition-delay: 490ms; }
+.reveal-ready .stagger > .reveal:nth-child(2) { transition-delay: 40ms; }
+.reveal-ready .stagger > .reveal:nth-child(3) { transition-delay: 80ms; }
+.reveal-ready .stagger > .reveal:nth-child(4) { transition-delay: 120ms; }
+.reveal-ready .stagger > .reveal:nth-child(5) { transition-delay: 160ms; }
+.reveal-ready .stagger > .reveal:nth-child(6) { transition-delay: 200ms; }
+.reveal-ready .stagger > .reveal:nth-child(7) { transition-delay: 240ms; }
+.reveal-ready .stagger > .reveal:nth-child(8) { transition-delay: 280ms; }
 
 @keyframes site-pulse {
   0% {
@@ -1147,6 +1162,11 @@ img {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .reveal-ready .reveal {
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   .reveal,

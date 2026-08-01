@@ -192,7 +192,7 @@ const structuredData = [
           <span class="site-kicker">03</span>
           <h3 class="mt-3 text-xl">Built-in web console</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">
-            Dashboard, data browser, SQL editor, log viewer, and settings — all at localhost:8080. No terminal-only workflows, no context switching between services.
+            Dashboard, data browser, SQL editor, log viewer, and settings — all at localhost:24080. No terminal-only workflows, no context switching between services.
           </p>
         </article>
       </div>
@@ -324,14 +324,14 @@ const structuredData = [
           <span class="site-kicker">Google's individual emulators</span>
           <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code class="text-[0.8rem] leading-[1.7]"># Pub/Sub
 gcloud components install pubsub-emulator
-gcloud beta emulators pubsub start --host-port=localhost:8085
+gcloud beta emulators pubsub start --host-port=localhost:24082
 
 # Firestore
-gcloud beta emulators firestore start --host-port=localhost:8086
+gcloud beta emulators firestore start --host-port=localhost:24083
 
 # Spanner
 gcloud components install spanner-emulator
-gcloud emulators spanner start --host-port=localhost:9010
+gcloud emulators spanner start --host-port=localhost:24085
 
 # That's 3 services — what about BigQuery?
 # No official emulator exists.</code></pre>
@@ -340,15 +340,15 @@ gcloud emulators spanner start --host-port=localhost:9010
         <div class="site-panel p-6" style="background: linear-gradient(135deg, rgba(25, 31, 41, 0.98), rgba(18, 23, 32, 0.98));">
           <span style="color: rgba(255,255,255,0.7);" class="site-kicker">LocalCloud</span>
           <pre class="mt-4 border-0 bg-transparent"><code class="text-[0.8rem] leading-[1.7]" style="color: #e8eaed;">docker run -d \
-  -p 8080:8080 -p 4443:4443 \
-  -p 8085-8087:8085-8087 \
-  -p 9010:9010 -p 9020:9020 \
-  -p 9050:9050 -p 9060:9060 \
-  -p 6379:6379 \
+  -p 24080:24080 -p 24081:24081 \
+  -p 24082-24084:24082-24084 \
+  -p 24085:24085 -p 24086:24086 \
+  -p 24087:24087 -p 24088:24088 \
+  -p 6379:24089 \
   -m 4g --name localcloud \
   jaysen2apache/localcloud
 
-eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
+eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
 
 # 20+ services, one command.
 # BigQuery, Storage, Bigtable included.</code></pre>

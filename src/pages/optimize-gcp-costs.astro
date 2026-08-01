@@ -1,0 +1,384 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+
+const faqItems = [
+  {
+    q: 'What are the biggest sources of GCP cost overruns?',
+    a: 'Non-production environments (dev, test, staging) typically account for 40-60% of total GCP spend. Teams run multiple environments 24/7, perform expensive BigQuery queries during development, store test data indefinitely, and run integration tests that hit production APIs. Individual developer accounts often go unmonitored.',
+  },
+  {
+    q: 'How do I optimize GCP costs for development and testing?',
+    a: 'Run local emulators for development and CI/CD testing. LocalCloud eliminates 70-90% of non-production GCP spend by running BigQuery, Cloud Storage, Pub/Sub, Firestore, Spanner, and other services locally. This saves $100-500+ per developer per month without changing application code.',
+  },
+  {
+    q: 'What about production cost optimization?',
+    a: 'Production optimization requires different strategies: committed use discounts (20-57% savings), right-sizing instances, lifecycle policies for storage, query optimization for BigQuery, efficient indexing for Firestore/Spanner, caching layers, and serverless options (Cloud Run, Cloud Functions) that scale to zero.',
+  },
+  {
+    q: 'How much can teams realistically save?',
+    a: 'For a 20-person engineering team spending $50K/year on GCP, local emulation typically saves $15K-35K (30-70% reduction) by eliminating dev/test costs. Production optimization can save another 20-40% through discounts, right-sizing, and architectural improvements. Combined savings of 50-80% are realistic.',
+  },
+  {
+    q: 'Will local emulation affect production reliability?',
+    a: 'No. Local emulators are for development and testing only. Production deployments still use real GCP services with full reliability guarantees. Always validate against production GCP before deployment. Emulators help catch issues early, reducing production incidents.',
+  },
+];
+---
+
+<LandingLayout
+  title="GCP Cost Optimization Guide — Save 50-80% on Google Cloud Bills"
+  description="Complete guide to optimizing Google Cloud Platform costs. Reduce non-production spending with local emulators, optimize production workloads, and cut GCP bills by 50-80% without sacrificing reliability."
+>
+  <script type="application/ld+json" is:inline>
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the biggest sources of GCP cost overruns?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Non-production environments typically account for 40-60% of total GCP spend. Teams run multiple environments 24/7, perform expensive BigQuery queries during development, store test data indefinitely, and run integration tests that hit production APIs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I optimize GCP costs for development and testing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run local emulators for development and CI/CD testing. LocalCloud eliminates 70-90% of non-production GCP spend by running services locally. This saves $100-500+ per developer per month without changing application code."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What about production cost optimization?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Production optimization requires committed use discounts (20-57% savings), right-sizing instances, lifecycle policies for storage, query optimization for BigQuery, efficient indexing, caching layers, and serverless options that scale to zero."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- HERO -->
+  <section class="site-section site-section--hero">
+    <div class="container">
+      <div class="max-w-[48rem] reveal">
+        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Cost Optimization</span>
+        <h1 class="mt-4">Complete guide to optimizing GCP costs</h1>
+        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
+          Teams spend $100-500 per developer per month on non-production GCP. Cut that to zero with local emulation, then optimize production workloads for 50-80% total savings.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#non-production" class="site-button site-button--primary">Optimize dev/test costs</a>
+          <a href="#production" class="site-button site-button--secondary">Production optimization</a>
+        </div>
+      </div>
+      <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
+        <article class="site-panel site-panel--soft p-5">
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">40-60%</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Non-prod spend</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Most teams spend nearly half their GCP budget on development, testing, and staging environments.</p>
+        </article>
+        <article class="site-panel site-panel--soft p-5">
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">$100-500</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per dev / month</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Average non-production GCP cost per developer for BigQuery, Cloud Storage, Pub/Sub, and testing.</p>
+        </article>
+        <article class="site-panel site-panel--soft p-5">
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">50-80%</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Total savings</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Realistic combined savings from non-production elimination and production optimization strategies.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHERE COSTS COME FROM -->
+  <section class="site-section">
+    <div class="container">
+      <div class="reveal">
+        <h2>Where GCP costs come from</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Understanding cost sources is the first step to optimization. Most teams don't realize how much they spend on non-production workloads.
+        </p>
+      </div>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 reveal">
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Non-production environments</h3>
+          <div class="mt-4 space-y-3 text-sm leading-7 text-[var(--text-2)]">
+            <div><strong class="text-[var(--text)]">Development:</strong> Individual developer GCP projects with BigQuery queries, Cloud Storage buckets, Pub/Sub topics running continuously.</div>
+            <div><strong class="text-[var(--text)]">CI/CD pipelines:</strong> Integration tests hitting production GCP APIs. Every commit triggers queries, storage operations, and message processing.</div>
+            <div><strong class="text-[var(--text)]">Testing environments:</strong> QA and staging environments that mirror production but run 24/7 with low utilization.</div>
+            <div><strong class="text-[var(--text)]">Onboarding:</strong> New hires creating throwaway projects while learning the stack. Often not cleaned up.</div>
+          </div>
+          <div class="mt-4 text-sm font-semibold text-[var(--accent-strong)]">40-60% of total spend</div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Production workloads</h3>
+          <div class="mt-4 space-y-3 text-sm leading-7 text-[var(--text-2)]">
+            <div><strong class="text-[var(--text)]">Compute:</strong> Over-provisioned VMs, idle instances, non-optimized Cloud Run/Functions configurations.</div>
+            <div><strong class="text-[var(--text)]">Storage:</strong> Indefinite retention policies, no lifecycle management, multi-region when single-region suffices.</div>
+            <div><strong class="text-[var(--text)]">Data processing:</strong> Inefficient BigQuery queries, full table scans, lack of partitioning and clustering.</div>
+            <div><strong class="text-[var(--text)]">Network:</strong> Egress charges from multi-region data movement, lack of caching, inefficient API patterns.</div>
+          </div>
+          <div class="mt-4 text-sm font-semibold text-[var(--accent-strong)]">40-60% of total spend</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- NON-PRODUCTION OPTIMIZATION -->
+  <section class="site-section site-section--tight" id="non-production">
+    <div class="container">
+      <div class="reveal">
+        <h2>Eliminate non-production GCP costs</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          The fastest way to reduce GCP bills is to eliminate costs for development, testing, and CI/CD environments by running services locally.
+        </p>
+      </div>
+
+      <div class="mt-8 site-panel p-6 reveal">
+        <h3 class="text-lg font-semibold text-[var(--text)]">Strategy: Local emulation for dev and test</h3>
+        <p class="mt-3 text-[var(--text-2)] leading-7">
+          Run BigQuery, Cloud Storage, Pub/Sub, Firestore, Spanner, Bigtable, and other GCP services locally during development and CI/CD testing. Zero cloud costs for non-production workloads.
+        </p>
+        
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <div>
+            <div class="font-semibold text-[var(--text)]">What you eliminate:</div>
+            <ul class="mt-2 space-y-2 text-sm text-[var(--text-2)] leading-7">
+              <li>• BigQuery query costs during development</li>
+              <li>• Cloud Storage egress and storage fees for test data</li>
+              <li>• Pub/Sub message charges in CI pipelines</li>
+              <li>• Firestore/Spanner read/write operations</li>
+              <li>• Individual developer GCP project costs</li>
+              <li>• 24/7 test environment bills</li>
+            </ul>
+          </div>
+          <div>
+            <div class="font-semibold text-[var(--text)]">Implementation:</div>
+            <ul class="mt-2 space-y-2 text-sm text-[var(--text-2)] leading-7">
+              <li>• Install LocalCloud Docker container</li>
+              <li>• Configure SDK environment variables</li>
+              <li>• Zero code changes required</li>
+              <li>• Works in CI/CD (GitHub Actions, GitLab, etc.)</li>
+              <li>• Production deploys still use real GCP</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-6 p-4 rounded bg-[var(--panel-1)]">
+          <div class="text-sm font-semibold text-[var(--text)]">Example savings:</div>
+          <p class="mt-2 text-sm text-[var(--text-2)] leading-7">
+            20-person team, $300/dev/month non-production spend → <strong class="text-[var(--accent-strong)]">$72K/year saved</strong> by running dev/test locally.
+          </p>
+        </div>
+
+        <div class="mt-6">
+          <a href={`${base}how-to-run-google-cloud-locally/`} class="site-button site-button--primary">How to run GCP locally</a>
+          <a href={`${base}reduce-gcp-dev-costs/`} class="ml-3 site-button site-button--secondary">Calculate your savings</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTION OPTIMIZATION -->
+  <section class="site-section" id="production">
+    <div class="container">
+      <div class="reveal">
+        <h2>Production cost optimization strategies</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Production workloads require different optimization approaches. These strategies reduce costs without sacrificing reliability or performance.
+        </p>
+      </div>
+
+      <div class="mt-8 grid gap-6 reveal">
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">1. Committed use discounts (CUDs)</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Commit to 1-year or 3-year usage for compute and memory resources. Get 20-57% discounts on Compute Engine, GKE, Cloud SQL, and other services.
+          </p>
+          <div class="mt-4 text-sm text-[var(--text-2)] leading-7">
+            <strong class="text-[var(--text)]">When to use:</strong> Stable, predictable workloads that won't change significantly over the commitment period.
+          </div>
+          <div class="mt-2 text-sm text-[var(--text-2)] leading-7">
+            <strong class="text-[var(--text)]">Savings:</strong> 20-57% depending on commitment length and resource type.
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">2. BigQuery cost optimization</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            BigQuery charges by data scanned. Reduce costs through partitioning, clustering, query optimization, and materialized views.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Partitioning:</strong> Partition tables by date/timestamp. Queries scan only relevant partitions (90%+ cost reduction).</div>
+            <div><strong class="text-[var(--text)]">Clustering:</strong> Cluster columns used in WHERE clauses. Further reduces data scanned (30-50% reduction).</div>
+            <div><strong class="text-[var(--text)]">Avoid SELECT *:</strong> Query only needed columns. Reduces scanned data proportionally.</div>
+            <div><strong class="text-[var(--text)]">Materialized views:</strong> Pre-aggregate frequently queried data. Eliminate expensive aggregations.</div>
+            <div><strong class="text-[var(--text)]">Flat-rate pricing:</strong> For high query volumes, flat-rate can be cheaper than on-demand ($2K-10K/month for unlimited queries).</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">3. Cloud Storage lifecycle policies</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Automatically transition data to cheaper storage classes or delete old data. Most teams store data indefinitely by default.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Nearline (30-day access):</strong> 50% cheaper than Standard. For monthly access patterns.</div>
+            <div><strong class="text-[var(--text)]">Coldline (90-day access):</strong> 70% cheaper. For quarterly access or compliance archives.</div>
+            <div><strong class="text-[var(--text)]">Archive (365-day access):</strong> 90% cheaper. For long-term regulatory retention.</div>
+            <div><strong class="text-[var(--text)]">Auto-delete:</strong> Delete objects after N days if no longer needed. Zero storage cost.</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">4. Right-sizing and autoscaling</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Match resources to actual usage. Most VMs and database instances are over-provisioned by 40-60%.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Compute Engine:</strong> Use Recommender API to identify under-utilized VMs. Downsize or use smaller machine types.</div>
+            <div><strong class="text-[var(--text)]">GKE autoscaling:</strong> Enable cluster autoscaler and horizontal pod autoscaling. Pay only for active load.</div>
+            <div><strong class="text-[var(--text)]">Cloud Run:</strong> Scales to zero when idle. No charges for idle time. Use instead of always-on VMs for low-traffic services.</div>
+            <div><strong class="text-[var(--text)]">Cloud Functions:</strong> Serverless execution. Pay per invocation, not per hour. Ideal for event-driven workloads.</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">5. Caching and CDN</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Reduce origin requests and egress costs with caching layers. Egress charges add up quickly for high-traffic applications.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Cloud CDN:</strong> Cache static content at edge locations. 60-90% reduction in origin traffic.</div>
+            <div><strong class="text-[var(--text)]">Memorystore (Redis):</strong> Cache database queries and API responses. Reduce database load and costs.</div>
+            <div><strong class="text-[var(--text)]">Cloud Storage + CDN:</strong> Serve static assets from GCS with Cloud CDN. Cheaper than serving from compute.</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">6. Database optimization</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Firestore, Spanner, and Cloud SQL costs scale with reads, writes, and storage. Optimize queries and schema design.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Firestore indexing:</strong> Composite indexes reduce read operations. Avoid querying without indexes.</div>
+            <div><strong class="text-[var(--text)]">Spanner schema:</strong> Use interleaved tables for parent-child relationships. Reduces cross-node traffic.</div>
+            <div><strong class="text-[var(--text)]">Connection pooling:</strong> Reuse database connections. Reduce Cloud SQL connection overhead.</div>
+            <div><strong class="text-[var(--text)]">Read replicas:</strong> Offload read traffic from primary instances. Cloud SQL replicas scale read capacity.</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">7. Network egress optimization</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Egress (data leaving GCP) is expensive. Keep data movement within the same region when possible.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Same-region architecture:</strong> Deploy services and data in the same region. Intra-region traffic is free.</div>
+            <div><strong class="text-[var(--text)]">Compression:</strong> Compress responses. Reduces egress volume (30-70% reduction for text/JSON).</div>
+            <div><strong class="text-[var(--text)]">CDN caching:</strong> Cache at edge. Reduces origin egress charges.</div>
+            <div><strong class="text-[var(--text)]">Premium vs Standard tier:</strong> Standard tier network is 30% cheaper. Use unless you need global load balancing.</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">8. Monitoring and alerting</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Set up cost alerts and budget notifications. Most cost overruns go unnoticed until the monthly bill arrives.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Budget alerts:</strong> Set monthly budgets per project. Get notifications at 50%, 90%, 100% thresholds.</div>
+            <div><strong class="text-[var(--text)]">Cost anomaly detection:</strong> Enable Cloud Billing anomaly detection. Catch unexpected spikes early.</div>
+            <div><strong class="text-[var(--text)]">Resource labels:</strong> Tag resources by team, environment, and cost center. Track spending by category.</div>
+            <div><strong class="text-[var(--text)]">BigQuery cost dashboard:</strong> Monitor query costs per user/team. Identify expensive queries and optimize.</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAVINGS CALCULATOR -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="reveal">
+        <h2>Realistic savings by team size</h2>
+      </div>
+      <div class="mt-8 grid gap-4 sm:grid-cols-3 reveal">
+        <article class="site-panel p-5">
+          <span class="site-kicker">Small team (5 devs)</span>
+          <div class="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">$10K-40K</div>
+          <div class="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per year saved</div>
+          <div class="mt-3 text-sm leading-7 text-[var(--text-2)]">
+            <div>Non-production elimination: $6K-30K</div>
+            <div>Production optimization: $4K-10K</div>
+          </div>
+        </article>
+        <article class="site-panel p-5">
+          <span class="site-kicker">Mid-size team (20 devs)</span>
+          <div class="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">$40K-160K</div>
+          <div class="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per year saved</div>
+          <div class="mt-3 text-sm leading-7 text-[var(--text-2)]">
+            <div>Non-production elimination: $24K-120K</div>
+            <div>Production optimization: $16K-40K</div>
+          </div>
+        </article>
+        <article class="site-panel p-5">
+          <span class="site-kicker">Large team (50+ devs)</span>
+          <div class="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">$100K-400K+</div>
+          <div class="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per year saved</div>
+          <div class="mt-3 text-sm leading-7 text-[var(--text-2)]">
+            <div>Non-production elimination: $60K-300K</div>
+            <div>Production optimization: $40K-100K+</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="mt-6 grid gap-3 reveal">
+        {faqItems.map(item => (
+          <details class="site-panel p-5 cursor-pointer">
+            <summary class="font-semibold text-[var(--text)] text-[1.05rem]">{item.q}</summary>
+            <p class="mt-3 text-[var(--text-2)] leading-7">{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="site-section">
+    <div class="container">
+      <div class="site-panel p-8 reveal" style="background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));">
+        <div class="grid gap-6 xl:grid-cols-[1fr,auto] items-center">
+          <div>
+            <h2 style="color: #e8eaed;">Start optimizing GCP costs today</h2>
+            <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
+              Eliminate 70-90% of non-production GCP spending by running services locally. Free for individual developers.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a href={`${base}how-to-run-google-cloud-locally/`} class="site-button site-button--secondary">Run GCP locally</a>
+            <a href={`${base}reduce-gcp-dev-costs/`} class="site-button site-button--primary">Calculate savings</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

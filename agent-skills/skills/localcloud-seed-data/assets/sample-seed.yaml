@@ -1,0 +1,45 @@
+storage:
+  buckets:
+    - name: local-test-bucket
+      objects:
+        - key: fixtures/hello.txt
+          content: "Hello from LocalCloud"
+
+pubsub:
+  topics:
+    - name: user-events
+      subscriptions:
+        - name: user-events-sub
+
+firestore:
+  collections:
+    - name: users
+      documents:
+        - id: user-001
+          data:
+            name: Test User
+            email: user-001@example.test
+            role: tester
+
+bigquery:
+  datasets:
+    - name: analytics
+      tables:
+        - name: events
+          schema:
+            - name: event_id
+              type: STRING
+            - name: event_type
+              type: STRING
+            - name: amount
+              type: INTEGER
+
+secrets:
+  - name: api-key
+    value: "sk-local-test-key-12345"
+
+memorystore:
+  keys:
+    - key: "session:local-test"
+      value: '{"user_id":"user-001"}'
+      ttl: 3600

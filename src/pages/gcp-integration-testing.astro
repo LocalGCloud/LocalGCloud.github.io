@@ -13,9 +13,9 @@ jobs:
       localcloud:
         image: jaysen2apache/localcloud
         ports:
-          - 8080:8080
-          - 8085:8085
-          - 9050:9050
+          - 24080:24080
+          - 24082:24082
+          - 24087:24087
         options: --memory 4g
 
     steps:
@@ -24,14 +24,14 @@ jobs:
       - name: Wait for LocalCloud
         run: |
           for i in $(seq 1 30); do
-            curl -sf http://localhost:8080/_localcloud/health && break
+            curl -sf http://localhost:24080/_localcloud/health && break
             sleep 2
           done
 
       - name: Run integration tests
         env:
-          BIGQUERY_EMULATOR_HOST: http://localhost:9050
-          PUBSUB_EMULATOR_HOST: localhost:8085
+          BIGQUERY_EMULATOR_HOST: http://localhost:24087
+          PUBSUB_EMULATOR_HOST: localhost:24082
         run: pytest tests/integration/`;
 
 const gitlabCiYaml = `integration-tests:
@@ -40,13 +40,13 @@ const gitlabCiYaml = `integration-tests:
     - name: jaysen2apache/localcloud
       alias: localcloud
   variables:
-    BIGQUERY_EMULATOR_HOST: http://localcloud:9050
-    PUBSUB_EMULATOR_HOST: localcloud:8085
+    BIGQUERY_EMULATOR_HOST: http://localcloud:24087
+    PUBSUB_EMULATOR_HOST: localcloud:24082
   before_script:
     - pip install -r requirements.txt
     - |
       for i in $(seq 1 30); do
-        curl -sf http://localcloud:8080/_localcloud/health && break
+        curl -sf http://localcloud:24080/_localcloud/health && break
         sleep 2
       done
   script:
@@ -58,19 +58,19 @@ const jenkinsfile = `pipeline {
     stage('Integration Tests') {
       steps {
         docker.image('jaysen2apache/localcloud')
-          .withRun('--memory 4g -p 9050:9050 -p 8085:8085') { c ->
+          .withRun('--memory 4g -p 24087:24087 -p 24082:24082') { c ->
             docker.image('appropriate/curl')
               .inside("--link \${c.id}:localcloud") {
                 sh """
                   for i in \$(seq 1 30); do
-                    curl -sf http://localcloud:8080/_localcloud/health && break
+                    curl -sf http://localcloud:24080/_localcloud/health && break
                     sleep 2
                   done
                 """
               }
             withEnv([
-              'BIGQUERY_EMULATOR_HOST=http://localcloud:9050',
-              'PUBSUB_EMULATOR_HOST=localcloud:8085'
+              'BIGQUERY_EMULATOR_HOST=http://localcloud:24087',
+              'PUBSUB_EMULATOR_HOST=localcloud:24082'
             ]) {
               sh 'pytest tests/integration/'
             }
@@ -95,7 +95,7 @@ const faqItems = [
   },
   {
     q: 'How fast does LocalCloud start in CI?',
-    a: 'LocalCloud boots in under 60 seconds on standard CI runners. The health check endpoint at localhost:8080/_localcloud/health returns 200 when all services are ready. Use a retry loop in your CI config to wait for readiness.',
+    a: 'LocalCloud boots in under 60 seconds on standard CI runners. The health check endpoint at localhost:24080/_localcloud/health returns 200 when all services are ready. Use a retry loop in your CI config to wait for readiness.',
   },
   {
     q: 'Can I run parallel test suites against the same LocalCloud instance?',

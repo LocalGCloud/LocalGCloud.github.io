@@ -108,7 +108,7 @@
     <rect x="30" y="246" width="216" height="42" rx="21" fill="#EFF5FF" stroke="#D6E4F7" stroke-width="2"/>
     <text x="52" y="272" fill="#2C72F6" font-family="IBM Plex Mono, monospace" font-size="12">major services ready · 0 cloud spend</text>
     <rect x="30" y="304" width="100" height="32" rx="16" fill="#FFFFFF" stroke="#D6E4F7" stroke-width="2"/>
-    <text x="48" y="324" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="15" font-weight="600">Gateway :8080</text>
+    <text x="48" y="324" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="15" font-weight="600">Gateway :24080</text>
     <rect x="146" y="304" width="100" height="32" rx="16" fill="#FFFFFF" stroke="#D6E4F7" stroke-width="2"/>
     <text x="162" y="324" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="15" font-weight="600">SDK handoff</text>
   </g>

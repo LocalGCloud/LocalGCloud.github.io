@@ -49,7 +49,7 @@
 
   <rect x="786" y="248" width="220" height="126" rx="28" fill="#FFFFFF" stroke="#D4E1F3" stroke-width="2"/>
   <rect x="810" y="272" width="136" height="16" rx="8" fill="url(#flow-blue)"/>
-  <text x="810" y="325" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="29" font-weight="600">Gateway :8080</text>
+  <text x="810" y="325" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="29" font-weight="600">Gateway :24080</text>
   <text x="810" y="352" fill="#5D718F" font-family="IBM Plex Sans, sans-serif" font-size="18">Admin API and route orchestration</text>
 
   <rect x="786" y="406" width="220" height="110" rx="28" fill="#FFFFFF" stroke="#D4E1F3" stroke-width="2"/>

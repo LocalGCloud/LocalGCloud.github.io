@@ -20,16 +20,16 @@ The same Terraform code works against real GCP (without env vars) or LocalCloud 
 ```bash
 # 1. Start LocalCloud
 docker run -d \
-  -p 8080:8080 -p 4443:4443 \
-  -p 8085-8087:8085-8087 \
-  -p 9010:9010 -p 9020:9020 \
-  -p 9050:9050 -p 9060:9060 \
+  -p 8080:24080 -p 4443:24081 \
+  -p 8085-8087:24082-8087 \
+  -p 9010:24085 -p 9020:24086 \
+  -p 9050:24087 -p 9060:24088 \
   -p 6379:6379 \
   -m 4g --name localcloud \
   jaysen2apache/localcloud
 
 # 2. Point Terraform at LocalCloud
-eval $(curl -s 'http://localhost:8080/_localcloud/env?format=terraform')
+eval $(curl -s 'http://localhost:24080/_localcloud/env?format=terraform')
 
 # 3. Run Terraform normally
 terraform init
@@ -61,23 +61,23 @@ provider "google" {
 
 ## Environment Variables
 
-When you run `eval $(curl -s 'http://localhost:8080/_localcloud/env?format=terraform')`, the following variables are set:
+When you run `eval $(curl -s 'http://localhost:24080/_localcloud/env?format=terraform')`, the following variables are set:
 
 | Variable | Value | Service |
 |----------|-------|---------|
-| `GOOGLE_STORAGE_CUSTOM_ENDPOINT` | `http://localhost:4443` | Cloud Storage |
-| `GOOGLE_PUBSUB_CUSTOM_ENDPOINT` | `http://localhost:8085` | Pub/Sub |
-| `GOOGLE_BIGQUERY_CUSTOM_ENDPOINT` | `http://localhost:9050` | BigQuery |
-| `GOOGLE_SPANNER_CUSTOM_ENDPOINT` | `http://localhost:9020` | Spanner (REST) |
-| `GOOGLE_FIRESTORE_CUSTOM_ENDPOINT` | `http://localhost:8086` | Firestore |
-| `GOOGLE_BIGTABLE_CUSTOM_ENDPOINT` | `http://localhost:8087` | Bigtable |
-| `GOOGLE_SECRET_MANAGER_CUSTOM_ENDPOINT` | `http://localhost:8080` | Secret Manager |
-| `GOOGLE_CLOUD_TASKS_CUSTOM_ENDPOINT` | `http://localhost:8080` | Cloud Tasks |
-| `GOOGLE_COMPUTE_CUSTOM_ENDPOINT` | `http://localhost:8080` | Compute Engine |
-| `GOOGLE_CLOUD_RUN_CUSTOM_ENDPOINT` | `http://localhost:8080` | Cloud Run |
-| `GOOGLE_CONTAINER_CUSTOM_ENDPOINT` | `http://localhost:8080` | GKE |
-| `GOOGLE_LOGGING_CUSTOM_ENDPOINT` | `http://localhost:8080` | Cloud Logging |
-| `GOOGLE_MONITORING_CUSTOM_ENDPOINT` | `http://localhost:8080` | Cloud Monitoring |
+| `GOOGLE_STORAGE_CUSTOM_ENDPOINT` | `http://localhost:24081` | Cloud Storage |
+| `GOOGLE_PUBSUB_CUSTOM_ENDPOINT` | `http://localhost:24082` | Pub/Sub |
+| `GOOGLE_BIGQUERY_CUSTOM_ENDPOINT` | `http://localhost:24087` | BigQuery |
+| `GOOGLE_SPANNER_CUSTOM_ENDPOINT` | `http://localhost:24086` | Spanner (REST) |
+| `GOOGLE_FIRESTORE_CUSTOM_ENDPOINT` | `http://localhost:24083` | Firestore |
+| `GOOGLE_BIGTABLE_CUSTOM_ENDPOINT` | `http://localhost:24084` | Bigtable |
+| `GOOGLE_SECRET_MANAGER_CUSTOM_ENDPOINT` | `http://localhost:24080` | Secret Manager |
+| `GOOGLE_CLOUD_TASKS_CUSTOM_ENDPOINT` | `http://localhost:24080` | Cloud Tasks |
+| `GOOGLE_COMPUTE_CUSTOM_ENDPOINT` | `http://localhost:24080` | Compute Engine |
+| `GOOGLE_CLOUD_RUN_CUSTOM_ENDPOINT` | `http://localhost:24080` | Cloud Run |
+| `GOOGLE_CONTAINER_CUSTOM_ENDPOINT` | `http://localhost:24080` | GKE |
+| `GOOGLE_LOGGING_CUSTOM_ENDPOINT` | `http://localhost:24080` | Cloud Logging |
+| `GOOGLE_MONITORING_CUSTOM_ENDPOINT` | `http://localhost:24080` | Cloud Monitoring |
 | `GOOGLE_APPLICATION_CREDENTIALS` | `/dev/null` | Auth bypass |
 | `GOOGLE_PROJECT` | `local-project` | All services |
 
@@ -198,17 +198,17 @@ jobs:
       localcloud:
         image: jaysen2apache/localcloud
         ports:
-          - 8080:8080
-          - 4443:4443
-          - 8085-8087:8085-8087
-          - 9010:9010
-          - 9020:9020
-          - 9050:9050
-          - 9060:9060
+          - 8080:24080
+          - 4443:24081
+          - 8085-8087:24082-8087
+          - 9010:24085
+          - 9020:24086
+          - 9050:24087
+          - 9060:24088
           - 6379:6379
         options: >-
           --memory 4g
-          --health-cmd "curl -f http://localhost:8080/_localcloud/health"
+          --health-cmd "curl -f http://localhost:24080/_localcloud/health"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
@@ -222,7 +222,7 @@ jobs:
       - name: Wait for LocalCloud
         run: |
           for i in $(seq 1 30); do
-            if curl -sf http://localhost:8080/_localcloud/health > /dev/null; then
+            if curl -sf http://localhost:24080/_localcloud/health > /dev/null; then
               echo "LocalCloud is ready"
               break
             fi
@@ -230,7 +230,7 @@ jobs:
           done
 
       - name: Configure Terraform for LocalCloud
-        run: eval $(curl -s http://localhost:8080/_localcloud/env?format=terraform) >> $GITHUB_ENV
+        run: eval $(curl -s http://localhost:24080/_localcloud/env?format=terraform) >> $GITHUB_ENV
 
       - name: Terraform Init & Apply
         run: |
@@ -262,3 +262,7 @@ terraform plan   # now targets real GCP
 ```
 
 Your `.tf` files require zero changes.
+
+## Agent Skills
+
+For agent-assisted Terraform validation, use the [LocalCloud Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills). The `localcloud-terraform` skill keeps the standard `hashicorp/google` provider, uses LocalCloud endpoint overrides, and avoids real GCP credentials for local checks.

@@ -1,0 +1,4 @@
+# Draft checksums
+# Fill after building the final MCPB archive.
+# Example:
+# sha256  localcloud-mcp-server-0.1.0.mcpb  <digest>

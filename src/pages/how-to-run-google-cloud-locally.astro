@@ -1,0 +1,450 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import ServiceIcon from '../components/ServiceIcon.astro';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+
+const quickStartCmd = `# Create persistent volume
+docker volume create localcloud-data
+
+# Pull and start LocalCloud
+docker pull jaysen2apache/localcloud
+
+docker run -d \\
+  -p 24080-24095:24080-24095 \\
+  -m 4g --name localcloud \\
+  -v localcloud-data:/var/lib/localcloud \\
+  jaysen2apache/localcloud
+
+# Configure environment
+eval $(curl -s http://localhost:24080/env?format=shell)
+
+# Test BigQuery
+bq query --nouse_legacy_sql "SELECT 1 as test"`;
+
+const services = [
+  { name: 'BigQuery', port: '24087', coverage: '96%', env: 'BIGQUERY_EMULATOR_HOST' },
+  { name: 'Cloud Storage', port: '24081', coverage: 'Full', env: 'STORAGE_EMULATOR_HOST' },
+  { name: 'Firestore', port: '24083', coverage: 'High', env: 'FIRESTORE_EMULATOR_HOST' },
+  { name: 'Pub/Sub', port: '24082', coverage: 'High', env: 'PUBSUB_EMULATOR_HOST' },
+  { name: 'Spanner', port: '24085', coverage: '95%', env: 'SPANNER_EMULATOR_HOST' },
+  { name: 'Bigtable', port: '24084', coverage: 'High', env: 'BIGTABLE_EMULATOR_HOST' },
+];
+
+const faqItems = [
+  {
+    q: 'Why run Google Cloud services locally?',
+    a: 'Running GCP locally eliminates cloud costs during development, removes dependency on internet connectivity, speeds up iteration cycles (no network latency), and simplifies onboarding — new developers start coding in 60 seconds instead of spending days on IAM and billing setup.',
+  },
+  {
+    q: 'Does Google provide official local emulators?',
+    a: 'Google provides official emulators for Pub/Sub, Firestore, Spanner, and Datastore. However, there are no official emulators for BigQuery, Cloud Storage, Bigtable, Secret Manager, Cloud Tasks, or most other GCP services. LocalCloud fills these gaps by bundling official emulators with high-quality third-party emulators in one container.',
+  },
+  {
+    q: 'Do I need to change my application code?',
+    a: 'No code changes required. Set environment variables to point SDKs at localhost, and your application uses the same gRPC/REST protocols it would use with production GCP. The same client libraries work unchanged.',
+  },
+  {
+    q: 'Can I run this in CI/CD pipelines?',
+    a: 'Yes. LocalCloud runs as a Docker container in GitHub Actions, GitLab CI, CircleCI, Jenkins, and any CI system that supports Docker. Integration tests run against local GCP services without cloud credentials or billing.',
+  },
+  {
+    q: 'How much does it cost?',
+    a: 'LocalCloud is free for individual developers. Core services (BigQuery, Cloud Storage, Firestore, Pub/Sub, Spanner) are available in the Community tier at no cost. Pro services (Bigtable, GKE, Compute Engine) require a license.',
+  },
+];
+---
+
+<LandingLayout
+  title="How to Run Google Cloud Services Locally — Complete Guide"
+  description="Run BigQuery, Cloud Storage, Firestore, Pub/Sub, Spanner, and 20+ GCP services locally in one Docker container. Same SDKs, same APIs, zero code changes. Complete setup guide for local GCP development."
+>
+  <script type="application/ld+json" is:inline>
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Run Google Cloud Services Locally",
+  "description": "Complete guide to running BigQuery, Cloud Storage, Firestore, Pub/Sub, Spanner, and other GCP services locally using LocalCloud emulator",
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Install Docker",
+      "text": "Install Docker Desktop for Mac/Windows or Docker Engine for Linux"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Create Docker volume",
+      "text": "Run: docker volume create localcloud-data"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Pull LocalCloud image",
+      "text": "Run: docker pull jaysen2apache/localcloud"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Start LocalCloud container",
+      "text": "Run the container with port mappings and memory allocation: docker run -d -p 24080-24095:24080-24095 -m 4g --name localcloud -v localcloud-data:/var/lib/localcloud jaysen2apache/localcloud"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Configure environment variables",
+      "text": "Set SDK environment variables to point at localhost: eval $(curl -s http://localhost:24080/env?format=shell)"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Verify setup",
+      "text": "Test with a simple BigQuery query: bq query --nouse_legacy_sql 'SELECT 1 as test'"
+    }
+  ]
+}
+  </script>
+
+  <script type="application/ld+json" is:inline>
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why run Google Cloud services locally?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Running GCP locally eliminates cloud costs during development, removes dependency on internet connectivity, speeds up iteration cycles, and simplifies onboarding — new developers start coding in 60 seconds instead of spending days on IAM and billing setup."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Google provide official local emulators?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Google provides official emulators for Pub/Sub, Firestore, Spanner, and Datastore. However, there are no official emulators for BigQuery, Cloud Storage, Bigtable, Secret Manager, Cloud Tasks, or most other GCP services. LocalCloud fills these gaps."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to change my application code?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No code changes required. Set environment variables to point SDKs at localhost, and your application uses the same gRPC/REST protocols it would use with production GCP."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- HERO -->
+  <section class="site-section site-section--hero">
+    <div class="container">
+      <div class="max-w-[48rem] reveal">
+        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Complete Guide</span>
+        <h1 class="mt-4">How to run Google Cloud services locally</h1>
+        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
+          5-minute setup. BigQuery, Cloud Storage, Firestore, Pub/Sub, Spanner, Bigtable, and 20+ GCP services on localhost.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#quick-start" class="site-button site-button--primary">Quick start</a>
+          <a href={`${base}docs/`} class="site-button site-button--secondary">Full documentation</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY RUN LOCALLY -->
+  <section class="site-section">
+    <div class="container">
+      <div class="reveal">
+        <h2>Why run Google Cloud services locally?</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Local development with GCP emulators eliminates cloud bills, speeds up iteration, and removes dependencies on network connectivity and cloud credentials.
+        </p>
+      </div>
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 reveal">
+        <article class="site-panel site-panel--soft p-5">
+          <div class="font-semibold text-[var(--text)]">Zero cloud costs</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Development and testing run locally. No BigQuery query charges, no Pub/Sub message fees, no Cloud Storage egress costs.</p>
+        </article>
+        <article class="site-panel site-panel--soft p-5">
+          <div class="font-semibold text-[var(--text)]">Faster iteration</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">No network latency. BigQuery queries return instantly. Pub/Sub messages process in microseconds. Storage operations are disk-speed.</p>
+        </article>
+        <article class="site-panel site-panel--soft p-5">
+          <div class="font-semibold text-[var(--text)]">Offline development</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Work without internet. No VPN required. Flight WiFi isn't a blocker. Your entire GCP stack runs on localhost.</p>
+        </article>
+        <article class="site-panel site-panel--soft p-5">
+          <div class="font-semibold text-[var(--text)]">Simple onboarding</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">New hires run one Docker command. No IAM setup, no billing configuration, no waiting for cloud project approvals.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK START -->
+  <section class="site-section" id="quick-start">
+    <div class="container">
+      <div class="reveal">
+        <h2>Quick start: 60 seconds to local GCP</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Pull the Docker image, start the container, configure environment variables, and you have a complete local GCP environment.
+        </p>
+      </div>
+      <div class="mt-8 site-panel p-6 reveal">
+        <pre class="overflow-x-auto text-sm"><code>{quickStartCmd}</code></pre>
+      </div>
+      <div class="mt-6 reveal">
+        <p class="text-[var(--text-2)] leading-7">
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES TABLE -->
+  <section class="site-section">
+    <div class="container">
+      <div class="reveal">
+        <h2>What Google Cloud services can run locally?</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          LocalCloud emulates 20+ GCP services in a single Docker container. Core services have high feature coverage and production-grade reliability.
+        </p>
+      </div>
+      <div class="mt-8 overflow-x-auto reveal">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-[var(--border-1)]">
+            <tr>
+              <th class="py-3 font-semibold text-[var(--text)]">Service</th>
+              <th class="py-3 font-semibold text-[var(--text)]">Port</th>
+              <th class="py-3 font-semibold text-[var(--text)]">Coverage</th>
+              <th class="py-3 font-semibold text-[var(--text)]">Environment Variable</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border-1)]">
+            {services.map(svc => (
+              <tr>
+                <td class="py-3 text-[var(--text)]">{svc.name}</td>
+                <td class="py-3 text-[var(--text-2)] font-mono text-xs">{svc.port}</td>
+                <td class="py-3 text-[var(--accent-strong)]">{svc.coverage}</td>
+                <td class="py-3 text-[var(--text-2)] font-mono text-xs">{svc.env}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-6 reveal">
+        <p class="text-sm text-[var(--text-2)] leading-7">
+          See the complete list of <a href={`${base}docs/services-overview/`} class="underline">20+ supported services</a> with detailed feature coverage.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP-BY-STEP SETUP -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="reveal">
+        <h2>Step-by-step setup guide</h2>
+      </div>
+      <div class="mt-8 grid gap-6 reveal">
+        <article class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">1</div>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-[var(--text)]">Install Docker</h3>
+              <p class="mt-2 text-[var(--text-2)] leading-7">Install Docker Desktop (Mac/Windows) or Docker Engine (Linux). LocalCloud requires Docker to run the emulator container.</p>
+              <div class="mt-3">
+                <a href="https://docs.docker.com/get-docker/" target="_blank" rel="noopener" class="text-sm text-[var(--accent-strong)] underline">Install Docker →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">2</div>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-[var(--text)]">Create Docker volume</h3>
+              <p class="mt-2 text-[var(--text-2)] leading-7">Create a named Docker volume for persistent data storage:</p>
+              <pre class="mt-3 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>docker volume create localcloud-data</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">3</div>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-[var(--text)]">Pull the LocalCloud image</h3>
+              <p class="mt-2 text-[var(--text-2)] leading-7">Download the latest LocalCloud Docker image from Docker Hub:</p>
+              <pre class="mt-3 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>docker pull jaysen2apache/localcloud</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">4</div>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-[var(--text)]">Start the container</h3>
+              <p class="mt-2 text-[var(--text-2)] leading-7">Run LocalCloud with port mappings and 4GB memory allocation:</p>
+              <pre class="mt-3 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>docker run -d \
+  -p 24080-24095:24080-24095 \
+  -m 4g --name localcloud \
+  -v localcloud-data:/var/lib/localcloud \
+  jaysen2apache/localcloud</code></pre>
+              <p class="mt-3 text-sm text-[var(--text-2)] leading-7">The container exposes all services on ports 24080-24095. Persistent data is stored in a Docker volume named <code class="text-xs">localcloud-data</code>.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">5</div>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-[var(--text)]">Configure environment variables</h3>
+              <p class="mt-2 text-[var(--text-2)] leading-7">Point your GCP SDKs at localhost by setting environment variables. LocalCloud provides an auto-config endpoint:</p>
+              <pre class="mt-3 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>eval $(curl -s http://localhost:24080/env?format=shell)</code></pre>
+              <p class="mt-3 text-sm text-[var(--text-2)] leading-7">Or set variables manually:</p>
+              <pre class="mt-2 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>export BIGQUERY_EMULATOR_HOST=http://localhost:24087
+export STORAGE_EMULATOR_HOST=http://localhost:24081
+export PUBSUB_EMULATOR_HOST=localhost:24082
+export FIRESTORE_EMULATOR_HOST=localhost:24083
+export SPANNER_EMULATOR_HOST=localhost:24085</code></pre>
+            </div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <div class="flex items-start gap-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">6</div>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-[var(--text)]">Verify the setup</h3>
+              <p class="mt-2 text-[var(--text-2)] leading-7">Test that services are running with a simple BigQuery query:</p>
+              <pre class="mt-3 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>bq query --nouse_legacy_sql "SELECT 1 as test"</code></pre>
+              <p class="mt-3 text-sm text-[var(--text-2)] leading-7">If the query returns successfully, your local GCP environment is ready.</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE-SPECIFIC GUIDES -->
+  <section class="site-section">
+    <div class="container">
+      <div class="reveal">
+        <h2>Service-specific setup guides</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Each GCP service has unique configuration and SDK patterns. Follow these guides for service-specific setup instructions.
+        </p>
+      </div>
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 reveal">
+        <a href={`${base}bigquery-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
+          <div class="font-semibold text-[var(--text)]">BigQuery</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Run BigQuery queries locally with 96% SQL coverage. DuckDB-backed emulator with 813 passing tests.</p>
+        </a>
+        <a href={`${base}cloud-storage-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
+          <div class="font-semibold text-[var(--text)]">Cloud Storage</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Local GCS buckets with full CRUD operations. Filesystem-backed storage, no egress costs.</p>
+        </a>
+        <a href={`${base}firestore-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
+          <div class="font-semibold text-[var(--text)]">Firestore</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Google's official Firestore emulator. Document CRUD, queries, and real-time listeners.</p>
+        </a>
+        <a href={`${base}pubsub-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
+          <div class="font-semibold text-[var(--text)]">Pub/Sub</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Google's official Pub/Sub emulator. Topics, subscriptions, and message workflows.</p>
+        </a>
+        <a href={`${base}spanner-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
+          <div class="font-semibold text-[var(--text)]">Spanner</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Extended fork of Google's Spanner emulator with LevelDB persistence. 95% feature coverage.</p>
+        </a>
+        <a href={`${base}bigtable-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
+          <div class="font-semibold text-[var(--text)]">Bigtable</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">SQLite-backed Bigtable emulator. Admin API, data plane, filters, and materialized views.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CI/CD INTEGRATION -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="reveal">
+        <h2>Running local GCP in CI/CD pipelines</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          LocalCloud runs as a service container in CI pipelines. Integration tests run against local GCP services without cloud credentials or billing.
+        </p>
+      </div>
+      <div class="mt-8 site-panel p-6 reveal">
+        <h3 class="text-lg font-semibold text-[var(--text)]">GitHub Actions example</h3>
+        <pre class="mt-4 overflow-x-auto text-xs"><code>name: Integration Tests
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      localcloud:
+        image: jaysen2apache/localcloud
+        ports:
+          - 24080:24080
+          - 24087:24087
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Configure GCP environment
+        run: |
+          eval $(curl -s http://localhost:24080/env?format=shell)
+          echo "BIGQUERY_EMULATOR_HOST=$BIGQUERY_EMULATOR_HOST" >> $GITHUB_ENV
+      
+      - name: Run integration tests
+        run: npm test</code></pre>
+      </div>
+      <div class="mt-6 reveal">
+        <p class="text-sm text-[var(--text-2)] leading-7">
+          See <a href={`${base}gcp-integration-testing/`} class="underline">complete CI/CD integration guide</a> with examples for GitHub Actions, GitLab CI, CircleCI, and Jenkins.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="mt-6 grid gap-3 reveal">
+        {faqItems.map(item => (
+          <details class="site-panel p-5 cursor-pointer">
+            <summary class="font-semibold text-[var(--text)] text-[1.05rem]">{item.q}</summary>
+            <p class="mt-3 text-[var(--text-2)] leading-7">{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="site-section">
+    <div class="container">
+      <div class="site-panel p-8 reveal" style="background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));">
+        <div class="grid gap-6 xl:grid-cols-[1fr,auto] items-center">
+          <div>
+            <h2 style="color: #e8eaed;">Start running GCP services locally</h2>
+            <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
+              One Docker container. 20+ GCP services. Zero code changes. Free for individual developers.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
+            <a href={`${base}reduce-gcp-dev-costs/`} class="site-button site-button--primary">See cost savings</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

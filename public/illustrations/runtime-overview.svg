@@ -42,7 +42,7 @@
   <rect x="232" y="260" width="736" height="18" rx="9" fill="#EAF1FE"/>
   <rect x="232" y="260" width="276" height="18" rx="9" fill="url(#runtime-accent)"/>
   <text x="232" y="310" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="38" font-weight="600">Armeria gateway</text>
-  <text x="232" y="340" fill="#5D718F" font-family="IBM Plex Sans, sans-serif" font-size="21">Admin API, web console, facade routing, and local service orchestration on :8080</text>
+  <text x="232" y="340" fill="#5D718F" font-family="IBM Plex Sans, sans-serif" font-size="21">Admin API, web console, facade routing, and local service orchestration on :24080</text>
 
   <rect x="234" y="402" width="236" height="118" rx="22" fill="#F8FBFF" stroke="#D4E1F3" stroke-width="2"/>
   <rect x="244" y="416" width="92" height="10" rx="5" fill="#2C72F6" fill-opacity="0.16"/>
@@ -64,11 +64,11 @@
 
   <rect x="208" y="548" width="784" height="72" rx="24" fill="#0F1C30"/>
   <text x="234" y="578" fill="#8CA8D6" font-family="IBM Plex Mono, monospace" font-size="16" letter-spacing="2">EXTERNAL EMULATOR PATHS</text>
-  <text x="234" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21">Cloud Storage :4443</text>
-  <text x="448" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21">Pub/Sub :8085</text>
-  <text x="602" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21">Firestore :8086</text>
-  <text x="774" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21">Bigtable :8087</text>
-  <text x="922" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21" text-anchor="end">Spanner :9010   BigQuery :9050</text>
+  <text x="234" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21">Cloud Storage :24081</text>
+  <text x="448" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21">Pub/Sub :24082</text>
+  <text x="602" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21">Firestore :24083</text>
+  <text x="774" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21">Bigtable :24084</text>
+  <text x="922" y="605" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="21" text-anchor="end">Spanner :24085   BigQuery :24087</text>
 
   <rect x="880" y="252" width="112" height="104" rx="24" fill="#F8FBFF" stroke="#D4E1F3" stroke-width="2"/>
   <text x="904" y="292" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="13" letter-spacing="1.5">PERSISTENCE</text>

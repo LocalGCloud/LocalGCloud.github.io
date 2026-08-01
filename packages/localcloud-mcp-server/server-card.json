@@ -1,0 +1,36 @@
+{
+  "name": "LocalCloud MCP Server",
+  "slug": "localcloud-mcp-server",
+  "version": "0.1.0",
+  "description": "Safely run, inspect, diagnose, and document LocalCloud from MCP clients over stdio.",
+  "transport": "stdio",
+  "package": "@localcloud/localcloud-mcp-server",
+  "run": "npx -y @localcloud/localcloud-mcp-server",
+  "homepage": "https://local.cloud/",
+  "docs": [
+    "https://local.cloud/compatibility/",
+    "https://local.cloud/services/",
+    "https://local.cloud/docs/",
+    "https://local.cloud/docs/sdk-examples/",
+    "https://local.cloud/docs/terraform/",
+    "https://local.cloud/docs/seed-data/"
+  ],
+  "icon": "assets/icon.svg",
+  "license": "Apache-2.0",
+  "safety": {
+    "requiresGcpCredentialsByDefault": false,
+    "requiresBillingByDefault": false,
+    "destructiveActionsRequireConfirm": true,
+    "arbitraryShellExecution": false,
+    "stdoutPolicy": "stdout is reserved for MCP JSON-RPC; logs go to stderr"
+  },
+  "tools": [
+    "localcloud-runtime",
+    "localcloud-services",
+    "localcloud-diagnostics",
+    "localcloud-logs",
+    "localcloud-state",
+    "localcloud-docs",
+    "localcloud-gcp-client"
+  ]
+}

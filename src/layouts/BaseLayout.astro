@@ -120,10 +120,12 @@ const ogImageURL = new URL(ogImage, Astro.site);
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.classList.add('visible');
+              // Stop observing once visible to prevent re-triggering
+              observer.unobserve(entry.target);
             }
           });
         },
-        { threshold: 0.06, rootMargin: '0px 0px -30px 0px' }
+        { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
       );
       document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
     </script>

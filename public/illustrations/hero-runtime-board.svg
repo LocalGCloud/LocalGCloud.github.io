@@ -36,7 +36,7 @@
     <rect x="128" y="236" width="598" height="416" rx="30" fill="url(#hrb-panel)"/>
     <text x="160" y="278" fill="#8CA8D6" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.5">RUNTIME BOARD</text>
     <rect x="160" y="308" width="534" height="94" rx="22" fill="#13233B" stroke="#284263" stroke-width="2"/>
-    <text x="188" y="344" fill="#DCEAFF" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">Gateway :8080</text>
+    <text x="188" y="344" fill="#DCEAFF" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">Gateway :24080</text>
     <text x="188" y="376" fill="#BBD0F1" font-family="IBM Plex Sans, sans-serif" font-size="19">Admin API, env export, health, browse, and console</text>
 
     <rect x="160" y="426" width="162" height="164" rx="22" fill="#13233B" stroke="#284263" stroke-width="2"/>

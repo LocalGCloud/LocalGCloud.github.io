@@ -25,7 +25,7 @@ Developing against real cloud services creates friction. Every API call costs mo
 
 Emulators implement the same wire protocols as real GCP services. When your code calls `storage.Client()` in Python or `BigQuery()` in Go, the GCP SDK sends gRPC or REST requests to an endpoint. In production, that endpoint is `storage.googleapis.com`. With an emulator, you set an environment variable to redirect it to `localhost`.
 
-For example, Google's official Pub/Sub emulator listens on `localhost:8085`. Set `PUBSUB_EMULATOR_HOST=localhost:8085` and every Pub/Sub SDK call goes to the local emulator instead of the cloud.
+For example, Google's official Pub/Sub emulator listens on `localhost:24082`. Set `PUBSUB_EMULATOR_HOST=localhost:24082` and every Pub/Sub SDK call goes to the local emulator instead of the cloud.
 
 The emulator maintains its own internal state — topics, subscriptions, stored data — and responds as the real service would. When you're ready to deploy, unset the emulator variables and your code connects to real GCP with no code changes.
 

@@ -1,0 +1,437 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+
+const platforms = [
+  { name: 'AWS (LocalStack)', services: '80+', popular: 'S3, DynamoDB, Lambda, SQS' },
+  { name: 'Google Cloud (LocalCloud)', services: '20+', popular: 'BigQuery, Cloud Storage, Firestore, Pub/Sub' },
+  { name: 'Azure (Azurite)', services: '10+', popular: 'Blob Storage, Queue Storage, Table Storage' },
+];
+
+const faqItems = [
+  {
+    q: 'What is local cloud development?',
+    a: 'Local cloud development means running cloud service emulators on your local machine instead of connecting to remote cloud APIs. Developers use local versions of S3, DynamoDB, BigQuery, Cloud Storage, and other services during development and testing, eliminating cloud costs and network dependencies.',
+  },
+  {
+    q: 'Which cloud platforms support local development?',
+    a: 'AWS (via LocalStack), Google Cloud (via LocalCloud and official emulators), and Azure (via Azurite and official emulators) all support local development. LocalStack covers 80+ AWS services, LocalCloud covers 20+ GCP services, and Azurite covers Azure Storage services.',
+  },
+  {
+    q: 'Do I need different tools for each cloud?',
+    a: 'Yes. Each cloud platform requires its own emulator tooling. LocalStack for AWS, LocalCloud for GCP, Azurite for Azure. However, the development pattern is the same: set environment variables to point SDKs at localhost instead of cloud endpoints.',
+  },
+  {
+    q: 'Can I use local cloud emulators in CI/CD?',
+    a: 'Yes. All major emulator tools (LocalStack, LocalCloud, Azurite) run as Docker containers in CI/CD pipelines. GitHub Actions, GitLab CI, CircleCI, and Jenkins support Docker service containers for integration testing against local cloud services.',
+  },
+  {
+    q: 'Should I test against real cloud services before production?',
+    a: 'Always. Local emulators are high-fidelity but not perfect. Run a final validation suite against real cloud services in a staging environment before production deployment. Emulators catch 95%+ of issues; real cloud catches edge cases and provider-specific behavior.',
+  },
+];
+---
+
+<LandingLayout
+  title="Local Cloud Development — Run AWS, GCP, Azure Services Locally"
+  description="Complete guide to local cloud development. Run AWS (LocalStack), Google Cloud (LocalCloud), and Azure (Azurite) services locally. Eliminate cloud costs, speed up development, and work offline."
+>
+  <script type="application/ld+json" is:inline>
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is local cloud development?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Local cloud development means running cloud service emulators on your local machine instead of connecting to remote cloud APIs. Developers use local versions of S3, DynamoDB, BigQuery, Cloud Storage, and other services during development and testing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which cloud platforms support local development?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AWS (via LocalStack), Google Cloud (via LocalCloud and official emulators), and Azure (via Azurite and official emulators) all support local development."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need different tools for each cloud?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Each cloud platform requires its own emulator tooling. LocalStack for AWS, LocalCloud for GCP, Azurite for Azure. However, the development pattern is the same: set environment variables to point SDKs at localhost."
+      }
+    }
+  ]
+}
+  </script>
+
+  <!-- HERO -->
+  <section class="site-section site-section--hero">
+    <div class="container">
+      <div class="max-w-[48rem] reveal">
+        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Local-First Development</span>
+        <h1 class="mt-4">Local cloud development guide</h1>
+        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
+          AWS has LocalStack. Azure has Azurite. Google Cloud has LocalCloud. Run cloud services locally, eliminate remote API dependencies, work offline.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#gcp" class="site-button site-button--primary">Google Cloud setup</a>
+          <a href="#comparison" class="site-button site-button--secondary">Compare platforms</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY LOCAL CLOUD -->
+  <section class="site-section">
+    <div class="container">
+      <div class="reveal">
+        <h2>Why develop against local cloud services?</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Local emulators remove cloud dependencies, enable offline work, and eliminate API costs during development. Pattern is consistent across AWS, GCP, and Azure.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATFORM COMPARISON -->
+  <section class="site-section" id="comparison">
+    <div class="container">
+      <div class="reveal">
+        <h2>Local cloud emulators by platform</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Each major cloud provider has local emulator tooling. Choose based on your cloud platform and service needs.
+        </p>
+      </div>
+      <div class="mt-8 overflow-x-auto reveal">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-[var(--border-1)]">
+            <tr>
+              <th class="py-3 font-semibold text-[var(--text)]">Platform</th>
+              <th class="py-3 font-semibold text-[var(--text)]">Tool</th>
+              <th class="py-3 font-semibold text-[var(--text)]">Services</th>
+              <th class="py-3 font-semibold text-[var(--text)]">Popular Services</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border-1)]">
+            {platforms.map(p => (
+              <tr>
+                <td class="py-3 text-[var(--text)]">{p.name}</td>
+                <td class="py-3 text-[var(--text-2)] font-mono text-xs">{p.name.includes('AWS') ? 'LocalStack' : p.name.includes('Google') ? 'LocalCloud' : 'Azurite'}</td>
+                <td class="py-3 text-[var(--accent-strong)]">{p.services}</td>
+                <td class="py-3 text-[var(--text-2)] text-xs">{p.popular}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- GCP LOCAL DEVELOPMENT -->
+  <section class="site-section site-section--tight" id="gcp">
+    <div class="container">
+      <div class="reveal">
+        <h2>Google Cloud local development with LocalCloud</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          LocalCloud runs 20+ GCP services in a single Docker container. BigQuery, Cloud Storage, Firestore, Pub/Sub, Spanner, Bigtable, and more — all on localhost.
+        </p>
+      </div>
+
+      <div class="mt-8 site-panel p-6 reveal">
+        <h3 class="text-lg font-semibold text-[var(--text)]">Quick start</h3>
+        <pre class="mt-4 overflow-x-auto text-xs"><code>docker pull jaysen2apache/localcloud
+
+docker run -d \
+  -p 24080-24095:24080-24095 \
+  -m 4g --name localcloud \
+  -v localcloud-data:/var/lib/localcloud \
+  jaysen2apache/localcloud
+
+# Configure environment
+eval $(curl -s http://localhost:24080/env?format=shell)
+
+# Test BigQuery
+bq query --nouse_legacy_sql "SELECT 1 as test"</code></pre>
+      </div>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 reveal">
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Supported GCP services</h3>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Data & Analytics:</strong> BigQuery, Cloud Storage, Firestore, Dataproc</div>
+            <div><strong class="text-[var(--text)]">Messaging:</strong> Pub/Sub, Cloud Tasks</div>
+            <div><strong class="text-[var(--text)]">Databases:</strong> Spanner, Bigtable, Cloud SQL, AlloyDB</div>
+            <div><strong class="text-[var(--text)]">Compute:</strong> Cloud Functions, Cloud Run, GKE, Compute Engine (Pro)</div>
+            <div><strong class="text-[var(--text)]">Operations:</strong> Secret Manager, Cloud Scheduler, Logging, Monitoring</div>
+          </div>
+          <div class="mt-4">
+            <a href={`${base}docs/services-overview/`} class="text-sm text-[var(--accent-strong)] underline">View all 20+ services →</a>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Key features</h3>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div>• Same gRPC/REST protocols as production GCP</div>
+            <div>• Zero code changes — just set environment variables</div>
+            <div>• Works with all official GCP client libraries</div>
+            <div>• Persistent storage (survives container restarts)</div>
+            <div>• CI/CD ready (GitHub Actions, GitLab, etc.)</div>
+            <div>• Terraform compatibility for IaC testing</div>
+            <div>• Native ARM64 support (Apple Silicon)</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="mt-6 reveal">
+        <a href={`${base}how-to-run-google-cloud-locally/`} class="site-button site-button--primary">Complete GCP setup guide</a>
+        <a href={`${base}docs/`} class="ml-3 site-button site-button--secondary">Documentation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- AWS LOCAL DEVELOPMENT -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="reveal">
+        <h2>AWS local development with LocalStack</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          LocalStack emulates 80+ AWS services locally. S3, DynamoDB, Lambda, SQS, SNS, and more — same APIs, same SDKs, zero cloud costs.
+        </p>
+      </div>
+
+      <div class="mt-8 site-panel p-6 reveal">
+        <h3 class="text-lg font-semibold text-[var(--text)]">Quick start</h3>
+        <pre class="mt-4 overflow-x-auto text-xs"><code>docker pull localstack/localstack
+
+docker run -d \
+  -p 4566:4566 \
+  -p 4510-4559:4510-4559 \
+  --name localstack \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  localstack/localstack
+
+# Configure AWS CLI
+export AWS_ENDPOINT_URL=http://localhost:4566
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+
+# Test S3
+aws s3 mb s3://test-bucket</code></pre>
+      </div>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 reveal">
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Popular AWS services</h3>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Storage:</strong> S3, EBS, EFS</div>
+            <div><strong class="text-[var(--text)]">Compute:</strong> Lambda, ECS, EKS</div>
+            <div><strong class="text-[var(--text)]">Databases:</strong> DynamoDB, RDS, DocumentDB</div>
+            <div><strong class="text-[var(--text)]">Messaging:</strong> SQS, SNS, EventBridge, Kinesis</div>
+            <div><strong class="text-[var(--text)]">Infrastructure:</strong> CloudFormation, IAM, API Gateway</div>
+          </div>
+          <div class="mt-4">
+            <a href="https://docs.localstack.cloud/references/coverage/" target="_blank" rel="noopener" class="text-sm text-[var(--accent-strong)] underline">LocalStack coverage →</a>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Limitations</h3>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div>• Some advanced features require Pro tier</div>
+            <div>• Lambda execution environment differs from real AWS</div>
+            <div>• IAM policies are simplified (not 100% parity)</div>
+            <div>• Multi-region behavior is emulated</div>
+            <div>• Performance characteristics differ from AWS</div>
+          </div>
+          <p class="mt-4 text-xs text-[var(--text-2)]">Always validate against real AWS before production deployment.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- AZURE LOCAL DEVELOPMENT -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="reveal">
+        <h2>Azure local development with Azurite</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Azurite is Microsoft's official Azure Storage emulator. Blob Storage, Queue Storage, and Table Storage run locally for development and testing.
+        </p>
+      </div>
+
+      <div class="mt-8 site-panel p-6 reveal">
+        <h3 class="text-lg font-semibold text-[var(--text)]">Quick start</h3>
+        <pre class="mt-4 overflow-x-auto text-xs"><code>docker pull mcr.microsoft.com/azure-storage/azurite
+
+docker run -d \
+  -p 10000:10000 \
+  -p 10001:10001 \
+  -p 10002:10002 \
+  --name azurite \
+  mcr.microsoft.com/azure-storage/azurite
+
+# Configure connection string
+export AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+
+# Test with Azure CLI
+az storage container create --name test-container</code></pre>
+      </div>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 reveal">
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Supported Azure services</h3>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Blob Storage:</strong> Block blobs, append blobs, page blobs</div>
+            <div><strong class="text-[var(--text)]">Queue Storage:</strong> Message queuing with TTL and visibility timeout</div>
+            <div><strong class="text-[var(--text)]">Table Storage:</strong> NoSQL key-value store with queries</div>
+          </div>
+          <div class="mt-4">
+            <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite" target="_blank" rel="noopener" class="text-sm text-[var(--accent-strong)] underline">Azurite documentation →</a>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Other Azure emulators</h3>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div><strong class="text-[var(--text)]">Cosmos DB:</strong> Local emulator for document database (Windows/Docker)</div>
+            <div><strong class="text-[var(--text)]">Azure Functions:</strong> Core Tools for local function development</div>
+            <div><strong class="text-[var(--text)]">Service Bus:</strong> No official local emulator (use real service or third-party)</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEST PRACTICES -->
+  <section class="site-section">
+    <div class="container">
+      <div class="reveal">
+        <h2>Best practices for local cloud development</h2>
+      </div>
+      <div class="mt-8 grid gap-6 reveal">
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">1. Environment variable separation</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Use different environment variables for local vs production. Never accidentally hit production APIs during local development.
+          </p>
+          <pre class="mt-4 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code># .env.local
+BIGQUERY_EMULATOR_HOST=http://localhost:24087
+STORAGE_EMULATOR_HOST=http://localhost:24081
+
+# .env.production
+# (no emulator variables — uses real GCP)</code></pre>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">2. Seed data for testing</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Pre-populate local services with test data. Makes testing faster and more consistent across team members.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div>• Create seed scripts that run on container startup</div>
+            <div>• Store seed data in version control</div>
+            <div>• Use realistic data volumes for performance testing</div>
+            <div>• Automate seed data creation in CI/CD</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">3. CI/CD integration</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Run emulators as service containers in CI pipelines. Integration tests run against local cloud services without credentials or billing.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div>• Use Docker Compose for multi-service setups</div>
+            <div>• Wait for emulators to be healthy before running tests</div>
+            <div>• Cache Docker images to speed up CI runs</div>
+            <div>• Run parallel test suites with isolated emulator instances</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">4. Feature parity awareness</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Know what's supported and what's not. Emulators have documented gaps — always validate against real cloud services before production.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div>• Read emulator coverage documentation</div>
+            <div>• Test edge cases against real cloud in staging</div>
+            <div>• Monitor for behavior differences</div>
+            <div>• Have a staging environment that mirrors production</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">5. Performance testing considerations</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Local emulators have different performance characteristics than production cloud services. Don't rely on local benchmarks for production capacity planning.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div>• Latency is microseconds locally, milliseconds in cloud</div>
+            <div>• Throughput limits differ significantly</div>
+            <div>• Resource contention behaves differently</div>
+            <div>• Always load test against real cloud before launch</div>
+          </div>
+        </article>
+
+        <article class="site-panel p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">6. Team consistency</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">
+            Standardize local development setup across the team. Everyone should run the same emulator versions with the same configuration.
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
+            <div>• Pin Docker image versions in docker-compose.yml</div>
+            <div>• Document setup in README</div>
+            <div>• Provide one-command setup script</div>
+            <div>• Include emulator config in version control</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="site-section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="mt-6 grid gap-3 reveal">
+        {faqItems.map(item => (
+          <details class="site-panel p-5 cursor-pointer">
+            <summary class="font-semibold text-[var(--text)] text-[1.05rem]">{item.q}</summary>
+            <p class="mt-3 text-[var(--text-2)] leading-7">{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="site-section">
+    <div class="container">
+      <div class="site-panel p-8 reveal" style="background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));">
+        <div class="grid gap-6 xl:grid-cols-[1fr,auto] items-center">
+          <div>
+            <h2 style="color: #e8eaed;">Start with Google Cloud local development</h2>
+            <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
+              Run BigQuery, Cloud Storage, Firestore, Pub/Sub, Spanner, and 20+ GCP services locally. Zero code changes. Free for developers.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a href={`${base}how-to-run-google-cloud-locally/`} class="site-button site-button--secondary">Setup guide</a>
+            <a href={`${base}docs/`} class="site-button site-button--primary">Documentation</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

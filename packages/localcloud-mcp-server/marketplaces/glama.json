@@ -1,0 +1,22 @@
+{
+  "displayName": "LocalCloud MCP Server",
+  "identifier": "io.localcloud.server",
+  "npmPackage": "@localcloud/localcloud-mcp-server",
+  "transport": "stdio",
+  "categories": ["developer-tools", "testing", "cloud"],
+  "links": {
+    "homepage": "https://local.cloud/",
+    "docs": "https://local.cloud/docs/",
+    "compatibility": "https://local.cloud/compatibility/",
+    "services": "https://local.cloud/services/"
+  },
+  "tools": [
+    "localcloud-runtime",
+    "localcloud-services",
+    "localcloud-diagnostics",
+    "localcloud-logs",
+    "localcloud-state",
+    "localcloud-docs",
+    "localcloud-gcp-client"
+  ]
+}

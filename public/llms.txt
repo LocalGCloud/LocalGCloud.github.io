@@ -1,70 +1,78 @@
 # LocalCloud
 
-LocalCloud is a local Google Cloud runtime that brings major GCP services into a single Docker container — no cloud account, no credentials, no cloud costs. Teams develop against real GCP APIs locally, then switch to production by unsetting emulator environment variables.
+> LocalCloud is a local Google Cloud runtime for development, testing, CI, and demos. It runs 20+ GCP service surfaces in one Docker container, uses standard Google Cloud SDKs pointed at localhost, and requires no GCP account, credentials, service-account keys, or billing project by default.
 
-## What It Is
-- A single Docker container running 20+ GCP service emulators
-- Same SDKs, same APIs, zero code changes
-- Free for developers
-- Built-in web console at localhost:8080 for inspecting service health and data
+LocalCloud is not a production replacement for Google Cloud. Validate against real GCP before production deployment.
+Availability: Free for developers.
 
-## Key Pages
-- Homepage: https://local.cloud/
-- Getting Started: https://local.cloud/docs/
-- What is a GCP Emulator?: https://local.cloud/docs/what-is-gcp-emulator/
-- Service Catalog: https://local.cloud/services/
-- Licensing: https://local.cloud/docs/licensing/
-- FAQ: https://local.cloud/docs/faq/
-- SDK Examples: https://local.cloud/docs/sdk-examples/
-- Terraform Integration: https://local.cloud/docs/terraform/
-- Architecture: https://local.cloud/docs/architecture/
+## Primary docs
 
-## SEO Landing Pages
-- GCP Emulator: https://local.cloud/gcp-emulator/
-- BigQuery Emulator: https://local.cloud/bigquery-emulator/
-- Pub/Sub Emulator: https://local.cloud/pubsub-emulator/
-- Firestore Emulator: https://local.cloud/firestore-emulator/
-- Spanner Emulator: https://local.cloud/spanner-emulator/
-- Bigtable Emulator: https://local.cloud/bigtable-emulator/
-- Cloud Storage Emulator: https://local.cloud/cloud-storage-emulator/
+- [AI agent guide](https://local.cloud/ai/): Human explanation, copy prompts, service matrix, safety boundaries, and AGENTS.md template for AI coding agents.
+- [Raw agent execution guide](https://local.cloud/ai/agents.md): Markdown instructions for agents to start LocalCloud and verify localhost GCP workflows safely.
+- [AGENTS.md template](https://local.cloud/ai/AGENTS.md): Downloadable repository-local agent policy template.
+- [Agent Markdown resources](https://local.cloud/ai/resources.md): Raw Markdown route index and canonical policy for agent-facing alternatives.
+- [Agent service matrix](https://local.cloud/ai/services.md): Raw Markdown service metadata for agents.
+- [Agent compatibility boundaries](https://local.cloud/ai/compatibility.md): Raw Markdown safety and validation rules.
+- [Agent docs index](https://local.cloud/ai/docs.md): Raw Markdown setup, SDK, Terraform, and seed-data links.
+- [LocalCloud Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): Portable skills for BigQuery, Pub/Sub, Terraform, CI sidecars, seed data, and SDK tests; copy `agent-skills/skills/*` into `.agents/skills/`.
+- [Getting started](https://local.cloud/docs/): Quick start for running LocalCloud locally.
+- [Service catalog](https://local.cloud/services/): 20+ local GCP service surfaces with ports, protocols, and coverage notes.
+- [Compatibility and limitations](https://local.cloud/compatibility/): Boundaries and known limitations for local validation.
+- [SDK examples](https://local.cloud/docs/sdk-examples/): Configure standard Google Cloud SDKs to use localhost emulator endpoints.
+- [Terraform integration](https://local.cloud/docs/terraform/): Endpoint overrides for local Terraform validation.
+- [Seed data](https://local.cloud/docs/seed-data/): Repeatable local data setup.
 
-## Use-Case Pages
-- GCP Integration Testing in CI/CD: https://local.cloud/gcp-integration-testing/
-- Reduce GCP Development Costs: https://local.cloud/reduce-gcp-dev-costs/
-- LocalStack for Google Cloud: https://local.cloud/localstack-for-google-cloud/
-- Compatibility & limitations: https://local.cloud/compatibility/
+## Product pages
 
-## Comparisons
-- LocalCloud vs Google Emulators: https://local.cloud/docs/localcloud-vs-google-emulators/
-- BigQuery Feature Comparison: https://local.cloud/docs/bigquery-feature-comparison/
-- BigQuery Coverage Gaps: https://local.cloud/docs/bigquery-coverage-gaps/
+- [Homepage](https://local.cloud/): LocalCloud overview.
+- [What is a GCP Emulator?](https://local.cloud/docs/what-is-gcp-emulator/): Explanation of emulator workflows.
+- [Architecture](https://local.cloud/docs/architecture/): LocalCloud runtime architecture.
+- [Web Console](https://local.cloud/docs/console/): Local service health and data inspection.
+- [FAQ](https://local.cloud/docs/faq/): Common questions.
+- [Licensing](https://local.cloud/docs/licensing/): License and usage terms.
 
-## Service Deep-Dives
-- BigQuery Emulator Features: https://local.cloud/docs/bigquery-emulator-features/
-- Bigtable Emulator Features: https://local.cloud/docs/bigtable-emulator-features/
-- Spanner Emulator Features: https://local.cloud/docs/spanner-emulator-features/
+## Use cases
 
-## Services Provided
-- Cloud Storage, Pub/Sub, Firestore (official Google emulators)
-- BigQuery (custom DuckDB-based emulator, ~96% SQL coverage, 936 collected tests)
-- Spanner (extended official emulator with PostgreSQL interface, PGAdapter)
-- Bigtable (custom emulator with change streams, materialized views, persistence)
-- Memorystore (Redis-compatible cache)
-- Secret Manager, Cloud Tasks, Cloud Logging, Cloud Monitoring (local facades)
-- Cloud Workflows (full stdlib, connector shims)
-- GKE, Compute Engine, Cloud Run (opt-in, Docker-backed)
-- Vertex AI, Cloud KMS, Cloud SQL (planned)
+- [GCP Emulator](https://local.cloud/gcp-emulator/): Run Google Cloud locally.
+- [GCP Integration Testing in CI/CD](https://local.cloud/gcp-integration-testing/): Local GCP integration tests.
+- [Reduce GCP Development Costs](https://local.cloud/reduce-gcp-dev-costs/): Avoid cloud spend during development.
+- [LocalStack for Google Cloud](https://local.cloud/localstack-for-google-cloud/): LocalStack-style workflow for GCP.
 
-## Quick Start
-```
+## Service deep dives
+
+- [BigQuery emulator](https://local.cloud/bigquery-emulator/): Local BigQuery-compatible workflows.
+- [Bigtable emulator](https://local.cloud/bigtable-emulator/): Local Bigtable workflows.
+- [Cloud Storage emulator](https://local.cloud/cloud-storage-emulator/): Local bucket/object workflows.
+- [Firestore emulator](https://local.cloud/firestore-emulator/): Local document database workflows.
+- [Pub/Sub emulator](https://local.cloud/pubsub-emulator/): Local messaging workflows.
+- [Spanner emulator](https://local.cloud/spanner-emulator/): Local Spanner workflows.
+- [BigQuery feature comparison](https://local.cloud/docs/bigquery-feature-comparison/): BigQuery coverage details.
+- [BigQuery coverage gaps](https://local.cloud/docs/bigquery-coverage-gaps/): Known BigQuery limitations.
+- [BigQuery emulator features](https://local.cloud/docs/bigquery-emulator-features/): BigQuery features.
+- [Bigtable emulator features](https://local.cloud/docs/bigtable-emulator-features/): Bigtable features.
+- [Spanner emulator features](https://local.cloud/docs/spanner-emulator-features/): Spanner features.
+
+## Key facts
+
+- Docker image: `jaysen2apache/localcloud`
+- Web console: `http://localhost:24080`
+- Health endpoint: `http://localhost:24080/_localcloud/health`
+- Shell env endpoint: `http://localhost:24080/_localcloud/env?format=shell`
+- Terraform env endpoint: `http://localhost:24080/_localcloud/env?format=terraform`
+- Quick start:
+
+```bash
 docker pull jaysen2apache/localcloud
-docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
-  -p 9010:9010 -p 9020:9020 -p 9050:9050 -p 9060:9060 -p 6379:6379 \
+docker run -d -p 8080:24080 -p 4443:24081 -p 8085-8087:24082-8087 \
+  -p 9010:24085 -p 9020:24086 -p 9050:24087 -p 9060:24088 -p 6379:6379 \
   -m 4g --name localcloud \
   -v ~/.localcloud/data:/var/lib/localcloud \
   jaysen2apache/localcloud
-eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
+eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
 ```
 
-## GitHub
-https://github.com/LocalGCloud/LocalGCloud.github.io
+## Optional
+
+- [Full LLM context](https://local.cloud/llms-full.txt): Expanded LocalCloud context for AI systems.
+- [Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): Portable LocalCloud skills for BigQuery, Pub/Sub, Terraform, CI sidecars, seed data, and SDK tests.
+- [GitHub](https://github.com/LocalGCloud/LocalGCloud.github.io): Project repository.

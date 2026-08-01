@@ -1,0 +1,13 @@
+---
+import AgenticIndexPage from '../../components/AgenticIndexPage.astro';
+import { blogDemoPages } from '../../data/agenticContent';
+---
+
+<AgenticIndexPage
+  title="LocalCloud Agentic Blog and Demos"
+  description="Practical LocalCloud posts and demos for Claude Code local GCP sandboxes, Google emulators versus LocalCloud for agents, and BigQuery pipelines written by agents."
+  h1="LocalCloud agentic blog and demos"
+  eyebrow="Blog routes"
+  deck="Narrative demos for teams evaluating LocalCloud as the local GCP runtime behind agent-written code, CI checks, and service-specific validation."
+  pages={blogDemoPages}
+/>

@@ -1,0 +1,9 @@
+[
+  { "name": "localcloud-runtime", "category": "runtime", "destructive": true, "confirmation": "stop and restart require confirm: true" },
+  { "name": "localcloud-services", "category": "metadata", "destructive": false },
+  { "name": "localcloud-diagnostics", "category": "diagnostics", "destructive": false },
+  { "name": "localcloud-logs", "category": "observability", "destructive": false, "boundedOutput": true },
+  { "name": "localcloud-state", "category": "state", "destructive": true, "confirmation": "reset requires confirm: true and LOCALCLOUD_MCP_ENABLE_STATE_RESET=1" },
+  { "name": "localcloud-docs", "category": "documentation", "destructive": false },
+  { "name": "localcloud-gcp-client", "category": "client", "destructive": false, "confirmation": "execution requires confirm: true and LOCALCLOUD_MCP_ENABLE_GCP_CLIENT=1; dry-run by default" }
+]

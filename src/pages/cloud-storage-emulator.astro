@@ -8,7 +8,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const pythonCode = `import os
 from google.cloud import storage
 
-os.environ["STORAGE_EMULATOR_HOST"] = "http://localhost:4443"
+os.environ["STORAGE_EMULATOR_HOST"] = "http://localhost:24081"
 
 client = storage.Client(project="local-project")
 bucket = client.create_bucket("my-test-bucket")
@@ -20,7 +20,7 @@ blob.upload_from_string("Hello, LocalCloud!")
 for blob in client.list_blobs("my-test-bucket"):
     print(f"{blob.name}: {blob.size} bytes")`;
 
-const nodeCode = `process.env.STORAGE_EMULATOR_HOST = 'http://localhost:4443';
+const nodeCode = `process.env.STORAGE_EMULATOR_HOST = 'http://localhost:24081';
 
 const { Storage } = require('@google-cloud/storage');
 const storage = new Storage({ projectId: 'local-project' });
@@ -36,12 +36,8 @@ files.forEach(file => {
 
 const faqItems = [
   {
-    q: 'Does Google provide an official Cloud Storage emulator?',
-    a: 'No — Google does not provide an official Cloud Storage emulator. Teams either use real GCS buckets during development (incurring storage and egress costs) or test without object storage entirely. LocalCloud fills this gap with a third-party emulator that provides bucket and object CRUD operations locally.',
-  },
-  {
     q: 'How does LocalCloud emulate Cloud Storage?',
-    a: 'LocalCloud integrates fake-gcs-server, a community-maintained Cloud Storage emulator, on port 4443. It provides bucket CRUD, object upload/download/list/delete/copy, object metadata, and multipart uploads — all using the standard Google Cloud Storage SDK.',
+    a: 'LocalCloud integrates fake-gcs-server, a community-maintained Cloud Storage emulator, on port 24081. It provides bucket CRUD, object upload/download/list/delete/copy, object metadata, and multipart uploads — all using the standard Google Cloud Storage SDK.',
   },
   {
     q: 'Can I upload large files to the local Cloud Storage emulator?',
@@ -65,18 +61,12 @@ const faqItems = [
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Does Google provide an official Cloud Storage emulator?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No — Google does not provide an official Cloud Storage emulator. LocalCloud fills this gap with a third-party emulator that provides bucket and object CRUD operations locally."
-      }
-    },
     {
       "@type": "Question",
       "name": "How does LocalCloud emulate Cloud Storage?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "LocalCloud integrates fake-gcs-server, a community-maintained Cloud Storage emulator, on port 4443. It provides bucket CRUD, object upload/download/list/delete/copy, object metadata, and multipart uploads."
+        "text": "LocalCloud integrates fake-gcs-server, a community-maintained Cloud Storage emulator, on port 24081. It provides bucket CRUD, object upload/download/list/delete/copy, object metadata, and multipart uploads."
       }
     },
     {
@@ -108,9 +98,9 @@ const faqItems = [
       </div>
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">4443</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Default port</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">HTTP endpoint — your GCS SDK connects automatically with one environment variable.</p>
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">$0</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Egress fees</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Upload, download, and transfer objects without cloud storage or egress charges.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">—</div>
@@ -152,7 +142,7 @@ const faqItems = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>What's included</h2>
+        <h2>Features</h2>
       </div>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 reveal">
         <article class="site-panel p-5">
@@ -208,7 +198,7 @@ const faqItems = [
           <div>
             <h2 style="color: #e8eaed;">Start using Cloud Storage locally</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              Bundle Cloud Storage with 20+ GCP services in one Docker container. Same SDKs, same APIs, zero egress costs. Free for individual developers.
+              No egress fees. Instant uploads. Localhost speed. Test bucket operations, object metadata, and multipart uploads without cloud storage costs.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

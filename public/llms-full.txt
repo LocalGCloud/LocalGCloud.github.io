@@ -1,0 +1,164 @@
+# LocalCloud full LLM context
+
+> LocalCloud is a local Google Cloud runtime for development, testing, CI, and demos. It runs 20+ GCP service surfaces in one Docker container, uses standard Google Cloud SDKs pointed at localhost, and requires no GCP account, credentials, service-account keys, or billing project by default.
+
+LocalCloud is not a production replacement for Google Cloud. Before production deployment, unset emulator environment variables and validate behavior against real Google Cloud.
+
+Large-context warning: this file is intentionally verbose for long-context AI systems. Prefer https://local.cloud/llms.txt or https://local.cloud/ai/agents.md for compact routing context.
+
+## Table of contents
+
+- Canonical facts
+- Quick start
+- Primary pages
+- Service matrix
+- Copy prompts for agents
+- Safety checklist
+
+## Source URLs
+
+- https://local.cloud/ai/
+- https://local.cloud/ai/agents.md
+- https://local.cloud/ai/AGENTS.md
+- https://local.cloud/services/
+- https://local.cloud/compatibility/
+- https://local.cloud/docs/
+
+## Canonical facts
+
+- Product: LocalCloud
+- Category: Local Google Cloud emulator
+- Site: https://local.cloud/
+- Docker image: `jaysen2apache/localcloud`
+- Container name: `localcloud`
+- Default project: `local-project`
+- Memory flag: `4g`
+- Web console: `http://localhost:24080`
+- Health endpoint: `http://localhost:24080/_localcloud/health`
+- Shell env endpoint: `http://localhost:24080/_localcloud/env?format=shell`
+- Terraform env endpoint: `http://localhost:24080/_localcloud/env?format=terraform`
+- Default boundary: no GCP account, no Google credentials, no service-account key, and no billing project are required for local development or CI workflows.
+
+## Quick start
+
+```bash
+docker pull jaysen2apache/localcloud
+docker run -d -p 8080:24080 -p 4443:24081 -p 8085-8087:24082-8087 \
+  -p 9010:24085 -p 9020:24086 -p 9050:24087 -p 9060:24088 -p 6379:6379 \
+  -m 4g --name localcloud \
+  -v ~/.localcloud/data:/var/lib/localcloud \
+  jaysen2apache/localcloud
+eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
+curl -fsS http://localhost:24080/_localcloud/health
+```
+
+If the `localcloud` container already exists, reuse or start it instead of creating a duplicate. If Docker or LocalCloud is unavailable, agents should stop rather than falling back to real Google Cloud.
+
+## Primary pages
+
+- [AI agent guide](https://local.cloud/ai/): Human explanation, copy prompts, service matrix, safety boundaries, and AGENTS.md distinction.
+- [Raw agent execution guide](https://local.cloud/ai/agents.md): Markdown execution guide for agents.
+- [AGENTS.md template](https://local.cloud/ai/AGENTS.md): Downloadable repository-local policy template for coding agents.
+- [Agent Markdown resources](https://local.cloud/ai/resources.md): Raw Markdown route index and canonical policy.
+- [Agent service matrix](https://local.cloud/ai/services.md): Raw Markdown service metadata.
+- [Agent compatibility boundaries](https://local.cloud/ai/compatibility.md): Raw Markdown safety and validation rules.
+- [Agent docs index](https://local.cloud/ai/docs.md): Raw Markdown setup, SDK, Terraform, and seed-data links.
+- [Documentation](https://local.cloud/docs/): Quick start and product documentation.
+- [Service catalog](https://local.cloud/services/): Local GCP service catalog.
+- [Compatibility](https://local.cloud/compatibility/): Limitations and validation boundaries.
+- [SDK examples](https://local.cloud/docs/sdk-examples/): Standard SDK configuration for localhost endpoints.
+- [Terraform](https://local.cloud/docs/terraform/): Terraform endpoint overrides for local validation.
+- [Seed data](https://local.cloud/docs/seed-data/): Repeatable local test data setup.
+- [Web Console](https://local.cloud/docs/console/): Inspect service health, local data, logs, and administrative state.
+- [Architecture](https://local.cloud/docs/architecture/): Runtime architecture.
+- [FAQ](https://local.cloud/docs/faq/): Common questions.
+- [Licensing](https://local.cloud/docs/licensing/): License terms.
+
+## Service matrix
+
+- Cloud Storage: HTTP/REST on 4443. Set `STORAGE_EMULATOR_HOST=http://localhost:24081`. Supports bucket CRUD, object upload/download/list/delete/copy, and metadata. Local gaps include versioning, lifecycle execution, and CMEK.
+- Pub/Sub: gRPC on 8085. Set `PUBSUB_EMULATOR_HOST=localhost:24082`. Supports topics, subscriptions, publish, pull, streaming pull, and ack. Local gaps include schema validation and BigQuery/GCS subscriptions.
+- Firestore: gRPC on 8086. Set `FIRESTORE_EMULATOR_HOST=localhost:24083`. Supports document CRUD, collection queries, batch writes, and real-time listeners. Local gaps include composite indexes and aggregation queries.
+- BigQuery: REST + gRPC on 9050 / 9060. Set `BIGQUERY_EMULATOR_HOST=http://localhost:24087`. Supports local warehouse-style SQL workflows including broad DQL/DDL/DML coverage, functions, scripts, procedures, joins, CTEs, window functions, UNNEST, PIVOT, external tables, REST API, simplified gRPC Storage API, and INFORMATION_SCHEMA views. Local gaps include BQML, AEAD encryption functions, security policy enforcement, and full GEOGRAPHY parity.
+- Spanner: gRPC + REST on 9010 / 9020. Set `SPANNER_EMULATOR_HOST=localhost:24085`. Supports instance/database admin APIs, DDL, SQL, DML, sessions, transactions, secondary indexes, commit timestamps, partitioned operations, NUMERIC, JSON, generated columns, PostgreSQL interface, PGAdapter, and persistence. Local gaps include IAM and Backup APIs, production performance parity, quota enforcement, and some SPANNER_SYS tables.
+- Bigtable: gRPC on 8087. Set `BIGTABLE_EMULATOR_HOST=localhost:24084`. Supports tables, column families, ReadRows, MutateRow, CheckAndMutate, admin APIs, change streams, materialized views, and persistence. Local gaps include GoogleSQL for Bigtable, replication, multi-cluster, and CMEK encryption.
+- Secret Manager: gRPC on 8080. Set `SECRET_MANAGER_EMULATOR_HOST=localhost:24080`. Supports secret CRUD, version management, enable/disable/destroy. Local gaps include rotation, CMEK, and per-secret IAM.
+- Cloud Tasks: gRPC on 8080. Set `CLOUD_TASKS_EMULATOR_HOST=localhost:24080`. Supports queue CRUD, HTTP tasks, and auto-dispatch with retries. Local gaps include App Engine tasks and OAuth token generation.
+- Cloud Logging: gRPC on 8080. Set `CLOUD_LOGGING_EMULATOR_HOST=localhost:24080`. Supports WriteLogEntries, ListLogEntries, ListLogs, and DeleteLog. Local gaps include metrics, sinks, exclusions, and audit logs.
+- Cloud Monitoring: gRPC on 8080. Set `CLOUD_MONITORING_EMULATOR_HOST=localhost:24080`. Supports CreateTimeSeries, ListTimeSeries, and metric descriptors. Local gaps include alerting, uptime checks, and dashboards.
+- Memorystore: RESP2 on 6379. Set `REDIS_HOST=localhost`. Supports Redis-compatible GET/SET/DEL, lists, sets, hashes, sorted sets, TTL, KEYS, and 16 logical databases. Local gaps include Pub/Sub, Lua scripting, streams, and MULTI/EXEC.
+- Cloud Workflows: REST on 8080. Set `WORKFLOWS_EMULATOR_HOST=localhost:24080`. Supports YAML workflow definitions, all step types, full stdlib, connector shims, and callbacks. Local gaps include persistent execution checkpointing, KMS, and IAM enforcement.
+- GKE: gRPC on 8080. Set `GKE_EMULATOR_HOST=localhost:24080`. Opt-in Docker-backed surface for cluster CRUD using real k3d clusters. Local gaps include node pools, auto-scaling, and upgrades.
+- Compute Engine: REST on 8080. Set `COMPUTE_EMULATOR_HOST=localhost:24080`. Opt-in Docker-backed surface for instance CRUD and start/stop. Local gaps include disks, snapshots, templates, and networking.
+- Cloud Run: gRPC on 8080. Set `CLOUD_RUN_EMULATOR_HOST=localhost:24080`. Opt-in Docker-backed surface for service CRUD and revisions. Local gaps include traffic splitting, custom domains, and jobs.
+- Vertex AI: REST on 8080. Set `AIPLATFORM_EMULATOR_HOST=http://localhost:24080`. Planned service; do not ask agents to rely on it for local verification yet.
+- Cloud KMS: REST on 8080. Set `CLOUD_KMS_EMULATOR_HOST=http://localhost:24080`. Planned service; do not ask agents to rely on it for local verification yet.
+- Cloud SQL: REST on 8080. Set `CLOUD_SQL_EMULATOR_HOST=http://localhost:24080`. Planned service; do not ask agents to rely on it for local verification yet.
+
+## Copy prompts for agents
+
+### Start LocalCloud
+
+```text
+Fetch https://local.cloud/ai/agents.md and follow the instructions to start LocalCloud on my machine. Verify Docker, start or reuse the localcloud container, export emulator environment variables, and run one local GCP SDK/API smoke check. Do not ask for or use real GCP credentials.
+```
+
+### Configure this repo
+
+```text
+Set up this repository to use LocalCloud for local GCP development. First read https://local.cloud/ai/agents.md, then inspect this repo, identify the GCP services and SDK language, configure emulator environment variables, and run the narrowest integration test against localhost. Do not use real GCP credentials or production endpoints.
+```
+
+### Prepare CI
+
+```text
+Prepare this repository for CI with LocalCloud. Read https://local.cloud/ai/agents.md and https://local.cloud/docs/terraform/, then propose the smallest CI change that starts LocalCloud, waits for readiness, exports emulator env vars, runs integration tests locally, and avoids real GCP secrets.
+```
+
+### Troubleshoot routing
+
+```text
+Troubleshoot my LocalCloud setup. Read https://local.cloud/ai/agents.md, check whether Docker and the localcloud container are healthy, verify emulator environment variables are set in this shell/test runner, and identify any SDK or Terraform configuration that could still call real Google Cloud.
+```
+
+### BigQuery local test
+
+```text
+Use LocalCloud to test BigQuery code locally. Read https://local.cloud/ai/agents.md and the BigQuery docs, set BIGQUERY_EMULATOR_HOST for localhost, create a local dataset/table, insert sample rows, run a representative query, and call out any unsupported SQL features instead of using real BigQuery.
+```
+
+### Pub/Sub local test
+
+```text
+Use LocalCloud to test Pub/Sub locally. Read https://local.cloud/ai/agents.md, set PUBSUB_EMULATOR_HOST=localhost:24082, create a topic and subscription, publish one test message, pull or stream it, ack it, and verify the payload without using real GCP credentials.
+```
+
+### Firestore local test
+
+```text
+Use LocalCloud to test Firestore locally. Read https://local.cloud/ai/agents.md, set FIRESTORE_EMULATOR_HOST=localhost:24083, create a local document, read it back through the project SDK, and document any index or aggregation behavior that still needs real GCP validation.
+```
+
+### Cloud Storage local test
+
+```text
+Use LocalCloud to test Cloud Storage locally. Read https://local.cloud/ai/agents.md, set STORAGE_EMULATOR_HOST=http://localhost:24081, create a bucket, upload a small object, list it, download it, and verify content without using real GCP credentials.
+```
+
+
+## Agent Skills
+
+- Repository: https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills
+- Included skills: `localcloud-bigquery`, `localcloud-pubsub`, `localcloud-terraform`, `localcloud-ci-sidecar`, `localcloud-seed-data`, and `localcloud-sdk-tests`.
+- Install pattern: copy `agent-skills/skills/*` into a project-local `.agents/skills/` directory, then invoke the relevant skill by name.
+- Safety boundary: skills route SDKs and Terraform to localhost, avoid real GCP credentials by default, and require real-GCP validation before production.
+
+## Safety checklist
+
+- State LocalCloud is for development, testing, CI, and demos — not a production GCP replacement.
+- State default workflows require no GCP account, no Google credentials, and no billing project.
+- Use the canonical Docker image `jaysen2apache/localcloud`.
+- Point SDKs and Terraform to localhost/emulator endpoints before any verification step.
+- Warn agents to stop rather than falling back to real GCP when Docker or LocalCloud is unavailable.
+- Link service-specific claims to the service catalog, compatibility docs, or reviewed evidence.
+- Instruct production validation against real Google Cloud after unsetting emulator environment variables.

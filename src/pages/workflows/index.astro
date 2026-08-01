@@ -1,0 +1,13 @@
+---
+import AgenticIndexPage from '../../components/AgenticIndexPage.astro';
+import { workflowPages } from '../../data/agenticContent';
+---
+
+<AgenticIndexPage
+  title="LocalCloud Agentic Workflows"
+  description="LocalCloud workflow pages for GitHub Actions GCP emulator jobs, Terraform endpoint validation, integration tests, and agentic CI."
+  h1="LocalCloud agentic workflows"
+  eyebrow="Workflow routes"
+  deck="Start LocalCloud, wait for health, export localhost emulator endpoints, and run reviewable tests before any real Google Cloud validation step."
+  pages={workflowPages}
+/>

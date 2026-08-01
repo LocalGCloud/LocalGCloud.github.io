@@ -39,7 +39,7 @@
   <rect x="366" y="202" width="470" height="240" rx="28" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
   <rect x="390" y="226" width="422" height="18" rx="9" fill="#EAF1FE"/>
   <rect x="390" y="226" width="176" height="18" rx="9" fill="url(#rt-blue)"/>
-  <text x="390" y="284" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="36" font-weight="600">Armeria gateway :8080</text>
+  <text x="390" y="284" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="36" font-weight="600">Armeria gateway :24080</text>
   <text x="390" y="316" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="20">Admin API, request logger, health aggregation, env export, web console, and in-process facades</text>
 
   <rect x="390" y="344" width="126" height="66" rx="18" fill="#F8FBFF" stroke="#D7E5F6" stroke-width="2"/>
@@ -68,22 +68,22 @@
   <text x="152" y="458" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="30" font-weight="600">supervisord keeps the runtime alive</text>
 
   <rect x="152" y="486" width="126" height="50" rx="18" fill="#EFF5FF" stroke="#D8E5F6" stroke-width="2"/>
-  <text x="177" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">fake-gcs :4443</text>
+  <text x="177" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">fake-gcs :24081</text>
 
   <rect x="292" y="486" width="126" height="50" rx="18" fill="#EFF5FF" stroke="#D8E5F6" stroke-width="2"/>
-  <text x="322" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">Pub/Sub :8085</text>
+  <text x="322" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">Pub/Sub :24082</text>
 
   <rect x="432" y="486" width="126" height="50" rx="18" fill="#EFF5FF" stroke="#D8E5F6" stroke-width="2"/>
-  <text x="456" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">Firestore :8086</text>
+  <text x="456" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">Firestore :24083</text>
 
   <rect x="572" y="486" width="126" height="50" rx="18" fill="#EFF5FF" stroke="#D8E5F6" stroke-width="2"/>
-  <text x="596" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">Bigtable :8087</text>
+  <text x="596" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">Bigtable :24084</text>
 
   <rect x="712" y="486" width="126" height="50" rx="18" fill="#EFF5FF" stroke="#D8E5F6" stroke-width="2"/>
-  <text x="744" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">Spanner :9010</text>
+  <text x="744" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">Spanner :24085</text>
 
   <rect x="852" y="486" width="198" height="50" rx="18" fill="#EFF5FF" stroke="#D8E5F6" stroke-width="2"/>
-  <text x="884" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">BigQuery :9050 / :9060</text>
+  <text x="884" y="517" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="19" font-weight="600">BigQuery :24087 / :24088</text>
 
   <rect x="152" y="580" width="302" height="110" rx="24" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
   <text x="178" y="614" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.6">SERVICE BOUNDARY</text>

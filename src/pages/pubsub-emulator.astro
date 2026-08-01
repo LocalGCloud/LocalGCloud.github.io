@@ -10,7 +10,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const pythonCode = `import os
 from google.cloud import pubsub_v1
 
-os.environ["PUBSUB_EMULATOR_HOST"] = "localhost:8085"
+os.environ["PUBSUB_EMULATOR_HOST"] = "localhost:24082"
 
 publisher = pubsub_v1.PublisherClient()
 topic_path = publisher.topic_path("local-project", "my-topic")
@@ -19,7 +19,7 @@ publisher.create_topic(name=topic_path)
 future = publisher.publish(topic_path, b"Hello, LocalCloud!")
 print(future.result())`;
 
-const nodeCode = `process.env.PUBSUB_EMULATOR_HOST = 'localhost:8085';
+const nodeCode = `process.env.PUBSUB_EMULATOR_HOST = 'localhost:24082';
 
 const { PubSub } = require('@google-cloud/pubsub');
 const pubsub = new PubSub({ projectId: 'local-project' });
@@ -35,12 +35,8 @@ main();`;
 
 const faqItems = [
   {
-    q: 'Does Google provide an official Pub/Sub emulator?',
-    a: 'Yes — Google provides an official Pub/Sub emulator. However, it runs as a standalone process that you must manage separately from other emulators. LocalCloud bundles it alongside 20+ other GCP services in one container, adds persistence, and includes web-console operations for topic and subscription management.',
-  },
-  {
     q: 'How do I connect to the Pub/Sub emulator in Docker?',
-    a: 'Set PUBSUB_EMULATOR_HOST=localhost:8085 and your GCP Pub/Sub SDK automatically connects to the local emulator. In CI/CD, LocalCloud runs as a service container — your test code uses the same SDK with zero changes.',
+    a: 'Set PUBSUB_EMULATOR_HOST=localhost:24082 and your GCP Pub/Sub SDK automatically connects to the local emulator. In CI/CD, LocalCloud runs as a service container — your test code uses the same SDK with zero changes.',
   },
   {
     q: 'Can I run Pub/Sub alongside BigQuery and Firestore locally?',
@@ -68,18 +64,12 @@ const faqItems = [
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Does Google provide an official Pub/Sub emulator?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes — Google provides an official Pub/Sub emulator. However, it runs as a standalone process. LocalCloud bundles it alongside 20+ other GCP services in one container, adds persistence, and includes web-console operations."
-      }
-    },
     {
       "@type": "Question",
       "name": "How do I connect to the Pub/Sub emulator in Docker?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Set PUBSUB_EMULATOR_HOST=localhost:8085 and your GCP Pub/Sub SDK automatically connects to the local emulator. In CI/CD, LocalCloud runs as a service container with zero code changes."
+        "text": "Set PUBSUB_EMULATOR_HOST=localhost:24082 and your GCP Pub/Sub SDK automatically connects to the local emulator. In CI/CD, LocalCloud runs as a service container with zero code changes."
       }
     },
     {
@@ -111,9 +101,9 @@ const faqItems = [
       </div>
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">8085</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Default port</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Standard gRPC endpoint — your Pub/Sub SDK connects automatically with one environment variable.</p>
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">$0</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Message charges</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Publish and consume unlimited messages without Pub/Sub API costs during development.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">✅</div>
@@ -152,7 +142,7 @@ const faqItems = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>What's included</h2>
+        <h2>Features</h2>
       </div>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 reveal">
         <article class="site-panel p-5">
@@ -169,7 +159,7 @@ const faqItems = [
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Web console</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Create topics, publish test messages, and inspect subscriptions from the built-in web console at localhost:8080.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Create topics, publish test messages, and inspect subscriptions from the built-in web console at localhost:24080.</p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Dead letter topics</span>
@@ -208,7 +198,7 @@ const faqItems = [
           <div>
             <h2 style="color: #e8eaed;">Run Pub/Sub locally today</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              Bundle Pub/Sub with 20+ GCP services in one Docker container. Same SDKs, same APIs, zero cloud costs. Free for individual developers.
+              Zero message charges. Instant delivery. No quotas. Test topics, subscriptions, and async workflows without Pub/Sub API costs.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

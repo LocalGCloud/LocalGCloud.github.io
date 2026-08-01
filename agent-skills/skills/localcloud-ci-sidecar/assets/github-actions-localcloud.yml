@@ -1,0 +1,51 @@
+name: LocalCloud Integration
+
+on:
+  pull_request:
+
+jobs:
+  localcloud-integration:
+    runs-on: ubuntu-latest
+    services:
+      localcloud:
+        image: jaysen2apache/localcloud
+        ports:
+          - 8080:24080
+          - 4443:24081
+          - 8085-8087:24082-8087
+          - 9010:24085
+          - 9020:24086
+          - 9050:24087
+          - 9060:24088
+          - 6379:6379
+        options: >-
+          --memory 4g
+          --health-cmd "curl -f http://localhost:24080/_localcloud/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for LocalCloud
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:24080/_localcloud/health > /dev/null; then
+              echo "LocalCloud is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "LocalCloud did not become ready" >&2
+          exit 1
+
+      - name: Export LocalCloud environment
+        run: |
+          curl -s http://localhost:24080/_localcloud/env?format=shell \
+            | sed 's/^export //' >> "$GITHUB_ENV"
+
+      - name: Run LocalCloud integration tests
+        run: |
+          # Replace with this repository's narrow LocalCloud integration test command.
+          npm run test:integration -- --localcloud

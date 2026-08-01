@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import CopyButton from '../../components/CopyButton.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
 import { getServiceCategoryLabel, getServiceImplementationLabel, getServiceImplementationNote, services } from '../../data/services';
+import { serviceTestingPages } from '../../data/agenticContent';
 import type { Service } from '../../data/services';
 
 export function getStaticPaths() {
@@ -22,6 +23,7 @@ const { service } = Astro.props;
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const categoryLabel = getServiceCategoryLabel(service);
+const agentTestingPage = serviceTestingPages.find((page) => page.slug === service.slug);
 ---
 
 <BaseLayout title={`${service.name} Local Emulator — LocalCloud`} description={`Run ${service.name} locally with LocalCloud. ${service.description} Part of a single Docker container with 20+ GCP emulators.`}>
@@ -166,6 +168,9 @@ const categoryLabel = getServiceCategoryLabel(service);
         <div class="site-panel p-6 reveal">
           <h2 class="text-2xl font-semibold tracking-tight mb-4">Learn More</h2>
           <ul class="site-list">
+            {agentTestingPage && (
+              <li><a href={`${base}services/${service.slug}/ai-agent-local-testing/`}>AI agent local testing</a> — prompts, env vars, validation examples, and production caveats</li>
+            )}
             <li><a href={`${base}docs/`}>Getting Started Guide</a> — set up LocalCloud in under a minute</li>
             <li><a href={`${base}docs/sdk-examples/`}>SDK Examples</a> — copy-paste code for Python, Node.js, Go, Java</li>
             <li><a href={`${base}docs/configuration/`}>Configuration</a> — environment variables and ports</li>

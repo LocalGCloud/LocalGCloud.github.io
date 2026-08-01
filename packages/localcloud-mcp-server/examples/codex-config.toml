@@ -1,0 +1,3 @@
+[mcp_servers.localcloud]
+command = "npx"
+args = ["-y", "@localcloud/localcloud-mcp-server"]

@@ -1,11 +1,12 @@
 ---
-interface Props { text: string; class?: string; }
-const { text, class: className = '' } = Astro.props;
+interface Props { text: string; class?: string; analyticsLabel?: string; }
+const { text, class: className = '', analyticsLabel } = Astro.props;
 ---
 
 <button
   class:list={['copy-btn inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded border border-[var(--border)] text-[var(--text-3)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors cursor-pointer bg-transparent', className]}
   data-copy={text}
+  data-analytics-label={analyticsLabel}
   aria-label="Copy to clipboard"
   style="font-family: var(--font-mono);"
 >

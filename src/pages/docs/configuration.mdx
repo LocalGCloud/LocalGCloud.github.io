@@ -52,21 +52,21 @@ When LocalCloud is running, set these variables so your GCP SDKs connect locally
 
 | Variable | Value | Service |
 |----------|-------|---------|
-| `STORAGE_EMULATOR_HOST` | `http://localhost:4443` | Cloud Storage |
-| `PUBSUB_EMULATOR_HOST` | `localhost:8085` | Pub/Sub |
-| `FIRESTORE_EMULATOR_HOST` | `localhost:8086` | Firestore |
-| `BIGTABLE_EMULATOR_HOST` | `localhost:8087` | Bigtable |
-| `SPANNER_EMULATOR_HOST` | `localhost:9010` | Spanner |
-| `BIGQUERY_EMULATOR_HOST` | `http://localhost:9050` | BigQuery |
-| `SECRET_MANAGER_EMULATOR_HOST` | `localhost:8080` | Secret Manager |
-| `CLOUD_TASKS_EMULATOR_HOST` | `localhost:8080` | Cloud Tasks |
+| `STORAGE_EMULATOR_HOST` | `http://localhost:24081` | Cloud Storage |
+| `PUBSUB_EMULATOR_HOST` | `localhost:24082` | Pub/Sub |
+| `FIRESTORE_EMULATOR_HOST` | `localhost:24083` | Firestore |
+| `BIGTABLE_EMULATOR_HOST` | `localhost:24084` | Bigtable |
+| `SPANNER_EMULATOR_HOST` | `localhost:24085` | Spanner |
+| `BIGQUERY_EMULATOR_HOST` | `http://localhost:24087` | BigQuery |
+| `SECRET_MANAGER_EMULATOR_HOST` | `localhost:24080` | Secret Manager |
+| `CLOUD_TASKS_EMULATOR_HOST` | `localhost:24080` | Cloud Tasks |
 | `REDIS_HOST` | `localhost` | Memorystore |
 | `GOOGLE_CLOUD_PROJECT` | `local-project` | All services |
 
 Use the generated export block to set these automatically:
 
 ```bash
-eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
+eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
 ```
 
 ### Terraform Variables
@@ -74,7 +74,7 @@ eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
 For Terraform, use the `terraform` format to export `GOOGLE_*_CUSTOM_ENDPOINT` variables:
 
 ```bash
-eval $(curl -s 'http://localhost:8080/_localcloud/env?format=terraform')
+eval $(curl -s 'http://localhost:24080/_localcloud/env?format=terraform')
 ```
 
 This sets endpoints like `GOOGLE_STORAGE_CUSTOM_ENDPOINT`, `GOOGLE_PUBSUB_CUSTOM_ENDPOINT`, etc. and bypasses authentication with `GOOGLE_APPLICATION_CREDENTIALS=/dev/null`. See the [Terraform Integration](/docs/terraform/) guide for details.
@@ -86,13 +86,13 @@ services:
   localcloud:
     image: jaysen2apache/localcloud
     ports:
-      - "8080:8080"
-      - "4443:4443"
-      - "8085-8087:8085-8087"
-      - "9010:9010"
-      - "9020:9020"
-      - "9050:9050"
-      - "9060:9060"
+      - "8080:24080"
+      - "4443:24081"
+      - "8085-8087:24082-8087"
+      - "9010:24085"
+      - "9020:24086"
+      - "9050:24087"
+      - "9060:24088"
       - "6379:6379"
     environment:
       LOCALCLOUD_PROJECT: my-project

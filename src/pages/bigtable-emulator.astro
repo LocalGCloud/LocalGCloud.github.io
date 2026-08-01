@@ -8,7 +8,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const pythonCode = `import os
 from google.cloud import bigtable
 
-os.environ["BIGTABLE_EMULATOR_HOST"] = "localhost:8087"
+os.environ["BIGTABLE_EMULATOR_HOST"] = "localhost:24084"
 
 client = bigtable.Client(
     project="local-project", admin=True)
@@ -30,7 +30,7 @@ const goCode = `import (
 )
 
 ctx := context.Background()
-// BIGTABLE_EMULATOR_HOST=localhost:8087 auto-detected
+// BIGTABLE_EMULATOR_HOST=localhost:24084 auto-detected
 client, _ := bigtable.NewClient(ctx,
     "local-project", "my-instance")
 
@@ -42,10 +42,6 @@ mut.Set("cf1", "col1", bigtable.Now(),
 tbl.Apply(ctx, "row-key-1", mut)`;
 
 const faqItems = [
-  {
-    q: 'Does Google provide an official Bigtable emulator?',
-    a: 'Google provides a Bigtable emulator, but it is in-memory only — all data is lost when the emulator stops. LocalCloud extends it with PostgreSQL-backed persistence, a console data browser, change streams, and materialized views, all running alongside 19+ other GCP services in one Docker container.',
-  },
   {
     q: 'What Bigtable features does LocalCloud support beyond the default emulator?',
     a: 'LocalCloud\'s Bigtable emulator adds data persistence (survives container restarts via PostgreSQL), change streams for CDC workflows, materialized views, instance/cluster/app profile admin APIs, CheckAndMutate operations, and a web-console data browser. Tables, column families, ReadRows, and MutateRow are fully supported.',
@@ -72,12 +68,6 @@ const faqItems = [
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Does Google provide an official Bigtable emulator?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Google provides a Bigtable emulator, but it is in-memory only. LocalCloud extends it with PostgreSQL-backed persistence, change streams, materialized views, and a web console data browser."
-      }
-    },
     {
       "@type": "Question",
       "name": "What Bigtable features does LocalCloud support beyond the default emulator?",
@@ -105,7 +95,7 @@ const faqItems = [
         <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Bigtable Emulator</span>
         <h1 class="mt-4">Run Google Cloud Bigtable locally</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          Test wide-column NoSQL workloads locally with persistence, change streams, and materialized views. Bundled with 20+ GCP services in one Docker container.
+          Test wide-column NoSQL workloads locally with persistence, change streams, and materialized views. 
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start in 60 seconds</a>
@@ -115,9 +105,9 @@ const faqItems = [
       </div>
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">8087</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Default port</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Standard gRPC endpoint — your Bigtable SDK connects automatically with BIGTABLE_EMULATOR_HOST.</p>
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">$0</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Node costs</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Test wide-column operations without Bigtable node or storage charges.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">💾</div>
@@ -159,7 +149,7 @@ const faqItems = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>What's included</h2>
+        <h2>Features</h2>
       </div>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 reveal">
         <article class="site-panel p-5">
@@ -215,7 +205,7 @@ const faqItems = [
           <div>
             <h2 style="color: #e8eaed;">Start testing Bigtable locally</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              Persistence, change streams, and materialized views — bundled with 20+ GCP services in one container. Free for individual developers.
+              SQLite persistence. Materialized views. Full filter support. Test wide-column operations without Bigtable node costs.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

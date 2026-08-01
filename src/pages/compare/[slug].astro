@@ -1,0 +1,14 @@
+---
+import AgenticContentPage from '../../components/AgenticContentPage.astro';
+import { comparisonPages } from '../../data/agenticContent';
+import type { AgenticContentPage as Page } from '../../data/agenticContent';
+
+export function getStaticPaths() {
+  return comparisonPages.map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+
+interface Props { page: Page; }
+const { page } = Astro.props;
+---
+
+<AgenticContentPage {page} />

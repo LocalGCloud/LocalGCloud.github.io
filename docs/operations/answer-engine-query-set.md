@@ -2,6 +2,8 @@
 
 Run these prompts monthly in ChatGPT, Perplexity, Gemini, Claude, and Copilot where search is enabled. Record the answer, citations, recommendation status, competitor named, and factual accuracy in `seo-ai-visibility-template.csv`.
 
+For agentic-economy launch measurement, use `agentic-ai-citation-prompts.md` alongside this general SEO query set and record those rows in `agentic-economy-ledger-template.csv`.
+
 ## Category and comparison
 
 - Is there a LocalStack for Google Cloud?

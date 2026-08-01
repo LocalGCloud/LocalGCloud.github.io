@@ -8,7 +8,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const pythonCode = `import os
 from google.cloud import firestore
 
-os.environ["FIRESTORE_EMULATOR_HOST"] = "localhost:8086"
+os.environ["FIRESTORE_EMULATOR_HOST"] = "localhost:24083"
 
 db = firestore.Client(project="local-project")
 
@@ -22,7 +22,7 @@ def on_snapshot(snapshot, changes, read_time):
 
 db.collection("users").on_snapshot(on_snapshot)`;
 
-const nodeCode = `process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8086';
+const nodeCode = `process.env.FIRESTORE_EMULATOR_HOST = 'localhost:24083';
 
 const { Firestore } = require('@google-cloud/firestore');
 const db = new Firestore({ projectId: 'local-project' });
@@ -40,10 +40,6 @@ db.collection('users').onSnapshot(snapshot => {
 });`;
 
 const faqItems = [
-  {
-    q: 'Does Google provide an official Firestore emulator?',
-    a: 'Yes — Google provides an official Firestore emulator. However, it runs as a standalone process that you must manage separately from other emulators. LocalCloud bundles it alongside 20+ other GCP services in one container with a unified web console and one-command startup.',
-  },
   {
     q: 'Can I run Firestore alongside Pub/Sub and BigQuery locally?',
     a: 'Yes. LocalCloud runs Firestore, Pub/Sub, BigQuery, Spanner, Bigtable, Cloud Storage, and 15+ more GCP services in a single Docker container. Test end-to-end flows where a Firestore document write triggers a Cloud Function that publishes to Pub/Sub — all locally.',
@@ -70,12 +66,6 @@ const faqItems = [
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Does Google provide an official Firestore emulator?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes — Google provides an official Firestore emulator. LocalCloud bundles it alongside 20+ other GCP services in one container with a unified web console and one-command startup."
-      }
-    },
     {
       "@type": "Question",
       "name": "Can I run Firestore alongside Pub/Sub and BigQuery locally?",
@@ -103,7 +93,7 @@ const faqItems = [
         <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Firestore Emulator</span>
         <h1 class="mt-4">Run Google Cloud Firestore locally</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          Develop and test Firestore applications locally with real-time listeners, collection queries, and batch writes. Bundled with 20+ GCP services in one Docker container.
+          Develop and test Firestore applications locally with real-time listeners, collection queries, and batch writes. 
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start in 60 seconds</a>
@@ -113,9 +103,9 @@ const faqItems = [
       </div>
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">8086</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Default port</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Standard gRPC endpoint — your Firestore SDK connects automatically with one environment variable.</p>
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">$0</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Read/write costs</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Test document operations and queries without Firestore read/write charges.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">✅</div>
@@ -157,7 +147,7 @@ const faqItems = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>What's included</h2>
+        <h2>Features</h2>
       </div>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 reveal">
         <article class="site-panel p-5">
@@ -213,7 +203,7 @@ const faqItems = [
           <div>
             <h2 style="color: #e8eaed;">Start building with Firestore locally</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              Bundle Firestore with 20+ GCP services in one Docker container. Same SDKs, same APIs, zero cloud costs. Free for individual developers.
+              Document CRUD. Real-time listeners. Batch writes. Test Firestore collections and queries without read/write charges.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

@@ -25,6 +25,7 @@
 - Check the live sitemap, `robots.txt`, route verifier, and build checks.
 - Review Search Console and Bing index state, impressions, clicks, and average position for the approved query set.
 - Run the answer-engine prompts in `answer-engine-query-set.md` and record recommendations, citations, and factual errors in the ledger.
+- For agentic-economy launch reviews, also run `agentic-ai-citation-prompts.md` and record results in `agentic-economy-ledger-template.csv`.
 - Check `src/data/productFacts.ts` evidence review dates and correct material claim drift before changing marketing copy.
 - Prioritize real evidence, useful documentation, and high-quality third-party references; do not create AI-only copy, fake reviews, or synthetic community mentions.
 

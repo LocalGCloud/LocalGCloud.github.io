@@ -42,8 +42,8 @@
 
   <rect x="150" y="536" width="226" height="84" rx="18" fill="#0F1C30"/>
   <text x="170" y="568" fill="#8BA6D3" font-family="IBM Plex Mono, monospace" font-size="13" letter-spacing="1.5">EXAMPLES</text>
-  <text x="170" y="598" fill="#F5F9FF" font-family="IBM Plex Sans, sans-serif" font-size="19">gcs :4443 rest external</text>
-  <text x="170" y="622" fill="#F5F9FF" font-family="IBM Plex Sans, sans-serif" font-size="19">secretmanager :8080 grpc facade</text>
+  <text x="170" y="598" fill="#F5F9FF" font-family="IBM Plex Sans, sans-serif" font-size="19">gcs :24081 rest external</text>
+  <text x="170" y="622" fill="#F5F9FF" font-family="IBM Plex Sans, sans-serif" font-size="19">secretmanager :24080 grpc facade</text>
 
   <rect x="472" y="116" width="248" height="114" rx="24" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
   <text x="498" y="150" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.6">ENTRYPOINT PARSING</text>
@@ -58,7 +58,7 @@
   <rect x="472" y="450" width="248" height="164" rx="24" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
   <text x="498" y="484" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.6">GATEWAY ROUTING</text>
   <text x="498" y="520" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">Port + protocol decisions</text>
-  <text x="498" y="550" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">The gateway knows which services stay on :8080 and which use direct host ports.</text>
+  <text x="498" y="550" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">The gateway knows which services stay on :24080 and which use direct host ports.</text>
   <text x="498" y="584" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">Facade services route in-process; external emulators route by declared host port and health check.</text>
 
   <rect x="790" y="112" width="286" height="156" rx="26" fill="#0F1C30"/>
@@ -69,15 +69,15 @@
 
   <rect x="790" y="298" width="286" height="142" rx="26" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
   <text x="818" y="332" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.6">FACADE TARGETS</text>
-  <text x="818" y="368" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">Gateway :8080</text>
+  <text x="818" y="368" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">Gateway :24080</text>
   <text x="818" y="398" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">Secret Manager</text>
   <text x="818" y="424" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">Cloud Tasks, Logging, Monitoring</text>
 
   <rect x="790" y="470" width="286" height="156" rx="26" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
   <text x="818" y="504" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.6">EXTERNAL TARGETS</text>
   <text x="818" y="540" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">Direct host ports</text>
-  <text x="818" y="570" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">GCS :4443, Pub/Sub :8085, Firestore :8086</text>
-  <text x="818" y="596" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">Bigtable :8087, Spanner :9010/9020, BigQuery :9050/9060</text>
+  <text x="818" y="570" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">GCS :24081, Pub/Sub :24082, Firestore :24083</text>
+  <text x="818" y="596" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">Bigtable :24084, Spanner :24085/9020, BigQuery :24087/9060</text>
 
   <path d="M404 180H452" stroke="#7DA4E6" stroke-width="4" stroke-linecap="round"/>
   <path d="M404 424H452" stroke="#7DA4E6" stroke-width="4" stroke-linecap="round"/>

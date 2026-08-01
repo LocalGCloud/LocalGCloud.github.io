@@ -1,0 +1,13 @@
+---
+import AgenticIndexPage from '../../components/AgenticIndexPage.astro';
+import { comparisonPages } from '../../data/agenticContent';
+---
+
+<AgenticIndexPage
+  title="LocalCloud Comparisons for Agents"
+  description="Balanced LocalCloud comparisons against Google emulators, hosted agent sandboxes such as E2B and Vercel, and BigQuery emulator alternatives."
+  h1="LocalCloud comparisons for agents"
+  eyebrow="Comparison routes"
+  deck="Choose the right local or hosted sandbox by job: service fidelity, arbitrary code isolation, BigQuery-only testing, or multi-service local GCP workflows."
+  pages={comparisonPages}
+/>

@@ -17,9 +17,19 @@ const navLinks = [
     isActive: currentPath.startsWith(`${base}services`),
   },
   {
+    label: 'AI',
+    href: `${base}ai/`,
+    isActive: currentPath.startsWith(`${base}ai`),
+  },
+  {
     label: 'GCP Emulator',
     href: `${base}gcp-emulator/`,
     isActive: currentPath.startsWith(`${base}gcp-emulator`),
+  },
+  {
+    label: 'Guides',
+    href: `${base}how-to-run-google-cloud-locally/`,
+    isActive: currentPath.startsWith(`${base}how-to-run-google-cloud-locally`) || currentPath.startsWith(`${base}optimize-gcp-costs`) || currentPath.startsWith(`${base}local-cloud-development`),
   },
 ];
 ---

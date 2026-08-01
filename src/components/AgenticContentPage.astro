@@ -1,0 +1,186 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import CopyButton from './CopyButton.astro';
+import { agentPromptLibrary } from '../data/agenticFacts';
+import { createBreadcrumbSchema, createSoftwareApplicationSchema, productFacts } from '../data/productFacts';
+import type { AgenticContentPage } from '../data/agenticContent';
+
+interface Props {
+  page: AgenticContentPage;
+}
+
+const { page } = Astro.props;
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const localHref = (href: string) => href.startsWith('http') ? href : `${base}${href.replace(/^\//, '')}`;
+const pageUrl = new URL(page.path, productFacts.siteUrl).toString();
+const prompts = page.promptIds
+  .map((id) => agentPromptLibrary.find((prompt) => prompt.id === id))
+  .filter(Boolean);
+const structuredData = [
+  createSoftwareApplicationSchema(pageUrl, page.description),
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: page.parentLabel, url: new URL(page.parentPath, productFacts.siteUrl).toString() },
+    { name: page.h1, url: pageUrl },
+  ]),
+];
+---
+
+<LandingLayout title={`${page.title} — LocalCloud`} description={page.description} {structuredData}>
+  <section class="site-section site-section--hero">
+    <div class="container grid gap-8 xl:grid-cols-[1fr,0.8fr]">
+      <div class="reveal">
+        <nav class="mb-5 flex items-center gap-2 text-sm text-[var(--text-3)]">
+          <a href={localHref(page.parentPath)} class="hover:text-[var(--text)]">{page.parentLabel}</a>
+          <span>/</span>
+          <span class="text-[var(--text)]">{page.h1}</span>
+        </nav>
+        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>{page.eyebrow}</span>
+        <h1 class="mt-4 max-w-[12ch]">{page.h1}</h1>
+        <p class="mt-6 max-w-[46rem] text-lg leading-8 text-[var(--text-2)] sm:text-xl">{page.deck}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={localHref('/docs/')} class="site-button">Read docs</a>
+          <a href={localHref('/compatibility/')} class="site-button site-button--secondary">Check compatibility</a>
+          <a href={localHref('/docs/sdk-examples/')} class="site-button site-button--secondary">SDK examples</a>
+        </div>
+      </div>
+
+      <aside class="site-panel p-5 reveal sm:p-6">
+        <span class="site-kicker">Agent prompt CTAs</span>
+        <div class="mt-4 space-y-4">
+          {prompts.map((prompt) => prompt && (
+            <article class="rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4" data-analytics-label={`agentic-copy-${page.slug}-${prompt.id}`}>
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h2 class="text-base font-semibold tracking-tight">{prompt.label}</h2>
+                  <p class="mt-1 text-sm leading-6 text-[var(--text-3)]">{prompt.useCase}</p>
+                </div>
+                <CopyButton text={prompt.prompt} analyticsLabel={`agentic-copy-${page.slug}-${prompt.id}`} />
+              </div>
+              <pre class="mt-3 max-h-44 overflow-auto whitespace-pre-wrap border-0 bg-transparent p-0 text-xs leading-6 text-[var(--text-2)]"><code>{prompt.prompt}</code></pre>
+            </article>
+          ))}
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="grid gap-4 sm:grid-cols-3">
+        {page.quickFacts.map((fact) => (
+          <article class="site-panel site-panel--soft p-5 reveal">
+            <span class="site-kicker">Fact</span>
+            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{fact}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section">
+    <div class="container">
+      <div class="grid gap-4 lg:grid-cols-2">
+        {page.sections.map((section) => (
+          <article class="site-panel p-6 reveal">
+            <span class="site-kicker">{section.kicker}</span>
+            <h2 class="mt-3 text-2xl">{section.title}</h2>
+            <p class="mt-3 leading-7 text-[var(--text-2)]">{section.body}</p>
+            {section.items && (
+              <ul class="site-list mt-4">
+                {section.items.map((item) => <li>{item}</li>)}
+              </ul>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {page.snippets && page.snippets.length > 0 && (
+    <section class="site-section">
+      <div class="container">
+        <div class="reveal">
+          <span class="site-kicker">Copy-ready setup</span>
+          <h2 class="mt-3">Commands and prompts</h2>
+          <p class="mt-3 max-w-[44rem] leading-7 text-[var(--text-2)]">Use these snippets as starting points, then keep the checks scoped to localhost until you intentionally validate against real Google Cloud.</p>
+        </div>
+        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+          {page.snippets.map((snippet) => (
+            <article class="site-panel overflow-hidden reveal" data-analytics-label={`agentic-copy-snippet-${page.slug}-${snippet.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+              <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-3">
+                <span class="site-kicker">{snippet.label}</span>
+                <CopyButton text={snippet.code} analyticsLabel={`agentic-copy-snippet-${page.slug}-${snippet.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} />
+              </div>
+              <pre class="border-0 bg-[var(--surface-2)]"><code class="block whitespace-pre-wrap px-4 pb-4 text-[0.78rem] leading-[1.7]">{snippet.code}</code></pre>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {page.table && (
+    <section class="site-section">
+      <div class="container">
+        <div class="reveal">
+          <span class="site-kicker">Compatibility</span>
+          <h2 class="mt-3">Local check versus release validation</h2>
+        </div>
+        <div class="site-panel mt-8 overflow-x-auto reveal">
+          <table class="min-w-[46rem] w-full text-left text-sm">
+            <thead class="border-b border-[var(--border)] text-[var(--text-3)]">
+              <tr>{page.table.columns.map((column) => <th class="p-4 font-medium text-[var(--text)]">{column}</th>)}</tr>
+            </thead>
+            <tbody>
+              {page.table.rows.map((row, index) => (
+                <tr class:list={[index % 2 === 0 && 'bg-[var(--surface-2)]']}>
+                  {row.map((cell) => <td class="p-4 leading-7 text-[var(--text-2)]">{cell}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="site-section">
+    <div class="container grid gap-4 lg:grid-cols-[0.9fr,1.1fr]">
+      <article class="site-panel site-panel--soft p-6 reveal">
+        <span class="site-kicker">Limitations</span>
+        <h2 class="mt-3 text-2xl">Use the sandbox deliberately</h2>
+        <ul class="site-list mt-4">
+          {page.limitations.map((item) => <li>{item}</li>)}
+        </ul>
+      </article>
+      <article class="site-panel p-6 reveal">
+        <span class="site-kicker">Next routes</span>
+        <h2 class="mt-3 text-2xl">Keep the agent on the supported path</h2>
+        <ul class="site-list mt-4">
+          {page.internalLinks.map((link) => (
+            <li><a href={localHref(link.href)}>{link.label}</a> — {link.note}</li>
+          ))}
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  {page.sources && page.sources.length > 0 && (
+    <section class="site-section site-section--tight">
+      <div class="container container--narrow">
+        <article class="site-panel p-6 reveal">
+          <span class="site-kicker">Sources and review</span>
+          <h2 class="mt-3 text-2xl">Claims are tied to current sources</h2>
+          <ul class="site-list mt-4">
+            {page.sources.map((source) => (
+              <li><a href={localHref(source.href)}>{source.label}</a> — {source.note}</li>
+            ))}
+            {page.reviewedAt && <li>LocalCloud agentic facts reviewed {page.reviewedAt}.</li>}
+          </ul>
+        </article>
+      </div>
+    </section>
+  )}
+</LandingLayout>

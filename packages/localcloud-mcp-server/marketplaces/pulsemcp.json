@@ -1,0 +1,15 @@
+{
+  "name": "LocalCloud MCP Server",
+  "package": "@localcloud/localcloud-mcp-server",
+  "transport": "stdio",
+  "command": "npx -y @localcloud/localcloud-mcp-server",
+  "homepage": "https://local.cloud/",
+  "repository": "https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/packages/localcloud-mcp-server",
+  "description": "LocalCloud runtime, service metadata, diagnostics, logs, state inspection, docs, and constrained local gcloud dry-runs for MCP clients.",
+  "safety": [
+    "No GCP credentials required by default",
+    "No arbitrary shell strings",
+    "Destructive actions require confirm: true",
+    "stdout reserved for MCP protocol"
+  ]
+}

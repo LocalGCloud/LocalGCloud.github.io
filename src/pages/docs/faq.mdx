@@ -53,13 +53,13 @@ services:
   localcloud:
     image: jaysen2apache/localcloud
     ports:
-      - 8080:8080
-      - 4443:4443
-      - 8085-8087:8085-8087
-      - 9010:9010
-      - 9020:9020
-      - 9050:9050
-      - 9060:9060
+      - 8080:24080
+      - 4443:24081
+      - 8085-8087:24082-8087
+      - 9010:24085
+      - 9020:24086
+      - 9050:24087
+      - 9060:24088
       - 6379:6379
 ```
 
@@ -84,7 +84,7 @@ Yes, if you mount a Docker volume to `/var/lib/localcloud`. Without a volume, da
 If a port is already in use, remap it:
 
 ```bash
-docker run -d -p 9080:8080 ... jaysen2apache/localcloud
+docker run -d -p 9080:24080 ... jaysen2apache/localcloud
 ```
 
 ### Service isn't responding
@@ -92,7 +92,7 @@ docker run -d -p 9080:8080 ... jaysen2apache/localcloud
 Check service status:
 
 ```bash
-curl http://localhost:8080/_localcloud/services
+curl http://localhost:24080/_localcloud/services
 ```
 
 ### GKE/Compute/Cloud Run not starting

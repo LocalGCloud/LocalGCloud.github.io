@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">LocalCloud MCP Server icon placeholder</title>
+  <desc id="desc">Rounded LocalCloud mark placeholder for registry drafts.</desc>
+  <rect width="400" height="400" rx="88" fill="#0f172a"/>
+  <path d="M122 244c-30 0-54-24-54-54s24-54 54-54c11-43 50-74 96-74 55 0 100 45 100 100 29 7 50 33 50 64 0 36-30 66-66 66H122Z" fill="#38bdf8"/>
+  <path d="M145 226h64v-32h64" fill="none" stroke="#f8fafc" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="145" cy="226" r="18" fill="#f8fafc"/>
+  <circle cx="209" cy="194" r="18" fill="#f8fafc"/>
+  <circle cx="273" cy="194" r="18" fill="#f8fafc"/>
+</svg>

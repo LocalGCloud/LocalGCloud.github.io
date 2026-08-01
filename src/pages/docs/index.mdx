@@ -62,15 +62,15 @@ docker pull jaysen2apache/localcloud
   <Step title="Start LocalCloud">
 
 ```bash
-mkdir -p ~/.localcloud/data
+docker volume create localcloud-data
 
 docker run -d \
-  -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
-  -p 9010:9010 -p 9020:9020 \
-  -p 9050:9050 -p 9060:9060 \
+  -p 8080:24080 -p 4443:24081 -p 8085-8087:24082-8087 \
+  -p 9010:24085 -p 9020:24086 \
+  -p 9050:24087 -p 9060:24088 \
   -p 6379:6379 \
   -m 4g --name localcloud \
-  -v ~/.localcloud/data:/var/lib/localcloud \
+  -v localcloud-data:/var/lib/localcloud \
   jaysen2apache/localcloud
 ```
 
@@ -78,7 +78,7 @@ docker run -d \
   <Step title="Open the console">
 
 ```bash
-open http://localhost:8080
+open http://localhost:24080
 ```
 
 The console is built into the running container, so you can inspect service status, browse data, and confirm the runtime is healthy before you debug your app.
@@ -89,7 +89,7 @@ The console is built into the running container, so you can inspect service stat
 Set environment variables for all services so your GCP SDKs connect to LocalCloud:
 
 ```bash
-eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
+eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
 ```
 
 This sets variables for all provided services like `STORAGE_EMULATOR_HOST`, `PUBSUB_EMULATOR_HOST`, etc.
@@ -98,7 +98,7 @@ To set up only a specific service, refer to the user guide on the console.
 **Using Terraform?** Point the Google provider at LocalCloud instead:
 
 ```bash
-eval $(curl -s 'http://localhost:8080/_localcloud/env?format=terraform')
+eval $(curl -s 'http://localhost:24080/_localcloud/env?format=terraform')
 terraform init && terraform apply
 ```
 
@@ -193,10 +193,10 @@ This same code works against real GCP. Just unset the emulator environment varia
 ## Verify Services Are Running
 
 ```bash
-curl http://localhost:8080/_localcloud/health | jq
+curl http://localhost:24080/_localcloud/health | jq
 ```
 
-Or visit the web console at [http://localhost:8080](http://localhost:8080).
+Or visit the web console at [http://localhost:24080](http://localhost:24080).
 
 
 ## Next Steps

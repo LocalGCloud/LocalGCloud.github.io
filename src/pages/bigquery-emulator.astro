@@ -9,20 +9,20 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
 const dockerCmd = `docker pull jaysen2apache/localcloud
 
-mkdir -p ~/.localcloud/data
+docker volume create localcloud-data
 
 docker run -d \\
-  -p 8080:8080 -p 4443:4443 \\
-  -p 8085-8087:8085-8087 \\
-  -p 9010:9010 -p 9020:9020 \\
-  -p 9050:9050 -p 9060:9060 \\
-  -p 6379:6379 \\
+  -p 24080:24080 -p 24081:24081 \\
+  -p 8085-8087:24082-8087 \\
+  -p 24085:24085 -p 24086:24086 \\
+  -p 24087:24087 -p 24088:24088 \\
+  -p 6379:24089 \\
   -m 4g --name localcloud \\
-  -v ~/.localcloud/data:/var/lib/localcloud \\
+  -v localcloud-data:/var/lib/localcloud \\
   jaysen2apache/localcloud
 
 # Export BigQuery environment variable
-export BIGQUERY_EMULATOR_HOST=http://localhost:9050
+export BIGQUERY_EMULATOR_HOST=http://localhost:24087
 
 # Your first local BigQuery query
 bq query --nouse_legacy_sql \\
@@ -36,7 +36,7 @@ const pythonCode = `from google.cloud import bigquery
 import os
 
 # Point SDK at local emulator
-os.environ["BIGQUERY_EMULATOR_HOST"] = "http://localhost:9050"
+os.environ["BIGQUERY_EMULATOR_HOST"] = "http://localhost:24087"
 
 client = bigquery.Client(project="local-project")
 
@@ -74,7 +74,7 @@ const ciYaml = `jobs:
       localcloud:
         image: jaysen2apache/localcloud
         ports:
-          - 9050:9050
+          - 24087:24087
         options: --memory 4g
 
     steps:
@@ -83,13 +83,13 @@ const ciYaml = `jobs:
       - name: Wait for LocalCloud
         run: |
           for i in $(seq 1 30); do
-            curl -sf http://localhost:8080/_localcloud/health && break
+            curl -sf http://localhost:24080/_localcloud/health && break
             sleep 2
           done
 
       - name: Run BigQuery tests
         env:
-          BIGQUERY_EMULATOR_HOST: http://localhost:9050
+          BIGQUERY_EMULATOR_HOST: http://localhost:24087
         run: pytest tests/bigquery/`;
 
 const keyStats = [
@@ -148,10 +148,6 @@ const limitsItems = [
 
 const faqItems = [
   {
-    q: 'Does Google provide an official BigQuery emulator?',
-    a: 'No — Google does not provide an official BigQuery emulator. BigQuery is the largest gap in Google Cloud\'s local development story. LocalCloud fills this gap with a DuckDB-backed BigQuery emulator purpose-built for local development and CI testing.',
-  },
-  {
     q: 'How complete is the BigQuery SQL coverage?',
     a: '~96% SQL coverage across DQL, DDL, DML, scripting, and stored procedures — validated by 936 collected tests across 25 test modules. The emulator covers the features teams reach for daily: SELECT with joins/CTEs/window functions, CREATE TABLE, INSERT/UPDATE/DELETE/MERGE, scripting, and 200+ built-in functions.',
   },
@@ -181,12 +177,6 @@ const faqItems = [
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Does Google provide an official BigQuery emulator?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No — Google does not provide an official BigQuery emulator. BigQuery is the largest gap in Google Cloud's local development story. LocalCloud fills this gap with a DuckDB-backed BigQuery emulator purpose-built for local development and CI testing."
-      }
-    },
     {
       "@type": "Question",
       "name": "How complete is the BigQuery SQL coverage?",
@@ -347,12 +337,9 @@ const faqItems = [
       <div class="reveal">
         <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>CI / CD</span>
         <h2 class="mt-4">Run BigQuery tests in your CI pipeline</h2>
-        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">Add LocalCloud as a service container in GitHub Actions and run BigQuery integration tests on every push — zero cloud cost per pipeline run.</p>
-      </div>
-      <div class="mt-6 reveal">
-        <div class="site-panel p-6">
-          <span class="site-kicker">GitHub Actions</span>
-          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code class="text-[0.82rem] leading-[1.75]">{ciYaml}</code></pre>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">Add LocalCloud as a service container. Integration tests run against local BigQuery at zero query cost.</p>
+        <div class="mt-6">
+          <a href={`${base}gcp-integration-testing/`} class="site-button site-button--primary">See integration guide</a>
         </div>
       </div>
     </div>
@@ -402,7 +389,7 @@ const faqItems = [
           <div>
             <h2 style="color: #e8eaed;">Start testing BigQuery locally</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              ~96% SQL coverage, 936 collected tests, zero cloud query costs. Free for individual developers.
+              Run BigQuery locally with DuckDB-backed emulation. All standard SQL, scripting, external tables, and Storage API — no cloud bills during development.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

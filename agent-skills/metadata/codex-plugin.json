@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "2026-07-localcloud-draft",
+  "name": "localcloud-agent-skills",
+  "description": "LocalCloud GCP emulator skills for Codex workflows: BigQuery, Pub/Sub, Terraform, CI, seed data, and SDK tests against localhost.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "canonicalSkillRoot": "../skills",
+  "install": {
+    "portableProjectRoot": ".agents/skills",
+    "instructions": "Copy every folder under ../skills into .agents/skills/ without renaming folders."
+  },
+  "skills": [
+    { "name": "localcloud-bigquery", "path": "../skills/localcloud-bigquery/SKILL.md" },
+    { "name": "localcloud-pubsub", "path": "../skills/localcloud-pubsub/SKILL.md" },
+    { "name": "localcloud-terraform", "path": "../skills/localcloud-terraform/SKILL.md" },
+    { "name": "localcloud-ci-sidecar", "path": "../skills/localcloud-ci-sidecar/SKILL.md" },
+    { "name": "localcloud-seed-data", "path": "../skills/localcloud-seed-data/SKILL.md" },
+    { "name": "localcloud-sdk-tests", "path": "../skills/localcloud-sdk-tests/SKILL.md" }
+  ],
+  "security": {
+    "permissions": "No broad or pre-approved tool permissions are declared by this metadata.",
+    "requiresRealGcpCredentials": false
+  }
+}

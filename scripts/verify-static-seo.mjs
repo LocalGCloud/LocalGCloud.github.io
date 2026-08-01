@@ -13,8 +13,9 @@ const requiredSchemaTypes = new Map([
   ['/compatibility/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
 ]);
 
-const routeToHtmlFile = (route) =>
-  route.path === '/' ? 'index.html' : `${route.path.replace(/^\//, '')}index.html`;
+const isHtmlRoute = (route) => route.path === '/' || route.path.endsWith('/');
+const routeToGeneratedFile = (route) =>
+  isHtmlRoute(route) ? (route.path === '/' ? 'index.html' : `${route.path.replace(/^\//, '')}index.html`) : route.path.replace(/^\//, '');
 
 const readRequired = async (file) => {
   try {
@@ -45,8 +46,9 @@ const jsonLdTypes = (html, route) => {
 };
 
 for (const route of expectedSearchRoutes) {
-  const html = await readRequired(routeToHtmlFile(route));
+  const html = await readRequired(routeToGeneratedFile(route));
   if (!html) continue;
+  if (!isHtmlRoute(route)) continue;
 
   const title = html.match(/<title>([^<]+)<\/title>/i)?.[1]?.trim();
   const description = contentAttribute(html, 'description');

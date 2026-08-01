@@ -6,13 +6,13 @@ const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
 const pythonCode = `import os
-os.environ["SPANNER_EMULATOR_HOST"] = "localhost:9010"
+os.environ["SPANNER_EMULATOR_HOST"] = "localhost:24085"
 
 from sqlalchemy import create_engine, text
 
 # Connect via PGAdapter (PostgreSQL wire protocol)
 engine = create_engine(
-    "postgresql+psycopg2://localhost:9020/local-project"
+    "postgresql+psycopg2://localhost:24086/local-project"
 )
 
 with engine.connect() as conn:
@@ -34,7 +34,7 @@ const goCode = `import (
 )
 
 ctx := context.Background()
-// SPANNER_EMULATOR_HOST=localhost:9010 auto-detected
+// SPANNER_EMULATOR_HOST=localhost:24085 auto-detected
 client, _ := spanner.NewClient(ctx,
     "projects/local-project/instances/test/databases/mydb")
 
@@ -46,10 +46,6 @@ _, err := client.Apply(ctx, []*spanner.Mutation{
 })`;
 
 const faqItems = [
-  {
-    q: 'Does Google provide an official Spanner emulator?',
-    a: 'Yes — Google provides an official Spanner emulator, but it is in-memory only (no data persistence between restarts). LocalCloud extends it with data persistence, a PostgreSQL interface via PGAdapter, NUMERIC and JSON column support, generated columns, and a web console data browser.',
-  },
   {
     q: 'How is LocalCloud\'s Spanner emulator different from the default?',
     a: 'LocalCloud wraps the official Google Spanner emulator with persistence (data survives container restarts), adds a PostgreSQL-compatible interface, supports secondary indexes with commit timestamps, partitioned read/query/DML APIs, and includes PGAdapter for PostgreSQL wire-protocol access — all in the same container as 19+ other GCP services.',
@@ -76,12 +72,6 @@ const faqItems = [
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Does Google provide an official Spanner emulator?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes — Google provides an official Spanner emulator, but it is in-memory only. LocalCloud extends it with data persistence, a PostgreSQL interface via PGAdapter, NUMERIC and JSON column support, and a web console data browser."
-      }
-    },
     {
       "@type": "Question",
       "name": "Can I use Spanner with PostgreSQL drivers?",
@@ -109,7 +99,7 @@ const faqItems = [
         <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Spanner Emulator</span>
         <h1 class="mt-4">Run Google Cloud Spanner locally</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          Test globally-distributed SQL workloads locally with persistence, PostgreSQL interface, and PGAdapter. Bundled with 20+ GCP services in one Docker container.
+          Test globally-distributed SQL workloads locally with persistence, PostgreSQL interface, and PGAdapter. 
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start in 60 seconds</a>
@@ -119,12 +109,12 @@ const faqItems = [
       </div>
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">9010</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">gRPC port</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Standard Spanner gRPC endpoint — your SDK connects automatically with SPANNER_EMULATOR_HOST.</p>
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">95%</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Feature coverage</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Extended fork with LevelDB persistence. DDL, DML, transactions, and PostgreSQL interface.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">9020</div>
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">24086</div>
           <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">PostgreSQL port</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">PGAdapter exposes a PostgreSQL wire-protocol endpoint — connect with psql, JDBC, or SQLAlchemy.</p>
         </article>
@@ -163,7 +153,7 @@ const faqItems = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>What's included</h2>
+        <h2>Features</h2>
       </div>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 reveal">
         <article class="site-panel p-5">
@@ -172,7 +162,7 @@ const faqItems = [
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">PostgreSQL interface</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">PGAdapter exposes Spanner on port 9020 via PostgreSQL wire protocol — connect with psql, JDBC, and SQLAlchemy.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">PGAdapter exposes Spanner on port 24086 via PostgreSQL wire protocol — connect with psql, JDBC, and SQLAlchemy.</p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Transactions</span>
@@ -188,7 +178,7 @@ const faqItems = [
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Web console</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Browse instances, databases, tables, and data through the built-in web console at localhost:8080.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Browse instances, databases, tables, and data through the built-in web console at localhost:24080.</p>
         </article>
       </div>
     </div>
@@ -219,7 +209,7 @@ const faqItems = [
           <div>
             <h2 style="color: #e8eaed;">Start testing Spanner locally</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              Persistence, PostgreSQL interface, and PGAdapter — bundled with 20+ GCP services in one container. Free for individual developers.
+              LevelDB persistence. PostgreSQL interface via PGAdapter. 95% feature coverage. Test globally-distributed databases without Cloud Spanner costs.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

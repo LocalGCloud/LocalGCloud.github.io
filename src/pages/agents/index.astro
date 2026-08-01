@@ -1,0 +1,14 @@
+---
+import AgenticIndexPage from '../../components/AgenticIndexPage.astro';
+import { allAgenticContentPages } from '../../data/agenticContent';
+---
+
+<AgenticIndexPage
+  title="Agentic Local GCP Routes"
+  description="Intent-to-route map and agent sandbox pages for LocalCloud, covering Claude Code, Codex CLI, Cursor, Gemini CLI, service testing, workflows, comparisons, glossary terms, and demo posts."
+  h1="Agentic Local GCP routes"
+  eyebrow="Intent map"
+  deck="Use this index to send agents and humans to the canonical LocalCloud page for each job: sandbox setup, service-local testing, workflow automation, comparisons, definitions, and demos. Thin duplicate variants are intentionally rejected."
+  pages={allAgenticContentPages}
+  showIntentMap
+/>

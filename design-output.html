@@ -236,8 +236,8 @@
     /* Ring orbiting the number */
     .hero__ring {
       position: absolute;
-      width: 120%; height: 120%;
-      top: -10%; left: -10%;
+      width: 110%; height: 110%;
+      top: -5%; left: -5%;
       border: 1px solid var(--border);
       border-radius: 50%;
       animation: slowSpin 60s linear infinite;
@@ -401,6 +401,8 @@
       padding: 2.5rem 2rem;
       background: var(--void);
       transition: background 0.4s var(--ease);
+      display: flex;
+      flex-direction: column;
     }
     .feature-card:hover { background: var(--deep); }
     .feature-card__tag {
@@ -473,7 +475,9 @@
       transition: all 0.3s var(--ease);
       text-decoration: none;
       color: inherit;
-      display: block;
+      display: flex;
+      flex-direction: column;
+      min-height: 120px;
     }
     .svc:hover {
       border-color: var(--border-gold);
@@ -575,7 +579,6 @@
     .comparison tr + tr td { border-top: 1px solid rgba(255,255,255,0.03); }
     .comparison .highlight {
       font-family: var(--display);
-      font-family: var(--display);
       font-weight: 600;
       color: var(--gold);
       font-size: 1.05rem;
@@ -585,7 +588,7 @@
     .footer {
       border-top: 1px solid var(--border);
       padding: 4rem 0;
-      margin-top: 2rem;
+      margin-top: 0;
     }
     .footer__inner {
       max-width: 80rem;
@@ -662,15 +665,26 @@
       .hero__inner { grid-template-columns: 1fr; text-align: center; }
       .hero__desc { margin-left: auto; margin-right: auto; }
       .hero__actions { justify-content: center; }
-      .hero__visual { margin-top: 2rem; }
+      .hero__visual { margin-top: 3rem; }
       .features__grid { grid-template-columns: repeat(2, 1fr); }
       .services__grid { grid-template-columns: repeat(3, 1fr); }
       .footer__inner { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 768px) {
-      .header__nav { display: none; }
+      .header__nav { 
+        display: flex;
+        gap: 0.15rem;
+        flex-wrap: wrap;
+      }
+      .header__link {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.7rem;
+      }
+      .header__sep { display: none; }
       .hero__number { font-size: 10rem; }
       .hero__number-fill { font-size: 10rem; }
+      .hero__number-label { bottom: -2.5rem; }
+      .hero__visual { margin-top: 4rem; }
       .features__grid { grid-template-columns: 1fr; }
       .services__grid { grid-template-columns: repeat(2, 1fr); }
       .services__optin-grid { grid-template-columns: 1fr; }
@@ -678,6 +692,12 @@
     }
     @media (max-width: 480px) {
       .services__grid { grid-template-columns: 1fr; }
+      .hero__number { font-size: 8rem; }
+      .hero__number-fill { font-size: 8rem; }
+      .hero__number-label { 
+        bottom: -2rem;
+        font-size: 0.625rem;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {

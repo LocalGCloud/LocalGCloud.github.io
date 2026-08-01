@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "2026-07-localcloud-draft",
+  "name": "localcloud-agent-skills",
+  "displayName": "LocalCloud Agent Skills",
+  "description": "Portable LocalCloud skills for GCP emulator workflows: BigQuery, Pub/Sub, Terraform, CI sidecars, seed data, and SDK tests.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "homepage": "https://local.cloud/docs/",
+  "canonicalSkillRoot": "../skills",
+  "skills": [
+    "localcloud-bigquery",
+    "localcloud-pubsub",
+    "localcloud-terraform",
+    "localcloud-ci-sidecar",
+    "localcloud-seed-data",
+    "localcloud-sdk-tests"
+  ],
+  "security": {
+    "permissionBoundary": "No broad tool permissions are declared by this metadata.",
+    "requiresRealGcpCredentials": false,
+    "credentialBoundary": "LocalCloud workflows use localhost endpoints and no GCP account, credentials, or billing project by default."
+  }
+}

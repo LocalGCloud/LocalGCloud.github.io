@@ -1,0 +1,84 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
+import { intentRouteMap } from '../data/agenticContent';
+import type { AgenticContentPage } from '../data/agenticContent';
+
+interface Props {
+  title: string;
+  description: string;
+  h1: string;
+  eyebrow: string;
+  deck: string;
+  pages: AgenticContentPage[];
+  showIntentMap?: boolean;
+}
+
+const { title, description, h1, eyebrow, deck, pages, showIntentMap = false } = Astro.props;
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const localHref = (href: string) => href.startsWith('http') ? href : `${base}${href.replace(/^\//, '')}`;
+const structuredData = [createBreadcrumbSchema([{ name: 'Home', url: productFacts.siteUrl }, { name: h1 }])];
+---
+
+<LandingLayout title={`${title} — LocalCloud`} {description} {structuredData}>
+  <section class="site-section site-section--hero">
+    <div class="container">
+      <div class="max-w-[54rem] reveal">
+        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>{eyebrow}</span>
+        <h1 class="mt-4">{h1}</h1>
+        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">{deck}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={localHref('/ai/')} class="site-button">AI onboarding</a>
+          <a href={localHref('/compatibility/')} class="site-button site-button--secondary">Compatibility</a>
+          <a href={localHref('/docs/')} class="site-button site-button--secondary">Docs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {showIntentMap && (
+    <section class="site-section site-section--tight">
+      <div class="container">
+        <div class="reveal">
+          <span class="site-kicker">Intent-to-route map</span>
+          <h2 class="mt-3">Choose the canonical page, avoid thin variants</h2>
+        </div>
+        <div class="mt-8 grid gap-4 lg:grid-cols-2">
+          {intentRouteMap.map((item) => (
+            <article class="site-panel p-6 reveal">
+              <span class="site-kicker">{item.cluster}</span>
+              <h3 class="mt-3 text-xl">{item.intent}</h3>
+              <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Audience: {item.audience}</p>
+              <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Canonical route: <code>{item.route}</code></p>
+              <ul class="site-list mt-4">
+                {item.rejectVariants.map((variant) => <li>{variant}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="site-section">
+    <div class="container">
+      <div class="reveal">
+        <span class="site-kicker">Published routes</span>
+        <h2 class="mt-3">Indexable pages with caveats</h2>
+      </div>
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {pages.map((page) => (
+          <article class="site-panel p-6 reveal">
+            <span class="site-kicker">{page.eyebrow}</span>
+            <h3 class="mt-3 text-xl"><a href={localHref(page.path)}>{page.h1}</a></h3>
+            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{page.description}</p>
+            <ul class="site-list mt-4">
+              {page.quickFacts.slice(0, 2).map((fact) => <li>{fact}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</LandingLayout>

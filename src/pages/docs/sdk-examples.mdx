@@ -190,14 +190,18 @@ main();
 Remember to set the emulator environment variables before running any examples:
 
 ```bash
-eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
+eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
 ```
 
 Or set them manually:
 
 ```bash
-export STORAGE_EMULATOR_HOST=http://localhost:4443
-export PUBSUB_EMULATOR_HOST=localhost:8085
-export BIGQUERY_EMULATOR_HOST=http://localhost:9050
+export STORAGE_EMULATOR_HOST=http://localhost:24081
+export PUBSUB_EMULATOR_HOST=localhost:24082
+export BIGQUERY_EMULATOR_HOST=http://localhost:24087
 export GOOGLE_CLOUD_PROJECT=local-project
 ```
+
+## Agent Skills
+
+For agent-assisted SDK test work, use the [LocalCloud Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills). The `localcloud-sdk-tests`, `localcloud-bigquery`, and `localcloud-pubsub` skills instruct agents to route standard Google Cloud SDKs to localhost, avoid real GCP credentials by default, and validate production behavior separately.

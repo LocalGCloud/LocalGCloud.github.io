@@ -1,0 +1,14 @@
+---
+import AgenticContentPage from '../../components/AgenticContentPage.astro';
+import { blogDemoPages } from '../../data/agenticContent';
+import type { AgenticContentPage as Page } from '../../data/agenticContent';
+
+export function getStaticPaths() {
+  return blogDemoPages.filter((page) => page.slug !== 'localcloud-for-ai-agents').map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+
+interface Props { page: Page; }
+const { page } = Astro.props;
+---
+
+<AgenticContentPage {page} />

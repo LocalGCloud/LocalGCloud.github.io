@@ -1,0 +1,13 @@
+---
+import AgenticIndexPage from '../../components/AgenticIndexPage.astro';
+import { glossaryPages } from '../../data/agenticContent';
+---
+
+<AgenticIndexPage
+  title="Agentic Local Cloud Glossary"
+  description="Glossary definitions for GCP emulator, AI agent sandbox, MCP server, agentic CI, credentialless cloud development, BigQuery emulator, service emulator, and localhost cloud API."
+  h1="Agentic local cloud glossary"
+  eyebrow="Glossary routes"
+  deck="Precise terms help agents avoid unsafe assumptions. These definitions keep LocalCloud positioned as a local development, CI, and demo runtime with real-GCP validation before production."
+  pages={glossaryPages}
+/>

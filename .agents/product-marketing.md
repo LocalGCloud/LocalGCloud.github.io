@@ -14,7 +14,7 @@
 
 **Business model:** Free for developers. Commercial and enterprise licensing details are intentionally not public.
 
-**Website:** `https://local.cloud` | **Docker Hub:** `localcloud/localcloud:latest` | **GitHub:** `https://github.com/LocalGCloud/LocalGCloud.github.io`
+**Website:** `https://local.cloud` | **Docker Hub:** `jaysen2apache/localcloud` | **GitHub:** `https://github.com/LocalGCloud/LocalGCloud.github.io`
 
 ---
 
