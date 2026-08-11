@@ -13,18 +13,16 @@ const dockerCmd = `docker pull jaysen2apache/localcloud
 docker volume create localcloud-data
 
 docker run -d --name localcloud \\
-  -p 24080:24080 -p 24081:24081 -p 24082:24082 -p 24083:24083 \\
-  -p 24084:24084 -p 24085:24085 -p 24086:24086 -p 24087:24087 -p 24088:24088 \\
-  -p 24089:24089 \\
+  -p 24080-24092:24080-24092
   -m 4g \\
   -v localcloud-data:/var/lib/localcloud \\
+  -v /var/run/docker.sock:/var/run/docker.sock \\
   jaysen2apache/localcloud
 
-# Sets env vars
-eval "$(curl -s localhost:24080/_localcloud/env?format=shell)"
+# Open the console
+http://localhost:24080
 
-# Use local Google Object Storage from Local FileSystem
-gcloud storage ls gs://
+# See user guide on how to use the SDKs and CLIs 
 `;
 
 const heroSignals = [
