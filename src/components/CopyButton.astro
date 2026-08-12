@@ -4,7 +4,7 @@ const { text, class: className = '', analyticsLabel } = Astro.props;
 ---
 
 <button
-  class:list={['copy-btn inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded border border-[var(--border)] text-[var(--text-3)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors cursor-pointer bg-transparent', className]}
+  class:list={['copy-btn inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 px-3 py-2 text-xs rounded border border-[var(--border)] text-[var(--text-3)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors cursor-pointer bg-transparent', className]}
   data-copy={text}
   data-analytics-label={analyticsLabel}
   aria-label="Copy to clipboard"
@@ -16,20 +16,46 @@ const { text, class: className = '', analyticsLabel } = Astro.props;
 </button>
 
 <script>
-  document.querySelectorAll('.copy-btn').forEach((btn) => {
+  const resetTimers = new WeakMap<Element, number>();
+
+  document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((btn) => {
+    if (btn.dataset.copyReady === 'true') return;
+    btn.dataset.copyReady = 'true';
+
     btn.addEventListener('click', async () => {
-      const text = (btn as HTMLElement).dataset.copy;
+      const text = btn.dataset.copy;
       if (!text) return;
-      await navigator.clipboard.writeText(text);
-      btn.querySelector('.copy-icon')?.classList.add('hidden');
-      btn.querySelector('.check-icon')?.classList.remove('hidden');
+
       const label = btn.querySelector('.copy-label');
-      if (label) label.textContent = 'Copied!';
-      setTimeout(() => {
-        btn.querySelector('.copy-icon')?.classList.remove('hidden');
-        btn.querySelector('.check-icon')?.classList.add('hidden');
+      const copyIcon = btn.querySelector('.copy-icon');
+      const checkIcon = btn.querySelector('.check-icon');
+      const activeTimer = resetTimers.get(btn);
+      if (activeTimer) window.clearTimeout(activeTimer);
+
+      let copied = false;
+      try {
+        if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable');
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      } catch {
+        copied = false;
+      }
+
+      copyIcon?.classList.toggle('hidden', copied);
+      checkIcon?.classList.toggle('hidden', !copied);
+      if (label) {
+        label.textContent = copied
+          ? 'Copied!'
+          : 'Copy failed. Select the text and copy manually.';
+      }
+
+      const timer = window.setTimeout(() => {
+        copyIcon?.classList.remove('hidden');
+        checkIcon?.classList.add('hidden');
         if (label) label.textContent = 'Copy';
-      }, 2000);
+        resetTimers.delete(btn);
+      }, copied ? 2000 : 5000);
+      resetTimers.set(btn, timer);
     });
   });
 </script>

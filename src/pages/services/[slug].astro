@@ -64,8 +64,8 @@ const agentTestingPage = serviceTestingPages.find((page) => page.slug === servic
 
   <main id="main-content" class="site-page">
     <section class="site-section site-section--hero">
-      <div class="container grid gap-8 xl:grid-cols-[1fr,0.85fr]">
-        <div class="reveal">
+      <div class="container service-hero-grid">
+        <div class="service-hero-intro reveal">
           <nav class="mb-5 flex items-center gap-2 text-sm text-[var(--text-3)]">
             <a href={`${base}services/`} class="hover:text-[var(--text)]">Services</a>
             <span>/</span>
@@ -88,28 +88,10 @@ const agentTestingPage = serviceTestingPages.find((page) => page.slug === servic
           <p class="mt-6 max-w-[40rem] text-lg leading-8 text-[var(--text-2)] sm:text-xl">
             {service.description}
           </p>
-
-          <div class="mt-8 grid gap-4 sm:grid-cols-3">
-            <article class="site-panel site-panel--soft p-5">
-              <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">{service.supported.length}</div>
-              <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Supported</div>
-              <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Capabilities you can exercise locally today.</p>
-            </article>
-            <article class="site-panel site-panel--soft p-5">
-              <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">{service.notSupported.length}</div>
-              <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Gaps</div>
-              <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Known gaps and behaviors that are not there yet.</p>
-            </article>
-            <article class="site-panel site-panel--soft p-5">
-              <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">{service.port}</div>
-              <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Port / Protocol</div>
-              <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{service.protocol}</p>
-            </article>
-          </div>
         </div>
 
-        <aside class="site-panel p-5 reveal sm:p-6">
-          <div class="flex items-center justify-between gap-3">
+        <aside class="site-panel service-hero-connection p-5 reveal sm:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
             <span class="site-kicker">Connection</span>
             <CopyButton text={service.envVar} />
           </div>
@@ -130,6 +112,30 @@ const agentTestingPage = serviceTestingPages.find((page) => page.slug === servic
             </ul>
           </div>
         </aside>
+
+        <dl class="service-hero-metrics reveal" aria-label={`${service.name} support summary`}>
+          <div class="service-hero-metric">
+            <dt>Supported</dt>
+            <dd>
+              <strong>{service.supported.length}</strong>
+              <span>Capabilities you can exercise locally today.</span>
+            </dd>
+          </div>
+          <div class="service-hero-metric">
+            <dt>Known gaps</dt>
+            <dd>
+              <strong>{service.notSupported.length}</strong>
+              <span>Documented behaviors that are not there yet.</span>
+            </dd>
+          </div>
+          <div class="service-hero-metric">
+            <dt>Port / protocol</dt>
+            <dd>
+              <strong>{service.port}</strong>
+              <span>{service.protocol}</span>
+            </dd>
+          </div>
+        </dl>
       </div>
     </section>
 

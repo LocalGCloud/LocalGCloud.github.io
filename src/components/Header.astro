@@ -46,7 +46,7 @@ const navLinks = [
       </a>
     </div>
 
-    <button id="site-nav-toggle" class="site-nav__toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+    <button id="site-nav-toggle" class="site-nav__toggle" type="button" aria-label="Open navigation" aria-controls="site-nav-mobile" aria-expanded="false">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
         <path d="M4 7h16"></path>
         <path d="M4 12h16"></path>
@@ -75,7 +75,7 @@ const navLinks = [
     </nav>
   </div>
 
-  <div id="site-nav-mobile" class="site-nav__mobile">
+  <div id="site-nav-mobile" class="site-nav__mobile" hidden>
     <div class="container site-nav__mobile-links">
       {navLinks.map((link) => (
         <a href={link.href} class:list={[link.isActive && 'is-active']}>
@@ -89,12 +89,24 @@ const navLinks = [
 </header>
 
 <script>
-  const toggle = document.getElementById('site-nav-toggle');
-  const mobileMenu = document.getElementById('site-nav-mobile');
+  const toggle = document.getElementById('site-nav-toggle') as HTMLButtonElement | null;
+  const mobileMenu = document.getElementById('site-nav-mobile') as HTMLElement | null;
+
+  const setMenuOpen = (open: boolean) => {
+    if (!toggle || !mobileMenu) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    mobileMenu.hidden = !open;
+    mobileMenu.classList.toggle('is-open', open);
+  };
 
   toggle?.addEventListener('click', () => {
-    const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!expanded));
-    mobileMenu?.classList.toggle('is-open', !expanded);
+    setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true');
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || toggle?.getAttribute('aria-expanded') !== 'true') return;
+    setMenuOpen(false);
+    toggle.focus();
   });
 </script>

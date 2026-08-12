@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import rehypeTableRegions from './src/utils/rehype-table-regions.mjs';
 
 const rawAgentPages = [
   'https://local.cloud/ai/agents.md',
@@ -16,7 +17,7 @@ const rawAgentPages = [
 
 export default defineConfig({
   site: 'https://local.cloud/',
-  integrations: [mdx(), sitemap({ customPages: rawAgentPages })],
+  integrations: [mdx({ gfm: true, rehypePlugins: [rehypeTableRegions] }), sitemap({ customPages: rawAgentPages })],
   vite: {
     plugins: [tailwindcss()],
   },
