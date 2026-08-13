@@ -1,0 +1,269 @@
+---
+import CodeTabs from './CodeTabs.astro';
+import CopyButton from './CopyButton.astro';
+import { productFacts } from '../data/productFacts';
+---
+
+<section
+  id="install-localcloud"
+  class="installation-methods"
+  aria-labelledby="install-localcloud-title"
+>
+  <div class="installation-methods__panel">
+    <header class="installation-methods__header">
+      <div>
+        <span class="installation-methods__kicker">Install LocalCloud</span>
+        <h2 id="install-localcloud-title">From zero to local GCP in one command.</h2>
+      </div>
+      <p class="installation-methods__prerequisite">
+        <strong>Docker prerequisite</strong>
+        Docker Desktop, Colima, or Docker Engine must already be running.
+      </p>
+    </header>
+
+    <CodeTabs labels={['Install script', 'Homebrew']}>
+      <Fragment slot="tab-0">
+        <div class="installation-methods__command">
+          <pre tabindex="0" aria-label="Install LocalCloud with the install script"><code>{productFacts.installScriptCommand}</code></pre>
+          <CopyButton
+            text={productFacts.installScriptCommand}
+            class="installation-methods__copy"
+            analyticsLabel="homepage-install-script"
+          />
+        </div>
+        <p class="installation-methods__channel-note">
+          macOS and Linux. The installer verifies the release checksum and can run <code>localcloud start</code> after you confirm.
+        </p>
+      </Fragment>
+      <Fragment slot="tab-1">
+        <div class="installation-methods__command">
+          <pre tabindex="0" aria-label="Install LocalCloud with Homebrew"><code>{productFacts.homebrewInstallCommand}</code></pre>
+          <CopyButton
+            text={productFacts.homebrewInstallCommand}
+            class="installation-methods__copy"
+            analyticsLabel="homepage-homebrew"
+          />
+        </div>
+        <p class="installation-methods__channel-note">
+          macOS. Homebrew installs the CLI; run <code>localcloud doctor</code> and <code>localcloud start</code> explicitly afterward.
+        </p>
+      </Fragment>
+    </CodeTabs>
+
+    <ol class="installation-methods__outcome" aria-label="LocalCloud first run">
+      <li>
+        <span class="installation-methods__step">01</span>
+        <strong>Docker running</strong>
+        <small>Keep your preferred engine under your control.</small>
+      </li>
+      <li>
+        <span class="installation-methods__step">02</span>
+        <strong><code>localcloud start</code></strong>
+        <small>The host CLI starts the version-matched image.</small>
+      </li>
+      <li>
+        <span class="installation-methods__step">03</span>
+        <strong>Open http://localhost:24080</strong>
+        <small>Inspect service readiness in the local console.</small>
+      </li>
+    </ol>
+
+    <p class="installation-methods__meta">
+      CLI {productFacts.releaseTag} ·
+      <a href={`${productFacts.githubUrl}/releases`}>Checksums and Sigstore bundles</a> ·
+      <a href={productFacts.homebrewTapUrl}>Homebrew tap</a> ·
+      <a href="/docs/licensing/">Proprietary license terms</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .installation-methods {
+    position: relative;
+    z-index: 1;
+    padding: 0 1rem;
+  }
+
+  .installation-methods__panel {
+    padding: clamp(1.15rem, 3vw, 2rem);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background:
+      linear-gradient(135deg, rgba(232, 240, 254, 0.78), rgba(255, 255, 255, 0.96) 48%),
+      var(--surface);
+    box-shadow: var(--shadow-md);
+  }
+
+  .installation-methods__header {
+    display: grid;
+    gap: 1rem;
+    align-items: end;
+  }
+
+  .installation-methods__kicker,
+  .installation-methods__step,
+  .installation-methods__prerequisite strong {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .installation-methods__kicker,
+  .installation-methods__step {
+    color: var(--accent-strong);
+  }
+
+  .installation-methods h2 {
+    margin-top: 0.35rem;
+    font-size: clamp(2rem, 4vw, 3.35rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  .installation-methods__prerequisite {
+    padding: 0.8rem 0.9rem;
+    border-left: 3px solid var(--brand-yellow);
+    background: rgba(251, 188, 4, 0.08);
+    color: var(--text-2);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .installation-methods__prerequisite strong {
+    display: block;
+    margin-bottom: 0.2rem;
+    color: var(--text);
+  }
+
+  .installation-methods :global(.code-tabs) {
+    margin: 1.25rem 0 0;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .installation-methods__command {
+    position: relative;
+    min-width: 0;
+  }
+
+  .installation-methods__command pre {
+    min-height: 4.5rem;
+    padding-right: 5rem;
+    border: 0;
+    border-radius: 0;
+    background: #1f2732;
+  }
+
+  .installation-methods__command pre > code {
+    color: #e8eaed;
+    white-space: pre;
+  }
+
+  .installation-methods__command :global(.installation-methods__copy) {
+    position: absolute;
+    top: 0.68rem;
+    right: 0.68rem;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(232, 234, 237, 0.88);
+  }
+
+  .installation-methods__channel-note {
+    padding: 0.85rem 1rem;
+    border-top: 1px solid var(--line);
+    color: var(--text-2);
+    font-size: 0.86rem;
+    line-height: 1.55;
+  }
+
+  .installation-methods__outcome {
+    display: grid;
+    gap: 0;
+    margin-top: 1rem;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: rgba(255, 255, 255, 0.72);
+    list-style: none;
+  }
+
+  .installation-methods__outcome li {
+    position: relative;
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+    padding: 0.9rem 1rem;
+  }
+
+  .installation-methods__outcome li + li {
+    border-top: 1px solid var(--line);
+  }
+
+  .installation-methods__outcome strong {
+    color: var(--text);
+    font-size: 0.96rem;
+    overflow-wrap: anywhere;
+  }
+
+  .installation-methods__outcome small {
+    color: var(--text-2);
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+
+  .installation-methods__meta {
+    margin-top: 0.9rem;
+    color: var(--text-2);
+    font-size: 0.78rem;
+    line-height: 1.65;
+  }
+
+  .installation-methods__meta a {
+    text-decoration: underline;
+    text-decoration-color: rgba(21, 87, 176, 0.3);
+    text-underline-offset: 0.18em;
+  }
+
+  @media (min-width: 760px) {
+    .installation-methods__header {
+      grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+    }
+
+    .installation-methods__outcome {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .installation-methods__outcome li + li {
+      border-top: 0;
+      border-left: 1px solid var(--line);
+    }
+
+    .installation-methods__outcome li + li::before {
+      content: "→";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--accent-strong);
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  @media (max-width: 759px) {
+    .installation-methods {
+      padding: 0;
+    }
+
+    .installation-methods__panel {
+      padding: 0.9rem;
+    }
+  }
+</style>

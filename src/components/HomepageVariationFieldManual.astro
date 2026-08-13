@@ -2,6 +2,7 @@
 import CopyButton from './CopyButton.astro';
 import ServiceIcon from './ServiceIcon.astro';
 import { serviceCategoryMeta, serviceCategoryOrder, services } from '../data/services';
+import InstallationMethods from './InstallationMethods.astro';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
@@ -86,6 +87,8 @@ const atlasColumns = serviceCategoryOrder
         />
       </figure>
     </section>
+
+    <InstallationMethods />
 
     <section class="field-quickstart" id="manual-quickstart">
           <article class="field-card field-card--paper">
@@ -351,6 +354,7 @@ const atlasColumns = serviceCategoryOrder
   .field-section-heading p,
   .field-column__head p,
   .field-story__card p,
+
   .field-cta p {
     color: var(--text-2);
     font-size: 0.98rem;

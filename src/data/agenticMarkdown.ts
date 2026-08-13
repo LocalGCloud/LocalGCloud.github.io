@@ -73,7 +73,7 @@ ${endpointLines}
 - **SDK examples**: https://local.cloud/docs/sdk-examples/
 - **Terraform guide**: https://local.cloud/docs/terraform/
 - **Seed data guide**: https://local.cloud/docs/seed-data/
-- **Agent Skills package**: ${productFacts.githubUrl}/tree/main/agent-skills
+- **Agent Skills package**: ${productFacts.siteRepositoryUrl}/tree/main/agent-skills
 
 ## Service matrix for agents
 ${serviceLines}
@@ -124,7 +124,7 @@ ${safetyLines}
 - SDK examples: https://local.cloud/docs/sdk-examples/
 - Terraform guide: https://local.cloud/docs/terraform/
 - Seed data guide: https://local.cloud/docs/seed-data/
-- Agent Skills package: ${productFacts.githubUrl}/tree/main/agent-skills
+- Agent Skills package: ${productFacts.siteRepositoryUrl}/tree/main/agent-skills
 `;
 
 export const agentResourceIndexMarkdown = `# LocalCloud agent Markdown resources

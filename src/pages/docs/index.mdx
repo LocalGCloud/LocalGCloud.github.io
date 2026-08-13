@@ -10,6 +10,7 @@ import Callout from '../../components/Callout.astro';
 import Steps from '../../components/Steps.astro';
 import Step from '../../components/Step.astro';
 import CodeTabs from '../../components/CodeTabs.astro';
+import { productFacts } from '../../data/productFacts';
 
 # Getting Started
 
@@ -49,7 +50,33 @@ brew install --cask docker-desktop
 
 - **4GB RAM** available for the container
 
-## Quick Start
+## Install the LocalCloud CLI
+
+Choose either supported host installation channel:
+
+<CodeTabs labels={["Install script", "Homebrew"]}>
+  <Fragment slot="tab-0">
+    <pre><code>{productFacts.installScriptCommand}</code></pre>
+  </Fragment>
+  <Fragment slot="tab-1">
+    <pre><code>{productFacts.homebrewInstallCommand}</code></pre>
+  </Fragment>
+</CodeTabs>
+
+The install script supports macOS and Linux, verifies the selected release archive, and can run diagnostics and start LocalCloud after you confirm. Homebrew users run the first start explicitly:
+
+```bash
+localcloud doctor
+localcloud start
+localcloud console
+eval "$(localcloud env)"
+```
+
+`localcloud doctor` diagnoses Docker but never installs or starts Docker Desktop, Colima, or Docker Engine. Release archives, checksums, and Sigstore bundles are published in the <a href={`${productFacts.githubUrl}/releases`}>CLI releases</a>; the formula source is in the <a href={productFacts.homebrewTapUrl}>Homebrew tap</a>.
+
+## Manual Docker path
+
+Use the direct-Docker flow below on unsupported CLI hosts or when you intentionally do not want the host CLI.
 
 <Steps>
   <Step title="Pull the image">
