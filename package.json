@@ -12,7 +12,8 @@
   "packageManager": "pnpm@10.28.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/generate-distributed-docs.mjs && node scripts/verify-docs-contract.mjs && node scripts/verify-cli-docs.mjs && node scripts/verify-doc-examples.mjs && node scripts/verify-policy-docs.mjs && node scripts/verify-distributed-docs.mjs && astro build && node scripts/verify-installer.mjs && node scripts/verify-rendered-docs.mjs && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node --experimental-strip-types scripts/verify-content-facts.mjs && pagefind --site dist",
+    "build": "node scripts/generate-distributed-docs.mjs && node scripts/verify-docs-contract.mjs && node scripts/verify-cli-docs.mjs && node scripts/verify-doc-examples.mjs && node scripts/verify-policy-docs.mjs && node scripts/verify-distributed-docs.mjs && astro build && node scripts/verify-rendered-docs.mjs && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node --experimental-strip-types scripts/verify-content-facts.mjs && pagefind --site dist",
+    "test:installer": "node scripts/verify-installer.mjs",
     "preview": "astro preview"
   },
   "dependencies": {
