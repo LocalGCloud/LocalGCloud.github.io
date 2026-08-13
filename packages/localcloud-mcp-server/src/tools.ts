@@ -2,20 +2,19 @@ import { z } from 'zod';
 import { agenticFacts, docsCorpus, localcloudServices, productFacts, promptLibrary } from './data/localcloudFacts.js';
 import { checkPort, dockerAvailable, inspectContainer, inspectState, logs, restartContainer, startContainer, stopContainer } from './lib/docker.js';
 import { fetchJson, waitForHealth } from './lib/http.js';
-import { runFile } from './lib/process.js';
 import { jsonResult, refusal, truncateText, type ToolResult } from './lib/result.js';
 
 export const runtimeInputShape = {
   action: z.enum(['status', 'health', 'start', 'stop', 'restart', 'readiness']).default('status'),
   confirm: z.boolean().optional().describe('Required for destructive stop and restart actions.'),
-  image: z.string().default(agenticFacts.dockerImage).describe('Docker image to start; defaults to jaysen2apache/localcloud.'),
+  image: z.string().default(agenticFacts.dockerImage).describe('Docker image to start; defaults to the reviewed mutable jaysen2apache/localcloud:latest identity. Pin a qualified digest for release workflows.'),
   containerName: z.string().default(agenticFacts.containerName),
   waitTimeoutMs: z.number().int().min(1_000).max(120_000).default(30_000),
 };
 export const runtimeInputSchema = z.object(runtimeInputShape);
 
 export const servicesInputShape = {
-  status: z.enum(['supported', 'partial', 'planned', 'all']).default('all'),
+  status: z.enum(['supported', 'partial', 'release-unverified', 'planned', 'all']).default('all'),
   service: z.string().optional().describe('Service slug or case-insensitive name substring.'),
   includeGaps: z.boolean().default(true),
 };
@@ -23,7 +22,7 @@ export const servicesInputSchema = z.object(servicesInputShape);
 
 export const diagnosticsInputShape = {
   includeEnv: z.boolean().default(true),
-  ports: z.array(z.number().int().min(1).max(65_535)).default([8080, 4443, 8085, 8086, 8087, 9010, 9020, 9050, 9060, 6379]),
+  ports: z.array(z.number().int().min(1).max(65_535)).default([24080, 24081, 24082, 24083, 24084, 24085, 24086, 24087, 24088, 24089, 24090, 24091, 24092]),
 };
 export const diagnosticsInputSchema = z.object(diagnosticsInputShape);
 
@@ -40,7 +39,7 @@ export const stateInputShape = {
   action: z.enum(['inspect', 'reset']).default('inspect'),
   confirm: z.boolean().optional().describe('Required for reset.'),
   containerName: z.string().default(agenticFacts.containerName),
-  resetEndpoint: z.string().url().default('http://localhost:24080/_localcloud/state/reset'),
+  resetEndpoint: z.string().url().default('http://localhost:24080/reset'),
 };
 export const stateInputSchema = z.object(stateInputShape);
 
@@ -53,10 +52,8 @@ export const docsInputSchema = z.object(docsInputShape);
 
 export const gcpClientInputShape = {
   args: z.array(z.string()).min(1).max(24).describe('gcloud argv tokens, excluding the gcloud binary.'),
-  execute: z.boolean().default(false).describe('Default false returns a safe dry-run plan.'),
-  confirm: z.boolean().optional().describe('Required when execute is true.'),
+  execute: z.boolean().default(false).describe('Execution is unavailable until runtime-generated gcloud endpoint overrides are safely validated.'),
   project: z.string().default(agenticFacts.defaultProject),
-  maxBytes: z.number().int().min(1_024).max(64_000).default(16_384),
 };
 export const gcpClientInputSchema = z.object(gcpClientInputShape);
 
@@ -213,26 +210,18 @@ export async function handleGcpClient(input: z.input<typeof gcpClientInputSchema
   if (!validation.ok) {
     return refusal(validation.reason, { args: args.args });
   }
-  const env = Object.fromEntries(localcloudServices.map((service) => service.envVar.split('=').slice(0, 2) as [string, string]));
   const finalArgs = ['--project', args.project, ...args.args];
-  if (!args.execute) {
-    return jsonResult({ ok: true, dryRun: true, command: 'gcloud', args: finalArgs, env, note: 'Dry run only. Pass execute: true, confirm: true, and set LOCALCLOUD_MCP_ENABLE_GCP_CLIENT=1 to run.' });
+  if (args.execute) {
+    return refusal(
+      'gcloud execution is unavailable: static SDK emulator variables do not safely force gcloud routing. Use the dry-run plan, then obtain runtime-generated CLOUDSDK_API_ENDPOINT_OVERRIDES_* values from the selected instance before executing gcloud outside this tool.',
+      { args: finalArgs, executionAvailable: false },
+    );
   }
-  if (args.confirm !== true) {
-    return refusal('Executing gcloud requires confirm: true.', { args: finalArgs, confirmRequired: true });
-  }
-  if (process.env.LOCALCLOUD_MCP_ENABLE_GCP_CLIENT !== '1') {
-    return refusal('gcloud execution is disabled by default. Set LOCALCLOUD_MCP_ENABLE_GCP_CLIENT=1 after reviewing the argv allowlist.', { args: finalArgs });
-  }
-  const result = await runFile('gcloud', finalArgs, {
-    timeoutMs: 30_000,
-    maxOutputBytes: args.maxBytes,
-    env: {
-      ...env,
-      CLOUDSDK_CORE_PROJECT: args.project,
-      CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: '/dev/null',
-      CLOUDSDK_CONFIG: process.env.LOCALCLOUD_MCP_GCLOUD_CONFIG ?? '/tmp/localcloud-mcp-gcloud',
-    },
+  return jsonResult({
+    ok: true,
+    dryRun: true,
+    command: 'gcloud',
+    args: finalArgs,
+    note: 'Planning only. Before external execution, obtain /env?format=json from the selected instance, verify every CLOUDSDK_API_ENDPOINT_OVERRIDES_* URL is loopback or the intended isolated container alias, and refuse any command group without a generated local override.',
   });
-  return jsonResult({ ok: result.exitCode === 0, command: { command: result.command, args: result.args, exitCode: result.exitCode }, stdout: result.stdout, stderr: result.stderr, stdoutTruncation: result.stdoutTruncation, stderrTruncation: result.stderrTruncation }, { isError: result.exitCode !== 0, limitBytes: args.maxBytes });
 }

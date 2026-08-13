@@ -15,7 +15,7 @@ const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const {
   title,
-  description = 'Run BigQuery, Pub/Sub, Firestore, Spanner, Bigtable, Cloud Storage, and 20+ GCP services locally in one Docker container. Use standard Google Cloud SDKs with zero code changes. Free for individual developers.',
+  description = 'Run evidence-bounded Google Cloud service workflows locally in one Docker container. Review compatibility, privacy, and the governing proprietary license before use.',
   ogImage = `${base}brand/localcloud-social-card.svg`,
   noindex = false,
   structuredData = [],
@@ -96,7 +96,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
         store_google: true,
         save_referrer: true,
 
-        // Anonymous events (controls billing)
+        // Events use PostHog distinct/session identifiers; see /docs/privacy/.
         person_profiles: 'identified_only',
 
         // Disabled — enable via feature flag when needed

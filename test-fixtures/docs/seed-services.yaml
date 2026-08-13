@@ -1,0 +1,23 @@
+services:
+  gcs:
+    buckets:
+      - name: localcloud-docs-bucket
+  secretmanager:
+    secrets:
+      - name: docs-api-key
+        versions:
+          - data: fake-local-value
+  bigquery:
+    datasets:
+      - name: analytics
+        location: US
+    tables:
+      - dataset: analytics
+        name: events
+        schema:
+          fields:
+            - name: event_id
+              type: STRING
+              mode: REQUIRED
+        rows:
+          - event_id: event-001

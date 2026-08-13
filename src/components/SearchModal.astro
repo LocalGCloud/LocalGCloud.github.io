@@ -17,12 +17,14 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
           class="search-modal__input"
           type="search"
           placeholder="Search documentation..."
+          aria-describedby="search-privacy-note"
           autocomplete="off"
           autofocus
         />
         <kbd class="search-modal__kbd">Esc</kbd>
       </div>
     </div>
+    <p id="search-privacy-note" class="search-modal__hint px-4 pt-2">Search text with 3+ characters is sent to PostHog. Do not enter secrets or personal data. <a href={`${base}docs/privacy/`}>Privacy details</a>.</p>
     <div id="search-results" class="search-modal__results">
       <div class="search-modal__empty">
         <p>Type to search across all documentation pages</p>

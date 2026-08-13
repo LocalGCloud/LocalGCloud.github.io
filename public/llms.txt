@@ -1,78 +1,62 @@
 # LocalCloud
 
-> LocalCloud is a local Google Cloud runtime for development, testing, CI, and demos. It runs 20+ GCP service surfaces in one Docker container, uses standard Google Cloud SDKs pointed at localhost, and requires no GCP account, credentials, service-account keys, or billing project by default.
+> Contract-generated LocalCloud context. Reviewed 2026-08-13; runtime aabbf62b5e72ddd6d29357c36c813bcae8928912; CLI 9045e94e4603d9909f780d6e0b57a93b2f947304.
 
-LocalCloud is not a production replacement for Google Cloud. Validate against real GCP before production deployment.
-Availability: Free for developers.
+LocalCloud provides 25 available services and 1 coming-soon service guide. Google Sheets is an integration surface rather than a LocalCloud service. It is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. The proprietary license permits limited non-commercial personal use by an Individual Developer acting personally; the license text governs. Excluded uses include employer or organization use, commercial development, cost-saving internal tools, team CI, shared team workflows.
 
-## Primary docs
-
-- [AI agent guide](https://local.cloud/ai/): Human explanation, copy prompts, service matrix, safety boundaries, and AGENTS.md template for AI coding agents.
-- [Raw agent execution guide](https://local.cloud/ai/agents.md): Markdown instructions for agents to start LocalCloud and verify localhost GCP workflows safely.
-- [AGENTS.md template](https://local.cloud/ai/AGENTS.md): Downloadable repository-local agent policy template.
-- [Agent Markdown resources](https://local.cloud/ai/resources.md): Raw Markdown route index and canonical policy for agent-facing alternatives.
-- [Agent service matrix](https://local.cloud/ai/services.md): Raw Markdown service metadata for agents.
-- [Agent compatibility boundaries](https://local.cloud/ai/compatibility.md): Raw Markdown safety and validation rules.
-- [Agent docs index](https://local.cloud/ai/docs.md): Raw Markdown setup, SDK, Terraform, and seed-data links.
-- [LocalCloud Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): Portable skills for BigQuery, Pub/Sub, Terraform, CI sidecars, seed data, and SDK tests; copy `agent-skills/skills/*` into `.agents/skills/`.
-- [Getting started](https://local.cloud/docs/): Quick start for running LocalCloud locally.
-- [Service catalog](https://local.cloud/services/): 20+ local GCP service surfaces with ports, protocols, and coverage notes.
-- [Compatibility and limitations](https://local.cloud/compatibility/): Boundaries and known limitations for local validation.
-- [SDK examples](https://local.cloud/docs/sdk-examples/): Configure standard Google Cloud SDKs to use localhost emulator endpoints.
-- [Terraform integration](https://local.cloud/docs/terraform/): Endpoint overrides for local Terraform validation.
-- [Seed data](https://local.cloud/docs/seed-data/): Repeatable local data setup.
-
-## Product pages
-
-- [Homepage](https://local.cloud/): LocalCloud overview.
-- [What is a GCP Emulator?](https://local.cloud/docs/what-is-gcp-emulator/): Explanation of emulator workflows.
-- [Architecture](https://local.cloud/docs/architecture/): LocalCloud runtime architecture.
-- [Web Console](https://local.cloud/docs/console/): Local service health and data inspection.
-- [FAQ](https://local.cloud/docs/faq/): Common questions.
-- [Licensing](https://local.cloud/docs/licensing/): License and usage terms.
-
-## Use cases
-
-- [GCP Emulator](https://local.cloud/gcp-emulator/): Run Google Cloud locally.
-- [GCP Integration Testing in CI/CD](https://local.cloud/gcp-integration-testing/): Local GCP integration tests.
-- [Reduce GCP Development Costs](https://local.cloud/reduce-gcp-dev-costs/): Avoid cloud spend during development.
-- [LocalStack for Google Cloud](https://local.cloud/localstack-for-google-cloud/): LocalStack-style workflow for GCP.
-
-## Service deep dives
-
-- [BigQuery emulator](https://local.cloud/bigquery-emulator/): Local BigQuery-compatible workflows.
-- [Bigtable emulator](https://local.cloud/bigtable-emulator/): Local Bigtable workflows.
-- [Cloud Storage emulator](https://local.cloud/cloud-storage-emulator/): Local bucket/object workflows.
-- [Firestore emulator](https://local.cloud/firestore-emulator/): Local document database workflows.
-- [Pub/Sub emulator](https://local.cloud/pubsub-emulator/): Local messaging workflows.
-- [Spanner emulator](https://local.cloud/spanner-emulator/): Local Spanner workflows.
-- [BigQuery feature comparison](https://local.cloud/docs/bigquery-feature-comparison/): BigQuery coverage details.
-- [BigQuery coverage gaps](https://local.cloud/docs/bigquery-coverage-gaps/): Known BigQuery limitations.
-- [BigQuery emulator features](https://local.cloud/docs/bigquery-emulator-features/): BigQuery features.
-- [Bigtable emulator features](https://local.cloud/docs/bigtable-emulator-features/): Bigtable features.
-- [Spanner emulator features](https://local.cloud/docs/spanner-emulator-features/): Spanner features.
-
-## Key facts
-
-- Docker image: `jaysen2apache/localcloud`
-- Web console: `http://localhost:24080`
-- Health endpoint: `http://localhost:24080/_localcloud/health`
-- Shell env endpoint: `http://localhost:24080/_localcloud/env?format=shell`
-- Terraform env endpoint: `http://localhost:24080/_localcloud/env?format=terraform`
-- Quick start:
+## Quick start
 
 ```bash
-docker pull jaysen2apache/localcloud
-docker run -d -p 8080:24080 -p 4443:24081 -p 8085-8087:24082-8087 \
-  -p 9010:24085 -p 9020:24086 -p 9050:24087 -p 9060:24088 -p 6379:6379 \
-  -m 4g --name localcloud \
-  -v ~/.localcloud/data:/var/lib/localcloud \
-  jaysen2apache/localcloud
-eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
+curl -fsSL https://local.cloud/install.sh | sh
+localcloud doctor
+localcloud start
+eval "$(localcloud env)"
+localcloud console
 ```
 
-## Optional
+## Runtime facts
 
-- [Full LLM context](https://local.cloud/llms-full.txt): Expanded LocalCloud context for AI systems.
-- [Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): Portable LocalCloud skills for BigQuery, Pub/Sub, Terraform, CI sidecars, seed data, and SDK tests.
-- [GitHub](https://github.com/LocalGCloud/LocalGCloud.github.io): Project repository.
+- Default project: `local-gcp-project`
+- Default user: `local-developer`
+- Default instance: `default`
+- CLI memory default: `4g`
+- Health endpoint: `http://localhost:24080/health`
+- Shell environment endpoint: `http://localhost:24080/env?format=shell`
+- Terraform environment endpoint: `http://localhost:24080/env?format=terraform`
+
+Trust URLs and endpoint values returned by the selected CLI instance; occupied canonical ports may be remapped. LocalCloud emulates bounded local development workflows. Validate application behavior against real Google Cloud before production deployment.
+
+## Useful URLs
+
+- Service catalog: https://local.cloud/services/
+- Compatibility and limitations: https://local.cloud/compatibility/
+- Licensing: https://local.cloud/docs/licensing/
+- LocalStack for Google Cloud: https://local.cloud/localstack-for-google-cloud/
+
+## Services
+- Cloud Storage — supported; HTTP/REST :24081; `STORAGE_EMULATOR_HOST=http://localhost:24081`. Verified only for the documented bounded local workflows; real Google Cloud remains the production source of truth.
+- Pub/Sub — partial; gRPC :24082; `PUBSUB_EMULATOR_HOST=localhost:24082`. Partial local behavior with operation-specific limitations.
+- Firestore — coming soon. Service support is coming soon; do not configure a local endpoint yet.
+- Bigtable — release-unverified; gRPC :24084; `BIGTABLE_EMULATOR_HOST=localhost:24084`. Release-unverified: qualify the dependency identity and assembled LocalCloud image before relying on positive workflows.
+- Spanner — release-unverified; gRPC :24085 · HTTP/REST :24086; `SPANNER_EMULATOR_HOST=localhost:24085`. Release-unverified: qualify the dependency identity and assembled LocalCloud image before relying on positive workflows.
+- BigQuery — release-unverified; HTTP/REST :24087 · gRPC :24088; `BIGQUERY_EMULATOR_HOST=http://localhost:24087`. Release-unverified: qualify the dependency identity and assembled LocalCloud image before relying on positive workflows.
+- Secret Manager — partial; gRPC :24080; `SECRET_MANAGER_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Tasks — partial; gRPC :24080; `CLOUD_TASKS_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Scheduler — partial; gRPC :24080; `CLOUD_SCHEDULER_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Functions (2nd Gen) — partial; gRPC :24080; `CLOUD_FUNCTIONS_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- AlloyDB — partial; gRPC :24080; `ALLOYDB_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Dataproc — partial; gRPC :24080; `DATAPROC_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud IAM — partial; gRPC :24080; `IAM_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Resource Manager — supported; HTTP/REST :24080; `CLOUD_RESOURCE_MANAGER_EMULATOR_HOST=http://localhost:24080`. Verified only for the documented bounded local workflows; real Google Cloud remains the production source of truth.
+- Service Usage — partial; HTTP/REST :24080; `SERVICE_USAGE_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Billing — partial; HTTP/REST :24080; `CLOUD_BILLING_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Logging — partial; gRPC :24080; `CLOUD_LOGGING_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Monitoring — partial; gRPC :24080; `CLOUD_MONITORING_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- GKE — partial; gRPC :24080 · k3d :24092; `GKE_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Compute Engine — partial; HTTP/REST :24080; `COMPUTE_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Run — partial; gRPC :24080; `CLOUD_RUN_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Memorystore (Redis/Valkey) — partial; RESP :24089; `REDIS_HOST=localhost`. Partial local behavior with operation-specific limitations.
+- Cloud Workflows — partial; gRPC :24080; `WORKFLOWS_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Vertex AI — partial; HTTP/REST :24080; `AIPLATFORM_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud KMS — partial; HTTP/REST :24080; `CLOUD_KMS_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud SQL — partial; HTTP/REST :24080 · PostgreSQL :24090 · MySQL :24091; `CLOUD_SQL_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.

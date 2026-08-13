@@ -54,7 +54,7 @@
   <g filter="url(#hsb-shadow)">
     <rect x="504" y="188" width="214" height="118" rx="28" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
     <text x="532" y="228" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.4">SDK HANDOFF</text>
-    <text x="532" y="268" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">/_localcloud/env</text>
+    <text x="532" y="268" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">/env</text>
     <text x="532" y="292" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">Generate localhost targets automatically</text>
   </g>
 

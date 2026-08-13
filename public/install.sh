@@ -441,7 +441,7 @@ if [ "$path_ready" -eq 0 ]; then
     fi
 fi
 
-if [ "$start_after_install" -eq 0 ] || [ ! -r /dev/tty ] || [ ! -w /dev/tty ]; then
+if [ "$start_after_install" -eq 0 ] || [ ! -r /dev/tty ] || [ ! -w /dev/tty ] || ! (: </dev/tty >/dev/tty) 2>/dev/null; then
     printf 'Next steps:\n  %s doctor\n  %s start\n' "$destination" "$destination"
     exit 0
 fi

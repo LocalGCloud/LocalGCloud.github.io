@@ -9,7 +9,7 @@
     "url": "https://local.cloud/"
   },
   "icon": "../assets/icon.svg",
-  "license": "Apache-2.0",
+  "license": "LicenseRef-LocalCloud-Proprietary",
   "homepage_url": "https://local.cloud/",
   "privacy_url": "../PRIVACY.md",
   "security_url": "../SECURITY.md",
@@ -20,12 +20,6 @@
     "env_schema": {
       "type": "object",
       "properties": {
-        "LOCALCLOUD_MCP_ENABLE_GCP_CLIENT": {
-          "type": "string",
-          "enum": ["0", "1"],
-          "default": "0",
-          "description": "Opt in to constrained gcloud execution. Dry-run does not require this."
-        },
         "LOCALCLOUD_MCP_ENABLE_STATE_RESET": {
           "type": "string",
           "enum": ["0", "1"],
@@ -43,7 +37,7 @@
     { "name": "localcloud-logs", "description": "Return bounded summaries, errors, requests, or raw logs." },
     { "name": "localcloud-state", "description": "Inspect state; reset is opt-in and confirmation-gated." },
     { "name": "localcloud-docs", "description": "Return canonical local.cloud docs and prompt references." },
-    { "name": "localcloud-gcp-client", "description": "Dry-run or opt-in constrained local gcloud argv execution." }
+    { "name": "localcloud-gcp-client", "description": "Dry-run planning for allowlisted local gcloud argv; execution is disabled pending safe runtime-generated override validation." }
   ],
   "prompts": ["gcp-sandbox-tester", "write-localcloud-integration-test", "terraform-local-gcp-validation", "debug-localcloud-sdk-routing"]
 }

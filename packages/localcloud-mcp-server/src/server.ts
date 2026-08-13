@@ -93,8 +93,8 @@ export function createLocalCloudMcpServer(): McpServer {
   server.registerTool(
     'localcloud-gcp-client',
     {
-      title: 'Constrained local gcloud client',
-      description: 'Dry-run or optionally execute allowlisted gcloud command groups with LocalCloud localhost emulator environment variables forced.',
+      title: 'Constrained local gcloud planner',
+      description: 'Return a dry-run plan for allowlisted gcloud groups. Execution stays disabled until runtime-generated gcloud endpoint overrides can be validated safely.',
       inputSchema: gcpClientInputShape,
     },
     handleGcpClient,

@@ -1,63 +1,49 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: What is a GCP Emulator?
-description: A clear definition of Google Cloud emulators — what they are, how they work, and why developers use them for local development without cloud costs.
+description: Understand local Google Cloud emulation, endpoint routing, evidence states, and production limits.
 ---
 
-# What is a GCP Emulator?
+# What is a GCP emulator?
 
-A **GCP emulator** is a local program or container that mimics the behavior of real Google Cloud Platform services — allowing developers to write, test, and debug cloud applications entirely on their own machine without connecting to Google Cloud.
+A GCP emulator is a local implementation of selected Google Cloud API behavior. Applications reach it through a local REST, gRPC, or service-specific endpoint rather than a production `googleapis.com` endpoint.
 
-Instead of provisioning real cloud resources, an emulator runs locally and responds to the same APIs, gRPC endpoints, and SDK calls that a real GCP service would. Your application code doesn't know the difference.
+“Emulator” does not imply full API, semantic, security, performance, or operational parity. Compatibility must be stated per operation and tested with the exact client and emulator release.
 
-## Why Developers Use GCP Emulators
+## Why use one?
 
-Developing against real cloud services creates friction. Every API call costs money, requires internet access, and needs authentication. Emulators solve this by removing the cloud dependency during development:
+A local emulator can help with:
 
-- **Zero cloud costs** during development and testing — no surprise bills from test runs
-- **No internet required** — develop on planes, in coffee shops, or behind corporate firewalls
-- **No credentials needed** — skip IAM setup and service account configuration during iteration
-- **Fast feedback loops** — localhost latency instead of network round trips to Google's data centers
-- **Reproducible tests** — CI/CD pipelines get identical environments every run, no flaky cloud dependencies
-- **Safe experimentation** — try destructive operations without risking production data
+- SDK endpoint wiring and serialization;
+- deterministic local fixtures and setup/teardown logic;
+- query and resource-definition feedback for documented operations;
+- destructive tests against synthetic local data; and
+- bounded development without giving the local process real Google Cloud credentials.
 
-## How GCP Emulators Work
+It does not automatically provide zero cost, complete offline operation, identical CI results, or a safe production security boundary. LocalCloud can make outbound requests for configured telemetry, licensing, updates, live IAM, certificate probing, or scheduled HTTP work. The governing proprietary license also limits allowed personal, organization, commercial, and CI use.
 
-Emulators implement the same wire protocols as real GCP services. When your code calls `storage.Client()` in Python or `BigQuery()` in Go, the GCP SDK sends gRPC or REST requests to an endpoint. In production, that endpoint is `storage.googleapis.com`. With an emulator, you set an environment variable to redirect it to `localhost`.
+## How routing works
 
-For example, Google's official Pub/Sub emulator listens on `localhost:24082`. Set `PUBSUB_EMULATOR_HOST=localhost:24082` and every Pub/Sub SDK call goes to the local emulator instead of the cloud.
+Some Google clients honor emulator variables such as `PUBSUB_EMULATOR_HOST`; some accept explicit client endpoints; Terraform exposes provider-specific custom-endpoint variables; and some clients require transparent DNS/HTTPS routing. The recommended LocalCloud flow generates values for the actual running instance:
 
-The emulator maintains its own internal state — topics, subscriptions, stored data — and responds as the real service would. When you're ready to deploy, unset the emulator variables and your code connects to real GCP with no code changes.
+```bash
+localcloud start
+eval "$(localcloud env)"
+```
 
-## Types of GCP Emulators
+The CLI can remap occupied host ports, so do not replace returned values with canonical ports. If a client tries to contact real Google Cloud, stop rather than adding real credentials.
 
-| Type | Description | Example |
-|------|-------------|---------|
-| **Official Google emulators** | Google maintains these directly. High fidelity for core operations. | Pub/Sub, Firestore, Spanner |
-| **Extended official emulators** | Built around an official emulator but adds missing features, persistence, or APIs. | LocalCloud's Spanner emulator adds PostgreSQL interface and PGAdapter |
-| **Custom emulators** | Built from scratch when no official emulator exists. | BigQuery emulator (DuckDB-based, ~96% SQL coverage) |
-| **Third-party emulators** | Community-maintained emulators for services Google hasn't covered. | Cloud Storage emulators |
-| **Local facades** | Lightweight implementations that provide the API surface for development workflows. | Secret Manager, Cloud Tasks, Cloud Logging |
+## LocalCloud implementation types
 
-## Individual Emulators vs All-in-One Solutions
+| Type | Meaning in LocalCloud |
+| --- | --- |
+| External emulator | A separate process supervised inside the container, such as Pub/Sub, Firestore, BigQuery, Bigtable, Spanner, Cloud Storage, or Valkey. |
+| Extended emulator | An upstream-derived artifact with local additions; the source revision and assembled image must be qualified together. |
+| Local facade | Gateway implementation of bounded REST/gRPC workflows backed by local stores or processes. |
+| Operator surface | Root routes such as `/health`, `/services`, `/env`, `/seed`, and `/terraform/readiness`; these are not Google Cloud APIs. |
 
-Google provides individual emulators for some services — Pub/Sub, Firestore, and Spanner. Each has its own binary, its own port, its own startup command, and its own environment variables. Running multiple services means managing each one separately.
+Spanner REST port `24086` is not PostgreSQL wire and LocalCloud does not package PGAdapter. BigQuery is DuckDB-backed with feature-specific partial behavior. Bigtable extended features remain release-unverified until immutable dependency and assembled-image provenance are resolved.
 
-**All-in-one solutions like LocalCloud** bundle multiple emulators into a single Docker container. One command starts 20+ services. One endpoint exports all environment variables. One console shows the health and state of everything.
+## What to validate in production
 
-## Common Use Cases
-
-- **Local development** — Build and test GCP applications without cloud access
-- **CI/CD testing** — Run integration tests against emulated services in GitHub Actions, GitLab CI, or Jenkins
-- **Learning and exploration** — Try GCP APIs risk-free, without a cloud account
-- **Demo and prototyping** — Show working cloud applications without internet dependency
-- **Cost-constrained teams** — Startups and individual developers who can't afford cloud bills during development
-
-## Limitations to Understand
-
-Emulators are not production GCP. They differ in:
-
-- **Performance characteristics** — An emulator running in a 4GB container won't match BigQuery's distributed query engine
-- **Feature completeness** — Every emulator has gaps; BigQuery emulators typically cover 80-96% of SQL features
-- **Scale** — Emulators are designed for development workloads, not production traffic volumes
-- **Security features** — IAM, encryption, and audit logging are typically absent or stubbed
+Before release, use a clean process without emulator/custom-endpoint variables and intentionally target an isolated real Google Cloud project. Validate IAM, quotas, networking, regions, concurrency, retries, ordering, durability, backups, performance, and every unsupported or release-unverified operation.

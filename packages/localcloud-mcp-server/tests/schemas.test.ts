@@ -5,7 +5,7 @@ describe('tool schemas', () => {
   it('defaults safe runtime metadata', () => {
     const parsed = runtimeInputSchema.parse({});
     expect(parsed.action).toBe('status');
-    expect(parsed.image).toBe('jaysen2apache/localcloud');
+    expect(parsed.image).toBe('jaysen2apache/localcloud:latest');
     expect(parsed.containerName).toBe('localcloud');
   });
 
@@ -17,6 +17,7 @@ describe('tool schemas', () => {
 
   it('keeps service and state defaults non-destructive', () => {
     expect(servicesInputSchema.parse({}).status).toBe('all');
+    expect(servicesInputSchema.parse({ status: 'release-unverified' }).status).toBe('release-unverified');
     expect(stateInputSchema.parse({}).action).toBe('inspect');
   });
 });

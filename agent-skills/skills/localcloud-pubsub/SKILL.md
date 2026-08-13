@@ -22,15 +22,15 @@ Ask only for unavailable project-specific details.
 
 ## LocalCloud setup assumptions
 
-- LocalCloud runs from Docker image `jaysen2apache/localcloud`.
-- Pub/Sub routes to `PUBSUB_EMULATOR_HOST=localhost:24082`.
-- Use a local project such as `local-project` unless the repo already defines one.
-- Local validation requires no GCP account, Google credentials, service-account key, or billing project.
+- Start through the host CLI, then load the generated environment with `eval "$(localcloud env)"`.
+- The reviewed default project is `local-gcp-project`; trust the generated Pub/Sub endpoint because host ports may be remapped.
+- Pub/Sub is partial and volatile across restart; review operation-level evidence before testing.
+- Confirm the governing proprietary license permits the intended use before running LocalCloud.
 
 ## Step-by-step workflow
 
 1. Inspect the repo's publisher/subscriber paths and test harness.
-2. Export `PUBSUB_EMULATOR_HOST=localhost:24082` in the test process.
+2. Load the generated `PUBSUB_EMULATOR_HOST` and project values into the test process.
 3. Create deterministic topic and subscription names.
 4. Publish a small test message with attributes that exercise the app's handler.
 5. Pull or streaming-pull the message through the same SDK path used by the app.
@@ -55,6 +55,6 @@ Return topics/subscriptions created, env vars used, message payloads or fixtures
 
 - [Pub/Sub workflow details](references/pubsub.md)
 - [Trigger prompt examples](references/triggers.md)
-- LocalCloud compatibility: https://local.cloud/compatibility/
-- LocalCloud services: https://local.cloud/services/
-- SDK examples: https://local.cloud/docs/sdk-examples/
+- LocalCloud compatibility: <https://local.cloud/compatibility/>
+- LocalCloud services: <https://local.cloud/services/>
+- SDK examples: <https://local.cloud/docs/sdk-examples/>

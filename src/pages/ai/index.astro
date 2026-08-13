@@ -212,7 +212,7 @@ const structuredData = [
       <div class="container">
         <div class="site-section-heading reveal">
           <span class="site-kicker">Service matrix</span>
-          <h2>{productFacts.serviceCountLabel} service surfaces, clearly bounded</h2>
+          <h2>{productFacts.serviceCountLabel} available services plus {plannedCount} coming soon</h2>
           <p>Service metadata is generated from the shared catalog. Use service pages and compatibility docs for capability-specific claims.</p>
         </div>
         <div class="mb-5 flex flex-wrap gap-3 reveal">
@@ -239,10 +239,10 @@ const structuredData = [
                   </td>
                   <td class="p-4 align-top">
                     <span class:list={['site-chip', service.status === 'supported' ? 'site-chip--success' : service.status === 'planned' ? 'site-chip--accent' : 'site-chip--warn']}>
-                      {service.status}
+                      {service.status === 'planned' ? 'coming soon' : service.status}
                     </span>
                   </td>
-                  <td class="p-4 align-top font-mono text-xs text-[var(--text-2)]">{service.envVar}</td>
+                  <td class="p-4 align-top font-mono text-xs text-[var(--text-2)]">{service.status === 'planned' ? 'Published when available' : service.envVar}</td>
                   <td class="p-4 align-top text-[var(--text-2)]">{service.caveat}</td>
                 </tr>
               ))}

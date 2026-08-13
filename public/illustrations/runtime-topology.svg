@@ -44,7 +44,7 @@
 
   <rect x="390" y="344" width="126" height="66" rx="18" fill="#F8FBFF" stroke="#D7E5F6" stroke-width="2"/>
   <text x="412" y="370" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.3">ADMIN</text>
-  <text x="412" y="396" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="20" font-weight="600">/_localcloud/*</text>
+  <text x="412" y="396" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="20" font-weight="600">/health · /env</text>
 
   <rect x="530" y="344" width="126" height="66" rx="18" fill="#F8FBFF" stroke="#D7E5F6" stroke-width="2"/>
   <text x="552" y="370" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.3">CONSOLE</text>

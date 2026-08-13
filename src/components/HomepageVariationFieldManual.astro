@@ -1,7 +1,6 @@
 ---
-import CopyButton from './CopyButton.astro';
 import ServiceIcon from './ServiceIcon.astro';
-import { serviceCategoryMeta, serviceCategoryOrder, services } from '../data/services';
+import { availableServiceCount, serviceCategoryMeta, services } from '../data/services';
 import InstallationMethods from './InstallationMethods.astro';
 
 const rawBase = import.meta.env.BASE_URL;
@@ -9,43 +8,38 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
 const categoryTones = ['sky', 'sage', 'ember'] as const;
 
-
-const dockerCmd = `docker pull jaysen2apache/localcloud
-
-docker volume create localcloud-data
-
-docker run -d --name localcloud \\
-  -p 24080-24092:24080-24092 \\
-  -m 4g \\
-  -v localcloud-data:/var/lib/localcloud \\
-  -v /var/run/docker.sock:/var/run/docker.sock \\
-  jaysen2apache/localcloud
-
-# Open the console
-http://localhost:24080
-
-# See user guide on how to use the SDKs and CLIs 
-`;
-
 const heroSignals = [
-  { value: '1', label: 'Docker container', note: 'No cloud account or access required for the team' },
-  { value: '$0', label: 'cloud spend during dev / iteration', note: 'stay local until the team is ready' },
+  { value: String(availableServiceCount), label: 'available services', note: 'plus clearly marked upcoming additions' },
+  { value: '1', label: 'managed instance', note: 'CLI-selected loopback ports and persistent data' },
 ];
 
 const heroIllustration = {
   src: `${base}illustrations/hero-laptop-service-grid.svg`,
-  alt: 'A laptop showing LocalCloud services running inside the screen, with real Google Cloud service icons, readiness panels, and badges for no code changes and zero cloud cost.',
+  alt: 'A laptop showing LocalCloud services running locally with readiness panels and Google Cloud service icons.',
 };
 
-const atlasColumns = serviceCategoryOrder
-  .map((category, index) => ({
-    category,
-    title: serviceCategoryMeta[category].label,
-    note: serviceCategoryMeta[category].description,
-    tone: categoryTones[index % categoryTones.length],
-    items: services.filter((service) => service.category === category),
-  }))
-  .filter((column) => column.items.length > 0);
+const atlasCategorySlots = [
+  ['databases'],
+  ['integration'],
+  ['analytics', 'storage'],
+  ['security'],
+  ['operations'],
+  ['compute'],
+] as const;
+
+const atlasSlots = atlasCategorySlots
+  .map((categories, slotIndex) =>
+    categories
+      .map((category, categoryIndex) => ({
+        category,
+        title: serviceCategoryMeta[category].label,
+        note: serviceCategoryMeta[category].description,
+        tone: categoryTones[(slotIndex + categoryIndex) % categoryTones.length],
+        items: services.filter((service) => service.category === category),
+      }))
+      .filter((column) => column.items.length > 0),
+  )
+  .filter((slot) => slot.length > 0);
 ---
 
 <main id="main-content" class="field-home">
@@ -58,7 +52,7 @@ const atlasColumns = serviceCategoryOrder
         </h1>
 
         <p class="field-intro">
-          Run 20+ GCP services locally in one Docker container. Same SDKs, same APIs, zero code changes, zero cloud costs.
+          Run {availableServiceCount} Google Cloud services locally. Use the CLI to choose safe loopback ports, export SDK settings, and inspect documented compatibility limits.
         </p>
 
         <div class="field-actions">
@@ -89,42 +83,10 @@ const atlasColumns = serviceCategoryOrder
     </section>
 
     <InstallationMethods />
-
-    <section class="field-quickstart" id="manual-quickstart">
-          <article class="field-card field-card--paper">
-        <div class="field-quickstart__content">
-          <span class="field-kicker">Quick Start</span>
-
-          <div class="field-callout">
-            <strong>Free for Developers !</strong>
-            <!--<p>LocalCloud is free for individual developers for evaluation, personal projects, learning, and testing. Not licensed for commercial or production use. <a href="/docs/licensing/">Learn more</a>.</p>-->
-          </div>
-          <h2>Up and running in a minute.</h2>
-          <ol class="field-steps">
-            <li><span>01</span> Pull and run the Docker image.</li>
-            <li><span>02</span> Open the console at localhost:24080 to check service health.</li>
-            <li><span>03</span> Export environment variables and point your SDK to localhost.</li>
-          </ol>
-        </div>
-        <div class="field-quickstart__terminal">
-          <article class="field-card field-card--terminal">
-            <div class="field-terminal__head">
-              <CopyButton text={dockerCmd} class="field-copy" />
-            </div>
-
-            <pre><code>{dockerCmd}</code></pre>
-          </article>
-          <!--<p class="field-docker-note">-->
-          <!--  <strong>Docker socket required for opt-in services</strong> — Services like Cloud Run and GKE start real containers via Docker. Mount <code>/var/run/docker.sock</code> when using those services.-->
-          <!--</p>-->
-        </div>
-      </article>
-    </section>
-
     <section class="field-ribbon">
       <article class="field-ribbon__item">
-        <span class="field-stamp">Zero Code Changes</span>
-        <div>Use the same Google Cloud SDKs and CLIs. Redirect to localhost with environment variables.</div>
+        <span class="field-stamp">SDK-shaped workflows</span>
+        <div>Use supported Google Cloud clients with the local endpoints returned by <code>localcloud env</code>.</div>
       </article>
       <article class="field-ribbon__item">
         <span class="field-stamp">Faster Inner Loop</span>
@@ -136,6 +98,7 @@ const atlasColumns = serviceCategoryOrder
       </article>
     </section>
 
+
     <section class="field-atlas">
       <div class="field-section-heading">
         <!--<span class="field-kicker">Service Catalog</span>-->
@@ -143,35 +106,41 @@ const atlasColumns = serviceCategoryOrder
       </div>
 
       <div class="field-atlas__grid">
-        {atlasColumns.map((column) => (
-          <article class:list={['field-column', `field-column--${column.tone}`]}>
-            <div class="field-column__head">
-              <span class="field-kicker">{column.title}</span>
-              <p>{column.note}</p>
-            </div>
+        {atlasSlots.map((slot) => (
+          <div class:list={['field-atlas__slot', slot.length > 1 && 'field-atlas__slot--split']}>
+            {slot.map((column) => (
+              <article class:list={['field-column', `field-column--${column.tone}`]}>
+                <div class="field-column__head">
+                  <span class="field-kicker">{column.title}</span>
+                  <p>{column.note}</p>
+                </div>
 
-            <div class="field-column__list">
-              {column.items.map((service) => (
-                <a href={`${base}services/${service.slug}/`} class="field-service">
-                  <div class="field-service__main">
-                    <span class="field-service__icon">
-                      <ServiceIcon iconId={service.iconId} name={service.name} size={34} />
-                    </span>
-                    <div>
-                      <strong>{service.name}</strong>
-                      <p>{service.description}</p>
-                    </div>
-                  </div>
+                <div class="field-column__list">
+                  {column.items.map((service) => (
+                    <a href={`${base}services/${service.slug}/`} class="field-service">
+                      <div class="field-service__main">
+                        <span class="field-service__icon">
+                          <ServiceIcon iconId={service.iconId} name={service.name} size={34} />
+                        </span>
+                        <div>
+                          <strong>{service.name}</strong>
+                          <p>{service.description}</p>
+                        </div>
+                      </div>
 
-                  <div class="field-service__tags">
-                    <span>{service.enabled ? 'Default-on' : 'Opt-in'}</span>
-                    <span>{service.protocol}</span>
-                    <span>:{service.port}</span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </article>
+                      <div class="field-service__tags">
+                        {service.catalogState === 'coming-soon' ? (
+                          <span>Coming soon</span>
+                        ) : (
+                          <span>{service.endpointLabel}</span>
+                        )}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
         ))}
       </div>
     </section>
@@ -192,13 +161,13 @@ const atlasColumns = serviceCategoryOrder
         <article class="field-story__card">
           <span class="field-kicker">Guide</span>
           <h3><a href={`${base}docs/bigquery-emulator-features/`}>How to Run BigQuery Locally</a></h3>
-          <p>Develop and test BigQuery pipelines with zero cloud cost using LocalCloud's DuckDB-based emulator.</p>
+          <p>Develop bounded BigQuery workflows locally and review release-verification caveats before relying on a feature.</p>
         </article>
 
         <article class="field-story__card">
           <span class="field-kicker">CI / CD</span>
-          <h3><a href={`${base}docs/terraform/`}>Cut CI Costs 90% with Local Emulation</a></h3>
-          <p>Run Terraform and integration tests against emulated GCP services in a single Docker container.</p>
+          <h3><a href={`${base}docs/terraform/`}>Configure Terraform for LocalCloud</a></h3>
+          <p>Choose the local endpoint or transparent-network workflow required by your tested resources.</p>
         </article>
       </div>
     </section>
@@ -206,7 +175,7 @@ const atlasColumns = serviceCategoryOrder
     <section class="field-cta">
       <div>
         <span class="field-kicker">Continue Exploring</span>
-        <h2>Run every cloud service locally. Build faster, test cheaper.</h2>
+        <h2>Run bounded Google Cloud workflows locally.</h2>
         <p>
           The homepage tells you what LocalCloud is. The docs and service pages explain how to use it, what each service supports, and where the runtime boundaries are.
         </p>
@@ -236,7 +205,6 @@ const atlasColumns = serviceCategoryOrder
   }
 
   .field-hero,
-  .field-quickstart,
   .field-ribbon,
   .field-atlas,
   .field-story,
@@ -255,7 +223,6 @@ const atlasColumns = serviceCategoryOrder
   .field-actions,
   .field-signal-strip,
   .field-board__title,
-  .field-quickstart,
   .field-ribbon,
   .field-atlas__grid,
   .field-story,
@@ -311,7 +278,6 @@ const atlasColumns = serviceCategoryOrder
 
   .field-hero h1,
   .field-section-heading h2,
-  .field-quickstart h2,
   .field-cta h2 {
     font-family: "Roboto", system-ui, sans-serif;
     letter-spacing: -0.045em;
@@ -350,7 +316,6 @@ const atlasColumns = serviceCategoryOrder
 
   .field-intro,
   .field-board__title p,
-  .field-card p,
   .field-section-heading p,
   .field-column__head p,
   .field-story__card p,
@@ -367,6 +332,7 @@ const atlasColumns = serviceCategoryOrder
   }
 
   .field-signal-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0;
     margin-top: 1.2rem;
     padding: 0;
@@ -378,13 +344,24 @@ const atlasColumns = serviceCategoryOrder
   .field-signal {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 0.75rem;
-    align-items: start;
-    padding: 0.85rem 0;
+    gap: clamp(0.4rem, 1.5vw, 0.75rem);
+    align-items: baseline;
+    padding: 0.85rem 0.75rem;
+  }
+
+  .field-signal:first-child {
+    padding-left: 0;
   }
 
   .field-signal + .field-signal {
-    border-top: 1px solid var(--line);
+    padding-right: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .field-signal__label {
+    font-size: clamp(0.65rem, 2.8vw, 0.75rem);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
   }
 
   .field-signal__value {
@@ -416,165 +393,10 @@ const atlasColumns = serviceCategoryOrder
     height: auto;
   }
 
-  .field-card,
   .field-cta {
     border: 1px solid var(--line);
     border-radius: 1rem;
     box-shadow: var(--shadow-md);
-  }
-
-  .field-quickstart {
-    margin-top: 1rem;
-  }
-
-  .field-card {
-    padding: 1.2rem;
-  }
-
-  .field-card--paper {
-    background: var(--surface);
-  }
-
-  .field-quickstart__content,
-  .field-quickstart__terminal {
-    min-width: 0;
-  }
-
-  .field-quickstart__terminal {
-    align-self: start;
-  }
-
-  .field-card--terminal {
-    background: linear-gradient(180deg, rgba(25, 31, 41, 0.98), rgba(18, 23, 32, 0.98));
-    color: #e8eaed;
-    position: relative;
-    border-radius: 0.75rem;
-  }
-
-  .field-terminal__head {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.85rem;
-  }
-
-  .field-terminal__head::before {
-    content: "";
-    display: flex;
-    gap: 0.45rem;
-    background:
-      radial-gradient(circle at 0.35rem 0.35rem, #ff5f57 0.35rem, transparent 0.35rem),
-      radial-gradient(circle at 1.15rem 0.35rem, #febc2e 0.35rem, transparent 0.35rem),
-      radial-gradient(circle at 1.95rem 0.35rem, #28c840 0.35rem, transparent 0.35rem);
-    width: 2.5rem;
-    height: 0.7rem;
-  }
-
-  .field-terminal__head :global(.copy-btn) {
-    margin-left: auto;
-  }
-
-  .field-terminal__head p {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.92rem;
-    line-height: 1.55;
-  }
-
-  .field-callout {
-    margin: 0.85rem 0;
-    padding: 0.75rem 0.85rem;
-    border: 1px solid rgba(26, 115, 232, 0.15);
-    border-radius: 0.5rem;
-    background: rgba(26, 115, 232, 0.06);
-    font-size: 0.88rem;
-    line-height: 1.55;
-  }
-
-  .field-callout strong {
-    display: block;
-    margin-bottom: 0.25rem;
-    color: var(--accent-strong);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .field-callout p {
-    margin: 0;
-    color: var(--text-2);
-    font-size: 0.92rem;
-    line-height: 1.6;
-  }
-
-  .field-docker-note {
-    margin: 0.75rem 0 0;
-    padding: 0.7rem 1rem;
-    border-radius: 0.5rem;
-    background: rgba(20, 125, 114, 0.07);
-    color: var(--text-2);
-    font-size: 0.85rem;
-    line-height: 1.55;
-  }
-
-  .field-docker-note strong {
-    color: var(--field-moss);
-    font-weight: 600;
-  }
-
-  .field-docker-note code {
-    padding: 0.12rem 0.35rem;
-    border-radius: 0.25rem;
-    background: rgba(20, 125, 114, 0.1);
-    color: var(--field-moss);
-    font-size: 0.82rem;
-  }
-
-  .field-steps {
-    display: grid;
-    gap: 0.6rem;
-    margin: 1rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .field-steps li {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.7rem;
-    align-items: start;
-    padding: 0.8rem 0;
-    border-top: 1px dashed var(--line);
-    color: var(--text);
-    line-height: 1.65;
-  }
-
-  .field-steps li:first-child {
-    border-top: 0;
-  }
-
-  .field-steps span {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 999px;
-    background: rgba(26, 115, 232, 0.08);
-    color: var(--accent-strong);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-  }
-
-  .field-card pre {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(10, 15, 22, 0.7);
-    border-radius: 0.5rem;
-  }
-
-  .field-card pre > code {
-    color: oklch(0.75 0.01 280);
-    font-size: 0.8rem;
   }
 
   .field-ribbon {
@@ -611,7 +433,9 @@ const atlasColumns = serviceCategoryOrder
     margin: 2.5rem 0 1.5rem;
   }
 
-  .field-atlas__grid {
+  .field-atlas__grid,
+  .field-atlas__slot {
+    display: grid;
     gap: 1rem;
   }
 
@@ -778,12 +602,6 @@ const atlasColumns = serviceCategoryOrder
     gap: 0.8rem;
   }
 
-  :global(.field-copy) {
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(228, 239, 255, 0.82);
-  }
-
   @media (min-width: 760px) {
     .field-ribbon,
     .field-story,
@@ -813,6 +631,17 @@ const atlasColumns = serviceCategoryOrder
       align-items: center;
     }
 
+    .field-hero__copy {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .field-board__figure {
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
+    }
+
     .field-blog__grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -826,11 +655,8 @@ const atlasColumns = serviceCategoryOrder
       border-left: 1px solid var(--line);
     }
 
-    .field-card--paper {
-      display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
-      gap: 1.5rem;
-      align-items: start;
+    .field-atlas__slot--split {
+      grid-template-rows: repeat(2, minmax(0, 1fr));
     }
 
     .field-atlas__grid,
@@ -854,7 +680,6 @@ const atlasColumns = serviceCategoryOrder
       grid-template-columns: 1fr;
     }
 
-    .field-card,
     .field-column,
     .field-cta {
       padding: 0.9rem;
@@ -864,7 +689,6 @@ const atlasColumns = serviceCategoryOrder
   @media (max-width: 560px) {
     .field-hero h1,
     .field-section-heading h2,
-    .field-quickstart h2,
     .field-cta h2 {
       max-width: none;
     }

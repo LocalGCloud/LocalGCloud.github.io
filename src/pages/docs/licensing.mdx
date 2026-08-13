@@ -1,27 +1,61 @@
 ---
 layout: ../../layouts/DocsLayout.astro
-title: Licensing
-description: LocalCloud is free for developers. Review the repository license for the current terms.
+title: Licensing Reference
+description: Current LocalCloud proprietary license scope, exclusions, technical enforcement, and metadata conflicts.
 author: LocalCloud
-updated: 2026-06-22
-reviewed: 2026-06-22
+updated: 2026-08-13
+reviewed: 2026-08-13
 ---
 
 import Callout from '../../components/Callout.astro';
-import { productFacts } from '../../data/productFacts';
+import { docsContract } from '../../data/docs-contract';
 
-# Licensing
+export const licensing = docsContract.licensing;
 
-LocalCloud is **free for developers**.
+# Licensing reference
 
-## Current Terms
+The governing LocalCloud runtime license is the repository root **Proprietary Software License Agreement**. The license text controls; this page is a summary, not legal advice and not a substitute for reading the agreement.
 
-The <a href={`${productFacts.githubUrl}/blob/main/LICENSE`}>LICENSE</a> in the public CLI repository is the governing source for LocalCloud terms.
-
-## Runtime Boundary
-
-LocalCloud is designed for local development, testing, CI, and demos. Validate against real Google Cloud before production deployment.
-
-<Callout type="info" title="Keep the inner loop local">
-Use LocalCloud to develop and test against local Google Cloud service behavior, then validate production-critical paths against real Google Cloud.
+<Callout type="warning" title="Technical availability is not legal permission">
+A service starting successfully, a development image exposing Pro-tier behavior, or documentation showing a workflow does not grant a license to use LocalCloud for that workflow.
 </Callout>
+
+## Current permitted-use summary
+
+The reviewed license grants a limited, revocable right only to an **Individual Developer** acting in a personal capacity for specified purposes, including personal learning, personal non-commercial projects, evaluation, feedback/contribution, qualifying academic research, and non-deployed personal experimentation.
+
+The license excludes use by or for an employer or organization, including:
+
+- commercial product development;
+- employer or organization development workflows;
+- shared team workflows and team CI;
+- internal business tools or services;
+- use that generates revenue, savings, or commercial advantage;
+- consulting, contracting, or professional services; and
+- production or third-party-facing deployment.
+
+The reviewed agreement states that **no commercial license is currently offered or available**. Do not interpret website examples about CI, onboarding, teams, or cost reduction as permission for those uses.
+
+## Technical enforcement
+
+| Runtime condition | Technical behavior | Legal boundary |
+| --- | --- | --- |
+| Development image with enforcement disabled | May expose technical Pro access without an API key. | Does not expand the proprietary license grant. |
+| Enforced/production build | Requires `LOCALCLOUD_API_KEY`; validation failure terminates startup. | A technically accepted key does not replace the governing agreement. |
+| Service `minTier` | Controls technical service availability. | Community/Pro labels are product controls, not legal grants or currently available commercial plans. |
+
+## License metadata conflicts
+
+Some package and image metadata previously declared `Apache-2.0`, including MCP package metadata and a runtime OCI label. Those declarations conflict with the governing proprietary root license and must not be used to infer LocalCloud runtime permissions.
+
+This repository's MCP package documentation and metadata now point to the governing proprietary license. If the MCP server is intended to have a separate license in the future, that requires an explicit owner/legal decision and a clearly scoped license grant; it must not be inferred from stale package metadata.
+
+## Before using LocalCloud
+
+1. Read the governing `LICENSE` in the LocalCloud runtime repository.
+2. Identify whether you are acting personally or for an employer, client, organization, or registered business.
+3. Identify whether the workflow creates revenue, savings, commercial advantage, shared CI, an internal tool, or a production/third-party service.
+4. Do not use the software if the agreement does not grant that use.
+5. Re-check the exact license shipped with the image or release you plan to use.
+
+For a license interpretation or permission not expressly granted by the text, obtain advice from the rights holder or qualified legal counsel before use.

@@ -1,60 +1,69 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Services Overview
-description: How LocalCloud groups major Google Cloud services for local development.
+description: Read the runtime registry and reviewed service guides without confusing presence with compatibility.
 ---
 
-# Services Overview
+import { availableServiceCount, comingSoonServiceCount, publishedServiceCount, serviceRegistryCount, services } from '../../data/services';
 
-LocalCloud focuses on the major Google Cloud services teams tend to need first during local development. The website and service catalog group them the same way Google Cloud users already think about the platform: by product category, not by emulator internals.
+# Services overview
 
-## Storage
+The runtime registry contains {serviceRegistryCount} Google Cloud identities. The public catalog exposes {publishedServiceCount} guides: {availableServiceCount} available services and {comingSoonServiceCount} roadmap addition. Google Sheets remains an integration surface rather than a LocalCloud service.
 
-- **Cloud Storage** for buckets, object access, uploads, downloads, and file-heavy local workflows.
+A registry entry does **not** mean full Google Cloud parity or that a service is enabled in every assembled image. Read six separate fields:
 
-## Databases
+1. **Registry default** — the service registry's default before container-environment overrides.
+2. **Assembled default** — whether the reviewed container starts it by default and how well that default is qualified.
+3. **Minimum tier** — community or Pro; this is a technical boundary, not a license grant.
+4. **Evidence state** — verified, partial, release-unverified, unsupported, or unknown.
+5. **Persistence** — service-data, metadata, volatile, or stateless, with a separate qualification.
+6. **Operation limits** — the bounded workflows and known gaps.
 
-- **Firestore** for document-style application state.
-- **Spanner** for relational and transactional SQL flows.
-- **Bigtable** for wide-column and large key-range workloads.
-- **Memorystore** for Redis-style cache and low-latency data access.
+<div className="overflow-x-auto">
+  <table className="w-full min-w-[72rem] text-left text-sm">
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Registry default</th>
+        <th>Assembled default</th>
+        <th>Tier</th>
+        <th>Evidence state</th>
+        <th>Persistence</th>
+        <th>Connection</th>
+      </tr>
+    </thead>
+    <tbody>
+      {services.map((service) => (
+        <tr>
+          <td><a href={`/services/${service.slug}/`}>{service.name}</a></td>
+          {service.catalogState === 'coming-soon' ? (
+            <td colSpan={6}><strong>Coming soon.</strong> Connection details and documented workflows will be published when available.</td>
+          ) : (
+            <>
+              <td>{service.registryDefaultEnabled ? 'on' : 'off'}</td>
+              <td>{service.assembledDefaultEnabled ? 'on' : 'off'} ({service.defaultQualification})</td>
+              <td>{service.minTier}</td>
+              <td>{service.status}</td>
+              <td>{service.persistence.scope} ({service.persistence.qualification})</td>
+              <td>{service.endpointLabel}</td>
+            </>
+          )}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
 
-## Analytics
+## Categories
 
-- **BigQuery** for warehouse-style SQL and local dataset development.
+The catalog groups services by user goal—storage, databases, analytics, messaging/workflow, security, operations, and compute/runtime—but implementation boundaries differ inside every category. Some are external emulator processes, some are local facades, and some require Docker-socket or transparent-network opt-ins.
 
-## Messaging & Workflow
+## How to use the catalog
 
-- **Pub/Sub** for eventing and asynchronous delivery.
-- **Cloud Tasks** for queued background work and HTTP dispatch.
-- **Cloud Workflows** for multi-step orchestration.
+- Load the actual running endpoints with `localcloud env`; the host CLI may remap ports.
+- Check the service detail and operation evidence before writing a test.
+- Treat release-unverified dependency services as requiring an identified source revision and assembled-image qualification.
+- Keep the runtime loopback-bound and use fake local data.
+- Remove emulator variables and validate production behavior against real Google Cloud before release.
 
-## Security
-
-- **Secret Manager** for local secret and version access.
-
-## Operations
-
-- **Cloud Logging** for ingesting and browsing logs locally.
-- **Cloud Monitoring** for metrics and local health-oriented workflows.
-
-## Compute & Runtime
-
-- **GKE**
-- **Compute Engine**
-- **Cloud Run**
-
-These runtime surfaces are intentionally marked as opt-in because they depend on Docker-backed behavior.
-
-## Where Implementation Notes Live
-
-The main homepage and service catalog stay focused on what each service is for. If you want to know how a specific service is implemented locally, open that service’s detail page. Each one includes:
-
-- Connection info and environment variables
-- Supported capabilities and current gaps
-- A brief implementation note
-- Default-on vs opt-in runtime status
-
-## Next Step
-
-Open the [service catalog](/services/) to browse services by category, then click through to a detail page for exact local behavior boundaries.
+Open the [service catalog](/services/) for all 26 public guides or [Compatibility](/compatibility/) for cross-service operation evidence. Google Sheets remains an integration surface and is not listed as a LocalCloud service.

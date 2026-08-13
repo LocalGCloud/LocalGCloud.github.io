@@ -1,80 +1,94 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Spanner Emulator Features
-description: How LocalCloud packages the Cloud Spanner emulator, why that choice matters, and what Spanner workflows it covers locally.
+description: Evidence-scoped Spanner API, persistence, SQL, change-stream, IAM-stub, and unsupported behavior in LocalCloud.
 ---
 
-# Spanner emulator features
+import Callout from '../../components/Callout.astro';
+import { getDocumentationService } from '../../data/docs-contract';
 
-Spanner is semantics-heavy: schemas, SQL, transactions, timestamps, indexes, and client behavior all matter. LocalCloud uses the Cloud Spanner emulator as the foundation because a database-shaped mock would give teams speed but not enough confidence.
+export const spanner = getDocumentationService('spanner');
 
-The LocalCloud value is packaging that emulator into the same local Google Cloud runtime as the rest of the stack: one container, one environment handoff, one console, one readiness surface, and one place to run multi-service development flows.
+# Spanner emulator feature reference
 
-## How it is built, and why
+LocalCloud packages an extended Cloud Spanner emulator for bounded local SDK and API workflows. The dependency has useful semantic coverage, but the exact assembled LocalCloud image has not been qualified.
 
-The Spanner emulator is built around the same kind of semantics that make Cloud Spanner different from a normal local database. It uses **ZetaSQL** for GoogleSQL behavior, a **C++ core** for the database backend, **gRPC APIs** for client-library compatibility, and a **Go REST gateway** for HTTP access.
+<Callout type="warning" title="Ports are protocol-specific">
+Use `localhost:24085` for the Spanner gRPC API and `http://localhost:24086` for the REST/grpc-gateway surface. Port `24086` is **not** PostgreSQL wire protocol. LocalCloud does not package PGAdapter, so `psql`, `psycopg2`, generic PostgreSQL JDBC, and PostgreSQL-wire SQLAlchemy URLs must not target it.
+</Callout>
 
-That choice matters because Spanner compatibility is not just about accepting SQL strings. It is about schema behavior, DML behavior, transaction rules, generated columns, commit timestamps, indexes, and the way official clients interact with the service.
+## Connection and persistence
 
-LocalCloud chooses this path for three reasons:
-
-| Decision | Why it was chosen |
-| --- | --- |
-| Use the Cloud Spanner emulator foundation | It is the closest local semantic target for Spanner clients and schema/query behavior. |
-| Keep the gRPC and REST surfaces | Existing Cloud Spanner SDKs can point at localhost without app-level rewrites. |
-| Wrap it inside LocalCloud | Developers do not need to orchestrate a standalone Spanner emulator beside the rest of their local cloud stack. |
-
-LocalCloud exposes the emulator with known ports, environment variables, health visibility, service metadata, and the same console-driven runtime model as the other services. That makes Spanner feel like part of a local cloud rather than a separate special-case process.
-
-The underlying build is also expensive work. ZetaSQL-heavy builds are large, so the dependency project documents optimization work around Docker layer reuse, faster code-only rebuilds, warm cache behavior, and lower-memory compile settings.
-
-## How it compares
-
-The top available Spanner emulator is the official Cloud Spanner emulator. LocalCloud does not try to replace its correctness work. Instead, it makes that emulator easier to use in real application development.
-
-| Option | Strength | LocalCloud advantage |
+| Surface | Value | Boundary |
 | --- | --- | --- |
-| Official Spanner emulator directly | Correctness-first local Spanner surface from Google. | You still manage it as a separate process, env setup, ports, health checks, and workflow island. |
-| LocalCloud Spanner | Uses the same emulator foundation inside a broader local cloud runtime. | Spanner runs beside Storage, Pub/Sub, BigQuery, Firestore, Workflows, and other services with one boot path and shared visibility. |
+| gRPC | `localhost:24085` | Primary official Spanner SDK endpoint through `SPANNER_EMULATOR_HOST`. |
+| REST | `http://localhost:24086` | HTTP/grpc-gateway, not PGAdapter. |
+| SQL dialects | GoogleSQL and PostgreSQL dialect through the Spanner API | PostgreSQL dialect support does not imply PostgreSQL-wire support. |
+| Storage | LevelDB rows plus JSON metadata under `/var/lib/localcloud/spanner-data` | Ordinary stop/start retains state; mount the LocalCloud volume for container removal or replacement. |
+| Aggregate state | `release-unverified` | Dependency behavior has not been qualified in an identified assembled image. |
 
-That is where LocalCloud shines: not by claiming better Spanner semantics than the official emulator, but by making Spanner part of a complete local development environment.
+## Official Python SDK example
 
-## Production feature parity
+```python
+import os
+from google.cloud import spanner
 
-The Spanner emulator covers the core development behaviors teams need before production validation:
+os.environ["SPANNER_EMULATOR_HOST"] = "localhost:24085"
 
-| Area | Local emulator coverage |
-| --- | --- |
-| Admin APIs | Instance and database admin APIs, including long-running operation flows. |
-| Schema | DDL schema changes, generated columns, generated primary keys, check constraints, and foreign keys. |
-| Query and mutation | SQL query execution, DML, sequence numbers, and non-SQL read/write APIs. |
-| Transactions | Read/write transaction behavior, stale reads, partitioned read, partitioned query, and partitioned DML APIs. |
-| Indexes and types | Secondary indexes, commit timestamps, `NUMERIC`, `JSON`, and information schema. |
-| Client surfaces | gRPC, REST, Cloud Spanner client libraries, PostgreSQL interface, and PGAdapter. |
+client = spanner.Client(project="local-gcp-project")
+instance = client.instance("test-instance")
+database = instance.database("test-database")
 
-There are important limits:
+with database.snapshot() as snapshot:
+    rows = snapshot.execute_sql("SELECT 1 AS value")
+    print(list(rows))
+```
 
-- Data is persisted to disk via `--data_dir` when a volume is mounted. Without a mounted volume, data is lost when the container stops.
-- IAM and Backup APIs are not supported.
-- Only one read-write transaction or schema change can run at a time; competing transactions can be aborted.
-- Query plans and profiling output are not meaningful production execution plans.
-- Quotas and production limits are not enforced.
-- Some `SPANNER_SYS` runtime introspection tables are not available.
-- Server-side monitoring, logging, and audit behavior are not production-equivalent.
+Create the instance and database through the Spanner API before running the query. Do not replace this with a guessed PostgreSQL-wire URL.
 
-That is the correct mental model: LocalCloud Spanner is strong for local correctness and workflow validation, while production Spanner remains the source of truth for scale, durability, IAM, quotas, monitoring, and operational behavior.
+## Current operation contract
 
-## Developer workflow coverage
+<table>
+  <thead><tr><th>Operation area</th><th>State</th><th>Boundary</th></tr></thead>
+  <tbody>
+    {spanner.operations.map((operation) => (
+      <tr><td>{operation.label}</td><td><code>{operation.status}</code></td><td>{operation.limitations.join(' ')}</td></tr>
+    ))}
+  </tbody>
+</table>
 
-For local engineering, this covers the workflows teams need most:
+## Feature-specific interpretation
 
-- Create instances and databases locally.
-- Apply schema migrations and DDL changes.
-- Validate queries, DML, sessions, and transactions.
-- Exercise Cloud Spanner SDK clients against localhost.
-- Test generated columns, indexes, timestamps, JSON, and NUMERIC behavior.
-- Run app integration tests without a cloud project or credentials.
-- Validate Spanner flows next to Pub/Sub, BigQuery, Storage, and other LocalCloud services.
+### Core API, SQL, and transactions
 
-This is especially useful for applications where Spanner is not isolated. Many real flows write events, read configuration, update transactional state, query analytics, and emit logs in one path. LocalCloud keeps that whole path local.
+Instance/database administration, schema, SQL/DML, transactions, indexes, generated columns, commit timestamps, JSON, NUMERIC, and partitioned paths are dependency-backed local workflows. Keep them release-unverified until an immutable dependency and assembled image are qualified. `MERGE` remains unsupported.
 
+### PostgreSQL dialect
+
+The Spanner PostgreSQL dialect is processed through the Spanner API. It does not make port `24086` a PostgreSQL server and does not establish compatibility with generic PostgreSQL drivers or ORMs. A separate tested PGAdapter process and dedicated port would be required for those clients.
+
+### `TABLESAMPLE`
+
+Dependency evidence supports bounded `BERNOULLI` and `RESERVOIR` behavior. `SYSTEM` and `REPEATABLE` remain unsupported, and the assembled image is not qualified.
+
+### Change streams
+
+The dependency implements change-stream paths for GoogleSQL and PostgreSQL dialects with limitations. Treat them as release-unverified until the exact dependency revision and assembled LocalCloud image pass targeted conformance tests.
+
+### IAM
+
+LocalCloud registers `setIamPolicy`, `getIamPolicy`, and `testIamPermissions` gateway stubs. This is a **partial permissive compatibility surface**, not production IAM enforcement.
+
+### Backups and internal snapshots
+
+Cloud Spanner Backup APIs are unsupported. Internal safety snapshots used for emulator recovery must not be documented as backup API support or as a production recovery guarantee.
+
+## Recovery and operations
+
+Rows are stored in LevelDB and metadata in JSON files. Mounting the LocalCloud volume protects state across container removal or replacement, not just ordinary stop/start. Known corruption and recovery risk remains; test restore and replacement workflows before relying on local state.
+
+Production concurrency, scale, quota, IAM, backup, monitoring, audit, performance, regional, and operational behavior still requires real Cloud Spanner validation.
+
+## Publication exit criteria
+
+A verified release claim requires the dependency source revision or image digest, assembled LocalCloud image digest, gRPC and REST smoke results, change-stream and `TABLESAMPLE` conformance evidence, persistence/replacement tests, negative PostgreSQL-wire and Backup/IAM enforcement tests, evidence path, and release association.

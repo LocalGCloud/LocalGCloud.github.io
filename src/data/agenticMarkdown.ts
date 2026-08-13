@@ -1,34 +1,47 @@
 import {
-  agenticEndpoints,
-  agenticFacts,
-  agenticServiceMetadata,
-  agentPromptLibrary,
-  agentSafeValidationChecklist,
-} from './agenticFacts';
-import { productFacts } from './productFacts';
+	agenticEndpoints,
+	agenticFacts,
+	agenticServiceMetadata,
+	agentPromptLibrary,
+	agentSafeValidationChecklist,
+} from "./agenticFacts";
+import { productFacts } from "./productFacts";
 
-const serviceStatusLabel = (status: (typeof agenticServiceMetadata)[number]['status']) => {
-  if (status === 'supported') return 'Supported locally';
-  if (status === 'partial') return 'Partial local coverage';
-  return 'Planned / do not rely on yet';
+const serviceStatusLabel = (
+	status: (typeof agenticServiceMetadata)[number]["status"],
+) => {
+	if (status === "supported") return "Supported locally";
+	if (status === "partial") return "Partial local coverage";
+	if (status === "release-unverified")
+		return "Release-unverified / qualify the assembled image first";
+	return "Coming soon";
 };
 
 const endpointLines = agenticEndpoints
-  .map((endpoint) => `- **${endpoint.label}**: \`${endpoint.url}\` — ${endpoint.purpose}`)
-  .join('\n');
+	.map(
+		(endpoint) =>
+			`- **${endpoint.label}**: \`${endpoint.url}\` — ${endpoint.purpose}`,
+	)
+	.join("\n");
 
 const serviceLines = agenticServiceMetadata
-  .map(
-    (service) =>
-      `- **${service.name}** (${serviceStatusLabel(service.status)}, ${service.protocol} on ${service.port}) — set \`${service.envVar}\`. ${service.caveat} Docs: ${service.docsUrl}`,
-  )
-  .join('\n');
+	.map((service) =>
+		service.status === "planned"
+			? `- **${service.name}** (${serviceStatusLabel(service.status)}) — ${service.caveat} Docs: ${service.docsUrl}`
+			: `- **${service.name}** (${serviceStatusLabel(service.status)}, ${service.endpointLabel}) — set \`${service.envVar}\`. ${service.caveat} Docs: ${service.docsUrl}`,
+	)
+	.join("\n");
 
 const promptLines = agentPromptLibrary
-  .map((item) => `### ${item.label}\nUse case: ${item.useCase}\n\n\`\`\`text\n${item.prompt}\n\`\`\``)
-  .join('\n\n');
+	.map(
+		(item) =>
+			`### ${item.label}\nUse case: ${item.useCase}\n\n\`\`\`text\n${item.prompt}\n\`\`\``,
+	)
+	.join("\n\n");
 
-const safetyLines = agentSafeValidationChecklist.map((item) => `- ${item}`).join('\n');
+const safetyLines = agentSafeValidationChecklist
+	.map((item) => `- ${item}`)
+	.join("\n");
 
 export const agentsMdTemplate = `# AGENTS.md — LocalCloud GCP emulator instructions
 
@@ -212,4 +225,3 @@ ${agenticFacts.envExportCommand}
 curl -fsS ${agenticFacts.healthEndpoint}
 \`\`\`
 `;
-

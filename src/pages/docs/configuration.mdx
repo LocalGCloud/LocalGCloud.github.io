@@ -1,102 +1,116 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Configuration
-description: Environment variables and configuration options for LocalCloud.
+description: Configure LocalCloud services, projects, persistence, IAM, and SDK endpoints.
 ---
+
+import { docsContract } from '../../data/docs-contract';
 
 # Configuration
 
-LocalCloud is configured through environment variables passed to the Docker container. Most teams only need the default boot path plus the generated SDK environment export; the rest of this page covers the knobs you can turn when you need a more tailored local runtime.
-
-## Core Settings
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `LOCALCLOUD_PROJECT` | `local-project` | Default GCP project ID |
-| `LOCALCLOUD_SERVICES` | all enabled | Comma-separated list of services to enable |
-| `LOCALCLOUD_SEED_FILE` | `/etc/localcloud/seed.yaml` | Path to seed file inside container |
-| `LOCALCLOUD_DATA_DIR` | `/var/lib/localcloud` | Persistent data directory |
-| `LOCALCLOUD_IAM_MODE` | `permissive` | IAM mode: `permissive`, `strict`, or `gcp-live` |
-| `JAVA_OPTS` | `-Xmx512m -Xms128m` | JVM flags for the gateway |
-
-## IAM Modes
-
-- **`permissive`** (default) — No credentials required. All requests are accepted.
-- **`strict`** — Validates token format but doesn't verify against a real identity provider.
-- **`gcp-live`** — Proxies IAM checks to real GCP (requires credentials).
-
-## Per-Service Toggle
-
-Each service can be individually enabled or disabled:
-
-| Variable | Default | Service |
-|----------|---------|---------|
-| `LOCALCLOUD_ENABLE_GCS` | `true` | Cloud Storage |
-| `LOCALCLOUD_ENABLE_PUBSUB` | `true` | Pub/Sub |
-| `LOCALCLOUD_ENABLE_FIRESTORE` | `true` | Firestore |
-| `LOCALCLOUD_ENABLE_BIGQUERY` | `true` | BigQuery |
-| `LOCALCLOUD_ENABLE_SPANNER` | `true` | Spanner |
-| `LOCALCLOUD_ENABLE_BIGTABLE` | `true` | Bigtable |
-| `LOCALCLOUD_ENABLE_SECRETMANAGER` | `true` | Secret Manager |
-| `LOCALCLOUD_ENABLE_CLOUDTASKS` | `true` | Cloud Tasks |
-| `LOCALCLOUD_ENABLE_LOGGING` | `true` | Cloud Logging |
-| `LOCALCLOUD_ENABLE_MONITORING` | `true` | Cloud Monitoring |
-| `LOCALCLOUD_ENABLE_MEMORYSTORE` | `true` | Memorystore (Redis) |
-| `LOCALCLOUD_ENABLE_GKE` | `false` | GKE (requires Docker socket) |
-| `LOCALCLOUD_ENABLE_COMPUTE` | `false` | Compute Engine (requires Docker socket) |
-| `LOCALCLOUD_ENABLE_CLOUDRUN` | `false` | Cloud Run (requires Docker socket) |
-
-## SDK Environment Variables
-
-When LocalCloud is running, set these variables so your GCP SDKs connect locally:
-
-| Variable | Value | Service |
-|----------|-------|---------|
-| `STORAGE_EMULATOR_HOST` | `http://localhost:24081` | Cloud Storage |
-| `PUBSUB_EMULATOR_HOST` | `localhost:24082` | Pub/Sub |
-| `FIRESTORE_EMULATOR_HOST` | `localhost:24083` | Firestore |
-| `BIGTABLE_EMULATOR_HOST` | `localhost:24084` | Bigtable |
-| `SPANNER_EMULATOR_HOST` | `localhost:24085` | Spanner |
-| `BIGQUERY_EMULATOR_HOST` | `http://localhost:24087` | BigQuery |
-| `SECRET_MANAGER_EMULATOR_HOST` | `localhost:24080` | Secret Manager |
-| `CLOUD_TASKS_EMULATOR_HOST` | `localhost:24080` | Cloud Tasks |
-| `REDIS_HOST` | `localhost` | Memorystore |
-| `GOOGLE_CLOUD_PROJECT` | `local-project` | All services |
-
-Use the generated export block to set these automatically:
+LocalCloud reads runtime configuration from environment variables. The host CLI is the recommended operator interface because it binds ports to loopback, can remap occupied ports, and returns the actual endpoints for the selected instance.
 
 ```bash
-eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
+localcloud start
+eval "$(localcloud env)"
 ```
 
-### Terraform Variables
+`localcloud.yaml` is a **host CLI** configuration file discovered in the current directory; CLI flags override it. The runtime file `application.yaml` is reference material only and is not automatically loaded by `LocalCloudConfig`.
 
-For Terraform, use the `terraform` format to export `GOOGLE_*_CUSTOM_ENDPOINT` variables:
+## Core settings
+
+| Variable | Runtime default | Purpose |
+| --- | --- | --- |
+| `LOCALCLOUD_PROJECT` | `local-gcp-project` | Default project when a request does not select one explicitly. |
+| `LOCALCLOUD_DATA_DIR` | `/var/lib/localcloud` | Persistent runtime data root. |
+| `LOCALCLOUD_PERSISTENCE` | `true` | Enables supported persistent stores. Service-specific behavior still varies. |
+| `LOCALCLOUD_SERVICES` | Registry defaults | Complete comma-separated service-set override. |
+| `LOCALCLOUD_SEED_FILE` | `/etc/localcloud/seed.yaml` | File used by `/reseed` and startup seeding. |
+| `LOCALCLOUD_IAM_MODE` | `permissive` | `permissive`, `strict`, or `gcp-live`. |
+| `LOCALCLOUD_IAM_POLICY_FILE` | empty | Local identity-to-path policy JSON used by strict mode and optionally by `gcp-live`. |
+| `LOCALCLOUD_TELEMETRY` | `true` | Runtime telemetry preference; see [Privacy](/docs/privacy/) for the verified limitations. |
+
+To choose another project, start the instance with `LOCALCLOUD_PROJECT`, use the CLI project option/configuration, or request `/env?project=my-project`. Keep examples and tests explicit when their project differs from `local-gcp-project`.
+
+## Service selection and precedence
+
+Service configuration follows this order:
+
+1. If `LOCALCLOUD_SERVICES` is set, it is the complete enabled set. Individual `LOCALCLOUD_ENABLE_<SERVICEID>` flags do not override it.
+2. Otherwise, `services.yaml` registry defaults apply.
+3. Individual `LOCALCLOUD_ENABLE_<SERVICEID>=true|false` values override those defaults.
+4. Persisted console configuration applies only where an environment value has not locked that service.
+
+Service IDs, defaults, and tier requirements are contract-derived:
+
+<table>
+  <thead><tr><th>Service ID</th><th>Service</th><th>Registry default</th><th>Assembled default</th><th>Minimum tier</th></tr></thead>
+  <tbody>
+    {docsContract.services.map((service) => (
+      <tr>
+        <td><code>{service.id}</code></td>
+        <td>{service.name}</td>
+        <td>{service.registryDefaultEnabled ? 'on' : 'off'}</td>
+        <td>{service.assembledDefault.enabled ? 'on' : 'off'} ({service.assembledDefault.qualification})</td>
+        <td>{service.minTier}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+Cloud SQL is an important example: the registry default and assembled-container default have conflicted. Treat the reviewed assembled default and its evidence state as authoritative for the image you run; explicitly select Cloud SQL rather than relying on an implicit default.
+
+## IAM modes
+
+- **`permissive`** (default): non-administrative requests are accepted without credential checks. This is convenient, not a production security boundary.
+- **`strict`**: a bearer identity is matched against path prefixes loaded from `LOCALCLOUD_IAM_POLICY_FILE`. Without a policy, non-exempt requests are denied. Administrative and developer paths such as `/health`, `/services`, `/env`, `/seed`, `/reset`, and console assets remain exempt.
+- **`gcp-live`**: bearer tokens are validated with Google OAuth tokeninfo, creating outbound network traffic. If a local policy is loaded, it is also applied. The runtime does not currently call its declared `testIamPermissions` URL, so this is not production IAM parity.
+
+Never describe strict or `gcp-live` mode as equivalent to Google Cloud IAM enforcement. See [Privacy](/docs/privacy/) before enabling behavior that contacts external services.
+
+## Operator endpoints
+
+All operator routes are rooted at the gateway; the retired underscore-prefixed namespace is not part of the API.
+
+| Route | Purpose |
+| --- | --- |
+| `/health` and `/health/{service}` | Health summaries. |
+| `/readiness` | General runtime readiness. |
+| `/services` | Service state and metadata. |
+| `/env` | Shell, JSON, Terraform, or Docker Compose environment output. |
+| `/seed`, `/reseed`, `/import` | Seed/import operations. |
+| `/reset` | Project-scoped reset. |
+| `/terraform/readiness` | Terraform routing and certificate readiness. |
+| `/graphql`, `/api-docs`, `/docs` | GraphQL and API discovery surfaces. |
+
+## SDK environment
+
+Use generated values rather than copying canonical ports. The CLI can dynamically remap occupied host ports.
 
 ```bash
-eval $(curl -s 'http://localhost:24080/_localcloud/env?format=terraform')
+eval "$(localcloud env)"
 ```
 
-This sets endpoints like `GOOGLE_STORAGE_CUSTOM_ENDPOINT`, `GOOGLE_PUBSUB_CUSTOM_ENDPOINT`, etc. and bypasses authentication with `GOOGLE_APPLICATION_CREDENTIALS=/dev/null`. See the [Terraform Integration](/docs/terraform/) guide for details.
+For a manual Docker runtime on canonical ports:
 
-## Docker Compose
+```bash
+eval "$(curl -fsS 'http://localhost:24080/env?format=shell')"
+```
+
+The output includes enabled-service endpoint variables plus project and caller values. Scope them to the shell or process running local tests. Stop if a client attempts real Google Cloud rather than adding production credentials.
+
+## Manual Docker Compose fallback
+
+Prefer the CLI. On unsupported CLI hosts, this loopback-bound fallback publishes canonical ports without mounting the Docker socket:
 
 ```yaml
 services:
   localcloud:
-    image: jaysen2apache/localcloud
+    image: jaysen2apache/localcloud:latest
     ports:
-      - "8080:24080"
-      - "4443:24081"
-      - "8085-8087:24082-8087"
-      - "9010:24085"
-      - "9020:24086"
-      - "9050:24087"
-      - "9060:24088"
-      - "6379:6379"
+      - "127.0.0.1:24080-24092:24080-24092"
     environment:
-      LOCALCLOUD_PROJECT: my-project
-      LOCALCLOUD_ENABLE_GKE: "false"
+      LOCALCLOUD_PROJECT: local-gcp-project
     volumes:
       - localcloud-data:/var/lib/localcloud
     deploy:
@@ -107,3 +121,5 @@ services:
 volumes:
   localcloud-data:
 ```
+
+The mutable image tag has not been tied to a qualified assembled-image digest. Pin a qualified digest for release workflows. Docker-socket and transparent-network access are opt-in and have separate security implications.

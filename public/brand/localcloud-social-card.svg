@@ -40,13 +40,13 @@
   <text x="520" y="200" fill="#1A73E8" font-family="IBM Plex Sans, Avenir Next, sans-serif" font-size="84" font-weight="700" letter-spacing="-4">Cloud</text>
   <text x="296" y="252" fill="#6B7F9D" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="24" font-weight="500" letter-spacing="4">GOOGLE CLOUD IN-A-BOX</text>
   <text x="104" y="372" fill="#13233D" font-family="IBM Plex Sans, Avenir Next, sans-serif" font-size="48" font-weight="650" letter-spacing="-1.5">Run major Google Cloud services locally.</text>
-  <text x="104" y="430" fill="#556A86" font-family="IBM Plex Sans, Avenir Next, sans-serif" font-size="29">One Docker container. Same SDKs. No cloud spend during local development.</text>
+  <text x="104" y="430" fill="#556A86" font-family="IBM Plex Sans, Avenir Next, sans-serif" font-size="29">One Docker container. Generated endpoints. Evidence-scoped workflows.</text>
 
   <g transform="translate(104 494)" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="18" font-weight="600" letter-spacing="1.7">
     <rect x="0" y="0" width="198" height="48" rx="24" fill="#FFFFFF" stroke="#C5D7F2"/>
     <text x="28" y="31" fill="#1A73E8">SINGLE CONTAINER</text>
     <rect x="220" y="0" width="194" height="48" rx="24" fill="#FFFFFF" stroke="#C5D7F2"/>
-    <text x="248" y="31" fill="#188038">ZERO CODE CHANGES</text>
+    <text x="248" y="31" fill="#188038">SDK ENDPOINTS</text>
     <rect x="436" y="0" width="160" height="48" rx="24" fill="#FFFFFF" stroke="#C5D7F2"/>
     <text x="464" y="31" fill="#0B57D0">LOCAL CONSOLE</text>
   </g>

@@ -1,33 +1,92 @@
 ---
 layout: ../../layouts/DocsLayout.astro
-title: Privacy Policy
-description: LocalCloud privacy policy — how we handle data when you visit our website and use our software.
+title: Privacy and Outbound Data Reference
+description: Runtime telemetry, website analytics, outbound connections, controls, and current limitations for LocalCloud.
+author: LocalCloud
+updated: 2026-08-13
+reviewed: 2026-08-13
 ---
 
-# Privacy Policy
+import Callout from '../../components/Callout.astro';
+import { docsContract } from '../../data/docs-contract';
 
-**Last updated: May 2025**
+export const privacy = docsContract.privacy;
 
-## Website (local.cloud)
+# Privacy and outbound data reference
 
-The LocalCloud website is a static site hosted on GitHub Pages. We do not:
+This page describes behavior found in the reviewed LocalCloud runtime and this website. It is an implementation reference, not a promise that every future image or site release behaves identically.
 
-- Collect personal information through forms or accounts
-- Use cookies for tracking or advertising
-- Share data with third parties
+<Callout type="warning" title="LocalCloud is not categorically offline">
+Runtime telemetry, update checks, certificate probes, online license validation, live-IAM validation, and user-configured HTTP jobs can make outbound requests. Review and control each path separately. `LOCALCLOUD_TELEMETRY=false` is not a categorical zero-egress switch.
+</Callout>
 
-We use **PostHog** for anonymous product analytics (page views, feature usage). PostHog processes IP addresses to determine country-level geography but we do not store or associate this with individual identities.
+## Runtime telemetry
 
-## LocalCloud Software
+Runtime telemetry requires both of these conditions:
 
-The LocalCloud Docker image runs entirely on your machine. It does not:
+1. `LOCALCLOUD_TELEMETRY` is not set to `false`; and
+2. `LOCALCLOUD_EVENT_API_KEY` is non-empty in the image or environment.
 
-- Send telemetry or usage data to any server
-- Phone home or make outbound connections except those you configure
-- Collect or transmit any of your data
+When active, the runtime sends events to `https://us.i.posthog.com/i/v0/e/` (the reviewed contract value in `privacy.runtimeTelemetry.destination`). The reviewed implementation uses a stable SHA-256-derived identifier built from machine/container characteristics. Treat it as a **pseudonymous identifier**, not an anonymous guarantee.
 
-## Contact
+| Event | Cadence or trigger | Fields observed in the reviewed implementation |
+| --- | --- | --- |
+| `server_started` | Startup | Version, OS/architecture, Java version, maximum memory, enabled service IDs/count, total service count, credential source, distinct identifier. |
+| `heartbeat` | Hourly after the first hour | Uptime, memory, enabled/disabled services, healthy-service count, per-service request deltas and cumulative counts, estimated-cost field, project count, credential source, errors-last-hour, queue depth, telemetry collection errors, distinct identifier. |
+| `service_error` | Method exists for immediate service errors | Service ID, error type, exit code, version, architecture. No main-source caller was found during the audit, so do not assume this event is currently wired. |
+| `telemetry_delivery_error` / `telemetry_internal_error` | Delivery or telemetry-internal failures | Operation, failed event, status/error type, and bounded error message. |
+| `telemetry_disabled` | Startup when `LOCALCLOUD_TELEMETRY=false` and an event key exists | Version, architecture, and distinct identifier. |
 
-For privacy questions, contact us at the GitHub repository:
+Failed events are stored in PostgreSQL and retried on the next cycle. The reviewed queue is capped at seven days of hourly events. The telemetry HTTP client installs a trust-all TLS manager; this weakens certificate verification for that client and is a security consideration.
 
-[https://github.com/LocalGCloud/LocalGCloud.github.io](https://github.com/LocalGCloud/LocalGCloud.github.io)
+### Telemetry control caveat
+
+Set `LOCALCLOUD_TELEMETRY=false` before starting the container to suppress normal startup and heartbeat telemetry. In the reviewed implementation, an event key still causes one `telemetry_disabled` event. A categorical zero-event opt-out therefore requires an implementation change or an image/environment with no event API key.
+
+## Other runtime outbound behavior
+
+<table>
+  <thead><tr><th>Behavior</th><th>Default/trigger</th><th>Destination</th><th>Control boundary</th></tr></thead>
+  <tbody>
+    {privacy.outboundBehaviors.map((item) => (
+      <tr><td>{item.id}</td><td>{item.default}</td><td>{item.destination}</td><td>{item.control}</td></tr>
+    ))}
+  </tbody>
+</table>
+
+These paths are separate from runtime telemetry:
+
+- startup may probe `storage.googleapis.com` while preparing certificates;
+- image or CLI update checks may contact Docker Hub;
+- enforced builds may send a license key and device identifier to an online validation service;
+- `gcp-live` IAM mode can validate bearer tokens through Google OAuth token-info;
+- Cloud Scheduler jobs can call the HTTP destination supplied by the user.
+
+Core local workflows can continue after required images are present when outbound features are disabled or unused, but no broad no-egress guarantee applies.
+
+## Website analytics
+
+The website loads PostHog from `https://us.i.posthog.com` across HTML routes. The reviewed configuration enables:
+
+- page-view and page-leave capture;
+- autocapture of interactions, links, and form submissions;
+- browser exception capture;
+- UTM and referrer storage;
+- code-copy and GitHub-link events;
+- time-on-page events at 30 and 120 seconds;
+- documentation search-open and search-query events, including query text and result count;
+- helpful/not-helpful feedback and optional free-text documentation comments;
+- feedback-menu, feature-request, content-issue, and feedback-dismiss interactions; and
+- landing page and landing referrer registration.
+
+Session recording, heatmaps, dead-click capture, and performance capture are disabled in the reviewed configuration. PostHog and browser storage behavior, IP processing, retention, deletion, and data-subject requests are governed by the deployed PostHog configuration and applicable policy; this repository does not currently expose a complete retention schedule or site consent/opt-out control.
+
+Do not submit credentials, personal data, customer data, or confidential information in search or feedback fields. Search text and optional documentation comments are transmitted to PostHog.
+
+## Local application data
+
+LocalCloud service data remains in the local runtime and its configured storage unless a documented outbound feature, live-cloud mode, user-configured target, or connected tool sends it elsewhere. Do not infer production privacy, encryption, access-control, or compliance guarantees from local storage.
+
+## Questions and requests
+
+For implementation questions or privacy requests, use the site repository's issue tracker without posting secrets or sensitive personal information. Include the affected surface (website analytics, runtime telemetry, update checks, licensing, live IAM, or scheduler egress) so the request can be routed correctly.

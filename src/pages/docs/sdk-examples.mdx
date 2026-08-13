@@ -1,207 +1,130 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: SDK Examples
-description: Code examples for connecting to LocalCloud with Python, Node.js, Go, and Java.
+description: Route standard Google Cloud SDK clients to LocalCloud and run bounded local checks.
 ---
 
-# SDK Examples
+# SDK examples
 
-Your existing GCP SDK code works with LocalCloud — just set environment variables. Below are examples for the most common services.
+LocalCloud accepts selected Google Cloud SDK workflows, but compatibility is service- and operation-specific. Start the runtime and load the endpoint values generated for the selected instance before running any example:
 
-## Cloud Storage
+```bash
+localcloud start
+eval "$(localcloud env)"
+```
 
-### Python
+Do not hard-code canonical ports when using the host CLI: occupied ports may be remapped. Run examples in the same shell or inject the generated variables into the test process. If a client tries to contact real Google Cloud, stop rather than adding real credentials.
+
+## Cloud Storage: Python
+
+This example is repeatable against a persistent local volume:
 
 ```python
+from google.api_core.exceptions import NotFound
 from google.cloud import storage
 
-client = storage.Client(project="local-project")
+client = storage.Client(project="local-gcp-project")
+bucket = client.bucket("localcloud-sdk-example")
 
-# Create bucket and upload
-bucket = client.create_bucket("my-bucket")
+try:
+    bucket.reload()
+except NotFound:
+    bucket.create()
+
 blob = bucket.blob("data.txt")
 blob.upload_from_string("Hello from LocalCloud!")
 print(blob.download_as_text())
 ```
 
-### Node.js
+## Cloud Storage: Node.js
 
 ```javascript
-const { Storage } = require("@google-cloud/storage");
+const { Storage } = require('@google-cloud/storage');
 
-const storage = new Storage({ projectId: "local-project" });
+const storage = new Storage({ projectId: 'local-gcp-project' });
+const bucket = storage.bucket('localcloud-sdk-example');
 
 async function main() {
-  await storage.createBucket("my-bucket");
-  const bucket = storage.bucket("my-bucket");
-  await bucket.file("data.txt").save("Hello from LocalCloud!");
-  const [content] = await bucket.file("data.txt").download();
+  const [exists] = await bucket.exists();
+  if (!exists) await storage.createBucket(bucket.name);
+  await bucket.file('data.txt').save('Hello from LocalCloud!');
+  const [content] = await bucket.file('data.txt').download();
   console.log(content.toString());
 }
-main();
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
 ```
 
-### Go
+## Pub/Sub: Python
 
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "io"
-
-    "cloud.google.com/go/storage"
-)
-
-func main() {
-    ctx := context.Background()
-    client, _ := storage.NewClient(ctx)
-    defer client.Close()
-
-    bucket := client.Bucket("my-bucket")
-    bucket.Create(ctx, "local-project", nil)
-
-    w := bucket.Object("data.txt").NewWriter(ctx)
-    fmt.Fprint(w, "Hello from LocalCloud!")
-    w.Close()
-
-    r, _ := bucket.Object("data.txt").NewReader(ctx)
-    data, _ := io.ReadAll(r)
-    fmt.Println(string(data))
-}
-```
-
-### Java
-
-```java
-import com.google.cloud.storage.*;
-
-public class Example {
-    public static void main(String[] args) {
-        Storage storage = StorageOptions.newBuilder()
-            .setProjectId("local-project")
-            .build().getService();
-
-        storage.create(BucketInfo.of("my-bucket"));
-
-        BlobId blobId = BlobId.of("my-bucket", "data.txt");
-        storage.create(BlobInfo.newBuilder(blobId).build(),
-            "Hello from LocalCloud!".getBytes());
-
-        byte[] content = storage.readAllBytes(blobId);
-        System.out.println(new String(content));
-    }
-}
-```
-
-## Pub/Sub
-
-### Python
+Pub/Sub state is volatile across emulator process restarts. Use stable names and tolerate resources that already exist during one run.
 
 ```python
+from google.api_core.exceptions import AlreadyExists
 from google.cloud import pubsub_v1
 
+project = "local-gcp-project"
 publisher = pubsub_v1.PublisherClient()
 subscriber = pubsub_v1.SubscriberClient()
+topic = publisher.topic_path(project, "localcloud-sdk-topic")
+subscription = subscriber.subscription_path(project, "localcloud-sdk-sub")
 
-topic_path = publisher.topic_path("local-project", "my-topic")
-sub_path = subscriber.subscription_path("local-project", "my-sub")
+try:
+    publisher.create_topic(request={"name": topic})
+except AlreadyExists:
+    pass
 
-# Create topic and subscription
-publisher.create_topic(request={"name": topic_path})
-subscriber.create_subscription(request={"name": sub_path, "topic": topic_path})
+try:
+    subscriber.create_subscription(request={"name": subscription, "topic": topic})
+except AlreadyExists:
+    pass
 
-# Publish
-publisher.publish(topic_path, b"Hello, Pub/Sub!")
-
-# Pull
-response = subscriber.pull(request={"subscription": sub_path, "max_messages": 10})
-for msg in response.received_messages:
-    print(msg.message.data.decode())
-    subscriber.acknowledge(request={"subscription": sub_path, "ack_ids": [msg.ack_id]})
+publisher.publish(topic, b"Hello, Pub/Sub!").result()
+response = subscriber.pull(request={"subscription": subscription, "max_messages": 1})
+for received in response.received_messages:
+    print(received.message.data.decode())
+    subscriber.acknowledge(
+        request={"subscription": subscription, "ack_ids": [received.ack_id]}
+    )
 ```
 
-### Node.js
+## BigQuery: deterministic query
 
-```javascript
-const { PubSub } = require("@google-cloud/pubsub");
-
-const pubsub = new PubSub({ projectId: "local-project" });
-
-async function main() {
-  const [topic] = await pubsub.createTopic("my-topic");
-  const [subscription] = await topic.createSubscription("my-sub");
-
-  await topic.publishMessage({ data: Buffer.from("Hello, Pub/Sub!") });
-
-  subscription.on("message", (message) => {
-    console.log(message.data.toString());
-    message.ack();
-  });
-}
-main();
-```
-
-## BigQuery
-
-### Python
+BigQuery behavior is release-unverified until the dependency source and assembled LocalCloud image are identified and qualified together. Start with a deterministic query rather than undeclared public data:
 
 ```python
+from google.auth.credentials import AnonymousCredentials
 from google.cloud import bigquery
 
-client = bigquery.Client(project="local-project")
-
-# Create dataset and table
-client.create_dataset("analytics")
-schema = [
-    bigquery.SchemaField("name", "STRING"),
-    bigquery.SchemaField("age", "INTEGER"),
-]
-table = bigquery.Table("local-project.analytics.users", schema=schema)
-client.create_table(table)
-
-# Insert and query
-rows = [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]
-client.insert_rows_json("local-project.analytics.users", rows)
-
-query = "SELECT name, age FROM analytics.users WHERE age > 20"
-for row in client.query(query):
-    print(f"{row.name}: {row.age}")
+client = bigquery.Client(
+    project="local-gcp-project",
+    credentials=AnonymousCredentials(),
+)
+rows = list(client.query("SELECT 1 AS ok").result())
+assert rows[0].ok == 1
 ```
 
-### Node.js
+Feature-specific compatibility remains partial; see the [BigQuery guide](/docs/bigquery-emulator-features/) before relying on scripting, external tables, Storage API behavior, or type semantics.
 
-```javascript
-const { BigQuery } = require("@google-cloud/bigquery");
+## Selecting another project
 
-const bigquery = new BigQuery({ projectId: "local-project" });
-
-async function main() {
-  await bigquery.createDataset("analytics");
-  const [rows] = await bigquery.query("SELECT 1 + 1 AS result");
-  console.log(rows);
-}
-main();
-```
-
-## Environment Setup
-
-Remember to set the emulator environment variables before running any examples:
+Generated environment output uses the configured project. Manual-Docker users can select an explicit project in the request:
 
 ```bash
-eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
+eval "$(curl -fsS 'http://localhost:24080/env?format=shell&project=my-local-project')"
 ```
 
-Or set them manually:
+Keep client project IDs consistent with the generated `GOOGLE_CLOUD_PROJECT` value.
 
-```bash
-export STORAGE_EMULATOR_HOST=http://localhost:24081
-export PUBSUB_EMULATOR_HOST=localhost:24082
-export BIGQUERY_EMULATOR_HOST=http://localhost:24087
-export GOOGLE_CLOUD_PROJECT=local-project
-```
+## Production validation
 
-## Agent Skills
+Local checks cover only documented workflows. Before production deployment:
 
-For agent-assisted SDK test work, use the [LocalCloud Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills). The `localcloud-sdk-tests`, `localcloud-bigquery`, and `localcloud-pubsub` skills instruct agents to route standard Google Cloud SDKs to localhost, avoid real GCP credentials by default, and validate production behavior separately.
+1. Start a clean process without LocalCloud emulator or custom-endpoint variables.
+2. Intentionally configure an isolated real Google Cloud project and credentials.
+3. Run production-bound integration tests for IAM, quotas, networking, regional behavior, concurrency, recovery, and unsupported operations.
+
+Do not treat protocol similarity or a passing emulator test as full Google Cloud parity. Organization and team-CI use must also comply with the governing proprietary license.

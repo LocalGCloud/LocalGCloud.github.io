@@ -44,7 +44,7 @@
 
   <rect x="470" y="336" width="260" height="120" rx="28" fill="#0F1C30"/>
   <text x="502" y="374" fill="#8CA8D6" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.5">ENV HANDOFF</text>
-  <text x="502" y="410" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="30" font-weight="600">/_localcloud/env</text>
+  <text x="502" y="410" fill="#F6FAFF" font-family="IBM Plex Sans, sans-serif" font-size="30" font-weight="600">/env</text>
   <text x="502" y="438" fill="#C3D7FB" font-family="IBM Plex Sans, sans-serif" font-size="18">Generated emulator vars point SDKs to localhost</text>
 
   <rect x="786" y="248" width="220" height="126" rx="28" fill="#FFFFFF" stroke="#D4E1F3" stroke-width="2"/>

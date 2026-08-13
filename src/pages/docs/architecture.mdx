@@ -1,96 +1,72 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Architecture
-description: How LocalCloud works — gateway, emulators, facades, and ports.
+description: LocalCloud gateway, service processes, persistence, networking, and operator boundaries.
 ---
 
 # Architecture
 
-LocalCloud runs everything inside a single Docker container. Here's how the pieces fit together.
+LocalCloud packages a Java gateway, the web console, local facades, and external emulator processes in one Docker container. “One container” does not mean every service shares the same protocol, process, storage engine, or compatibility level.
 
-## Overview
+## Request flow
 
-{/* <div class="docs-visual-grid docs-visual-grid--architecture"> */}
-{/*   <figure class="docs-visual docs-visual--feature"> */}
-{/*     <img */}
-{/*       src="/localcloud-site/illustrations/runtime-overview.svg" */}
-{/*       alt="Architecture overview showing LocalCloud's single Docker container with the Armeria gateway, facade services, external emulator processes, and PostgreSQL-backed persistence." */}
-{/*     /> */}
-{/*     <figcaption>Single-container runtime layout with the gateway, external emulator processes, built-in facades, and persistence layers.</figcaption> */}
-{/*   </figure> */}
+1. `localcloud start` launches a loopback-bound instance and may remap occupied canonical ports.
+2. `localcloud env` returns endpoint values for that instance and selected project/caller.
+3. SDK, REST, gRPC, and Terraform requests reach a direct emulator port or the gateway on canonical container port `24080`.
+4. The gateway handles operator routes and routes facade/API traffic to local implementations.
 
-{/*   <figure class="docs-visual docs-visual--secondary"> */}
-{/*     <img */}
-{/*       src="/localcloud-site/illustrations/request-flow.svg" */}
-{/*       alt="Request flow showing SDKs and the web console routing through LocalCloud environment handoff into the gateway, then into emulators and facade services." */}
-{/*     /> */}
-{/*     <figcaption>The routing path from your app's existing SDK calls into LocalCloud's localhost targets.</figcaption> */}
-{/*   </figure> */}
-{/* </div> */}
+Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env`, `/services`, `/seed`, `/reseed`, `/import`, `/reset`, `/terraform/readiness`, `/graphql`, `/api-docs`, and `/docs`.
 
-## Components
+## Process and storage model
 
-### Armeria Gateway
+| Component | Reviewed implementation | Persistence boundary |
+| --- | --- | --- |
+| Gateway and local facades | Java/Armeria services | Many facade records use internal PostgreSQL beneath `/var/lib/localcloud/pgdata`; operation-specific limits still apply. |
+| Cloud Storage | `fake-gcs-server` process | Object data is stored beneath the mounted LocalCloud data root. |
+| Pub/Sub | Google emulator process | Volatile across process restart; topics, subscriptions, and messages require recreation/reseeding. |
+| Firestore | Google emulator process | Firestore seeding is disabled; do not infer seed or persistence guarantees from process presence. |
+| Bigtable | `little_bigtable` artifact | LocalCloud Docker is configured for PostgreSQL under the mounted data root, but exact extended features remain release-unverified pending immutable artifact and assembled-image qualification. |
+| BigQuery | DuckDB-backed emulator process | DuckDB files live beneath the LocalCloud data root; feature claims are release-sensitive. |
+| Spanner | Extended emulator process | LevelDB row data plus JSON metadata beneath its data directory; mounted storage is needed across container replacement and known recovery/corruption limits apply. |
+| Memorystore | External Valkey-compatible process on canonical port `24089` | Do not describe it as the old in-process PostgreSQL-backed RESP handler. |
+| Cloud SQL | PostgreSQL and MySQL data planes on `24090` and `24091` plus gateway administration | Effective assembled default has differed from the registry default; enable explicitly. |
 
-The central gateway built with [Armeria](https://armeria.dev/) (Java HTTP/gRPC framework). It handles:
+A retained volume improves restart/container-replacement behavior only for stores that actually persist. It does not provide production replication, backups, disaster recovery, transaction parity, or durability guarantees.
 
-- **Admin API** — REST endpoints at `/_localcloud/` for health, status, seed data, and configuration
-- **Web Console** — A Solid.js SPA served at the root, providing a GCP Console-like interface
-- **Facade Services** — gRPC/REST implementations for services without dedicated emulators (Secret Manager, Cloud Tasks, Logging, Monitoring, Workflows, GKE, Compute Engine, Cloud Run)
-- **Memorystore** — RESP2 (Redis protocol) handler via Netty codec-redis on port 6379
+## Canonical container ports
 
-### External Emulators
+The host CLI may dynamically remap these ports; generated endpoint output is authoritative for a running instance.
 
-Where high-quality emulators exist, LocalCloud delegates to them:
+| Port | Purpose |
+| --- | --- |
+| `24080` | Gateway, console, operator APIs, and facades |
+| `24081` | Cloud Storage |
+| `24082` | Pub/Sub |
+| `24083` | Firestore |
+| `24084` | Bigtable |
+| `24085` | Spanner gRPC |
+| `24086` | Spanner REST/grpc-gateway — **not PostgreSQL wire** |
+| `24087` | BigQuery REST |
+| `24088` | BigQuery Storage API profile |
+| `24089` | Memorystore/Valkey |
+| `24090` | Cloud SQL PostgreSQL |
+| `24091` | Cloud SQL MySQL |
+| `24092` | GKE/k3d infrastructure |
+| `24093` | Transparent DNS/UDP listener |
+| `24094` | Transparent HTTPS listener |
+| `24095` | Transparent HTTP listener |
 
-| Emulator | Source | Port |
-|----------|--------|------|
-| fake-gcs-server | Community (Go) | 4443 |
-| Pub/Sub | Google official emulator | 8085 |
-| Firestore | Google official emulator | 8086 |
-| Bigtable | Google official emulator | 8087 |
-| Spanner | Extended emulator built around the official Spanner emulator | 9010 |
-| BigQuery | Custom emulator built from scrach | 9050 |
+## Transparent networking and Docker socket
 
-These run as separate processes managed by [supervisord](http://supervisord.org/).
+Both features are disabled by default in the host CLI.
 
-### Facade Services
+- Transparent networking redirects selected Google API DNS/HTTP/HTTPS traffic and requires host DNS changes and certificate trust. It is used for clients, including some Terraform paths, that ignore custom endpoint variables.
+- Docker-socket access grants the container control over the host Docker daemon. It is required only for runtime workflows that deliberately create subordinate containers/clusters. Do not mount it in the beginner path.
 
-For services without existing emulators, LocalCloud implements Java facades:
+## Outbound behavior
 
-- **Secret Manager** — Full CRUD for secrets and versions
-- **Cloud Tasks** — Queue management with HTTP task dispatch and retries
-- **Cloud Logging** — Sink-mode log ingestion and listing
-- **Cloud Monitoring** — Time series ingestion and querying
-- **Memorystore** — RESP2 protocol over Netty, backed by PostgreSQL
-- **Cloud Workflows** — Full YAML expression engine with stdlib and connector shims
-- **GKE** — Cluster CRUD via k3d (requires Docker socket)
-- **Compute Engine** — Instance CRUD using Docker containers as VMs
-- **Cloud Run** — Service/revision management with real Docker containers
+LocalCloud is not categorically offline or zero-egress. Depending on configuration and feature use, the runtime can send telemetry, probe certificate storage, check image updates, validate licenses, validate live IAM bearer tokens, or dispatch scheduled/HTTP work. Core local workflows can continue offline after required images are present, but review [Privacy](/docs/privacy/) and disable or isolate outbound features according to your environment.
 
-### PostgreSQL
+## Production boundary
 
-An internal PostgreSQL 17 instance provides persistence for all facade services. GCS blobs are stored on the filesystem; all other data uses PostgreSQL tables.
-
-## Docker Image
-
-- **Base**: `debian:trixie-slim`
-- **JRE**: Custom Java 25 built via `jlink` (~72 MB)
-- **Architectures**: Native `arm64` (Apple Silicon) and `amd64`
-- **Memory**: Requires `-m 4g` for stable full operation
-- **No gcloud SDK**: All emulators run as direct JAR/binary execution
-
-## Port Map
-
-| Port | Service |
-|------|---------|
-| 8080 | Gateway (Admin, Console, Facades) |
-| 4443 | Cloud Storage |
-| 8085 | Pub/Sub |
-| 8086 | Firestore |
-| 8087 | Bigtable |
-| 9010 | Spanner (gRPC) |
-| 9020 | Spanner (REST) |
-| 9050 | BigQuery (REST) |
-| 9060 | BigQuery (gRPC Storage API) |
-| 6379 | Memorystore (Redis) |
+Local emulation does not reproduce Google Cloud IAM enforcement, quotas, managed networking, regional behavior, concurrency, performance, replication, or disaster recovery. Consult each service operation and evidence state, then run an explicit real-Google-Cloud validation before release.

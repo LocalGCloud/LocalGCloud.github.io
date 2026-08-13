@@ -1,11 +1,24 @@
-# Privacy Statement
+# Privacy and local-data boundary
 
-The LocalCloud MCP server runs locally over stdio. It does not include telemetry, analytics, tracking pixels, or hosted control-plane calls.
+The LocalCloud MCP server itself runs locally over stdio and does not initialize an analytics or telemetry SDK. Its tools can still access or disclose local information when requested, and linked LocalCloud runtime behavior has separate outbound paths.
 
-Tool behavior:
+## MCP server behavior
 
-- Runtime, diagnostics, logs, and state tools inspect Docker and localhost endpoints on the user's machine.
-- Docs and service tools return bundled metadata plus canonical local.cloud URLs; they do not need network access to answer.
-- Optional `localcloud-gcp-client` execution is dry-run by default and, when explicitly enabled, forces LocalCloud emulator environment variables and blocks credential-oriented argv.
+- Runtime, diagnostics, logs, and state tools inspect host Docker and loopback LocalCloud endpoints.
+- Tool results can return container names/status, bounded logs, service state, endpoint values, and environment-variable **presence** to the connected MCP client.
+- Diagnostic output masks environment-variable values, but local logs can contain application data. Review output before sharing it with a remote model or third party.
+- Documentation and service tools return bundled metadata and URLs. The gcloud tool is planning-only; execution is disabled until runtime-generated endpoint overrides can be validated safely.
+- The MCP package does not promise that the connected MCP host, model provider, npm client, Docker registry, or LocalCloud runtime performs no network requests. Those systems have separate behavior and policies.
 
-The server may surface local container logs or environment-variable presence back to the connected MCP client because that is the requested tool output. It masks environment variable values in diagnostics. Do not paste secrets into prompts or tool arguments.
+## LocalCloud runtime behavior
+
+Starting or managing LocalCloud can activate runtime telemetry, update checks, certificate probes, online license validation, live-IAM token validation, or user-configured scheduler HTTP egress. Runtime telemetry can send pseudonymous identifiers and usage/health fields to PostHog, persist failed events, and emit a `telemetry_disabled` event when normal telemetry is disabled but an event key is present.
+
+See [the LocalCloud privacy reference](https://local.cloud/docs/privacy/) for destinations, event fields, activation conditions, and controls.
+
+## Safety guidance
+
+- Do not paste credentials, personal data, customer data, or secrets into prompts or tool arguments.
+- Treat a read-write Docker socket as broad host control.
+- Review logs before returning them to an MCP client.
+- Keep live-cloud IAM and external scheduler targets disabled unless explicitly intended.

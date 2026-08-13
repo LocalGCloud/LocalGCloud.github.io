@@ -2,193 +2,35 @@
 import LandingLayout from '../layouts/LandingLayout.astro';
 
 const rawBase = import.meta.env.BASE_URL;
-const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
-
-const faqItems = [
-  {
-    q: 'How much do teams spend on non-production GCP usage?',
-    a: 'Mid-size engineering teams commonly spend $100-500+ per developer per month on non-production GCP usage — BigQuery queries during development, Pub/Sub messages in test environments, Cloud Storage for test data, and CI/CD pipeline API calls. For a 20-person team, that\'s $2K-$10K+ per month that goes to cloud bills instead of product development.',
-  },
-  {
-    q: 'Does LocalCloud completely eliminate GCP development costs?',
-    a: 'LocalCloud eliminates GCP costs for the development and testing lifecycle — local development, CI/CD pipelines, integration testing, onboarding, and demos. You still need real GCP for production workloads and production-scale performance testing. For most teams, 70-90% of their GCP API calls happen in non-production contexts.',
-  },
-  {
-    q: 'Will my tests behave differently on LocalCloud vs real GCP?',
-    a: 'LocalCloud emulators speak the same gRPC and REST protocols as production GCP services. Your SDK code is unchanged. The BigQuery emulator has ~96% SQL coverage with 936 tests. There are documented gaps (BQML, encryption, geography parity), but for the 95% of dev/test cycles that use standard features, behavior is equivalent. Always validate against real GCP before production deployment.',
-  },
-  {
-    q: 'What about developer onboarding time?',
-    a: 'New hires spend their first week configuring GCP projects, IAM roles, and billing — before writing a single line of code. With LocalCloud, they run one Docker command and have a full GCP environment in under 60 seconds. No IAM setup, no billing, no cloud project approvals.',
-  },
-];
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 ---
 
 <LandingLayout
-  title="Reduce GCP Development Costs — Save $100-500+ Per Developer/Month"
-  description="Eliminate non-production GCP costs with local emulation. Save on BigQuery queries, Pub/Sub messages, Cloud Storage egress, and CI/CD pipeline costs — all with one Docker container."
+  title="Evaluate Local GCP Development Costs — LocalCloud"
+  description="A methodology for comparing local-emulation and real-GCP development costs without unsupported savings claims or unlicensed team-use assumptions."
 >
-  <script type="application/ld+json" is:inline>
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "How much do teams spend on non-production GCP usage?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Mid-size engineering teams commonly spend $100-500+ per developer per month on non-production GCP usage. For a 20-person team, that's $2K-$10K+ per month that goes to cloud bills instead of product development."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does LocalCloud completely eliminate GCP development costs?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "LocalCloud eliminates GCP costs for the development and testing lifecycle. You still need real GCP for production workloads. For most teams, 70-90% of their GCP API calls happen in non-production contexts."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Will my tests behave differently on LocalCloud vs real GCP?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "LocalCloud emulators speak the same gRPC and REST protocols as production GCP services. The BigQuery emulator has ~96% SQL coverage with 936 tests. Always validate against real GCP before production deployment."
-      }
-    }
-  ]
-}
-  </script>
-
-  <!-- HERO -->
   <section class="site-section site-section--hero">
-    <div class="container">
-      <div class="max-w-[48rem] reveal">
-        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Cost Savings</span>
-        <h1 class="mt-4">Cut GCP development costs to zero</h1>
-        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          Teams spend $100-500+ per developer per month on non-production GCP. LocalCloud eliminates those costs entirely — local development, CI/CD, and testing with zero cloud bills.
-        </p>
-        <div class="mt-8 flex flex-wrap gap-3">
-          <a href={`${base}docs/`} class="site-button site-button--primary">Start saving</a>
-          <a href={`${base}gcp-emulator/`} class="site-button site-button--secondary">GCP emulator overview</a>
-          <a href={`${base}gcp-integration-testing/`} class="site-button site-button--secondary">CI/CD integration</a>
-        </div>
-      </div>
-      <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
-        <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">$100-500</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per dev / month</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Average non-production GCP spend per developer across BigQuery, Pub/Sub, and Cloud Storage usage.</p>
-        </article>
-        <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">70-90%</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Non-prod API calls</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The majority of GCP API traffic is development, testing, and CI — not production workloads.</p>
-        </article>
-        <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">$0</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">With LocalCloud</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">All development and testing GCP usage runs locally — zero cloud costs for non-production workloads.</p>
-        </article>
-      </div>
-    </div>
+    <div class="container"><div class="max-w-[52rem] reveal">
+      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Cost evaluation</span>
+      <h1 class="mt-4">Measure your own local-development cost trade-off</h1>
+      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">LocalCloud does not publish a maintained savings benchmark. Use your own billing exports, workload profile, hardware cost, engineering time, and production-validation requirements.</p>
+      <div class="mt-8 flex flex-wrap gap-3"><a href={`${base}docs/licensing/`} class="site-button site-button--primary">Review licensing first</a><a href={`${base}compatibility/`} class="site-button site-button--secondary">Review compatibility</a></div>
+    </div></div>
   </section>
 
-  <!-- WHERE COSTS COME FROM -->
-  <section class="site-section site-section--tight">
-    <div class="container">
-      <div class="reveal">
-        <h2>Where GCP development costs come from</h2>
-        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Most teams don't track non-production GCP spend — it's hidden across individual developer accounts, CI pipeline usage, and test environment resources that run 24/7.
-        </p>
-      </div>
-      <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 reveal">
-        <article class="site-panel site-panel--soft p-5">
-          <div class="font-semibold text-[var(--text)]">BigQuery queries</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Every ad-hoc query during development costs real money. $5-50 per CI run for integration tests that query BigQuery.</p>
-        </article>
-        <article class="site-panel site-panel--soft p-5">
-          <div class="font-semibold text-[var(--text)]">Pub/Sub messages</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Millions of test messages published during development and CI accumulate publish, subscribe, and storage charges.</p>
-        </article>
-        <article class="site-panel site-panel--soft p-5">
-          <div class="font-semibold text-[var(--text)]">Cloud Storage</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Test data stored in GCS buckets incurs storage and egress costs. CI pipelines upload/download test fixtures repeatedly.</p>
-        </article>
-        <article class="site-panel site-panel--soft p-5">
-          <div class="font-semibold text-[var(--text)]">Idle dev projects</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">GCP projects provisioned for development often run 24/7. Spanner instances, Bigtable clusters, and Cloud SQL databases bill by the hour.</p>
-        </article>
-      </div>
-    </div>
-  </section>
+  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning"><div class="callout__body"><p class="callout__title">Current license excludes cost-saving business use</p><div class="callout__content"><p>The governing proprietary license permits limited personal, non-commercial individual use and excludes employer/organization use, internal tools, shared team CI, and use that generates savings or commercial advantage. No commercial license is currently offered by the reviewed text. A technically possible workflow is not necessarily licensed.</p></div></div></aside></div></section>
 
-  <!-- SAVINGS CALCULATOR -->
-  <section class="site-section">
-    <div class="container">
-      <div class="reveal">
-        <h2>Estimated savings for your team</h2>
-      </div>
-      <div class="mt-8 grid gap-4 sm:grid-cols-3 reveal">
-        <article class="site-panel p-5">
-          <span class="site-kicker">Small team (5 devs)</span>
-          <div class="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">$6K-30K</div>
-          <div class="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per year saved</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Assuming $100-500/dev/month on non-production GCP. 5 developers × 12 months.</p>
-        </article>
-        <article class="site-panel p-5">
-          <span class="site-kicker">Mid-size team (20 devs)</span>
-          <div class="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">$24K-120K</div>
-          <div class="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per year saved</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">20 developers × $100-500/month. Plus CI pipeline savings of $3K-10K/month.</p>
-        </article>
-        <article class="site-panel p-5">
-          <span class="site-kicker">Large team (50+ devs)</span>
-          <div class="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text)]">$60K-300K+</div>
-          <div class="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per year saved</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">50+ developers, multiple CI pipelines, shared dev environments. GCP costs scale with team size.</p>
-        </article>
-      </div>
+  <section class="site-section"><div class="container">
+    <div class="site-section-heading reveal"><span class="site-kicker">Method</span><h2>Build a reproducible comparison</h2><p>Record assumptions instead of copying generalized percentages or dollar ranges.</p></div>
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 stagger">
+      <article class="site-panel p-5"><h3>1. Establish the baseline</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Use dated billing exports to isolate developer, test, staging, and CI usage by service. Exclude unrelated production spend.</p></article>
+      <article class="site-panel p-5"><h3>2. Define the workflow</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">List exact SDK versions, services, operations, data volume, test frequency, retention, and required fidelity.</p></article>
+      <article class="site-panel p-5"><h3>3. Check evidence</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Map each operation to the compatibility contract. Release-unverified and unsupported behavior needs a different test path.</p></article>
+      <article class="site-panel p-5"><h3>4. Include local costs</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Account for compute, storage, Docker infrastructure, maintenance, developer time, and the cost of failed fidelity assumptions.</p></article>
+      <article class="site-panel p-5"><h3>5. Keep production validation</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Budget for guarded tests against real Google Cloud for IAM, quotas, regional behavior, managed integrations, performance, and release confidence.</p></article>
+      <article class="site-panel p-5"><h3>6. Measure, do not extrapolate</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Run a time-boxed evaluation and compare observed bills and cycle time. Publish the date, hardware, workload, and exclusions with any result.</p></article>
     </div>
-  </section>
+  </div></section>
 
-  <!-- FAQ -->
-  <section class="site-section">
-    <div class="container container--narrow">
-      <div class="reveal">
-        <h2>Frequently asked questions</h2>
-      </div>
-      <div class="mt-6 grid gap-3 reveal">
-        {faqItems.map(item => (
-          <details class="site-panel p-5 cursor-pointer">
-            <summary class="font-semibold text-[var(--text)] text-[1.05rem]">{item.q}</summary>
-            <p class="mt-3 text-[var(--text-2)] leading-7">{item.a}</p>
-          </details>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- BOTTOM CTA -->
-  <section class="site-section">
-    <div class="container">
-      <div class="site-panel p-8 reveal" style="background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));">
-        <div class="grid gap-6 xl:grid-cols-[1fr,auto] items-center">
-          <div>
-            <h2 style="color: #e8eaed;">Start saving today</h2>
-            <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              One Docker container. 20+ GCP services. Zero cloud costs for development and testing. Free for individual developers.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
-            <a href={`${base}gcp-integration-testing/`} class="site-button site-button--primary">CI/CD integration</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <section class="site-section"><div class="container"><div class="site-panel p-6 reveal"><h2>Evidence checklist</h2><ul class="site-list mt-5"><li>Dated source billing data and project/service filters.</li><li>Exact LocalCloud image or CLI release identity.</li><li>Service-operation evidence state and known gaps.</li><li>Local infrastructure and maintenance cost.</li><li>Real-GCP release-validation scope.</li><li>Governing license review for the intended user and purpose.</li></ul></div></div></section>
 </LandingLayout>

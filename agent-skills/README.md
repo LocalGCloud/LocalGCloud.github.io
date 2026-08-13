@@ -2,7 +2,7 @@
 
 Portable Agent Skills for using LocalCloud as a local Google Cloud sandbox. The canonical skill content lives in `skills/`; client-specific wrappers reference that content rather than maintaining separate copies.
 
-LocalCloud runs 20+ Google Cloud service emulators in one Docker container (`jaysen2apache/localcloud`). Standard GCP SDKs and Terraform are pointed at localhost endpoints. Default workflows require no GCP account, no Google credentials, and no billing project. Validate production-critical behavior against real Google Cloud after unsetting emulator variables.
+LocalCloud's versioned contract lists 27 service surfaces with operation-level evidence. Start through the host CLI and trust its generated local endpoints rather than hard-coded ports. The reviewed proprietary license permits limited personal, non-commercial Individual Developer use and excludes employer/organization, commercial, internal-tool, cost-saving, and team-CI use. Validate allowed production-critical behavior against real Google Cloud after clearing emulator variables.
 
 ## Skills included
 
@@ -39,12 +39,12 @@ Then ask your agent to load the relevant skill by name, for example: `Use the lo
 
 ## LocalCloud references
 
-- Compatibility: https://local.cloud/compatibility/
-- Services: https://local.cloud/services/
-- Docs: https://local.cloud/docs/
-- SDK examples: https://local.cloud/docs/sdk-examples/
-- Terraform: https://local.cloud/docs/terraform/
-- Seed data: https://local.cloud/docs/seed-data/
+- Compatibility: <https://local.cloud/compatibility/>
+- Services: <https://local.cloud/services/>
+- Docs: <https://local.cloud/docs/>
+- SDK examples: <https://local.cloud/docs/sdk-examples/>
+- Terraform: <https://local.cloud/docs/terraform/>
+- Seed data: <https://local.cloud/docs/seed-data/>
 
 ## Safety rules for all skills
 
@@ -52,7 +52,8 @@ Then ask your agent to load the relevant skill by name, for example: `Use the lo
 - Do not fall back to production Google Cloud when LocalCloud is unavailable.
 - Prefer existing project test commands and inspect the repo before asking the user.
 - Keep detailed service claims tied to LocalCloud docs and compatibility pages.
-- Before production deployment, unset emulator variables and validate against real Google Cloud.
+- Confirm the governing proprietary license permits the intended use before running LocalCloud.
+- Before an authorized production deployment, unset emulator variables and validate against real Google Cloud.
 
 ## Release process
 

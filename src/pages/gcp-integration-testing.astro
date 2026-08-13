@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       localcloud:
-        image: jaysen2apache/localcloud
+        image: jaysen2apache/localcloud:latest
         ports:
           - 24080:24080
           - 24082:24082
@@ -24,9 +24,11 @@ jobs:
       - name: Wait for LocalCloud
         run: |
           for i in $(seq 1 30); do
-            curl -sf http://localhost:24080/_localcloud/health && break
+            if curl -fsS http://localhost:24080/health; then exit 0; fi
             sleep 2
           done
+          docker logs localcloud
+          exit 1
 
       - name: Run integration tests
         env:
@@ -37,7 +39,7 @@ jobs:
 const gitlabCiYaml = `integration-tests:
   image: python:3.12
   services:
-    - name: jaysen2apache/localcloud
+    - name: jaysen2apache/localcloud:latest
       alias: localcloud
   variables:
     BIGQUERY_EMULATOR_HOST: http://localcloud:24087
@@ -46,9 +48,10 @@ const gitlabCiYaml = `integration-tests:
     - pip install -r requirements.txt
     - |
       for i in $(seq 1 30); do
-        curl -sf http://localcloud:24080/_localcloud/health && break
+        if curl -fsS http://localcloud:24080/health; then exit 0; fi
         sleep 2
       done
+      exit 1
   script:
     - pytest tests/integration/`;
 
@@ -57,15 +60,16 @@ const jenkinsfile = `pipeline {
   stages {
     stage('Integration Tests') {
       steps {
-        docker.image('jaysen2apache/localcloud')
+        docker.image('jaysen2apache/localcloud:latest')
           .withRun('--memory 4g -p 24087:24087 -p 24082:24082') { c ->
             docker.image('appropriate/curl')
               .inside("--link \${c.id}:localcloud") {
                 sh """
                   for i in \$(seq 1 30); do
-                    curl -sf http://localcloud:24080/_localcloud/health && break
+                    if curl -fsS http://localcloud:24080/health; then exit 0; fi
                     sleep 2
                   done
+                  exit 1
                 """
               }
             withEnv([
@@ -83,30 +87,30 @@ const jenkinsfile = `pipeline {
 const faqItems = [
   {
     q: 'How much do GCP-integrated CI/CD pipelines cost?',
-    a: 'A typical CI pipeline that runs BigQuery queries, publishes to Pub/Sub, and reads from Cloud Storage can cost $5-50 per run. With 200+ pipeline executions per day across pull requests, merges, and scheduled runs, teams easily spend $3K-10K+ per month on CI GCP costs alone.',
+    a: 'Cost depends on your Google Cloud usage, pricing, regions, and billing agreements. This site has no maintained dataset supporting a typical per-run or monthly savings figure. Use authorized billing data for estimates.',
   },
   {
     q: 'Does LocalCloud support GitHub Actions, GitLab CI, and Jenkins?',
-    a: 'Yes. LocalCloud runs as a standard Docker service container — it works with any CI platform that supports Docker. Configure it in your workflow YAML, wait for the health check to pass, then run your tests with emulator environment variables set. No special plugins or integrations required.',
+    a: 'The runtime can technically run on Docker-capable CI systems, but exact runner networking and service-container behavior must be tested. Organization and team-CI use is excluded by the current governing proprietary license.',
   },
   {
     q: 'Will my tests behave differently in CI vs local development?',
-    a: 'No. Both CI and local development use the same LocalCloud Docker image. The emulator environment is deterministic and isolated per run. Tests that pass locally will pass in CI, and vice versa — eliminating the "works on my machine" problem.',
+    a: 'They can differ because of image identity, runner resources, networking, ports, concurrency, and retained state. Pin a qualified image digest, isolate state, and validate production behavior separately.',
   },
   {
     q: 'How fast does LocalCloud start in CI?',
-    a: 'LocalCloud boots in under 60 seconds on standard CI runners. The health check endpoint at localhost:24080/_localcloud/health returns 200 when all services are ready. Use a retry loop in your CI config to wait for readiness.',
+    a: 'No maintained cross-runner startup benchmark is available. Poll http://localhost:24080/health with a job timeout and inspect logs on failure.',
   },
   {
     q: 'Can I run parallel test suites against the same LocalCloud instance?',
-    a: 'Yes — each CI job gets its own isolated LocalCloud container. Services are namespaced per container, so parallel test suites don\'t interfere. For higher parallelism, run multiple LocalCloud instances on different ports.',
+    a: 'Use one isolated instance and project per job. Parallel clients can still contend for service state, resources, and ports; namespace fixtures and verify concurrency behavior rather than assuming isolation guarantees.',
   },
 ];
 ---
 
 <LandingLayout
-  title="GCP Integration Testing in CI/CD — Zero Cloud Cost Pipelines"
-  description="Replace real GCP in your CI/CD pipeline with LocalCloud. Run BigQuery, Pub/Sub, and Cloud Storage integration tests locally in GitHub Actions, GitLab CI, and Jenkins — zero cloud costs per pipeline run."
+  title="GCP Integration Testing with LocalCloud"
+  description="Structure bounded LocalCloud integration checks with health gates, local endpoint routing, compatibility limits, and explicit production validation."
 >
   <script type="application/ld+json" is:inline>
 {
@@ -118,7 +122,7 @@ const faqItems = [
       "name": "How much do GCP-integrated CI/CD pipelines cost?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A typical CI pipeline that runs BigQuery queries, publishes to Pub/Sub, and reads from Cloud Storage can cost $5-50 per run. With 200+ pipeline executions per day, teams easily spend $3K-10K+ per month on CI GCP costs alone."
+        "text": "Cost depends on actual Google Cloud usage and pricing. This site has no maintained dataset supporting a typical per-run or monthly savings figure."
       }
     },
     {
@@ -126,7 +130,7 @@ const faqItems = [
       "name": "Does LocalCloud support GitHub Actions, GitLab CI, and Jenkins?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. LocalCloud runs as a standard Docker service container — it works with any CI platform that supports Docker. Configure it in your workflow YAML, wait for the health check to pass, then run your tests with emulator environment variables set."
+        "text": "LocalCloud can technically run on Docker-capable CI systems, but runner behavior must be tested and organization or team-CI use is excluded by the current governing proprietary license."
       }
     },
     {
@@ -134,7 +138,7 @@ const faqItems = [
       "name": "Will my tests behave differently in CI vs local development?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Both CI and local development use the same LocalCloud Docker image. The emulator environment is deterministic and isolated per run. Tests that pass locally will pass in CI, and vice versa."
+        "text": "Local and CI behavior can differ because of image identity, resources, networking, concurrency, ports, and retained state. Validate production behavior separately."
       }
     }
   ]
@@ -146,30 +150,27 @@ const faqItems = [
     <div class="container">
       <div class="max-w-[48rem] reveal">
         <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>CI / CD Integration Testing</span>
-        <h1 class="mt-4">Replace real GCP in your CI pipeline</h1>
+        <h1 class="mt-4">Add bounded local GCP checks to a CI pipeline</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          Run BigQuery, Pub/Sub, Cloud Storage, and 20+ GCP services as a CI service container. Every pull request gets its own isolated GCP environment — with zero cloud costs per pipeline execution.
+          Run evidence-bounded BigQuery, Pub/Sub, Cloud Storage, and other local service checks in a Docker job. Keep every job isolated, pin a qualified image, and confirm the governing license permits the intended CI use.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href={`${base}docs/`} class="site-button site-button--primary">Start in 60 seconds</a>
+          <a href={`${base}docs/`} class="site-button site-button--primary">Review local setup</a>
           <a href={`${base}gcp-emulator/`} class="site-button site-button--secondary">GCP emulator overview</a>
         </div>
       </div>
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">$0</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per CI run</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">No BigQuery query costs, no Pub/Sub message fees, no Cloud Storage egress — all local.</p>
+          <div class="text-xl font-semibold text-[var(--text)]">Evidence-bounded</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Select only operations supported by the current compatibility contract.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">&lt; 60s</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Startup time</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">LocalCloud boots in under a minute on standard CI runners — health check endpoint confirms readiness.</p>
+          <div class="text-xl font-semibold text-[var(--text)]">Fail-closed readiness</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Do not run tests unless the health gate succeeds; retain logs when startup fails.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">All</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">CI platforms</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">GitHub Actions, GitLab CI, Jenkins, CircleCI, Bitbucket Pipelines — any platform with Docker support.</p>
+          <div class="text-xl font-semibold text-[var(--text)]">Runner-qualified</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Treat these as templates until exercised with a pinned image on the selected CI runner.</p>
         </article>
       </div>
     </div>
@@ -181,7 +182,7 @@ const faqItems = [
       <div class="reveal">
         <h2>CI platform examples</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud works as a service container in any CI platform that supports Docker. Below are working examples for the most common platforms.
+          These unqualified templates show the intended shape for three Docker-capable runners. Exercise networking, health, image identity, and cleanup on the exact runner before relying on them.
         </p>
       </div>
 
@@ -208,24 +209,24 @@ const faqItems = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>Why replace real GCP in CI with local emulation</h2>
+        <h2>What bounded local emulation can add</h2>
       </div>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 reveal">
         <article class="site-panel p-5">
-          <span class="site-kicker">Zero cost</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Eliminate GCP costs from your CI pipeline entirely. No BigQuery query charges, no Pub/Sub message fees, no Cloud Storage egress — every pipeline run costs $0 in cloud resources.</p>
+          <span class="site-kicker">Local isolation</span>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Exercise documented operations without routing the local test step to a real Google Cloud project. This is a technical boundary, not a quantified cost claim.</p>
         </article>
         <article class="site-panel p-5">
-          <span class="site-kicker">Deterministic</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Every CI run starts from a clean, isolated GCP environment. No test pollution from previous runs, no shared state, no flaky tests caused by cloud-side changes.</p>
+          <span class="site-kicker">Controlled state</span>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Use one instance, project, and fixture namespace per job. Explicitly reset or seed state and do not assume emulator concurrency or isolation matches Google Cloud.</p>
         </article>
         <article class="site-panel p-5">
-          <span class="site-kicker">Faster feedback</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Sub-millisecond latency for local services vs 50-200ms network round-trips to GCP. Tests run faster, CI pipelines finish sooner.</p>
+          <span class="site-kicker">Earlier feedback</span>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Catch endpoint, request-shape, and fixture errors before the guarded real-Google-Cloud release step. No cross-runner latency or duration benchmark is claimed.</p>
         </article>
         <article class="site-panel p-5">
-          <span class="site-kicker">No credentials</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">No GCP service accounts, no IAM roles, no credentials to rotate. Your CI config has zero secrets related to GCP access.</p>
+          <span class="site-kicker">Credential boundary</span>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The bounded local job should not need production GCP credentials. Stop if an SDK tries to reach Google Cloud; keep release credentials in a separate guarded job.</p>
         </article>
       </div>
     </div>
@@ -256,12 +257,12 @@ const faqItems = [
           <div>
             <h2 style="color: #e8eaed;">Add LocalCloud to your CI pipeline</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              One Docker service container. 20+ GCP services. Zero cloud costs per pipeline execution. Free for individual developers.
+              One Docker service container with service-specific compatibility. Validate production behavior separately and review the proprietary license before personal or CI use.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">
             <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
-            <a href={`${base}reduce-gcp-dev-costs/`} class="site-button site-button--primary">See cost savings</a>
+            <a href={`${base}compatibility/`} class="site-button site-button--primary">Review compatibility</a>
           </div>
         </div>
       </div>

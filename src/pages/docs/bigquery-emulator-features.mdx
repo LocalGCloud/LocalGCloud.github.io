@@ -1,148 +1,108 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: BigQuery Emulator Features
-description: Test-evidence-based feature support for LocalCloud's DuckDB-based BigQuery emulator.
+description: Evidence-scoped BigQuery behavior in LocalCloud, including release qualification and feature-specific limits.
 ---
 
 import Callout from '../../components/Callout.astro';
+import { getDocumentationService } from '../../data/docs-contract';
 
-# BigQuery Emulator Coverage
+export const bigquery = getDocumentationService('bigquery');
 
-<Callout type="info" title="Evidence-based coverage">
-This page is based only on the latest test-case coverage report from the BigQuery emulator dependency, `TEST_CASE_FUNCTIONALITY_COVERAGE_REPORT.md`.
+# BigQuery emulator feature reference
 
-The report treats tests as the source of truth. If implementation code appears to support a feature but no positive test directly covers it, this page does not claim developer-quality support for that feature.
+Use this page to decide whether a BigQuery workflow is appropriate for local validation. It describes **local behavior**, not production BigQuery parity.
+
+<Callout type="warning" title="Release qualification is incomplete">
+The reviewed BigQuery dependency checkout contains behavior that is newer than LocalCloud's runtime compatibility record. The LocalCloud lock file does not identify a qualified dependency image, and no assembled LocalCloud image digest is recorded. Every positive feature below therefore remains **release-unverified** unless stated otherwise.
 </Callout>
 
-## Support legend
+## Connection and persistence
 
-| Status | Meaning |
-| --- | --- |
-| <span class="support-badge support-badge--supported">Supported</span> | Provides Functional and API Parity to BigQuery production capabilities. |
-| <span class="support-badge support-badge--partial">Supported*</span> | Exposes & accepts but may not enforce everywhere like partitioning. |
-| <span class="support-badge support-badge--unsupported">Not supported</span> | Unsupported, cloud-only, outside emulator scope, has no dev impact. |
-
-## Support summary
-
-| Area | Status | What this means for developers |
+| Surface | Value | Boundary |
 | --- | --- | --- |
-| Core SQL query language | <span class="support-badge support-badge--supported">Supported</span> | Common `SELECT` / `FROM` / `WHERE` / `JOIN` / `GROUP BY` / window / set-operation workflows execute locally through SQLGlot and DuckDB. |
-| Advanced grouping | <span class="support-badge support-badge--supported">Supported</span> | `GROUP BY ALL`, `ROLLUP`, `CUBE`, `GROUPING SETS`, and `GROUPING()` have representative positive execution tests. |
-| Pipe syntax | <span class="support-badge support-badge--supported">Supported</span> | Tested cases work when SQLGlot and DuckDB accept the syntax. Full pipe grammar coverage is not claimed. |
-| DDL and DML | <span class="support-badge support-badge--supported">Supported</span> | Common table, view, materialized-view, external-table DDL and `INSERT` / `UPDATE` / `DELETE` / `MERGE` workflows execute locally. |
-| Constraints and column defaults | <span class="support-badge support-badge--partial">Supported*</span> | Constraint and default declarations are parsed and exposed through `INFORMATION_SCHEMA`. Constraint enforcement and default injection across all write paths are not claimed. |
-| Table functions | <span class="support-badge support-badge--supported">Supported</span> | Scalar-parameter table functions execute as DuckDB table macros and appear in routine metadata. Table parameters and full BigQuery routine semantics are not claimed. |
-| Search and vector indexes | <span class="support-badge support-badge--partial">Supported*</span> | Index DDL is accepted and index metadata is exposed. Query acceleration and index-backed planning are not implemented. |
-| `SEARCH` and `VECTOR_SEARCH` | <span class="support-badge support-badge--supported">Supported</span> | `SEARCH` has local case-insensitive matching; `VECTOR_SEARCH` has brute-force local array embedding search. |
-| RANGE functions | <span class="support-badge support-badge--supported">Supported</span> | RANGE literals, types, predicates, `GENERATE_RANGE_ARRAY`, and a local `RANGE_SESSIONIZE` path cover common local tests. |
-| Scripting and procedural SQL | <span class="support-badge support-badge--supported">Supported</span> | Variables, control flow, dynamic SQL, transactions, procedures, and `RETURN` have tests. |
-| REST API core resources | <span class="support-badge support-badge--supported">Supported</span> | Projects, datasets, tables, tabledata, query jobs, load/copy/extract jobs, and common metadata shapes are usable for local clients. |
-| IAM, row policies, grants, and revokes | <span class="support-badge support-badge--partial">Supported*</span> | Accepted or permissive responses support local client compatibility. Real security enforcement is not implemented. |
-| Storage Read and Write APIs | <span class="support-badge support-badge--supported">Supported</span> | Read sessions, rows, splitting, and `AppendRows` ingestion for committed, pending, and buffered streams are tested. |
-| Local load, export, and external data | <span class="support-badge support-badge--supported">Supported</span> | Local CSV, JSON, Parquet, common CSV options, copy/extract, and deterministic wildcard export workflows are supported. |
-| Built-in functions | <span class="support-badge support-badge--supported">Supported</span> | A large tested subset of GoogleSQL functions is available through DuckDB, SQL rewrites, macros, and Python UDFs. |
-| `INFORMATION_SCHEMA` | <span class="support-badge support-badge--supported">Supported</span> | Common views and local metadata-backed rows are available. |
-| Operational and control-plane systems | <span class="support-badge support-badge--unsupported">Not supported</span> | Slots, reservations, BI Engine, scheduled queries, quotas, billing, audit logging, and production auth are cloud-control-plane features and are outside emulator scope. |
+| REST | `http://localhost:24087` | Primary local REST surface. |
+| Storage API profile | `localhost:24088` | Client- and feature-specific; not blanket gRPC parity. |
+| SDK environment | `BIGQUERY_EMULATOR_HOST=http://localhost:24087` | Use an SDK path that supports the emulator endpoint explicitly. |
+| Persistence | DuckDB files under `/var/lib/localcloud/bigquery-data` | Retention depends on the mounted LocalCloud volume; assembled dependency identity remains release-unverified. |
 
-## SQL, DDL, and DML
+## Evidence states
 
-| Area | Status | Covered by tests | Limits from the report |
-| --- | --- | --- | --- |
-| Query language | <span class="support-badge support-badge--supported">Supported</span> | Literals, `*`, aliases, expressions, `DISTINCT`, null handling, `SELECT * EXCEPT`, `SELECT * REPLACE`, `SELECT AS STRUCT`, `SELECT AS VALUE`, table references, subqueries, `UNNEST`, filters, grouping, ordering, joins, CTEs, recursive CTEs, set operations, correlated subqueries, `QUALIFY`, `PIVOT`, `UNPIVOT`, `TABLESAMPLE`, windows, arrays, structs, casts, conditionals, named parameters, wildcard tables, and `_TABLE_SUFFIX`. | Some syntax variants are covered only by rewrite checks or single representative examples. Collation, time travel, and differential privacy behavior are narrow or non-production. |
-| Advanced grouping | <span class="support-badge support-badge--supported">Supported</span> | `GROUP BY ALL`, `GROUPING SETS`, `ROLLUP`, `CUBE`, and `GROUPING()`. | Exhaustive BigQuery edge and error parity is not claimed. |
-| Pipe syntax | <span class="support-badge support-badge--supported">Supported</span> | Tested pipe patterns that SQLGlot and DuckDB accept. | No broader pipe-syntax matrix is present. |
-| DDL | <span class="support-badge support-badge--supported">Supported</span> | `CREATE TABLE`, `IF NOT EXISTS`, `OR REPLACE`, partition and cluster metadata extraction, table options, `CREATE TABLE AS SELECT`, `LIKE`, `COPY`, `CLONE`, snapshot clone as data copy, views, materialized views and refresh, external tables, `ALTER TABLE`, `DROP`, `TRUNCATE`, SQL UDFs, procedures, scalar table functions, local `LOAD DATA`, and local `EXPORT DATA`. | Remote functions, user-defined Python UDFs, aggregate UDFs, Spark procedures, authorized views/datasets, policy-tag enforcement, true snapshot/time-travel semantics, schema evolution options, and BigLake object-table metadata are not supported. |
-| DML | <span class="support-badge support-badge--supported">Supported</span> | `INSERT VALUES`, `INSERT SELECT`, `UPDATE`, `DELETE`, and `MERGE` with matched and not-matched branches. | DML quotas, streaming-buffer constraints, production partition-specific DML behavior, exact transactional edge cases, complex `MERGE` combinations, and nested/repeated field mutation semantics are not developer-supported by test evidence. |
-| Constraints and defaults | <span class="support-badge support-badge--partial">Supported*</span> | Primary key, foreign key, check constraint, and column default declarations are exposed through metadata. | Enforcement, optimizer use, and default value injection across every write path are not implemented or not covered. |
-| Search and vector indexes | <span class="support-badge support-badge--partial">Supported*</span> | `CREATE SEARCH INDEX` and `CREATE VECTOR INDEX` expose indexed columns, options, DDL text, and status rows through `INFORMATION_SCHEMA`. | Query acceleration and production index behavior are not implemented. |
-
-## Scripting and procedures
-
-| Area | Status | Covered by tests | Limits from the report |
-| --- | --- | --- | --- |
-| Procedural SQL | <span class="support-badge support-badge--supported">Supported</span> | `DECLARE`, `SET`, variable interpolation, `IF`, `ELSEIF`, `ELSE`, `WHILE`, `LOOP`, `BREAK`, `CONTINUE`, `FOR ... IN`, `REPEAT ... UNTIL`, `LEAVE`, `ITERATE`, exception blocks, `RAISE USING MESSAGE`, `EXECUTE IMMEDIATE`, transactions, procedures, `CALL`, `@@project_id`, `@@row_count`, `ASSERT`, `EXECUTE IMMEDIATE INTO/USING`, and `RETURN`. | Stored procedure authorization and production sessions are unsupported. Procedure `OUT`/`INOUT` parameters, nested exception metadata, and complete system-variable coverage have no test evidence. |
-| Table functions | <span class="support-badge support-badge--supported">Supported</span> | Scalar-parameter table functions are registered and queried as DuckDB table macros, with routine and parameter metadata. | Table parameters, `ANY TYPE` table-function behavior, and complete BigQuery routine semantics are not claimed. |
-
-## APIs and metadata
-
-| Area | Status | Covered by tests | Limits from the report |
-| --- | --- | --- | --- |
-| REST API | <span class="support-badge support-badge--supported">Supported</span> | Projects list, service account endpoint, dataset CRUD, table CRUD, table metadata, external table API creation, partition/cluster metadata reporting, `tabledata.insertAll`, `tabledata.list`, synchronous query endpoint, dry runs, named parameters, pagination, error formatting, query jobs, load jobs, copy jobs, extract jobs, routines metadata, discovery endpoint, and `/bigquery/v2` prefix routing. | Real cancellation side effects, reservations integration, dataset/table IAM enforcement, encryption configuration, cloud transfer APIs, full routine CRUD semantics, schema patch edge cases, and production resources outside the tested subset are not supported by evidence. |
-| Storage Read API | <span class="support-badge support-badge--supported">Supported</span> | `CreateReadSession` and `ReadRows` for AVRO and ARROW, row restriction filtering, and `SplitReadStream` disjoint range reads. | Production permission behavior, throttling, snapshots, selected fields, compression, full schema details, and additional stream error paths are not claimed. |
-| Storage Write API | <span class="support-badge support-badge--supported">Supported</span> | `CreateWriteStream`, `FinalizeWriteStream`, `BatchCommitWriteStreams`, descriptor-based `AppendRows`, committed-stream inserts, valid offsets, pending stream commit visibility, buffered stream flush visibility, and invalid offset handling. | Service-level exactly-once guarantees, schema evolution, multiplexing, compression, and additional stream errors are not claimed. |
-| `INFORMATION_SCHEMA` | <span class="support-badge support-badge--supported">Supported</span> | `COLUMNS`, `TABLES`, `SCHEMATA`, `PARTITIONS`, `VIEWS`, `ROUTINES`, `TABLE_OPTIONS`, `TABLE_STORAGE`, `JOBS_BY_USER`, `JOBS_BY_PROJECT`, `COLUMN_FIELD_PATHS`, constraints/default metadata, table-function metadata, parameters, `JOBS_TIMELINE`, and search/vector index metadata. | Permission-filtered results, production reservation details, BI Engine capacities, audit-grade job statistics, full catalog breadth, region/project scoping, historical timelines, and change history are not claimed. |
-| Operational metadata views | <span class="support-badge support-badge--partial">Supported*</span> | `OBJECT_PRIVILEGES`, session views, assignment/reservation views, capacity commitment changes, `STREAMING_TIMELINE`, `BI_CAPACITIES`, and `EFFECTIVE_PROJECT_OPTIONS` exist with schemas or empty rows. | These are compatibility surfaces, not production metadata. |
-
-## Data, types, and functions
-
-| Area | Status | Covered by tests | Limits from the report |
-| --- | --- | --- | --- |
-| External data, load, export, and copy | <span class="support-badge support-badge--supported">Supported</span> | External Parquet, CSV, JSON tables from local files; Parquet wildcard globs; filters, aggregates, declared schema, joins; local URI resolution; GCS URI resolution with emulator configuration; S3 URI passthrough; local CSV `LOAD DATA`; local CSV/Parquet `EXPORT DATA`; REST load/copy/extract jobs; common CSV options; deterministic single-shard wildcard export; YAML fixture loading. | Datastore/Firestore exports, Google Sheets, Bigtable, BigLake, Iceberg, object tables, managed disaster recovery, destination encryption, cross-cloud connection auth, Avro/ORC paths, full Cloud Storage sharding/compression, external partitions, bad-record limits, full autodetect parity, and schema update options are not supported by evidence. |
-| Types and values | <span class="support-badge support-badge--supported">Supported</span> | BigQuery/DuckDB type mapping, schema conversion, value conversion, `BIGNUMERIC` arithmetic helpers, 76-digit precision UDF path, `RANGE` literal/type storage, range predicates, `GENERATE_RANGE_ARRAY`, and local `RANGE_SESSIONIZE`. | ObjectRef, policy-tag enforcement, exact BigQuery `GEOGRAPHY` spherical semantics, parameterized type edge cases, rounding modes, overflow parity, additional `RANGE_SESSIONIZE` modes, non-DATE `GENERATE_RANGE_ARRAY`, and complete nested/repeated JSON API parity are not claimed. |
-| Built-in functions | <span class="support-badge support-badge--supported">Supported</span> | Tested aggregate, approximate, HLL, string/bytes, math/statistical, date/time, JSON, array, RANGE, hash, format, AEAD helper, search, vector, session/system, `NET.*`, and broad `ST_*` geography function families. | BigQuery AI/ML functions, remote functions, DLP functions, `KLL_QUANTILES`, ObjectRef functions, production search/vector acceleration, deterministic AEAD variants, key rotation/wrapping functions, full search analyzers, full vector distance/query-shape parity, complete range edge parity, and untested geography functions are not supported by evidence. |
-
-## Explicit non-production behavior
-
-The report calls out these behaviors as tested but not production BigQuery functionality:
-
-| Area | Status | Tested behavior |
-| --- | --- | --- |
-| BigQuery ML | <span class="support-badge support-badge--unsupported">Not supported</span> | `CREATE MODEL`, `CREATE OR REPLACE MODEL`, `ML.PREDICT`, and `ML.EVALUATE` return clear unsupported errors. |
-| REST models | <span class="support-badge support-badge--partial">Supported*</span> | Model list is empty; get, patch, and delete are not-implemented stubs. |
-| IAM policy endpoints | <span class="support-badge support-badge--partial">Supported*</span> | Endpoints return permissive/default stub responses. |
-| Row access policies | <span class="support-badge support-badge--partial">Supported*</span> | Create/drop/list behavior is accepted or stubbed, but enforcement is not tested. |
-| Grants and revokes | <span class="support-badge support-badge--partial">Supported*</span> | `GRANT` and `REVOKE` are accepted no-op stubs. |
-| Differential privacy | <span class="support-badge support-badge--unsupported">Not supported</span> | The clause is stripped; no noise or privacy guarantee is tested. |
-| Time travel | <span class="support-badge support-badge--unsupported">Not supported</span> | `FOR SYSTEM_TIME AS OF` is stripped and returns current data. |
-| Snapshot table clone | <span class="support-badge support-badge--partial">Supported*</span> | Tested as data copy, not BigQuery historical snapshot storage. |
-| `ST_CLUSTERDBSCAN` | <span class="support-badge support-badge--unsupported">Not supported</span> | Registered only as an unsupported stub. |
-
-## Unsupported product areas
-
-| Area | Status | What to expect |
-| --- | --- | --- |
-| BigQuery ML lifecycle and inference | <span class="support-badge support-badge--unsupported">Not supported</span> | Training, evaluation, prediction, forecasting, model metadata, Vertex AI integrations, and AI functions are unsupported. |
-| Security enforcement | <span class="support-badge support-badge--unsupported">Not supported</span> | IAM, dataset/table ACLs, authorized views/datasets, row-level security filters, column-level security policy tags, and data masking are unsupported. |
-| Scheduling and transfers | <span class="support-badge support-badge--unsupported">Not supported</span> | Scheduled queries and BigQuery Data Transfer Service orchestration are unsupported. |
-| BI Engine | <span class="support-badge support-badge--unsupported">Not supported</span> | BI Engine acceleration, preferred tables, BI capacities, and acceleration statistics are unsupported. |
-| Reservations and workload management | <span class="support-badge support-badge--unsupported">Not supported</span> | Reservations, slots, assignments, capacity commitments, editions, and workload management behavior are unsupported. |
-| Other high-impact product features | <span class="support-badge support-badge--unsupported">Not supported</span> | BigQuery Graph, continuous queries, saved queries, production sessions, managed disaster recovery, cross-region replication, and change history are unsupported. |
-| Advanced SQL/product gaps | <span class="support-badge support-badge--unsupported">Not supported</span> | `MATCH_RECOGNIZE`, remote functions, non-SQL UDF runtimes, object tables, ObjectRef, DLP functions, KLL functions, generated columns if applicable, schema policy tags, table expiration enforcement, partition expiration enforcement, clustering performance semantics, authorized views/datasets, and routine authorization are unsupported. |
-| Operational semantics | <span class="support-badge support-badge--unsupported">Not supported</span> | Quota enforcement, billing bytes, slot accounting, result cache parity, audit logging, region restrictions, and production-grade auth are unsupported. |
-
-## Developer workflow coverage
-
-Based on the tested areas above, the emulator is suited for local workflows that need to:
-
-- Write and execute common GoogleSQL query shapes locally.
-- Exercise DDL, DML, routines, table functions, procedures, and scripting flows in tests.
-- Load local CSV/JSON/Parquet fixtures and query external local data.
-- Run SDK-backed REST and Storage API integration paths against local endpoints.
-- Inspect common `INFORMATION_SCHEMA` views and local metadata-backed rows.
-- Persist datasets, tables, schemas, and row data across tested restart scenarios.
-
-The coverage report's framing is the important boundary: this is developer-environment support for small local tests and CI, not a production implementation parity claim. Managed-service behavior, security enforcement, quotas, billing, reservations, BI Engine, audit logging, production auth, and untested edge semantics are outside the supported evidence base.
-
-## Test cases coverage & evidence
-### &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Report Date | `2026-04-26`
-
-| Evidence | Current finding |
+| State | Meaning on this page |
 | --- | --- |
-| Pytest collection | `936` collected tests across `25` `test_*.py` modules |
-| Static inventory | `927` Python test functions, with parameterized cases expanding to `936` collected tests |
-| Test Results | `.venv/bin/pytest -q` -> `932` passed, `4` skipped |
-| Quality bar | Developer-environment quality for small local tests and CI, not production implementation parity |
+| **Release-unverified** | Behavior exists in source or dependency tests but has not been qualified in an identified assembled LocalCloud image. |
+| **Partial** | A bounded compatibility path exists with material semantic, security, or client-profile limits. |
+| **Unsupported** | Do not expect this behavior locally. |
 
-## Evidence model
+Do not derive a coverage percentage, function total, test total, or supported-language matrix from these states.
 
-The coverage report separates positive behavior from compatibility stubs:
+## Current operation contract
 
-| Evidence type | Meaning |
-| --- | --- |
-| Execution coverage | A test transpiles and executes behavior against DuckDB, REST, or gRPC. |
-| Transpile coverage | A test proves SQL rewriting or parsing only, not execution. |
-| API coverage | A test proves a REST or gRPC endpoint contract. |
-| Stub coverage | A test proves a clear no-op, empty response, or unsupported error, not production behavior. |
-| No test evidence | No positive test currently proves developer-quality support. |
+<table>
+  <thead><tr><th>Operation area</th><th>State</th><th>Qualification boundary</th></tr></thead>
+  <tbody>
+    {bigquery.operations.map((operation) => (
+      <tr><td>{operation.label}</td><td><code>{operation.status}</code></td><td>{operation.limitations.join(' ')}</td></tr>
+    ))}
+  </tbody>
+</table>
 
-The report describes the emulator as using DuckDB, SQL rewrites, local files, Python UDFs, and metadata tables rather than BigQuery's distributed production internals.
+## Feature-specific interpretation
+
+### SQL and grouping
+
+Common query, join, CTE, window, DML, and metadata workflows have dependency evidence. `ROLLUP`, `CUBE`, `GROUPING SETS`, and `TABLESAMPLE` also have newer upstream execution evidence, but their semantics and the assembled LocalCloud release are not qualified. Do not present them as production-equivalent SQL coverage.
+
+DuckDB coercion, integer division, division-by-zero, geography, and error behavior can differ from BigQuery. A query accepted locally may still fail or return different results in production.
+
+### Scripting and procedures
+
+The dependency has a local procedural interpreter for bounded variables, control flow, dynamic SQL, transactions, and procedure paths. Treat this as **partial local interpretation**, not complete BigQuery scripting or session parity. Authorization, complete system-variable behavior, every parameter mode, and production session semantics require real BigQuery validation.
+
+### Materialized views
+
+Materialized views are emulated with physical local tables and explicit refresh behavior. This is useful for application workflow tests, but it does not reproduce BigQuery's automatic or incremental refresh, optimizer integration, staleness policy, or distributed maintenance behavior.
+
+### External data and load/export
+
+External tables are source- and format-specific. Local CSV, JSON, Parquet, and configured local Cloud Storage paths can have dependency evidence; BigLake, object tables, cross-cloud authentication, production sharding, full autodetect behavior, and all schema-evolution options do not follow from that evidence.
+
+### Storage APIs
+
+Read and write profiles exist for selected AVRO, Arrow, stream, append, offset, and commit workflows. Client behavior is profile-specific. Do not claim universal SDK or connector compatibility without an assembled client matrix.
+
+### `INFORMATION_SCHEMA`
+
+The dependency contains a mixture of:
+
+1. populated, tested metadata views;
+2. schema-compatible views that return empty local rows;
+3. views with unknown qualification; and
+4. unsupported production-control-plane views.
+
+There is no durable fixed view count. Empty compatibility rows are not production metadata parity.
+
+### Types and functions
+
+- **BIGNUMERIC:** local precision-preserving helper/text paths do not establish complete native 76-digit semantics.
+- **AEAD:** a bounded local AES-GCM subset does not establish KMS, keyset, deterministic encryption, rotation, or wrapping parity.
+- **NET:** document only individually tested functions; do not infer the full namespace.
+- **Search and vector:** local matching and brute-force nearest-neighbor behavior do not provide production indexes, analyzers, ranking, planning, or acceleration.
+- **GEOGRAPHY:** local approximations are not BigQuery's complete spherical semantics.
+
+## Unsupported production systems
+
+The local emulator does not reproduce BigQuery ML lifecycle, distributed slots and reservations, BI Engine, billing, quota enforcement, production IAM, audit logging, regional restrictions, managed disaster recovery, scheduled queries, transfer orchestration, or production performance.
+
+## Validation rule
+
+Before publishing a stronger claim, record all of the following together:
+
+- dependency source revision;
+- dependency image digest and platform digest;
+- assembled LocalCloud image digest;
+- client/profile qualification result;
+- durable evidence path; and
+- release association.
+
+Until then, keep the feature state release-unverified and validate release behavior against real BigQuery.

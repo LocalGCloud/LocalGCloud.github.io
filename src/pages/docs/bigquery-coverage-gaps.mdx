@@ -1,322 +1,37 @@
 ---
 layout: ../../layouts/DocsLayout.astro
-title: BigQuery Emulator Coverage Gap Analysis
-description: Deep-dive analysis of the gaps between BigQuery production and LocalCloud's Python/SQLGlot/DuckDB rewrite — parse failures, silent semantic errors, DuckDB engine limitations, and infrastructure-only concepts.
+title: BigQuery Coverage Gap Analysis — Historical
+description: Archived April 2026 BigQuery design-gap analysis; not a current compatibility matrix.
 ---
 
-# BigQuery Emulator: Coverage Gap Analysis
+import Callout from '../../components/Callout.astro';
 
-**Stack:** Python + SQLGlot + DuckDB
-**Date:** 2026-04-20
-**SQLGlot version analyzed:** 30.5.0
+# BigQuery coverage-gap analysis: historical
 
----
+<Callout type="warning" title="Archived as of 2026-04-20">
+This page described gaps in an earlier SQLGlot and DuckDB implementation. The dependency has since added or changed several relevant paths. Treat every earlier parse failure, workaround, planned phase, fixed count, and blanket unsupported statement as historical—not as current LocalCloud behavior.
+</Callout>
 
-## Gap Layers Overview
+## What remains useful
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    BigQuery Full Feature Set                     │
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │      Layer 1: SQLGlot Parse/Transpilation Failures       │   │
-│  │  ┌───────────────────────────────────────────────────┐   │   │
-│  │  │      Layer 2: DuckDB Engine Gaps                  │   │   │
-│  │  │  ┌────────────────────────────────────────────┐   │   │   │
-│  │  │  │   Layer 3: Silent Semantic Wrong Results   │   │   │   │
-│  │  │  └────────────────────────────────────────────┘   │   │   │
-│  │  └───────────────────────────────────────────────────┘   │   │
-│  └──────────────────────────────────────────────────────────┘   │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │      Layer 4: Infrastructure / API-Only Concepts         │   │
-│  └──────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-```
+The analysis identified categories that still belong in release qualification:
 
----
+1. parser or transpiler acceptance;
+2. actual execution behavior;
+3. silent semantic differences;
+4. DuckDB engine differences;
+5. REST or Storage API compatibility;
+6. compatibility stubs that return empty or permissive responses; and
+7. cloud control-plane behavior that cannot be inferred from a local emulator.
 
-## Layer 1: Hard Parse/Transpilation Failures
+These categories are more durable than the individual April 2026 findings.
 
-SQLGlot raises `ParseError` or crashes — cannot process these at all.
+## What changed
 
-| Feature | Error | Impact |
-|---------|-------|--------|
-| `RAISE USING MESSAGE` | ParseError | Scripting |
-| `RETURN` (standalone) | ParseError | Scripting |
-| `ML.EVALUATE(MODEL m, ...)` | ParseError | ML |
-| `ML.PREDICT(MODEL m, ...)` | ParseError | ML |
-| `AI.FORECAST(...)` | ParseError | AI |
-| `NTH_VALUE(x, n FROM LAST)` | ParseError | Window functions |
-| `STRUCT(* FROM nested)` | ParseError | Struct operations |
-| `LOAD DATA INTO ...` | ParseError | Data loading |
-| Pipe `\|> RENAME/CALL/SET/DROP/LIMIT` | ParseError / AttributeError | Pipe syntax |
+Newer dependency evidence includes bounded implementations or compatibility paths for features that the historical analysis called absent, including scripting, materialized views, external data, broader metadata, grouping extensions, `TABLESAMPLE`, and search/vector behavior. Those additions remain feature-specific and do not establish assembled LocalCloud release parity.
 
----
+## Current source of truth
 
-## Layer 2: Silent Scripting Truncation
+Use the [BigQuery emulator feature reference](/docs/bigquery-emulator-features/) and [BigQuery service contract](/services/bigquery/). They preserve release-unverified status until the dependency revision, dependency image digest, assembled image digest, client qualification, evidence path, and release association are recorded together.
 
-SQLGlot silently **drops everything after the first statement** in scripting blocks. No error raised.
-
-```sql
--- Input:
-BEGIN
-  DECLARE y INT64;
-  SET y = 5;
-  IF y > 0 THEN SELECT 'positive'; END IF;
-END
-
--- SQLGlot output:
-BEGIN DECLARE y INT64
--- ⚠️ EVERYTHING ELSE IS GONE
-```
-
-**Affected constructs:**
-- `BEGIN...END`
-- `IF...THEN...ELSE...END IF`
-- `LOOP...END LOOP`
-- `WHILE...DO...END WHILE`
-- `FOR...IN...END FOR`
-
-**Root cause:** `END`, `END IF`, `END FOR`, `END WHILE`, `END LOOP` are parsed as separate `COMMAND` tokens in SQLGlot's BigQuery parser (`parsers/bigquery.py` lines 331-337). Terminal keywords are not attached to the preceding block.
-
-**Note:** Single `DECLARE`, `SET`, `CALL` statements do transpile correctly. Only block constructs truncate.
-
----
-
-## Layer 3: Silent Semantic Wrong Results
-
-These transpile without error but **produce incorrect results**.
-
-### 3a. Reversed Semantics
-
-| Feature | What Goes Wrong |
-|---------|----------------|
-| `TIMESTAMP('2020-01-01', 'America/New_York')` | BQ interprets as local→UTC. DuckDB `AT TIME ZONE` does UTC→local. **Semantics are reversed.** |
-| `TABLESAMPLE BERNOULLI(10)` | Converted to `RESERVOIR(10 ROWS)` — 10% probability → fixed 10 rows |
-
-### 3b. Silently Dropped Clauses
-
-| Feature | What's Dropped |
-|---------|---------------|
-| `ARRAY_AGG(x IGNORE NULLS)` | `IGNORE NULLS` dropped — NULLs included in result |
-| `ARRAY_AGG(x RESPECT NULLS)` | `RESPECT NULLS` dropped (happens to match DuckDB default) |
-| `INSTR(s, 'sub', 1, 2)` | Occurrence parameter dropped — finds 1st, not 2nd |
-| DDL `PARTITION BY` | Silently dropped from CREATE TABLE |
-| DDL `CLUSTER BY` | Silently dropped from CREATE TABLE |
-| DDL `OPTIONS(...)` | Silently dropped from CREATE TABLE/SCHEMA |
-| `CREATE EXTERNAL TABLE OPTIONS(...)` | All options dropped, becomes plain `CREATE TABLE` |
-| `CREATE MODEL OPTIONS(...)` | Training config (model_type, etc.) dropped |
-| `ALTER TABLE SET OPTIONS(...)` | OPTIONS clause dropped entirely |
-| `EXPORT DATA OPTIONS(...)` | OPTIONS block dropped |
-
-### 3c. Invalid Output SQL
-
-| Feature | Output |
-|---------|--------|
-| `CAST(x AS BIGNUMERIC(76,38))` | `CAST(x AS DECIMAL(38,5)(76,38))` — syntactically invalid |
-
-### 3d. Return Type Mismatches
-
-| Feature | Difference |
-|---------|-----------|
-| `APPROX_TOP_COUNT(x, 5)` | BQ returns `ARRAY<STRUCT<value, count>>`. DuckDB `APPROX_TOP_K` returns different structure. |
-| `APPROX_QUANTILES(x, 100)` | BQ returns `ARRAY<T>` of 101 values. DuckDB `APPROX_QUANTILE` uses fractional list — downstream `result[OFFSET(50)]` breaks. |
-
-### 3e. Wildcard Tables
-
-```sql
--- Input:
-SELECT * FROM `project.dataset.table_*` WHERE _TABLE_SUFFIX BETWEEN '20200101' AND '20201231'
-
--- Output:
-SELECT * FROM "project"."dataset"."table_*" WHERE _TABLE_SUFFIX BETWEEN ...
--- Table name with * quoted as identifier (unresolvable)
--- _TABLE_SUFFIX is a BQ pseudocolumn with no DuckDB equivalent
-```
-
----
-
-## Layer 4: DuckDB Engine Gaps
-
-Even with perfect transpilation, DuckDB cannot execute these.
-
-### 4a. Critical Gaps
-
-#### GEOGRAPHY (Geodetic/Spherical)
-- DuckDB spatial extension = **planar only** (Euclidean geometry)
-- BigQuery GEOGRAPHY = **spherical** (WGS84 geodesic, results in meters)
-- `ST_DISTANCE`: DuckDB returns degrees, BQ returns meters
-- `ST_AREA`: DuckDB returns square units, BQ returns square meters on sphere
-- All relationship predicates use different geometric models
-- BQ-only: `ST_CLUSTERDBSCAN`, `S2_CELLIDFROMPOINT`, `S2_COVERINGCELLIDS`, `ST_GEOGFROM`, `ST_BOUNDINGBOX` (struct), `ST_BUFFERWITHTOLERANCE`, `ST_UNION_AGG`, `ST_CENTROID_AGG`
-- **Workaround:** Python UDFs wrapping `S2Geometry` or `shapely` + `pyproj`
-
-#### Scripting Engine
-- DuckDB has **no procedural interpreter**
-- Missing: `DECLARE`, `SET` (variables), `IF/ELSE`, `WHILE`, `LOOP`, `FOR...IN`, `BREAK`, `CONTINUE`, `RETURN`, `RAISE`
-- **Workaround:** Build procedural interpreter in Python — parse into statements, maintain variable namespace, evaluate conditionals in Python, execute DuckDB statements sequentially
-
-#### Partitioned / Clustered Tables
-- No DDL-level partitioning syntax
-- No `_PARTITIONTIME` / `_PARTITIONDATE` pseudocolumns
-- No partition expiration
-- No required partition filter enforcement
-- **Workaround:** Application-layer metadata + pseudocolumn injection + WHERE clause push-down via zonemaps
-
-#### INFORMATION_SCHEMA
-- BQ has **50+ views**, DuckDB has **8**
-- Missing: `PARTITIONS`, `ROUTINES`, `PARAMETERS`, `JOBS`, `JOBS_BY_USER`, `TABLE_STORAGE`, `OBJECT_PRIVILEGES`, `SEARCH_INDEXES`, `VECTOR_INDEXES`, `STREAMING_TIMELINE`, `RESERVATIONS`, `BI_CAPACITIES`, and ~35 more
-- Existing views (`TABLES`, `COLUMNS`) have different schemas — BQ adds `is_partitioning_column`, `clustering_ordinal_position`, `creation_time`, `row_count`, `size_bytes`
-- **Workaround:** Synthesize all views from emulator metadata catalog
-
-### 4b. High-Impact Gaps
-
-| Feature | Notes | Workaround |
-|---------|-------|------------|
-| `SAFE.*` prefix | BQ: `SAFE.any_function()` → NULL on error. No generic equivalent in DuckDB. | Python function wrapper registry with try/except |
-| `NET.*` functions (10) | IP parsing, domain extraction, public suffix list | Python UDFs (`ipaddress` stdlib, `tldextract`) |
-| JavaScript UDFs | BQ runs JS via V8 engine | Cannot execute — reject with clear error |
-| `HLL_COUNT.*` sketch functions | Serialized HyperLogLog as first-class objects | Stub or raise not-implemented |
-| `BIGNUMERIC` (76-digit precision) | DuckDB DECIMAL max = 38 digits | Python `decimal.Decimal` UDFs for overflow cases |
-| Materialized Views | DuckDB views always virtual | Maintain physical table + refresh triggers |
-| `FOR SYSTEM_TIME AS OF` | No time travel | CDC records + history replay (complex) |
-| Table Snapshots / Clones | Copy-on-write storage concepts | Full copy on CREATE SNAPSHOT |
-| Stored Procedures (`CREATE PROCEDURE`) | DuckDB has `CREATE MACRO` only | Procedural interpreter (same as scripting) |
-| User-Defined Aggregates | No SQL DDL for UDAFs in DuckDB | Python API only |
-| Differential Privacy | `WITH DIFFERENTIAL_PRIVACY OPTIONS(epsilon=...)` | Out of scope |
-
-### 4c. Pass-Through Functions (Transpile OK, Fail at Runtime)
-
-SQLGlot passes these through unchanged — DuckDB has no implementation:
-
-| Category | Functions |
-|----------|----------|
-| String encoding | `TO_CODE_POINTS`, `CODE_POINTS_TO_STRING`, `NORMALIZE` |
-| JSON lax conversion | `LAX_INT64`, `LAX_FLOAT64`, `LAX_BOOL`, `LAX_STRING` |
-| Approximate aggregates | `APPROX_TOP_SUM` |
-| NET namespace | `NET.IP_FROM_STRING`, `NET.IP_TO_STRING`, `NET.IPV4_FROM_INT64`, `NET.IPV4_TO_INT64`, `NET.IP_NET_MASK`, `NET.IP_TRUNC`, `NET.HOST`, `NET.PUBLIC_SUFFIX`, `NET.REG_DOMAIN` |
-| Date/time | `CURRENT_DATETIME()`, `SOUNDEX` |
-| Control | `ERROR()` (DuckDB has `error()` — different casing may work) |
-| Format specifiers | `FORMAT('%t', x)`, `FORMAT('%T', x)`, `FORMAT('%P', x)` |
-
-### 4d. Type System Gaps
-
-| BQ Type | DuckDB Equivalent | Gap |
-|---------|-------------------|-----|
-| `GEOGRAPHY` | `GEOMETRY` (spatial ext) | Planar vs geodesic — fundamentally different |
-| `BIGNUMERIC` | `DECIMAL(38,s)` | 76 vs 38 digit precision |
-| `BYTES` | `BLOB` | Functional equivalent; `SAFE_CONVERT_BYTES_TO_STRING` missing |
-| `DATETIME` (civil) | `TIMESTAMP` (naive) | Representable but mapping must be careful |
-| `TIMESTAMP` (UTC) | `TIMESTAMPTZ` | Correct mapping |
-| `STRUCT` | `STRUCT` | BQ has `NULLABLE`/`REQUIRED`/`REPEATED` modes; DuckDB always nullable |
-| `ARRAY` | `LIST` | BQ prohibits `ARRAY<ARRAY<...>>`; DuckDB allows nested — must enforce |
-| `INTERVAL` | `INTERVAL` | Mostly equivalent; BQ has `JUSTIFY_HOURS/DAYS/INTERVAL` (missing in DuckDB) |
-
----
-
-## Layer 5: Infrastructure / API-Only Concepts
-
-Not SQL gaps — BigQuery platform features with no emulator equivalent needed:
-
-| Feature | Notes |
-|---------|-------|
-| Slot-based distributed execution | Emulator is single-node by design |
-| Streaming buffer / streaming inserts | No buffer concept needed |
-| Table decorators (`table@timestamp`) | Legacy SQL — unlikely needed |
-| BI Engine | Not applicable — DuckDB is already in-memory |
-| Row-level access policies | Stub DDL, no enforcement |
-| Column-level security / policy tags | Stub DDL, no enforcement |
-| Search indexes / `SEARCH()` | Stub DDL, raise on SEARCH() |
-| Remote functions | Out of scope |
-| Reservations / billing | Not applicable |
-
----
-
-## What Works Correctly
-
-For reference, these BigQuery features transpile and execute correctly:
-
-- `MERGE` → `MERGE INTO`
-- `STRUCT(a AS x, b AS y)` → `{'x': a, 'y': b}`
-- `SELECT AS STRUCT x, y` → `SELECT {'x': x, 'y': y}`
-- `QUALIFY` clause (DuckDB native support)
-- `SELECT * EXCEPT(col)` → `SELECT * EXCLUDE (col)`
-- `SELECT * REPLACE(expr AS col)` → `SELECT * REPLACE (expr AS col)`
-- `UNNEST` with `WITH OFFSET` → `UNNEST(...) WITH ORDINALITY`
-- `arr[OFFSET(n)]` → `arr[n+1]` (0→1 index)
-- `arr[ORDINAL(n)]` → `arr[n]`
-- `SAFE_CAST(x AS T)` → `TRY_CAST(x AS T)`
-- `SAFE_DIVIDE(x, y)` → `CASE WHEN y <> 0 THEN x / y ELSE NULL END`
-- `DATE_ADD` / `DATE_SUB` / `DATETIME_ADD` → interval arithmetic
-- `TIMESTAMP_SECONDS/MILLIS/MICROS` → `MAKE_TIMESTAMP(...)`
-- `GENERATE_DATE_ARRAY` → `CAST(GENERATE_SERIES(...) AS DATE[])`
-- `JSON_QUERY` → `->` operator
-- `JSON_VALUE` → `JSON_VALUE(col, path)`
-- `TO_JSON_STRING` → `CAST(TO_JSON(x) AS TEXT)`
-- `STRING_AGG(x, sep ORDER BY y)` → `LISTAGG(x, sep ORDER BY y)`
-- `SPLIT(s, delim)` → `STR_SPLIT(s, delim)`
-- `REGEXP_CONTAINS(s, pat)` → `REGEXP_MATCHES(s, pat)`
-- `LOGICAL_AND` / `LOGICAL_OR` → `BOOL_AND` / `BOOL_OR`
-- `COUNTIF(cond)` → `COUNT_IF(cond)`
-- `APPROX_COUNT_DISTINCT` → `APPROX_COUNT_DISTINCT`
-- `WITH RECURSIVE` (DuckDB native)
-- `EXCEPT ALL` / `INTERSECT ALL` (DuckDB native)
-- `PIVOT` / `UNPIVOT` (DuckDB native)
-- `DECLARE x INT64 DEFAULT 0` → `DECLARE x BIGINT = 0` (single statement)
-- Named params `@param` → `$param`
-- `GENERATE_UUID()` → `CAST(UUID() AS TEXT)`
-- `MAKE_INTERVAL(year=>1, day=>3)` → `INTERVAL '1 year 3 day'`
-- Pipe `\|> WHERE/SELECT/AGGREGATE/JOIN/ORDER BY/DISTINCT/EXTEND/AS` → CTEs
-
----
-
-## Priority Matrix
-
-```
-                        ┌─────────────────────────────────────┐
-                  High  │  PARTITIONING    INFORMATION_SCHEMA │
-                        │  SCRIPTING       _TABLE_SUFFIX      │
-         Frequency      │                                     │
-         in real        ├─────────────────────────────────────┤
-         BQ usage       │  SAFE.* prefix   TIMESTAMP timezone │
-                        │  ARRAY_AGG       DDL OPTIONS        │
-                        │  IGNORE NULLS                       │
-                        ├─────────────────────────────────────┤
-                  Low   │  GEOGRAPHY       BigQuery ML        │
-                        │  NET.*           HLL sketches       │
-                        │  JS UDFs         Diff Privacy       │
-                        └─────────────────────────────────────┘
-                          High                          Low
-                               Severity of Gap
-```
-
-### Recommended Implementation Priority
-
-1. **P0 — Must have for MVP:**
-   - Partition DDL metadata + `_PARTITIONTIME` pseudocolumns
-   - `INFORMATION_SCHEMA` core views (TABLES, COLUMNS, SCHEMATA, PARTITIONS, ROUTINES)
-   - Fix `TIMESTAMP(datetime, timezone)` reversed semantics
-   - Fix `ARRAY_AGG IGNORE NULLS` behavior
-   - DDL property preservation (PARTITION BY, CLUSTER BY, OPTIONS)
-
-2. **P1 — High value:**
-   - Scripting interpreter (DECLARE, SET, IF, LOOP, BEGIN...END)
-   - `SAFE.*` prefix wrapper system
-   - `_TABLE_SUFFIX` wildcard table support
-   - `NET.*` functions via Python UDFs
-
-3. **P2 — Medium value:**
-   - Materialized view emulation
-   - `BIGNUMERIC` precision handling
-   - Missing string/JSON functions (TO_CODE_POINTS, LAX_*, NORMALIZE)
-   - FORMAT %t/%T specifiers
-   - JUSTIFY_HOURS/DAYS/INTERVAL
-
-4. **P3 — Low priority / stub:**
-   - GEOGRAPHY (complex, niche usage in testing)
-   - BigQuery ML (out of scope)
-   - JavaScript UDFs (reject with error)
-   - HLL sketch serialization
-   - Differential privacy
-   - Time travel / snapshots / clones
-   - Row/column security policies
+Production BigQuery remains required for IAM, quotas, billing, reservations, audit behavior, regional behavior, distributed performance, and any feature whose semantics are not explicitly qualified.

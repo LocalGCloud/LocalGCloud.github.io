@@ -3,40 +3,30 @@
 ## Local setup
 
 ```bash
-export PUBSUB_EMULATOR_HOST=localhost:24082
-export GOOGLE_CLOUD_PROJECT=local-project
+localcloud start
+eval "$(localcloud env)"
 ```
+
+Confirm the generated values include `PUBSUB_EMULATOR_HOST` and `GOOGLE_CLOUD_PROJECT=local-gcp-project`.
 
 ## Representative Python flow
 
 ```python
 from google.cloud import pubsub_v1
 
+project = "local-gcp-project"
 publisher = pubsub_v1.PublisherClient()
 subscriber = pubsub_v1.SubscriberClient()
-
-topic = publisher.topic_path("local-project", "events-local")
-subscription = subscriber.subscription_path("local-project", "events-local-sub")
+topic = publisher.topic_path(project, "events-local")
+subscription = subscriber.subscription_path(project, "events-local-sub")
 
 publisher.create_topic(request={"name": topic})
 subscriber.create_subscription(request={"name": subscription, "topic": topic})
-
-future = publisher.publish(topic, b'{"event":"created"}', source="local-test")
-future.result(timeout=10)
-
+publisher.publish(topic, b'{"event":"created"}', source="local-test").result(timeout=10)
 response = subscriber.pull(request={"subscription": subscription, "max_messages": 1})
 assert response.received_messages
-message = response.received_messages[0]
-assert message.message.attributes["source"] == "local-test"
-subscriber.acknowledge(request={"subscription": subscription, "ack_ids": [message.ack_id]})
 ```
 
-## Streaming pull guidance
+## Boundaries
 
-Use the repo's existing streaming subscriber abstraction when it exists. Keep tests bounded with a timeout and a deterministic message. Stop the subscriber cleanly after the assertion.
-
-## Known gaps to call out
-
-- Schema validation may not match production Pub/Sub unless documented as supported.
-- BigQuery, Cloud Storage, or push delivery subscriptions may require real-GCP validation.
-- IAM is permissive in LocalCloud; do not treat local success as production authorization proof.
+Pub/Sub state is volatile across restart. Review operation-level evidence for schema, delivery, push, BigQuery, and Cloud Storage subscription behavior. Local success is not production IAM or delivery proof. Use is subject to the proprietary license.

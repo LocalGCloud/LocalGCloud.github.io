@@ -1,59 +1,37 @@
 ---
 name: localcloud-terraform
-description: "LocalCloud Terraform GCP emulator workflows: use when validating existing hashicorp/google resources against localhost endpoint overrides without custom providers or real GCP credentials."
+description: "Validate evidence-qualified hashicorp/google resources against LocalCloud endpoint or transparent-network routing."
 ---
 
 # LocalCloud Terraform
 
 ## When to use
 
-Use this skill when a task mentions LocalCloud Terraform, Google provider endpoint overrides, local Terraform validation, GCP emulator resources, or checking existing `.tf` files without reaching real Google Cloud.
+Use this skill for local Terraform validation with the standard `hashicorp/google` provider. Do not use it to configure production credentials, claim broad provider compatibility, or send unsupported resources to real Google Cloud.
 
-Do not use it to create custom Terraform providers, configure production credentials, or validate resources LocalCloud documents as unsupported.
+## Contract to preserve
 
-## Inputs to inspect
+- Maintained examples use `hashicorp/google ~> 7.0` (including 7.34.0).
+- Provider v7 needs a syntactically valid fake service-account JSON file. Generated `/dev/null` output must be overridden.
+- Endpoint-only mode uses `localcloud env --format terraform` or `/env?format=terraform`.
+- Transparent-network mode is required for BigQuery and other clients that ignore custom endpoints; it requires explicit DNS/HTTP/HTTPS routing, trusted LocalCloud CA, and `LOCALCLOUD_TERRAFORM_MODE=true`.
+- Gate Terraform on `/terraform/readiness`, not generic health alone.
+- Keep endpoint values, fake credentials, state, and backend isolated from production.
 
-- Terraform modules, provider blocks, variables, backend config, and test commands.
-- CI files that already run `terraform init`, `plan`, `apply`, or test wrappers.
-- Existing `GOOGLE_*_CUSTOM_ENDPOINT` and `GOOGLE_APPLICATION_CREDENTIALS` handling.
-- LocalCloud docs linked in [references/terraform.md](references/terraform.md).
+## Workflow
 
-Ask only for workspace, variable, or command details unavailable from the repo.
+1. Inspect provider version, resources, backend, project, and existing endpoint handling.
+2. Compare resources with the current contract-qualified list; report the rest as unqualified.
+3. Choose endpoint-only or transparent-network mode and document why.
+4. Before starting, create or update `localcloud.yaml` with `environment: { LOCALCLOUD_TERRAFORM_MODE: "true" }`; for transparent mode also set `transparent_network: true`.
+5. Run `localcloud start` with the minimum service set.
+6. Create a valid fake credential file and export generated Terraform values in the same process.
+7. Verify `/terraform/readiness?mode=endpoint` or `?mode=transparent`.
+8. Run the narrowest `init`, `plan`, and—only in an isolated local state—`apply`/`destroy` path.
+9. Fail closed if any request reaches real Google Cloud.
 
-## LocalCloud setup assumptions
+See [references/terraform.md](references/terraform.md).
 
-- LocalCloud runs from Docker image `jaysen2apache/localcloud`.
-- Use the standard `hashicorp/google` provider; do not introduce a custom provider for LocalCloud.
-- `http://localhost:24080/_localcloud/env?format=terraform` exports endpoint overrides and `GOOGLE_APPLICATION_CREDENTIALS=/dev/null` for local auth bypass.
-- Local validation uses no real GCP account, credentials, service-account key, or billing project.
+## Verification and boundary
 
-## Step-by-step workflow
-
-1. Inspect existing Terraform structure and supported resource types.
-2. Preserve provider blocks unless the repo already needs local-only variables.
-3. Export LocalCloud Terraform env vars in the shell or CI step that runs Terraform.
-4. Use existing Terraform commands with local variables and a non-production backend.
-5. Validate supported resources such as storage buckets, Pub/Sub topics/subscriptions, BigQuery datasets/tables, Spanner instances/databases, and documented partial resources.
-6. Report unsupported resources instead of calling real GCP.
-
-See [references/terraform.md](references/terraform.md) for endpoint and resource guidance.
-
-## Verification
-
-Use the narrowest Terraform validation path available in the repo. Prefer an isolated workspace, test module, or plan/apply/destroy flow that exercises supported resources against LocalCloud endpoints.
-
-## Known gaps / when to fall back to real GCP
-
-Do not claim IAM, service accounts, DNS, Cloud SQL, VPC networking, billing, or organization/project management are locally validated unless LocalCloud docs state support. Run real-GCP validation only as a separate production-readiness step after unsetting LocalCloud env vars and intentionally configuring real credentials.
-
-## Expected output
-
-Return provider/resource files reviewed, endpoint variables used, resources validated or skipped, commands identified, and any unsupported resource caveats.
-
-## References
-
-- [Terraform workflow details](references/terraform.md)
-- [Trigger prompt examples](references/triggers.md)
-- Terraform docs: https://local.cloud/docs/terraform/
-- Compatibility: https://local.cloud/compatibility/
-- Services: https://local.cloud/services/
+Report provider version, routing mode, resource list, endpoint/readiness output, plan/apply/destroy results, and unqualified resources. Local success does not validate IAM, quotas, regions, networking, concurrency, or recovery. Perform real-Google-Cloud validation separately in a clean environment. Organization/team-CI use must comply with the governing proprietary license.

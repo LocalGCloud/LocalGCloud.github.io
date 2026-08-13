@@ -98,6 +98,53 @@ async function runInstaller(args, environment, { expectFailure = false } = {}) {
   }
 }
 
+async function runInstallerInPseudoTty(args, environment, answer) {
+  const helper = String.raw`
+import errno, os, pty, select, sys, time
+pid, master = pty.fork()
+if pid == 0:
+    os.execvpe(sys.argv[2], sys.argv[2:], os.environ.copy())
+output = bytearray()
+prompt = b"Run LocalCloud doctor and start now?"
+answered = False
+deadline = time.monotonic() + 60
+status = None
+while time.monotonic() < deadline:
+    readable, _, _ = select.select([master], [], [], 0.25)
+    if readable:
+        try:
+            chunk = os.read(master, 4096)
+            if not chunk:
+                break
+            output.extend(chunk)
+            if not answered and prompt in output:
+                os.write(master, (sys.argv[1] + "\n").encode())
+                answered = True
+        except OSError as error:
+            if error.errno == errno.EIO:
+                break
+            raise
+    done, wait_status = os.waitpid(pid, os.WNOHANG)
+    if done:
+        status = wait_status
+        break
+if status is None:
+    done, status = os.waitpid(pid, os.WNOHANG)
+    if not done:
+        os.kill(pid, 9)
+        os.waitpid(pid, 0)
+        sys.stdout.buffer.write(output)
+        raise SystemExit("pseudo-TTY child timed out")
+sys.stdout.buffer.write(output)
+sys.exit(os.waitstatus_to_exitcode(status))
+`;
+  const result = await execFile('python3', ['-c', helper, answer, 'sh', sourceInstaller.pathname, ...args], {
+    env: environment,
+    maxBuffer: 4 * 1024 * 1024,
+  });
+  return { ...result, code: 0 };
+}
+
 try {
   await execFile('sh', ['-n', sourceInstaller.pathname]);
   const [source, rendered] = await Promise.all([
@@ -201,6 +248,25 @@ esac
   const zshrcAfterNoop = await readFile(zshrcPath, 'utf8');
   assert(count(zshrcAfterNoop, '# >>> LocalCloud installer >>>') === 1, 'same-version reinstall duplicated the PATH block');
 
+  await writeFile(commandLog, '');
+  const declinedPrompt = await runInstallerInPseudoTty([], baseEnvironment, 'n');
+  assert(declinedPrompt.stdout.includes('Run LocalCloud doctor and start now?'), 'interactive decline did not display the startup prompt');
+  assert(declinedPrompt.stdout.includes('Next steps:'), 'interactive decline did not print recovery commands');
+  assert((await readFile(commandLog, 'utf8')) === '', 'interactive decline invoked lifecycle commands');
+
+  await writeFile(commandLog, '');
+  const acceptedPrompt = await runInstallerInPseudoTty([], baseEnvironment, 'y');
+  assert(acceptedPrompt.stdout.includes('Run LocalCloud doctor and start now?'), 'interactive acceptance did not display the startup prompt');
+  assert(acceptedPrompt.stdout.includes('LocalCloud is running at http://localhost:24080'), 'interactive acceptance did not report the selected console URL');
+  assert(acceptedPrompt.stdout.includes('localcloud console') && acceptedPrompt.stdout.includes('localcloud env'), 'interactive acceptance omitted post-start next steps');
+  assert((await readFile(commandLog, 'utf8')) === 'doctor\nstart\n', 'interactive acceptance did not invoke doctor then start exactly once');
+
+  await writeFile(commandLog, '');
+  const nonTty = await runInstaller([], baseEnvironment);
+  assert(nonTty.stdout.includes('Next steps:'), 'genuine non-TTY install did not print next steps');
+  assert(!nonTty.stdout.includes('Run LocalCloud doctor and start now?'), 'genuine non-TTY install unexpectedly prompted');
+  assert((await readFile(commandLog, 'utf8')) === '', 'genuine non-TTY install invoked lifecycle commands');
+
   requestedPaths.length = 0;
   await runInstaller(['--version', '0.1.0', '--no-start'], baseEnvironment);
   assert(requestedPaths.includes(`/releases/download/v0.1.0/${assetName}`), 'pinned install did not select the versioned archive URL');
@@ -240,7 +306,7 @@ esac
   assert(!zshrcAfterUninstall.includes('# >>> LocalCloud installer >>>'), 'uninstall left the PATH block in place');
   assert((await readFile(join(runtimeData, 'preserved.txt'), 'utf8')) === 'persistent data\n', 'uninstall changed runtime data');
 
-  console.log('Installer verification passed: install, pinning, preservation, platform rejection, and uninstall.');
+  console.log('Installer verification passed: install, pinning, prompt yes/no, genuine non-TTY recovery, preservation, platform rejection, and uninstall.');
 } finally {
   if (server) await new Promise((resolve) => server.close(resolve));
   await rm(root, { recursive: true, force: true });

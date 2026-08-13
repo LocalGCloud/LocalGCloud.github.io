@@ -4,200 +4,127 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import CopyButton from '../../components/CopyButton.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
-import { getServiceCategoryLabel, getServiceImplementationLabel, getServiceImplementationNote, services } from '../../data/services';
+import { getServiceCategoryLabel, getServiceImplementationLabel, getServiceSignalLabel, publishedServiceCount, services } from '../../data/services';
 import { serviceTestingPages } from '../../data/agenticContent';
 import type { Service } from '../../data/services';
 
 export function getStaticPaths() {
-  return services.map((service) => ({
-    params: { slug: service.slug },
-    props: { service },
-  }));
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
 }
 
-interface Props {
-  service: Service;
-}
-
+interface Props { service: Service; }
 const { service } = Astro.props;
 const rawBase = import.meta.env.BASE_URL;
-const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const categoryLabel = getServiceCategoryLabel(service);
-const agentTestingPage = serviceTestingPages.find((page) => page.slug === service.slug);
+const isComingSoon = service.catalogState === 'coming-soon';
+const agentTestingPage = isComingSoon ? undefined : serviceTestingPages.find((page) => page.slug === service.slug);
+const documentedOperations = isComingSoon
+  ? []
+  : service.operations.filter((operation) => operation.status !== 'unsupported' && operation.status !== 'unknown');
+const unavailableOperations = service.operations.filter((operation) => operation.status === 'unsupported' || operation.status === 'unknown');
+const operationBoundaries = documentedOperations.filter((operation) => operation.limitations.length > 0);
+const pageTitle = isComingSoon
+  ? `${service.name} Support Coming Soon — LocalCloud`
+  : `${service.name} Local Emulator — LocalCloud`;
+const pageDescription = isComingSoon
+  ? `${service.name} support is coming soon to LocalCloud.`
+  : `Connect to ${service.name} locally and review ${documentedOperations.length} documented workflows, runtime details, and service boundaries.`;
 ---
 
-<BaseLayout title={`${service.name} Local Emulator — LocalCloud`} description={`Run ${service.name} locally with LocalCloud. ${service.description} Part of a single Docker container with 20+ GCP emulators.`}>
-  <!-- JSON-LD BreadcrumbList -->
-  <script type="application/ld+json" set:html={`{
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Services",
-        "item": "https://local.cloud/services/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "${service.name}"
-      }
-    ]
-  }`} />
-  <!-- JSON-LD SoftwareApplication -->
-  <script type="application/ld+json" set:html={`{
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "LocalCloud ${service.name} Emulator",
-    "applicationCategory": "DeveloperApplication",
-    "operatingSystem": "Linux (Docker)",
-    "description": "${service.description}",
-    "url": "https://local.cloud/services/${service.slug}/",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    }
-  }`} />
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: `LocalCloud ${service.name} local service`,
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Linux (Docker)',
+    description: service.description,
+    url: `https://local.cloud/services/${service.slug}/`,
+  })} />
   <Header />
-
   <main id="main-content" class="site-page">
     <section class="site-section site-section--hero">
       <div class="container service-hero-grid">
         <div class="service-hero-intro reveal">
-          <nav class="mb-5 flex items-center gap-2 text-sm text-[var(--text-3)]">
-            <a href={`${base}services/`} class="hover:text-[var(--text)]">Services</a>
-            <span>/</span>
-            <span class="text-[var(--text)]">{service.name}</span>
-          </nav>
-
-          <div class="flex items-start gap-5">
-            <span class="flex h-24 w-24 shrink-0 items-center justify-center rounded-[1.8rem] border border-[var(--line)] bg-white shadow-[var(--shadow-md)]">
-              <ServiceIcon iconId={service.iconId} name={service.name} size={64} />
-            </span>
-            <div class="min-w-0">
-              <div class="flex flex-wrap items-center gap-3">
-                <span class="site-chip site-chip--accent">{categoryLabel}</span>
-                {!service.enabled && <span class="site-chip site-chip--warn">Opt-in</span>}
-              </div>
-              <h1 class="mt-4 max-w-[12ch]">{service.name}</h1>
+          <nav class="mb-5 flex items-center gap-2 text-sm text-[var(--text-3)]"><a href={`${base}services/`}>Services</a><span>/</span><span>{service.name}</span></nav>
+          <div class="flex flex-wrap items-center gap-4">
+            <span class="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.5rem] border border-[var(--line)] bg-white shadow-[var(--shadow-md)]"><ServiceIcon iconId={service.iconId} name={service.name} size={52} /></span>
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="site-chip site-chip--accent">{categoryLabel}</span>
+              <span class="site-chip site-chip--accent">{getServiceSignalLabel(service)}</span>
             </div>
           </div>
-
-          <p class="mt-6 max-w-[40rem] text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-            {service.description}
-          </p>
+          <h1 class="mt-6 max-w-[16ch]">{service.name}</h1>
+          <p class="mt-5 max-w-[42rem] text-lg leading-8 text-[var(--text-2)] sm:text-xl">{service.description}</p>
         </div>
 
-        <aside class="site-panel service-hero-connection p-5 reveal sm:p-6">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <span class="site-kicker">Connection</span>
-            <CopyButton text={service.envVar} />
-          </div>
-
-          <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4">
-            <p class="site-micro">Environment Variable</p>
-            <code class="mt-3 block break-all border-0 bg-transparent p-0 text-[0.92rem] leading-7 text-[var(--accent-strong)]">
-              {service.envVar}
-            </code>
-          </div>
-
-          <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4">
-            <p class="site-micro">Service Snapshot</p>
-            <ul class="site-list mt-4">
-              <li>Category: {categoryLabel}.</li>
-              <li>Implementation: {getServiceImplementationLabel(service)}. {getServiceImplementationNote(service)}</li>
-              <li>{service.enabled ? 'Available in the default container boot.' : 'Requires opt-in runtime access because it depends on Docker-backed behavior.'}</li>
-            </ul>
-          </div>
-        </aside>
-
-        <dl class="service-hero-metrics reveal" aria-label={`${service.name} support summary`}>
-          <div class="service-hero-metric">
-            <dt>Supported</dt>
-            <dd>
-              <strong>{service.supported.length}</strong>
-              <span>Capabilities you can exercise locally today.</span>
-            </dd>
-          </div>
-          <div class="service-hero-metric">
-            <dt>Known gaps</dt>
-            <dd>
-              <strong>{service.notSupported.length}</strong>
-              <span>Documented behaviors that are not there yet.</span>
-            </dd>
-          </div>
-          <div class="service-hero-metric">
-            <dt>Port / protocol</dt>
-            <dd>
-              <strong>{service.port}</strong>
-              <span>{service.protocol}</span>
-            </dd>
-          </div>
-        </dl>
+        {isComingSoon ? (
+          <aside class="site-panel service-hero-connection p-6 reveal">
+            <span class="site-kicker">Roadmap</span>
+            <h2 class="mt-4 text-2xl font-semibold tracking-tight">{service.name} support is coming soon</h2>
+            <p class="mt-4 leading-7 text-[var(--text-2)]">Connection details and documented local workflows will be published here as the integration becomes available.</p>
+          </aside>
+        ) : (
+          <aside class="site-panel service-hero-connection p-5 reveal sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-3"><span class="site-kicker">Connection</span><CopyButton text={service.envVar} /></div>
+            <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4"><p class="site-micro">Environment variable</p><code class="mt-3 block break-all border-0 bg-transparent p-0 text-[0.92rem] leading-7 text-[var(--accent-strong)]">{service.envVar}</code></div>
+            <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4">
+              <p class="site-micro">Runtime details</p>
+              <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm leading-6">
+                <div><dt class="font-semibold">Endpoints</dt><dd>{service.endpointLabel}</dd></div>
+                <div><dt class="font-semibold">Minimum tier</dt><dd>{service.minTier}</dd></div>
+                <div><dt class="font-semibold">Persistence</dt><dd>{service.persistence.scope}</dd></div>
+                <div><dt class="font-semibold">Implementation</dt><dd>{getServiceImplementationLabel(service)}</dd></div>
+              </dl>
+            </div>
+          </aside>
+        )}
       </div>
     </section>
 
-    <section class="site-section">
-      <div class="container">
-        <div class="grid gap-4 lg:grid-cols-2">
-          <section class="site-panel p-6 reveal">
-            <div class="flex items-center justify-between gap-3">
-              <h2 class="text-2xl font-semibold tracking-tight">Supported Today</h2>
-              <span class="site-chip site-chip--success">{service.supported.length} items</span>
-            </div>
-            <ul class="site-list site-list--success mt-5">
-              {service.supported.map((item) => (
-                <li>{item}</li>
-              ))}
-            </ul>
-          </section>
-
-          <section class="site-panel site-panel--soft p-6 reveal">
-            <div class="flex items-center justify-between gap-3">
-              <h2 class="text-2xl font-semibold tracking-tight">Not Yet Supported</h2>
-              <span class="site-chip site-chip--accent">{service.notSupported.length} items</span>
-            </div>
+    {!isComingSoon && (
+      <section class="site-section site-section--tight">
+        <div class="container grid gap-4 lg:grid-cols-2">
+          <section class="site-panel min-w-0 p-6 reveal">
+            <div class="flex flex-wrap items-center justify-between gap-3"><h2 class="text-2xl font-semibold tracking-tight">Documented workflows</h2><span class="site-chip site-chip--accent">{documentedOperations.length} workflows</span></div>
             <ul class="site-list mt-5">
-              {service.notSupported.map((item) => (
-                <li>{item}</li>
+              {documentedOperations.map((operation) => <li><span><strong>{operation.label}</strong></span></li>)}
+            </ul>
+          </section>
+          <section class="site-panel site-panel--soft min-w-0 p-6 reveal">
+            <h2 class="text-2xl font-semibold tracking-tight">Service boundaries</h2>
+            <ul class="site-list mt-5">
+              {service.notSupported.map((item) => <li><span>{item}</span></li>)}
+              {operationBoundaries.map((operation) => (
+                <li><span><strong>{operation.label}</strong>: {operation.limitations.join(' ')}</span></li>
               ))}
+              {unavailableOperations.map((operation) => (
+                <li>
+                  <span>
+                    <strong>{operation.label}</strong>: {operation.status === 'unsupported' ? 'Not supported locally.' : 'Local support is not documented.'}
+                    {operation.limitations.length ? ` ${operation.limitations.join(' ')}` : ''}
+                  </span>
+                </li>
+              ))}
+              <li><span>{service.persistence.restartBehavior}</span></li>
+              {service.persistence.recoveryLimitations.map((item) => <li><span>{item}</span></li>)}
             </ul>
           </section>
         </div>
-      </div>
-    </section>
+      </section>
+    )}
 
     <section class="site-section">
-      <div class="container">
-        <div class="site-panel p-6 reveal">
-          <h2 class="text-2xl font-semibold tracking-tight mb-4">Learn More</h2>
-          <ul class="site-list">
-            {agentTestingPage && (
-              <li><a href={`${base}services/${service.slug}/ai-agent-local-testing/`}>AI agent local testing</a> — prompts, env vars, validation examples, and production caveats</li>
-            )}
-            <li><a href={`${base}docs/`}>Getting Started Guide</a> — set up LocalCloud in under a minute</li>
-            <li><a href={`${base}docs/sdk-examples/`}>SDK Examples</a> — copy-paste code for Python, Node.js, Go, Java</li>
-            <li><a href={`${base}docs/configuration/`}>Configuration</a> — environment variables and ports</li>
-            {service.slug === 'bigquery' && (
-              <>
-                <li><a href={`${base}docs/bigquery-emulator-features/`}>BigQuery Emulator Features</a> — detailed feature support and test coverage</li>
-                <li><a href={`${base}docs/bigquery-feature-comparison/`}>BigQuery Feature Comparison</a> — Production vs Go Emulator vs LocalCloud</li>
-                <li><a href={`${base}docs/bigquery-coverage-gaps/`}>BigQuery Coverage Gap Analysis</a> — deep-dive into emulator limitations</li>
-              </>
-            )}
-            {service.slug === 'spanner' && (
-              <li><a href={`${base}docs/spanner-emulator-features/`}>Spanner Emulator Features</a> — extended emulator with PGAdapter support</li>
-            )}
-            {service.slug === 'bigtable' && (
-              <li><a href={`${base}docs/bigtable-emulator-features/`}>Bigtable Emulator Features</a> — change streams, materialized views, persistence</li>
-            )}
-          </ul>
-        </div>
-      </div>
+      <div class="container"><div class="site-panel p-6 reveal"><h2 class="mb-4 text-2xl font-semibold tracking-tight">Next steps</h2><ul class="site-list">
+        {agentTestingPage && <li><span><a href={`${base}services/${service.slug}/ai-agent-local-testing/`}>AI agent local testing</a>: prompts and endpoint routing for local workflows.</span></li>}
+        <li><span><a href={`${base}compatibility/`}>Compatibility</a>: compare all {publishedServiceCount} service guides.</span></li>
+        <li><span><a href={`${base}docs/configuration/`}>Configuration</a>: service selection, tiers, and runtime precedence.</span></li>
+        {service.slug === 'bigquery' && <li><span><a href={`${base}docs/bigquery-emulator-features/`}>BigQuery emulator features</a>: query profiles and detailed local workflows.</span></li>}
+        {service.slug === 'spanner' && <li><span><a href={`${base}docs/spanner-emulator-features/`}>Spanner emulator features</a>: endpoint details and local workflows.</span></li>}
+        {service.slug === 'bigtable' && <li><span><a href={`${base}docs/bigtable-emulator-features/`}>Bigtable emulator features</a>: feature reference and workflow details.</span></li>}
+      </ul></div></div>
     </section>
   </main>
-
   <Footer />
 </BaseLayout>

@@ -1,41 +1,25 @@
 # SDK Tests LocalCloud Reference
 
-## Common env vars
+## Generated environment
 
 ```bash
-export GOOGLE_CLOUD_PROJECT=local-project
-export STORAGE_EMULATOR_HOST=http://localhost:24081
-export PUBSUB_EMULATOR_HOST=localhost:24082
-export FIRESTORE_EMULATOR_HOST=localhost:24083
-export BIGQUERY_EMULATOR_HOST=http://localhost:24087
+localcloud start
+eval "$(localcloud env)"
 ```
 
-Or use LocalCloud's generated shell env:
+The reviewed default project is `local-gcp-project`. Use the endpoint values generated for the selected instance; the CLI can remap occupied host ports.
 
-```bash
-eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
-```
+## Language guidance
 
-## Python
+- **Python:** use explicit anonymous credentials where a client would otherwise discover ADC.
+- **Node.js:** pass the generated project and endpoint values when the SDK does not honor emulator variables automatically.
+- **Go:** use standard clients with bounded contexts and generated environment values.
+- **Java:** make emulator environment visible to the test JVM and prevent default credential discovery.
 
-Use `google-cloud-*` clients normally after env vars are set. Keep project IDs local and assert returned SDK objects.
+## Verification
 
-## Node.js
+Exercise an operation listed in the service contract and assert an observable result. SDK compatibility depends on service, client version, transport, and operation; there is no blanket four-language matrix.
 
-Use `@google-cloud/*` clients with `projectId: "local-project"` when the repo does not already supply a local project. Assert promises resolve to expected resources or payloads.
+## Production and license boundary
 
-## Go
-
-Use standard Google Cloud Go clients and pass context timeouts. Keep tests bounded and clean up local resources where the SDK supports it.
-
-## Java
-
-Use standard Google Cloud Java clients with emulator env vars visible to the test JVM. Prefer test-scoped environment setup over developer-machine global state.
-
-## Mock positioning
-
-Mocks are acceptable for error branches or unsupported services. For services LocalCloud supports, add at least one SDK-backed test for the integration path that would otherwise be a fragile mock.
-
-## Production unset reminder
-
-Before real-GCP validation, unset emulator variables such as `PUBSUB_EMULATOR_HOST`, `FIRESTORE_EMULATOR_HOST`, `BIGQUERY_EMULATOR_HOST`, `STORAGE_EMULATOR_HOST`, and `GOOGLE_*_CUSTOM_ENDPOINT`.
+Unset all emulator/custom endpoints in a clean process before authorized real-GCP validation. LocalCloud use is governed by the proprietary license; organization/team CI and commercial workflows are excluded by the reviewed text.

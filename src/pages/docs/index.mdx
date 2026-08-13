@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Getting Started
-description: Get LocalCloud running in less than 1 minute.
+description: Install the LocalCloud CLI, start a local instance, and make your first Cloud Storage request.
 ---
 
 import CardGroup from '../../components/CardGroup.astro';
@@ -10,238 +10,180 @@ import Callout from '../../components/Callout.astro';
 import Steps from '../../components/Steps.astro';
 import Step from '../../components/Step.astro';
 import CodeTabs from '../../components/CodeTabs.astro';
-import { productFacts } from '../../data/productFacts';
+import { docsContract } from '../../data/docs-contract';
+import { publishedServiceCount } from '../../data/services';
 
-# Getting Started
+# Get started with LocalCloud
 
-Get LocalCloud up and running in less than 1 minute. By the end of this guide, you'll have the major Google Cloud services your team reaches for first running locally.
-
-No cloud access. No credentials. No cloud costs.
-
-<CardGroup cols={2}>
-  <Card title="Services" icon="grid" href="/services/">
-    Browse major Google Cloud services by category.
-  </Card>
-  <Card title="What is a GCP Emulator?" icon="book" href="/docs/what-is-gcp-emulator/">
-    Understand emulators and why you need one.
-  </Card>
-  <Card title="SDK Examples" icon="code" href="/docs/sdk-examples/">
-    Copy-paste examples for Python, Node.js, Go, and Java.
-  </Card>
-  <Card title="Configuration" icon="settings" href="/docs/configuration/">
-    Environment variables, ports, and settings.
-  </Card>
-  <Card title="Terraform" icon="settings" href="/docs/terraform/">
-    Use your existing .tf files with LocalCloud.
-  </Card>
-  <Card title="Architecture" icon="layers" href="/docs/architecture/">
-    How LocalCloud emulates GCP services internally.
-  </Card>
-</CardGroup>
+This tutorial installs the LocalCloud CLI, starts a persistent local instance, configures this shell, and verifies a Cloud Storage request. LocalCloud emulates bounded development workflows; always run final validation against real Google Cloud before production deployment.
 
 ## Prerequisites
 
-- **Docker** — [Install Docker](https://docs.docker.com/get-docker/) (20.10+)
-- **Homebrew install on macOS** — if you use Homebrew, Docker Desktop is available as:
+- Docker Desktop, Colima, or Docker Engine is installed **and running**.
+- A supported native CLI host: macOS 13+ or Linux with glibc 2.35+, on ARM64 or AMD64.
+- `curl`, `tar`, `sed`, `sort`, and either `sha256sum` or `shasum`.
 
-```bash
-brew install --cask docker-desktop
-```
+The standalone CLI is a frozen executable and does not require Python. Windows users should use the [manual Docker fallback](#manual-docker-path).
 
-- **4GB RAM** available for the container
-
-## Install the LocalCloud CLI
-
-Choose either supported host installation channel:
+## Install the CLI
 
 <CodeTabs labels={["Install script", "Homebrew"]}>
   <Fragment slot="tab-0">
-    <pre><code>{productFacts.installScriptCommand}</code></pre>
+
+```bash
+curl -fsSL https://local.cloud/install.sh | sh
+```
+
   </Fragment>
   <Fragment slot="tab-1">
-    <pre><code>{productFacts.homebrewInstallCommand}</code></pre>
+```bash
+brew install LocalGCloud/tap/localcloud
+```
   </Fragment>
 </CodeTabs>
 
-The install script supports macOS and Linux, verifies the selected release archive, and can run diagnostics and start LocalCloud after you confirm. Homebrew users run the first start explicitly:
+The install script downloads the appropriate macOS or Linux release, verifies its SHA-256 checksum, validates the exact archive members, and runs the executable to confirm its semantic version. Release automation separately publishes Sigstore bundles, but `install.sh` does not verify those bundles.
+
+In an interactive terminal, the installer can offer to run diagnostics and start LocalCloud after you confirm. In automation or with `--no-start`, it prints absolute-path next steps instead. If it adds the CLI to your shell startup file, run the exact `source` command printed by the installer before continuing.
+
+<Callout type="note" title="Release boundary">
+The commands below were reviewed from CLI source revision <code>{docsContract.provenance.cliRevision}</code>. The documentation site does not independently qualify every released binary; use the published checksum for the exact archive you install.
+</Callout>
+
+## Start your first instance
+
+<Steps>
+  <Step title="Check Docker">
 
 ```bash
 localcloud doctor
-localcloud start
-localcloud console
-eval "$(localcloud env)"
 ```
 
-`localcloud doctor` diagnoses Docker but never installs or starts Docker Desktop, Colima, or Docker Engine. Release archives, checksums, and Sigstore bundles are published in the <a href={`${productFacts.githubUrl}/releases`}>CLI releases</a>; the formula source is in the <a href={productFacts.homebrewTapUrl}>Homebrew tap</a>.
-
-## Manual Docker path
-
-Use the direct-Docker flow below on unsupported CLI hosts or when you intentionally do not want the host CLI.
-
-<Steps>
-  <Step title="Pull the image">
-
-```bash
-docker pull jaysen2apache/localcloud
-```
+A usable Docker installation returns JSON with `"status": "ok"`. `doctor` diagnoses Docker; it does not install or start Docker Desktop, Colima, or Docker Engine.
 
   </Step>
   <Step title="Start LocalCloud">
 
 ```bash
-docker volume create localcloud-data
-
-docker run -d \
-  -p 8080:24080 -p 4443:24081 -p 8085-8087:24082-8087 \
-  -p 9010:24085 -p 9020:24086 \
-  -p 9050:24087 -p 9060:24088 \
-  -p 6379:6379 \
-  -m 4g --name localcloud \
-  -v localcloud-data:/var/lib/localcloud \
-  jaysen2apache/localcloud
+localcloud start
 ```
+
+A successful command returns `started`, `already_running`, or `reconfigured`. By default the CLI uses:
+
+- instance `default`
+- project `local-gcp-project`
+- caller `local-developer`
+- persistent data in the Docker volume `localcloud-data`
+- Docker socket access **off**
+- transparent networking **off**
+
+The CLI binds published ports to `127.0.0.1`. If a canonical port is occupied, it can dynamically remap host ports. Use the URL and `sdk_env` values in the command output rather than assuming the console is always on port 24080.
+
+  </Step>
+  <Step title="Configure this shell">
+
+```bash
+eval "$(localcloud env)"
+```
+
+`localcloud env` inspects the running instance and prints local-only SDK settings using the actual mapped ports. It rejects environment values that would route supported services to real Google endpoints or non-loopback HTTP endpoints.
 
   </Step>
   <Step title="Open the console">
 
 ```bash
-open http://localhost:24080
+localcloud console
 ```
 
-The console is built into the running container, so you can inspect service status, browse data, and confirm the runtime is healthy before you debug your app.
-
-  </Step>
-  <Step title="Configure your SDK">
-
-Set environment variables for all services so your GCP SDKs connect to LocalCloud:
-
-```bash
-eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
-```
-
-This sets variables for all provided services like `STORAGE_EMULATOR_HOST`, `PUBSUB_EMULATOR_HOST`, etc.
-To set up only a specific service, refer to the user guide on the console.
-
-**Using Terraform?** Point the Google provider at LocalCloud instead:
-
-```bash
-eval $(curl -s 'http://localhost:24080/_localcloud/env?format=terraform')
-terraform init && terraform apply
-```
-
-See the [Terraform Integration](/docs/terraform/) guide for details.
+The CLI opens the console for the selected instance, project, and caller. Trust the returned `url`; do not replace it with a hard-coded port.
 
   </Step>
 </Steps>
 
+## Make your first API call
 
-## Make Your First API Call
-
-<CodeTabs labels={["Python", "Node.js", "Go"]}>
-  <Fragment slot="tab-0">
-```python
-from google.cloud import storage
-
-client = storage.Client()
-
-# Create a bucket
-bucket = client.create_bucket("my-first-bucket")
-
-# Upload a file
-blob = bucket.blob("hello.txt")
-blob.upload_from_string("Hello, LocalCloud!")
-
-# Read it back
-print(blob.download_as_text())
-# Output: Hello, LocalCloud!
-```
-  </Fragment>
-  <Fragment slot="tab-1">
-```javascript
-const {Storage} = require('@google-cloud/storage');
-
-const storage = new Storage();
-
-async function main() {
-  // Create a bucket
-  await storage.createBucket('my-first-bucket');
-
-  // Upload a file
-  const bucket = storage.bucket('my-first-bucket');
-  await bucket.file('hello.txt').save('Hello, LocalCloud!');
-
-  // Read it back
-  const [content] = await bucket.file('hello.txt').download();
-  console.log(content.toString());
-  // Output: Hello, LocalCloud!
-}
-
-main();
-```
-  </Fragment>
-  <Fragment slot="tab-2">
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "io"
-
-    "cloud.google.com/go/storage"
-)
-
-func main() {
-    ctx := context.Background()
-    client, _ := storage.NewClient(ctx)
-
-    // Create a bucket
-    client.Bucket("my-first-bucket").Create(ctx, "local-project", nil)
-
-    // Upload a file
-    w := client.Bucket("my-first-bucket").Object("hello.txt").NewWriter(ctx)
-    fmt.Fprint(w, "Hello, LocalCloud!")
-    w.Close()
-
-    // Read it back
-    r, _ := client.Bucket("my-first-bucket").Object("hello.txt").NewReader(ctx)
-    data, _ := io.ReadAll(r)
-    fmt.Println(string(data))
-    // Output: Hello, LocalCloud!
-}
-```
-  </Fragment>
-</CodeTabs>
-
-<Callout type="tip" title="Zero code changes">
-This same code works against real GCP. Just unset the emulator environment variables.
-</Callout>
-
-## Verify Services Are Running
+Install the Python Cloud Storage client if needed, then run this repeatable example in the same shell where you evaluated `localcloud env`:
 
 ```bash
-curl http://localhost:24080/_localcloud/health | jq
+python -m pip install google-cloud-storage
 ```
 
-Or visit the web console at [http://localhost:24080](http://localhost:24080).
+```python
+from google.api_core.exceptions import NotFound
+from google.cloud import storage
 
+client = storage.Client(project="local-gcp-project")
+bucket = client.bucket("localcloud-quickstart")
 
-## Next Steps
+try:
+    bucket.reload()
+except NotFound:
+    bucket.create()
+
+blob = bucket.blob("hello.txt")
+blob.upload_from_string("Hello, LocalCloud!")
+print(blob.download_as_text())
+```
+
+The example safely reuses the same local bucket and overwrites the same object, so it can run repeatedly with the default persistent volume. The expected output is:
+
+```text
+Hello, LocalCloud!
+```
+
+If the SDK tries to contact Google Cloud, stop instead of adding real credentials. Re-run `eval "$(localcloud env)"` in the shell or process that launches the application. This example is source-validated and designed to be idempotent; no qualified assembled image was available in this worker environment for an end-to-end runtime execution.
+
+## Verify and manage the instance
+
+```bash
+localcloud status
+localcloud logs --tail 50
+```
+
+`localcloud stop` stops the default persistent instance but retains its volume. Running the installer with `--uninstall` removes only a script-managed CLI and its PATH block; containers and persistent volumes remain intact.
+
+## Manual Docker path
+
+Use this fallback on unsupported CLI hosts or when you deliberately do not want the host CLI. This starts the runtime using the image identity reviewed from `../localcloud`; its assembled digest remains release-unverified.
+
+```bash
+docker volume create localcloud-data
+
+docker run -d --name localcloud \
+  -p 127.0.0.1:24080-24092:24080-24092 \
+  -m 4g \
+  -v localcloud-data:/var/lib/localcloud \
+  jaysen2apache/localcloud:latest
+```
+
+Verify the runtime and configure the shell through root operator endpoints:
+
+```bash
+curl -fsS http://localhost:24080/health
+eval "$(curl -fsS 'http://localhost:24080/env?format=shell')"
+```
+
+The default command does not mount `/var/run/docker.sock` and does not expose ports on every host interface. GKE, Compute Engine, Cloud Run, and Dataproc execution can require explicit Docker-socket access; transparent DNS/HTTPS routing is also opt-in. Configure those capabilities only after reviewing their security implications.
+
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Services Overview" icon="grid" href="/docs/services-overview/">
-    See how LocalCloud groups major Google Cloud categories.
+  <Card title="Configuration" icon="settings" href="/docs/configuration/">
+    Select services, projects, persistence, and optional networking behavior.
+  </Card>
+  <Card title="SDK Examples" icon="code" href="/docs/sdk-examples/">
+    Configure supported client libraries using local endpoint values.
+  </Card>
+  <Card title="Service Catalog" icon="grid" href="/services/">
+    Browse {publishedServiceCount} reviewed service guides. The remaining registry entries stay unpublished until their evidence review is complete.
+  </Card>
+  <Card title="Compatibility" icon="book" href="/compatibility/">
+    Check bounded local workflows before relying on an emulator behavior.
   </Card>
   <Card title="Seed Data" icon="database" href="/docs/seed-data/">
-    Pre-populate services with test data.
-  </Card>
-  <Card title="Web Console" icon="terminal" href="/docs/console/">
-    Browse data and run queries from your browser.
-  </Card>
-  <Card title="BigQuery Features" icon="book" href="/docs/bigquery-emulator-features/">
-    See how the DuckDB-based BigQuery emulator works.
+    Pre-populate supported services with deterministic test data.
   </Card>
   <Card title="Terraform" icon="settings" href="/docs/terraform/">
-    Provision resources locally with your existing .tf files.
+    Choose endpoint-only or transparent-network Terraform setup.
   </Card>
 </CardGroup>

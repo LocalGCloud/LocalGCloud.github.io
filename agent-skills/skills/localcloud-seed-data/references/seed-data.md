@@ -1,39 +1,44 @@
-# Seed Data LocalCloud Reference
+# Seed data LocalCloud reference
 
-## Admin API load
+## Load, reload, and reset
 
 ```bash
-curl -X POST http://localhost:24080/_localcloud/seed \
-  -H "Content-Type: application/yaml" \
+curl -fsS -X POST http://localhost:24080/seed \
+  -H 'Content-Type: application/yaml' \
   --data-binary @seed.yaml
+
+curl -fsS -X POST http://localhost:24080/reseed
+
+curl -fsS -X POST 'http://localhost:24080/reset?project=local-gcp-project' \
+  -H 'Content-Type: application/json' \
+  -d '{"restore_seed":true}'
 ```
+
+Canonical port `24080` applies to manual Docker. With the host CLI, use the actual gateway URL returned for the instance.
 
 ## Startup mount
 
 ```bash
-docker run -d \
-  -v ./seed.yaml:/etc/localcloud/seed.yaml \
-  -v ~/.localcloud/data:/var/lib/localcloud \
-  -p 8080:24080 -p 4443:24081 \
-  -p 8085-8087:24082-8087 \
-  -p 9010:24085 -p 9020:24086 \
-  -p 9050:24087 -p 9060:24088 \
-  -p 6379:6379 \
-  -m 4g --name localcloud \
-  jaysen2apache/localcloud
+docker volume create localcloud-data
+
+docker run -d --name localcloud \
+  -p 127.0.0.1:24080-24092:24080-24092 \
+  -m 4g \
+  -v "$PWD/seed.yaml:/etc/localcloud/seed.yaml:ro" \
+  -v localcloud-data:/var/lib/localcloud \
+  jaysen2apache/localcloud:latest
 ```
 
-## Reset and restore
+The mutable image is release-unverified; pin a qualified digest when one is available.
 
-```bash
-curl -X POST http://localhost:24080/_localcloud/reset \
-  -H "Content-Type: application/json" \
-  -d '{"restore_seed": true}'
-```
+## Format rules
 
-## Fixture rules
+- Flat, `services:`, and `projects:` envelopes are accepted.
+- Cloud Storage key: `gcs`.
+- Secret Manager: `secretmanager.secrets`.
+- BigQuery datasets: `bigquery.datasets`; tables: `bigquery.tables`, with `dataset` on each table.
+- Firestore seeding is unsupported.
+- `POST /seed?mode=volatile` seeds Pub/Sub and Bigtable only.
+- `LOCALCLOUD_TERRAFORM_MODE=true` skips seed operations.
 
-- Stable IDs, deterministic timestamps, and small datasets.
-- Fake secrets only; no copied production tokens.
-- No real customer names, emails, object contents, or event payloads.
-- Keep examples small enough for agents to reason about and tests to reset quickly.
+Use stable IDs, deterministic timestamps, small datasets, and fake secret payloads. Verify through the application SDK and validate production data workflows separately.

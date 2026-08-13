@@ -22,15 +22,15 @@ Ask the user only for details unavailable from repo files or tool context.
 
 ## LocalCloud setup assumptions
 
-- LocalCloud runs from Docker image `jaysen2apache/localcloud`.
-- BigQuery routes to `BIGQUERY_EMULATOR_HOST=http://localhost:24087`.
-- Default project is `local-project` unless the repo already defines another local project.
-- No GCP account, Google credentials, service-account key, or billing project is required for local validation.
+- Start through the host CLI, then load the generated environment with `eval "$(localcloud env)"`.
+- The reviewed default project is `local-gcp-project`; trust the generated BigQuery endpoint because host ports may be remapped.
+- BigQuery behavior is feature-specific and release-unverified until an assembled image is qualified.
+- Confirm the governing proprietary license permits the intended use before running LocalCloud.
 
 ## Step-by-step workflow
 
 1. Inspect how the repo creates BigQuery clients and where tests live.
-2. Ensure test setup exports `BIGQUERY_EMULATOR_HOST=http://localhost:24087` and a local project ID.
+2. Start the selected CLI instance and load its generated BigQuery endpoint and project values into the test process.
 3. Create or reuse deterministic local datasets and tables.
 4. Insert small representative rows through the same SDK or API path the app uses.
 5. Run representative queries, including edge cases that matter for the project.
@@ -54,8 +54,8 @@ Return the files changed, emulator variables used, datasets/tables created, quer
 
 - [BigQuery workflow details](references/bigquery.md)
 - [Trigger prompt examples](references/triggers.md)
-- LocalCloud compatibility: https://local.cloud/compatibility/
-- LocalCloud services: https://local.cloud/services/
-- SDK examples: https://local.cloud/docs/sdk-examples/
-- BigQuery feature comparison: https://local.cloud/docs/bigquery-feature-comparison/
-- BigQuery coverage gaps: https://local.cloud/docs/bigquery-coverage-gaps/
+- LocalCloud compatibility: <https://local.cloud/compatibility/>
+- LocalCloud services: <https://local.cloud/services/>
+- SDK examples: <https://local.cloud/docs/sdk-examples/>
+- BigQuery feature comparison: <https://local.cloud/docs/bigquery-feature-comparison/>
+- BigQuery coverage gaps: <https://local.cloud/docs/bigquery-coverage-gaps/>

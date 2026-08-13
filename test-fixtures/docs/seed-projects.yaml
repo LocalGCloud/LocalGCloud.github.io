@@ -1,0 +1,11 @@
+projects:
+  local-gcp-project:
+    services:
+      gcs:
+        buckets:
+          - name: localcloud-main-project
+  second-local-project:
+    services:
+      pubsub:
+        topics:
+          - name: second-project-events

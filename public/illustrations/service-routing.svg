@@ -52,7 +52,7 @@
 
   <rect x="472" y="278" width="248" height="124" rx="24" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
   <text x="498" y="312" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.6">ENV EXPORT</text>
-  <text x="498" y="348" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">/_localcloud/env</text>
+  <text x="498" y="348" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="28" font-weight="600">/env</text>
   <text x="498" y="376" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="18">Builds STORAGE_EMULATOR_HOST, PUBSUB_EMULATOR_HOST, and friends directly from the registry.</text>
 
   <rect x="472" y="450" width="248" height="164" rx="24" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>

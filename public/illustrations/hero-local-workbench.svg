@@ -53,7 +53,7 @@
     <text x="34" y="130" fill="#DDEBFF" font-family="IBM Plex Sans, sans-serif" font-size="20">Gateway, services, data, and console surface</text>
 
     <rect x="34" y="166" width="254" height="54" rx="18" fill="#FFFFFF" fill-opacity="0.12" stroke="#CDE1FF" stroke-width="2"/>
-    <text x="56" y="198" fill="#F7FBFF" font-family="IBM Plex Sans, sans-serif" font-size="22" font-weight="600">/_localcloud/env?format=shell</text>
+    <text x="56" y="198" fill="#F7FBFF" font-family="IBM Plex Sans, sans-serif" font-size="22" font-weight="600">/env?format=shell</text>
 
     <rect x="34" y="238" width="118" height="36" rx="18" fill="#FFFFFF" fill-opacity="0.14" stroke="#CDE1FF" stroke-width="2"/>
     <text x="52" y="261" fill="#F7FBFF" font-family="IBM Plex Mono, monospace" font-size="12">localhost handoff</text>

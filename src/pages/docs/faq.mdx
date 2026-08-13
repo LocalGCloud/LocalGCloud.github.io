@@ -1,107 +1,31 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: FAQ
-description: Frequently asked questions about LocalCloud — what it is, how it works, compatibility, performance, and troubleshooting.
+description: Verified answers about LocalCloud setup, compatibility, persistence, licensing, and troubleshooting.
 author: LocalCloud
-updated: 2026-06-22
-reviewed: 2026-06-22
+updated: 2026-08-13
+reviewed: 2026-08-13
 ---
 
 import FAQPageSchema from '../../components/FAQPageSchema.astro';
+import { faqSections } from '../../data/faqContent';
 
 <FAQPageSchema />
 
 # FAQ
 
-## General
+{faqSections.map((section) => (
+  <section>
+    <h2>{section.title}</h2>
+    {section.entries.map((entry) => (
+      <article>
+        <h3>{entry.question}</h3>
+        <p>{entry.answer}</p>
+        {entry.code && <pre><code>{entry.code}</code></pre>}
+        {entry.afterCode && <p>{entry.afterCode}</p>}
+      </article>
+    ))}
+  </section>
+))}
 
-### What is LocalCloud?
-
-LocalCloud is a local Google Cloud runtime that brings the major Google Cloud services teams reach for first into a single Docker container. It gives you one boot path, one localhost handoff for SDKs, and a built-in console for inspecting the runtime locally.
-
-### Is LocalCloud free?
-
-Yes — LocalCloud is free for developers. See the [Licensing page](/docs/licensing/) for the current terms.
-
-### How is this different from individual Google emulators?
-
-Google provides some emulator paths, but you still have to run and manage them separately. LocalCloud wraps the major services developers need into one container, exports the right localhost environment variables, exposes health and service metadata, loads seed data, and gives you a console to inspect the whole runtime in one place.
-
-## Compatibility
-
-### Do I need to change my application code?
-
-No. LocalCloud works with standard GCP SDK and CLI clients. You only change environment variables to point service endpoints at localhost. Switching back to real GCP is done by unsetting those env. variables.
-
-### Which SDK languages are supported?
-
-Any language with GCP SDK support works: Python, Node.js, Go, Java, C#, Ruby, PHP, and more. The emulators speak the same gRPC/REST protocols as real GCP.
-
-### How complete is the BigQuery emulation?
-
-Because Google does not provide an official BigQuery emulator, LocalCloud includes a DuckDB-backed BigQuery emulator built for local development and CI testing.
-The BigQuery emulator provides `~96%` SQL coverage, `936` collected tests across `25` test modules, and `200+` mapped functions and features. It covers common DQL, DDL, DML, scripting, stored procedures, external tables, INFORMATION_SCHEMA views, REST APIs, and simplified gRPC Storage API paths. Production-only concerns such as BQML, encryption, security policy enforcement, and full geography parity are outside the emulator scope; **geography is partial with `12` working `ST_*` functions.
-
-
-### Can I use this in CI/CD?
-
-Yes. LocalCloud runs in any environment with Docker support. Add it as a service in your CI pipeline:
-
-```yaml
-# GitHub Actions example
-services:
-  localcloud:
-    image: jaysen2apache/localcloud
-    ports:
-      - 8080:24080
-      - 4443:24081
-      - 8085-8087:24082-8087
-      - 9010:24085
-      - 9020:24086
-      - 9050:24087
-      - 9060:24088
-      - 6379:6379
-```
-
-## Performance
-
-### How much memory does LocalCloud need?
-
-Recommended: 4GB (`-m 4g`). With fewer services enabled, 2GB may suffice.
-
-### How long does it take to start?
-
-The default boot path is designed to come up in less than 1 minute on a typical development machine.
-
-### Is data persisted between restarts?
-
-Yes, if you mount a Docker volume to `/var/lib/localcloud`. Without a volume, data is lost when the container stops.
-
-## Troubleshooting
-
-### Port conflicts
-
-If a port is already in use, remap it:
-
-```bash
-docker run -d -p 9080:24080 ... jaysen2apache/localcloud
-```
-
-### Service isn't responding
-
-Check service status:
-
-```bash
-curl http://localhost:24080/_localcloud/services
-```
-
-### GKE/Compute/Cloud Run not starting
-
-These services require Docker socket access:
-
-```bash
-docker run -d \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -e LOCALCLOUD_ENABLE_GKE=true \
-  ...
-```
+Related policy and implementation details are documented in [Licensing](/docs/licensing/), [Privacy](/docs/privacy/), [Architecture](/docs/architecture/), and the [service catalog](/services/).

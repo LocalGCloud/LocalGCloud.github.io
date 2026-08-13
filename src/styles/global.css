@@ -499,22 +499,12 @@ img {
 
 @media (min-width: 1280px) {
   .service-hero-grid {
-    grid-template-areas:
-      "intro connection"
-      "metrics connection";
     grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.85fr);
   }
 
-  .service-hero-intro {
-    grid-area: intro;
-  }
-
+  .service-hero-intro,
   .service-hero-connection {
-    grid-area: connection;
-  }
-
-  .service-hero-metrics {
-    grid-area: metrics;
+    grid-area: auto;
   }
 }
 
@@ -655,20 +645,22 @@ img {
 }
 
 .site-list li {
-  display: flex;
-  align-items: start;
-  gap: 0.75rem;
+  position: relative;
+  display: block;
+  padding-left: 1.3rem;
   color: var(--text-2);
   line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
 .site-list li::before {
   content: "";
+  position: absolute;
+  top: 0.55rem;
+  left: 0;
   width: 0.55rem;
   height: 0.55rem;
-  margin-top: 0.55rem;
   border-radius: 999px;
-  flex: 0 0 auto;
   background: rgba(26, 115, 232, 0.32);
 }
 
@@ -1660,11 +1652,7 @@ img {
 /* ─── Service catalog filter ─── */
 
 .service-filter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
+  max-width: 36rem;
   padding: 0.85rem 1rem;
   border: 1px solid var(--line);
   border-radius: 1rem;
@@ -1674,13 +1662,11 @@ img {
 .service-filter__search {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  flex: 1;
-  min-width: 12rem;
 }
 
 .service-filter__input {
   flex: 1;
+  min-width: 0;
   border: none;
   background: transparent;
   color: var(--text);
@@ -1692,48 +1678,6 @@ img {
 
 .service-filter__input::placeholder {
   color: var(--text-3);
-}
-
-.service-filter__toggles {
-  display: flex;
-  gap: 0.3rem;
-}
-
-.service-filter__toggle {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2rem;
-  padding: 0 0.75rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--text-2);
-  font-family: var(--font-body);
-  font-size: 0.82rem;
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-}
-
-.service-filter__toggle:hover {
-  border-color: rgba(26, 115, 232, 0.25);
-  color: var(--text);
-}
-
-.service-filter__toggle.is-active {
-  background: rgba(26, 115, 232, 0.08);
-  border-color: rgba(26, 115, 232, 0.25);
-  color: var(--accent-strong);
-}
-
-@media (max-width: 640px) {
-  .service-filter {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .service-filter__toggles {
-    justify-content: center;
-  }
 }
 
 .doc-feedback {

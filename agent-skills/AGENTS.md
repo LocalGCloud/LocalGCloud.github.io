@@ -9,7 +9,8 @@ Guidance for contributors and agents editing this skills repository.
 - Do not add broad tool permission lists or shell auto-approval.
 - Do not require real GCP credentials, service-account JSON, billing projects, or production endpoints for LocalCloud validation.
 - Link service claims to LocalCloud docs: `/compatibility/`, `/services/`, `/docs/`, `/docs/sdk-examples/`, `/docs/terraform/`, and `/docs/seed-data/`.
-- Keep the canonical Docker image as `jaysen2apache/localcloud` unless the shared LocalCloud product facts change.
+- Prefer CLI-generated image/endpoints; the reviewed mutable image is `jaysen2apache/localcloud:latest` and remains release-unverified until a qualified digest is recorded.
+- Preserve the proprietary-license boundary and do not turn technical CI/team examples into a legal grant.
 
 ## Required skill structure
 

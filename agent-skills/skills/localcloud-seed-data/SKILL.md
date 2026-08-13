@@ -1,61 +1,36 @@
 ---
 name: localcloud-seed-data
-description: "LocalCloud seed data GCP emulator workflows: use when creating deterministic YAML seeds, admin API loads, startup mounts, reset flows, and fake local fixtures."
+description: "Create deterministic LocalCloud YAML fixtures, load them through root seed endpoints, and reset project-scoped local state."
 ---
 
-# LocalCloud Seed Data
+# LocalCloud seed data
 
 ## When to use
 
-Use this skill when a task mentions LocalCloud seed data, deterministic fixtures, seed YAML, admin API loading, startup seed mounts, reset-to-known-state, or multi-service local test data.
+Use this skill for deterministic local fixtures, seed YAML, startup seed mounts, or reset-to-known-state workflows. Do not use it for production migrations, backups, customer data, or real secrets.
 
-Do not use it for production data migration, backups, real customer data, real secrets, or credential material.
+## Contract to preserve
 
-## Inputs to inspect
+- Load YAML with `POST /seed`; `POST /import` is an alias and `POST /reseed` reads `LOCALCLOUD_SEED_FILE` (default `/etc/localcloud/seed.yaml`).
+- Accepted envelopes are flat service keys, `services:`, or multi-project `projects:`.
+- Use `gcs`, `secretmanager.secrets`, and top-level `bigquery.tables` entries that each name a dataset.
+- Firestore has no implemented seed registrar. Create Firestore fixtures through the SDK.
+- `mode=volatile` is for Pub/Sub and Bigtable. Do not claim Firestore seeding.
+- `LOCALCLOUD_TERRAFORM_MODE=true` skips seed operations.
+- Examples contain synthetic data and fake local secrets only.
 
-- Existing test fixtures, factories, seed files, migrations, and reset helpers.
-- Services used by the repo: storage, Pub/Sub, Firestore, BigQuery, Secret Manager, Memorystore, or others documented by LocalCloud.
-- Test isolation requirements and naming conventions.
-- LocalCloud docs linked in [references/seed-data.md](references/seed-data.md).
+## Workflow
 
-Ask only when the desired fixture shape or service set is not inferable.
+1. Inspect application fixtures and identify the smallest required service set.
+2. Confirm every seeded service is enabled and available at the current tier.
+3. Create stable IDs and minimal fake records using [assets/sample-seed.yaml](assets/sample-seed.yaml).
+4. Load through `/seed`, or mount a read-only seed at `/etc/localcloud/seed.yaml`.
+5. Assert data through the application's normal SDK/API path.
+6. Reset only the intended project with `POST /reset?project=...`; use `{"restore_seed":true}` only when the last loaded seed should be restored.
+7. Report unavailable registrars instead of silently changing to real Google Cloud.
 
-## LocalCloud setup assumptions
+See [references/seed-data.md](references/seed-data.md).
 
-- Seed data is loaded into LocalCloud, not real Google Cloud.
-- The admin API accepts YAML at `http://localhost:24080/_localcloud/seed`.
-- Startup seed files can be mounted at `/etc/localcloud/seed.yaml`.
-- Reset with seed restore uses `http://localhost:24080/_localcloud/reset`.
-- Examples must use fake local secrets and synthetic data only.
+## Verification and boundary
 
-## Step-by-step workflow
-
-1. Identify the services and entities tests need.
-2. Create minimal deterministic seed records with stable IDs and names.
-3. Use fake values such as `sk-local-test-key-12345`; never include production secrets or customer data.
-4. Load seeds through the admin API for ad hoc tests or mount the seed file at startup for CI/repeatability.
-5. Reset before tests that need a known state.
-6. Assert seeded data through the app's SDK path where practical.
-
-See [assets/sample-seed.yaml](assets/sample-seed.yaml) and [references/seed-data.md](references/seed-data.md).
-
-## Verification
-
-Verify that the seed load succeeds and that tests can read seeded data through LocalCloud-backed SDK/API clients. Reset flows should prove the same fixture can be restored deterministically.
-
-## Known gaps / when to fall back to real GCP
-
-Seed files are for local development, testing, CI, and demos. Do not use them as production migration proof. Validate production data migrations and secret handling against real Google Cloud separately after removing LocalCloud endpoint variables.
-
-## Expected output
-
-Return seed files changed, services seeded, fake values used, load/reset method, test assertions, and any service-specific limitations.
-
-## References
-
-- [Seed data workflow details](references/seed-data.md)
-- [Sample seed file](assets/sample-seed.yaml)
-- [Trigger prompt examples](references/triggers.md)
-- Seed data docs: https://local.cloud/docs/seed-data/
-- Services: https://local.cloud/services/
-- Compatibility: https://local.cloud/compatibility/
+Record the envelope, services, fake values, load/reset response, and SDK assertions. Persistence is service-specific and not proof of production durability. Validate production migrations and recovery separately against real Google Cloud after removing all LocalCloud endpoint values.

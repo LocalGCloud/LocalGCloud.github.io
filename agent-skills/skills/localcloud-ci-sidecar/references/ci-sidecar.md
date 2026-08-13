@@ -1,42 +1,43 @@
 # CI Sidecar LocalCloud Reference
 
-## Readiness gate
+## License gate
+
+The current proprietary LocalCloud license excludes employer/organization use and team CI. Do not implement a CI sidecar unless the rights holder has granted the intended use under the exact release license.
+
+## Reviewed technical pattern
 
 ```bash
 for i in $(seq 1 30); do
-  if curl -sf http://localhost:24080/_localcloud/health > /dev/null; then
+  if curl -fsS http://localhost:24080/health >/dev/null; then
     echo "LocalCloud is ready"
-    exit 0
+    break
   fi
   sleep 2
+  if [ "$i" -eq 30 ]; then
+    docker logs localcloud || true
+    exit 1
+  fi
 done
 
-echo "LocalCloud did not become ready" >&2
-exit 1
+eval "$(curl -fsS http://localhost:24080/env?format=shell)"
 ```
 
-## Env export
+## Ports and memory
 
-For shell-based jobs:
+- Canonical LocalCloud range: `24080-24092`.
+- Publish only ports needed by the selected tests.
+- Keep ports loopback-bound where the runner supports it.
+- Reviewed CLI default memory: `4g`.
+- Trust generated endpoint values rather than reconstructing them.
 
-```bash
-eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
-```
+## Qualification boundary
 
-For GitHub Actions, append exported values to `$GITHUB_ENV` only after reviewing the endpoint output in the job context.
-
-## Port and memory constraints
-
-- Admin/console/health: `8080`
-- Cloud Storage: `4443`
-- Pub/Sub, Firestore, Bigtable range: `8085-8087`
-- Spanner/other service ports: `9010`, `9020`, `9050`, `9060`
-- Memorystore: `6379`
-- Recommended memory: `4g`
+Pin a qualified image digest. The mutable reviewed tag is release-unverified. No qualified assembled image was available to execute this template during the documentation remediation.
 
 ## Acceptance criteria
 
-- The job cannot reach real GCP by default.
-- The health wait fails closed if LocalCloud is unavailable.
-- Test command is repo-specific and narrow.
-- Real secrets are not added to the LocalCloud job.
+- License permission is recorded.
+- Health failure terminates the job and prints diagnostics.
+- The test process uses generated local endpoint values.
+- No real GCP credentials are available to the local job.
+- Real-GCP validation is separate and never an automatic fallback.

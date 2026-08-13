@@ -3,10 +3,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
-import { serviceCategoryMeta, serviceCategoryOrder, services } from '../../data/services';
+import { availableServiceCount, comingSoonServiceCount, getServiceSignalLabel, publishedServiceCount, serviceCategoryMeta, serviceCategoryOrder, services } from '../../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
-const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
 const categoryGroups = serviceCategoryOrder
   .map((category) => ({
@@ -17,67 +17,29 @@ const categoryGroups = serviceCategoryOrder
   }))
   .filter((group) => group.items.length > 0);
 
-const optIn = services.filter((service) => !service.enabled);
-
-const catalogStats = [
-  {
-    value: `${categoryGroups.length}`,
-    label: 'Product Categories',
-    note: 'Grouped the way Google Cloud teams already scan the platform.',
-  },
-  {
-    value: '< 1 min',
-    label: 'Default Boot Path',
-    note: 'Pull the image, start the container, export the env block, and begin testing locally.',
-  },
-  {
-    value: `${optIn.length}`,
-    label: 'Opt-in Runtime Services',
-    note: 'Compute-oriented surfaces stay clearly marked when Docker-backed behavior is required.',
-  },
-];
 ---
 
-<BaseLayout title="LocalCloud Services — 20+ GCP Emulators for Local Development" description="Browse 20+ Google Cloud service emulators organized by category. Run BigQuery, Storage, Spanner, Pub/Sub, Firestore and more locally in one Docker container.">
+<BaseLayout title={`LocalCloud Services — ${publishedServiceCount} Service Guides`} description={`Browse ${availableServiceCount} available LocalCloud services and ${comingSoonServiceCount} upcoming addition by category, endpoint, tier, and documented workflows.`}>
   <Header />
-
   <main id="main-content" class="site-page">
     <section class="site-section site-section--hero" style="padding-bottom: 0;">
       <div class="container">
-        <div class="max-w-[48rem] reveal">
-          <span class="site-eyebrow">
-            <span class="site-eyebrow__pulse"></span>
-            Local Google Cloud runtime
-          </span>
-          <h1 class="mt-4">LocalCloud GCP service catalog</h1>
+        <div class="max-w-[52rem] reveal">
+          <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>{availableServiceCount} available services</span>
+          <h1 class="mt-4">LocalCloud service catalog</h1>
           <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
-            Browse the local Google Cloud services available in LocalCloud, then open each service page to review connection details, supported workflows, and documented boundaries.
+            Find connection details and documented local workflows for every available service. Roadmap additions are clearly marked as coming soon.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- Service filter bar -->
     <section class="site-section site-section--tight" style="padding-bottom: 0;">
       <div class="container">
         <div class="service-filter" data-service-filter>
           <div class="service-filter__search">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: 0 0 auto; color: var(--text-3);">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.3-4.3"></path>
-            </svg>
-            <input
-              type="search"
-              class="service-filter__input"
-              placeholder="Filter services…"
-              autocomplete="off"
-              data-filter-input
-            />
-          </div>
-          <div class="service-filter__toggles">
-            <button type="button" class="service-filter__toggle is-active" data-filter-status="all">All</button>
-            <button type="button" class="service-filter__toggle" data-filter-status="enabled">Default-on</button>
-            <button type="button" class="service-filter__toggle" data-filter-status="optin">Opt-in</button>
+            <label class="sr-only" for="service-search">Search services</label>
+            <input id="service-search" type="search" class="service-filter__input" placeholder={`Search ${publishedServiceCount} service guides…`} autocomplete="off" data-filter-input />
           </div>
         </div>
       </div>
@@ -88,23 +50,15 @@ const catalogStats = [
         <div class="container">
           <div class="site-section-heading reveal">
             <span class="site-kicker">{group.title}</span>
-            <h3>{group.title} services for local development.</h3>
+            <h2>{group.title} services</h2>
             <p>{group.description}</p>
           </div>
-
           <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 stagger">
             {group.items.map((service) => (
-              <a
-                href={`${base}services/${service.slug}/`}
+              <a href={`${base}services/${service.slug}/`}
                 data-service-name={service.name.toLowerCase()}
                 data-service-desc={service.description.toLowerCase()}
-                data-service-enabled={String(service.enabled)}
-                data-service-category={group.id}
-                class:list={[
-                  'site-panel reveal p-5 transition-transform hover:-translate-y-0.5',
-                  !service.enabled && 'site-panel--soft',
-                ]}
-              >
+                class="site-panel reveal p-5 transition-transform hover:-translate-y-0.5">
                 <div class="flex items-start justify-between gap-3">
                   <div class="flex min-w-0 items-start gap-3">
                     <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--surface-2)]">
@@ -113,21 +67,14 @@ const catalogStats = [
                     <div class="min-w-0">
                       <h3 class="text-xl">{service.name}</h3>
                       <div class="mt-2 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[var(--text-3)]">
-                        {service.protocol} · {service.port}
+                        {service.catalogState === 'coming-soon' ? 'Planned addition' : service.endpointLabel}
                       </div>
                     </div>
                   </div>
-                  <span class:list={['site-chip', service.enabled ? 'site-chip--success' : 'site-chip--warn']}>
-                    {service.enabled ? 'Default-on' : 'Opt-in'}
-                  </span>
+                  <span class="site-chip site-chip--accent">{getServiceSignalLabel(service)}</span>
                 </div>
-
                 <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">{service.description}</p>
-
-                <div class="mt-5 flex items-center justify-between gap-3 text-sm text-[var(--text-3)]">
-                  <span>{service.supported.length} supported capabilities</span>
-                  <span class="text-[var(--text)]">Details</span>
-                </div>
+                <div class="mt-5 text-sm font-medium text-[var(--text)]">View service guide</div>
               </a>
             ))}
           </div>
@@ -135,80 +82,35 @@ const catalogStats = [
       </section>
     ))}
 
-    <section class="site-section site-section--hero">
-      <div class="container grid gap-8 xl:grid-cols-[1fr,0.9fr]">
-        <div class="reveal">
-          <span class="site-eyebrow">
-            <span class="site-eyebrow__pulse"></span>
-            Service Catalog
-          </span>
-          <p class="mt-6 max-w-[44rem] text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-            LocalCloud provides health & usage for each service via in-built console app.
-          </p>
-
-          <div class="mt-8 grid gap-4 sm:grid-cols-3">
-            {catalogStats.map((stat) => (
-                <article class="site-panel site-panel--soft p-5">
-                  <div class="text-4xl font-semibold tracking-[-0.08em] text-[var(--text)]">{stat.value}</div>
-                  <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">{stat.label}</div>
-                  <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{stat.note}</p>
-                </article>
-              ))}
+    <section class="site-section">
+      <div class="container">
+        <aside class="callout callout--warning" role="note">
+          <div class="callout__body">
+            <p class="callout__title">Technical availability is not a license grant</p>
+            <div class="callout__content"><p>The governing proprietary license controls permitted use. Review it before personal, employer, organization, commercial, internal-tool, or CI use. Validate production behavior separately against real Google Cloud.</p></div>
           </div>
-        </div>
+        </aside>
       </div>
     </section>
-
   </main>
 
   <script>
     (function() {
-      var filterInput = document.querySelector('[data-filter-input]');
-      var filterToggles = document.querySelectorAll('[data-filter-status]');
-      var currentStatus = 'all';
-
-      function updateFilter() {
-        var query = (filterInput?.value || '').toLowerCase().trim();
-        var sections = document.querySelectorAll('[data-service-section]');
-
-        sections.forEach(function(section) {
-          var cards = section.querySelectorAll('[data-service-name]');
-          var visibleCount = 0;
-
-          cards.forEach(function(card) {
-            var name = card.dataset.serviceName || '';
-            var desc = card.dataset.serviceDesc || '';
-            var enabled = card.dataset.serviceEnabled === 'true';
-
-            var matchesSearch = !query || name.includes(query) || desc.includes(query);
-            var matchesStatus = currentStatus === 'all' ||
-              (currentStatus === 'enabled' && enabled) ||
-              (currentStatus === 'optin' && !enabled);
-
-            if (matchesSearch && matchesStatus) {
-              card.style.display = '';
-              visibleCount++;
-            } else {
-              card.style.display = 'none';
-            }
+      var input = document.querySelector('[data-filter-input]');
+      function update() {
+        var query = (input?.value || '').toLowerCase().trim();
+        document.querySelectorAll('[data-service-section]').forEach(function(section) {
+          var visible = 0;
+          section.querySelectorAll('[data-service-name]').forEach(function(card) {
+            var searchMatch = !query || (card.dataset.serviceName || '').includes(query) || (card.dataset.serviceDesc || '').includes(query);
+            card.style.display = searchMatch ? '' : 'none';
+            if (searchMatch) visible++;
           });
-
-          section.style.display = visibleCount > 0 ? '' : 'none';
+          section.style.display = visible ? '' : 'none';
         });
       }
-
-      filterInput?.addEventListener('input', updateFilter);
-
-      filterToggles.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          filterToggles.forEach(function(b) { b.classList.remove('is-active'); });
-          btn.classList.add('is-active');
-          currentStatus = btn.dataset.filterStatus || 'all';
-          updateFilter();
-        });
-      });
+      input?.addEventListener('input', update);
     })();
   </script>
-
   <Footer />
 </BaseLayout>

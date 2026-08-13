@@ -2,27 +2,27 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
   "name": "io.localcloud/server",
   "description": "Stdio MCP server for safely running and inspecting LocalCloud, the local Google Cloud emulator.",
-  "status": "draft",
+  "status": "active",
   "repository": {
     "url": "https://github.com/LocalGCloud/LocalGCloud.github.io",
     "source": "github",
-    "directory": "packages/localcloud-mcp-server"
+    "subfolder": "packages/localcloud-mcp-server"
   },
   "version": "0.1.0",
   "packages": [
     {
-      "registryType": "npm",
-      "registryBaseUrl": "https://registry.npmjs.org",
+      "registry_type": "npm",
+      "registry_base_url": "https://registry.npmjs.org",
       "identifier": "@localcloud/localcloud-mcp-server",
       "version": "0.1.0",
       "transport": {
         "type": "stdio"
       },
-      "runtimeHint": "npx -y @localcloud/localcloud-mcp-server"
+      "runtime_hint": "npx"
     }
   ],
   "remotes": [],
-  "license": "Apache-2.0",
+  "license": "LicenseRef-LocalCloud-Proprietary",
   "icon": "https://local.cloud/brand/localcloud-mark.svg",
   "homepage": "https://local.cloud/",
   "documentation": "https://local.cloud/docs/",

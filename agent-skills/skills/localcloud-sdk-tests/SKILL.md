@@ -22,10 +22,10 @@ Ask only for information the repo and tools cannot provide.
 
 ## LocalCloud setup assumptions
 
-- LocalCloud runs from Docker image `jaysen2apache/localcloud`.
-- SDKs use standard Google Cloud libraries pointed at localhost endpoints.
-- Common env vars include `GOOGLE_CLOUD_PROJECT=local-project`, `STORAGE_EMULATOR_HOST=http://localhost:24081`, `PUBSUB_EMULATOR_HOST=localhost:24082`, `FIRESTORE_EMULATOR_HOST=localhost:24083`, and `BIGQUERY_EMULATOR_HOST=http://localhost:24087`.
-- No real GCP credentials, account, or billing project is required for local tests.
+- Start through the host CLI and load `eval "$(localcloud env)"` into the test process.
+- The reviewed default project is `local-gcp-project`; trust all generated endpoint values because host ports may be remapped.
+- SDK compatibility depends on service, client version, transport, and operation; there is no blanket language matrix.
+- Confirm the governing proprietary license permits the intended use before running LocalCloud.
 
 ## Step-by-step workflow
 
@@ -45,7 +45,7 @@ A valid verification exercises the real SDK client against LocalCloud and assert
 
 ## Known gaps / when to fall back to real GCP
 
-LocalCloud is for development, testing, CI, and demos. For production-readiness, unset emulator variables and run a separate real-GCP validation pass only when the user intentionally provides credentials and target project configuration.
+For an authorized production-readiness pass, unset emulator variables in a clean process and use intentionally supplied credentials and target configuration. Organization/team CI and commercial workflows are excluded by the reviewed proprietary license.
 
 ## Expected output
 
@@ -55,6 +55,6 @@ Return language/framework detected, SDK clients updated, env vars scoped, local 
 
 - [SDK test workflow details](references/sdk-tests.md)
 - [Trigger prompt examples](references/triggers.md)
-- SDK examples: https://local.cloud/docs/sdk-examples/
-- Compatibility: https://local.cloud/compatibility/
-- Services: https://local.cloud/services/
+- SDK examples: <https://local.cloud/docs/sdk-examples/>
+- Compatibility: <https://local.cloud/compatibility/>
+- Services: <https://local.cloud/services/>

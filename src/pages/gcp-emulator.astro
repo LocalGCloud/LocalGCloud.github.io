@@ -2,7 +2,8 @@
 import LandingLayout from '../layouts/LandingLayout.astro';
 import Callout from '../components/Callout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
-import { services, serviceCategoryOrder, serviceCategoryMeta } from '../data/services';
+import { docsContract } from '../data/docs-contract';
+import { availableServiceCount, publishedServiceCount, services, serviceCategoryOrder, serviceCategoryMeta } from '../data/services';
 import {
   createBreadcrumbSchema,
   createSoftwareApplicationSchema,
@@ -12,8 +13,6 @@ import {
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
-const defaultOn = services.filter(s => s.enabled);
-const optIn = services.filter(s => !s.enabled);
 
 const categoryGroups = serviceCategoryOrder
   .map(cat => ({
@@ -27,27 +26,23 @@ const categoryGroups = serviceCategoryOrder
 const faqItems = [
   {
     q: 'What is a GCP emulator?',
-    a: 'A GCP emulator is a local program or container that mimics the behavior of real Google Cloud Platform services — allowing developers to write, test, and debug cloud applications entirely on their own machine without connecting to Google Cloud. Instead of provisioning real cloud resources, an emulator runs locally and responds to the same APIs, gRPC endpoints, and SDK calls that a real GCP service would.',
+    a: 'A GCP emulator implements bounded local workflows for selected Google Cloud APIs. It is not production Google Cloud, so review each service limitation and validate against real Google Cloud before deployment.',
   },
   {
-    q: 'Does Google provide official GCP emulators?',
-    a: 'Google provides official emulators for only 3 services: Pub/Sub, Firestore, and Spanner. For everything else — BigQuery, Bigtable, Cloud Storage, and 15+ more services — there is no official local option. LocalCloud fills this gap by bundling official emulators with custom and third-party ones into a single Docker container.',
+    q: 'Can I use Google Cloud SDKs?',
+    a: 'Use the client libraries listed for each documented service workflow after exporting the actual local endpoints with localcloud env. Compatibility varies by service and client profile.',
   },
   {
-    q: 'How is LocalCloud different from running individual emulators?',
-    a: 'Individual emulators require separate binaries, separate startup commands, separate port management, and separate environment variable configuration for each service. LocalCloud bundles 20+ services into one Docker container with one startup command, one env export, and a built-in web console to inspect the entire runtime in one place.',
-  },
-  {
-    q: 'Can I use LocalCloud with my existing GCP SDK code?',
-    a: 'Yes. LocalCloud speaks the same gRPC and REST protocols as real GCP. Your Python, Go, Java, and Node.js SDKs work without code changes — just set environment variables to point at localhost instead of googleapis.com. When you\'re ready for production, unset those variables and your code connects to real GCP.',
+    q: 'Which services are included?',
+    a: `LocalCloud currently provides ${availableServiceCount} services, with Firestore clearly marked as coming soon. Google Sheets is supported as an integration rather than listed as a LocalCloud service.`,
   },
   {
     q: 'Is LocalCloud free?',
-    a: 'LocalCloud is free for developers. See the licensing page for the applicable terms.',
+    a: 'Use is governed by the proprietary LocalCloud license. It permits limited non-commercial personal use by an Individual Developer acting personally; review the governing license before use.',
   },
   {
-    q: 'Does LocalCloud work in CI/CD pipelines?',
-    a: 'Yes. LocalCloud runs in any environment with Docker support — GitHub Actions, GitLab CI, Jenkins, CircleCI, and more. Add it as a service container and your integration tests run against emulated GCP services with zero cloud cost per pipeline execution.',
+    q: 'Can I use LocalCloud in CI?',
+    a: 'The runtime can be containerized, but organization and team-CI use is excluded by the current governing license. Do not infer legal permission from technical tier availability.',
   },
 ];
 
@@ -78,7 +73,7 @@ const structuredData = [
 
 <LandingLayout
   title="GCP Emulator — Run Google Cloud Services Locally in Docker"
-  description="Run 20+ Google Cloud services locally with LocalCloud's all-in-one GCP emulator. BigQuery, Pub/Sub, Firestore, Spanner, Bigtable, Cloud Storage, and more in a single Docker container. Same SDKs, same APIs, zero code changes."
+  description={`Run ${availableServiceCount} Google Cloud services locally with LocalCloud. Install the host CLI, export actual loopback endpoints, and review per-service workflows.`}
   {structuredData}
 >
   <!-- HERO -->
@@ -91,11 +86,11 @@ const structuredData = [
         </span>
         <h1 class="mt-4">Run Google Cloud locally in one Docker container</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          LocalCloud gives developers local BigQuery, Pub/Sub, Firestore, Spanner, Bigtable, Cloud Storage, and 15+ more GCP services — using standard Google Cloud SDKs with no application code changes.
+          LocalCloud provides {availableServiceCount} Google Cloud services, with upcoming additions clearly marked. Use the host CLI to start a loopback-bound instance and export its actual SDK endpoint settings.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href={`${base}docs/`} class="site-button site-button--primary">Start in 60 seconds</a>
-          <a href={`${base}services/`} class="site-button site-button--secondary">View all 20+ services</a>
+          <a href={`${base}docs/`} class="site-button site-button--primary">Start with the CLI</a>
+          <a href={`${base}services/`} class="site-button site-button--secondary">View {publishedServiceCount} reviewed service guides</a>
           <a href={`${base}docs/localcloud-vs-google-emulators/`} class="site-button site-button--secondary">Compare with Google emulators</a>
           <a href={`${base}localstack-for-google-cloud/`} class="site-button site-button--secondary">LocalStack for Google Cloud?</a>
         </div>
@@ -103,19 +98,19 @@ const structuredData = [
 
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">20+</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">GCP services</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Databases, messaging, storage, analytics, security, and compute — all in one container.</p>
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">{availableServiceCount}</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Available services</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Databases, messaging, storage, analytics, security, and compute in one container.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">1</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Docker command</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">No per-service binaries. No port juggling. One docker run starts everything.</p>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Managed instance</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">One CLI lifecycle with persistent data and dynamically resolved loopback ports.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">$0</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Cloud costs</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">No cloud account, no credentials, no billing. Free for individual developers.</p>
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">License</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Review before use</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The proprietary license governs use; technical tiers do not grant legal permission.</p>
         </article>
       </div>
     </div>
@@ -127,30 +122,20 @@ const structuredData = [
       <div class="reveal">
         <h2>GCP local development is fragmented</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Google provides individual emulators for only 3 services. For the other 17+ GCP services your team reaches for daily — BigQuery, Bigtable, Cloud Storage, Secret Manager, Cloud Tasks — there is no official local option. Teams cobble together emulators, mocks, and real cloud projects, creating slow, expensive, and inconsistent development environments.
+          Individual emulator processes have separate startup, port, and environment contracts. LocalCloud provides one managed lifecycle for bounded workflows across its registry, while each service page records evidence and limitations.
         </p>
       </div>
 
-      <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 reveal">
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 reveal">
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">3 services</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Google's emulators</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Google only provides emulators for Pub/Sub, Firestore, and Spanner. No BigQuery, no Storage, no Bigtable.</p>
+          <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">Per-service</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Compatibility</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Every published workflow needs an evidence state and explicit local-emulation limits.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">3+ processes</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">To manage</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Each Google emulator runs as a separate binary with its own port, env vars, and startup command.</p>
-        </article>
-        <article class="site-panel site-panel--soft p-5">
-          <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">$100-500+</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Per dev / month</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Teams using real GCP dev projects spend hundreds per developer monthly on non-production cloud usage.</p>
-        </article>
-        <article class="site-panel site-panel--soft p-5">
-          <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">Days</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">To onboard devs</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">New hires spend their first week configuring GCP projects, IAM roles, and billing instead of writing code.</p>
+          <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">One CLI</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Managed lifecycle</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The CLI selects loopback ports, starts or reuses an instance, and exports its actual endpoint map.</p>
         </article>
       </div>
     </div>
@@ -166,7 +151,7 @@ const structuredData = [
         </span>
         <h2 class="mt-4">One runtime, one console, one handoff</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud wraps official, custom, and third-party emulators behind a single gateway. One Docker command starts 20+ services. One endpoint exports all environment variables. One built-in console shows the health of everything.
+          LocalCloud wraps official, custom, and third-party emulators behind a managed local runtime. The host CLI starts a loopback-bound instance, exports actual environment values, and opens the built-in console.
         </p>
         <p class="mt-4 text-base leading-7 text-[var(--text-2)]">
           Before relying on a local workflow, review the <a href={`${base}compatibility/`} class="font-medium text-[var(--accent-strong)]">documented compatibility and limitations</a> for the services your application uses.
@@ -176,23 +161,23 @@ const structuredData = [
       <div class="mt-8 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel p-6">
           <span class="site-kicker">01</span>
-          <h3 class="mt-3 text-xl">20+ services, one container</h3>
+          <h3 class="mt-3 text-xl">Registry-backed service catalog</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">
-            BigQuery, Pub/Sub, Firestore, Spanner, Bigtable, Cloud Storage, Memorystore, Secret Manager, Cloud Tasks, Cloud Logging, Cloud Monitoring, Cloud Workflows, and more — all started with a single <code>docker run</code>.
+            Browse {publishedServiceCount} public service guides: {availableServiceCount} available services and Firestore marked as coming soon.
           </p>
         </article>
         <article class="site-panel p-6">
           <span class="site-kicker">02</span>
-          <h3 class="mt-3 text-xl">Same SDKs, zero code changes</h3>
+          <h3 class="mt-3 text-xl">SDK-shaped local workflows</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">
-            LocalCloud speaks real GCP wire protocols. Your Python, Go, Java, and Node.js SDKs work unchanged. Set environment variables to localhost, unset them for production.
+            Export local endpoint values with <code>localcloud env</code>. Client and operation support varies by service; validate the production path against real Google Cloud.
           </p>
         </article>
         <article class="site-panel p-6">
           <span class="site-kicker">03</span>
           <h3 class="mt-3 text-xl">Built-in web console</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">
-            Dashboard, data browser, SQL editor, log viewer, and settings — all at localhost:24080. No terminal-only workflows, no context switching between services.
+            The console URL is returned by the CLI and may use a dynamically remapped loopback port. Use it to inspect service health and bounded local data workflows.
           </p>
         </article>
       </div>
@@ -205,7 +190,7 @@ const structuredData = [
       <div class="reveal">
         <h2>What you can run locally</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud covers the Google Cloud services development teams reach for first. Compare this to Google&rsquo;s 3 official emulators.
+          Each available service lists its documented local workflows. Planned additions are labeled separately.
         </p>
       </div>
 
@@ -214,25 +199,18 @@ const structuredData = [
           <thead>
             <tr>
               <th class="text-left p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-3)] bg-[var(--surface-2)]">Service</th>
-              <th class="text-center p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-3)] bg-[var(--surface-2)]">Google Emulator</th>
+              <th class="text-center p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-3)] bg-[var(--surface-2)]">Availability</th>
               <th class="text-center p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-3)] bg-[var(--surface-2)]">LocalCloud</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td class="p-3 font-medium">BigQuery</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅ ~96% SQL</td></tr>
-            <tr class="bg-[var(--surface-2)]"><td class="p-3 font-medium">Pub/Sub</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td><td class="p-3 text-center text-[var(--brand-green)]">✅ + persistence</td></tr>
-            <tr><td class="p-3 font-medium">Firestore</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td></tr>
-            <tr class="bg-[var(--surface-2)]"><td class="p-3 font-medium">Spanner</td><td class="p-3 text-center text-[var(--brand-yellow)]">⚠️ In-memory</td><td class="p-3 text-center text-[var(--brand-green)]">✅ + persistence</td></tr>
-            <tr><td class="p-3 font-medium">Bigtable</td><td class="p-3 text-center text-[var(--brand-yellow)]">⚠️ In-memory</td><td class="p-3 text-center text-[var(--brand-green)]">✅ + persistence</td></tr>
-            <tr class="bg-[var(--surface-2)]"><td class="p-3 font-medium">Cloud Storage</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td></tr>
-            <tr><td class="p-3 font-medium">Memorystore</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td></tr>
-            <tr class="bg-[var(--surface-2)]"><td class="p-3 font-medium">Secret Manager</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td></tr>
-            <tr><td class="p-3 font-medium">Cloud Tasks</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td></tr>
-            <tr class="bg-[var(--surface-2)]"><td class="p-3 font-medium">Cloud Logging</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td></tr>
-            <tr><td class="p-3 font-medium">Cloud Monitoring</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td></tr>
-            <tr class="bg-[var(--surface-2)]"><td class="p-3 font-medium">Cloud Workflows</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td></tr>
-            <tr><td class="p-3 font-medium">Web Console</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅ Built-in</td></tr>
-            <tr class="bg-[var(--surface-2)]"><td class="p-3 font-medium">Terraform support</td><td class="p-3 text-center text-[var(--brand-red)]">—</td><td class="p-3 text-center text-[var(--brand-green)]">✅</td></tr>
+            {services.map((service) => (
+              <tr>
+                <td class="p-3 font-medium">{service.name}</td>
+                <td class="p-3 text-center">{service.catalogState === 'coming-soon' ? 'Coming soon' : 'Available'}</td>
+                <td class="p-3 text-center">{service.catalogState === 'coming-soon' ? 'Roadmap addition' : `${service.supported.length} documented workflows`}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -275,37 +253,37 @@ const structuredData = [
         <article class="site-panel p-5">
           <span class="site-kicker">Local development</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Build and test GCP applications on your laptop with sub-millisecond latency. No cloud account, no credentials, no internet required. Works on planes and behind firewalls.
+            Run bounded workflows on loopback endpoints. Runtime telemetry and other outbound features exist; review privacy controls before relying on offline operation.
           </p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">CI/CD testing</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Replace real GCP in your CI pipeline with a LocalCloud service container. Every PR gets its own isolated GCP environment at zero cloud cost per pipeline run.
+            Containerized test workflows remain technically possible, but the current governing license excludes organization and team-CI use. Review it before adopting this pattern.
           </p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">BigQuery pipeline testing</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Finally test BigQuery pipelines locally. Execute SQL, DDL, DML, and scripting against a DuckDB-backed emulator — no cloud query costs during development.
+            Exercise 10 documented DuckDB-backed BigQuery workflows locally, including datasets, tables, queries, scripting, and API profiles.
           </p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Developer onboarding</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            New hires run one Docker command and have a full GCP environment. No IAM setup, no billing configuration, no waiting for cloud project approvals. Minutes, not days.
+            The CLI can standardize local startup, but organization and onboarding use must comply with the governing proprietary license.
           </p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Terraform validation</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Run terraform plan, apply, and destroy against local emulators using your existing .tf files. Validate infrastructure changes before they touch real cloud resources.
+            Use the documented endpoint-only or transparent-network workflow for qualified resources, then validate against real Google Cloud before production.
           </p>
         </article>
         <article class="site-panel p-5">
-          <span class="site-kicker">Offline development</span>
+          <span class="site-kicker">Outbound-aware operation</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Develop, demo, and test GCP applications without an internet connection. Perfect for conferences, flights, secure environments, and locations with unreliable connectivity.
+            Core local workflows may continue after the image is present, but telemetry, update checks, licensing, IAM, and configured scheduler targets can make outbound requests.
           </p>
         </article>
       </div>
@@ -333,25 +311,19 @@ gcloud beta emulators firestore start --host-port=localhost:24083
 gcloud components install spanner-emulator
 gcloud emulators spanner start --host-port=localhost:24085
 
-# That's 3 services — what about BigQuery?
-# No official emulator exists.</code></pre>
+# These are separate emulator processes.
+# This comparison does not claim an exhaustive vendor count.</code></pre>
         </div>
 
         <div class="site-panel p-6" style="background: linear-gradient(135deg, rgba(25, 31, 41, 0.98), rgba(18, 23, 32, 0.98));">
           <span style="color: rgba(255,255,255,0.7);" class="site-kicker">LocalCloud</span>
-          <pre class="mt-4 border-0 bg-transparent"><code class="text-[0.8rem] leading-[1.7]" style="color: #e8eaed;">docker run -d \
-  -p 24080:24080 -p 24081:24081 \
-  -p 24082-24084:24082-24084 \
-  -p 24085:24085 -p 24086:24086 \
-  -p 24087:24087 -p 24088:24088 \
-  -p 6379:24089 \
-  -m 4g --name localcloud \
-  jaysen2apache/localcloud
+          <pre class="mt-4 border-0 bg-transparent"><code class="text-[0.8rem] leading-[1.7]" style="color: #e8eaed;">{docsContract.cli.installCommand}
+localcloud doctor
+localcloud start
+eval "$(localcloud env)"
+localcloud console
 
-eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
-
-# 20+ services, one command.
-# BigQuery, Storage, Bigtable included.</code></pre>
+# Use the URLs and endpoint values returned by the CLI.</code></pre>
         </div>
       </div>
     </div>
@@ -382,7 +354,7 @@ eval "$(curl -s http://localhost:24080/_localcloud/env?format=shell)"
           <div>
             <h2 style="color: #e8eaed;">Start developing against GCP locally</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              20+ GCP services in one Docker container. Same SDKs, same APIs, zero code changes. Free for individual developers.
+              Use the CLI to start bounded local workflows, then review service evidence and the governing proprietary license.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

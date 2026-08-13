@@ -22,9 +22,14 @@ describe('refusal behavior', () => {
     expect(result.isError).toBe(true);
   });
 
-  it('keeps gcloud dry-run by default', async () => {
+  it('keeps gcloud dry-run only until runtime-generated overrides can be validated', async () => {
     const result = await handleGcpClient({ args: ['pubsub', 'topics', 'list'] });
     expect(result.isError).toBeUndefined();
     expect(result.structuredContent.dryRun).toBe(true);
+    expect(result.structuredContent).not.toHaveProperty('env');
+
+    const execution = await handleGcpClient({ args: ['pubsub', 'topics', 'list'], execute: true });
+    expect(execution.isError).toBe(true);
+    expect(execution.structuredContent.executionAvailable).toBe(false);
   });
 });

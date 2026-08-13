@@ -1,189 +1,81 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Bigtable Emulator Features
-description: Feature support for LocalCloud's extended Bigtable emulator with SQLite/PostgreSQL persistence, change streams, and materialized views.
+description: Evidence-scoped Bigtable behavior observed in a cached dependency artifact, with LocalCloud release qualification limits.
 ---
 
-# Bigtable Emulator Coverage
+import Callout from '../../components/Callout.astro';
+import { getDocumentationService } from '../../data/docs-contract';
 
-This page documents the feature coverage of LocalCloud's extended Bigtable emulator (`bigtable-emulator-extended`), which adds persistence, change streams, continuous materialized views, and additional Admin API support on top of the upstream Google Cloud Bigtable emulator.
+export const bigtable = getDocumentationService('bigtable');
 
-The emulator is compatible with standard Bigtable SDKs via the `BIGTABLE_EMULATOR_HOST` environment variable.
+# Bigtable emulator feature reference
 
-## Support legend
+Use this page to understand the bounded Bigtable behavior observed during the documentation audit. Do not treat it as production Bigtable parity or as proof of behavior in a released LocalCloud image.
 
-| Status | Meaning |
-| --- | --- |
-| <span class="support-badge support-badge--supported">Supported</span> | Provides functional and API parity to Bigtable production capabilities. |
-| <span class="support-badge support-badge--partial">Supported*</span> | Exposes and accepts the API but may not enforce behavior (e.g., IAM stubs, metadata-only backups). |
-| <span class="support-badge support-badge--unsupported">Not supported</span> | Unsupported, cloud-only, outside emulator scope, or returns `Unimplemented`. |
+<Callout type="warning" title="Dependency identity is unresolved">
+LocalCloud builds from a mutable `v0.0.1` input with checksum verification disabled. The inspected machine-local cached module, local tag, and current dependency checkout differ. Extended behavior below was observed in the cached artifact and remains **release-unverified** until an immutable dependency and assembled LocalCloud image are qualified.
+</Callout>
 
-## Support summary
+## Connection and product persistence
 
-| Area | Status | What this means for developers |
+| Surface | Value | Boundary |
 | --- | --- | --- |
-| Data API (reads and writes) | <span class="support-badge support-badge--supported">Supported</span> | `ReadRows`, `MutateRow`, `MutateRows`, `CheckAndMutateRow`, `ReadModifyWriteRow`, and `SampleRowKeys` execute locally with full filter and mutation support. |
-| Read filters | <span class="support-badge support-badge--supported">Supported</span> | All 17 filter types including composite (chain, interleave, condition), regex, range, limiting, and transformer filters. |
-| Table Admin API | <span class="support-badge support-badge--supported">Supported</span> | Table CRUD, column family management with GC rules, `DropRowRange`, consistency tokens, and deletion protection. |
-| Instance Admin API | <span class="support-badge support-badge--supported">Supported</span> | Instance, cluster, and app profile CRUD with cascading deletes and partial updates. |
-| Change streams | <span class="support-badge support-badge--supported">Supported</span> | Single-partition streaming with continuation tokens, start-time filtering, and heartbeats. |
-| Continuous materialized views | <span class="support-badge support-badge--supported">Supported</span> | Write-time re-keying with automatic shadow table creation and propagation. LocalCloud-extended feature. |
-| Backups | <span class="support-badge support-badge--partial">Supported*</span> | Full CRUD and `CopyBackup` for metadata. `RestoreTable` creates table with schema but no data restore. |
-| Authorized and logical views | <span class="support-badge support-badge--partial">Supported*</span> | Metadata CRUD works. No access enforcement on reads/writes. |
-| IAM | <span class="support-badge support-badge--partial">Supported*</span> | Permissive stubs — `GetIamPolicy`, `SetIamPolicy`, and `TestIamPermissions` always succeed. |
-| Persistence | <span class="support-badge support-badge--supported">Supported</span> | SQLite3 (default) or PostgreSQL backends. All entities persist across restarts. |
-| GoogleSQL for Bigtable | <span class="support-badge support-badge--unsupported">Not supported</span> | `PrepareQuery` and `ExecuteQuery` return `Unimplemented`. |
-| Replication and multi-cluster | <span class="support-badge support-badge--unsupported">Not supported</span> | Single-process emulator. No replication, failover, or multi-cluster consistency. |
+| Primary API | gRPC on `localhost:24084` | Standard unauthenticated emulator endpoint. |
+| SDK variable | `BIGTABLE_EMULATOR_HOST=localhost:24084` | Client compatibility must still be tested per SDK/version. |
+| LocalCloud backing store | PostgreSQL under the mounted `/var/lib/localcloud` volume | The standalone cached artifact can also use SQLite; LocalCloud Docker is configured for PostgreSQL. |
+| Aggregate state | `release-unverified` | No identified assembled image qualification exists. |
 
-## Data API
+## Meaning of a positive state
 
-| Area | Status | Covered | Limits |
-| --- | --- | --- | --- |
-| `ReadRows` | <span class="support-badge support-badge--supported">Supported</span> | Streaming reads with full filter pipeline, row key ranges, row key sets, and multiple row ranges. | No read throttling or quota enforcement. |
-| `MutateRow` | <span class="support-badge support-badge--supported">Supported</span> | Atomic single-row mutations: `SetCell`, `DeleteFromColumn`, `DeleteFromFamily`, `DeleteFromRow`. | No server-side timestamp assignment differences from production. |
-| `MutateRows` | <span class="support-badge support-badge--supported">Supported</span> | Streaming batch mutations with per-entry error reporting and status codes. | No batch size limits enforced. |
-| `CheckAndMutateRow` | <span class="support-badge support-badge--supported">Supported</span> | Predicate-based conditional mutations with true/false mutation branches. | No production-grade atomicity guarantees in concurrent scenarios. |
-| `ReadModifyWriteRow` | <span class="support-badge support-badge--supported">Supported</span> | Atomic increment (`AddToCell` for int64 sum) and append operations. | Only int64 sum aggregation supported. HyperLogLog and other aggregate types return raw input unchanged. |
-| `SampleRowKeys` | <span class="support-badge support-badge--supported">Supported</span> | Returns approximate row key samples for partitioning. | Sampling is approximate; no production-grade distribution guarantees. |
-| `PingAndWarm` | <span class="support-badge support-badge--supported">Supported</span> | No-op, always succeeds. | — |
-| `PrepareQuery` | <span class="support-badge support-badge--unsupported">Not supported</span> | Returns `Unimplemented`. | GoogleSQL for Bigtable not supported. |
-| `ExecuteQuery` | <span class="support-badge support-badge--unsupported">Not supported</span> | Returns `Unimplemented`. | GoogleSQL for Bigtable not supported. |
+“Implemented” here means suitable for the documented bounded local workflow in the inspected artifact. It does **not** mean full API, topology, consistency, security, connector, quota, or operational parity.
 
-## Read filters
+## Current operation contract
 
-| Filter | Status | Behavior | Limits |
-| --- | --- | --- | --- |
-| Chain | <span class="support-badge support-badge--supported">Supported</span> | Applies multiple filters in sequence, each filtering the output of the previous. | — |
-| Interleave | <span class="support-badge support-badge--supported">Supported</span> | Union of filter results with deduplication of matching cells. | — |
-| Condition | <span class="support-badge support-badge--supported">Supported</span> | If/then/else branching — applies true or false filter based on predicate match. | — |
-| `BlockAllFilter` | <span class="support-badge support-badge--supported">Supported</span> | Drops all cells. | — |
-| `PassAllFilter` | <span class="support-badge support-badge--supported">Supported</span> | Passes all cells unchanged. | — |
-| `RowKeyRegexFilter` | <span class="support-badge support-badge--supported">Supported</span> | Binary regex matching against row keys. | — |
-| `FamilyNameRegexFilter` | <span class="support-badge support-badge--supported">Supported</span> | Regex matching against column family names. | — |
-| `ColumnQualifierRegexFilter` | <span class="support-badge support-badge--supported">Supported</span> | Regex matching against column qualifiers. | — |
-| `ValueRegexFilter` | <span class="support-badge support-badge--supported">Supported</span> | Regex matching against cell values. | — |
-| `ColumnRangeFilter` | <span class="support-badge support-badge--supported">Supported</span> | Range by column qualifier within a family, with inclusive/exclusive bounds. | — |
-| `TimestampRangeFilter` | <span class="support-badge support-badge--supported">Supported</span> | Microsecond-precision range filtering on cell timestamps. | — |
-| `ValueRangeFilter` | <span class="support-badge support-badge--supported">Supported</span> | Range filtering on cell values with inclusive/exclusive bounds. | — |
-| `CellsPerRowLimitFilter` | <span class="support-badge support-badge--supported">Supported</span> | Limits number of cells returned per row. | — |
-| `CellsPerRowOffsetFilter` | <span class="support-badge support-badge--supported">Supported</span> | Skips first N cells per row. | — |
-| `CellsPerColumnLimitFilter` | <span class="support-badge support-badge--supported">Supported</span> | Limits number of versions per column. | — |
-| `RowSampleFilter` | <span class="support-badge support-badge--supported">Supported</span> | Probabilistic row sampling. | — |
-| `StripValueTransformer` | <span class="support-badge support-badge--supported">Supported</span> | Removes cell values while keeping metadata (family, qualifier, timestamp). | — |
-| `ApplyLabelTransformer` | <span class="support-badge support-badge--supported">Supported</span> | Adds custom string labels to matched cells. | — |
+<table>
+  <thead><tr><th>Operation area</th><th>State</th><th>Boundary</th></tr></thead>
+  <tbody>
+    {bigtable.operations.map((operation) => (
+      <tr><td>{operation.label}</td><td><code>{operation.status}</code></td><td>{operation.limitations.join(' ')}</td></tr>
+    ))}
+  </tbody>
+</table>
 
-## Table Admin API
+## Cached-artifact feature interpretation
 
-| Area | Status | Covered | Limits |
-| --- | --- | --- | --- |
-| `CreateTable` | <span class="support-badge support-badge--supported">Supported</span> | Create tables with column families, GC rules, and initial row key splits. | — |
-| `ListTables` | <span class="support-badge support-badge--supported">Supported</span> | List all tables in an instance. | — |
-| `GetTable` | <span class="support-badge support-badge--supported">Supported</span> | Returns table metadata including deletion protection status. | — |
-| `UpdateTable` | <span class="support-badge support-badge--supported">Supported</span> | Update `deletion_protection` and `automated_backup_policy` fields. | — |
-| `DeleteTable` | <span class="support-badge support-badge--supported">Supported</span> | Respects deletion protection. Returns error if protection enabled. | — |
-| `ModifyColumnFamilies` | <span class="support-badge support-badge--supported">Supported</span> | Create, update, and delete column families with GC rules (`MaxNumVersions`, `MaxAge`, union, intersection). | — |
-| `DropRowRange` | <span class="support-badge support-badge--supported">Supported</span> | Clear row range by prefix or delete all rows from table. | — |
-| `GenerateConsistencyToken` | <span class="support-badge support-badge--supported">Supported</span> | Returns consistency token for replication checks. | — |
-| `CheckConsistency` | <span class="support-badge support-badge--supported">Supported</span> | Always returns consistent (single-process emulator). | — |
-| `UndeleteTable` | <span class="support-badge support-badge--unsupported">Not supported</span> | Returns `Unimplemented`. | — |
-| Snapshot APIs | <span class="support-badge support-badge--unsupported">Not supported</span> | `SnapshotTable`, `GetSnapshot`, `ListSnapshots`, `DeleteSnapshot`, `CreateTableFromSnapshot` all return `Unimplemented`. Deprecated upstream. | — |
-
-## Instance Admin API
-
-| Area | Status | Covered | Limits |
-| --- | --- | --- | --- |
-| Instance CRUD | <span class="support-badge support-badge--supported">Supported</span> | `CreateInstance` (auto-creates clusters, sets type/display name/labels), `GetInstance`, `ListInstances`, `UpdateInstance`, `PartialUpdateInstance`, `DeleteInstance` (cascades to tables, clusters, app profiles). | No billing or quota enforcement. |
-| Cluster CRUD | <span class="support-badge support-badge--supported">Supported</span> | `CreateCluster`, `GetCluster`, `ListClusters`, `UpdateCluster`, `PartialUpdateCluster` (update `serve_nodes`), `DeleteCluster`. | Serve nodes and storage type stored but not enforced. |
-| App Profile CRUD | <span class="support-badge support-badge--supported">Supported</span> | `CreateAppProfile` (auto-sets `SingleClusterRouting` and `StandardIsolation` defaults), `GetAppProfile`, `ListAppProfiles`, `UpdateAppProfile`, `DeleteAppProfile`. | Routing policy stored but not enforced for reads/writes. |
-| IAM | <span class="support-badge support-badge--partial">Supported*</span> | `GetIamPolicy` returns stored policy or empty default. `SetIamPolicy` stores policy in memory. `TestIamPermissions` always returns all requested permissions. | Permissive stubs — no actual access control enforcement. |
-| `ListHotTablets` | <span class="support-badge support-badge--unsupported">Not supported</span> | Returns `Unimplemented`. | — |
-
-## Change streams and materialized views
-
-| Area | Status | Covered | Limits |
-| --- | --- | --- | --- |
-| `GenerateInitialChangeStreamPartitions` | <span class="support-badge support-badge--supported">Supported</span> | Returns one stable full-table partition token. | Single partition only. No partition-level row key range filtering. |
-| `ReadChangeStream` | <span class="support-badge support-badge--supported">Supported</span> | Streaming change events with continuation tokens, start-time filtering, configurable heartbeat duration (default 5s), and mutation type tracking (`set_cell`, `delete_from_column`, `delete_from_family`, `delete_from_row`). Microsecond-precision commit timestamps. | Single partition only. No multi-partition fan-out or partition merging. |
-| Change log storage | <span class="support-badge support-badge--supported">Supported</span> | SQL-backed `change_log_t` table with automatic append on `MutateRow`, `MutateRows`, and `ReadModifyWriteRow`. | — |
-| `CreateMaterializedView` | <span class="support-badge support-badge--supported">Supported</span> | SQL query parsing, composite key mapping with reordering, configurable key separator, optional source key appending, selective column family inclusion, automatic shadow table creation. LocalCloud-extended feature. | CMV SQL parser scoped to standard Bigtable CMV query format. No backfill of existing data. |
-| CMV write-time propagation | <span class="support-badge support-badge--supported">Supported</span> | Automatic propagation on `MutateRow`, `MutateRows`, `CheckAndMutateRow`, `ReadModifyWriteRow`. Delete propagation for `DeleteFromRow` and `DropRowRange`. | GC policy changes after CMV creation not reflected in shadow table. No `ModifyColumnFamilies` sync to shadow tables. |
-| `GetMaterializedView` | <span class="support-badge support-badge--supported">Supported</span> | Returns CMV metadata including query, deletion protection, and source table reference. | — |
-| `ListMaterializedViews` | <span class="support-badge support-badge--supported">Supported</span> | List all CMVs in an instance. | — |
-| `UpdateMaterializedView` | <span class="support-badge support-badge--supported">Supported</span> | Toggle deletion protection. Query is immutable after creation. | — |
-| `DeleteMaterializedView` | <span class="support-badge support-badge--supported">Supported</span> | Respects deletion protection. Removes shadow table. | — |
-
-## Backups, views, and protection
-
-| Area | Status | Covered | Limits |
-| --- | --- | --- | --- |
-| Backup CRUD | <span class="support-badge support-badge--partial">Supported*</span> | `CreateBackup`, `GetBackup`, `UpdateBackup` (expire time), `DeleteBackup`, `ListBackups` (by parent cluster). State is always `READY` immediately. | Metadata-only — no actual data snapshot is taken. |
-| `CopyBackup` | <span class="support-badge support-badge--partial">Supported*</span> | Clones backup metadata with `source_backup` reference. | Metadata copy only. |
-| `RestoreTable` | <span class="support-badge support-badge--partial">Supported*</span> | Creates new table with source table schema (column families and GC rules). | Schema restore only — no row data is restored. |
-| Authorized view CRUD | <span class="support-badge support-badge--partial">Supported*</span> | `CreateAuthorizedView`, `GetAuthorizedView`, `ListAuthorizedViews`, `UpdateAuthorizedView`, `DeleteAuthorizedView`. Deletion protection supported. | No access enforcement — reads/writes return full table data regardless of view restrictions. |
-| Logical view CRUD | <span class="support-badge support-badge--partial">Supported*</span> | `CreateLogicalView`, `GetLogicalView`, `ListLogicalViews`, `UpdateLogicalView`, `DeleteLogicalView`. Deletion protection supported. | Query strings stored but not executed. |
-| Deletion protection | <span class="support-badge support-badge--supported">Supported</span> | Enforced for tables, materialized views, authorized views, logical views. `DeleteTable`/`Delete*` returns error when protection enabled. | Not supported for instances. |
-
-## Garbage collection
-
-| Area | Status | Covered | Limits |
-| --- | --- | --- | --- |
-| `MaxNumVersions` | <span class="support-badge support-badge--supported">Supported</span> | Keeps only the N most recent cell versions per column. | — |
-| `MaxAge` | <span class="support-badge support-badge--supported">Supported</span> | Removes cells older than specified duration. | — |
-| Union and intersection rules | <span class="support-badge support-badge--supported">Supported</span> | Composite GC rules combining multiple policies. | — |
-| GC execution model | <span class="support-badge support-badge--supported">Supported</span> | Lazy GC applied at read and write time on a per-row basis. | Single-process model. No background GC compaction. |
-
-## Explicit non-production behavior
-
-| Area | Status | Tested behavior |
+| Area | Observed local behavior | Required boundary |
 | --- | --- | --- |
-| IAM policies | <span class="support-badge support-badge--partial">Supported*</span> | `SetIamPolicy` stores policy, `GetIamPolicy` returns it, `TestIamPermissions` returns all requested permissions. No access control enforcement. |
-| Backups | <span class="support-badge support-badge--partial">Supported*</span> | Full metadata lifecycle works. No actual data snapshot — `RestoreTable` recreates schema only. |
-| Authorized views | <span class="support-badge support-badge--partial">Supported*</span> | CRUD operations work. No read/write filtering — all data accessible regardless of view definition. |
-| Logical views | <span class="support-badge support-badge--partial">Supported*</span> | CRUD operations work. Query strings are stored but never executed. |
-| Consistency checks | <span class="support-badge support-badge--partial">Supported*</span> | `CheckConsistency` always returns consistent. Single-process emulator has no replication lag. |
-| Aggregate mutations | <span class="support-badge support-badge--partial">Supported*</span> | `AddToCell` and `MergeToCell` support int64 sum aggregation. HyperLogLog and other aggregate types return raw input without transformation. |
-| Change stream partitions | <span class="support-badge support-badge--partial">Supported*</span> | Single full-table partition only. No partition splitting, merging, or row key range filtering. |
+| Core Data API | Row reads, mutations, conditional mutations, read-modify-write, sampling, and filters. | Simplified local semantics; no production quota, concurrency, distribution, or performance guarantees. |
+| Table Admin | Table and family lifecycle, GC rules, ranges, consistency tokens, and deletion protection. | Undelete and snapshot APIs remain unsupported. |
+| Instance Admin | Instance lifecycle plus cluster and app-profile metadata CRUD. | Cluster topology, routing, isolation, replication, failover, autoscaling, and multi-region behavior are not enforced. |
+| Change streams | Single full-table partition, mutation records, continuation tokens, start time, and heartbeat behavior. | No real partition topology, splitting, merging, or assembled-image qualification. |
+| Backups | Backup metadata lifecycle and schema-only restore. | Rows are not snapshotted or restored; this is not a recovery guarantee. |
+| IAM | Policy-shaped calls and permissive responses. | Requested permissions can be granted without access-control enforcement; do not test security policy with this stub. |
+| Logical views | Metadata CRUD. | Stored queries are not executed. |
+| Materialized views | Local write-time shadow-table propagation. | No existing-row backfill; parser and schema synchronization are limited. |
 
-## Unsupported product areas
+## Unsupported production behavior
 
-| Area | Status | What to expect |
-| --- | --- | --- |
-| GoogleSQL for Bigtable | <span class="support-badge support-badge--unsupported">Not supported</span> | `PrepareQuery` and `ExecuteQuery` return `Unimplemented`. Use the Data API filter pipeline for queries. |
-| Replication and multi-cluster | <span class="support-badge support-badge--unsupported">Not supported</span> | Single-process emulator. No cross-cluster replication, automatic failover, or multi-cluster routing. |
-| Encryption (CMEK) | <span class="support-badge support-badge--unsupported">Not supported</span> | No customer-managed encryption key support. Data stored unencrypted in SQLite/PostgreSQL. |
-| Autoscaling | <span class="support-badge support-badge--unsupported">Not supported</span> | Node counts and storage type are stored as metadata but not enforced. No autoscaling behavior. |
-| Hot tablets and Key Visualizer | <span class="support-badge support-badge--unsupported">Not supported</span> | `ListHotTablets` returns `Unimplemented`. No Key Visualizer or performance profiling. |
-| Data Boost | <span class="support-badge support-badge--unsupported">Not supported</span> | No Data Boost read isolation. All reads go through the single emulator process. |
-| Snapshots (deprecated) | <span class="support-badge support-badge--unsupported">Not supported</span> | `SnapshotTable`, `GetSnapshot`, `ListSnapshots`, `DeleteSnapshot`, and `CreateTableFromSnapshot` return `Unimplemented`. These APIs are deprecated upstream. |
-| Connector parity | <span class="support-badge support-badge--unsupported">Not supported</span> | HBase, Beam, Spark, Flink, and Kafka connector compatibility is not tested. Standard gRPC SDK clients work. |
-| Schema bundles | <span class="support-badge support-badge--unsupported">Not supported</span> | No schema bundle management support. |
-| Production operations | <span class="support-badge support-badge--unsupported">Not supported</span> | Quota enforcement, billing, audit logging, monitoring metrics, and production-grade authentication are outside emulator scope. |
+- GoogleSQL `PrepareQuery` and `ExecuteQuery`.
+- Production replication, failover, multi-cluster routing, and multi-region consistency.
+- CMEK, HSM-backed encryption behavior, and production IAM enforcement.
+- Autoscaling, quotas, billing, audit logging, Key Visualizer, and production monitoring.
+- Broad connector parity for HBase, Beam, Spark, Flink, or Kafka without a tested matrix.
+- Snapshot and undelete APIs where the artifact returns `Unimplemented`.
 
-## Developer workflow coverage
+## Persistence and recovery
 
-Based on the supported features above, the emulator is suited for local workflows that need to:
+Within LocalCloud Docker, Bigtable data is intended to use PostgreSQL under the mounted LocalCloud volume. Do not describe SQLite as the LocalCloud default. Retaining a volume is necessary for container replacement; release qualification must also exercise restart and recovery behavior.
 
-- Set up instances, clusters, tables, and column families with GC rules in tests.
-- Read and write rows with full filter pipelines, conditional mutations, and atomic read-modify-write operations.
-- Test change stream consumers with realistic mutation events and continuation tokens.
-- Develop materialized view workflows with automatic write-time re-keying propagation.
-- Exercise backup and view management APIs for setup and teardown code paths.
-- Persist all state across emulator restarts via SQLite or PostgreSQL.
-- Run SDK-backed integration tests against a local endpoint using `BIGTABLE_EMULATOR_HOST`.
+The standalone cached artifact can support PostgreSQL or SQLite, but that artifact is not yet reconciled with the mutable build input or dependency HEAD.
 
-This is developer-environment support for local tests and CI, not a production implementation parity claim. Replication, encryption, autoscaling, quota enforcement, and production auth are outside the supported scope.
+## Publication exit criteria
 
-## Persistence and configuration
+Before changing these states to verified, record:
 
-The emulator supports two persistence backends:
-
-| Backend | Storage format | Default |
-| --- | --- | --- |
-| SQLite3 | BLOB binary, `AUTOINCREMENT` IDs | Yes |
-| PostgreSQL | BYTEA binary, `BIGSERIAL` IDs | No |
-
-All entities are persisted across restarts: rows, tables, instances, clusters, app profiles, materialized views (metadata and shadow table data), change log records, authorized views, backups, and logical views.
-
-**SDK integration:** Set `BIGTABLE_EMULATOR_HOST` to the emulator address. Standard Bigtable SDKs (Go, Python, Node.js, Java, etc.) connect automatically with unauthenticated gRPC.
-
-**Embedded usage:** The emulator can be embedded as a Go library via the `bttest` package for in-process testing.
+- immutable Bigtable source revision and module checksum;
+- dependency artifact identity;
+- assembled LocalCloud image digest;
+- gRPC qualification for core data, administration, change streams, views, and persistence;
+- durable test evidence; and
+- the LocalCloud release that consumed that evidence.

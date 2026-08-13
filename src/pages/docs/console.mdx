@@ -1,83 +1,47 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Web Console
-description: Built-in GCP Console-inspired interface for managing LocalCloud services.
+description: Inspect and mutate bounded LocalCloud state from the built-in console.
 ---
 
-# Web Console
+# Web console
 
-LocalCloud includes a built-in web console at `http://localhost:24080`. It is served directly by the running LocalCloud container, so the console is available as soon as the gateway is healthy.
-
-## Dashboard
-
-The dashboard is the fastest way to confirm the local runtime is ready:
-
-- **Service health grid** — green/red/yellow status indicators for each service
-- **Project info and uptime** — current project ID and container uptime
-- **Request counts** — per-service API call counts
-- **Quick actions** — Refresh, Reset All, Export environment variables
-
-## Service Explorer
-
-Deep-dive into individual services with built-in tooling:
-
-### BigQuery & Spanner
-- **SQL Editor** — write and execute queries with schema browsing
-- **Resizable editor panels** — drag to resize the query editor and results
-- **Schema detection** — browse datasets, tables, and column types
-
-### Cloud Storage
-- **File browser** — navigate buckets and folders in a tree view
-- **File preview** — click any object to view its contents
-- **Folder expansion** — drill into nested path structures
-
-### Memorystore (Redis)
-- **Key browser** — list all keys with type and TTL display
-- **Filtering** — search and filter keys by pattern
-- **Value preview** — view string, hash, list, set, and sorted set values
-
-## Data Browser
-
-Read-only preview across all services:
-
-| Service | What You Can Browse |
-|---------|-------------------|
-| Firestore | Collections and document JSON |
-| BigQuery | Datasets, table schemas, sample rows |
-| Cloud Storage | Buckets and object listings |
-| Spanner | Instances, databases, table details |
-| Secret Manager | Secret names (values redacted) |
-| Pub/Sub | Topics and subscription status |
-| Memorystore | Keys with types and TTL |
-
-## Logs Viewer
-
-Real-time request log viewer:
-
-- **Auto-tail** — configurable refresh interval (1–60 seconds)
-- **Service filtering** — show logs for specific services only
-- **Color-coded status** — HTTP status codes are color-coded for quick scanning
-
-## Usage & Cost Savings
-
-Track your local development impact:
-
-- **API request counts** per service
-- **Estimated GCP cost savings** from local development
-- **Pricing reference** — see what each API call would cost on real GCP
-
-## Settings
-
-Configure the console and export configuration:
-
-- **Auto-refresh interval** — control how often the dashboard updates
-- **Environment export** — copy env vars in shell, Docker Compose, or JSON format
-- **SDK setup examples** — ready-to-paste code for Python and Node.js
-
-## Opening the Console
+Open the console for the selected instance with the host CLI:
 
 ```bash
-open http://localhost:24080
+localcloud console
 ```
 
-The console is served directly by the Armeria gateway — no separate process needed.
+Trust the URL printed by the CLI because the gateway may be dynamically remapped from canonical port `24080`. Manual-Docker users on canonical ports can open `http://localhost:24080`.
+
+## Dashboard and service status
+
+The dashboard exposes runtime status, the selected project, request counts, and service health. Use `/health`, `/health/{service}`, `/readiness`, and `/services` for automation; the visual state is an operator aid rather than a production monitoring guarantee.
+
+## Data browser
+
+The Data Browser is **not read-only**. Depending on the selected service and current compatibility it can perform bounded mutations, including:
+
+- creating buckets and folders;
+- uploading and deleting Cloud Storage objects;
+- creating and deleting Pub/Sub topics;
+- publishing local Pub/Sub messages; and
+- using service-specific mutation forms exposed by the runtime.
+
+Treat console actions like API calls: use synthetic data, keep the selected project visible, and do not expose a permissive gateway outside loopback.
+
+Read and query views include service-specific datasets, schemas, objects, documents, secret metadata, messages, keys, logs, and metrics. Availability follows enabled services and their compatibility evidence; not every Google Cloud console operation exists locally.
+
+## SQL and service explorers
+
+BigQuery and Spanner expose query and schema tooling for documented local workflows. BigQuery and Spanner dependency behavior remains release-sensitive until a source revision and assembled image are qualified together. Validate production SQL semantics separately.
+
+The console also provides request logs and generated environment snippets. Generated values should be copied into the exact shell or process running local clients.
+
+## Usage and cost estimates
+
+Any displayed cost value is **indicative pricing only — not live Google Cloud rates**. It is not a bill, realized saving, or purchasing forecast. Pricing inputs and UI estimates can become stale; confirm the review date shown in the runtime and use current, authorized billing data for decisions.
+
+## Security boundary
+
+The console and many administrative paths are accessible even when IAM strict or `gcp-live` mode is enabled. Keep the runtime loopback-bound. Docker-socket access and transparent networking are separate opt-ins with broader host/network impact.

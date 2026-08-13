@@ -2,7 +2,7 @@ name: localcloud
 image: localcloud/localcloud-mcp-server:0.1.0
 title: LocalCloud MCP Server
 description: Stdio MCP server for LocalCloud, the local Google Cloud emulator.
-license: Apache-2.0
+license: LicenseRef-LocalCloud-Proprietary
 transport:
   type: stdio
 entrypoint:
@@ -17,11 +17,8 @@ links:
   source: https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/packages/localcloud-mcp-server
 icon: https://local.cloud/brand/localcloud-mark.svg
 env:
-  - name: LOCALCLOUD_MCP_ENABLE_GCP_CLIENT
-    default: '0'
-    description: Enable constrained gcloud execution after per-call confirmation.
   - name: LOCALCLOUD_MCP_ENABLE_STATE_RESET
-    default: '0'
+    default: "0"
     description: Enable LocalCloud reset endpoint calls after per-call confirmation.
 volumes:
   - name: docker-socket

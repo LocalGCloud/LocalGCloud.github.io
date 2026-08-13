@@ -1,52 +1,78 @@
-# Terraform LocalCloud Reference
+# Terraform LocalCloud reference
 
-## Endpoint setup
+## Endpoint-only setup
 
-```bash
-eval $(curl -s 'http://localhost:24080/_localcloud/env?format=terraform')
+Configure Terraform mode in the runtime before it starts:
+
+```yaml
+# localcloud.yaml
+environment:
+  LOCALCLOUD_TERRAFORM_MODE: "true"
 ```
 
-This configures `GOOGLE_*_CUSTOM_ENDPOINT` variables for LocalCloud services and sets `GOOGLE_APPLICATION_CREDENTIALS=/dev/null` for local auth bypass.
+```bash
+localcloud start
+eval "$(localcloud env --format terraform)"
+export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.localcloud/fake-service-account.json"
+curl -fsS http://localhost:24080/terraform/readiness?mode=endpoint
+```
+
+The CLI can remap the gateway port; use its actual readiness URL. Provider v7 requires valid fake service-account JSON, not `/dev/null`.
 
 ## Provider pattern
-
-Keep the standard provider:
 
 ```hcl
 terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 5.0"
+      version = "~> 7.0"
     }
   }
 }
 
 provider "google" {
-  project = "local-project"
+  project = "local-gcp-project"
   region  = "us-central1"
 }
 ```
 
-## Resources documented as good local candidates
+## Transparent mode
 
-- `google_storage_bucket`
-- `google_storage_bucket_object`
-- `google_pubsub_topic`
-- `google_pubsub_subscription`
-- `google_bigquery_dataset`
-- `google_bigquery_table`
-- `google_spanner_instance`
-- `google_spanner_database`
+BigQuery and some provider paths ignore custom endpoint variables. Configure transparent routing and Terraform mode before startup:
 
-## Resources to flag before use
+```yaml
+# localcloud.yaml
+transparent_network: true
+environment:
+  LOCALCLOUD_TERRAFORM_MODE: "true"
+```
 
-- `google_secret_manager_secret`, `google_secret_manager_secret_version`, and `google_cloud_tasks_queue` may be partial.
-- `google_project`, `google_project_iam_*`, `google_service_account`, `google_dns_*`, `google_sql_*`, and networking resources are not local validation targets unless docs change.
+Transparent mode also requires explicit LocalCloud DNS/HTTP/HTTPS routing, a trusted LocalCloud CA, and:
 
-## Acceptance criteria
+```bash
+curl -fsS http://localhost:24080/terraform/readiness?mode=transparent
+```
 
-- Existing Terraform provider stays `hashicorp/google`.
-- No real service-account key is introduced.
-- LocalCloud endpoint variables are scoped to local validation jobs.
-- Destroy or reset guidance is included for resources created by tests.
+## Currently contract-qualified resources
+
+- `google_project`
+- `google_secret_manager_secret`
+- `google_secret_manager_secret_version`
+- `google_cloud_tasks_queue`
+- `google_sql_database_instance`
+- `google_sql_database`
+- `google_sql_user`
+
+Do not promote other resources to verified without the provider version, routing mode, assembled image digest, and maintained qualification result.
+
+## Endpoint details
+
+- Storage includes `/storage/v1/`.
+- Pub/Sub and Bigtable Terraform endpoints use gateway port `24080`.
+- Spanner uses `http://localhost:24086/v1/`; this is REST, not PostgreSQL wire.
+- Cloud Tasks uses `/v2/`.
+- All generated Terraform endpoints end in `/`.
+- BigQuery requires transparent routing despite its generated custom endpoint.
+
+Use isolated state/backend, destroy local resources, and perform production validation separately in a clean environment.

@@ -1,0 +1,11 @@
+gcs:
+  buckets:
+    - name: localcloud-docs-bucket
+      objects:
+        - key: fixtures/hello.txt
+          content: Hello from LocalCloud
+pubsub:
+  topics:
+    - name: docs-events
+      subscriptions:
+        - name: docs-events-sub

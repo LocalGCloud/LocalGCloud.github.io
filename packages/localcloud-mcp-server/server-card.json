@@ -16,7 +16,7 @@
     "https://local.cloud/docs/seed-data/"
   ],
   "icon": "assets/icon.svg",
-  "license": "Apache-2.0",
+  "license": "LicenseRef-LocalCloud-Proprietary",
   "safety": {
     "requiresGcpCredentialsByDefault": false,
     "requiresBillingByDefault": false,

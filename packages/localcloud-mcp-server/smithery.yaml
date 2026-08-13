@@ -3,11 +3,6 @@ startCommand:
   configSchema:
     type: object
     properties:
-      LOCALCLOUD_MCP_ENABLE_GCP_CLIENT:
-        type: string
-        enum: ['0', '1']
-        default: '0'
-        description: Opt in to constrained gcloud execution. Dry-run works without this.
       LOCALCLOUD_MCP_ENABLE_STATE_RESET:
         type: string
         enum: ['0', '1']

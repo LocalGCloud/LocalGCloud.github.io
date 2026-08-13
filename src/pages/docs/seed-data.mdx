@@ -1,179 +1,144 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Seed Data
-description: Pre-populate LocalCloud services with test data using YAML seed files.
+description: Load deterministic YAML fixtures through LocalCloud seed and reset endpoints.
 ---
 
-# Seed Data
+# Seed data
 
-Seed files let you pre-populate LocalCloud services with test data on startup. Define your data in YAML and it loads automatically.
+LocalCloud accepts YAML fixture data at root operator endpoints. Seeding is partial and service-specific; it is not a migration, backup, or production-data tool.
 
-## Usage
+## Load and reload
 
 ```bash
-# Load seed data via the Admin API
-curl -X POST http://localhost:24080/_localcloud/seed \
-  -H "Content-Type: application/yaml" \
+curl -fsS -X POST http://localhost:24080/seed \
+  -H 'Content-Type: application/yaml' \
   --data-binary @seed.yaml
 ```
 
-You can also mount a seed file at startup:
+The canonical gateway URL applies to manual Docker. With the host CLI, derive the actual gateway URL from `localcloud start`, `localcloud status`, or `localcloud env` because port `24080` can be remapped.
+
+Other routes:
+
+| Route | Behavior |
+| --- | --- |
+| `POST /seed` | Load a YAML body. |
+| `POST /import` | Alias of `/seed`. |
+| `POST /reseed` | Reload `LOCALCLOUD_SEED_FILE`, default `/etc/localcloud/seed.yaml`. |
+| `POST /reset?project=...` | Clear one project; `{"restore_seed":true}` reapplies that project's most recently loaded seed when available. |
+
+## Accepted envelopes
+
+### Flat service keys
+
+```yaml
+# docs-example: seed-flat
+
+gcs:
+  buckets:
+    - name: localcloud-docs-bucket
+      objects:
+        - key: fixtures/hello.txt
+          content: Hello from LocalCloud
+
+pubsub:
+  topics:
+    - name: docs-events
+      subscriptions:
+        - name: docs-events-sub
+```
+
+### One-project `services` mapping
+
+```yaml
+# docs-example: seed-services
+
+services:
+  gcs:
+    buckets:
+      - name: localcloud-docs-bucket
+  secretmanager:
+    secrets:
+      - name: docs-api-key
+        versions:
+          - data: fake-local-value
+  bigquery:
+    datasets:
+      - name: analytics
+        location: US
+    tables:
+      - dataset: analytics
+        name: events
+        schema:
+          fields:
+            - name: event_id
+              type: STRING
+              mode: REQUIRED
+        rows:
+          - event_id: event-001
+```
+
+BigQuery tables are top-level entries under `bigquery.tables`; every table names its dataset. Secret Manager records belong under `secretmanager.secrets`.
+
+### Multi-project mapping
+
+```yaml
+# docs-example: seed-projects
+
+projects:
+  local-gcp-project:
+    services:
+      gcs:
+        buckets:
+          - name: localcloud-main-project
+  second-local-project:
+    services:
+      pubsub:
+        topics:
+          - name: second-project-events
+```
+
+## Supported seed registrars
+
+The reviewed `SeedService` implementation registers `gcs`, `pubsub`, `bigquery`, `spanner`, `secretmanager`, `cloudtasks`, `memorystore`, `workflows`, `cloudscheduler` (alias `scheduler`), `cloudfunctions` (alias `functions`), `alloydb`, `dataproc`, `cloudiam` (alias `iam`), `cloudsql`, `bigtable`, and `sheets`.
+
+A registrar can still be unavailable if its service is disabled, its tier is unavailable, or its implementation was not registered in the assembled runtime. **Firestore has no enabled seed registrar** and is rejected; create Firestore test data through the SDK instead.
+
+## Volatile restart mode
+
+```bash
+curl -fsS -X POST 'http://localhost:24080/seed?mode=volatile' \
+  -H 'Content-Type: application/yaml' \
+  --data-binary @seed.yaml
+```
+
+Volatile mode seeds only Pub/Sub and Bigtable from the current implementation. Firestore is listed internally as volatile but has no implemented registrar, so it remains unavailable. Persistent services are skipped because their service stores are expected to retain data on the volume; this is not a production durability guarantee.
+
+## Startup file
+
+Manual Docker users can mount the seed and persistent data together:
 
 ```bash
 docker volume create localcloud-data
 
-docker run -d \
-  -v ./seed.yaml:/etc/localcloud/seed.yaml \
+docker run -d --name localcloud \
+  -p 127.0.0.1:24080-24092:24080-24092 \
+  -m 4g \
+  -v "$PWD/seed.yaml:/etc/localcloud/seed.yaml:ro" \
   -v localcloud-data:/var/lib/localcloud \
-  -p 8080:24080 -p 4443:24081 \
-  -p 8085-8087:24082-8087 \
-  -p 9010:24085 -p 9020:24086 \
-  -p 9050:24087 -p 9060:24088 \
-  -p 6379:6379 \
-  -m 4g --name localcloud \
-  jaysen2apache/localcloud
+  jaysen2apache/localcloud:latest
 ```
 
-## Seed File Format
+The mutable image tag remains release-unverified. Prefer `localcloud start` and pin a qualified digest for release workflows.
 
-A seed file is a YAML document with top-level keys for each service:
+## Terraform interaction
 
-```yaml
-# seed.yaml
+`LOCALCLOUD_TERRAFORM_MODE=true` causes seed requests to return a skipped result so Terraform-managed resources are not duplicated. Do not combine a Terraform resource-creation test with implicit startup seed data.
 
-storage:
-  buckets:
-    - name: my-bucket
-      objects:
-        - key: documents/hello.txt
-          content: "Hello, world!"
-        - key: data/config.json
-          content: '{"env": "local", "debug": true}'
+## Fixture safety
 
-pubsub:
-  topics:
-    - name: user-events
-      subscriptions:
-        - name: user-events-sub
-    - name: order-events
-      subscriptions:
-        - name: order-processor
-        - name: order-analytics
-
-firestore:
-  collections:
-    - name: users
-      documents:
-        - id: user-001
-          data:
-            name: Alice
-            email: alice@example.com
-            role: admin
-        - id: user-002
-          data:
-            name: Bob
-            email: bob@example.com
-            role: member
-
-bigquery:
-  datasets:
-    - name: analytics
-      tables:
-        - name: events
-          schema:
-            - name: event_id
-              type: STRING
-            - name: event_type
-              type: STRING
-            - name: timestamp
-              type: TIMESTAMP
-            - name: user_id
-              type: STRING
-
-secrets:
-  - name: api-key
-    value: "sk-local-test-key-12345"
-  - name: db-password
-    value: "local-dev-password"
-
-memorystore:
-  keys:
-    - key: "session:abc123"
-      value: '{"user_id": "user-001", "expires": 1700000000}'
-      ttl: 3600
-    - key: "cache:config"
-      value: '{"feature_flags": {"dark_mode": true}}'
-```
-
-## Service-Specific Formats
-
-### Cloud Storage
-```yaml
-storage:
-  buckets:
-    - name: bucket-name
-      objects:
-        - key: path/to/file.txt
-          content: "file contents"
-```
-
-### Pub/Sub
-```yaml
-pubsub:
-  topics:
-    - name: topic-name
-      subscriptions:
-        - name: subscription-name
-```
-
-### Firestore
-```yaml
-firestore:
-  collections:
-    - name: collection-name
-      documents:
-        - id: doc-id
-          data:
-            field: value
-```
-
-### BigQuery
-```yaml
-bigquery:
-  datasets:
-    - name: dataset-name
-      tables:
-        - name: table-name
-          schema:
-            - name: column_name
-              type: STRING|INTEGER|FLOAT|BOOLEAN|TIMESTAMP
-```
-
-### Secret Manager
-```yaml
-secrets:
-  - name: secret-name
-    value: "secret-value"
-```
-
-### Memorystore
-```yaml
-memorystore:
-  keys:
-    - key: "key-name"
-      value: "value"
-      ttl: 3600  # optional, seconds
-```
-
-## Reset with Seed Restore
-
-```bash
-# Clear all data and reload seed
-curl -X POST http://localhost:24080/_localcloud/reset \
-  -H "Content-Type: application/json" \
-  -d '{"restore_seed": true}'
-```
-
-## Agent Skills
-
-For agent-assisted fixture work, use the [LocalCloud Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills). The `localcloud-seed-data` skill guides agents to create deterministic local seed data with fake values, load it through the admin API or startup mount, and reset tests to a known state.
+- Use stable IDs, deterministic values, and small datasets.
+- Use fake secret payloads only; never copy production credentials or customer data.
+- Assert the data through the same SDK/API path the application uses.
+- Reset only the intended project and verify the response before continuing.
+- Validate production migrations, backup/recovery, and secret handling separately against real Google Cloud.

@@ -1,51 +1,47 @@
-name: LocalCloud Integration
+name: LocalCloud Integration Evaluation
 
 on:
-  pull_request:
+  workflow_dispatch:
 
+# LICENSE GATE: the reviewed LocalCloud license excludes organization/team CI.
+# Use this technical template only after the rights holder grants the intended use.
+# Replace the placeholder with an exact qualified image digest.
 jobs:
   localcloud-integration:
     runs-on: ubuntu-latest
     services:
       localcloud:
-        image: jaysen2apache/localcloud
+        image: jaysen2apache/localcloud@sha256:REPLACE_WITH_QUALIFIED_DIGEST
         ports:
-          - 8080:24080
-          - 4443:24081
-          - 8085-8087:24082-8087
-          - 9010:24085
-          - 9020:24086
-          - 9050:24087
-          - 9060:24088
-          - 6379:6379
+          - 24080:24080
+          # Add only canonical service ports required by this test.
         options: >-
           --memory 4g
-          --health-cmd "curl -f http://localhost:24080/_localcloud/health"
+          --health-cmd "curl -f http://localhost:24080/health"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Wait for LocalCloud
         run: |
           for i in $(seq 1 30); do
-            if curl -sf http://localhost:24080/_localcloud/health > /dev/null; then
-              echo "LocalCloud is ready"
+            if curl -fsS http://localhost:24080/health >/dev/null; then
               exit 0
             fi
             sleep 2
           done
-          echo "LocalCloud did not become ready" >&2
+          docker logs localcloud || true
           exit 1
 
       - name: Export LocalCloud environment
         run: |
-          curl -s http://localhost:24080/_localcloud/env?format=shell \
+          curl -fsS http://localhost:24080/env?format=shell \
             | sed 's/^export //' >> "$GITHUB_ENV"
 
-      - name: Run LocalCloud integration tests
+      - name: Run narrow LocalCloud integration tests
         run: |
-          # Replace with this repository's narrow LocalCloud integration test command.
+          # Replace with this repository's reviewed local-only test command.
           npm run test:integration -- --localcloud

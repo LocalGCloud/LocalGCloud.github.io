@@ -1,0 +1,53 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import ServiceIcon from './ServiceIcon.astro';
+import { getServiceSignalLabel, services } from '../data/services';
+
+interface Props { slug: string; title: string; description: string; }
+const { slug, title, description } = Astro.props;
+const service = services.find((item) => item.slug === slug);
+if (!service) throw new Error(`Missing service contract for ${slug}`);
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const isComingSoon = service.catalogState === 'coming-soon';
+const documentedOperations = isComingSoon
+  ? []
+  : service.operations.filter((operation) => operation.status !== 'unsupported' && operation.status !== 'unknown');
+const operationBoundaries = documentedOperations.filter((operation) => operation.limitations.length > 0);
+const unavailableOperations = service.operations.filter((operation) => operation.status === 'unsupported' || operation.status === 'unknown');
+---
+
+<LandingLayout title={title} description={description}>
+  <section class="site-section site-section--hero"><div class="container"><div class="max-w-[52rem] reveal">
+    <div class="flex items-center gap-4"><span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white"><ServiceIcon iconId={service.iconId} name={service.name} size={44} /></span><span class="site-chip site-chip--accent">{getServiceSignalLabel(service)}</span></div>
+    <h1 class="mt-6">{isComingSoon ? `${service.name} support is coming soon` : `Run ${service.name} workflows locally`}</h1>
+    <p class="mt-6 text-lg leading-8 text-[var(--text-2)]">{service.description}</p>
+    <div class="mt-8 flex gap-3"><a class="site-button site-button--primary" href={`${base}services/${service.slug}/`}>{isComingSoon ? 'View roadmap details' : 'View service guide'}</a><a class="site-button site-button--secondary" href={`${base}compatibility/`}>Compatibility matrix</a></div>
+  </div></div></section>
+
+  {!isComingSoon && (
+    <section class="site-section"><div class="container grid gap-4 lg:grid-cols-2">
+      <article class="site-panel p-6"><h2>Runtime details</h2><dl class="mt-5 grid grid-cols-2 gap-4 text-sm">
+        <div><dt class="font-semibold">Endpoints</dt><dd>{service.endpointLabel}</dd></div>
+        <div><dt class="font-semibold">Minimum tier</dt><dd>{service.minTier}</dd></div>
+        <div><dt class="font-semibold">Persistence</dt><dd>{service.persistence.scope}</dd></div>
+        <div><dt class="font-semibold">Documented workflows</dt><dd>{documentedOperations.length}</dd></div>
+      </dl></article>
+      <article class="site-panel p-6"><h2>Documented workflows</h2><ul class="site-list mt-5">{documentedOperations.map((operation) => <li><span><strong>{operation.label}</strong></span></li>)}</ul></article>
+      <article class="site-panel site-panel--soft p-6 lg:col-span-2">
+        <h2>Service boundaries</h2>
+        <ul class="site-list mt-5">
+          {service.notSupported.map((item) => <li><span>{item}</span></li>)}
+          {operationBoundaries.map((operation) => <li><span><strong>{operation.label}</strong>: {operation.limitations.join(' ')}</span></li>)}
+          {unavailableOperations.map((operation) => (
+            <li><span><strong>{operation.label}</strong>: {operation.status === 'unsupported' ? 'Not supported locally.' : 'Local support is not documented.'}{operation.limitations.length ? ` ${operation.limitations.join(' ')}` : ''}</span></li>
+          ))}
+          <li><span>{service.persistence.restartBehavior}</span></li>
+          {service.persistence.recoveryLimitations.map((item) => <li><span>{item}</span></li>)}
+        </ul>
+      </article>
+    </div></section>
+  )}
+
+  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning"><div class="callout__body"><p class="callout__title">Local development boundary</p><div class="callout__content"><p>Review the governing proprietary license before use. Validate production behavior separately against real Google Cloud.</p></div></div></aside></div></section>
+</LandingLayout>
