@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "reviewedAt": "2026-08-13",
   "provenance": {
-    "runtimeRevision": "aabbf62b5e72ddd6d29357c36c813bcae8928912",
-    "cliRevision": "9045e94e4603d9909f780d6e0b57a93b2f947304",
+    "runtimeRevision": "0b3f9afabc9f74a33e834e52997bdf09cf74ad7f",
+    "cliRevision": "7016269f63de3b4c15360b99ef81546c9b73cb44",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -49,7 +49,7 @@
     "imageQualification": "release-unverified",
     "defaultProject": "local-gcp-project",
     "defaultUser": "local-developer",
-    "defaultInstance": "default",
+    "defaultDataVolume": "localcloud-data",
     "memory": "4g",
     "serviceCount": 27,
     "productionBoundary": "LocalCloud emulates bounded local development workflows. Validate application behavior against real Google Cloud before production deployment.",
@@ -122,7 +122,8 @@
     "startSuccessStatuses": [
       "started",
       "already_running",
-      "reconfigured"
+      "reconfigured",
+      "restarted"
     ],
     "dataDefault": "persistent",
     "dockerSocketDefault": false,

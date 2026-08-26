@@ -29,9 +29,9 @@ export interface AgenticServiceMetadata {
 	caveat: string;
 	registryDefaultEnabled: boolean;
 	assembledDefaultEnabled: boolean;
-	defaultQualification: Service['defaultQualification'];
-	minTier: Service['minTier'];
-	persistence: Service['persistence'];
+	defaultQualification: Service["defaultQualification"];
+	minTier: Service["minTier"];
+	persistence: Service["persistence"];
 }
 
 export interface AgentPrompt {
@@ -120,8 +120,12 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 			slug: service.slug,
 			status,
 			port: service.catalogState === "coming-soon" ? "coming soon" : service.port,
-			protocol: service.catalogState === "coming-soon" ? "planned" : service.protocol,
-			endpointLabel: service.catalogState === "coming-soon" ? "Coming soon" : service.endpointLabel,
+			protocol:
+				service.catalogState === "coming-soon" ? "planned" : service.protocol,
+			endpointLabel:
+				service.catalogState === "coming-soon"
+					? "Coming soon"
+					: service.endpointLabel,
 			envVar: service.catalogState === "coming-soon" ? "" : service.envVar,
 			docsUrl: `${productFacts.siteUrl}services/${service.slug}/`,
 			implementation: service.implementation,
@@ -131,8 +135,7 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 					: service.operations
 							.filter(
 								(operation) =>
-									operation.status !== "unsupported" &&
-									operation.status !== "unknown",
+									operation.status !== "unsupported" && operation.status !== "unknown",
 							)
 							.map(
 								(operation) =>
@@ -146,13 +149,9 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 							...service.operations
 								.filter(
 									(operation) =>
-										operation.status === "unsupported" ||
-										operation.status === "unknown",
+										operation.status === "unsupported" || operation.status === "unknown",
 								)
-								.map(
-									(operation) =>
-										`${operation.label}: ${operation.status}`,
-								),
+								.map((operation) => `${operation.label}: ${operation.status}`),
 						],
 			registryDefaultEnabled: service.registryDefaultEnabled,
 			assembledDefaultEnabled: service.assembledDefaultEnabled,
@@ -203,8 +202,7 @@ export const agentPromptLibrary: AgentPrompt[] = [
 	{
 		id: "bigquery",
 		label: "BigQuery local test",
-		useCase:
-			"Ask an agent to validate BigQuery code against the local emulator.",
+		useCase: "Ask an agent to validate BigQuery code against the local emulator.",
 		prompt:
 			"Use LocalCloud to test BigQuery code locally. Read https://local.cloud/ai/agents.md and the BigQuery docs, set BIGQUERY_EMULATOR_HOST for localhost, create a local dataset/table, insert sample rows, run a representative query, and call out any unsupported SQL features instead of using real BigQuery.",
 	},
@@ -226,7 +224,8 @@ export const agentPromptLibrary: AgentPrompt[] = [
 
 export const claimReviewRule = {
 	title: "Agentic claim review",
-	rule: "No agentic page, skill, MCP metadata, or machine-readable file may publish a service capability, compatibility, cost, credential, Docker image, endpoint, or production-boundary claim unless it references an approved source, reviewer, and review date.",
+	rule:
+		"No agentic page, skill, runtime-integration reference, or machine-readable file may publish a service capability, compatibility, cost, credential, Docker image, endpoint, or production-boundary claim unless it references an approved source, reviewer, and review date.",
 	evidence: agenticFacts.evidence,
 } as const;
 

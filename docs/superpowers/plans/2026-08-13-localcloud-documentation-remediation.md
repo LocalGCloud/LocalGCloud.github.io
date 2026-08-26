@@ -124,7 +124,6 @@
 - Relevant workflow pages under `src/pages/workflows/**`
 - Relevant skills under `agent-skills/skills/localcloud-seed-data/**`
 - Relevant skills under `agent-skills/skills/localcloud-terraform/**`
-- Relevant MCP docs/assets and facts
 - `scripts/verify-doc-examples.mjs` (new)
 - `test-fixtures/docs/**` (new, if needed)
 
@@ -191,7 +190,7 @@
 - `src/pages/bigquery-emulator.astro`
 - `src/pages/bigtable-emulator.astro`
 - `src/pages/spanner-emulator.astro`
-- Matching service pages, agentic content, skills, MCP facts, and LLM output
+- Matching service pages, agentic content, skills, and LLM output
 
 ### Steps
 
@@ -223,9 +222,6 @@
 - Analytics/search/feedback components and their adjacent disclosures
 - `src/pages/index.astro`
 - Cost, CI, onboarding, agent, and comparison pages with team-use claims
-- `packages/localcloud-mcp-server/PRIVACY.md`
-- `packages/localcloud-mcp-server/SECURITY.md`
-- `packages/localcloud-mcp-server/LICENSE` and package metadata where public claims conflict
 - Relevant agent skills and LLM files
 
 ### Steps
@@ -237,17 +233,17 @@
 5. Summarize the governing proprietary license accurately and state that the license text controls.
 6. Remove or rewrite claims that employer, organization, commercial development, cost-saving, internal-tool, onboarding, or team-CI use is free or currently licensed.
 7. Separate technical Pro/Team/Enterprise tier enforcement from legal permission and state that the governing license currently says no commercial license is available.
-8. Correct distributed package license metadata or, when changing package metadata would create a release decision outside documentation scope, remove contradictory public assertions and add an explicit tracked residual finding.
+8. Remove contradictory public license assertions and add an explicit tracked residual finding where the site cannot establish runtime behavior.
 9. Place warnings adjacent to Docker socket, destructive MCP, telemetry, and live-network features.
 
 ### Proof
 
 - Privacy pages enumerate actual event categories, destinations, and opt-out caveat.
-- Site and package text no longer promise no telemetry or zero egress.
+- Site text no longer promises no telemetry or zero egress.
 - No unqualified “free for developers/teams/CI” copy conflicts with the governing license.
 - Technical tier labels do not imply an available legal grant.
 
-## Phase 8: Migrate generated, AI/LLM, skill, and MCP surfaces
+## Phase 8: Migrate generated, AI/LLM, skill, and runtime-integration surfaces
 
 ### Files
 
@@ -258,18 +254,16 @@
 - `public/llms.txt`
 - `public/llms-full.txt`
 - `agent-skills/**`
-- `packages/localcloud-mcp-server/src/data/localcloudFacts.ts`
-- `packages/localcloud-mcp-server/src/tools.ts`
-- MCP README/docs/assets/manifests
+- Runtime MCP links and integration copy in public site pages
 - `scripts/generate-distributed-docs.mjs` (new where generation is practical)
 - `scripts/verify-distributed-docs.mjs` (new)
 
 ### Steps
 
 1. Generate machine-oriented operator/service facts from the contract.
-2. Remove duplicated canonical declarations such as image, project, root routes, ports, service count, and compatibility lists from `agenticFacts`, LLM files, skills, and MCP package snapshots.
+2. Remove duplicated canonical declarations such as image, project, root routes, ports, service count, and compatibility lists from `agenticFacts`, LLM files, and skills.
 3. Rewrite agent workflows to use CLI `doctor`, `start`, `env`, `status`, and local-only endpoint behavior.
-4. Correct MCP operational defaults, reset/health/env paths, project IDs, service lists, and destructive-operation warnings.
+4. Point MCP references to the runtime repository’s canonical integration guide instead of duplicating protocol or operational facts in the site repository.
 5. Preserve task-specific skill procedures but verify their commands and service claims against the contract.
 6. Remove the unused duplicate AI-agents blog data record or make its canonical ownership explicit.
 7. Add generation-freshness checks and repository-wide forbidden-pattern scans with a narrow documented allowlist.
@@ -277,9 +271,9 @@
 ### Proof
 
 - Pattern scans find no stale route/image/project/port occurrence outside explained audit/history allowlists.
-- MCP tools use contract-correct endpoints and defaults.
-- LLM text, agentic HTML, skill commands, and MCP facts report the same service count and operator contract.
-- MCP build, typecheck, and tests pass.
+- Public MCP links resolve to the runtime repository’s canonical integration guide.
+- LLM text, agentic HTML, and skill commands report the same service count and operator contract.
+- Site build and documentation checks pass.
 
 ## Phase 9: Remove unsupported marketing and comparison claims
 
@@ -323,9 +317,6 @@
 
    ```sh
    pnpm build
-   pnpm --dir packages/localcloud-mcp-server build
-   pnpm --dir packages/localcloud-mcp-server typecheck
-   pnpm --dir packages/localcloud-mcp-server test
    ```
 
 5. Verify all static route families and confirm all 27 service routes build.
@@ -336,7 +327,7 @@
 
 ### Proof
 
-- Root and MCP validation commands pass.
+- Site validation commands pass.
 - Diagnostics report no blocking issues.
 - All 27 service routes and generated families are present.
 - Every audit finding has a status and verification reference.

@@ -44,7 +44,7 @@ const faqItems = [
 
 <LandingLayout
   title="How to Run Google Cloud Services Locally — Complete Guide"
-  description={`Install the LocalCloud CLI, start a loopback-bound instance, and configure local workflows across ${availableServiceCount} available services.`}
+  description={`Install the LocalCloud CLI, start a loopback-bound runtime, and configure local workflows across ${availableServiceCount} available services.`}
 >
   <script type="application/ld+json" is:inline>
 {
@@ -122,7 +122,7 @@ const faqItems = [
         <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Complete Guide</span>
         <h1 class="mt-4">How to run Google Cloud services locally</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          Install the host CLI, start a loopback-bound instance, and inspect bounded service workflows and limitations.
+          Install the host CLI, start a loopback-bound runtime, and inspect bounded service workflows and limitations.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href="#quick-start" class="site-button site-button--primary">Quick start</a>
@@ -156,7 +156,7 @@ const faqItems = [
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="font-semibold text-[var(--text)]">Managed lifecycle</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">The CLI manages a loopback-bound instance and exports its actual endpoints. Organization use must comply with the proprietary license.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">The CLI selects a Docker data volume, manages a loopback-bound runtime, and exports its actual endpoints. Organization use must comply with the proprietary license.</p>
         </article>
       </div>
     </div>
@@ -168,7 +168,7 @@ const faqItems = [
       <div class="reveal">
         <h2>Quick start with the LocalCloud CLI</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Install the host CLI, diagnose Docker, start a persistent local instance, and use its dynamically resolved endpoint settings.
+          Install the host CLI, diagnose Docker, start a persistent local runtime, and use its dynamically resolved endpoint settings.
         </p>
       </div>
       <div class="mt-8 site-panel p-6 reveal">
@@ -256,7 +256,7 @@ const faqItems = [
             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">3</div>
             <div class="flex-1">
               <h3 class="text-lg font-semibold text-[var(--text)]">Diagnose and start</h3>
-              <p class="mt-2 text-[var(--text-2)] leading-7">The CLI keeps Docker under your control and starts a loopback-bound persistent instance:</p>
+              <p class="mt-2 text-[var(--text-2)] leading-7">The CLI keeps Docker under your control and starts a loopback-bound persistent runtime:</p>
               <pre class="mt-3 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>localcloud doctor
 localcloud start</code></pre>
               <p class="mt-3 text-sm text-[var(--text-2)] leading-7">Use the URL and endpoint map in the output. If canonical ports are occupied, the CLI assigns dynamic host ports.</p>
@@ -329,7 +329,7 @@ localcloud status</code></pre>
       </div>
       <div class="mt-8 site-panel p-6 reveal">
         <h3 class="text-lg font-semibold text-[var(--text)]">CI requires its own reviewed workflow</h3>
-        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">Do not copy a development image tag or assume fixed ports in CI. Pin the image used by your release, wait on <code>/readiness</code>, export environment values from the running instance, and stop rather than falling back to real Google Cloud. Review the governing license before organization or team-CI use.</p>
+        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">Do not copy a development image tag or assume fixed ports in CI. Pin the image used by your release, wait on <code>/readiness</code>, export environment values from the running LocalCloud runtime, and stop rather than falling back to real Google Cloud. Review the governing license before organization or team-CI use.</p>
       </div>
       <div class="mt-6 reveal">
         <p class="text-sm text-[var(--text-2)] leading-7">
@@ -364,7 +364,7 @@ localcloud status</code></pre>
           <div>
             <h2 style="color: #e8eaed;">Start running GCP services locally</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              One managed local instance, {availableServiceCount} available services, and explicit service boundaries.
+              One data-volume runtime, {availableServiceCount} available services, and explicit service boundaries.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

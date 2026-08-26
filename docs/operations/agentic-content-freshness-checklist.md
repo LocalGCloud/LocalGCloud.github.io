@@ -1,6 +1,6 @@
 # Agentic Content Freshness Review Checklist
 
-Review agentic launch and distribution content every quarter and whenever a platform changes its docs, API, registry policy, install flow, bot policy, or marketplace requirements.
+Review agentic launch and distribution content every quarter and whenever a platform changes its docs, API, install flow, bot policy, or integration requirements.
 
 ## Scope
 
@@ -10,7 +10,7 @@ Review agentic launch and distribution content every quarter and whenever a plat
 | Agent instructions | `/ai/`, `/ai/agents.md`, `/llms.txt`, `/llms-full.txt` if published |
 | Developer docs | `/docs/`, `/docs/sdk-examples/`, `/docs/terraform/`, `/docs/seed-data/` |
 | Launch docs | `agentic-launch-kit.md`, community drafts, response playbook, rehearsal runbook |
-| MCP distribution | MCP package README, registry metadata, MCPB/desktop docs, client install snippets |
+| Runtime MCP integration | Runtime-owned MCP guide and site links to it |
 | Skills distribution | Skill `SKILL.md` files, references, install matrix, plugin metadata |
 | Measurement | Ledger template, AI citation prompts, bot policy, release checklist |
 
@@ -32,17 +32,14 @@ Review agentic launch and distribution content every quarter and whenever a plat
 - [ ] Copyable prompts still instruct agents to stop when LocalCloud is unhealthy instead of falling back to real GCP.
 - [ ] Client-specific install instructions have been checked against current platform docs or marked as unverified.
 - [ ] Claude/Codex/Cursor/Copilot/Gemini/OpenCode/Zed references are platform-specific only where source-confirmed.
-- [ ] MCP and skills links point to existing packages/repos before public promotion.
+- [ ] MCP links point to the runtime-owned integration guide, and skills links point to existing repositories before public promotion.
 
-### MCP registry and package metadata
+### Runtime MCP integration
 
-- [ ] Package name, version, license, repository, icon, security link, and privacy link are current.
-- [ ] Registry submission status is recorded in the measurement ledger.
-- [ ] Tool descriptions mention LocalCloud, localhost endpoints, and no-credential defaults where relevant.
-- [ ] Destructive actions require confirmation.
-- [ ] Logs/output are bounded.
-- [ ] Docker/socket permissions are documented.
-- [ ] Unsupported marketplace paths are not claimed as accepted listings.
+- [ ] Site links resolve to the runtime repository’s canonical MCP guide.
+- [ ] Site copy distinguishes the `/mcp` endpoint from the `localcloud mcp` stdio bridge.
+- [ ] Tool, lifecycle, transport, and security details remain owned by the runtime repository.
+- [ ] No site page duplicates runtime-owned MCP client configuration or tool details.
 
 ### Skills and prompts
 
@@ -62,11 +59,11 @@ Review agentic launch and distribution content every quarter and whenever a plat
 
 ### Measurement and answer-engine visibility
 
-- [ ] `agentic-economy-ledger-template.csv` still includes active channels and package/directory fields.
+- [ ] `agentic-economy-ledger-template.csv` still includes active channels and runtime MCP/skills fields.
 - [ ] AI citation prompt set includes current answer engines and public claim classes.
 - [ ] Bot policy reflects current robots/WAF/CDN behavior.
 - [ ] Analytics event names still match implemented events.
-- [ ] Docker pull, docs visit, quickstart proxy, package download, and skill repo metrics have current owners.
+- [ ] Docker pull, docs visit, quickstart proxy, and skill repository metrics have current owners.
 
 ## Triggered review events
 
@@ -74,8 +71,8 @@ Run an out-of-cycle review when any of these happen:
 
 - Service support status changes.
 - Docker image name changes.
-- `/ai/agents.md`, MCP tools, or skill prompts change agent behavior.
-- A platform changes MCP/extension/marketplace submission rules.
+- `/ai/agents.md`, the runtime MCP integration guide, or skill prompts change agent behavior.
+- A platform changes its agent-integration or extension instructions.
 - A community removes a launch post for rule reasons.
 - Three or more users repeat the same objection.
 - An answer engine cites inaccurate LocalCloud facts.

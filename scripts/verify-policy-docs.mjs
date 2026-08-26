@@ -33,16 +33,6 @@ const paths = [
 	"src/data/agenticFacts.ts",
 	"src/data/agenticContent.ts",
 	"public/llms.txt",
-	"packages/localcloud-mcp-server/README.md",
-	"packages/localcloud-mcp-server/PRIVACY.md",
-	"packages/localcloud-mcp-server/SECURITY.md",
-	"packages/localcloud-mcp-server/LICENSE",
-	"packages/localcloud-mcp-server/package.json",
-	"packages/localcloud-mcp-server/server.json",
-	"packages/localcloud-mcp-server/server-card.json",
-	"packages/localcloud-mcp-server/mcpb/manifest.json",
-	"packages/localcloud-mcp-server/mcpb/README.md",
-	"packages/localcloud-mcp-server/docker-catalog/server.yaml",
 ];
 const docs = new Map(
 	await Promise.all(paths.map(async (path) => [path, await read(path)])),
@@ -109,24 +99,6 @@ for (const phrase of [
 	);
 
 for (const path of [
-	"packages/localcloud-mcp-server/package.json",
-	"packages/localcloud-mcp-server/server.json",
-	"packages/localcloud-mcp-server/server-card.json",
-	"packages/localcloud-mcp-server/mcpb/manifest.json",
-	"packages/localcloud-mcp-server/docker-catalog/server.yaml",
-])
-	assert(
-		!docs.get(path).includes("Apache-2.0"),
-		`${path} retains conflicting Apache metadata`,
-	);
-assert(
-	docs
-		.get("packages/localcloud-mcp-server/LICENSE")
-		.startsWith("PROPRIETARY SOFTWARE LICENSE AGREEMENT"),
-	"MCP package does not bundle the governing proprietary license",
-);
-
-for (const path of [
 	"src/components/SearchModal.astro",
 	"src/components/DocFeedback.astro",
 	"src/components/FeedbackFab.astro",
@@ -136,19 +108,6 @@ for (const path of [
 		`${path} lacks adjacent privacy disclosure`,
 	);
 }
-assert(
-	docs
-		.get("packages/localcloud-mcp-server/SECURITY.md")
-		.includes("broad control over the host Docker daemon"),
-	"MCP security page lacks explicit Docker-socket risk",
-);
-assert(
-	docs
-		.get("packages/localcloud-mcp-server/PRIVACY.md")
-		.includes("pseudonymous identifiers"),
-	"MCP privacy page omits runtime telemetry boundary",
-);
-
 for (const path of [
 	"src/pages/optimize-gcp-costs.astro",
 	"src/pages/reduce-gcp-dev-costs.astro",
@@ -159,13 +118,11 @@ for (const path of [
 		`${path} lacks adjacent licensing gate`,
 	);
 	assert(
-		!/\$\d|\b\d{2,3}-\d{2,3}%|zero cloud costs|eliminates? .*cost/i.test(
-			source,
-		),
+		!/\$\d|\b\d{2,3}-\d{2,3}%|zero cloud costs|eliminates? .*cost/i.test(source),
 		`${path} retains unsupported quantified or elimination claim`,
 	);
 }
 
 console.log(
-	`Policy documentation verified across ${docs.size} privacy, licensing, analytics, marketing, and MCP surfaces.`,
+	`Policy documentation verified across ${docs.size} privacy, licensing, analytics, and marketing surfaces.`,
 );

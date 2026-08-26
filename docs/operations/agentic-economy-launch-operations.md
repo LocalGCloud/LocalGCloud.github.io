@@ -8,8 +8,8 @@ This is the operating index for LocalCloud agentic launch tasks 7.1-7.9 and 8.1-
 - Disclose affiliation when posting or replying.
 - Use only supported public facts: LocalCloud is a local Google Cloud emulator, covers `20+` service surfaces, uses Docker image `jaysen2apache/localcloud`, routes standard GCP SDKs to localhost, requires no default GCP account/credentials/billing project, and requires real-GCP validation before production.
 - Link `/compatibility/`, `/services/`, `/docs/`, `/docs/sdk-examples/`, `/docs/terraform/`, and `/docs/seed-data/` where relevant.
-- Treat Docker pulls, docs visits, quickstart clicks, citations, package downloads, and stars as directional signals unless tied to a verified user workflow.
-- Convert repeated objections into public docs, compatibility notes, skills, MCP guardrails, or product backlog items before the next launch wave.
+- Treat Docker pulls, docs visits, quickstart clicks, citations, and stars as directional signals unless tied to a verified user workflow.
+- Convert repeated objections into public docs, compatibility notes, skills, runtime MCP guidance, or product backlog items before the next launch wave.
 
 ## Task-to-artifact map
 
@@ -23,18 +23,18 @@ This is the operating index for LocalCloud agentic launch tasks 7.1-7.9 and 8.1-
 | 7.6 DEV/LinkedIn/Medium | `agentic-community-post-drafts.md` | Publish/syndicate with canonical local.cloud links, commands, and compatibility caveats. |
 | 7.7 Response playbook | `agentic-community-response-playbook.md` | Use templates for compatibility, security, Docker/MCP permissions, comparisons, pricing/licensing, and production validation. |
 | 7.8 Measurement ledger | `agentic-economy-measurement.md`, `agentic-economy-ledger-template.csv` | Track posts, comments, objections, removals, GitHub issues, Docker pulls, docs visits, quickstart interactions, and follow-ups. |
-| 7.9 Objection conversion | `agentic-community-response-playbook.md`, `agentic-economy-measurement.md` | Convert three-or-more repeated objections into docs, FAQs, compatibility notes, skills, MCP guardrails, or backlog items. |
+| 7.9 Objection conversion | `agentic-community-response-playbook.md`, `agentic-economy-measurement.md` | Convert three-or-more repeated objections into docs, FAQs, compatibility notes, skills, runtime MCP guidance, or backlog items. |
 | 8.1 Measurement operations | `agentic-economy-measurement.md` | Follow owner/cadence/channel/review process. |
 | 8.2 CSV/template ledger | `agentic-economy-ledger-template.csv` | Copy per launch wave and preserve historical rows. |
 | 8.3 AI citation prompts | `agentic-ai-citation-prompts.md`, `answer-engine-query-set.md` | Run monthly prompts and record cited URLs, competitors, and factual accuracy. |
 | 8.4 Crawler/bot policy | `agentic-crawler-bot-policy.md` | Separate search/citation retrieval policy from model-training policy. |
 | 8.5 Freshness review | `agentic-content-freshness-checklist.md` | Review quarterly or when platform docs/policies change. |
-| 8.6 Release checklist | `agentic-release-checklist.md` | Validate agentic docs, MCP metadata, skills, directory assets, copy prompts, bot policy, and measurement ledger before promotion. |
+| 8.6 Release checklist | `agentic-release-checklist.md` | Validate agentic docs, runtime MCP links, skills, copy prompts, bot policy, and the measurement ledger before promotion. |
 
 ## Launch wave sequence
 
 1. Copy `agentic-economy-ledger-template.csv` into the launch tracker.
-2. Record baseline Docker pulls, docs visits, quickstart proxies, package/download signals, and AI citations.
+2. Record baseline Docker pulls, docs visits, quickstart proxies, skill signals, and AI citations.
 3. Complete `agentic-release-checklist.md`.
 4. Run the fresh-machine rehearsal from `agentic-launch-rehearsal.md` and attach the real transcript.
 5. Produce screenshots and video using `agentic-demo-script.md` and `agentic-launch-asset-templates.md`.
@@ -52,6 +52,6 @@ Do not promote the launch if:
 - Public assets disagree on Docker image, service count, or production boundary.
 - `/compatibility/` or `/services/` does not support a launch claim.
 - Community copy violates platform rules or asks for votes.
-- MCP/skills/directory assets claim unsupported registry acceptance.
+- Runtime MCP or skill assets claim unsupported client integration.
 - Measurement baseline rows are missing.
 - Docker/MCP permissions, exposed ports, credentials, or private data concerns are unresolved.

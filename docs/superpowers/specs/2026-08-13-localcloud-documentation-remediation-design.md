@@ -90,7 +90,7 @@ Explanation pages cover:
 - `public/llms.txt` and `public/llms-full.txt`
 - Installer guidance in `public/install.sh`
 - `agent-skills/**`
-- `packages/localcloud-mcp-server/**`
+- Runtime MCP links and integration copy in public site pages
 - Content validation scripts and tests
 - Remediation status in `reports/localcloud-documentation-accuracy-audit.md`
 
@@ -166,7 +166,6 @@ The derived data powers:
 - Agentic facts and Markdown
 - Public LLM files
 - Agent skills
-- MCP facts and guidance
 
 Hand-authored prose can import concise facts or link to canonical reference pages but must not restate large endpoint, port, or capability matrices independently.
 
@@ -175,10 +174,10 @@ Hand-authored prose can import concise facts or link to canonical reference page
 Not every distributed file needs runtime generation. The implementation may use either generation or strict verification:
 
 - Generate machine-oriented LLM and agent metadata where templates are maintainable.
-- Keep task-specific skills and MCP prose hand-authored where necessary.
+- Keep task-specific skills hand-authored where necessary.
 - Enforce contract alignment with structured checks and forbidden-stale-string scans.
 
-Operational MCP defaults must consume the shared contract or a generated package snapshot; prose-only checks are insufficient because stale MCP values cause incorrect tool actions.
+Runtime MCP implementation details remain in the runtime repository. This site links to the canonical integration guide rather than copying operational defaults or tool catalogs.
 
 ## CLI-First Quick Start Contract
 
@@ -330,7 +329,7 @@ Validate, where local evidence and environment permit:
 - Seed fixtures
 - Terraform endpoint generation and readiness flow
 - Service route generation
-- MCP operational defaults
+- Runtime MCP integration links and safety boundaries
 
 The site repository cannot establish released-binary behavior alone. CLI release claims therefore retain source revision and artifact-boundary metadata.
 
@@ -340,9 +339,6 @@ Run:
 
 ```sh
 pnpm build
-pnpm --dir packages/localcloud-mcp-server build
-pnpm --dir packages/localcloud-mcp-server typecheck
-pnpm --dir packages/localcloud-mcp-server test
 ```
 
 Also run language-server diagnostics on changed TypeScript, Astro, and MDX files, and Markdown diagnostics on reports and specifications.
@@ -365,7 +361,7 @@ Review representative routes and every generated family:
 - Agent, workflow, comparison, glossary, and blog families
 - `public/llms*.txt`
 - Representative agent skills
-- MCP README, privacy/security docs, tools, and facts
+- Public links to the runtime repository’s canonical MCP integration guide
 
 ## Audit Report Disposition
 
@@ -387,7 +383,7 @@ The remediation is one coordinated project but should be implemented in reviewab
 3. Correct privacy, licensing, seed, and Terraform documentation.
 4. Rebuild the 27-service catalog and architecture content.
 5. Correct dependency-sensitive feature pages.
-6. Migrate AI/LLM, agent skills, and MCP operational guidance.
+6. Migrate AI/LLM, Agent Skills, and runtime MCP integration links.
 7. Remove unsupported marketing claims and reconcile comparisons.
 8. Run exhaustive validation and update the audit status.
 
@@ -401,7 +397,7 @@ Each phase must leave generated and distributed facts internally consistent. A p
 - Privacy and licensing pages reflect current behavior and governing terms without categorical contradictions.
 - Seed and Terraform guides use exercised shapes and prerequisites.
 - BigQuery, Bigtable, and Spanner claims include the required qualification boundary.
-- AI/LLM files, agent skills, and MCP behavior agree with the same contract.
+- AI/LLM files and Agent Skills agree with the same contract, while MCP links point to the runtime-owned guide.
 - CI rejects the known stale patterns and contract drift.
-- Root build and MCP build, typecheck, and tests pass.
+- The site build and documentation checks pass.
 - The audit report records resolved and residual findings.

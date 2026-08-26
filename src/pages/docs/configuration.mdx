@@ -8,7 +8,7 @@ import { docsContract } from '../../data/docs-contract';
 
 # Configuration
 
-LocalCloud reads runtime configuration from environment variables. The host CLI is the recommended operator interface because it binds ports to loopback, can remap occupied ports, and returns the actual endpoints for the selected instance.
+LocalCloud reads runtime configuration from environment variables. The host CLI is the recommended operator interface because it discovers runtimes by their Docker data volume, binds ports to loopback, can remap occupied ports, and returns actual endpoints.
 
 ```bash
 localcloud start
@@ -16,6 +16,34 @@ eval "$(localcloud env)"
 ```
 
 `localcloud.yaml` is a **host CLI** configuration file discovered in the current directory; CLI flags override it. The runtime file `application.yaml` is reference material only and is not automatically loaded by `LocalCloudConfig`.
+
+```yaml
+data_volume: localcloud-data
+project: local-gcp-project
+user: local-developer
+services: default
+seed: auto
+data: persistent
+image: jaysen2apache/localcloud:latest
+memory: 4g
+docker_socket: false
+transparent_network: false
+environment: {}
+```
+
+The named volume mounted at `/var/lib/localcloud` is the durable runtime
+selector. Use `--data-volume NAME` to override YAML for any runtime command.
+Project, caller, current directory, container name, network name, and image tag
+do not define runtime identity. Legacy `instance:` and `volume_name:` fields are
+rejected with an exact `data_volume:` migration value; the former `--instance`
+and `--volume-name` flags are not accepted.
+
+Configuration precedence is CLI options and an explicit positional config path,
+then `./localcloud.yaml`, then the selected managed runtime's remembered config,
+then built-in defaults. A successful start records the active data volume,
+configured image, and immutable container ID. A compatible container created
+outside the CLI can be attached and operated safely, but the CLI never removes
+or relabels Docker resources it does not own.
 
 ## Core settings
 
@@ -30,7 +58,7 @@ eval "$(localcloud env)"
 | `LOCALCLOUD_IAM_POLICY_FILE` | empty | Local identity-to-path policy JSON used by strict mode and optionally by `gcp-live`. |
 | `LOCALCLOUD_TELEMETRY` | `true` | Runtime telemetry preference; see [Privacy](/docs/privacy/) for the verified limitations. |
 
-To choose another project, start the instance with `LOCALCLOUD_PROJECT`, use the CLI project option/configuration, or request `/env?project=my-project`. Keep examples and tests explicit when their project differs from `local-gcp-project`.
+To choose another project, start the runtime with `LOCALCLOUD_PROJECT`, use the CLI project option/configuration, or request `/env?project=my-project`. Keep examples and tests explicit when their project differs from `local-gcp-project`.
 
 ## Service selection and precedence
 

@@ -1,6 +1,6 @@
 # Agentic Release Checklist
 
-Use this checklist before promoting any LocalCloud agentic launch wave, MCP package, skills release, or community campaign.
+Use this checklist before promoting any LocalCloud agentic launch wave, runtime MCP integration, skills release, or community campaign.
 
 ## Release owner
 
@@ -39,17 +39,14 @@ Use this checklist before promoting any LocalCloud agentic launch wave, MCP pack
 - [ ] `/services/` reflects current supported/partial/planned service state.
 - [ ] `/compatibility/` is linked from community drafts, Product Hunt assets, and response playbook.
 
-## 4. MCP package metadata
+## 4. Runtime MCP integration
 
-Complete this section only for launches that include the MCP package.
+Complete this section when launch content mentions MCP support.
 
-- [ ] Package metadata includes name, version, license, repository, docs, icon, security, and privacy links.
-- [ ] Registry/server metadata is current and does not claim acceptance before acceptance.
-- [ ] Tool names/descriptions are namespaced and accurate.
-- [ ] Destructive operations require explicit confirmation.
-- [ ] Docker/socket and local permission behavior is documented.
-- [ ] Logs/output are bounded and no stdout/stderr contract is violated.
-- [ ] Client install snippets are source-confirmed or marked as generic JSON config.
+- [ ] Site content links to the runtime repository’s canonical MCP integration guide.
+- [ ] Connection guidance distinguishes the runtime-owned `/mcp` endpoint from the `localcloud mcp` stdio bridge.
+- [ ] Tool, transport, lifecycle, and security claims are sourced from the runtime repository rather than copied into this site.
+- [ ] Site content does not advertise an independent package, registry listing, or client configuration owned by this repository.
 
 ## 5. Agent Skills specs
 
@@ -84,7 +81,7 @@ Complete this section only for launches that include skills.
 - [ ] UTM/source labels are assigned for each platform where allowed.
 - [ ] GitHub issue/discussion tracking is ready.
 - [ ] AI citation baseline is recorded with `agentic-ai-citation-prompts.md`.
-- [ ] Directory submission/package download/skill install rows are present if those channels exist.
+- [ ] Runtime MCP documentation and skill-install rows are present if those channels exist.
 
 ## 8. Crawler and bot policy
 
@@ -110,7 +107,7 @@ Do not launch if any of these are true:
 - `/compatibility/` or `/services/` is missing or stale for a claim in the launch assets.
 - The demo requires real GCP credentials for the default path.
 - Community copy claims production parity or 100% compatibility.
-- MCP/skill assets claim a registry, marketplace, or client support path that has not been accepted or source-confirmed.
+- Runtime MCP or skill assets claim a client support path that is not source-confirmed.
 - Measurement owner cannot record baseline metrics and objections.
 - Security owner flags Docker/MCP permissions, exposed ports, credentials, or private data concerns.
 
@@ -120,7 +117,7 @@ Within one week:
 
 - [ ] Every post URL and removal reason is recorded.
 - [ ] Every repeated objection is clustered.
-- [ ] Three-or-more repeated objections are converted to docs, FAQs, compatibility notes, skills, MCP guardrails, or product backlog items.
+- [ ] Three-or-more repeated objections are converted to docs, FAQs, compatibility notes, skills, runtime issues, or product backlog items.
 - [ ] Docker pull deltas and docs visits are recorded.
 - [ ] Quickstart proxy metrics are recorded.
 - [ ] GitHub issues and follow-up tasks are linked.

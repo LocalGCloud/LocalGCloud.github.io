@@ -26,7 +26,7 @@ export const faqSections: FaqSection[] = [
       },
       {
         question: 'What is the recommended setup?',
-        answer: 'Install the host CLI, verify Docker, start the selected instance, load its generated environment values, and open the returned console URL.',
+        answer: 'Install the host CLI, verify Docker, start the selected data-volume runtime, load its generated environment values, and open the returned console URL.',
         code: 'curl -fsSL https://local.cloud/install.sh | sh\nlocalcloud doctor\nlocalcloud start\neval "$(localcloud env)"\nlocalcloud console',
         afterCode:
           'The CLI binds to loopback, keeps persistence by default, and can remap occupied ports. Trust the URLs and environment values it returns.',
@@ -76,6 +76,12 @@ export const faqSections: FaqSection[] = [
           'The CLI uses persistent storage by default, but persistence is service-specific. Pub/Sub is volatile; other services use different stores and recovery limits. A mounted volume does not provide production durability, replication, or backup semantics.',
       },
       {
+        question: 'How do I isolate or reuse a LocalCloud runtime?',
+        answer:
+          'The Docker volume mounted at /var/lib/localcloud is durable runtime identity. Use --data-volume NAME on any runtime command for isolated storage. The CLI can attach to a compatible container already using that volume, but it never removes or relabels Docker resources it does not own.',
+        code: 'localcloud start --data-volume payments-localcloud-data\nlocalcloud status --data-volume payments-localcloud-data --verbose',
+      },
+      {
         question: 'Is LocalCloud fully offline?',
         answer:
           'No categorical offline guarantee applies. Depending on configuration, the runtime can emit telemetry, probe certificate storage, check image updates, validate licenses or live IAM tokens, and dispatch HTTP work. Core local workflows can operate offline after required images are present; review the Privacy and Architecture guides for outbound behavior.',
@@ -93,7 +99,7 @@ export const faqSections: FaqSection[] = [
       },
       {
         question: 'What if a service is not responding?',
-        answer: 'Inspect the selected instance and its logs. For manual Docker on canonical ports, /services exposes service state.',
+        answer: 'Inspect the selected data-volume runtime and its logs. For manual Docker on canonical ports, /services exposes service state.',
         code: 'localcloud status\nlocalcloud logs --tail 50\ncurl -fsS http://localhost:24080/services',
         afterCode: 'Confirm the service is enabled, its required tier is available, and its evidence state is suitable for the workflow.',
       },

@@ -1,6 +1,6 @@
 # LocalCloud
 
-> Contract-generated LocalCloud context. Reviewed 2026-08-13; runtime aabbf62b5e72ddd6d29357c36c813bcae8928912; CLI 9045e94e4603d9909f780d6e0b57a93b2f947304.
+> Contract-generated LocalCloud context. Reviewed 2026-08-13; runtime 0b3f9afabc9f74a33e834e52997bdf09cf74ad7f; CLI 7016269f63de3b4c15360b99ef81546c9b73cb44.
 
 LocalCloud provides 25 available services and 1 coming-soon service guide. Google Sheets is an integration surface rather than a LocalCloud service. It is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. The proprietary license permits limited non-commercial personal use by an Individual Developer acting personally; the license text governs. Excluded uses include employer or organization use, commercial development, cost-saving internal tools, team CI, shared team workflows.
 
@@ -18,13 +18,13 @@ localcloud console
 
 - Default project: `local-gcp-project`
 - Default user: `local-developer`
-- Default instance: `default`
+- Default data volume: `localcloud-data`
 - CLI memory default: `4g`
 - Health endpoint: `http://localhost:24080/health`
 - Shell environment endpoint: `http://localhost:24080/env?format=shell`
 - Terraform environment endpoint: `http://localhost:24080/env?format=terraform`
 
-Trust URLs and endpoint values returned by the selected CLI instance; occupied canonical ports may be remapped. LocalCloud emulates bounded local development workflows. Validate application behavior against real Google Cloud before production deployment.
+Trust URLs and endpoint values returned by the selected CLI runtime; occupied canonical ports may be remapped. Select durable storage with `--data-volume NAME`; project and caller remain request context. LocalCloud emulates bounded local development workflows. Validate application behavior against real Google Cloud before production deployment.
 
 ## Useful URLs
 

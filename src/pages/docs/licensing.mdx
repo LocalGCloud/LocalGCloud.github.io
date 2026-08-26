@@ -9,6 +9,7 @@ reviewed: 2026-08-13
 
 import Callout from '../../components/Callout.astro';
 import { docsContract } from '../../data/docs-contract';
+import { productFacts } from '../../data/productFacts';
 
 export const licensing = docsContract.licensing;
 
@@ -46,9 +47,9 @@ The reviewed agreement states that **no commercial license is currently offered 
 
 ## License metadata conflicts
 
-Some package and image metadata previously declared `Apache-2.0`, including MCP package metadata and a runtime OCI label. Those declarations conflict with the governing proprietary root license and must not be used to infer LocalCloud runtime permissions.
+Some historical package and image metadata previously declared `Apache-2.0`, including a runtime OCI label. Those declarations conflict with the governing proprietary root license and must not be used to infer LocalCloud runtime permissions.
 
-This repository's MCP package documentation and metadata now point to the governing proprietary license. If the MCP server is intended to have a separate license in the future, that requires an explicit owner/legal decision and a clearly scoped license grant; it must not be inferred from stale package metadata.
+The LocalCloud runtime, including its <a href={`${productFacts.githubUrl}/blob/main/docs/MCP_INTEGRATION.md`}>built-in MCP integration</a>, remains governed by the runtime repository’s license. Technical access through the canonical `/mcp` endpoint or the `localcloud mcp` stdio bridge does not create a separate license grant.
 
 ## Before using LocalCloud
 

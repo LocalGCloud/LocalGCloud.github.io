@@ -118,12 +118,10 @@ for (const path of seedSources) {
 	const source = await read(path);
 	const documents = [".yaml", ".yml"].includes(extname(path))
 		? [{ body: source, label: path }]
-		: [...source.matchAll(/```ya?ml\s*\n([\s\S]*?)```/g)].map(
-				(match, index) => ({
-					body: match[1],
-					label: `${path} YAML fence ${index + 1}`,
-				}),
-			);
+		: [...source.matchAll(/```ya?ml\s*\n([\s\S]*?)```/g)].map((match, index) => ({
+				body: match[1],
+				label: `${path} YAML fence ${index + 1}`,
+			}));
 	for (const item of documents) {
 		let document;
 		try {
@@ -169,14 +167,6 @@ const surfacePaths = [
 	"agent-skills/skills/localcloud-seed-data/references/seed-data.md",
 	"agent-skills/skills/localcloud-terraform/SKILL.md",
 	"agent-skills/skills/localcloud-terraform/references/terraform.md",
-	"packages/localcloud-mcp-server/README.md",
-	"packages/localcloud-mcp-server/mcpb/README.md",
-	"packages/localcloud-mcp-server/mcpb/manifest.json",
-	"packages/localcloud-mcp-server/smithery.yaml",
-	"packages/localcloud-mcp-server/docker-catalog/server.yaml",
-	"packages/localcloud-mcp-server/src/data/localcloudFacts.ts",
-	"packages/localcloud-mcp-server/src/server.ts",
-	"packages/localcloud-mcp-server/src/tools.ts",
 ];
 const docs = new Map(
 	await Promise.all(surfacePaths.map(async (path) => [path, await read(path)])),
@@ -325,10 +315,7 @@ for (const endpoint of [
 	contract.operator.endpoints.reset,
 	contract.terraform.readinessEndpoint,
 ])
-	assert(
-		combined.includes(endpoint),
-		`docs omit contract endpoint ${endpoint}`,
-	);
+	assert(combined.includes(endpoint), `docs omit contract endpoint ${endpoint}`);
 
 const configuration = docs.get("src/pages/docs/configuration.mdx");
 assert(
@@ -413,33 +400,6 @@ const agentic = docs.get("src/data/agenticContent.ts");
 assert(
 	!agentic.includes("bigquery.Client("),
 	"agentic content must not publish an unqualified executable BigQuery client example",
-);
-
-const mcpTools = docs.get("packages/localcloud-mcp-server/src/tools.ts");
-assert(
-	mcpTools.includes("gcloud execution is unavailable"),
-	"MCP gcloud execution is not explicitly suppressed",
-);
-assert(
-	!mcpTools.includes("runFile('gcloud'"),
-	"MCP still executes gcloud without validated runtime-generated overrides",
-);
-const mcpDistribution = [
-	docs.get("packages/localcloud-mcp-server/README.md"),
-	docs.get("packages/localcloud-mcp-server/mcpb/README.md"),
-	docs.get("packages/localcloud-mcp-server/mcpb/manifest.json"),
-	docs.get("packages/localcloud-mcp-server/smithery.yaml"),
-	docs.get("packages/localcloud-mcp-server/docker-catalog/server.yaml"),
-].join("\n");
-assert(
-	!mcpDistribution.includes("LOCALCLOUD_MCP_ENABLE_GCP_CLIENT"),
-	"MCP distribution still advertises disabled gcloud execution opt-in",
-);
-assert(
-	!/opt-in[^\n]*gcloud execution|gcloud execution[^\n]*confirm/i.test(
-		mcpDistribution,
-	),
-	"MCP distribution still advertises executable gcloud support",
 );
 
 console.log(

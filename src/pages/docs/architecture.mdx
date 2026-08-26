@@ -10,10 +10,25 @@ LocalCloud packages a Java gateway, the web console, local facades, and external
 
 ## Request flow
 
-1. `localcloud start` launches a loopback-bound instance and may remap occupied canonical ports.
-2. `localcloud env` returns endpoint values for that instance and selected project/caller.
+1. `localcloud start` selects a Docker data volume, discovers or creates one compatible loopback-bound runtime, and may remap occupied canonical ports.
+2. `localcloud env` resolves that runtime and returns endpoint values for the selected project and caller.
 3. SDK, REST, gRPC, and Terraform requests reach a direct emulator port or the gateway on canonical container port `24080`.
 4. The gateway handles operator routes and routes facade/API traffic to local implementations.
+
+## Runtime identity and ownership
+
+The named Docker volume mounted at `/var/lib/localcloud` is the only durable
+runtime selector; the default is `localcloud-data`. The CLI verifies the
+configured image and selects the unique compatible container using that volume.
+Immutable container ID is live process identity. A recorded ID is only a
+revalidated tie-break hint.
+
+CLI-created container, network, and volume resources carry exact ownership
+labels. Ownership is independent per resource. The CLI can start, stop,
+restart, inspect, and use an attached compatible container, but it never removes
+or relabels a Docker resource it does not own. Ambiguous volume use,
+incompatible images, invalid labels, and shared-volume conflicts fail before
+mutation. Full `reset --all-projects` requires a fully managed runtime.
 
 Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env`, `/services`, `/seed`, `/reseed`, `/import`, `/reset`, `/terraform/readiness`, `/graphql`, `/api-docs`, and `/docs`.
 
@@ -35,7 +50,7 @@ A retained volume improves restart/container-replacement behavior only for store
 
 ## Canonical container ports
 
-The host CLI may dynamically remap these ports; generated endpoint output is authoritative for a running instance.
+The host CLI may dynamically remap these ports; generated endpoint output is authoritative for a running LocalCloud runtime.
 
 | Port | Purpose |
 | --- | --- |

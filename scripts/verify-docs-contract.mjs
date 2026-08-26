@@ -30,7 +30,7 @@ const state = (value, path) => assert(evidenceStates.has(value), `${path} has un
 const evidence = (value, path) => strings(value, path, { nonempty: true });
 
 exactKeys(contract, ['schemaVersion', 'reviewedAt', 'provenance', 'product', 'operator', 'cli', 'seed', 'terraform', 'privacy', 'licensing', 'services'], 'root');
-assert(contract.schemaVersion === 2, 'unsupported schema version');
+assert(contract.schemaVersion === 3, 'unsupported schema version');
 assert(/^\d{4}-\d{2}-\d{2}$/.test(contract.reviewedAt), 'reviewedAt must be an ISO date');
 
 exactKeys(contract.provenance, ['runtimeRevision', 'cliRevision', 'assembledImageDigest', 'qualification', 'sources', 'dependencyRevalidations'], 'provenance');
@@ -48,8 +48,8 @@ array(contract.provenance.dependencyRevalidations, 'provenance.dependencyRevalid
 });
 assert(new Set(contract.provenance.dependencyRevalidations.map((item) => item.id)).size === 3, 'dependency provenance IDs must be unique');
 
-exactKeys(contract.product, ['name', 'siteUrl', 'imageQualification', 'defaultProject', 'defaultUser', 'defaultInstance', 'memory', 'serviceCount', 'productionBoundary', 'runtimeImage'], 'product');
-for (const key of ['name', 'siteUrl', 'defaultProject', 'defaultUser', 'defaultInstance', 'memory', 'productionBoundary']) string(contract.product[key], `product.${key}`);
+exactKeys(contract.product, ['name', 'siteUrl', 'imageQualification', 'defaultProject', 'defaultUser', 'defaultDataVolume', 'memory', 'serviceCount', 'productionBoundary', 'runtimeImage'], 'product');
+for (const key of ['name', 'siteUrl', 'defaultProject', 'defaultUser', 'defaultDataVolume', 'memory', 'productionBoundary']) string(contract.product[key], `product.${key}`);
 number(contract.product.serviceCount, 'product.serviceCount');
 state(contract.product.imageQualification, 'product.imageQualification');
 exactKeys(contract.product.runtimeImage, ['repository', 'tag', 'digest', 'qualification', 'evidence', 'limitation'], 'product.runtimeImage');
@@ -83,7 +83,7 @@ for (const key of ['installScriptUrl', 'installCommand', 'homebrewCommand', 'doc
 for (const key of ['requiresDocker', 'frozenBinaryRequiresPython', 'dockerSocketDefault', 'transparentNetworkDefault', 'dynamicPortMapping']) boolean(contract.cli[key], `cli.${key}`);
 for (const key of ['supportedHosts', 'commands', 'quickStart', 'startSuccessStatuses', 'environmentFormats']) strings(contract.cli[key], `cli.${key}`, { nonempty: true });
 assert(contract.cli.doctorSuccessStatus === 'ok', 'CLI doctor success state drifted');
-assert(JSON.stringify(contract.cli.startSuccessStatuses) === JSON.stringify(['started', 'already_running', 'reconfigured']), 'CLI start states drifted');
+assert(JSON.stringify(contract.cli.startSuccessStatuses) === JSON.stringify(['started', 'already_running', 'reconfigured', 'restarted']), 'CLI start states drifted');
 assert(contract.cli.bindAddress === '127.0.0.1', 'CLI must remain loopback-bound');
 assert(contract.cli.dockerSocketDefault === false, 'Docker socket must remain opt-in');
 assert(contract.cli.transparentNetworkDefault === false, 'transparent networking must remain opt-in');

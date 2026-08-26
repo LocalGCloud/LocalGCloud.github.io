@@ -19,8 +19,8 @@ The audit below is retained as the original evidence record. The approved contra
 | 27-service catalog and compatibility | Resolved | 27 overlays/icons, 27 catalog/detail routes, and 27 agent-testing routes are contract-derived with evidence state, tier, defaults, persistence, and operation limits. |
 | BigQuery, Bigtable, and Spanner claims | Public wording resolved; release qualification pending | Fixed totals/parity claims and PGAdapter errors were removed. Feature-specific release-unverified references now require immutable dependency and assembled-image evidence. |
 | Runtime privacy and website analytics | Disclosure resolved; product controls pending | Runtime telemetry fields/cadence/queue and other egress paths plus website PostHog events are disclosed. A zero-event runtime opt-out, ordinary TLS verification, site consent/opt-out, and a complete retention schedule remain product decisions. |
-| Governing license and team/commercial claims | Public wording resolved; product decision pending | Public pages and MCP metadata now follow the proprietary root license and separate technical tiers from legal permission. The reviewed license still offers no commercial grant. |
-| Agent Skills, AI/LLM, and MCP facts | Resolved | LLM files and MCP service facts are generated from the contract; skills use CLI/root-route defaults; repository-wide forbidden-pattern and parity scans run in `verify-distributed-docs`. |
+| Governing license and team/commercial claims | Public wording resolved; product decision pending | Public pages follow the proprietary root license and separate technical tiers from legal permission. The reviewed license still offers no commercial grant. |
+| Agent Skills, AI/LLM, and runtime MCP links | Resolved | LLM files are generated from the contract; skills use CLI/root-route defaults; site copy points to the runtime-owned MCP guide; repository-wide forbidden-pattern scans run in `verify-distributed-docs`. |
 | Unsupported marketing and vendor comparisons | Resolved | Savings/latency/startup/parity statistics were removed or replaced by evidence methodology; unvalidated vendor counts and broad comparisons were omitted. |
 | Installer and released CLI behavior | Partially resolved | Installer mechanics and current checkout commands are validated, but the exact checksummed released CLI artifact is not qualified end to end. |
 
@@ -74,7 +74,7 @@ The public and distributed documentation includes:
 - AI-facing HTML and Markdown under `src/pages/ai/**`.
 - `public/llms.txt`, `public/llms-full.txt`, and the CLI installer at `public/install.sh`.
 - Distributed agent guidance under `agent-skills/**`.
-- MCP server README, client guidance, tool descriptions, and runtime facts under `packages/localcloud-mcp-server/**`.
+- Public links to the runtime repository’s canonical MCP integration guide.
 
 ### Coverage ledger
 
@@ -84,7 +84,7 @@ The public and distributed documentation includes:
 | Generated services and agentic routes | Reviewed | Shared facts are stale; regenerate after canonical contracts are fixed. |
 | AI/LLM Markdown and text files | Reviewed | Broken setup facts repeat across HTML, Markdown, and `llms` files. |
 | Agent skills | Pattern-audited | 17 files contain stale routes, image/project facts, legacy ports, or unsupported command assumptions. |
-| MCP server package | Pattern-audited | Four source/doc files repeat stale Docker, endpoint, project, and port facts. |
+| Runtime MCP links | Reviewed | Site copy must link to the runtime-owned integration guide rather than duplicate MCP implementation facts. |
 | CLI installer | Sampled | It installs a separately released CLI and publishes `localcloud console`/`localcloud env`; command accuracy requires auditing that release repository, which is outside the supplied local source set. |
 | Repository-internal operations/plans | Excluded unless published | Used as supporting evidence only, not treated as current user documentation. |
 | External vendor documentation | Excluded by instruction | Vendor comparisons remain unvalidated. |
@@ -190,17 +190,16 @@ The website privacy section also understates PostHog collection: page views, int
 
 **Action:** Replace categorical no-collection/no-sharing statements with an accurate data inventory, processor disclosure, event fields, identifiers, storage/retention, retry behavior, opt-out behavior, and user controls. Runtime changes are required if the intended promise is truly zero telemetry.
 
-### 6. Distributed agent, MCP, and installer guidance also carries stale facts
+### 6. Distributed agent and installer guidance also carries stale facts
 
 **Severity:** Critical
 
 The same broken operator contract is distributed outside the website pages:
 
 - `agent-skills/**`: 17 files contain stale API routes, Docker image/project facts, legacy ports, or command assumptions. Examples include `agent-skills/skills/localcloud-sdk-tests/references/sdk-tests.md`, `localcloud-ci-sidecar/SKILL.md`, and `localcloud-seed-data/references/seed-data.md`.
-- `packages/localcloud-mcp-server/**`: `src/data/localcloudFacts.ts`, `src/tools.ts`, and package guidance repeat the stale image, `local-project`, `/_localcloud/*`, and legacy port maps. MCP tools can therefore generate commands that fail.
 - `public/install.sh`: installs a separately released CLI and recommends `localcloud console` and `localcloud env`. The CLI implementation is not present in the supplied product repository, so these commands cannot be validated from `../localcloud`; they require release-repository and artifact verification.
 
-**Action:** Include distributed skills and MCP facts in the same canonical-facts migration as the site. Audit the separate CLI release before retaining installer command guidance, and add cross-package stale-string/contract tests.
+**Action:** Include distributed skills in the same canonical-facts migration as the site. Audit the separate CLI release before retaining installer command guidance, and add cross-surface stale-string/contract tests.
 
 ### 7. Licensing and team-use positioning conflict with the governing license
 
@@ -366,7 +365,7 @@ External vendor claims were not validated because this audit was restricted to r
 
 | Finding | Main surfaces | Authority | Gate/owner | Phase | Verification |
 | --- | --- | --- | --- | --- | --- |
-| Broken API routes and Docker contract | Docs, Astro pages, AI/LLM files, skills, MCP facts | Runtime contracts, `services.yaml`, launcher | Distribution owner | Immediate containment, Phase 1 | Execute every published quick start against qualified image. |
+| Broken API routes and Docker contract | Docs, Astro pages, AI/LLM files, and skills | Runtime contracts, `services.yaml`, launcher | Distribution owner | Immediate containment, Phase 1 | Execute every published quick start against qualified image. |
 | Installer and CLI commands | `public/install.sh` and install guidance | Released CLI repository plus checksummed binary | CLI release owner | Immediate containment, Phase 1 | Verify `doctor`, `start`, `console`, and `env` from the exact released artifact. |
 | Seed and Terraform workflows | Seed/Terraform docs and workflows | `SeedService`, tested Terraform setup | Runtime/integration owner | Immediate containment, Phase 1 | Run published fixtures and both Terraform networking modes. |
 | Privacy/telemetry contradiction | Privacy page and all analytics-enabled routes | Runtime telemetry and site analytics code | Privacy/product owner | Immediate disclosure + Phase 0 decision | Event inventory review and egress/opt-out tests. |

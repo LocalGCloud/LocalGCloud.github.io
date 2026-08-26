@@ -96,7 +96,7 @@ export interface DocumentationContract {
     imageQualification: EvidenceState;
     defaultProject: string;
     defaultUser: string;
-    defaultInstance: string;
+    defaultDataVolume: string;
     memory: string;
     serviceCount: number;
     productionBoundary: string;
@@ -203,7 +203,7 @@ function loadDocumentationContract(value: unknown): DocumentationContract {
     throw new Error('Documentation contract snapshot must be an object');
   }
   const candidate = value as Record<string, unknown>;
-  if (candidate.schemaVersion !== 2 || !Array.isArray(candidate.services)) {
+  if (candidate.schemaVersion !== 3 || !Array.isArray(candidate.services)) {
     throw new Error('Documentation contract snapshot has an unsupported schema');
   }
   return value as DocumentationContract;

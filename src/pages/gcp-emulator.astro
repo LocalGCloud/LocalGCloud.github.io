@@ -86,7 +86,7 @@ const structuredData = [
         </span>
         <h1 class="mt-4">Run Google Cloud locally in one Docker container</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          LocalCloud provides {availableServiceCount} Google Cloud services, with upcoming additions clearly marked. Use the host CLI to start a loopback-bound instance and export its actual SDK endpoint settings.
+          LocalCloud provides {availableServiceCount} Google Cloud services, with upcoming additions clearly marked. Use the host CLI to start a loopback-bound runtime and export its actual SDK endpoint settings.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start with the CLI</a>
@@ -104,7 +104,7 @@ const structuredData = [
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">1</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Managed instance</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Data-volume runtime</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">One CLI lifecycle with persistent data and dynamically resolved loopback ports.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
@@ -135,7 +135,7 @@ const structuredData = [
         <article class="site-panel site-panel--soft p-5">
           <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">One CLI</div>
           <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Managed lifecycle</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The CLI selects loopback ports, starts or reuses an instance, and exports its actual endpoint map.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The CLI selects durable storage and loopback ports, starts or reuses a compatible runtime, and exports its actual endpoint map.</p>
         </article>
       </div>
     </div>
@@ -151,7 +151,7 @@ const structuredData = [
         </span>
         <h2 class="mt-4">One runtime, one console, one handoff</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud wraps official, custom, and third-party emulators behind a managed local runtime. The host CLI starts a loopback-bound instance, exports actual environment values, and opens the built-in console.
+          LocalCloud wraps official, custom, and third-party emulators behind a managed local runtime. The host CLI selects its Docker data volume, exports actual environment values, and opens the built-in console.
         </p>
         <p class="mt-4 text-base leading-7 text-[var(--text-2)]">
           Before relying on a local workflow, review the <a href={`${base}compatibility/`} class="font-medium text-[var(--accent-strong)]">documented compatibility and limitations</a> for the services your application uses.

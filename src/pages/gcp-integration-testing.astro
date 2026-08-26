@@ -102,8 +102,8 @@ const faqItems = [
     a: 'No maintained cross-runner startup benchmark is available. Poll http://localhost:24080/health with a job timeout and inspect logs on failure.',
   },
   {
-    q: 'Can I run parallel test suites against the same LocalCloud instance?',
-    a: 'Use one isolated instance and project per job. Parallel clients can still contend for service state, resources, and ports; namespace fixtures and verify concurrency behavior rather than assuming isolation guarantees.',
+    q: 'Can I run parallel test suites against the same LocalCloud runtime?',
+    a: 'Use one isolated data volume and project per job. Parallel clients can still contend for service state, resources, and ports; namespace fixtures and verify concurrency behavior rather than assuming isolation guarantees.',
   },
 ];
 ---
@@ -218,7 +218,7 @@ const faqItems = [
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Controlled state</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Use one instance, project, and fixture namespace per job. Explicitly reset or seed state and do not assume emulator concurrency or isolation matches Google Cloud.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Use one data volume, project, and fixture namespace per job. Explicitly reset or seed state and do not assume emulator concurrency or isolation matches Google Cloud.</p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Earlier feedback</span>

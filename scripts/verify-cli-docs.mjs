@@ -8,16 +8,18 @@ let contract;
 try {
 	contract = JSON.parse(await readFile(contractUrl, "utf8"));
 } catch (error) {
-	throw new Error(
-		`CLI documentation: could not parse ${contractUrl.pathname}`,
-		{ cause: error },
-	);
+	throw new Error(`CLI documentation: could not parse ${contractUrl.pathname}`, {
+		cause: error,
+	});
 }
 const sources = new Map();
 for (const path of [
 	"src/pages/index.astro",
 	"src/pages/docs/index.mdx",
+	"src/pages/docs/configuration.mdx",
+	"src/pages/docs/architecture.mdx",
 	"src/components/HomepageVariationFieldManual.astro",
+	"src/pages/docs/terraform.mdx",
 	"src/components/InstallationMethods.astro",
 	"src/pages/gcp-emulator.astro",
 	"src/pages/how-to-run-google-cloud-locally.astro",
@@ -50,12 +52,25 @@ for (const phrase of [
 	"local-developer",
 	"already_running",
 	"reconfigured",
+	"restarted",
 	"dynamically remap",
 ]) {
 	assert(
 		tutorial.includes(phrase),
 		`getting started omits CLI contract phrase: ${phrase}`,
 	);
+}
+for (const phrase of [
+	"built-in `localcloud-data` fallback",
+	"durable runtime identity",
+	"--data-volume NAME",
+	"never removes or relabels Docker resources it does not own",
+]) {
+	const normalizedPhrase = phrase.replace(/\s+/g, " ");
+	const found = [...sources.values()].some((source) =>
+		source.replace(/\s+/g, " ").includes(normalizedPhrase),
+	);
+	assert(found, `public docs omit data-volume contract phrase: ${phrase}`);
 }
 assert(
 	tutorial.includes("SHA-256"),
@@ -121,6 +136,11 @@ const forbidden = [
 		label: "unsupported performance claim",
 	},
 	{ pattern: "no internet required", label: "categorical offline claim" },
+	{ pattern: "selected instance", label: "removed runtime-instance wording" },
+	{
+		pattern: "Terraform-managed instances",
+		label: "removed runtime-instance wording",
+	},
 ];
 for (const [path, source] of sources) {
 	const lowered = source.toLowerCase();
@@ -139,6 +159,12 @@ assert(
 assert(
 	installer.includes("Next steps:"),
 	"installer lacks non-interactive next steps",
+);
+assert(
+	installer.includes(
+		"lc is an alias for localcloud; both commands behave identically.",
+	),
+	"installer lacks the lc alias contract",
 );
 assert(installer.includes("source %s"), "installer lacks PATH source recovery");
 assert(

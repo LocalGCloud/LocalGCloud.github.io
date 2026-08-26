@@ -1,5 +1,0 @@
-src/
-tests/
-vitest.config.ts
-tsconfig.json
-*.tsbuildinfo

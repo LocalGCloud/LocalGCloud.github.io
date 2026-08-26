@@ -7,65 +7,7 @@ const assert = (condition, message) => {
 		throw new Error(`Distributed documentation verification: ${message}`);
 };
 
-let contract;
-try {
-	contract = JSON.parse(await read("src/data/docs-contract.snapshot.json"));
-} catch (error) {
-	throw new Error(
-		"Distributed documentation verification: docs contract is invalid JSON",
-		{ cause: error },
-	);
-}
-let generated;
-try {
-	generated = JSON.parse(
-		await read(
-			"packages/localcloud-mcp-server/src/data/localcloud-contract.generated.json",
-		),
-	);
-} catch (error) {
-	throw new Error(
-		"Distributed documentation verification: generated MCP contract is invalid JSON",
-		{ cause: error },
-	);
-}
-
-assert(
-	generated.services.length === contract.services.length - 1,
-	"MCP generated public service count must exclude integration-only Google Sheets",
-);
-assert(
-	generated.product.serviceCount === 25,
-	"generated available service count is not 25",
-);
-assert(
-	generated.product.serviceGuideCount === 26,
-	"generated public service guide count is not 26",
-);
-assert(
-	!generated.services.some((service) => service.slug === "google-sheets"),
-	"Google Sheets is still exposed as a LocalCloud service",
-);
-assert(
-	generated.services.find((service) => service.slug === "firestore")?.status ===
-		"planned",
-	"Firestore must be exposed as coming soon",
-);
-assert(
-	generated.runtimeRevision === contract.provenance.runtimeRevision,
-	"generated runtime revision is stale",
-);
-assert(
-	generated.cliRevision === contract.provenance.cliRevision,
-	"generated CLI revision is stale",
-);
-
-const roots = [
-	"src",
-	"public",
-	"agent-skills",
-	"packages/localcloud-mcp-server",
-];
+const roots = ["src", "public", "agent-skills"];
 const { execFileSync } = await import("node:child_process");
 const files = execFileSync("find", [...roots, "-type", "f"], {
 	cwd: new URL("..", import.meta.url),
@@ -87,6 +29,55 @@ const source = entries
 	.filter(([path]) => path !== "src/data/docs-contract.snapshot.json")
 	.map(([path, content]) => `\n@@ ${path}\n${content}`)
 	.join("\n");
+
+const referenceRoots = [
+	...roots,
+	"docs",
+	"openspec",
+	"reports",
+	"scripts",
+	"package.json",
+	"pnpm-lock.yaml",
+];
+const referenceFiles = execFileSync("find", [...referenceRoots, "-type", "f"], {
+	cwd: new URL("..", import.meta.url),
+	encoding: "utf8",
+})
+	.trim()
+	.split("\n")
+	.filter(Boolean)
+	.filter(
+		(path) =>
+			!path.includes("/node_modules/") &&
+			!path.includes("/dist/") &&
+			!path.startsWith("public/pagefind/") &&
+			path !== "scripts/verify-distributed-docs.mjs",
+	);
+const referenceEntries = await Promise.all(
+	referenceFiles.map(async (path) => [path, await read(path)]),
+);
+const retiredMcpPatterns = [
+	/packages\/localcloud-mcp-server/i,
+	/@localcloud\/localcloud-mcp-server/i,
+	/@modelcontextprotocol\/sdk/i,
+	/\blocalcloud-mcp-server\b/i,
+	/\bMCP package\b/i,
+	/\bmcp_package\w*\b/i,
+	/\bMCP (?:README|facts|build|typecheck|metadata|distribution)\b/i,
+	/\binstallable MCP tools\b/i,
+	/generated package snapshot/i,
+	/package\/download signals/i,
+	/\b(?:MCPB|Docker MCP Catalog|PulseMCP|Smithery)\b/i,
+	/\bnpm\b[^\n]{0,80}\bMCP\b|\bMCP\b[^\n]{0,80}\bnpm\b/i,
+];
+for (const [path, content] of referenceEntries) {
+	for (const pattern of retiredMcpPatterns) {
+		assert(
+			!pattern.test(content),
+			`${path} retains a retired site-local MCP package reference: ${pattern}`,
+		);
+	}
+}
 
 const forbidden = [
 	"/_localcloud/",
@@ -111,6 +102,24 @@ for (const phrase of forbidden) {
 	assert(
 		!source.toLowerCase().includes(phrase.toLowerCase()),
 		`forbidden stale phrase remains: ${phrase}`,
+	);
+}
+
+const runtimeMcpGuideExpression =
+	"${productFacts.githubUrl}/blob/main/docs/MCP_INTEGRATION.md";
+for (const path of [
+	"src/pages/blog/localcloud-for-ai-agents.astro",
+	"src/pages/docs/licensing.mdx",
+	"src/data/agenticContent.ts",
+]) {
+	const value = await read(path);
+	assert(
+		value.includes(runtimeMcpGuideExpression),
+		`${path} does not use the canonical productFacts runtime MCP guide URL`,
+	);
+	assert(
+		value.includes("/mcp") && value.includes("localcloud mcp"),
+		`${path} does not distinguish the runtime endpoint from the stdio bridge`,
 	);
 }
 
@@ -142,20 +151,6 @@ assert(
 	(agentic.match(/slug: 'localcloud-for-ai-agents'/g) ?? []).length === 0,
 	"unused duplicate AI-agents blog record remains",
 );
-const mcpFacts = await read(
-	"packages/localcloud-mcp-server/src/data/localcloudFacts.ts",
-);
-assert(
-	/import contract from ["']\.\/localcloud-contract\.generated\.json["']/.test(
-		mcpFacts,
-	),
-	"MCP facts do not consume generated contract",
-);
-assert(
-	!mcpFacts.includes("service('Cloud Storage'"),
-	"MCP facts retain hand-maintained service rows",
-);
-
 console.log(
-	`Distributed documentation verified: ${generated.services.length} generated services, ${files.length} files scanned, LLM/MCP/skill parity enforced.`,
+	`Distributed documentation verified: ${files.length} distributed files and ${referenceFiles.length} repository references scanned; runtime MCP links, public LLM files, and Agent Skills surfaces are consistent.`,
 );

@@ -102,7 +102,7 @@ Use a non-production backend and project. Keep LocalCloud endpoint variables sco
 
 ## Generated endpoint shapes
 
-Generate the complete values from the running instance:
+Generate the complete values from the running LocalCloud runtime:
 
 ```bash
 eval "$(curl -fsS 'http://localhost:24080/env?format=terraform')"
@@ -138,7 +138,7 @@ Other resources may have implementation or example coverage, but publish them as
 
 ## Terraform mode and seed data
 
-Set `LOCALCLOUD_TERRAFORM_MODE=true` in the **runtime container** for Terraform-managed instances. Seed operations are skipped to avoid creating resources outside Terraform state. The dedicated `/terraform/readiness` response checks routing prerequisites; generic `/health` alone is insufficient.
+Set `LOCALCLOUD_TERRAFORM_MODE=true` in the **runtime container** for Terraform-managed resources. Seed operations are skipped to avoid creating resources outside Terraform state. The dedicated `/terraform/readiness` response checks routing prerequisites; generic `/health` alone is insufficient.
 
 ## Cleanup and production validation
 

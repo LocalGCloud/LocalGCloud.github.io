@@ -30,14 +30,14 @@ Use this playbook for launch comments, support replies, GitHub issues, and socia
 | “Is this production-ready?” | No. LocalCloud is for development, testing, CI, and demos. Validate against real GCP before production. | `/compatibility/` |
 | “Is it 100% compatible with GCP?” | No emulator should be marketed that way. Use the service catalog and compatibility docs to decide which local checks are safe. | `/services/`, `/compatibility/` |
 | “Does it require real Google credentials?” | Default local workflows should not require a GCP account, credentials, service-account keys, or billing project. If a workflow asks for them, fix routing instead of proceeding. | `/ai/agents.md`, `/docs/sdk-examples/` |
-| “What about security?” | Keep LocalCloud on localhost/private CI networks, use fake seed data/secrets, avoid mounting real credentials, and review Docker/MCP permissions before use. | `/docs/seed-data/`, MCP security docs when available |
+| “What about security?” | Keep LocalCloud on localhost/private CI networks, use fake seed data/secrets, avoid mounting real credentials, and review Docker/MCP permissions before use. | `/docs/seed-data/`, [runtime MCP integration guide](https://github.com/LocalGCloud/localcloud-cli/blob/main/docs/MCP_INTEGRATION.md) |
 | “Why not just use Google’s emulators?” | If Google’s individual emulators cover your workflow, use them. LocalCloud is useful when you want one container, a unified workflow, and service coverage beyond the individual emulator setup. | `/services/` |
 | “Is this LocalStack for GCP?” | It solves a similar local-development category problem for GCP, but do not imply affiliation with LocalStack. Describe it as LocalCloud, a local GCP emulator. | `/compatibility/` |
 | “How is this different from a generic sandbox?” | Generic sandboxes run code. LocalCloud provides localhost GCP service endpoints for SDK/Terraform workflows. Some teams may use both. | `/docs/sdk-examples/`, `/docs/terraform/` |
 | “Will this reduce our bill?” | Default local dev/test calls do not hit billable Google Cloud APIs. Do not promise a specific savings number without measuring the team’s workflow. | Measurement ledger/backlog |
 | “What services are missing?” | Link the service catalog and compatibility page; do not guess. Planned services should not be used as launch proof. | `/services/`, `/compatibility/` |
 | “Can it run in CI?” | Yes as a local container/sidecar pattern when Docker and ports are available; wait for health and export env vars before tests. | `/docs/`, `/docs/terraform/` |
-| “What if an agent tries real GCP anyway?” | The agent instructions must tell it to stop if localhost routing is unavailable. MCP tools and skills should enforce endpoint checks where possible. | `/ai/agents.md` |
+| “What if an agent tries real GCP anyway?” | The agent instructions must tell it to stop if localhost routing is unavailable. Runtime MCP behavior and skills should enforce endpoint checks where possible. | `/ai/agents.md`, [runtime MCP integration guide](https://github.com/LocalGCloud/localcloud-cli/blob/main/docs/MCP_INTEGRATION.md) |
 
 ## Detailed reply templates
 

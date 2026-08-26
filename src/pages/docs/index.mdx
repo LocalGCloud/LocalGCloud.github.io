@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Getting Started
-description: Install the LocalCloud CLI, start a local instance, and make your first Cloud Storage request.
+description: Install the LocalCloud CLI, start a local runtime, and make your first Cloud Storage request.
 ---
 
 import CardGroup from '../../components/CardGroup.astro';
@@ -15,7 +15,7 @@ import { publishedServiceCount } from '../../data/services';
 
 # Get started with LocalCloud
 
-This tutorial installs the LocalCloud CLI, starts a persistent local instance, configures this shell, and verifies a Cloud Storage request. LocalCloud emulates bounded development workflows; always run final validation against real Google Cloud before production deployment.
+This tutorial installs the LocalCloud CLI, starts a persistent local runtime, configures this shell, and verifies a Cloud Storage request. LocalCloud emulates bounded development workflows; always run final validation against real Google Cloud before production deployment.
 
 ## Prerequisites
 
@@ -50,7 +50,7 @@ In an interactive terminal, the installer can offer to run diagnostics and start
 The commands below were reviewed from CLI source revision <code>{docsContract.provenance.cliRevision}</code>. The documentation site does not independently qualify every released binary; use the published checksum for the exact archive you install.
 </Callout>
 
-## Start your first instance
+## Start your first runtime
 
 <Steps>
   <Step title="Check Docker">
@@ -59,7 +59,7 @@ The commands below were reviewed from CLI source revision <code>{docsContract.pr
 localcloud doctor
 ```
 
-A usable Docker installation returns JSON with `"status": "ok"`. `doctor` diagnoses Docker; it does not install or start Docker Desktop, Colima, or Docker Engine.
+A usable Docker installation exits successfully and reports `status: ok`. `doctor` diagnoses Docker; it does not install or start Docker Desktop, Colima, or Docker Engine. Add `--verbose` when you need the complete JSON payload.
 
   </Step>
   <Step title="Start LocalCloud">
@@ -68,16 +68,21 @@ A usable Docker installation returns JSON with `"status": "ok"`. `doctor` diagno
 localcloud start
 ```
 
-A successful command returns `started`, `already_running`, or `reconfigured`. By default the CLI uses:
+A successful command reports `started`, `already_running`, `restarted`, or
+`reconfigured`. Runtime selection precedence is `--data-volume`, the selected
+configuration's `data_volume`, the revalidated active-runtime record, then the
+built-in `localcloud-data` fallback. Other built-in defaults are:
 
-- instance `default`
 - project `local-gcp-project`
 - caller `local-developer`
-- persistent data in the Docker volume `localcloud-data`
+- persistent data
 - Docker socket access **off**
 - transparent networking **off**
 
-The CLI binds published ports to `127.0.0.1`. If a canonical port is occupied, it can dynamically remap host ports. Use the URL and `sdk_env` values in the command output rather than assuming the console is always on port 24080.
+The CLI binds published ports to `127.0.0.1`. If a canonical port is occupied,
+it can dynamically remap host ports. Use `--verbose` to inspect the complete
+runtime payload, including immutable container ID, ownership, image identity,
+mount details, and `sdk_env`.
 
   </Step>
   <Step title="Configure this shell">
@@ -86,7 +91,7 @@ The CLI binds published ports to `127.0.0.1`. If a canonical port is occupied, i
 eval "$(localcloud env)"
 ```
 
-`localcloud env` inspects the running instance and prints local-only SDK settings using the actual mapped ports. It rejects environment values that would route supported services to real Google endpoints or non-loopback HTTP endpoints.
+`localcloud env` discovers the compatible running container using the selected data volume and prints local-only SDK settings with its actual mapped ports. It rejects environment values that would route supported services to real Google endpoints or non-loopback HTTP endpoints.
 
   </Step>
   <Step title="Open the console">
@@ -95,7 +100,7 @@ eval "$(localcloud env)"
 localcloud console
 ```
 
-The CLI opens the console for the selected instance, project, and caller. Trust the returned `url`; do not replace it with a hard-coded port.
+The CLI opens the console for the selected runtime, project, and caller. Trust the returned `url`; do not replace it with a hard-coded port.
 
   </Step>
 </Steps>
@@ -133,14 +138,21 @@ Hello, LocalCloud!
 
 If the SDK tries to contact Google Cloud, stop instead of adding real credentials. Re-run `eval "$(localcloud env)"` in the shell or process that launches the application. This example is source-validated and designed to be idempotent; no qualified assembled image was available in this worker environment for an end-to-end runtime execution.
 
-## Verify and manage the instance
+## Verify and manage the runtime
 
 ```bash
-localcloud status
+localcloud status --verbose
 localcloud logs --tail 50
 ```
-
-`localcloud stop` stops the default persistent instance but retains its volume. Running the installer with `--uninstall` removes only a script-managed CLI and its PATH block; containers and persistent volumes remain intact.
+Use `--data-volume NAME` with any runtime command to select an isolated durable
+runtime identity and its storage. Without the flag or a configured
+`data_volume`, runtime commands use the revalidated active-runtime record before
+falling back to `localcloud-data`.
+`localcloud stop` stops that selected runtime and retains persistent storage.
+The CLI may operate a compatible container created by another tool, but never
+removes or relabels Docker resources it does not own. Running the
+installer with `--uninstall` removes only a script-managed CLI and its PATH
+block; containers and persistent volumes remain intact.
 
 ## Manual Docker path
 

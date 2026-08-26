@@ -1,6 +1,6 @@
 # Agentic Economy Measurement Operations
 
-This document defines how to measure the LocalCloud agentic launch without spam, synthetic engagement, or unsupported claims. It covers launch posts, comments, Docker pulls, docs visits, answer-engine citations, directory submissions, MCP package distribution, skill repository adoption, and quickstart activation proxies.
+This document defines how to measure the LocalCloud agentic launch without spam, synthetic engagement, or unsupported claims. It covers launch posts, comments, Docker pulls, docs visits, answer-engine citations, runtime MCP documentation, skill repository adoption, and quickstart activation proxies.
 
 ## Owner and cadence
 
@@ -8,8 +8,8 @@ This document defines how to measure the LocalCloud agentic launch without spam,
 |---|---|---|
 | Launch day | Launch operator | Record every post, comment thread, removal, docs spike, Docker pull baseline/delta, quickstart interaction, and high-risk objection. |
 | Launch week daily | Launch operator + maintainer | Cluster objections, respond where useful, open docs/backlog issues, and update the ledger. |
-| Monthly | Growth/ops owner | Review search visibility, AI citations, Docker pulls, docs visits, package downloads, skill repo signals, and conversion proxies. |
-| Quarterly | Docs owner + product owner | Review compatibility freshness, agent platform install instructions, MCP registry metadata, skills, and launch assets. |
+| Monthly | Growth/ops owner | Review search visibility, AI citations, Docker pulls, docs visits, skill repository signals, and conversion proxies. |
+| Quarterly | Docs owner + product owner | Review compatibility freshness, runtime MCP integration links, skills, and launch assets. |
 | Before each launch wave | Release owner | Complete `agentic-release-checklist.md` and confirm the ledger has baseline rows. |
 
 ## Source of truth
@@ -30,10 +30,9 @@ Launch asset production uses `agentic-launch-asset-templates.md`; demo recording
 | Docker pulls | Baseline, daily count, launch-week delta. | Docker Hub public stats or owner dashboard. | Pull count is directional; do not treat as activated usage. |
 | Docs visits | Page visits, referrers, copy-prompt clicks, quickstart clicks, SDK/Terraform visits. | PostHog or configured analytics. | Segment by UTM/source where available. |
 | Quickstart activation proxies | `/ai/agents.md` visits, env export docs visits, copy prompt events, docs SDK example visits, Terraform guide visits. | Analytics events/page paths. | These are proxies, not proof of successful local runs. |
-| MCP package downloads | npm downloads, registry listing views, GitHub releases. | npm/registry/GitHub. | Only when MCP package exists. |
+| Runtime MCP documentation | Guide visits, MCP-link clicks, and MCP-related support issues. | Analytics/manual. | The runtime repository owns implementation and connection details. |
 | Skill repo installs/stars | Stars, clones, install links clicked, issues. | GitHub/analytics. | Only when skill repo exists. |
 | Answer engines | Prompt, engine, cited URLs, competitor mentions, factual accuracy. | Manual monthly review. | Use `agentic-ai-citation-prompts.md`. |
-| Directory submissions | Registry/directory name, submission URL, status, rejection reason, asset gaps. | Manual capture. | Do not claim listing until accepted. |
 
 ## Baseline setup
 
@@ -45,7 +44,7 @@ Before launch day:
 4. Confirm analytics labels for copy-prompt, docs quickstart, SDK examples, Terraform, seed data, and compatibility clicks.
 5. Assign comment owners for each platform.
 6. Record current answer-engine citation baseline using `agentic-ai-citation-prompts.md`.
-7. Record current directory/package status for MCP, skills, and package registries only if those artifacts exist.
+7. Record the current runtime MCP documentation link and Agent Skills repository status.
 
 ## UTM and event naming
 
@@ -79,7 +78,7 @@ For each meaningful comment thread, record:
 - Objection category.
 - Exact user wording or a short faithful summary.
 - Response URL and owner.
-- Whether the concern is resolved, needs docs, needs product work, needs MCP/skill guardrail, or should be ignored by rule.
+- Whether the concern is resolved, needs site docs, needs a runtime issue, needs skill guidance, or should be ignored by rule.
 
 Use these standard objection categories:
 
@@ -116,8 +115,8 @@ Artifact mapping:
 | SDK routing confusion | `/docs/sdk-examples/`, `/ai/agents.md`, or copy prompt update. |
 | Terraform setup confusion | `/docs/terraform/` update. |
 | Seed/reset confusion | `/docs/seed-data/` update. |
-| Agent safety failure | Skill instruction, MCP guardrail, or `/ai/agents.md` stop condition. |
-| Docker/MCP permission concern | Security note, package README, MCP permission docs. |
+| Agent safety failure | Skill instruction, runtime MCP guidance, or `/ai/agents.md` stop condition. |
+| Docker/MCP permission concern | Security note or the runtime repository’s canonical MCP integration guide. |
 | Pricing/licensing question | Public licensing/pricing doc only after owner approval; otherwise response playbook update. |
 | Missing service | Product backlog item and service catalog/compatibility note if needed. |
 
@@ -130,7 +129,7 @@ Artifact mapping:
 5. Run the AI-citation prompt set across enabled answer engines.
 6. Record cited URLs, competitor mentions, and factual accuracy.
 7. Check search visibility using the existing SEO/AI visibility process.
-8. Review directory submission/package status.
+8. Review runtime MCP integration links and Agent Skills distribution status.
 9. Open updates for repeated objections and stale content.
 10. Share a concise summary: what launched, what users asked, what changed, and what remains blocked.
 
@@ -138,6 +137,6 @@ Artifact mapping:
 
 - No fake reviews, synthetic comments, undisclosed astroturfing, or vote requests.
 - No claims that LocalCloud is production-safe or 100% compatible.
-- No claims of Docker pulls, docs visits, package downloads, stars, or citations unless recorded from a real source.
+- No claims of Docker pulls, docs visits, stars, or citations unless recorded from a real source.
 - No unsupported pricing/licensing promises.
 - Every repeated objection has an owner, artifact/backlog target, and next review date.
