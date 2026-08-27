@@ -1,4 +1,12 @@
 node_modules
 dist
+
+#AI agents
 .astro
 .design-extract/
+.pi
+.agents
+.codex
+.gemini
+.impeccable
+graft

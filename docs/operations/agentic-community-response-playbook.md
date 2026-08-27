@@ -13,9 +13,9 @@ Use this playbook for launch comments, support replies, GitHub issues, and socia
 
 ## Fast facts to use
 
-- LocalCloud is a local Google Cloud emulator for development, testing, CI, and demos.
+- LocalCloud is a local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its proprietary license.
 - Docker image: `jaysen2apache/localcloud`.
-- Service breadth: `20+` service surfaces; link `/services/`.
+- Service breadth: 27 available service guides; link `/services/`.
 - Default local workflows require no GCP account, credentials, service-account keys, or billing project.
 - Standard Google Cloud SDKs route to localhost through emulator environment variables; link `/docs/sdk-examples/`.
 - Terraform can be configured against local endpoints; link `/docs/terraform/`.
@@ -27,24 +27,24 @@ Use this playbook for launch comments, support replies, GitHub issues, and socia
 
 | Objection | Short response | Link/action |
 |---|---|---|
-| “Is this production-ready?” | No. LocalCloud is for development, testing, CI, and demos. Validate against real GCP before production. | `/compatibility/` |
+| “Is this production-ready?” | No. LocalCloud is for permitted personal workflows and is not a production Google Cloud replacement. Validate against real GCP before production. | `/compatibility/` |
 | “Is it 100% compatible with GCP?” | No emulator should be marketed that way. Use the service catalog and compatibility docs to decide which local checks are safe. | `/services/`, `/compatibility/` |
 | “Does it require real Google credentials?” | Default local workflows should not require a GCP account, credentials, service-account keys, or billing project. If a workflow asks for them, fix routing instead of proceeding. | `/ai/agents.md`, `/docs/sdk-examples/` |
-| “What about security?” | Keep LocalCloud on localhost/private CI networks, use fake seed data/secrets, avoid mounting real credentials, and review Docker/MCP permissions before use. | `/docs/seed-data/`, [runtime MCP integration guide](https://github.com/LocalGCloud/localcloud-cli/blob/main/docs/MCP_INTEGRATION.md) |
+| “What about security?” | Keep LocalCloud on localhost, use fake seed data and secrets, avoid mounting real credentials, and review Docker/MCP permissions before use. | `/docs/seed-data/`, [runtime MCP integration guide](https://github.com/jhsenjaliya/localcloud/blob/main/docs/MCP_INTEGRATION.md) |
 | “Why not just use Google’s emulators?” | If Google’s individual emulators cover your workflow, use them. LocalCloud is useful when you want one container, a unified workflow, and service coverage beyond the individual emulator setup. | `/services/` |
 | “Is this LocalStack for GCP?” | It solves a similar local-development category problem for GCP, but do not imply affiliation with LocalStack. Describe it as LocalCloud, a local GCP emulator. | `/compatibility/` |
 | “How is this different from a generic sandbox?” | Generic sandboxes run code. LocalCloud provides localhost GCP service endpoints for SDK/Terraform workflows. Some teams may use both. | `/docs/sdk-examples/`, `/docs/terraform/` |
 | “Will this reduce our bill?” | Default local dev/test calls do not hit billable Google Cloud APIs. Do not promise a specific savings number without measuring the team’s workflow. | Measurement ledger/backlog |
 | “What services are missing?” | Link the service catalog and compatibility page; do not guess. Planned services should not be used as launch proof. | `/services/`, `/compatibility/` |
-| “Can it run in CI?” | Yes as a local container/sidecar pattern when Docker and ports are available; wait for health and export env vars before tests. | `/docs/`, `/docs/terraform/` |
-| “What if an agent tries real GCP anyway?” | The agent instructions must tell it to stop if localhost routing is unavailable. Runtime MCP behavior and skills should enforce endpoint checks where possible. | `/ai/agents.md`, [runtime MCP integration guide](https://github.com/LocalGCloud/localcloud-cli/blob/main/docs/MCP_INTEGRATION.md) |
+| “Can it run in CI?” | The current license excludes employer, organization, commercial, shared-team, and team-CI use. A permitted personal automation workflow can technically use a Docker runner after checking the license. | `/docs/licensing/`, `/gcp-integration-testing/` |
+| “What if an agent tries real GCP anyway?” | The agent instructions must tell it to stop if localhost routing is unavailable. Runtime MCP behavior and skills should enforce endpoint checks where possible. | `/ai/agents.md`, [runtime MCP integration guide](https://github.com/jhsenjaliya/localcloud/blob/main/docs/MCP_INTEGRATION.md) |
 
 ## Detailed reply templates
 
 ### Compatibility
 
 ```text
-You’re right to ask about compatibility. LocalCloud is an emulator for dev/test/CI/demo workflows, not a promise of 100% production parity. The safest path is to match your services against the catalog and known gaps, then validate production behavior against real Google Cloud before release:
+You’re right to ask about compatibility. LocalCloud is an emulator for personal workflows permitted by its license, not a promise of 100% production parity. Match your services against the catalog and known gaps, then validate production behavior against real Google Cloud before release:
 
 - Services: https://local.cloud/services/
 - Compatibility: https://local.cloud/compatibility/
@@ -62,7 +62,7 @@ Agent guide: https://local.cloud/ai/agents.md
 ### Docker and local permissions
 
 ```text
-LocalCloud is Docker-based, so the machine or CI runner needs Docker and the required local ports. For a safe launch demo, keep it bound to localhost/private CI, do not mount real cloud credentials, and use fake seed data.
+LocalCloud is Docker-based, so the personal machine or eligible personal runner needs Docker and the required local ports. Keep it bound to localhost, do not mount real cloud credentials, and use fake seed data.
 
 Seed data docs: https://local.cloud/docs/seed-data/
 ```
@@ -76,7 +76,7 @@ For MCP/client integrations, treat Docker/container controls as privileged local
 ### Pricing/licensing
 
 ```text
-The public positioning we can safely state is: LocalCloud is free for developers, and default local workflows avoid GCP billing because they target localhost instead of real cloud APIs. I’m not going to invent enterprise pricing or long-term license terms in a thread; we’ll keep public docs updated when those details are formalized.
+The public positioning we can safely state is: the proprietary license grants limited royalty-free use to qualifying Individual Developers for specified personal purposes. It excludes employer, organization, commercial, cost-saving, shared-team, and team-CI use, and currently offers no commercial license. Local endpoint routing does not itself grant permission.
 ```
 
 ### LocalStack comparison

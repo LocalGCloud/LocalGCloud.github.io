@@ -1,16 +1,21 @@
 {
   "schemaVersion": 3,
-  "reviewedAt": "2026-08-13",
+  "reviewedAt": "2026-08-26",
   "provenance": {
-    "runtimeRevision": "0b3f9afabc9f74a33e834e52997bdf09cf74ad7f",
-    "cliRevision": "7016269f63de3b4c15360b99ef81546c9b73cb44",
+    "runtimeRevision": "4f223cb67a0ed3a452a027105bc3dd1f1b0f0f01",
+    "cliRevision": "5d4b47590c681f8b2c2eeda91b2a62f9fdce1562",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
-      "../localcloud/services.yaml",
-      "../localcloud/specs/api/**",
-      "../localcloud/localcloud-server/src/main/resources/compatibility/services/*.yaml",
-      "../localcloud-cli/src/localcloud_cli/**",
+      "../localcloud/localcloud.defaults.yaml",
+      "../localcloud/documentation.yaml",
+      "../localcloud/docs/SERVICE_STATUS.md",
+      "../localcloud/docs/TLS_AND_TRANSPARENT_NETWORKING.md",
+      "../localcloud/docs/MCP_INTEGRATION.md",
+      "../localcloud/specs/api/catalog.json",
+      "../localcloud-cli/README.md",
+      "../localcloud-cli/src/localcloud_cli/config.py",
+      "../localcloud-cli/src/localcloud_cli/__init__.py",
       "public/install.sh"
     ],
     "dependencyRevalidations": [
@@ -41,6 +46,22 @@
           "reports/localcloud-documentation-accuracy-audit.md#spanner"
         ]
       }
+    ],
+    "sourceDigests": {
+      "../localcloud/localcloud.defaults.yaml": "sha256:1986f49d6efcc35fe78c993a75b634aaac84f45ed2ad9b40a540e2ca38ec4a81",
+      "../localcloud/documentation.yaml": "sha256:5d06a69d258fd2b8c7c3c3b50d4676984ffbdfaea786137899328b4fa34d5c70",
+      "../localcloud/docs/SERVICE_STATUS.md": "sha256:d2177881c359aa861b225e7d6a3c324bff477dfb6637a01c988a73f44dfde8c2",
+      "../localcloud/docs/TLS_AND_TRANSPARENT_NETWORKING.md": "sha256:6a6fac2329ea79875798bfc54a778bd93e4545c479e80e1d3577e48c77130c65",
+      "../localcloud/docs/MCP_INTEGRATION.md": "sha256:600dddfa3ece7243b1f1605a133cd2cbaac3e982a30fa56be378452627af23f5",
+      "../localcloud/specs/api/catalog.json": "sha256:d23a9da45aa9c7b8363f4265bc3a2c89bac88349297a47a09599f8c4277460e3",
+      "../localcloud-cli/README.md": "sha256:15902f4bc41efda7c63ab8a04c35ed8f916651a3f08ec15dca6307ef763b1fe7",
+      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:be43ad58cce6612049c5353f773cd3aaae2c209356be10eb8743f9ae939c7eee",
+      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:b8b4b3dab2b6f86889716b6cd63c21b7d46516944509d9fe9e9e5c0cdfb810a2",
+      "public/install.sh": "sha256:428a2788dc6048c6426390484223b509de84d2dacc40f46e393b34b3e73594bf"
+    },
+    "worktreeSources": [
+      "../localcloud-cli/README.md",
+      "../localcloud-cli/src/localcloud_cli/config.py"
     ]
   },
   "product": {
@@ -69,8 +90,10 @@
   "operator": {
     "gatewayPort": 24080,
     "publishedPorts": {
-      "default": "24080-24092",
-      "transparentNetwork": "24093-24095"
+      "services": "24080-24092",
+      "transparentDns": "53/udp -> 24093/udp",
+      "transparentHttp": "80 -> 24080",
+      "transparentHttps": "443 -> tls.port (default 24443)"
     },
     "endpoints": {
       "health": "/health",
@@ -137,7 +160,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "Command behavior was reviewed from CLI source revision 9045e94e4603d9909f780d6e0b57a93b2f947304; re-verify exact released artifacts independently."
+    "releaseBoundary": "CLI 0.1.2 behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
@@ -410,8 +433,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/gcs.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/docker/conf/supervisord.conf"
         ]
       },
@@ -420,44 +443,52 @@
         "[prod_only] IAM, lifecycle policies, and notifications not emulated in LocalCloud."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/gcs.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "gcs.1",
+          "id": "gcs.buckets.lifecycle",
           "label": "buckets.create/list/delete",
           "status": "verified",
-          "limitations": [
-            "[prod_only] IAM, lifecycle policies, and notifications not emulated in LocalCloud."
-          ],
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/gcs.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "gcs.2",
+          "id": "gcs.objects.lifecycle",
           "label": "objects.upload/download/list/delete",
           "status": "verified",
           "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/gcs.yaml"
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "gcs.advanced-control-plane",
+          "label": "iam, lifecycle policies, notifications",
+          "status": "unsupported",
+          "limitations": [
+            "Production-only control-plane behavior; not applicable to local development."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "pubsub",
@@ -465,7 +496,7 @@
       "port": 24082,
       "additionalPorts": {},
       "protocol": "grpc",
-      "type": "external",
+      "type": "facade",
       "minTier": "community",
       "envVar": "PUBSUB_EMULATOR_HOST",
       "envValue": "localhost:24082",
@@ -480,82 +511,72 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/pubsub.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
       "status": "partial",
       "limitations": [
-        "External emulator supports schemas, snapshots, seek, and dead-letter policy; gateway/Terraform REST facade exposes core topic/subscription routes only.",
-        "gcloud and console paths remain partial/unverified for advanced Pub/Sub workflows."
+        "Schemas, snapshots, seek, dead-letter policy, filters, and other advanced subscription fields are not implemented on the configured endpoint.",
+        "gcloud and console paths remain partial for advanced Pub/Sub workflows."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/pubsub.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "pubsub.1",
-          "label": "topics.create/list/delete",
-          "status": "partial",
-          "limitations": [
-            "External emulator supports schemas, snapshots, seek, and dead-letter policy; gateway/Terraform REST facade exposes core topic/subscription routes only.",
-            "gcloud and console paths remain partial/unverified for advanced Pub/Sub workflows."
-          ],
+          "id": "pubsub.topics.lifecycle",
+          "label": "topics.create/get/list/delete",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/pubsub.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "pubsub.2",
-          "label": "subscriptions.create/list/delete",
-          "status": "partial",
-          "limitations": [
-            "Pub/Sub operation remains partial; review the service-level limitations and evidence before relying on production parity."
-          ],
+          "id": "pubsub.subscriptions.lifecycle",
+          "label": "subscriptions.create/get/list/delete",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/pubsub.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "pubsub.3",
-          "label": "publish/pull/ack",
-          "status": "partial",
-          "limitations": [
-            "Pub/Sub operation remains partial; review the service-level limitations and evidence before relying on production parity."
-          ],
+          "id": "pubsub.message.workflow",
+          "label": "publish/pull/ack/modifyAckDeadline",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/pubsub.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "pubsub.4",
+          "id": "pubsub.advanced-delivery",
           "label": "schemas, snapshots, seek, dead-letter policy",
-          "status": "partial",
+          "status": "unsupported",
           "limitations": [
-            "Pub/Sub operation remains partial; review the service-level limitations and evidence before relying on production parity."
+            "The configured Pub/Sub gRPC endpoint fails unsupported schemas, snapshots, seek, and advanced subscription fields explicitly with UNIMPLEMENTED."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/pubsub.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "firestore",
@@ -578,8 +599,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/firestore.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -589,47 +610,45 @@
         "Index/query behavior is unverified."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/firestore.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
-      "registryDefaultEnabled": true,
+      "registryDefaultEnabled": false,
       "assembledDefault": {
-        "enabled": true,
+        "enabled": false,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "firestore.1",
+          "id": "firestore.documents.crud",
           "label": "documents.create/read/update/delete",
           "status": "partial",
           "limitations": [
-            "Seed and browser parity is not fully hardened.",
-            "Index/query behavior is unverified."
+            "External emulator is available; seed and browser parity needs hardening."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/firestore.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "firestore.2",
+          "id": "firestore.queries.indexes",
           "label": "queries/index behavior",
           "status": "partial",
           "limitations": [
-            "Firestore operation remains partial; review the service-level limitations and evidence before relying on production parity."
+            "Complex query/index parity is unverified."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/firestore.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "bigtable",
@@ -653,196 +672,121 @@
         ],
         "qualification": "release-unverified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigtable.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/docker/conf/supervisord.conf"
         ]
       },
-      "status": "release-unverified",
+      "status": "verified",
       "limitations": [
-        "Extended features differ between the mutable v0.0.1 dependency, cached artifact, and current dependency checkout; qualify the assembled image before relying on them.",
         "[prod_only] Single-node emulator by design; clusters, multi-region, replication require Google infrastructure.",
-        "GoogleSQL queries (ExecuteQuery/PrepareQuery) are unsupported; use the Bigtable Data API filter pipeline.",
-        "Cached-artifact extended features are bounded local implementations, not production topology, routing, backup, IAM, or query parity.",
-        "Session protocol (OpenTable/OpenAuthorizedView/OpenMaterializedView) is unsupported."
+        "GoogleSQL queries (ExecuteQuery/PrepareQuery) not supported — data-plane uses HBase-style API only.",
+        "Change streams, app profiles, and logical views are not implemented in the emulator.",
+        "Session protocol (OpenTable/OpenAuthorizedView/OpenMaterializedView) not implemented — not needed for correctness."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigtable.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "bigtable.1",
+          "id": "bigtable.admin.lifecycle",
           "label": "instances/tables/families",
-          "status": "release-unverified",
-          "limitations": [
-            "Extended features differ between the mutable v0.0.1 dependency, cached artifact, and current dependency checkout; qualify the assembled image before relying on them.",
-            "[prod_only] Single-node emulator by design; clusters, multi-region, replication require Google infrastructure.",
-            "GoogleSQL queries (ExecuteQuery/PrepareQuery) are unsupported; use the Bigtable Data API filter pipeline.",
-            "Cluster and app-profile APIs are metadata CRUD only; topology and routing are not enforced.",
-            "Session protocol (OpenTable/OpenAuthorizedView/OpenMaterializedView) is unsupported."
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigtable.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigtable.2",
-          "label": "Core row reads, mutations, filters, and sampling",
-          "status": "release-unverified",
-          "limitations": [
-            "The inspected cached artifact implements core data workflows with simplified local semantics and no production quotas, concurrency, or distribution guarantees; the assembled image is not qualified."
-          ],
+          "id": "bigtable.rows.data",
+          "label": "row mutations and reads",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigtable.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigtable.3",
-          "label": "Table and column-family administration",
-          "status": "release-unverified",
-          "limitations": [
-            "Table and family lifecycle is observed in source artifacts; undelete, snapshots, production consistency, and assembled-image qualification are not provided."
-          ],
+          "id": "bigtable.cli.cbt",
+          "label": "cbt CLI compatibility",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigtable.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigtable.4",
-          "label": "Instance administration",
-          "status": "release-unverified",
-          "limitations": [
-            "Instance lifecycle is local metadata behavior without billing, quota, replication, or multi-region semantics."
-          ],
+          "id": "bigtable.browser.console",
+          "label": "localcloud console data browser",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigtable.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigtable.5",
-          "label": "PostgreSQL-backed LocalCloud persistence",
-          "status": "release-unverified",
-          "limitations": [
-            "Persistence is configured under the mounted LocalCloud volume, but dependency identity, restart recovery, and the assembled image have not been qualified."
-          ],
+          "id": "bigtable.persistence",
+          "label": "data survives emulator restart",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigtable.yaml"
-          ]
-        },
-        {
-          "id": "bigtable.6",
-          "label": "Cached-artifact extended administration methods",
-          "status": "release-unverified",
-          "limitations": [
-            "Extended methods differ between the cached module, mutable v0.0.1 input, local tag, and dependency HEAD; use the feature-specific entries below and qualify an immutable assembled image."
-          ],
-          "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigtable.yaml"
-          ]
-        },
-        {
-          "id": "bigtable.7",
-          "label": "Forward-compatible unsupported RPC handling",
-          "status": "release-unverified",
-          "limitations": [
-            "Unimplemented RPC handling is a compatibility boundary, not evidence that new Bigtable methods are supported."
-          ],
-          "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigtable.yaml"
-          ]
-        },
-        {
-          "id": "bigtable.change-streams",
-          "label": "Single-partition change streams",
-          "status": "release-unverified",
-          "limitations": [
-            "Observed in the machine-local cached artifact; no assembled-image qualification."
-          ],
-          "evidence": [
-            "../local_cloud_dependencies/little_bigtable",
-            "reports/localcloud-documentation-accuracy-audit.md#bigtable"
-          ]
-        },
-        {
-          "id": "bigtable.clusters-app-profiles",
-          "label": "Cluster and app-profile metadata CRUD",
-          "status": "release-unverified",
-          "limitations": [
-            "Metadata only; no topology or routing fidelity."
-          ],
-          "evidence": [
-            "../local_cloud_dependencies/little_bigtable",
-            "reports/localcloud-documentation-accuracy-audit.md#bigtable"
-          ]
-        },
-        {
-          "id": "bigtable.backups",
-          "label": "Backup metadata and schema-only restore",
-          "status": "release-unverified",
-          "limitations": [
-            "Rows are not preserved by restore."
-          ],
-          "evidence": [
-            "../local_cloud_dependencies/little_bigtable",
-            "reports/localcloud-documentation-accuracy-audit.md#bigtable"
-          ]
-        },
-        {
-          "id": "bigtable.iam",
-          "label": "Permissive IAM API stub",
-          "status": "release-unverified",
-          "limitations": [
-            "Does not enforce production access control."
-          ],
-          "evidence": [
-            "../local_cloud_dependencies/little_bigtable",
-            "reports/localcloud-documentation-accuracy-audit.md#bigtable"
-          ]
-        },
-        {
-          "id": "bigtable.logical-views",
-          "label": "Logical-view metadata CRUD",
-          "status": "release-unverified",
-          "limitations": [
-            "Queries are not executed."
-          ],
-          "evidence": [
-            "../local_cloud_dependencies/little_bigtable",
-            "reports/localcloud-documentation-accuracy-audit.md#bigtable"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
           "id": "bigtable.materialized-views",
-          "label": "Local materialized views",
-          "status": "release-unverified",
+          "label": "materialized views (CMVs)",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "bigtable.snapshots-backups",
+          "label": "snapshots and backups",
+          "status": "unsupported",
           "limitations": [
-            "No backfill; parser and schema behavior are limited."
+            "All 10 snapshot/backup RPCs return codes.Unimplemented:\nSnapshotTable, GetSnapshot, ListSnapshots, DeleteSnapshot,\nCreateBackup, GetBackup, UpdateBackup, DeleteBackup, ListBackups, RestoreTable.\nAlso: CreateTableFromSnapshot, UndeleteTable.\n"
           ],
           "evidence": [
-            "../local_cloud_dependencies/little_bigtable",
-            "reports/localcloud-documentation-accuracy-audit.md#bigtable"
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "bigtable.iam",
+          "label": "IAM policy management",
+          "status": "unsupported",
+          "limitations": [
+            "GetIamPolicy, SetIamPolicy, TestIamPermissions return codes.Unimplemented."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "bigtable.safety.forward-compat",
+          "label": "new proto methods return Unimplemented (no panics)",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "spanner",
@@ -868,119 +812,122 @@
         ],
         "qualification": "release-unverified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/spanner.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/docker/conf/supervisord.conf"
         ]
       },
-      "status": "release-unverified",
+      "status": "partial",
       "limitations": [
-        "LocalCloud exposes gRPC on 24085 and REST on 24086; it does not package PGAdapter or PostgreSQL wire access.",
-        "Core Spanner API behavior is dependency-backed but not qualified in an identified assembled LocalCloud image; production IAM, Backup APIs, scale, quotas, and operations remain out of scope.",
-        "PostgreSQL dialect is available through the Spanner API, not through PostgreSQL wire protocol."
+        "Pinned extended Spanner emulator image; the exact image and immutable digest come from `SPANNER_EMULATOR_IMAGE` in the root Dockerfile.",
+        "Change-stream support matrix — native gRPC/REST ExecuteStreamingSql supported; official SDK clients through SPANNER_EMULATOR_HOST supported; LocalCloud SQL Editor through managed run APIs or cancellable /query/stream NDJSON supported; gcloud spanner databases execute-sql unsupported for change streams because it uses unary ExecuteSql."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/spanner.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "spanner.1",
-          "label": "instances/databases",
-          "status": "release-unverified",
+          "id": "spanner.data-plane",
+          "label": "Native SQL, read, and streaming read",
+          "status": "unknown",
           "limitations": [
-            "LocalCloud exposes gRPC on 24085 and REST on 24086; it does not package PGAdapter or PostgreSQL wire access.",
-            "Core admin behavior is dependency-backed but the assembled LocalCloud image is not qualified.",
-            "Cloud Spanner Backup APIs are unsupported; internal safety snapshots are not Backup API support."
+            "Change-stream reads use native ExecuteStreamingSql. Unary ExecuteSql intentionally retains the emulator's rejection of change-stream queries."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/spanner.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "spanner.2",
-          "label": "DDL, GoogleSQL/PostgreSQL-dialect SQL, DML, and transactions through the Spanner API",
-          "status": "release-unverified",
+          "id": "spanner.sessions-transactions",
+          "label": "Sessions, transactions, and batch DML",
+          "status": "unknown",
           "limitations": [
-            "LocalCloud packages no PGAdapter or PostgreSQL-wire endpoint; MERGE is unsupported and the assembled image is not qualified."
+            "Existing native transaction and session behavior remains authoritative."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/spanner.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "spanner.change-streams",
-          "label": "GoogleSQL and PostgreSQL-dialect change streams",
-          "status": "release-unverified",
+          "id": "spanner.partition-batch",
+          "label": "Partition query/read and batch write",
+          "status": "unknown",
           "limitations": [
-            "Bounded dependency implementation pending assembled-image qualification."
+            "Existing native partition and batch-write behavior remains authoritative."
           ],
           "evidence": [
-            "../local_cloud_dependencies/cloud-spanner-emulator",
-            "reports/localcloud-documentation-accuracy-audit.md#spanner"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "spanner.tablesample",
-          "label": "TABLESAMPLE BERNOULLI and RESERVOIR",
-          "status": "release-unverified",
+          "id": "spanner.instance-admin",
+          "label": "Instance, configuration, and instance-partition administration",
+          "status": "unknown",
           "limitations": [
-            "SYSTEM and REPEATABLE remain unsupported; assembled image not qualified."
+            "Existing native instance-admin behavior remains authoritative."
           ],
           "evidence": [
-            "../local_cloud_dependencies/cloud-spanner-emulator",
-            "reports/localcloud-documentation-accuracy-audit.md#spanner"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "spanner.merge",
-          "label": "MERGE",
-          "status": "unsupported",
+          "id": "spanner.database-admin",
+          "label": "Database administration and DDL",
+          "status": "unknown",
           "limitations": [
-            "The integrated dependency does not implement Spanner MERGE."
+            "Existing native database-admin behavior remains authoritative."
           ],
           "evidence": [
-            "../local_cloud_dependencies/cloud-spanner-emulator",
-            "reports/localcloud-documentation-accuracy-audit.md#spanner"
-          ]
-        },
-        {
-          "id": "spanner.backup-api",
-          "label": "Cloud Spanner Backup APIs",
-          "status": "unsupported",
-          "limitations": [
-            "Internal safety snapshots do not implement Cloud Spanner backup or restore APIs."
-          ],
-          "evidence": [
-            "../local_cloud_dependencies/cloud-spanner-emulator",
-            "reports/localcloud-documentation-accuracy-audit.md#spanner"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
           "id": "spanner.iam",
-          "label": "Permissive IAM gateway stubs",
-          "status": "partial",
+          "label": "Instance and database IAM policies",
+          "status": "unknown",
           "limitations": [
-            "setIamPolicy/getIamPolicy/testIamPermissions do not enforce production IAM."
+            "Policies are stored durably and returned through native endpoints. Authorization remains intentionally permissive and TestIamPermissions returns requested permissions."
           ],
           "evidence": [
-            "../localcloud/localcloud-server/src/main/**"
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "spanner.backup",
+          "label": "Backup, copy, restore, and backup schedules",
+          "status": "unknown",
+          "limitations": [
+            "Backups and schedules use LevelDB-backed metadata and compatible long-running operations."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "spanner.operations",
+          "label": "Long-running operation lifecycle",
+          "status": "unknown",
+          "limitations": [
+            "Native operation polling and lifecycle behavior is shared by instance, database, backup, copy, and restore calls."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "bigquery",
@@ -1005,159 +952,126 @@
         ],
         "qualification": "release-unverified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/docker/conf/supervisord.conf"
         ]
       },
-      "status": "release-unverified",
+      "status": "partial",
       "limitations": [
-        "Feature behavior varies by source revision and client profile; no assembled-image qualification currently supports a coverage percentage, test total, or function count.",
-        "DuckDB type coercion and division behavior can differ from production BigQuery.",
-        "Grouping extensions and TABLESAMPLE have upstream execution evidence but no qualified assembled-image evidence.",
-        "Scripting is a partial local interpreter; materialized views use physical-table emulation and explicit refresh semantics.",
-        "External tables and Storage APIs are source-, format-, and client-profile specific.",
-        "INFORMATION_SCHEMA mixes populated views, schema-compatible empty stubs, unknown views, and unsupported views.",
-        "BIGNUMERIC, AEAD/NET, search/vector, and geography behavior require feature-specific caveats; do not infer full production parity.",
-        "BQML, distributed execution, reservations, billing, production IAM, quotas, and audit behavior remain unsupported."
+        "DuckDB type coercion is permissive where BigQuery is strict — queries accepted locally may error in production.",
+        "Division by zero returns Inf/NaN instead of error; integer division returns int instead of FLOAT64.",
+        "GROUP BY ROLLUP/CUBE/GROUPING SETS not supported.",
+        "SEMI/ANTI JOIN syntax not supported (rely on EXISTS/NOT EXISTS transpile).",
+        "BQML (CREATE MODEL, ML.PREDICT, ML.EVALUATE, etc.) returns clear error.",
+        "AEAD encryption functions and KLL quantile functions not implemented.",
+        "GEOGRAPHY functions use haversine approximation, not true WGS84 geodesic.",
+        "BIGNUMERIC truncated to DECIMAL(38,9); FARM_FINGERPRINT requires pyfarmhash for correct values.",
+        "Time travel (FOR SYSTEM_TIME AS OF), continuous queries, graph queries, search/vector indexes not supported.",
+        "External object tables (OBJ.* functions) not supported."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "bigquery.1",
+          "id": "bigquery.datasets.lifecycle",
           "label": "datasets.create/list/delete",
-          "status": "release-unverified",
-          "limitations": [
-            "Dataset lifecycle is source- and client-profile specific; no assembled-image qualification supports a coverage percentage or production IAM parity."
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigquery.2",
+          "id": "bigquery.tables.lifecycle",
           "label": "tables.create/list/delete",
-          "status": "release-unverified",
-          "limitations": [
-            "BigQuery operation remains release-unverified; review the service-level limitations and evidence before relying on production parity."
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigquery.3",
-          "label": "Common SELECT, JOIN, CTE, window, PIVOT/UNPIVOT, and DML workflows",
-          "status": "release-unverified",
+          "id": "bigquery.sql.query",
+          "label": "SELECT, JOIN, window functions, CTEs, PIVOT/UNPIVOT, MERGE",
+          "status": "partial",
           "limitations": [
-            "DuckDB coercion, division, geography, and error behavior can differ from BigQuery; feature edges and assembled-image behavior remain unqualified."
+            "DuckDB-backed via SQLGlot transpiler. ~96% BigQuery SQL coverage, 175+ functions.\n958 tests passing. Key gaps: GROUP BY ROLLUP/CUBE/GROUPING SETS, SEMI/ANTI JOIN,\nBQML (clear error), AEAD encryption, KLL quantiles, graph queries, continuous queries.\n⚠ Type coercion risk: DuckDB is permissive where BigQuery is strict — queries that\nwork locally may error in production. Division by zero returns Inf instead of error.\nGEOGRAPHY: 12 ST_* functions with haversine approximation (not true geodesic).\n"
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigquery.4",
+          "id": "bigquery.sql.scripting",
           "label": "DECLARE, SET, IF/WHILE/LOOP, BEGIN/EXCEPTION, CALL, EXECUTE IMMEDIATE",
-          "status": "release-unverified",
+          "status": "partial",
           "limitations": [
-            "This is a partial local interpreter; complete authorization, system variables, parameter modes, sessions, and assembled-image qualification are not established."
+            "Full scripting interpreter with variable scoping, BREAK/CONTINUE, RAISE, transactions."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigquery.5",
-          "label": "Materialized-view physical-table emulation with explicit refresh",
-          "status": "release-unverified",
+          "id": "bigquery.materialized-views",
+          "label": "CREATE MATERIALIZED VIEW, auto-refresh",
+          "status": "partial",
           "limitations": [
-            "Does not establish automatic or incremental refresh, optimizer integration, staleness policy, or distributed maintenance parity."
+            "Supported in emulator with PARTITION BY, CLUSTER BY, OPTIONS."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigquery.6",
-          "label": "Source-specific external CSV, JSON, Parquet, and configured local GCS paths",
-          "status": "release-unverified",
+          "id": "bigquery.external-tables",
+          "label": "query Parquet/CSV/JSON files (local + GCS)",
+          "status": "partial",
           "limitations": [
-            "BigLake, object tables, cross-cloud authentication, all formats, production sharding, and schema-evolution parity are not established."
+            "CREATE EXTERNAL TABLE with format/uris options. Object tables not supported."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigquery.7",
-          "label": "Selected Storage Read/Write API profiles with AVRO and Arrow",
-          "status": "release-unverified",
+          "id": "bigquery.storage-api",
+          "label": "gRPC Storage Read/Write API (AVRO + Arrow)",
+          "status": "partial",
           "limitations": [
-            "Read/write behavior is stream-, feature-, and client-profile specific; universal SDK or connector compatibility is not established."
+            "gRPC endpoint on port 24088. ReadRows with streaming support."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "bigquery.8",
+          "id": "bigquery.information-schema",
           "label": "INFORMATION_SCHEMA views",
-          "status": "release-unverified",
+          "status": "partial",
           "limitations": [
-            "The dependency mixes populated views, empty compatibility stubs, unknown views, and unsupported control-plane views; no fixed view count is valid."
+            "11 views: COLUMNS, TABLES, SCHEMATA, PARTITIONS, VIEWS, ROUTINES, TABLE_OPTIONS, TABLE_STORAGE, JOBS_BY_*, COLUMN_FIELD_PATHS."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/bigquery.yaml"
-          ]
-        },
-        {
-          "id": "bigquery.grouping-extensions",
-          "label": "ROLLUP, CUBE, and GROUPING SETS",
-          "status": "release-unverified",
-          "limitations": [
-            "Upstream execution tests exist, but semantic edge cases and behavior in an identified assembled LocalCloud image are not qualified."
-          ],
-          "evidence": [
-            "../local_cloud_dependencies/bigquery-emulator-on-duckdb",
-            "reports/localcloud-documentation-accuracy-audit.md#bigquery"
-          ]
-        },
-        {
-          "id": "bigquery.tablesample",
-          "label": "TABLESAMPLE",
-          "status": "release-unverified",
-          "limitations": [
-            "Upstream execution exists, but semantic parity is weakly evidenced and behavior in an identified assembled LocalCloud image is not qualified."
-          ],
-          "evidence": [
-            "../local_cloud_dependencies/bigquery-emulator-on-duckdb",
-            "reports/localcloud-documentation-accuracy-audit.md#bigquery"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "sheets",
@@ -1180,8 +1094,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/sheets.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1191,47 +1105,45 @@
         "Values are selected by exact stored A1 range and project scope."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/sheets.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "sheets.1",
+          "id": "sheets.values.get",
           "label": "spreadsheets.values.get",
           "status": "partial",
           "limitations": [
-            "Spreadsheet metadata, writes, formulas, range evaluation, OAuth, and production Sheets access are not emulated.",
-            "Values are selected by exact stored A1 range and project scope."
+            "Returns durable row-major values for one exact A1 range."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/sheets.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "sheets.2",
+          "id": "sheets.values.batch-get",
           "label": "spreadsheets.values.batchGet",
           "status": "partial",
           "limitations": [
-            "Google Sheets operation remains partial; review the service-level limitations and evidence before relying on production parity."
+            "Returns durable values for repeated exact ranges query parameters."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/sheets.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "secretmanager",
@@ -1254,8 +1166,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/secretmanager.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/secretmanager/SecretManagerStore.java"
         ]
       },
@@ -1265,47 +1177,52 @@
         "Per-secret IAM is not complete."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/secretmanager.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "secretmanager.1",
+          "id": "secretmanager.secrets.lifecycle",
           "label": "secrets.create/list/get/delete",
-          "status": "partial",
-          "limitations": [
-            "[prod_only] Rotation and CMEK (customer-managed encryption keys).",
-            "Per-secret IAM is not complete."
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/secretmanager.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "secretmanager.2",
+          "id": "secretmanager.versions.lifecycle",
           "label": "versions.add/access/list",
-          "status": "partial",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "secretmanager.advanced-secret-management",
+          "label": "rotation, CMEK, per-secret IAM",
+          "status": "unsupported",
           "limitations": [
-            "Secret Manager operation remains partial; review the service-level limitations and evidence before relying on production parity."
+            "Rotation policies, customer-managed encryption keys, and per-secret IAM are not implemented."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/secretmanager.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "cloudtasks",
@@ -1328,8 +1245,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudtasks.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/cloudtasks/CloudTasksStore.java",
           "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/cloudtasks/CloudTasksEmulator.java"
         ]
@@ -1339,46 +1256,45 @@
         "App Engine tasks and OAuth token generation are not complete."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudtasks.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "cloudtasks.1",
+          "id": "cloudtasks.queues.lifecycle",
           "label": "queues.create/list/delete",
           "status": "partial",
           "limitations": [
-            "App Engine tasks and OAuth token generation are not complete."
+            "Facade-backed queue lifecycle exists."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudtasks.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "cloudtasks.2",
+          "id": "cloudtasks.tasks.lifecycle",
           "label": "tasks.create/list/delete",
           "status": "partial",
           "limitations": [
-            "Cloud Tasks operation remains partial; review the service-level limitations and evidence before relying on production parity."
+            "Dispatch and scheduling parity remain limited."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudtasks.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "cloudscheduler",
@@ -1401,8 +1317,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudscheduler.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1411,34 +1327,34 @@
         "Timezone rules beyond cron-utils support are not fully verified."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudscheduler.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "cloudscheduler.1",
+          "id": "cloudscheduler.jobs.lifecycle",
           "label": "jobs.create/list/get/delete/pause/resume",
           "status": "partial",
           "limitations": [
-            "Timezone rules beyond cron-utils support are not fully verified."
+            "Cron scheduling and HTTP/Pub/Sub/App Engine targets exist for local workflows."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudscheduler.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "cloudfunctions",
@@ -1461,8 +1377,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudfunctions.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1471,34 +1387,34 @@
         "Build and container execution are metadata-only; use Functions Framework locally."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudfunctions.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "cloudfunctions.1",
+          "id": "cloudfunctions.functions.metadata",
           "label": "functions.create/list/get/delete/update",
           "status": "partial",
           "limitations": [
-            "Build and container execution are metadata-only; use Functions Framework locally."
+            "Metadata CRUD and trigger routing exist; build/container execution is not emulated."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudfunctions.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "alloydb",
@@ -1521,8 +1437,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/alloydb.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1532,35 +1448,32 @@
         "Backup/restore is not complete."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/alloydb.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "alloydb.1",
+          "id": "alloydb.cluster-instance.lifecycle",
           "label": "clusters/instances.create/list/get/delete",
-          "status": "partial",
-          "limitations": [
-            "[prod_only] PSC (Private Service Connect) and cross-region replication.",
-            "Backup/restore is not complete."
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/alloydb.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "dataproc",
@@ -1583,8 +1496,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/dataproc.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1594,47 +1507,43 @@
         "Runtime execution requires Docker socket access; without it, cluster metadata remains available but Spark/Hadoop processes are not started."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/dataproc.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "dataproc.1",
+          "id": "dataproc.clusters.crud",
           "label": "clusters.create/list/get/delete",
-          "status": "partial",
-          "limitations": [
-            "Autoscaling and Kubernetes cluster mode are not complete.",
-            "Runtime execution requires Docker socket access; without it, cluster metadata remains available but Spark/Hadoop processes are not started."
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/dataproc.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "dataproc.2",
+          "id": "dataproc.jobs.execution",
           "label": "jobs submit/list/get",
           "status": "partial",
           "limitations": [
-            "Dataproc operation remains partial; review the service-level limitations and evidence before relying on production parity."
+            "Cluster jobs run in the Dataproc runtime container; jobs without a cluster use ephemeral serverless containers. Execution requires Docker socket access and a compatible runtime image; otherwise only metadata paths are available."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/dataproc.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "cloudiam",
@@ -1657,8 +1566,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudiam.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1667,34 +1576,34 @@
         "Role validation, conditions, and deny policies are not complete."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudiam.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "cloudiam.1",
+          "id": "cloudiam.policies.permissions",
           "label": "getIamPolicy/setIamPolicy/testIamPermissions",
           "status": "partial",
           "limitations": [
-            "Role validation, conditions, and deny policies are not complete."
+            "Permissive policy stub with local policy storage."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudiam.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "cloudresourcemanager",
@@ -1717,8 +1626,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudresourcemanager.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1727,34 +1636,32 @@
         "[prod_only] Organization/folder hierarchy not modeled in LocalCloud."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudresourcemanager.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "cloudresourcemanager.1",
+          "id": "cloudresourcemanager.projects.lifecycle",
           "label": "projects.create/list/get/update/delete",
           "status": "verified",
-          "limitations": [
-            "[prod_only] Organization/folder hierarchy not modeled in LocalCloud."
-          ],
+          "limitations": [],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudresourcemanager.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "serviceusage",
@@ -1777,8 +1684,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/serviceusage.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1787,34 +1694,34 @@
         "Quotas and service entitlement behavior are stubs."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/serviceusage.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "serviceusage.1",
+          "id": "serviceusage.services.enablement",
           "label": "services.enable/disable/list",
           "status": "partial",
           "limitations": [
-            "Quotas and service entitlement behavior are stubs."
+            "Local service toggles are available; quota billing semantics are not complete."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/serviceusage.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "cloudbilling",
@@ -1837,8 +1744,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudbilling.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1847,34 +1754,34 @@
         "Real billing, budget enforcement, and cost export are not implemented."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudbilling.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "cloudbilling.1",
+          "id": "cloudbilling.billing.budgets",
           "label": "billing accounts and budgets CRUD",
           "status": "partial",
           "limitations": [
-            "Real billing, budget enforcement, and cost export are not implemented."
+            "Local REST facade covers selected Terraform-oriented paths."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudbilling.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "logging",
@@ -1897,8 +1804,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/logging.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1907,34 +1814,34 @@
         "Metrics, exclusions, audit logs, and production sink behavior are limited."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/logging.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "logging.1",
+          "id": "logging.logs.write-list",
           "label": "write log entries and list/filter entries",
           "status": "partial",
           "limitations": [
-            "Metrics, exclusions, audit logs, and production sink behavior are limited."
+            "Local ingestion exists; query/filter parity is limited."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/logging.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "monitoring",
@@ -1957,8 +1864,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/monitoring.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -1967,34 +1874,34 @@
         "Alerting, uptime checks, and dashboards are partial."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/monitoring.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "monitoring.1",
+          "id": "monitoring.metrics.time-series",
           "label": "create/list time series and descriptors",
           "status": "partial",
           "limitations": [
-            "Alerting, uptime checks, and dashboards are partial."
+            "Local metric storage exists; query parity is limited."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/monitoring.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "gke",
@@ -2019,8 +1926,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/gke.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -2030,35 +1937,45 @@
         "[prod_only] Node pools, autoscaling, and upgrades (GCP-managed cluster autoscaler, regional instance groups)."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/gke.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": false,
       "assembledDefault": {
         "enabled": false,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "gke.1",
+          "id": "gke.clusters.lifecycle",
           "label": "clusters CRUD",
           "status": "partial",
           "limitations": [
-            "Kubernetes runtime parity depends on host runtime/k3d integration.",
-            "[prod_only] Node pools, autoscaling, and upgrades (GCP-managed cluster autoscaler, regional instance groups)."
+            "Local facade exists for cluster metadata and k3d-oriented workflows."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/gke.yaml"
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "gke.nodepools.runtime",
+          "label": "node pools, autoscaling, upgrades",
+          "status": "unsupported",
+          "limitations": [
+            "Production cluster management; local k3d provides the runtime cluster."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "compute",
@@ -2081,8 +1998,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/compute.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -2092,35 +2009,45 @@
         "Snapshots, instance templates, and VPC networking are not yet emulated."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/compute.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": false,
       "assembledDefault": {
         "enabled": false,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "compute.1",
+          "id": "compute.instances.lifecycle",
           "label": "instances.create/get/list/start/stop/delete",
           "status": "partial",
           "limitations": [
-            "[prod_only] Persistent disks and live migration (hypervisor-level storage/VM management).",
-            "Snapshots, instance templates, and VPC networking are not yet emulated."
+            "Docker-backed instance approximation exists when container runtime is available."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/compute.yaml"
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "compute.disks-networking",
+          "label": "disks, snapshots, templates, networking",
+          "status": "unsupported",
+          "limitations": [
+            "This operation is not available in LocalCloud."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "cloudrun",
@@ -2143,8 +2070,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudrun.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -2154,35 +2081,56 @@
         "[prod_only] Custom domains and production routing (Google Front End load balancers, managed TLS)."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudrun.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": false,
       "assembledDefault": {
         "enabled": false,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "cloudrun.1",
+          "id": "cloudrun.services-revisions",
           "label": "services/revisions",
           "status": "partial",
           "limitations": [
-            "Container execution and routing require host runtime architecture.",
-            "[prod_only] Custom domains and production routing (Google Front End load balancers, managed TLS)."
+            "Local facade exists for service metadata."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudrun.yaml"
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "cloudrun.jobs-execution",
+          "label": "jobs",
+          "status": "unsupported",
+          "limitations": [
+            "This operation is not available in LocalCloud."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "cloudrun.custom-domains-routing",
+          "label": "custom domains, production routing",
+          "status": "unsupported",
+          "limitations": [
+            "Production-only DNS and load-balancing features."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "memorystore",
@@ -2193,7 +2141,7 @@
       "type": "external",
       "minTier": "community",
       "envVar": "REDIS_HOST",
-      "envValue": "localhost",
+      "envValue": "localhost:24089",
       "terraformEnvVar": "GOOGLE_REDIS_CUSTOM_ENDPOINT",
       "implementation": "third-party-emulator",
       "persistence": {
@@ -2205,8 +2153,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/memorystore.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/docker/conf/supervisord.conf"
         ]
       },
@@ -2215,34 +2163,45 @@
         "Pub/Sub, Lua, streams, and MULTI/EXEC are not supported."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/memorystore.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "memorystore.1",
+          "id": "memorystore.resp.commands",
           "label": "RESP commands",
           "status": "partial",
           "limitations": [
-            "Pub/Sub, Lua, streams, and MULTI/EXEC are not supported."
+            "Redis/Valkey-compatible data path is available."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/memorystore.yaml"
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "memorystore.admin-api",
+          "label": "Cloud Redis admin API",
+          "status": "unsupported",
+          "limitations": [
+            "Cloud Redis Admin API is production control-plane; local Redis/Valkey data path is fully functional."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "workflows",
@@ -2265,8 +2224,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/workflows.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -2275,46 +2234,45 @@
         "In-flight execution checkpointing is not durable across restart."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/workflows.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
         "enabled": true,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "workflows.1",
+          "id": "workflows.workflows.management",
           "label": "workflow deploy/list/get/delete",
           "status": "partial",
           "limitations": [
-            "In-flight execution checkpointing is not durable across restart."
+            "Local facade and seed paths exist."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/workflows.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "workflows.2",
+          "id": "workflows.workflows.executions",
           "label": "executions",
           "status": "partial",
           "limitations": [
-            "Cloud Workflows operation remains partial; review the service-level limitations and evidence before relying on production parity."
+            "Execution engine exists but connector/runtime parity needs expansion."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/workflows.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "vertexai",
@@ -2337,8 +2295,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/vertexai.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -2348,35 +2306,45 @@
         "Prediction endpoints and model management are out of current scope."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/vertexai.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": false,
       "assembledDefault": {
         "enabled": false,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "vertexai.1",
+          "id": "vertexai.genai.stub",
           "label": "generateContent, streamGenerateContent, embedContent, countTokens",
           "status": "partial",
           "limitations": [
-            "[prod_only] Model training and tuning (requires TPU/GPU clusters).",
-            "Prediction endpoints and model management are out of current scope."
+            "Deterministic local GenAI REST facade exists for selected flows."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/vertexai.yaml"
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "vertexai.model-platform",
+          "label": "models, tuning, batch prediction",
+          "status": "unsupported",
+          "limitations": [
+            "This operation is not available in LocalCloud."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "kms",
@@ -2399,8 +2367,8 @@
         ],
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/kms.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -2410,47 +2378,45 @@
         "Import jobs and Cloud HSM level enforcement are not implemented."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/kms.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": false,
       "assembledDefault": {
         "enabled": false,
         "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "Assembled default follows the reviewed registry and container environment."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "kms.1",
+          "id": "kms.keys.lifecycle",
           "label": "key rings, crypto keys, versions",
           "status": "partial",
           "limitations": [
-            "[prod_only] HSM (physical FIPS 140-2 Level 3 hardware) and EKM (external key manager providers).",
-            "Import jobs and Cloud HSM level enforcement are not implemented."
+            "Local REST facade exists."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/kms.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "kms.2",
+          "id": "kms.crypto.operations",
           "label": "encrypt/decrypt/sign/verify",
           "status": "partial",
           "limitations": [
-            "Cloud KMS operation remains partial; review the service-level limitations and evidence before relying on production parity."
+            "Crypto operation parity needs SDK and IAM tests."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/kms.yaml"
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     },
     {
       "id": "cloudsql",
@@ -2477,8 +2443,8 @@
         ],
         "qualification": "release-unverified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudsql.yaml",
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml",
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
@@ -2489,48 +2455,56 @@
         "Backup/restore execution is not implemented."
       ],
       "evidence": [
-        "../localcloud/services.yaml",
-        "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudsql.yaml"
+        "../localcloud/localcloud.defaults.yaml",
+        "../localcloud/documentation.yaml"
       ],
       "registryDefaultEnabled": true,
       "assembledDefault": {
-        "enabled": false,
-        "qualification": "release-unverified",
+        "enabled": true,
+        "qualification": "verified",
         "evidence": [
-          "../localcloud/services.yaml",
-          "../localcloud/Dockerfile"
+          "../localcloud/localcloud.defaults.yaml",
+          "../localcloud/documentation.yaml"
         ],
-        "limitation": "services.yaml is default-on, but the reviewed Dockerfile sets LOCALCLOUD_ENABLE_CLOUDSQL=false and environment configuration wins."
+        "limitation": "Default enablement follows the current runtime catalog and remains subject to license-tier gates."
       },
       "operations": [
         {
-          "id": "cloudsql.1",
+          "id": "cloudsql.sql-admin.lifecycle",
           "label": "instances/databases/users",
           "status": "partial",
           "limitations": [
-            "[prod_only] Read replicas (cross-region replication) and PSC (Private Service Connect).",
-            "MySQL instances share one on-demand MySQL 8.4.11 server; schemas and physical wire logins are deterministically isolated by project and instance.",
-            "Backup/restore execution is not implemented."
+            "Local REST facade with PostgreSQL and MySQL 8.4 data planes."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudsql.yaml"
+            "../localcloud/documentation.yaml"
           ]
         },
         {
-          "id": "cloudsql.2",
+          "id": "cloudsql.mysql-managed-runtime",
           "label": "MySQL 8.4 data plane",
           "status": "partial",
           "limitations": [
-            "Cloud SQL operation remains partial; review the service-level limitations and evidence before relying on production parity."
+            "Shared, on-demand mysqld with logical schema isolation on port 24091."
           ],
           "evidence": [
-            "../localcloud/services.yaml",
-            "../localcloud/localcloud-server/src/main/resources/compatibility/services/cloudsql.yaml"
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "cloudsql.cloudsql-advanced-lifecycle",
+          "label": "replicas, backups, PSC",
+          "status": "unsupported",
+          "limitations": [
+            "This operation is not available in LocalCloud."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
           ]
         }
       ],
-      "published": true
+      "published": true,
+      "availability": "available"
     }
   ]
 }

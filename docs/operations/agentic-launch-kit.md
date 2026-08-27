@@ -1,6 +1,6 @@
 # Agentic Economy Launch Kit
 
-Use this kit for community launches of LocalCloud as an agent-safe local Google Cloud sandbox. Keep every claim tied to reviewed product facts: LocalCloud is a local GCP emulator, runs `20+` services in one Docker container, uses standard GCP SDKs pointed at localhost, requires no GCP account, credentials, or billing project for default local workflows, and must be validated against real Google Cloud before production.
+Use this kit for community launches of LocalCloud as a local Google Cloud sandbox. Keep every claim tied to current product facts: LocalCloud is a local GCP emulator with 27 available service guides, uses standard GCP SDKs pointed at localhost, requires no GCP account or production credentials for default local workflows, is limited by its proprietary license, and must be validated against real Google Cloud before production.
 
 ## Canonical links
 
@@ -14,7 +14,7 @@ Use this kit for community launches of LocalCloud as an agent-safe local Google 
 | Seed data guide | `/docs/seed-data/` |
 | Service catalog | `/services/` |
 | Compatibility and limitations | `/compatibility/` |
-| GitHub | `https://github.com/LocalGCloud/LocalGCloud.github.io` |
+| GitHub | `https://github.com/LocalStack-Google/localcloud-site` |
 | Docker image | `jaysen2apache/localcloud` |
 | Demo script | `agentic-demo-script.md` |
 | Asset templates | `agentic-launch-asset-templates.md` |
@@ -48,7 +48,7 @@ Fetch https://local.cloud/ai/agents.md and follow it exactly. Start or reuse the
 2. **LocalCloud setup:** Pull `jaysen2apache/localcloud`, start one container, wait for health, and export localhost SDK variables.
 3. **Agent workflow:** Give the agent `/ai/agents.md`; it reads the guardrails, checks Docker, starts or reuses LocalCloud, and runs a local SDK smoke test.
 4. **Inspect:** Open `http://localhost:8080` to inspect service state and logs.
-5. **Boundary:** Link `/compatibility/` and say plainly: LocalCloud is for development, testing, CI, and demos. Validate against real GCP before production.
+5. **Boundary:** Link `/docs/licensing/` and say plainly: LocalCloud is limited to permitted personal use; employer, organization, commercial, shared-team, and team-CI use is excluded. Validate against real GCP before production.
 
 ## CLI transcript template
 
@@ -97,18 +97,18 @@ Keep the video under two minutes for Product Hunt and under five minutes for tec
 | Area | Safe launch claim | Required caveat/link |
 |---|---|---|
 | Runtime | LocalCloud runs as a Docker container. | Link `/docs/`; mention Docker and local ports are required. |
-| Service breadth | LocalCloud covers `20+` Google Cloud services. | Link `/services/`; avoid saying every GCP service is supported. |
+| Service breadth | LocalCloud publishes 27 available Google Cloud service guides. | Link `/services/`; avoid saying every GCP service or operation is supported. |
 | SDKs | Standard Google Cloud SDKs can target localhost through emulator env vars. | Link `/docs/sdk-examples/`; do not imply production parity. |
 | Terraform | Terraform workflows can be pointed at local endpoints. | Link `/docs/terraform/`; validate real infrastructure separately. |
 | Seed data | Seed data can make local runs deterministic. | Link `/docs/seed-data/`; use fake secrets only. |
 | Credentials | Default local workflows do not need a GCP account, credentials, or billing project. | If a user config calls real GCP, stop and fix routing instead of using secrets. |
-| Production | LocalCloud is for development, testing, CI, and demos. | Link `/compatibility/`; validate against real Google Cloud before production. |
+| Production and permission | LocalCloud is for personal uses permitted by its proprietary license and is not a production replacement. | Link `/docs/licensing/` and `/compatibility/`; validate against real Google Cloud before production. |
 
 ## Limitations language
 
 Use this language in every launch surface:
 
-> LocalCloud is not a production Google Cloud replacement. It is a local emulator for development, testing, CI, and demos. Some service behavior is partial or planned; check `/compatibility/` and `/services/`. Before production deployment, unset emulator variables and validate the workload against real Google Cloud.
+> LocalCloud is not a production Google Cloud replacement. Its proprietary license permits only specified personal uses and excludes employer, organization, commercial, shared-team, and team-CI use. Some service behavior is partial; check `/compatibility/`, `/services/`, and `/docs/licensing/`. Before production deployment, unset emulator variables and validate the workload against real Google Cloud.
 
 ## Launch asset checklist
 

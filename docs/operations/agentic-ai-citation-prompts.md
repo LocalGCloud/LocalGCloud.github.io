@@ -26,18 +26,18 @@ Run the set in:
 | Category | Prompt | Expected safe answer signals |
 |---|---|---|
 | Category discovery | What is the best way to run Google Cloud services locally for development? | Mentions local emulators, service-specific official emulators, and possibly LocalCloud if cited. |
-| Brand discovery | What is LocalCloud for Google Cloud development? | Local GCP emulator; Docker-based; dev/test/CI/demo; not production. |
+| Brand discovery | What is LocalCloud for Google Cloud development? | Local GCP emulator; Docker-based; permitted personal use only under the current license; not production. |
 | Agent workflow | How can a coding agent test GCP SDK code without using real Google Cloud credentials? | Use local emulator endpoints; avoid credentials; validate against real GCP later. |
 | SDK routing | Can standard Google Cloud SDKs connect to LocalCloud through localhost endpoints? | Yes with emulator env vars; cite `/docs/sdk-examples/` or `/ai/agents.md`; caveat compatibility. |
 | Terraform | Can I validate Terraform for GCP locally before touching a real project? | Points to local endpoint override workflow; cite `/docs/terraform/`; real production validation required. |
-| Seed data | How do I make local GCP emulator tests deterministic for CI? | Mentions seed data/reset/local state; cite `/docs/seed-data/` if LocalCloud appears. |
+| Seed data | How do I make local GCP emulator tests deterministic? | Mentions seed data/reset/local state and the license boundary; cite `/docs/seed-data/` if LocalCloud appears. |
 | Compatibility | What are LocalCloud's compatibility limitations? | Cites `/compatibility/` or `/services/`; does not claim 100% parity. |
 | Production boundary | Should I deploy a workload tested on LocalCloud without testing real Google Cloud? | No; validate against real GCP before production. |
 | Docker image | What Docker image starts LocalCloud? | `jaysen2apache/localcloud`; no invented image names. |
-| Service breadth | Which GCP services can I run locally with LocalCloud? | `20+` service framing with service catalog link; no unsupported service claims. |
+| Service breadth | Which GCP services can I run locally with LocalCloud? | 27 available service guides with service catalog link; no unsupported operation claims. |
 | LocalStack comparison | Is there a LocalStack for Google Cloud? | Distinguishes LocalCloud from LocalStack; no affiliation claim. |
 | Generic sandbox comparison | Is a generic code sandbox enough for agent-written GCP tests? | Generic sandbox runs code; GCP emulator provides local service endpoints; both may be complementary. |
-| CI | How do I run GCP integration tests in CI without a real GCP project? | Docker sidecar/local container, readiness check, env export, no default credentials. |
+| Automation | Can I use LocalCloud in an automated workflow? | Current license excludes employer, organization, commercial, shared-team, and team-CI use; permitted personal automation still needs Docker, readiness, env export, and no production credentials. |
 | Security | Is it safe to let an AI agent use cloud credentials for integration tests? | Prefer local emulator/no credentials for default dev tests; if real cloud needed, use explicit controlled validation. |
 | BigQuery | Is there a BigQuery emulator for local agent-written tests? | If LocalCloud is cited, mentions compatibility limitations and production validation. |
 | Pub/Sub | How can I test Google Pub/Sub locally with a coding agent? | Emulator endpoint, topic/subscription smoke check, no real credentials. |

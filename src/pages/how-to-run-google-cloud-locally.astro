@@ -16,7 +16,7 @@ localcloud console`;
 const services = [
   { name: 'BigQuery', port: '24087 / 24088', availability: '10 documented workflows', env: 'BIGQUERY_EMULATOR_HOST' },
   { name: 'Cloud Storage', port: '24081', availability: '2 documented workflows', env: 'STORAGE_EMULATOR_HOST' },
-  { name: 'Firestore', port: '—', availability: 'Coming soon', env: '—' },
+  { name: 'Firestore', port: '24083', availability: '2 documented workflows', env: 'FIRESTORE_EMULATOR_HOST' },
   { name: 'Pub/Sub', port: '24082', availability: '4 documented workflows', env: 'PUBSUB_EMULATOR_HOST' },
   { name: 'Spanner', port: '24085 / 24086', availability: '5 documented workflows', env: 'SPANNER_EMULATOR_HOST' },
   { name: 'Bigtable', port: '24084', availability: '13 documented workflows', env: 'BIGTABLE_EMULATOR_HOST' },
@@ -187,7 +187,7 @@ const faqItems = [
       <div class="reveal">
         <h2>What Google Cloud services can run locally?</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud exposes {availableServiceCount} available services in one managed container, with Firestore clearly marked as coming soon. Review each service guide for exact workflows and boundaries.
+          LocalCloud exposes {availableServiceCount} available services in one managed container. Review each service guide for exact workflows, default enablement, and limitations.
         </p>
       </div>
       <div class="mt-8 overflow-x-auto reveal">
@@ -214,7 +214,7 @@ const faqItems = [
       </div>
       <div class="mt-6 reveal">
         <p class="text-sm text-[var(--text-2)] leading-7">
-          Browse <a href={`${base}services/`} class="underline">{publishedServiceCount} public service guides</a>: {availableServiceCount} available services plus Firestore on the roadmap. Google Sheets is documented as an integration, not a LocalCloud service.
+          Browse <a href={`${base}services/`} class="underline">all {publishedServiceCount} service guides</a>. Firestore is available but disabled by default; Google Sheets is an available read-only facade with limited A1-range behavior.
         </p>
       </div>
     </div>
@@ -300,7 +300,7 @@ localcloud status</code></pre>
         </a>
         <a href={`${base}firestore-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Firestore</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Firestore document and query support is coming soon.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Firestore document CRUD and query workflows are available on port 24083. Enable Firestore explicitly before use and review its query, index, seed, and persistence limits.</p>
         </a>
         <a href={`${base}pubsub-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Pub/Sub</div>
@@ -318,22 +318,22 @@ localcloud status</code></pre>
     </div>
   </section>
 
-  <!-- CI/CD INTEGRATION -->
+  <!-- PERSONAL AUTOMATION -->
   <section class="site-section site-section--tight">
     <div class="container">
       <div class="reveal">
-        <h2>Running local GCP in CI/CD pipelines</h2>
+        <h2>Automating a permitted personal project</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Containerized test workflows are technically possible, but organization and team-CI use must comply with the governing proprietary license.
+          Containerized automation is technically possible for a personal, non-commercial project permitted by the license. Employer, organization, commercial, shared-team, and team-CI use is excluded.
         </p>
       </div>
       <div class="mt-8 site-panel p-6 reveal">
-        <h3 class="text-lg font-semibold text-[var(--text)]">CI requires its own reviewed workflow</h3>
-        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">Do not copy a development image tag or assume fixed ports in CI. Pin the image used by your release, wait on <code>/readiness</code>, export environment values from the running LocalCloud runtime, and stop rather than falling back to real Google Cloud. Review the governing license before organization or team-CI use.</p>
+        <h3 class="text-lg font-semibold text-[var(--text)]">Check eligibility before adding automation</h3>
+        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">Do not proceed when the workflow is for an employer, organization, commercial project, shared team, or team CI. For permitted personal automation, pin the image, wait on <code>/readiness</code>, export values from the running LocalCloud runtime, and stop rather than falling back to real Google Cloud.</p>
       </div>
       <div class="mt-6 reveal">
         <p class="text-sm text-[var(--text-2)] leading-7">
-          See <a href={`${base}gcp-integration-testing/`} class="underline">complete CI/CD integration guide</a> with examples for GitHub Actions, GitLab CI, CircleCI, and Jenkins.
+          See the <a href={`${base}gcp-integration-testing/`} class="underline">automation eligibility and integration guide</a> before using a hosted runner.
         </p>
       </div>
     </div>

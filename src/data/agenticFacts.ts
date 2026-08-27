@@ -61,7 +61,7 @@ export const agenticFacts = {
 	terraformEnvCommand: "localcloud env --format terraform",
 	productionBoundary: productFacts.productionBoundary,
 	noCredentialBoundary:
-		"Bounded local SDK workflows use local endpoint values and should stop rather than fall back to real Google Cloud or real credentials. Organization and CI use must comply with the governing proprietary license.",
+		"Permitted personal workflows use local endpoint values and should stop rather than fall back to real Google Cloud or real credentials. The current license excludes employer, organization, commercial, and team-CI use.",
 	releaseGuardrail:
 		"Before production deployment, unset LocalCloud emulator environment variables and validate behavior against real Google Cloud.",
 	evidence: {
@@ -82,7 +82,7 @@ export const agenticEndpoints: AgenticEndpoint[] = [
 		label: "Health check",
 		url: agenticFacts.healthEndpoint,
 		purpose:
-			"Wait for LocalCloud readiness before SDK, Terraform, seed, or CI workflows.",
+			"Wait for LocalCloud readiness before SDK, Terraform, seed, or other local workflows.",
 	},
 	{
 		label: "Shell environment export",
@@ -187,10 +187,10 @@ export const agentPromptLibrary: AgentPrompt[] = [
 	},
 	{
 		id: "ci",
-		label: "Prepare CI",
-		useCase: "Have an agent propose a CI sidecar/runtime setup.",
+		label: "Check automation eligibility",
+		useCase: "Confirm that a personal automation workflow is permitted before changing it.",
 		prompt:
-			"Prepare this repository for CI with LocalCloud. Read https://local.cloud/ai/agents.md and https://local.cloud/docs/terraform/, then propose the smallest CI change that starts LocalCloud, waits for readiness, exports emulator env vars, runs integration tests locally, and avoids real GCP secrets.",
+			"Read https://local.cloud/docs/licensing/ before changing this automation. Stop if it is for an employer, organization, commercial project, shared team workflow, or team CI. If it is a permitted personal non-commercial workflow, propose the smallest change that starts LocalCloud, waits for readiness, exports emulator env vars, runs integration tests locally, and avoids real GCP secrets.",
 	},
 	{
 		id: "troubleshoot",
@@ -230,7 +230,7 @@ export const claimReviewRule = {
 } as const;
 
 export const agentSafeValidationChecklist = [
-	"States LocalCloud is for development, testing, CI, and demos — not a production GCP replacement.",
+	"States that LocalCloud is limited to uses permitted by the governing proprietary license and is not a production GCP replacement.",
 	"Keeps bounded local workflows on loopback endpoints and stops rather than requesting or falling back to real Google Cloud credentials.",
 	`Uses the reviewed image repository ${productFacts.dockerImage}; the mutable tag remains release-unverified, so prefer localcloud start and pin a qualified digest for release workflows.`,
 	"Points SDKs and Terraform to localhost/emulator endpoints before any verification step.",

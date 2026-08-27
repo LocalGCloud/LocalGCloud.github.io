@@ -1,17 +1,17 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Terraform Integration
-description: Validate qualified Google provider resources using LocalCloud endpoint or transparent-network routing.
+description: Configure Terraform for supported LocalCloud resources using generated endpoints or transparent networking.
 ---
 
 import Callout from '../../components/Callout.astro';
 
 # Terraform integration
 
-LocalCloud can exercise selected `hashicorp/google` resources locally. Compatibility is resource- and routing-specific; do not assume an existing module runs unchanged or that a successful local apply proves Google Cloud parity.
+LocalCloud can exercise selected `hashicorp/google` resources locally. Support depends on the resource and routing mode; a successful local apply does not prove production Google Cloud behavior.
 
-<Callout type="warning" title="Partial, evidence-bounded support">
-The contract records `hashicorp/google ~> 7.0 (maintained examples include 7.34.0)`. Provider v7 requires a syntactically valid fake service-account JSON file; `/dev/null` is not sufficient. Some resources ignore custom endpoints and require transparent DNS/HTTPS routing plus a trusted LocalCloud CA.
+<Callout type="warning" title="Check the supported resource list">
+The maintained examples use `hashicorp/google ~> 7.0` (including 7.34.0). Provider v7 requires a syntactically valid fake service-account JSON file; `/dev/null` is not sufficient. Some resources ignore custom endpoints and require transparent DNS/HTTPS routing plus a trusted LocalCloud CA.
 </Callout>
 
 ## Choose a routing mode
@@ -22,8 +22,10 @@ Use endpoint-only mode for resources whose Google provider clients honor generat
 
 ```yaml
 # localcloud.yaml
-environment:
-  LOCALCLOUD_TERRAFORM_MODE: "true"
+version: 1
+host:
+  environment:
+    LOCALCLOUD_TERRAFORM_MODE: "true"
 ```
 
 ```bash
@@ -43,16 +45,21 @@ Use transparent networking only when required, notably for BigQuery and other cl
 
 ```yaml
 # localcloud.yaml
-transparent_network: true
-environment:
-  LOCALCLOUD_TERRAFORM_MODE: "true"
+version: 1
+host:
+  transparent_network: true
+  environment:
+    LOCALCLOUD_TERRAFORM_MODE: "true"
+tls:
+  enabled: true
+  port: 24443
 ```
 
 It requires:
 
 - transparent networking enabled at start;
 - host DNS routing for the required `*.googleapis.com` names;
-- host ports `53/udp`, `80`, and `443` routed to canonical container listeners `24093`, `24095`, and `24094`;
+- host `53/udp` routed to container `24093/udp`, host `80` routed to gateway `24080`, and host `443` routed to `tls.port` (default `24443`);
 - the LocalCloud CA trusted by the Terraform process; and
 - `LOCALCLOUD_TERRAFORM_MODE=true` in the runtime.
 
@@ -62,7 +69,7 @@ Verify the dedicated gate:
 curl -fsS http://localhost:24080/terraform/readiness?mode=transparent
 ```
 
-These host/network changes can affect other processes. Use an isolated development or CI environment and remove the DNS/trust configuration afterward.
+These host/network changes can affect other processes. Use an isolated personal environment and remove the DNS/trust configuration afterward.
 
 ## Create valid fake credentials
 
@@ -108,7 +115,7 @@ Generate the complete values from the running LocalCloud runtime:
 eval "$(curl -fsS 'http://localhost:24080/env?format=terraform')"
 ```
 
-Important reviewed shapes include:
+Important generated shapes include:
 
 | Variable | Canonical value/shape | Note |
 | --- | --- | --- |
@@ -122,9 +129,9 @@ Important reviewed shapes include:
 
 Do not hand-maintain a complete endpoint table; `/env?format=terraform` is derived from the enabled runtime registry and may include additional facade-specific paths.
 
-## Qualified resource evidence
+## Supported Terraform resources
 
-The site contract currently records maintained qualification evidence for:
+Maintained LocalCloud examples cover:
 
 - `google_project`;
 - `google_secret_manager_secret`;
@@ -134,7 +141,7 @@ The site contract currently records maintained qualification evidence for:
 - `google_sql_database`; and
 - `google_sql_user`.
 
-Other resources may have implementation or example coverage, but publish them as verified only after the matching provider version, routing mode, assembled LocalCloud image digest, and test result are recorded. BigQuery requires transparent routing. IAM, organization policy, quotas, regional managed behavior, networking, and production recovery remain real-Google-Cloud validation concerns.
+Other resources may work partially, but do not rely on them unless their service page documents the exact operation. BigQuery requires transparent routing. IAM, organization policy, quotas, regional managed behavior, networking, and production recovery must be validated in Google Cloud.
 
 ## Terraform mode and seed data
 
@@ -148,8 +155,6 @@ unset GOOGLE_APPLICATION_CREDENTIALS
 # Start a clean process before any real-Google-Cloud validation.
 ```
 
-Do not merely unset a few endpoint variables in a long-lived shell. Use a clean environment, explicitly configure an isolated real project and credentials, review the plan, and validate IAM/network/quota behavior against Google Cloud before release. Organization or team-CI use must comply with the governing proprietary license.
+Do not merely unset a few endpoint variables in a long-lived shell. Use a clean environment, explicitly configure an isolated real project and credentials, review the plan, and validate IAM, networking, and quota behavior against Google Cloud before release. Review the governing proprietary license before using LocalCloud.
 
-## Validation exception
-
-The documentation examples and endpoint facts are statically checked against the site contract and reviewed implementation. No qualified assembled LocalCloud image was available in this worker environment, so this guide does not claim an end-to-end `terraform apply` result.
+Confirm `/terraform/readiness` succeeds for the routing mode you selected before running `terraform plan` or `terraform apply`.

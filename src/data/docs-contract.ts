@@ -4,6 +4,7 @@ export type EvidenceState = 'verified' | 'partial' | 'release-unverified' | 'uns
 export type ServiceTier = 'community' | 'pro';
 export type ServiceProtocol = 'rest' | 'grpc' | 'redis';
 export type ServiceRuntimeType = 'external' | 'facade';
+export type ServiceAvailability = 'available' | 'coming_soon' | 'unsupported';
 export type PersistenceScope = 'volatile' | 'metadata' | 'service-data' | 'stateless';
 export type ServiceImplementation =
   | 'google-official'
@@ -54,6 +55,7 @@ export interface AssembledDefaultContract {
 export interface DocumentationServiceContract {
   id: string;
   name: string;
+  availability: ServiceAvailability;
   port: number;
   additionalPorts: Record<string, number>;
   protocol: ServiceProtocol;
@@ -82,6 +84,8 @@ export interface DocumentationContract {
     assembledImageDigest: string | null;
     qualification: EvidenceState;
     sources: string[];
+    sourceDigests: Record<string, string>;
+    worktreeSources: string[];
     dependencyRevalidations: Array<{
       id: string;
       revision: string;

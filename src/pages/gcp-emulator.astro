@@ -34,7 +34,7 @@ const faqItems = [
   },
   {
     q: 'Which services are included?',
-    a: `LocalCloud currently provides ${availableServiceCount} services, with Firestore clearly marked as coming soon. Google Sheets is supported as an integration rather than listed as a LocalCloud service.`,
+    a: `LocalCloud currently provides ${availableServiceCount} available services. Firestore is available but disabled by default, and Google Sheets provides a limited read-only values facade.`,
   },
   {
     q: 'Is LocalCloud free?',
@@ -50,7 +50,7 @@ const pageUrl = new URL('gcp-emulator/', productFacts.siteUrl).toString();
 const structuredData = [
   createSoftwareApplicationSchema(
     pageUrl,
-    'LocalCloud runs major Google Cloud services locally in Docker for development, testing, CI, and demos.',
+    'LocalCloud runs bounded Google Cloud service workflows locally in Docker for permitted personal learning, evaluation, and non-commercial projects.',
   ),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
@@ -86,11 +86,11 @@ const structuredData = [
         </span>
         <h1 class="mt-4">Run Google Cloud locally in one Docker container</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          LocalCloud provides {availableServiceCount} Google Cloud services, with upcoming additions clearly marked. Use the host CLI to start a loopback-bound runtime and export its actual SDK endpoint settings.
+          LocalCloud provides {availableServiceCount} available Google Cloud services. Use the host CLI to start a loopback-bound runtime and export its actual SDK endpoint settings.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start with the CLI</a>
-          <a href={`${base}services/`} class="site-button site-button--secondary">View {publishedServiceCount} reviewed service guides</a>
+          <a href={`${base}services/`} class="site-button site-button--secondary">View all {publishedServiceCount} service guides</a>
           <a href={`${base}docs/localcloud-vs-google-emulators/`} class="site-button site-button--secondary">Compare with Google emulators</a>
           <a href={`${base}localstack-for-google-cloud/`} class="site-button site-button--secondary">LocalStack for Google Cloud?</a>
         </div>
@@ -130,7 +130,7 @@ const structuredData = [
         <article class="site-panel site-panel--soft p-5">
           <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">Per-service</div>
           <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Compatibility</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Every published workflow needs an evidence state and explicit local-emulation limits.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Every published workflow includes a support level and explicit local-emulation limits.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">One CLI</div>
@@ -163,7 +163,7 @@ const structuredData = [
           <span class="site-kicker">01</span>
           <h3 class="mt-3 text-xl">Registry-backed service catalog</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">
-            Browse {publishedServiceCount} public service guides: {availableServiceCount} available services and Firestore marked as coming soon.
+            Browse {publishedServiceCount} service guides with connection details, default enablement, supported workflows, and known limitations.
           </p>
         </article>
         <article class="site-panel p-6">
@@ -257,9 +257,9 @@ const structuredData = [
           </p>
         </article>
         <article class="site-panel p-5">
-          <span class="site-kicker">CI/CD testing</span>
+          <span class="site-kicker">Personal automation</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Containerized test workflows remain technically possible, but the current governing license excludes organization and team-CI use. Review it before adopting this pattern.
+            A permitted personal project can use containerized automation. The current license excludes employer, organization, commercial, shared-team, and team-CI use.
           </p>
         </article>
         <article class="site-panel p-5">
@@ -269,9 +269,9 @@ const structuredData = [
           </p>
         </article>
         <article class="site-panel p-5">
-          <span class="site-kicker">Developer onboarding</span>
+          <span class="site-kicker">Repeatable personal setup</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            The CLI can standardize local startup, but organization and onboarding use must comply with the governing proprietary license.
+            The CLI can standardize local startup for a permitted personal project. It does not grant permission for employer or organization onboarding.
           </p>
         </article>
         <article class="site-panel p-5">

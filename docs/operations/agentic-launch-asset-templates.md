@@ -75,7 +75,7 @@ Resolution summary:
 Before publishing any asset, confirm:
 
 - [ ] Docker image is `jaysen2apache/localcloud`.
-- [ ] Service count is `20+`, with `/services/` linked.
+- [ ] Service count says 27 available service guides, with `/services/` linked.
 - [ ] No production replacement or 100% compatibility claim appears.
 - [ ] No unapproved pricing/licensing, benchmark, customer, or roadmap claim appears.
 - [ ] No LocalStack affiliation is implied.

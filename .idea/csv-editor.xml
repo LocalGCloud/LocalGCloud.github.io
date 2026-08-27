@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="/docs/operations/agentic-economy-ledger-template.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/docs/operations/seo-ai-visibility-template.csv">
           <value>
             <Attribute>

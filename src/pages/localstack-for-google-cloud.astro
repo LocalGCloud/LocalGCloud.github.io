@@ -15,7 +15,7 @@ const faqs = [
   {
     question: 'Is there a LocalStack-style option for Google Cloud?',
     answer:
-      'Yes. LocalCloud is a local Google Cloud runtime for development, testing, CI, and demos. It runs major GCP services in Docker so applications can use local endpoints instead of real cloud services during the inner development loop.',
+      'Yes. LocalCloud is a local Google Cloud runtime for personal learning, evaluation, and non-commercial projects permitted by its proprietary license. It runs major GCP services in Docker so applications can use local endpoints instead of real cloud services.',
   },
   {
     question: 'Is LocalCloud affiliated with LocalStack?',
@@ -25,7 +25,7 @@ const faqs = [
   {
     question: 'Does LocalCloud replace Google Cloud in production?',
     answer:
-      'No. LocalCloud is for local development, testing, CI, and demos. Validate behavior against real Google Cloud before production deployment.',
+      'No. LocalCloud is for permitted personal local workflows only. Validate behavior against real Google Cloud before production deployment.',
   },
   {
     question: 'Can I use my existing Google Cloud SDK code?',
@@ -50,7 +50,7 @@ const faqSchema = {
 const structuredData = [
   createSoftwareApplicationSchema(
     pageUrl,
-    'LocalCloud is a local Google Cloud runtime for development, testing, CI, and demos.',
+    'LocalCloud is a local Google Cloud runtime for personal uses permitted by its proprietary license.',
   ),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
@@ -74,7 +74,7 @@ const structuredData = [
         </span>
         <h1 class="mt-4">Looking for LocalStack for Google Cloud?</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          LocalCloud brings an all-in-one local-development pattern to Google Cloud: reviewed service contracts, generated local SDK endpoints, and a built-in console. The current proprietary license permits only limited personal, non-commercial Individual Developer use and excludes organization/team CI and commercial workflows.
+          LocalCloud brings an all-in-one local-development pattern to Google Cloud: service guides, generated local SDK endpoints, and a built-in console. The current proprietary license permits only limited personal, non-commercial Individual Developer use and excludes organization, team CI, and commercial workflows.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start with LocalCloud</a>
@@ -99,7 +99,7 @@ const structuredData = [
         <span class="site-kicker">Choose the runtime that matches your cloud</span>
         <h2 class="mt-4">AWS local workflows and GCP local workflows are different jobs</h2>
         <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
-          LocalStack is designed around AWS service emulation. LocalCloud is the equivalent category for teams building on Google Cloud APIs: run local GCP services for the fast inner loop, then validate the same application against real Google Cloud before production.
+          LocalStack is designed around AWS service emulation. LocalCloud serves a similar category for Google Cloud APIs, but its current license is limited to permitted personal use. Run local GCP services for that personal workflow, then validate separately against real Google Cloud.
         </p>
       </div>
 
@@ -127,7 +127,7 @@ const structuredData = [
             <tr class="border-b border-[var(--border)]">
               <th class="p-4 font-medium text-[var(--text)]">LocalCloud fit</th>
               <td class="p-4 text-[var(--text-2)]">Not a substitute for AWS emulation</td>
-              <td class="p-4 text-[var(--text-2)]">GCP services, local endpoints, console, and CI workflows</td>
+              <td class="p-4 text-[var(--text-2)]">GCP services, local endpoints, console, and permitted personal workflows</td>
             </tr>
             <tr>
               <th class="p-4 font-medium text-[var(--text)]">Production validation</th>

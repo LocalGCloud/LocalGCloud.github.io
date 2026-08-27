@@ -6,7 +6,7 @@ This is the operating index for LocalCloud agentic launch tasks 7.1-7.9 and 8.1-
 
 - Follow community rules; do not mass-post, vote-brigade, or create synthetic engagement.
 - Disclose affiliation when posting or replying.
-- Use only supported public facts: LocalCloud is a local Google Cloud emulator, covers `20+` service surfaces, uses Docker image `jaysen2apache/localcloud`, routes standard GCP SDKs to localhost, requires no default GCP account/credentials/billing project, and requires real-GCP validation before production.
+- Use only supported public facts: LocalCloud is a local Google Cloud emulator with 27 available service guides, uses Docker image `jaysen2apache/localcloud`, routes standard GCP SDKs to localhost, requires no default GCP account or production credentials, is limited by its proprietary license, and requires real-GCP validation before production.
 - Link `/compatibility/`, `/services/`, `/docs/`, `/docs/sdk-examples/`, `/docs/terraform/`, and `/docs/seed-data/` where relevant.
 - Treat Docker pulls, docs visits, quickstart clicks, citations, and stars as directional signals unless tied to a verified user workflow.
 - Convert repeated objections into public docs, compatibility notes, skills, runtime MCP guidance, or product backlog items before the next launch wave.

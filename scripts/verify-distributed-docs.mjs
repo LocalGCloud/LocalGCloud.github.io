@@ -106,7 +106,16 @@ for (const phrase of forbidden) {
 }
 
 const runtimeMcpGuideExpression =
-	"${productFacts.githubUrl}/blob/main/docs/MCP_INTEGRATION.md";
+	"${productFacts.runtimeRepositoryUrl}/blob/main/docs/MCP_INTEGRATION.md";
+const productFactsSource = await read("src/data/productFacts.ts");
+for (const repository of [
+	'https://github.com/LocalGCloud/localcloud-cli',
+	'https://github.com/jhsenjaliya/localcloud',
+	'https://github.com/LocalStack-Google/localcloud-site',
+]) {
+	assert(productFactsSource.includes(repository), `productFacts omits repository owner ${repository}`);
+}
+assert(!productFactsSource.includes('githubUrl:'), 'productFacts still conflates repositories in githubUrl');
 for (const path of [
 	"src/pages/blog/localcloud-for-ai-agents.astro",
 	"src/pages/docs/licensing.mdx",
@@ -126,13 +135,12 @@ for (const path of [
 for (const path of ["public/llms.txt", "public/llms-full.txt"]) {
 	const value = await read(path);
 	assert(
-		value.includes("25 available services") &&
-			value.includes("1 coming-soon service guide"),
+		value.includes("27 available Google Cloud service guides"),
 		`${path} lacks public service counts`,
 	);
 	assert(
-		value.includes("Google Sheets is an integration surface") &&
-			value.includes("Firestore — coming soon"),
+		value.includes("Firestore is available but disabled by default") &&
+			value.includes("Google Sheets provides a limited read-only values facade"),
 		`${path} lacks service classification policy`,
 	);
 	assert(value.includes("local-gcp-project"), `${path} lacks default project`);

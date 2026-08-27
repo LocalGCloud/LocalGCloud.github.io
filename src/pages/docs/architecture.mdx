@@ -34,17 +34,17 @@ Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env
 
 ## Process and storage model
 
-| Component | Reviewed implementation | Persistence boundary |
+| Component | Current implementation | Persistence boundary |
 | --- | --- | --- |
 | Gateway and local facades | Java/Armeria services | Many facade records use internal PostgreSQL beneath `/var/lib/localcloud/pgdata`; operation-specific limits still apply. |
 | Cloud Storage | `fake-gcs-server` process | Object data is stored beneath the mounted LocalCloud data root. |
 | Pub/Sub | Google emulator process | Volatile across process restart; topics, subscriptions, and messages require recreation/reseeding. |
 | Firestore | Google emulator process | Firestore seeding is disabled; do not infer seed or persistence guarantees from process presence. |
-| Bigtable | `little_bigtable` artifact | LocalCloud Docker is configured for PostgreSQL under the mounted data root, but exact extended features remain release-unverified pending immutable artifact and assembled-image qualification. |
+| Bigtable | `little_bigtable` artifact | LocalCloud Docker uses PostgreSQL under the mounted data root. Confirm release-unverified extended features against the exact image version you run. |
 | BigQuery | DuckDB-backed emulator process | DuckDB files live beneath the LocalCloud data root; feature claims are release-sensitive. |
 | Spanner | Extended emulator process | LevelDB row data plus JSON metadata beneath its data directory; mounted storage is needed across container replacement and known recovery/corruption limits apply. |
 | Memorystore | External Valkey-compatible process on canonical port `24089` | Do not describe it as the old in-process PostgreSQL-backed RESP handler. |
-| Cloud SQL | PostgreSQL and MySQL data planes on `24090` and `24091` plus gateway administration | Effective assembled default has differed from the registry default; enable explicitly. |
+| Cloud SQL | PostgreSQL and MySQL data planes on `24090` and `24091` plus gateway administration | Starts by default; backups, replicas, PSC, and production HA behavior remain limited. |
 
 A retained volume improves restart/container-replacement behavior only for stores that actually persist. It does not provide production replication, backups, disaster recovery, transaction parity, or durability guarantees.
 
@@ -68,14 +68,13 @@ The host CLI may dynamically remap these ports; generated endpoint output is aut
 | `24091` | Cloud SQL MySQL |
 | `24092` | GKE/k3d infrastructure |
 | `24093` | Transparent DNS/UDP listener |
-| `24094` | Transparent HTTPS listener |
-| `24095` | Transparent HTTP listener |
+| `24443` | Optional native gateway HTTPS (configurable with `tls.port`) |
 
 ## Transparent networking and Docker socket
 
 Both features are disabled by default in the host CLI.
 
-- Transparent networking redirects selected Google API DNS/HTTP/HTTPS traffic and requires host DNS changes and certificate trust. It is used for clients, including some Terraform paths, that ignore custom endpoint variables.
+- Transparent networking maps host `53/udp` to container `24093/udp`, host `80` to gateway `24080`, and host `443` to the configured native TLS port (default `24443`). It requires scoped host DNS changes and certificate trust and is used only for clients that ignore custom endpoint variables.
 - Docker-socket access grants the container control over the host Docker daemon. It is required only for runtime workflows that deliberately create subordinate containers/clusters. Do not mount it in the beginner path.
 
 ## Outbound behavior
@@ -84,4 +83,4 @@ LocalCloud is not categorically offline or zero-egress. Depending on configurati
 
 ## Production boundary
 
-Local emulation does not reproduce Google Cloud IAM enforcement, quotas, managed networking, regional behavior, concurrency, performance, replication, or disaster recovery. Consult each service operation and evidence state, then run an explicit real-Google-Cloud validation before release.
+Local emulation does not reproduce Google Cloud IAM enforcement, quotas, managed networking, regional behavior, concurrency, performance, replication, or disaster recovery. Consult each service operation and support level, then run an explicit real-Google-Cloud validation before release.

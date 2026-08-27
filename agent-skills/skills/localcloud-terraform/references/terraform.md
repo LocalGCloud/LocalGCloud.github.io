@@ -6,8 +6,10 @@ Configure Terraform mode in the runtime before it starts:
 
 ```yaml
 # localcloud.yaml
-environment:
-  LOCALCLOUD_TERRAFORM_MODE: "true"
+version: 1
+host:
+  environment:
+    LOCALCLOUD_TERRAFORM_MODE: "true"
 ```
 
 ```bash
@@ -43,9 +45,14 @@ BigQuery and some provider paths ignore custom endpoint variables. Configure tra
 
 ```yaml
 # localcloud.yaml
-transparent_network: true
-environment:
-  LOCALCLOUD_TERRAFORM_MODE: "true"
+version: 1
+host:
+  transparent_network: true
+  environment:
+    LOCALCLOUD_TERRAFORM_MODE: "true"
+tls:
+  enabled: true
+  port: 24443
 ```
 
 Transparent mode also requires explicit LocalCloud DNS/HTTP/HTTPS routing, a trusted LocalCloud CA, and:
@@ -54,7 +61,7 @@ Transparent mode also requires explicit LocalCloud DNS/HTTP/HTTPS routing, a tru
 curl -fsS http://localhost:24080/terraform/readiness?mode=transparent
 ```
 
-## Currently contract-qualified resources
+## Currently supported resources
 
 - `google_project`
 - `google_secret_manager_secret`
@@ -64,7 +71,7 @@ curl -fsS http://localhost:24080/terraform/readiness?mode=transparent
 - `google_sql_database`
 - `google_sql_user`
 
-Do not promote other resources to verified without the provider version, routing mode, assembled image digest, and maintained qualification result.
+Do not treat other resources as supported without a documented provider-version and routing-mode result.
 
 ## Endpoint details
 

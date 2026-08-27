@@ -12,7 +12,7 @@ import { services } from '../../data/services';
 Use this explanation to choose a local-development runtime. It does not maintain a count or capability matrix for external vendor emulators because those claims were not revalidated during this documentation remediation.
 
 <Callout type="warning" title="Check the current vendor documentation">
-Google-maintained emulator availability, installation, and behavior can change. Consult current Google documentation for the service you need. The table below describes only LocalCloud's reviewed contract.
+Google-maintained emulator availability, installation, and behavior can change. Consult current Google documentation for the service you need. The table below describes LocalCloud's current documented support.
 </Callout>
 
 ## Decision model
@@ -33,7 +33,7 @@ Consider LocalCloud when:
 ## LocalCloud contract summary
 
 <table>
-  <thead><tr><th>Service</th><th>Evidence state</th><th>Implementation</th><th>Local boundary</th></tr></thead>
+  <thead><tr><th>Service</th><th>Support level</th><th>Implementation</th><th>Local boundary</th></tr></thead>
   <tbody>
     {services.map((service) => (
       <tr><td>{service.name}</td><td><code>{service.status}</code></td><td>{service.implementation}</td><td>{service.description}</td></tr>
@@ -41,7 +41,7 @@ Consider LocalCloud when:
   </tbody>
 </table>
 
-A contract listing does not imply default startup, full parity, legal permission, or availability in a qualified assembled image. Review the [service detail](/services/), [compatibility matrix](/compatibility/), and [licensing reference](/docs/licensing/).
+A service listing does not imply default startup, full parity, or legal permission. Review the [service detail](/services/), [compatibility matrix](/compatibility/), and [licensing reference](/docs/licensing/).
 
 ## LocalCloud setup
 

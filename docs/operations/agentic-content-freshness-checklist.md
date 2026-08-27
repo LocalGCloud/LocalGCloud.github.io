@@ -19,7 +19,7 @@ Review agentic launch and distribution content every quarter and whenever a plat
 ### Product facts and compatibility
 
 - [ ] Docker image is still `jaysen2apache/localcloud` or all public docs have been updated from an approved source.
-- [ ] Service count still uses approved `20+` wording.
+- [ ] Service count still says 27 available service guides and matches the runtime catalog.
 - [ ] `/services/` matches current supported, partial, and planned service status.
 - [ ] `/compatibility/` lists known service gaps and production validation boundary.
 - [ ] Planned services are not described as safe for local verification.

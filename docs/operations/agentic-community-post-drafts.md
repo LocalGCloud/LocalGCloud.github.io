@@ -6,8 +6,8 @@ Do not mass-post the same copy. Stagger posts, adapt the framing, and skip a com
 
 ## Universal guardrails
 
-- Say: LocalCloud is a local Google Cloud emulator for development, testing, CI, and demos.
-- Say: one Docker image, `jaysen2apache/localcloud`, and `20+` services.
+- Say: LocalCloud is a local Google Cloud emulator for personal uses permitted by its proprietary license.
+- Say: one Docker image, `jaysen2apache/localcloud`, and 27 available service guides.
 - Say: default local workflows require no GCP account, credentials, or billing project.
 - Say: standard GCP SDKs connect via localhost emulator endpoints.
 - Say: validate against real Google Cloud before production.
@@ -19,12 +19,12 @@ Do not mass-post the same copy. Stagger posts, adapt the framing, and skip a com
 **Title options**
 
 - Show HN: LocalCloud – run a local GCP sandbox for agent-written integration tests
-- Show HN: LocalCloud – a Dockerized local Google Cloud emulator for dev and CI
+- Show HN: LocalCloud – a Dockerized local Google Cloud emulator for permitted personal projects
 
 **Post body**
 
 ```text
-Hi HN — I’m working on LocalCloud, a local Google Cloud emulator for development, testing, CI, and demos.
+Hi HN — I’m working on LocalCloud, a local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its license.
 
 The agent workflow is the part I’m most interested in feedback on: give a coding agent one instruction file, have it start a local GCP sandbox, export emulator env vars, and run a narrow SDK smoke check without asking for real GCP credentials.
 
@@ -43,7 +43,7 @@ Agent prompt:
 
   Fetch https://local.cloud/ai/agents.md and follow it to start LocalCloud, export emulator env vars, and run one local GCP SDK smoke check. Do not use real GCP credentials.
 
-What it is: a local emulator for 20+ GCP services in one Docker container. Apps use the same GCP SDKs pointed at localhost.
+What it is: a local emulator with 27 available GCP service guides in one Docker container. Apps use standard GCP SDKs pointed at localhost.
 
 What it is not: a production Google Cloud replacement. Compatibility and gaps are documented at https://local.cloud/compatibility/ and service coverage is at https://local.cloud/services/. Validate against real GCP before production.
 
@@ -51,7 +51,7 @@ Docs: https://local.cloud/docs/
 SDK examples: https://local.cloud/docs/sdk-examples/
 Terraform: https://local.cloud/docs/terraform/
 Seed data: https://local.cloud/docs/seed-data/
-GitHub/site repo: https://github.com/LocalGCloud/LocalGCloud.github.io
+GitHub/site repo: https://github.com/LocalStack-Google/localcloud-site
 
 I’ll be in the comments today. I’m especially looking for feedback on compatibility expectations, agent safety guardrails, and which GCP workflows are most useful to validate locally.
 ```
@@ -66,7 +66,7 @@ I’ll be in the comments today. I’m especially looking for feedback on compat
 
 **Tagline options**
 
-- Local Google Cloud sandbox for agents, dev, and CI
+- Local Google Cloud sandbox for agents and permitted personal projects
 - Run GCP-style dev/test workflows locally in one Docker container
 - A localhost GCP emulator for agent-written integration tests
 
@@ -82,7 +82,7 @@ I’ll be in the comments today. I’m especially looking for feedback on compat
 ```text
 Hi Product Hunt — I’m launching LocalCloud for developers building on Google Cloud who want local, credentialless dev/test workflows.
 
-LocalCloud runs 20+ GCP service surfaces in one Docker container. Standard Google Cloud SDKs can be routed to localhost, so a coding agent can start the sandbox, export emulator variables, and run a small integration check without reaching for a real GCP account, credentials, or billing project.
+LocalCloud publishes 27 available GCP service guides for one Docker runtime. Standard Google Cloud SDKs can be routed to localhost, so a coding agent can start the sandbox, export emulator variables, and run a small integration check without reaching for a real GCP account, credentials, or billing project.
 
 Try the agent workflow:
 
@@ -96,7 +96,7 @@ Useful links:
 - Terraform: https://local.cloud/docs/terraform/
 - Seed data: https://local.cloud/docs/seed-data/
 
-Important boundary: LocalCloud is for development, testing, CI, and demos. It is not a production Google Cloud replacement; validate against real GCP before production.
+Important boundary: LocalCloud is limited to personal uses permitted by its proprietary license and is not a production Google Cloud replacement. Validate against real GCP before production.
 
 I’d love feedback on the first-run experience, agent prompts, compatibility docs, and which GCP workflows you would want covered next.
 ```
@@ -121,7 +121,7 @@ Always check subreddit rules immediately before posting. If self-promotion is re
 ```text
 Title: Looking for feedback: local GCP emulator workflow for SDK tests and agents
 
-I’m working on LocalCloud, a Docker-based local Google Cloud emulator for development, testing, CI, and demos. It runs 20+ service surfaces locally and lets standard GCP SDKs target localhost through emulator env vars.
+I’m working on LocalCloud, a Docker-based local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its license. It publishes 27 available service guides and lets standard GCP SDKs target localhost through emulator env vars.
 
 The workflow I’m testing:
 1. Start `jaysen2apache/localcloud`
@@ -136,15 +136,15 @@ SDK examples: https://local.cloud/docs/sdk-examples/
 
 Not a production replacement — production workloads still need validation against real Google Cloud.
 
-Question: which GCP service behavior would you consider mandatory before trusting a local emulator in your dev or CI loop?
+Question: which GCP service behavior would you consider mandatory before trusting a local emulator in a personal workflow?
 ```
 
 ### r/devops
 
 ```text
-Title: Local GCP emulator for CI/dev loops — what would you need before using it?
+Title: Local GCP emulator for personal projects — what would you need before using it?
 
-I’m working on LocalCloud, a local Google Cloud emulator packaged as one Docker container (`jaysen2apache/localcloud`). The goal is to let dev and CI workflows run GCP-style integration checks locally, with standard SDKs routed to localhost and no default need for GCP credentials or a billing project.
+I’m working on LocalCloud, a local Google Cloud emulator packaged as one Docker container (`jaysen2apache/localcloud`). The goal is to let permitted personal workflows run GCP-style integration checks locally, with standard SDKs routed to localhost and no default need for GCP credentials or a billing project.
 
 Useful docs:
 - Terraform: https://local.cloud/docs/terraform/
@@ -152,9 +152,9 @@ Useful docs:
 - Compatibility: https://local.cloud/compatibility/
 - Services: https://local.cloud/services/
 
-I’m especially interested in CI-sidecar feedback: readiness checks, port collisions, seed/reset workflow, and how you would prevent accidental fallback to real cloud endpoints.
+I’m especially interested in personal automation feedback: readiness checks, port collisions, seed/reset workflow, and how you would prevent accidental fallback to real cloud endpoints.
 
-Boundary: this is for development, testing, CI, and demos. Validate against real GCP before production.
+Boundary: this is limited to personal use permitted by the proprietary license. Validate against real GCP before production.
 ```
 
 ### r/LocalLLaMA
@@ -168,7 +168,7 @@ Prompt:
 
 Fetch https://local.cloud/ai/agents.md and follow it to start LocalCloud, export emulator environment variables, and run one local GCP SDK/API smoke check. Do not use real GCP credentials.
 
-LocalCloud runs as Docker image `jaysen2apache/localcloud` and covers 20+ GCP service surfaces for development/testing. Known limitations are documented at https://local.cloud/compatibility/ and service coverage is at https://local.cloud/services/.
+LocalCloud runs as Docker image `jaysen2apache/localcloud` and publishes 27 available GCP service guides for permitted personal workflows. Known limitations are documented at https://local.cloud/compatibility/ and service coverage is at https://local.cloud/services/.
 
 I’d like feedback on the instruction design: what would make this safer for autonomous agents? What refusal/stop conditions should be explicit?
 ```
@@ -200,7 +200,7 @@ What guardrails would you add before trusting an agent with this workflow?
 ````markdown
 Coding agents are good at writing integration tests, but cloud APIs create a safety problem: a default test run can drift into real credentials, real projects, and real billing.
 
-LocalCloud is a local Google Cloud emulator for development, testing, CI, and demos. It runs as one Docker container and lets standard GCP SDKs connect to localhost through emulator environment variables.
+LocalCloud is a local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its license. It runs as one Docker container and lets standard GCP SDKs connect to localhost through emulator environment variables.
 
 ```bash
 docker pull jaysen2apache/localcloud
@@ -228,7 +228,7 @@ Useful references:
 - Service catalog: https://local.cloud/services/
 - Compatibility: https://local.cloud/compatibility/
 
-The important boundary: LocalCloud is not a production Google Cloud replacement. Use it for local development, testing, CI, and demos; validate against real Google Cloud before production.
+The important boundary: LocalCloud is not a production Google Cloud replacement. Use it only for personal purposes permitted by its proprietary license, and validate against real Google Cloud before production.
 
 I’m looking for feedback on the agent instructions and the service coverage you would need for your own GCP workflows.
 ````
@@ -238,7 +238,7 @@ I’m looking for feedback on the agent instructions and the service coverage yo
 ```text
 Coding agents should not need your production cloud credentials to write and run integration tests.
 
-We’re preparing LocalCloud: a local Google Cloud emulator for development, testing, CI, and demos. It runs in Docker (`jaysen2apache/localcloud`), covers 20+ GCP service surfaces, and lets standard GCP SDKs target localhost through emulator environment variables.
+We’re preparing LocalCloud: a local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its license. It runs in Docker (`jaysen2apache/localcloud`), publishes 27 available GCP service guides, and lets standard GCP SDKs target localhost through emulator environment variables.
 
 The agent workflow:
 1. Read `/ai/agents.md`
@@ -253,7 +253,7 @@ Services: https://local.cloud/services/
 Compatibility: https://local.cloud/compatibility/
 SDK examples: https://local.cloud/docs/sdk-examples/
 
-Boundary: development/testing/CI/demo only; validate against real Google Cloud before production.
+Boundary: personal use permitted by the proprietary license only; validate against real Google Cloud before production.
 
 If your team builds on GCP, what local workflow would you want an agent to validate first?
 ```

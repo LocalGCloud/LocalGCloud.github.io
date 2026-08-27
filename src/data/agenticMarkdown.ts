@@ -45,10 +45,11 @@ const safetyLines = agentSafeValidationChecklist
 
 export const agentsMdTemplate = `# AGENTS.md — LocalCloud GCP emulator instructions
 
-Use this file as repository-local guidance for AI coding agents that need Google Cloud services during development, tests, CI, or demos.
+Use this file as repository-local guidance for AI coding agents working on personal, non-commercial projects permitted by the LocalCloud license.
 
 ## LocalCloud facts agents must preserve
-- LocalCloud is a local Google Cloud emulator/runtime for development, testing, CI, and demos.
+- LocalCloud is a local Google Cloud emulator/runtime for permitted personal learning, evaluation, and non-commercial projects.
+- The current license excludes employer, organization, commercial, shared-team, and team-CI use. Stop if the requested workflow falls into one of those categories.
 - It runs ${productFacts.serviceCountLabel} GCP service surfaces in one Docker container.
 - Canonical Docker image: \`${agenticFacts.dockerImage}\`.
 - Default local workflows require no GCP account, no Google credentials, no service-account key, and no billing project.
@@ -86,7 +87,7 @@ ${endpointLines}
 - **SDK examples**: https://local.cloud/docs/sdk-examples/
 - **Terraform guide**: https://local.cloud/docs/terraform/
 - **Seed data guide**: https://local.cloud/docs/seed-data/
-- **Agent Skills package**: ${productFacts.siteRepositoryUrl}/tree/main/agent-skills
+- **Agent Skills package**: ${productFacts.agentSkillsUrl}
 
 ## Service matrix for agents
 ${serviceLines}
@@ -137,14 +138,14 @@ ${safetyLines}
 - SDK examples: https://local.cloud/docs/sdk-examples/
 - Terraform guide: https://local.cloud/docs/terraform/
 - Seed data guide: https://local.cloud/docs/seed-data/
-- Agent Skills package: ${productFacts.siteRepositoryUrl}/tree/main/agent-skills
+- Agent Skills package: ${productFacts.agentSkillsUrl}
 `;
 
 export const agentResourceIndexMarkdown = `# LocalCloud agent Markdown resources
 
 Canonical policy: human-facing HTML pages remain the canonical product pages. Raw Markdown routes under https://local.cloud/ai/ are published for AI agents that need compact, source-linked operating context. If a Markdown route and an HTML page disagree, treat the shared source data and the linked HTML page as authoritative.
 
-Default LocalCloud agent workflows require no GCP account, no Google credentials, no service-account keys, and no billing project. LocalCloud is for development, testing, CI, and demos; validate against real Google Cloud before production.
+Default LocalCloud agent workflows require no GCP account, no Google credentials, no service-account keys, and no billing project. Use LocalCloud only for workflows permitted by its proprietary license, and validate against real Google Cloud before production.
 
 ## Core Markdown routes
 - https://local.cloud/ai/agents.md — execution guide for starting LocalCloud safely.
@@ -153,7 +154,7 @@ Default LocalCloud agent workflows require no GCP account, no Google credentials
 - https://local.cloud/ai/services.md — service matrix generated from shared LocalCloud service metadata.
 - https://local.cloud/ai/compatibility.md — safety boundaries and validation rules for agents.
 - https://local.cloud/ai/docs.md — compact guide to docs, SDK examples, Terraform, and seed data.
-- https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills — portable Agent Skills package for project-local \`.agents/skills/\` installs.
+- ${productFacts.agentSkillsUrl} — portable Agent Skills package for project-local \`.agents/skills/\` installs.
 
 ## Canonical HTML sources
 - https://local.cloud/ai/
@@ -163,7 +164,7 @@ Default LocalCloud agent workflows require no GCP account, no Google credentials
 - https://local.cloud/docs/sdk-examples/
 - https://local.cloud/docs/terraform/
 - https://local.cloud/docs/seed-data/
-- https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills
+- ${productFacts.agentSkillsUrl}
 `;
 
 export const agentServicesMarkdown = `# LocalCloud service matrix for agents
@@ -215,7 +216,7 @@ Use the raw Markdown routes for compact agent context, then follow canonical HTM
 - https://local.cloud/ai/AGENTS.md — repository-local template.
 - https://local.cloud/ai/services.md — service matrix.
 - https://local.cloud/ai/compatibility.md — boundaries and validation rules.
-- https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills — portable Agent Skills package.
+- ${productFacts.agentSkillsUrl} — portable Agent Skills package.
 
 ## Quick start
 \`\`\`bash

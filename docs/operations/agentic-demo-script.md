@@ -8,7 +8,7 @@ Show that a coding agent can use LocalCloud as a local Google Cloud sandbox for 
 
 ## Required disclaimers
 
-- LocalCloud is for development, testing, CI, and demos.
+- LocalCloud is for personal uses permitted by its proprietary license; employer, organization, commercial, shared-team, and team-CI use is excluded.
 - LocalCloud is not a production Google Cloud replacement.
 - Some service behavior is partial or planned; check `/services/` and `/compatibility/`.
 - Validate production workloads against real Google Cloud before deployment.
@@ -17,7 +17,7 @@ Show that a coding agent can use LocalCloud as a local Google Cloud sandbox for 
 
 | Time | Visual | Narration |
 |---|---|---|
-| 0:00-0:10 | Title slide: “Local GCP sandbox for coding agents” | “This is LocalCloud: a local Google Cloud emulator for development, testing, CI, and demos.” |
+| 0:00-0:10 | Title slide: “Local GCP sandbox for coding agents” | “This is LocalCloud: a local Google Cloud emulator for permitted personal learning, evaluation, and non-commercial projects.” |
 | 0:10-0:25 | Terminal with Docker pull/run command | “It starts from one Docker image: `jaysen2apache/localcloud`.” |
 | 0:25-0:35 | Health endpoint | “Before an agent runs SDK code, it waits for the local health endpoint.” |
 | 0:35-0:50 | Env export command | “The app keeps using standard Google Cloud SDKs; emulator variables point those SDKs at localhost.” |
@@ -73,7 +73,7 @@ Narrator: The agent runs one narrow local SDK/API check. No real GCP account, cr
 Terminal: <local SDK/API smoke check>
 Terminal: <success output>
 
-Narrator: LocalCloud is for development, testing, CI, and demos. Check compatibility and validate against real Google Cloud before production.
+Narrator: LocalCloud is limited to uses permitted by its proprietary license. Check licensing and compatibility, then validate against real Google Cloud before production.
 Browser: https://local.cloud/compatibility/
 ```
 

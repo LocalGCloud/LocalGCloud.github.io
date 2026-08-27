@@ -6,35 +6,38 @@
 **Dependency repositories:** `../local_cloud_dependencies`  
 **Audience:** LocalCloud users  
 **Scope:** All public tutorials, how-to guides, reference pages, explanations, generated agent content, and LLM-facing files  
-**Deliverable:** Findings and update plan only; no public documentation was changed
+**Deliverable:** Original findings plus the current remediation record
 
-## Remediation status — 2026-08-13
+## Remediation status — 2026-08-26
 
-The audit below is retained as the original evidence record. The approved contract-first remediation has since updated the public documentation in `localcloud-site`; sibling runtime and CLI repositories were not modified.
+The audit below is retained as the original 2026-08-13 record. The current site snapshot is synchronized with `../localcloud/localcloud.defaults.yaml`, `../localcloud/documentation.yaml`, and the LocalCloud CLI 0.1.2 source. `verify-upstream-docs.mjs` performs live sibling-project parity checks when those projects are present.
 
 | Finding cluster | Status | Remediation and verification |
 | --- | --- | --- |
-| Root operator routes, project default, ports, and CLI-first setup | Resolved | Schema-v2 contract, CLI-first tutorial, loopback/manual boundaries, and cross-surface route scans; `verify-docs-contract`, `verify-cli-docs`, and `verify-doc-examples`. |
-| Seed and Terraform workflows | Resolved with runtime-test exception | Accepted YAML envelopes, registrar limits, Terraform mode-before-start, provider-v7 credentials, routing modes, and readiness are source-validated. No qualified assembled image was available for end-to-end apply/seed qualification. |
-| 27-service catalog and compatibility | Resolved | 27 overlays/icons, 27 catalog/detail routes, and 27 agent-testing routes are contract-derived with evidence state, tier, defaults, persistence, and operation limits. |
+| Root operator routes, project default, ports, and CLI-first setup | Resolved | Schema-v3 contract, versioned CLI configuration, loopback/manual boundaries, native TLS on `24443`, and transparent host mappings `53/80/443` are checked by `verify-docs-contract`, `verify-upstream-docs`, `verify-cli-docs`, and `verify-doc-examples`. |
+| Seed and Terraform workflows | Resolved for documentation | Accepted YAML envelopes, registrar limits, nested `localcloud.yaml` syntax, provider-v7 credentials, routing modes, and readiness are documented. Release execution remains a separate product qualification task. |
+| 27-service catalog and compatibility | Resolved | All 27 runtime services are available and published. Firestore is available/default-disabled; Sheets is available/default-enabled. Catalog, detail, compatibility, agent, and LLM surfaces use the same runtime-owned availability and default fields. |
 | BigQuery, Bigtable, and Spanner claims | Public wording resolved; release qualification pending | Fixed totals/parity claims and PGAdapter errors were removed. Feature-specific release-unverified references now require immutable dependency and assembled-image evidence. |
 | Runtime privacy and website analytics | Disclosure resolved; product controls pending | Runtime telemetry fields/cadence/queue and other egress paths plus website PostHog events are disclosed. A zero-event runtime opt-out, ordinary TLS verification, site consent/opt-out, and a complete retention schedule remain product decisions. |
 | Governing license and team/commercial claims | Public wording resolved; product decision pending | Public pages follow the proprietary root license and separate technical tiers from legal permission. The reviewed license still offers no commercial grant. |
-| Agent Skills, AI/LLM, and runtime MCP links | Resolved | LLM files are generated from the contract; skills use CLI/root-route defaults; site copy points to the runtime-owned MCP guide; repository-wide forbidden-pattern scans run in `verify-distributed-docs`. |
+| Agent Skills, AI/LLM, and runtime MCP links | Resolved | LLM files are generated from the contract; CLI releases link to `LocalGCloud/localcloud-cli`, MCP documentation links to `jhsenjaliya/localcloud`, and Agent Skills/site feedback link to `LocalStack-Google/localcloud-site`. |
 | Unsupported marketing and vendor comparisons | Resolved | Savings/latency/startup/parity statistics were removed or replaced by evidence methodology; unvalidated vendor counts and broad comparisons were omitted. |
-| Installer and released CLI behavior | Partially resolved | Installer mechanics and current checkout commands are validated, but the exact checksummed released CLI artifact is not qualified end to end. |
+| Installer and released CLI behavior | Partially resolved | Installer mechanics and CLI 0.1.2 source behavior are validated, but the exact checksummed binary artifact is not qualified end to end. |
 
 ### Residual release and product blockers
 
 1. Record a qualified immutable LocalCloud image digest and release association; the reviewed mutable image remains release-unverified.
 2. Qualify the exact released CLI artifact—not only the checkout or mock installer—across `doctor`, `start`, `status`, `env`, `console`, and `stop`.
 3. Pin and qualify BigQuery, Bigtable, and Spanner dependency identities with source/module/image digests, assembled-image smoke results, durable evidence paths, and release association.
-4. Reconcile and qualify Cloud SQL's registry-default-on versus container-environment-default-off behavior.
-5. Decide whether runtime telemetry opt-out must emit zero events and replace the telemetry trust-all TLS client; define website analytics consent/opt-out, retention, and request handling.
-6. Decide the intended commercial/team/organization license model. Technical Pro access and CI capability do not supply permission under the current agreement.
-7. Execute Cloud Storage, seed, Terraform, and dependency-sensitive examples against a qualified assembled image; current documentation records the unavailable-artifact exception instead of inferring success.
+4. Decide whether runtime telemetry opt-out must emit zero events and replace the telemetry trust-all TLS client; define website analytics consent/opt-out, retention, and request handling.
+5. Decide the intended commercial/team/organization license model. Technical Pro access and CI capability do not supply permission under the current agreement.
+6. Execute Cloud Storage, seed, Terraform, and dependency-sensitive examples against a qualified assembled image before making release-specific success claims.
 
-**Current repository validation:** 27 contract services, 27 service detail routes, 27 agent-testing routes, and 119 static pages build successfully. Fast contract, CLI, example, policy, distributed-doc, installer, rendered-doc, SEO, and product-fact checks are wired into `pnpm build`.
+**Current repository validation:** 27 contract services, 27 service detail routes, and 27 available agent-testing routes pass the contract and sibling-project checks. Contract, upstream parity, CLI, example, policy, distributed-doc, installer, rendered-doc, SEO, and product-fact checks are wired into `pnpm build`.
+
+## Historical findings — superseded remediation input
+
+The remaining sections describe the repository as it appeared on 2026-08-13. They explain why the remediation was required and are not current setup instructions or current product facts.
 
 ## Executive summary
 
@@ -54,7 +57,7 @@ The current `pnpm build` succeeds and reports **89 pages built**, with static SE
 Conflicts were resolved in this order:
 
 1. The dependency revision actually assembled into the LocalCloud image, plus its executable tests and current implementation.
-2. LocalCloud runtime registration and generated contracts: `../localcloud/localcloud-server/src/main/**`, `../localcloud/services.yaml`, and `../localcloud/specs/api/**`.
+2. LocalCloud runtime registration and generated contracts: `../localcloud/localcloud.defaults.yaml`, `../localcloud/documentation.yaml`, `../localcloud/localcloud-server/src/main/**`, and `../localcloud/specs/api/catalog.json`.
 3. LocalCloud tests and release qualification.
 4. Container wiring: `Dockerfile`, `docker/**`, `start.sh`, and `build.sh`.
 5. Exercised examples and Terraform qualification.

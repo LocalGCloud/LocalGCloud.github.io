@@ -1,33 +1,32 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Services Overview
-description: Read the runtime registry and reviewed service guides without confusing presence with compatibility.
+description: Compare available LocalCloud services, startup defaults, connections, and known limitations.
 ---
 
 import { availableServiceCount, comingSoonServiceCount, publishedServiceCount, serviceRegistryCount, services } from '../../data/services';
 
 # Services overview
 
-The runtime registry contains {serviceRegistryCount} Google Cloud identities. The public catalog exposes {publishedServiceCount} guides: {availableServiceCount} available services and {comingSoonServiceCount} roadmap addition. Google Sheets remains an integration surface rather than a LocalCloud service.
+The runtime includes {serviceRegistryCount} service entries and publishes {publishedServiceCount} guides. All {availableServiceCount} services are available; {comingSoonServiceCount} are marked as coming soon. Availability does not mean full Google Cloud parity or that a service starts by default.
 
-A registry entry does **not** mean full Google Cloud parity or that a service is enabled in every assembled image. Read six separate fields:
+A service guide separates the facts that affect normal use:
 
-1. **Registry default** — the service registry's default before container-environment overrides.
-2. **Assembled default** — whether the reviewed container starts it by default and how well that default is qualified.
-3. **Minimum tier** — community or Pro; this is a technical boundary, not a license grant.
-4. **Evidence state** — verified, partial, release-unverified, unsupported, or unknown.
-5. **Persistence** — service-data, metadata, volatile, or stateless, with a separate qualification.
-6. **Operation limits** — the bounded workflows and known gaps.
+1. **Starts by default** — whether `services.enabled: default` starts the service.
+2. **Minimum tier** — Community or Pro; this is a technical boundary, not a license grant.
+3. **Support level** — verified, partial, release-unverified, unsupported, or unknown.
+4. **Persistence** — whether data is volatile, metadata-only, service data, or stateless.
+5. **Connection** — the canonical container port and protocol. Use `localcloud env` for the actual host endpoint.
+6. **Known limits** — operations or Google Cloud behavior that LocalCloud does not provide.
 
 <div className="overflow-x-auto">
   <table className="w-full min-w-[72rem] text-left text-sm">
     <thead>
       <tr>
         <th>Service</th>
-        <th>Registry default</th>
-        <th>Assembled default</th>
+        <th>Starts by default</th>
         <th>Tier</th>
-        <th>Evidence state</th>
+        <th>Support level</th>
         <th>Persistence</th>
         <th>Connection</th>
       </tr>
@@ -37,11 +36,10 @@ A registry entry does **not** mean full Google Cloud parity or that a service is
         <tr>
           <td><a href={`/services/${service.slug}/`}>{service.name}</a></td>
           {service.catalogState === 'coming-soon' ? (
-            <td colSpan={6}><strong>Coming soon.</strong> Connection details and documented workflows will be published when available.</td>
+            <td colSpan={5}><strong>Coming soon.</strong> Connection details and documented workflows will be published when available.</td>
           ) : (
             <>
-              <td>{service.registryDefaultEnabled ? 'on' : 'off'}</td>
-              <td>{service.assembledDefaultEnabled ? 'on' : 'off'} ({service.defaultQualification})</td>
+              <td>{service.registryDefaultEnabled ? 'yes' : 'no'}</td>
               <td>{service.minTier}</td>
               <td>{service.status}</td>
               <td>{service.persistence.scope} ({service.persistence.qualification})</td>
@@ -61,9 +59,9 @@ The catalog groups services by user goal—storage, databases, analytics, messag
 ## How to use the catalog
 
 - Load the actual running endpoints with `localcloud env`; the host CLI may remap ports.
-- Check the service detail and operation evidence before writing a test.
-- Treat release-unverified dependency services as requiring an identified source revision and assembled-image qualification.
+- Check the service detail and operation limitations before relying on a workflow.
+- Treat release-unverified behavior as something to verify with the exact image version you run.
 - Keep the runtime loopback-bound and use fake local data.
 - Remove emulator variables and validate production behavior against real Google Cloud before release.
 
-Open the [service catalog](/services/) for all 26 public guides or [Compatibility](/compatibility/) for cross-service operation evidence. Google Sheets remains an integration surface and is not listed as a LocalCloud service.
+Open the [service catalog](/services/) for all {publishedServiceCount} guides or [Compatibility](/compatibility/) for operation-level support and limitations.

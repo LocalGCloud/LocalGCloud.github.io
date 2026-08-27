@@ -7,29 +7,29 @@ const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const pageUrl = new URL('compatibility/', productFacts.siteUrl).toString();
 const structuredData = [
-  createSoftwareApplicationSchema(pageUrl, `Operation-level LocalCloud compatibility evidence for ${publishedServiceCount} public service guides.`),
+  createSoftwareApplicationSchema(pageUrl, `Operation-level LocalCloud support and limitations for ${publishedServiceCount} service guides.`),
   createBreadcrumbSchema([{ name: 'Home', url: productFacts.siteUrl }, { name: 'Compatibility', url: pageUrl }]),
 ];
 const statusClass = (status: string) => status === 'verified' ? 'site-chip--success' : status === 'unsupported' || status === 'unknown' ? '' : 'site-chip--warn';
 ---
 
-<LandingLayout title={`LocalCloud Compatibility — ${publishedServiceCount}-service Evidence Matrix`} description={`Compare operation evidence, runtime defaults, tier, persistence, and limitations for ${publishedServiceCount} public LocalCloud service guides.`} {structuredData}>
+<LandingLayout title={`LocalCloud Compatibility — ${publishedServiceCount} Services`} description={`Compare supported operations, startup defaults, tier, persistence, and limitations for ${publishedServiceCount} LocalCloud service guides.`} {structuredData}>
   <section class="site-section site-section--hero">
     <div class="container"><div class="max-w-[54rem] reveal">
-      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Contract-derived compatibility</span>
+      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Service support</span>
       <h1 class="mt-4">LocalCloud compatibility and limitations</h1>
-      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">The aggregate state is not inferred from a startup default. Each operation retains its own verified, partial, release-unverified, unsupported, or unknown evidence state. Review the exact operation before using a local result.</p>
+      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">A service can be available without supporting every Google Cloud operation. Check the operation-level support and limitations before relying on a local result.</p>
       <div class="mt-8 flex flex-wrap gap-3"><a href={`${base}services/`} class="site-button site-button--primary">Browse all {publishedServiceCount} guides</a><a href={`${base}docs/configuration/`} class="site-button site-button--secondary">Defaults and tiers</a></div>
     </div></div>
   </section>
 
-  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning" role="note"><div class="callout__body"><p class="callout__title">Evidence, availability, and permission are different</p><div class="callout__content"><p>{productFacts.productionBoundary} Registry default, assembled default, and minimum tier are technical facts—not compatibility ratings or legal permission. The governing proprietary license controls use.</p></div></div></aside></div></section>
+  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning" role="note"><div class="callout__body"><p class="callout__title">Availability, compatibility, and permission are different</p><div class="callout__content"><p>{productFacts.productionBoundary} Startup defaults and minimum tiers describe runtime behavior; they do not imply full compatibility or legal permission. The governing proprietary license controls use.</p></div></div></aside></div></section>
 
   <section class="site-section"><div class="container">
     <div class="overflow-x-auto reveal">
       <table class="w-full min-w-[78rem] text-left text-sm">
         <thead><tr class="border-b border-[var(--line)]">
-          <th class="py-3 pr-4">Service</th><th class="py-3 pr-4">Evidence state</th><th class="py-3 pr-4">Defaults</th><th class="py-3 pr-4">Tier</th><th class="py-3 pr-4">Persistence</th><th class="py-3 pr-4">Operation evidence</th><th class="py-3">Known boundaries</th>
+          <th class="py-3 pr-4">Service</th><th class="py-3 pr-4">Support level</th><th class="py-3 pr-4">Starts by default</th><th class="py-3 pr-4">Tier</th><th class="py-3 pr-4">Persistence</th><th class="py-3 pr-4">Documented operations</th><th class="py-3">Known limitations</th>
         </tr></thead>
         <tbody>
           {services.map((service) => (
@@ -48,7 +48,7 @@ const statusClass = (status: string) => status === 'verified' ? 'site-chip--succ
               ) : (
                 <>
                   <td class="py-4 pr-4"><span class:list={['site-chip', statusClass(service.status)]}>{getServiceStatusLabel(service)}</span></td>
-                  <td class="py-4 pr-4 text-[var(--text-2)]">Registry: {service.registryDefaultEnabled ? 'on' : 'off'}<br />Assembled: {service.assembledDefaultEnabled ? 'on' : 'off'} ({service.defaultQualification})</td>
+                  <td class="py-4 pr-4 text-[var(--text-2)]">{service.registryDefaultEnabled ? 'Yes' : 'No'}</td>
                   <td class="py-4 pr-4 text-[var(--text-2)]">{service.minTier}</td>
                   <td class="py-4 pr-4 text-[var(--text-2)]">{service.persistence.scope}<br />{service.persistence.qualification}</td>
                   <td class="py-4 pr-4"><ul class="space-y-2 text-[var(--text-2)]">{service.operations.map((operation) => <li><strong>{operation.status}</strong> — {operation.label}{operation.limitations.length ? `: ${operation.limitations[0]}` : ''}</li>)}</ul></td>
@@ -65,6 +65,6 @@ const statusClass = (status: string) => status === 'verified' ? 'site-chip--succ
   <section class="site-section"><div class="container grid gap-4 md:grid-cols-3">
     <article class="site-panel p-6"><span class="site-kicker">Verified</span><p class="mt-3 leading-7 text-[var(--text-2)]">Implemented for the documented bounded workflow. This is not complete Google Cloud parity.</p></article>
     <article class="site-panel p-6"><span class="site-kicker">Partial</span><p class="mt-3 leading-7 text-[var(--text-2)]">Implemented with limitations adjacent to the operation claim.</p></article>
-    <article class="site-panel p-6"><span class="site-kicker">Release-unverified</span><p class="mt-3 leading-7 text-[var(--text-2)]">Source behavior exists or was observed, but dependency and assembled-image provenance are not qualified together.</p></article>
+    <article class="site-panel p-6"><span class="site-kicker">Release-unverified</span><p class="mt-3 leading-7 text-[var(--text-2)]">The behavior may exist, but it has not been confirmed for an identified LocalCloud image release.</p></article>
   </div></section>
 </LandingLayout>

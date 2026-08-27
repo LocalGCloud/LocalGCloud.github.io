@@ -102,7 +102,7 @@ const faqItems = [
       <div class="reveal">
         <h2>Local cloud emulators by platform</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          This audit validates LocalCloud only. External vendor counts and capability matrices are omitted until authorized, dated evidence is available.
+          This page focuses on LocalCloud. Consult each vendor's current documentation when comparing other local cloud tools.
         </p>
       </div>
       <div class="mt-8 overflow-x-auto reveal">
@@ -136,7 +136,7 @@ const faqItems = [
       <div class="reveal">
         <h2>Google Cloud local development with LocalCloud</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud exposes {availableServiceCount} available Google Cloud services in one managed container, with Firestore clearly marked as coming soon. The CLI returns local endpoint settings for the actual host ports.
+          LocalCloud exposes {availableServiceCount} available Google Cloud services in one managed container. Firestore is available but disabled by default. The CLI returns local endpoint settings for the actual host ports.
         </p>
       </div>
 
@@ -160,7 +160,7 @@ localcloud console</code></pre>
             <div><strong class="text-[var(--text)]">Operations:</strong> Secret Manager, Cloud Scheduler, Logging, Monitoring</div>
           </div>
           <div class="mt-4">
-            <a href={`${base}services/`} class="text-sm text-[var(--accent-strong)] underline">View {publishedServiceCount} reviewed service guides →</a>
+            <a href={`${base}services/`} class="text-sm text-[var(--accent-strong)] underline">View all {publishedServiceCount} service guides →</a>
           </div>
         </article>
 
@@ -214,19 +214,19 @@ STORAGE_EMULATOR_HOST=http://localhost:24081
             <div>• Create seed scripts that run on container startup</div>
             <div>• Store seed data in version control</div>
             <div>• Use realistic data volumes for performance testing</div>
-            <div>• Automate seed data creation in CI/CD</div>
+            <div>• Automate seed data creation in a permitted personal workflow</div>
           </div>
         </article>
 
         <article class="site-panel p-6">
-          <h3 class="text-lg font-semibold text-[var(--text)]">3. CI/CD integration</h3>
+          <h3 class="text-lg font-semibold text-[var(--text)]">3. Personal automation</h3>
           <p class="mt-3 text-[var(--text-2)] leading-7">
-            Containerization is technically possible. Organization or team-CI use must comply with the governing proprietary license.
+            Containerization is technically possible for permitted personal projects. Employer, organization, commercial, shared-team, and team-CI use is excluded by the current license.
           </p>
           <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
             <div>• Use Docker Compose for multi-service setups</div>
             <div>• Wait for emulators to be healthy before running tests</div>
-            <div>• Cache Docker images to speed up CI runs</div>
+            <div>• Cache Docker images only in a permitted personal runner</div>
             <div>• Run parallel test suites with isolated emulator data volumes</div>
           </div>
         </article>

@@ -1,6 +1,6 @@
 ---
 name: localcloud-terraform
-description: "Validate evidence-qualified hashicorp/google resources against LocalCloud endpoint or transparent-network routing."
+description: "Configure supported hashicorp/google resources for LocalCloud endpoint or transparent-network routing."
 ---
 
 # LocalCloud Terraform
@@ -21,9 +21,9 @@ Use this skill for local Terraform validation with the standard `hashicorp/googl
 ## Workflow
 
 1. Inspect provider version, resources, backend, project, and existing endpoint handling.
-2. Compare resources with the current contract-qualified list; report the rest as unqualified.
+2. Compare resources with the currently documented list; report anything else as unsupported or unverified.
 3. Choose endpoint-only or transparent-network mode and document why.
-4. Before starting, create or update `localcloud.yaml` with `environment: { LOCALCLOUD_TERRAFORM_MODE: "true" }`; for transparent mode also set `transparent_network: true`.
+4. Before starting, create or update `localcloud.yaml` with `host.environment.LOCALCLOUD_TERRAFORM_MODE: "true"`; for transparent mode also set `host.transparent_network: true` and enable `tls`.
 5. Run `localcloud start` with the minimum service set.
 6. Create a valid fake credential file and export generated Terraform values in the same process.
 7. Verify `/terraform/readiness?mode=endpoint` or `?mode=transparent`.

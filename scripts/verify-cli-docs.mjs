@@ -93,12 +93,12 @@ assert(
 	"tutorial quick start must document a deterministic result",
 );
 assert(
-	tutorial.includes("designed to be idempotent"),
-	"tutorial must explain repeatability and runtime qualification boundary",
+	tutorial.includes("The example is idempotent"),
+	"tutorial must explain repeatability",
 );
 assert(
-	tutorial.includes("no qualified assembled image was available"),
-	"tutorial must retain the explicit end-to-end validation exception until an image is qualified",
+	tutorial.includes("LocalCloud CLI 0.1.2") && tutorial.includes("localcloud --version"),
+	"tutorial must identify the documented CLI release and show how to check it",
 );
 assert(
 	tutorial.includes("127.0.0.1:24080-24092:24080-24092"),
@@ -188,6 +188,28 @@ assert(
 	homepageInstall.includes("dynamic"),
 	"homepage does not warn about dynamic ports",
 );
+
+const configuration = sources.get("src/pages/docs/configuration.mdx");
+for (const phrase of [
+	"version: 1",
+	"context:",
+	"host:",
+	"services:",
+	"enabled: default",
+	"server:",
+	"host.data_volume",
+]) {
+	assert(configuration.includes(phrase), `configuration omits current schema phrase: ${phrase}`);
+}
+assert(
+	!/^project:\s|^data_volume:\s|^transparent_network:\s/m.test(configuration),
+	"configuration contains a removed flat-key example",
+);
+for (const path of ["src/pages/docs/architecture.mdx", "src/pages/docs/terraform.mdx"]) {
+	const source = sources.get(path);
+	assert(!source.includes("24094") && !source.includes("24095"), `${path} retains retired transparent-network ports`);
+	assert(source.includes("24443"), `${path} omits native TLS default port`);
+}
 
 const catalogSurfaces = [
 	"src/pages/docs/index.mdx",

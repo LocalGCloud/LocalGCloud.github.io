@@ -109,8 +109,8 @@ const faqItems = [
 ---
 
 <LandingLayout
-  title="GCP Integration Testing with LocalCloud"
-  description="Structure bounded LocalCloud integration checks with health gates, local endpoint routing, compatibility limits, and explicit production validation."
+  title="LocalCloud Automation Eligibility and Integration Testing"
+  description="Check license eligibility before adding LocalCloud to personal automation, then use health gates, local endpoints, and explicit production validation."
 >
   <script type="application/ld+json" is:inline>
 {
@@ -149,10 +149,10 @@ const faqItems = [
   <section class="site-section site-section--hero">
     <div class="container">
       <div class="max-w-[48rem] reveal">
-        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>CI / CD Integration Testing</span>
-        <h1 class="mt-4">Add bounded local GCP checks to a CI pipeline</h1>
+        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Personal automation</span>
+        <h1 class="mt-4">Check license eligibility before automating LocalCloud</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          Run evidence-bounded BigQuery, Pub/Sub, Cloud Storage, and other local service checks in a Docker job. Keep every job isolated, pin a qualified image, and confirm the governing license permits the intended CI use.
+          The current license excludes employer, organization, commercial, shared-team, and team-CI use. Continue only for a personal, non-commercial workflow permitted by the license; then keep the job isolated, pin the image, and validate against real Google Cloud separately.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Review local setup</a>
@@ -180,9 +180,9 @@ const faqItems = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>CI platform examples</h2>
+        <h2>Technical examples for eligible personal automation</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          These unqualified templates show the intended shape for three Docker-capable runners. Exercise networking, health, image identity, and cleanup on the exact runner before relying on them.
+          These templates do not grant permission to use LocalCloud. Use them only for an eligible personal, non-commercial project after reading the governing license. Exercise networking, health, image identity, and cleanup on the exact runner.
         </p>
       </div>
 
@@ -255,9 +255,9 @@ const faqItems = [
       <div class="site-panel p-8 reveal" style="background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));">
         <div class="grid gap-6 xl:grid-cols-[1fr,auto] items-center">
           <div>
-            <h2 style="color: #e8eaed;">Add LocalCloud to your CI pipeline</h2>
+            <h2 style="color: #e8eaed;">Review the license before automating LocalCloud</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              One Docker service container with service-specific compatibility. Validate production behavior separately and review the proprietary license before personal or CI use.
+              Employer, organization, commercial, shared-team, and team-CI use is excluded. For an eligible personal workflow, keep LocalCloud isolated and validate production behavior separately.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

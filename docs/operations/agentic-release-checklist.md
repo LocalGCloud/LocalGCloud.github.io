@@ -15,9 +15,9 @@ Use this checklist before promoting any LocalCloud agentic launch wave, runtime 
 
 - [ ] Public facts are sourced from approved product facts and current docs.
 - [ ] Docker image is `jaysen2apache/localcloud` everywhere.
-- [ ] Service breadth uses `20+` and links `/services/`.
+- [ ] Service breadth says 27 available service guides and links `/services/`.
 - [ ] No page claims 100% compatibility, production parity, official Google affiliation, LocalStack affiliation, or unsupported pricing/licensing.
-- [ ] Every launch asset says LocalCloud is for development, testing, CI, and demos.
+- [ ] Every launch asset states the proprietary-license boundary and does not imply employer, organization, commercial, shared-team, or team-CI permission.
 - [ ] Every launch asset says to validate against real Google Cloud before production.
 - [ ] Default workflow language says no GCP account, credentials, service-account keys, or billing project are required.
 
@@ -25,8 +25,8 @@ Use this checklist before promoting any LocalCloud agentic launch wave, runtime 
 
 - [ ] `/ai/` explains the human workflow and links canonical docs.
 - [ ] `/ai/agents.md` is reachable and copyable.
-- [ ] `/ai/agents.md` includes Docker check, start/reuse, health wait, env export, SDK verification, Terraform setup, CI/headless setup, coverage notes, troubleshooting, and stop conditions.
-- [ ] Copy prompts cover quickstart, project integration, CI, troubleshooting, BigQuery, Pub/Sub, Firestore, and Cloud Storage where published.
+- [ ] `/ai/agents.md` includes license eligibility, Docker check, start/reuse, health wait, env export, SDK verification, Terraform setup, permitted personal automation, coverage notes, troubleshooting, and stop conditions.
+- [ ] Copy prompts cover quickstart, project integration, automation eligibility, troubleshooting, BigQuery, Pub/Sub, Firestore, and Cloud Storage where published.
 - [ ] `/llms.txt` and `/llms-full.txt` policy is current.
 - [ ] Markdown/raw routes intended for agents have canonical/index policy documented.
 

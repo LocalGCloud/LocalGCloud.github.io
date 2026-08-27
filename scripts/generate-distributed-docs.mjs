@@ -20,9 +20,7 @@ const editorial = new Map(
 			const body = match[2];
 			const slug = body.match(/slug: '([^']+)'/)?.[1];
 			if (!slug) throw new Error(`Missing editorial slug for ${id}`);
-			const catalogState =
-				body.match(/catalogState: '([^']+)'/)?.[1] ?? "available";
-			return [id, { slug, catalogState }];
+			return [id, { slug }];
 		},
 	),
 );
@@ -57,9 +55,8 @@ const endpointLabel = (service) =>
 const services = contract.services.flatMap((service) => {
 	const overlay = editorial.get(service.id);
 	if (!overlay) throw new Error(`Missing editorial overlay for ${service.id}`);
-	if (overlay.catalogState === "integration-only") return [];
 
-	const comingSoon = overlay.catalogState === "coming-soon";
+	const comingSoon = service.availability !== "available";
 	return [
 		{
 			name: service.name,
@@ -102,7 +99,8 @@ const services = contract.services.flatMap((service) => {
 					? "Release-unverified: qualify the dependency identity and assembled LocalCloud image before relying on positive workflows."
 					: service.status === "verified"
 						? "Verified only for the documented bounded local workflows; real Google Cloud remains the production source of truth."
-						: "Partial local behavior with operation-specific limitations.",
+					: "Partial local behavior with operation-specific limitations.",
+			defaultEnabled: service.registryDefaultEnabled,
 		},
 	];
 });
@@ -113,15 +111,15 @@ const serviceLines = services
 	.map((service) =>
 		service.status === "planned"
 			? `- ${service.name} — coming soon. ${service.caveat}`
-			: `- ${service.name} — ${service.status}; ${service.endpointLabel}; \`${service.envVar}\`. ${service.caveat}`,
+			: `- ${service.name} — ${service.status}; ${service.defaultEnabled ? "starts by default" : "available but disabled by default"}; ${service.endpointLabel}; \`${service.envVar}\`. ${service.caveat}`,
 	)
 	.join("\n");
-const compact = `# LocalCloud\n\n> Contract-generated LocalCloud context. Reviewed ${contract.reviewedAt}; runtime ${contract.provenance.runtimeRevision}; CLI ${contract.provenance.cliRevision}.\n\nLocalCloud provides ${availableServiceCount} available services and ${services.length - availableServiceCount} coming-soon service guide. Google Sheets is an integration surface rather than a LocalCloud service. It is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. ${contract.licensing.summary} Excluded uses include ${contract.licensing.excludedUse.join(", ")}.\n\n## Quick start\n\n\`\`\`bash\n${contract.cli.installCommand}\nlocalcloud doctor\nlocalcloud start\neval "$(localcloud env)"\nlocalcloud console\n\`\`\`\n\n## Runtime facts\n\n- Default project: \`${contract.product.defaultProject}\`\n- Default user: \`${contract.product.defaultUser}\`\n- Default data volume: \`${contract.product.defaultDataVolume}\`\n- CLI memory default: \`${contract.product.memory}\`\n- Health endpoint: \`http://localhost:${contract.operator.gatewayPort}${contract.operator.endpoints.health}\`\n- Shell environment endpoint: \`http://localhost:${contract.operator.gatewayPort}${contract.operator.endpoints.environment}?format=shell\`\n- Terraform environment endpoint: \`http://localhost:${contract.operator.gatewayPort}${contract.operator.endpoints.environment}?format=terraform\`\n\nTrust URLs and endpoint values returned by the selected CLI runtime; occupied canonical ports may be remapped. Select durable storage with \`--data-volume NAME\`; project and caller remain request context. ${contract.product.productionBoundary}\n\n## Useful URLs\n\n- Service catalog: https://local.cloud/services/\n- Compatibility and limitations: https://local.cloud/compatibility/\n- Licensing: https://local.cloud/docs/licensing/\n- LocalStack for Google Cloud: https://local.cloud/localstack-for-google-cloud/\n\n## Services\n${serviceLines}\n`;
+const compact = `# LocalCloud\n\nLocalCloud provides ${availableServiceCount} available Google Cloud service guides in one local Docker runtime. Availability does not imply full Google Cloud parity or default startup. Firestore is available but disabled by default; Google Sheets provides a limited read-only values facade.\n\nLocalCloud is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. ${contract.licensing.summary} Excluded uses include ${contract.licensing.excludedUse.join(", ")}.\n\n## Quick start\n\n\`\`\`bash\n${contract.cli.installCommand}\nlocalcloud doctor\nlocalcloud start\neval "$(localcloud env)"\nlocalcloud console\n\`\`\`\n\n## Runtime facts\n\n- Default project: \`${contract.product.defaultProject}\`\n- Default user: \`${contract.product.defaultUser}\`\n- Default data volume: \`${contract.product.defaultDataVolume}\`\n- CLI memory default: \`${contract.product.memory}\`\n- Health endpoint: \`http://localhost:${contract.operator.gatewayPort}${contract.operator.endpoints.health}\`\n- Shell environment endpoint: \`http://localhost:${contract.operator.gatewayPort}${contract.operator.endpoints.environment}?format=shell\`\n- Terraform environment endpoint: \`http://localhost:${contract.operator.gatewayPort}${contract.operator.endpoints.environment}?format=terraform\`\n\nTrust URLs and endpoint values returned by the selected CLI runtime; occupied canonical ports may be remapped. Select durable storage with \`--data-volume NAME\`; project and caller remain request context. ${contract.product.productionBoundary}\n\n## Useful URLs\n\n- Service catalog: https://local.cloud/services/\n- Compatibility and limitations: https://local.cloud/compatibility/\n- Configuration: https://local.cloud/docs/configuration/\n- Licensing: https://local.cloud/docs/licensing/\n- LocalStack for Google Cloud: https://local.cloud/localstack-for-google-cloud/\n- CLI releases: https://github.com/LocalGCloud/localcloud-cli/releases\n\n## Services\n${serviceLines}\n`;
 await write("public/llms.txt", compact);
 await write(
 	"public/llms-full.txt",
 	`${compact}\n## Safety boundaries\n\n- The mutable image identity is ${contract.product.runtimeImage.qualification}; prefer the host CLI and pin a qualified digest for release work.\n- Default CLI Docker-socket and transparent-network settings are off.\n- Technical tiers and successful startup do not grant legal permission.\n- Runtime telemetry and other outbound behaviors are documented at https://local.cloud/docs/privacy/.\n- Validate allowed release behavior against real Google Cloud after clearing local endpoint variables.\n`,
 );
 console.log(
-	`Generated distributed contract for ${availableServiceCount} available services, ${services.length - availableServiceCount} coming-soon guide, plus public/llms.txt and public/llms-full.txt.`,
+	`Generated end-user context for ${availableServiceCount} available services plus public/llms.txt and public/llms-full.txt.`,
 );

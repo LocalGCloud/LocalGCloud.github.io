@@ -16,8 +16,11 @@ export interface Evidence {
 export const productFacts = {
 	name: "LocalCloud",
 	siteUrl: "https://local.cloud/",
-	githubUrl: "https://github.com/LocalGCloud/localcloud-cli",
-	siteRepositoryUrl: "https://github.com/LocalGCloud/LocalGCloud.github.io",
+	cliRepositoryUrl: "https://github.com/LocalGCloud/localcloud-cli",
+	runtimeRepositoryUrl: "https://github.com/jhsenjaliya/localcloud",
+	siteRepositoryUrl: "https://github.com/LocalStack-Google/localcloud-site",
+	agentSkillsUrl:
+		"https://github.com/LocalStack-Google/localcloud-site/tree/main/agent-skills",
 	dockerImageRepository: docsContract.product.runtimeImage.repository,
 	dockerImageTag: docsContract.product.runtimeImage.tag,
 	dockerImage: `${docsContract.product.runtimeImage.repository}:${docsContract.product.runtimeImage.tag}`,
@@ -26,8 +29,8 @@ export const productFacts = {
 	installScriptCommand: docsContract.cli.installCommand,
 	homebrewInstallCommand: docsContract.cli.homebrewCommand,
 	homebrewTapUrl: "https://github.com/LocalGCloud/homebrew-tap",
-	releaseVersion: "0.1.0",
-	releaseTag: "v0.1.0",
+	releaseVersion: "0.1.2",
+	releaseTag: "v0.1.2",
 	logoUrl: "https://local.cloud/brand/localcloud-mark.svg",
 	serviceCountLabel: String(availableServiceCount),
 	availabilityStatement:
@@ -35,7 +38,7 @@ export const productFacts = {
 	licensingPath: "/docs/licensing/",
 	category: "Local Google Cloud emulator",
 	description:
-		"LocalCloud provides evidence-bounded Google Cloud service workflows in one local Docker container. Use is governed by the proprietary license, and SDK compatibility depends on service, client, and endpoint configuration.",
+		"LocalCloud provides documented Google Cloud service workflows in one local Docker container. Use is governed by the proprietary license, and compatibility depends on the service, client, and endpoint configuration.",
 	productionBoundary: docsContract.product.productionBoundary,
 	evidence: {
 		source: `Versioned documentation contract from runtime ${docsContract.provenance.runtimeRevision} and CLI ${docsContract.provenance.cliRevision}`,
@@ -53,7 +56,7 @@ export const organizationSchema: JsonLd = {
 	url: productFacts.siteUrl,
 	logo: productFacts.logoUrl,
 	description: productFacts.description,
-	sameAs: [productFacts.githubUrl],
+	sameAs: [productFacts.cliRepositoryUrl, productFacts.runtimeRepositoryUrl],
 };
 
 export const createSoftwareApplicationSchema = (

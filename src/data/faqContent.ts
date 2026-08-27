@@ -101,7 +101,7 @@ export const faqSections: FaqSection[] = [
         question: 'What if a service is not responding?',
         answer: 'Inspect the selected data-volume runtime and its logs. For manual Docker on canonical ports, /services exposes service state.',
         code: 'localcloud status\nlocalcloud logs --tail 50\ncurl -fsS http://localhost:24080/services',
-        afterCode: 'Confirm the service is enabled, its required tier is available, and its evidence state is suitable for the workflow.',
+        afterCode: 'Confirm the service is enabled, its required tier is available, and its documented support level is suitable for the workflow.',
       },
       {
         question: 'Why do GKE, Compute Engine, or Cloud Run need Docker access?',

@@ -98,7 +98,7 @@ export const serviceRegistryCount = docsContract.services.length;
 export const services: Service[] = docsContract.services.flatMap(
 	(contractService) => {
 		const editorial = getServiceEditorial(contractService);
-		if (editorial.catalogState === "integration-only") return [];
+		if (!contractService.published) return [];
 
 		const allPorts = [
 			contractService.port,
@@ -116,7 +116,8 @@ export const services: Service[] = docsContract.services.flatMap(
 				operation.status === "partial" ||
 				operation.status === "release-unverified",
 		);
-		const catalogState = editorial.catalogState ?? "available";
+		const catalogState =
+			contractService.availability === "available" ? "available" : "coming-soon";
 		const service: Service = {
 			id: contractService.id,
 			name: contractService.name,

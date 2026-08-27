@@ -14,17 +14,16 @@ export interface ServiceEditorial {
   category: ServiceCategory;
   iconId: string;
   description: string;
-  catalogState?: 'coming-soon' | 'integration-only';
 }
 
 const editorial = {
   gcs: { slug: 'cloud-storage', category: 'storage', iconId: 'gcs', description: 'Bucket and object lifecycle workflows for local SDK and API development.' },
   pubsub: { slug: 'pubsub', category: 'integration', iconId: 'pubsub', description: 'Topic, subscription, publish, pull, and acknowledgement workflows.' },
-  firestore: { slug: 'firestore', category: 'databases', iconId: 'firestore', description: 'Firestore document and query support is coming soon.', catalogState: 'coming-soon' },
+  firestore: { slug: 'firestore', category: 'databases', iconId: 'firestore', description: 'Document CRUD and query workflows through the local Firestore emulator. Enable it explicitly before use.' },
   bigtable: { slug: 'bigtable', category: 'databases', iconId: 'bigtable', description: 'Wide-column data, administration, persistence, and query workflows.' },
   spanner: { slug: 'spanner', category: 'databases', iconId: 'spanner', description: 'Spanner data and administration workflows over gRPC and REST.' },
   bigquery: { slug: 'bigquery', category: 'analytics', iconId: 'bigquery', description: 'Dataset, table, query, scripting, and API workflows.' },
-  sheets: { slug: 'google-sheets', category: 'integration', iconId: 'sheets', description: 'Read-only stored spreadsheet values selected by exact A1 range and project scope.', catalogState: 'integration-only' },
+  sheets: { slug: 'google-sheets', category: 'integration', iconId: 'sheets', description: 'Read-only stored spreadsheet values selected by exact A1 range and project scope.' },
   secretmanager: { slug: 'secret-manager', category: 'security', iconId: 'secretmanager', description: 'Secret and version lifecycle workflows for local development.' },
   cloudtasks: { slug: 'cloud-tasks', category: 'integration', iconId: 'cloudtasks', description: 'Queue and task lifecycle workflows.' },
   cloudscheduler: { slug: 'cloud-scheduler', category: 'integration', iconId: 'cloudscheduler', description: 'Schedule and job lifecycle workflows.' },

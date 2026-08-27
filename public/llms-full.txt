@@ -1,8 +1,8 @@
 # LocalCloud
 
-> Contract-generated LocalCloud context. Reviewed 2026-08-13; runtime 0b3f9afabc9f74a33e834e52997bdf09cf74ad7f; CLI 7016269f63de3b4c15360b99ef81546c9b73cb44.
+LocalCloud provides 27 available Google Cloud service guides in one local Docker runtime. Availability does not imply full Google Cloud parity or default startup. Firestore is available but disabled by default; Google Sheets provides a limited read-only values facade.
 
-LocalCloud provides 25 available services and 1 coming-soon service guide. Google Sheets is an integration surface rather than a LocalCloud service. It is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. The proprietary license permits limited non-commercial personal use by an Individual Developer acting personally; the license text governs. Excluded uses include employer or organization use, commercial development, cost-saving internal tools, team CI, shared team workflows.
+LocalCloud is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. The proprietary license permits limited non-commercial personal use by an Individual Developer acting personally; the license text governs. Excluded uses include employer or organization use, commercial development, cost-saving internal tools, team CI, shared team workflows.
 
 ## Quick start
 
@@ -30,36 +30,39 @@ Trust URLs and endpoint values returned by the selected CLI runtime; occupied ca
 
 - Service catalog: https://local.cloud/services/
 - Compatibility and limitations: https://local.cloud/compatibility/
+- Configuration: https://local.cloud/docs/configuration/
 - Licensing: https://local.cloud/docs/licensing/
 - LocalStack for Google Cloud: https://local.cloud/localstack-for-google-cloud/
+- CLI releases: https://github.com/LocalGCloud/localcloud-cli/releases
 
 ## Services
-- Cloud Storage — supported; HTTP/REST :24081; `STORAGE_EMULATOR_HOST=http://localhost:24081`. Verified only for the documented bounded local workflows; real Google Cloud remains the production source of truth.
-- Pub/Sub — partial; gRPC :24082; `PUBSUB_EMULATOR_HOST=localhost:24082`. Partial local behavior with operation-specific limitations.
-- Firestore — coming soon. Service support is coming soon; do not configure a local endpoint yet.
-- Bigtable — release-unverified; gRPC :24084; `BIGTABLE_EMULATOR_HOST=localhost:24084`. Release-unverified: qualify the dependency identity and assembled LocalCloud image before relying on positive workflows.
-- Spanner — release-unverified; gRPC :24085 · HTTP/REST :24086; `SPANNER_EMULATOR_HOST=localhost:24085`. Release-unverified: qualify the dependency identity and assembled LocalCloud image before relying on positive workflows.
-- BigQuery — release-unverified; HTTP/REST :24087 · gRPC :24088; `BIGQUERY_EMULATOR_HOST=http://localhost:24087`. Release-unverified: qualify the dependency identity and assembled LocalCloud image before relying on positive workflows.
-- Secret Manager — partial; gRPC :24080; `SECRET_MANAGER_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud Tasks — partial; gRPC :24080; `CLOUD_TASKS_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud Scheduler — partial; gRPC :24080; `CLOUD_SCHEDULER_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud Functions (2nd Gen) — partial; gRPC :24080; `CLOUD_FUNCTIONS_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- AlloyDB — partial; gRPC :24080; `ALLOYDB_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Dataproc — partial; gRPC :24080; `DATAPROC_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud IAM — partial; gRPC :24080; `IAM_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud Resource Manager — supported; HTTP/REST :24080; `CLOUD_RESOURCE_MANAGER_EMULATOR_HOST=http://localhost:24080`. Verified only for the documented bounded local workflows; real Google Cloud remains the production source of truth.
-- Service Usage — partial; HTTP/REST :24080; `SERVICE_USAGE_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud Billing — partial; HTTP/REST :24080; `CLOUD_BILLING_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud Logging — partial; gRPC :24080; `CLOUD_LOGGING_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud Monitoring — partial; gRPC :24080; `CLOUD_MONITORING_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- GKE — partial; gRPC :24080 · k3d :24092; `GKE_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Compute Engine — partial; HTTP/REST :24080; `COMPUTE_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud Run — partial; gRPC :24080; `CLOUD_RUN_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Memorystore (Redis/Valkey) — partial; RESP :24089; `REDIS_HOST=localhost`. Partial local behavior with operation-specific limitations.
-- Cloud Workflows — partial; gRPC :24080; `WORKFLOWS_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
-- Vertex AI — partial; HTTP/REST :24080; `AIPLATFORM_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud KMS — partial; HTTP/REST :24080; `CLOUD_KMS_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
-- Cloud SQL — partial; HTTP/REST :24080 · PostgreSQL :24090 · MySQL :24091; `CLOUD_SQL_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Storage — supported; starts by default; HTTP/REST :24081; `STORAGE_EMULATOR_HOST=http://localhost:24081`. Verified only for the documented bounded local workflows; real Google Cloud remains the production source of truth.
+- Pub/Sub — partial; starts by default; gRPC :24082; `PUBSUB_EMULATOR_HOST=localhost:24082`. Partial local behavior with operation-specific limitations.
+- Firestore — partial; available but disabled by default; gRPC :24083; `FIRESTORE_EMULATOR_HOST=localhost:24083`. Partial local behavior with operation-specific limitations.
+- Bigtable — supported; starts by default; gRPC :24084; `BIGTABLE_EMULATOR_HOST=localhost:24084`. Verified only for the documented bounded local workflows; real Google Cloud remains the production source of truth.
+- Spanner — partial; starts by default; gRPC :24085 · HTTP/REST :24086; `SPANNER_EMULATOR_HOST=localhost:24085`. Partial local behavior with operation-specific limitations.
+- BigQuery — partial; starts by default; HTTP/REST :24087 · gRPC :24088; `BIGQUERY_EMULATOR_HOST=http://localhost:24087`. Partial local behavior with operation-specific limitations.
+- Google Sheets — partial; starts by default; HTTP/REST :24080; `SHEETS_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Secret Manager — partial; starts by default; gRPC :24080; `SECRET_MANAGER_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Tasks — partial; starts by default; gRPC :24080; `CLOUD_TASKS_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Scheduler — partial; starts by default; gRPC :24080; `CLOUD_SCHEDULER_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Functions (2nd Gen) — partial; starts by default; gRPC :24080; `CLOUD_FUNCTIONS_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- AlloyDB — partial; starts by default; gRPC :24080; `ALLOYDB_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Dataproc — partial; starts by default; gRPC :24080; `DATAPROC_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud IAM — partial; starts by default; gRPC :24080; `IAM_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Resource Manager — supported; starts by default; HTTP/REST :24080; `CLOUD_RESOURCE_MANAGER_EMULATOR_HOST=http://localhost:24080`. Verified only for the documented bounded local workflows; real Google Cloud remains the production source of truth.
+- Service Usage — partial; starts by default; HTTP/REST :24080; `SERVICE_USAGE_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Billing — partial; starts by default; HTTP/REST :24080; `CLOUD_BILLING_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Logging — partial; starts by default; gRPC :24080; `CLOUD_LOGGING_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Monitoring — partial; starts by default; gRPC :24080; `CLOUD_MONITORING_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- GKE — partial; available but disabled by default; gRPC :24080 · k3d :24092; `GKE_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Compute Engine — partial; available but disabled by default; HTTP/REST :24080; `COMPUTE_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud Run — partial; available but disabled by default; gRPC :24080; `CLOUD_RUN_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Memorystore (Redis/Valkey) — partial; starts by default; RESP :24089; `REDIS_HOST=localhost:24089`. Partial local behavior with operation-specific limitations.
+- Cloud Workflows — partial; starts by default; gRPC :24080; `WORKFLOWS_EMULATOR_HOST=localhost:24080`. Partial local behavior with operation-specific limitations.
+- Vertex AI — partial; available but disabled by default; HTTP/REST :24080; `AIPLATFORM_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud KMS — partial; available but disabled by default; HTTP/REST :24080; `CLOUD_KMS_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
+- Cloud SQL — partial; starts by default; HTTP/REST :24080 · PostgreSQL :24090 · MySQL :24091; `CLOUD_SQL_EMULATOR_HOST=http://localhost:24080`. Partial local behavior with operation-specific limitations.
 
 ## Safety boundaries
 

@@ -33,12 +33,19 @@ exactKeys(contract, ['schemaVersion', 'reviewedAt', 'provenance', 'product', 'op
 assert(contract.schemaVersion === 3, 'unsupported schema version');
 assert(/^\d{4}-\d{2}-\d{2}$/.test(contract.reviewedAt), 'reviewedAt must be an ISO date');
 
-exactKeys(contract.provenance, ['runtimeRevision', 'cliRevision', 'assembledImageDigest', 'qualification', 'sources', 'dependencyRevalidations'], 'provenance');
+exactKeys(contract.provenance, ['runtimeRevision', 'cliRevision', 'assembledImageDigest', 'qualification', 'sources', 'sourceDigests', 'worktreeSources', 'dependencyRevalidations'], 'provenance');
 assert(contract.provenance.runtimeRevision.length === 40, 'runtime revision must be a full commit');
 assert(contract.provenance.cliRevision.length === 40, 'CLI revision must be a full commit');
 assert(contract.provenance.assembledImageDigest === null || /^sha256:[a-f0-9]{64}$/.test(contract.provenance.assembledImageDigest), 'assembled image digest must be null or sha256');
 state(contract.provenance.qualification, 'provenance.qualification');
 evidence(contract.provenance.sources, 'provenance.sources');
+object(contract.provenance.sourceDigests, 'provenance.sourceDigests');
+assert(Object.keys(contract.provenance.sourceDigests).length === contract.provenance.sources.length, 'every provenance source must have a digest');
+for (const source of contract.provenance.sources) {
+  assert(/^sha256:[a-f0-9]{64}$/.test(contract.provenance.sourceDigests[source] ?? ''), `${source} must have a SHA-256 digest`);
+}
+strings(contract.provenance.worktreeSources, 'provenance.worktreeSources');
+for (const source of contract.provenance.worktreeSources) assert(contract.provenance.sources.includes(source), `${source} worktree marker is not a provenance source`);
 array(contract.provenance.dependencyRevalidations, 'provenance.dependencyRevalidations', { nonempty: true }).forEach((item, index) => {
   exactKeys(item, ['id', 'revision', 'qualification', 'evidence'], `dependencyRevalidations[${index}]`);
   string(item.id, `dependencyRevalidations[${index}].id`);
@@ -154,14 +161,17 @@ assert(contract.services.length === 27, `expected 27 services, found ${contract.
 assert(uniqueIds.size === 27, 'service IDs are not unique');
 assert(contract.product.serviceCount === contract.services.length, 'product service count differs from registry');
 const persistenceScopes = new Set(['volatile', 'metadata', 'service-data', 'stateless']);
+const availabilityStates = new Set(['available', 'coming_soon', 'unsupported']);
 for (const [index, service] of contract.services.entries()) {
   const path = `services[${index}](${service.id})`;
-  exactKeys(service, ['id', 'name', 'port', 'additionalPorts', 'protocol', 'type', 'registryDefaultEnabled', 'assembledDefault', 'minTier', 'envVar', 'envValue', 'terraformEnvVar', 'implementation', 'persistence', 'status', 'operations', 'limitations', 'evidence', 'published'], path);
+  exactKeys(service, ['id', 'name', 'availability', 'port', 'additionalPorts', 'protocol', 'type', 'registryDefaultEnabled', 'assembledDefault', 'minTier', 'envVar', 'envValue', 'terraformEnvVar', 'implementation', 'persistence', 'status', 'operations', 'limitations', 'evidence', 'published'], path);
   for (const key of ['id', 'name', 'protocol', 'type', 'minTier', 'envVar', 'envValue', 'implementation']) string(service[key], `${path}.${key}`);
   number(service.port, `${path}.port`);
   object(service.additionalPorts, `${path}.additionalPorts`);
   boolean(service.registryDefaultEnabled, `${path}.registryDefaultEnabled`);
   boolean(service.published, `${path}.published`);
+  assert(availabilityStates.has(service.availability), `${path}.availability is invalid`);
+  assert(service.published === (service.availability === 'available'), `${path}.published must follow runtime availability`);
   assert(service.terraformEnvVar === null || typeof service.terraformEnvVar === 'string', `${path}.terraformEnvVar must be string or null`);
   state(service.status, `${path}.status`);
   strings(service.limitations, `${path}.limitations`, { nonempty: true });
@@ -198,16 +208,13 @@ for (const [index, service] of contract.services.entries()) {
 }
 const cloudSql = contract.services.find((service) => service.id === 'cloudsql');
 assert(cloudSql.registryDefaultEnabled === true, 'Cloud SQL registry default drifted');
-assert(cloudSql.assembledDefault.enabled === false, 'Cloud SQL assembled-image default must reflect Dockerfile override');
-assert(cloudSql.assembledDefault.qualification === 'release-unverified', 'Cloud SQL default conflict must remain qualified');
-for (const [serviceId, operationIds] of Object.entries({
-  bigquery: ['bigquery.grouping-extensions', 'bigquery.tablesample'],
-  bigtable: ['bigtable.change-streams', 'bigtable.clusters-app-profiles', 'bigtable.backups', 'bigtable.iam', 'bigtable.logical-views', 'bigtable.materialized-views'],
-  spanner: ['spanner.change-streams', 'spanner.tablesample', 'spanner.iam'],
-})) {
-  const service = contract.services.find((item) => item.id === serviceId);
-  for (const operationId of operationIds) assert(service.operations.some((item) => item.id === operationId), `${serviceId} is missing dependency-revalidated operation ${operationId}`);
-}
+assert(cloudSql.assembledDefault.enabled === true, 'Cloud SQL current runtime default must be enabled');
+assert(cloudSql.assembledDefault.qualification === 'verified', 'Cloud SQL current runtime default must come from the canonical catalog');
+const firestore = contract.services.find((service) => service.id === 'firestore');
+assert(firestore.availability === 'available', 'Firestore must be available');
+assert(firestore.registryDefaultEnabled === false, 'Firestore must remain disabled by default');
+const sheets = contract.services.find((service) => service.id === 'sheets');
+assert(sheets.availability === 'available' && sheets.published, 'Google Sheets must be an available published service');
 
 const editorialIds = [...editorialSource.matchAll(/^ {2}([a-z0-9]+): \{/gm)].map((match) => match[1]);
 assert(editorialIds.length === 27, `expected 27 editorial overlays, found ${editorialIds.length}`);
@@ -215,12 +222,9 @@ assert(new Set(editorialIds).size === 27, 'editorial overlay IDs are not unique'
 for (const id of editorialIds) assert(uniqueIds.has(id), `editorial overlay ${id} is not in the runtime contract`);
 const publishedContractServices = contract.services.filter((service) => service.published);
 assert(publishedContractServices.length === 27, `expected all 27 runtime surfaces published in the contract, found ${publishedContractServices.length}`);
-const publicServiceIds = publishedContractServices
-  .filter((service) => service.id !== 'sheets')
-  .map((service) => service.id);
-assert(publicServiceIds.length === 26, `expected 26 public service guides after excluding integration-only Sheets, found ${publicServiceIds.length}`);
-assert(editorialSource.includes("firestore: {") && editorialSource.includes("catalogState: 'coming-soon'"), 'Firestore must remain explicitly marked coming soon');
-assert(editorialSource.includes("sheets: {") && editorialSource.includes("catalogState: 'integration-only'"), 'Google Sheets must remain integration-only');
+const publicServiceIds = publishedContractServices.map((service) => service.id);
+assert(publicServiceIds.length === 27, `expected 27 public service guides, found ${publicServiceIds.length}`);
+assert(!editorialSource.includes('catalogState'), 'availability must come from the runtime contract, not editorial copy');
 
 const editorialEntries = new Map(
   [...editorialSource.matchAll(/^ {2}([a-z0-9]+): \{ slug: '([^']+)', category: '[^']+', iconId: '([^']+)'/gm)]
@@ -250,7 +254,7 @@ for (const path of [
 ]) routeSources.set(path, await readFile(new URL(`../${path}`, import.meta.url), 'utf8'));
 const servicesSource = routeSources.get('src/data/services.ts');
 assert(servicesSource.includes('docsContract.services.flatMap'), 'service adapter must classify runtime surfaces before publishing routes');
-assert(servicesSource.includes('editorial.catalogState === "integration-only"'), 'service adapter does not exclude integration-only surfaces');
+assert(servicesSource.includes('contractService.published'), 'service adapter does not honor runtime publication state');
 assert(servicesSource.includes('catalogState === "coming-soon"'), 'service adapter does not preserve coming-soon services');
 assert(servicesSource.includes('operation.status === "verified"') && servicesSource.includes('operation.status === "partial"') && servicesSource.includes('operation.status === "release-unverified"'), 'service adapter does not constrain positive operations by evidence state');
 assert(servicesSource.includes('Object.entries(contractService.additionalPorts)') && servicesSource.includes('endpointLabel'), 'service adapter must preserve protocol labels for additional ports');
@@ -280,4 +284,8 @@ const servicesOverviewSource = routeSources.get('src/pages/docs/services-overvie
 assert(servicesOverviewSource.includes('<tbody>') && servicesOverviewSource.includes('service.endpointLabel'), 'services overview does not render semantic endpoint rows');
 assert(!servicesOverviewSource.includes(".join('\\\\n')"), 'services overview still emits pipe-delimited row text');
 
-console.log(`Documentation contract verified: ${contract.services.length} runtime surfaces, ${editorialEntries.size} overlays/icons, ${publicServiceIds.length} public service routes, ${publicServiceIds.length - 1} available agent-testing routes, schema v${contract.schemaVersion}.`);
+for (const retiredPath of ['../localcloud/services.yaml', '../localcloud/localcloud-server/src/main/resources/compatibility/services/']) {
+  assert(!JSON.stringify(contract).includes(retiredPath), `retired evidence path remains: ${retiredPath}`);
+}
+
+console.log(`Documentation contract verified: ${contract.services.length} runtime surfaces, ${editorialEntries.size} overlays/icons, ${publicServiceIds.length} public service routes, ${publicServiceIds.length} available agent-testing routes, schema v${contract.schemaVersion}.`);

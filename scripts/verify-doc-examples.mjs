@@ -340,7 +340,9 @@ for (const [index, source] of terraformSurfaces.entries()) {
 }
 const terraform = terraformSurfaces[0];
 for (const fact of [
-	contract.terraform.providerConstraint,
+	"hashicorp/google",
+	"~> 7.0",
+	"7.34.0",
 	contract.terraform.readinessEndpoint,
 	"http://localhost:24081/storage/v1/",
 	"http://localhost:24080/v2/",
@@ -368,10 +370,7 @@ for (const block of [...terraform.matchAll(/```hcl\s*\n([\s\S]*?)```/g)].map(
 		"Terraform HCL fence has unbalanced braces",
 	);
 }
-assert(
-	terraform.includes("No qualified assembled LocalCloud image was available"),
-	"Terraform guide omits e2e validation exception",
-);
+assert(terraform.includes("Confirm `/terraform/readiness` succeeds"), "Terraform guide omits the user-facing readiness gate");
 assert(
 	!terraform.includes("Zero .tf changes"),
 	"Terraform guide retains zero-change claim",

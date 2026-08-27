@@ -2,9 +2,9 @@
 
 ## Positive prompts
 
-- "Add a LocalCloud CI sidecar to this GitHub Actions workflow for GCP emulator tests."
-- "Prepare agentic CI that starts LocalCloud, waits for readiness, exports env vars, and runs integration tests."
-- "Convert this local emulator setup into a Docker service container in CI without real GCP secrets."
+- "Check whether this personal, non-commercial GitHub Actions workflow is eligible under the LocalCloud license, then add a sidecar if permitted."
+- "For a license-permitted personal project, prepare automation that starts LocalCloud, waits for readiness, exports env vars, and runs integration tests."
+- "Check the license first, then convert this eligible personal emulator setup into a Docker service container without real GCP secrets."
 
 ## Negative prompts
 
