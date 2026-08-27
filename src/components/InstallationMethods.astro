@@ -4,8 +4,7 @@ import CopyButton from './CopyButton.astro';
 import { docsContract } from '../data/docs-contract';
 import { productFacts } from '../data/productFacts';
 
-const startCommand = "localcloud doctor\nlocalcloud start";
-const connectCommand = "eval \"$(localcloud env)\"\nlocalcloud console";
+const launchCommand = "localcloud start\nlocalcloud console";
 ---
 
 <section
@@ -70,29 +69,14 @@ const connectCommand = "eval \"$(localcloud env)\"\nlocalcloud console";
       <li class="installation-methods__workflow-step">
         <div class="installation-methods__step-copy">
           <span class="installation-methods__step">2.</span>
-          <h3>Check and start LocalCloud</h3>
-          <p>Verify Docker, then start the default persistent runtime.</p>
+          <h3>Start LocalCloud and open the console</h3>
+          <p>Start the default persistent runtime, then open its console.</p>
         </div>
 
         <div class="installation-methods__step-content">
           <div class="installation-methods__command">
-            <pre tabindex="0" aria-label="Check Docker and start LocalCloud"><code>{startCommand}</code></pre>
-            <CopyButton text={startCommand} class="installation-methods__copy" />
-          </div>
-        </div>
-      </li>
-
-      <li class="installation-methods__workflow-step">
-        <div class="installation-methods__step-copy">
-          <span class="installation-methods__step">3.</span>
-          <h3>Connect SDKs and open the console</h3>
-          <p>Export the CLI-returned SDK endpoints into this shell, then open the selected runtime URL. Ports can dynamically remap.</p>
-        </div>
-
-        <div class="installation-methods__step-content">
-          <div class="installation-methods__command">
-            <pre tabindex="0" aria-label="Configure SDK endpoints and open the LocalCloud console"><code>{connectCommand}</code></pre>
-            <CopyButton text={connectCommand} class="installation-methods__copy" />
+            <pre tabindex="0" aria-label="Start LocalCloud and open its console"><code>{launchCommand}</code></pre>
+            <CopyButton text={launchCommand} class="installation-methods__copy" />
           </div>
         </div>
       </li>
@@ -255,56 +239,88 @@ const connectCommand = "eval \"$(localcloud env)\"\nlocalcloud console";
   }
 
   .installation-methods :global(.code-tabs) {
+    display: inline-grid;
+    width: fit-content;
+    max-width: 100%;
     margin: 0;
-    overflow: hidden;
-    background: var(--surface);
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
   }
 
   .installation-methods :global(.code-tabs__bar) {
-    width: 100%;
-    justify-content: center;
+    width: fit-content;
+    max-width: 100%;
+    gap: 0.25rem;
+    border-bottom: 0;
+    background: transparent;
   }
 
   .installation-methods :global(.code-tabs__tab) {
-    flex: 1 1 50%;
+    flex: 0 0 auto;
     justify-content: center;
     min-height: 2.75rem;
-    font-size: 0.9rem;
+    padding: 0 0.75rem;
   }
 
-  .installation-methods__command {
-    position: relative;
+  .installation-methods :global(.code-tabs__panel) {
     min-width: 0;
   }
 
+  .installation-methods__command {
+    display: inline-grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+    border: 1px solid rgba(26, 115, 232, 0.16);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--accent-soft) 58%, var(--surface));
+  }
+
   .installation-methods__command pre {
-    min-height: 4.5rem;
-    padding-right: 5.5rem;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: 0;
     overflow-x: auto;
     border: 0;
     border-radius: 0;
-    background: #1f2732;
+    background: transparent;
   }
 
   .installation-methods__command pre > code {
-    color: #e8eaed;
-    font-size: clamp(0.95rem, 1.2vw, 1rem);
-    line-height: 1.7;
+    box-sizing: border-box;
+    width: max-content;
+    min-width: 100%;
+    padding: 0.72rem 0.9rem;
+    color: var(--text);
+    line-height: 1.55;
     white-space: pre;
   }
 
   .installation-methods__command ::selection {
-    background: rgba(138, 180, 248, 0.35);
-    color: #f8f9fa;
+    background: rgba(26, 115, 232, 0.2);
+    color: var(--text);
   }
 
   .installation-methods__command :global(.installation-methods__copy) {
-    position: absolute;
-    top: 0.68rem;
-    right: 0.68rem;
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.07);
-    color: rgba(232, 234, 237, 0.88);
+    position: static;
+    align-self: center;
+    margin: 0.25rem;
+    transform: none;
+    border-color: rgba(26, 115, 232, 0.18);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    color: var(--accent-strong);
+  }
+
+  .installation-methods__command :global(.installation-methods__copy:hover) {
+    border-color: var(--border-hover);
+    background: var(--surface);
   }
 
   .installation-methods__channel-note {
