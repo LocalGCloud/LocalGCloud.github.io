@@ -1,11 +1,11 @@
 PROPRIETARY SOFTWARE LICENSE AGREEMENT
 
-Copyright (c) 2026 LocalCloud
+Copyright (c) 2026 LocalCloud Inc.
 All rights reserved.
 
 IMPORTANT - READ CAREFULLY: This Proprietary Software License Agreement
 ("Agreement") is a legal agreement between you (either an individual or a
-single entity, "You" or "Licensee") and LocalCloud ("Licensor") for the
+single entity, "You" or "Licensee") and LocalCloud Inc. ("Licensor") for the
 software product identified above, which includes computer software,
 container images (including Docker images), associated media, printed
 materials, and online or electronic documentation (collectively, the
@@ -307,7 +307,8 @@ written consent of Licensor. Any attempted assignment in violation of
 this section shall be void. Licensor may freely assign this Agreement.
 
 9.7 Notices. Any notices to Licensor under this Agreement shall be sent
-in writing to https://local.cloud.
+in writing to LocalCloud Inc., 5365 California Street, Palo Alto, CA,
+or via https://local.cloud.
 
 9.8 Future Commercial Licensing. Licensor may, at its sole discretion,
 make a commercial license available for the Software at a future date.
@@ -330,7 +331,8 @@ CONTACT
 For questions regarding this Agreement, or to inquire about commercial
 licensing when it becomes available, please contact:
 
-    LocalCloud
+    LocalCloud Inc.
+    5365 California Street, Palo Alto, CA
     https://local.cloud
 
 ================================================================================

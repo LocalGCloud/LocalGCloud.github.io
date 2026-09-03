@@ -32,6 +32,8 @@ export const productFacts = {
 	releaseVersion: "0.1.2",
 	releaseTag: "v0.1.2",
 	logoUrl: "https://local.cloud/brand/localcloud-mark.svg",
+	companyName: "LocalCloud Inc.",
+	companyAddress: "5365 California Street, Palo Alto, CA",
 	serviceCountLabel: String(availableServiceCount),
 	availabilityStatement:
 		"Use is governed by the proprietary LocalCloud license; review the license before use.",
@@ -52,10 +54,18 @@ export type JsonLd = Record<string, unknown>;
 export const organizationSchema: JsonLd = {
 	"@context": "https://schema.org",
 	"@type": "Organization",
-	name: productFacts.name,
+	name: productFacts.companyName,
+	legalName: productFacts.companyName,
 	url: productFacts.siteUrl,
 	logo: productFacts.logoUrl,
 	description: productFacts.description,
+	address: {
+		"@type": "PostalAddress",
+		streetAddress: "5365 California Street",
+		addressLocality: "Palo Alto",
+		addressRegion: "CA",
+		addressCountry: "US",
+	},
 	sameAs: [productFacts.cliRepositoryUrl, productFacts.runtimeRepositoryUrl],
 };
 
