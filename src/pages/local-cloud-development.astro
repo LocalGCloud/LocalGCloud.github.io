@@ -21,7 +21,7 @@ const faqItems = [
   },
   {
     q: 'Can I use LocalCloud in CI/CD?',
-    a: 'The runtime can be containerized, but organization and team-CI use is excluded by the current governing proprietary license.',
+    a: 'Yes. The Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Exact runner behavior must still be tested.',
   },
   {
     q: 'Should I test against real Google Cloud before production?',
@@ -214,19 +214,19 @@ STORAGE_EMULATOR_HOST=http://localhost:24081
             <div>• Create seed scripts that run on container startup</div>
             <div>• Store seed data in version control</div>
             <div>• Use realistic data volumes for performance testing</div>
-            <div>• Automate seed data creation in a permitted personal workflow</div>
+            <div>• Automate seed data creation in a permitted internal workflow</div>
           </div>
         </article>
 
         <article class="site-panel p-6">
-          <h3 class="text-lg font-semibold text-[var(--text)]">3. Personal automation</h3>
+          <h3 class="text-lg font-semibold text-[var(--text)]">3. Internal automation</h3>
           <p class="mt-3 text-[var(--text-2)] leading-7">
-            Containerization is technically possible for permitted personal projects. Employer, organization, commercial, shared-team, and team-CI use is excluded by the current license.
+            The Public Preview License permits containerized development and testing for individuals and organizations, including ongoing internal team CI.
           </p>
           <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
             <div>• Use Docker Compose for multi-service setups</div>
             <div>• Wait for emulators to be healthy before running tests</div>
-            <div>• Cache Docker images only in a permitted personal runner</div>
+            <div>• Cache Docker images in an authorized internal runner</div>
             <div>• Run parallel test suites with isolated emulator data volumes</div>
           </div>
         </article>

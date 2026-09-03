@@ -505,8 +505,8 @@ const githubActionsSnippet = [
 	"      - uses: actions/checkout@v4",
 	"      - name: Start LocalCloud",
 	`        run: |`,
-	"          # LICENSE GATE: organization/team CI is excluded by the reviewed license.",
-	"          # Replace with a separately granted and qualified image digest before use.",
+	"          # Public preview permits non-production internal organization and team CI.",
+	"          # Pin a qualified image digest before relying on this workflow.",
 	`          docker run -d --name localcloud -p 127.0.0.1:24080-24092:24080-24092 -m ${agenticFacts.memoryRequirement} ${agenticFacts.dockerImage}`,
 	"          for i in $(seq 1 60); do curl -fsS http://localhost:24080/health && exit 0; sleep 2; done",
 	"          docker logs localcloud",
@@ -527,15 +527,15 @@ export const workflowPages: AgenticContentPage[] = [
 		eyebrow: "GitHub Actions",
 		title: "GitHub Actions GCP Emulator with LocalCloud",
 		description:
-			"Check LocalCloud license eligibility before using a GitHub Actions runner, then apply readiness checks and localhost SDK endpoints to a permitted personal workflow.",
-		h1: "LocalCloud and GitHub Actions eligibility",
+			"Run LocalCloud in a GitHub Actions workflow with readiness checks, pinned image identity, and localhost SDK endpoints.",
+		h1: "LocalCloud in GitHub Actions",
 		deck:
-			"The Community License covers eligible individual, student, and nonprofit workflows. A for-profit company must obtain a separate Commercial License before using LocalCloud in a repository or team CI.",
+			"The Public Preview License permits individuals and organizations, including for-profit companies, to run ongoing internal CI without payment or a license key.",
 		promptIds: ["ci", "quickstart"],
 		quickFacts: [
 			"No GCP secrets are required for the bounded local job.",
 			"Readiness gate: http://localhost:24080/health.",
-			"Stop before editing the workflow if its use is excluded by the proprietary license.",
+			"Keep the workflow non-production and review the proprietary Public Preview License.",
 		],
 		sections: [
 			{
@@ -701,17 +701,17 @@ export const workflowPages: AgenticContentPage[] = [
 		path: "/workflows/agentic-ci/",
 		parentLabel: "Workflows",
 		parentPath: "/workflows/",
-		eyebrow: "Automation eligibility",
-		title: "Personal Automation with LocalCloud",
+		eyebrow: "Internal automation",
+		title: "Team Automation with LocalCloud",
 		description:
-			"Have coding agents check license eligibility before preparing a permitted personal automation workflow with health gates and local endpoints.",
-		h1: "Personal LocalCloud automation for eligible projects",
+			"Have coding agents prepare a non-production LocalCloud automation workflow with health gates and local endpoints.",
+		h1: "LocalCloud automation for internal projects",
 		deck:
-			"The agent must stop when the workflow is for an employer, organization, commercial project, shared team, or team CI. For permitted personal automation, keep Docker, localhost endpoints, no Google Cloud credentials, and a visible readiness check.",
+			"The Public Preview License permits organization and team CI for non-production development and testing. Keep Docker, localhost endpoints, no Google Cloud credentials, and a visible readiness check.",
 		promptIds: ["ci", "troubleshoot", "project-integration"],
 		quickFacts: [
-			"Agents must check license eligibility before proposing a diff.",
-			"Eligible automation jobs must print active emulator endpoints before tests.",
+			"Agents must keep automation inside the Public Preview License boundary.",
+			"Automation jobs must print active emulator endpoints before tests.",
 			"Real GCP validation is a separate release gate.",
 		],
 		sections: [
@@ -730,10 +730,10 @@ export const workflowPages: AgenticContentPage[] = [
 		],
 		snippets: [
 			{
-				label: "Automation eligibility instruction",
+				label: "Public preview automation instruction",
 				language: "text",
 				code:
-					"Read the LocalCloud license and stop if this is employer, organization, commercial, shared-team, or team-CI use. For a permitted personal project, prepare the smallest automation change that starts LocalCloud, waits for http://localhost:24080/health, exports emulator env vars, runs existing integration tests, and does not add real GCP secrets.",
+					"Read the LocalCloud Public Preview License and keep this workflow non-production. Prepare the smallest automation change that starts LocalCloud, waits for http://localhost:24080/health, exports emulator env vars, runs existing integration tests, and does not add real GCP secrets.",
 			},
 			{
 				label: "Reusable health gate",
@@ -1212,7 +1212,7 @@ export const blogDemoPages: AgenticContentPage[] = [
 			"How to decide between official Google emulators and LocalCloud when AI agents need local GCP validation.",
 		h1: "Google emulators vs LocalCloud for agents",
 		deck:
-			"Official Google emulators are valuable; the agentic question is whether one emulator is enough. For a permitted personal repository spanning BigQuery, Pub/Sub, Storage, and Terraform, one LocalCloud runtime can be easier for an agent to operate safely.",
+			"Official Google emulators are valuable; the agentic question is whether one emulator is enough. For a non-production repository spanning BigQuery, Pub/Sub, Storage, and Terraform, one LocalCloud runtime can be easier for an agent to operate safely.",
 		promptIds: ["project-integration", "ci"],
 		quickFacts: [
 			"Use official emulators for single-service fidelity when they fit.",

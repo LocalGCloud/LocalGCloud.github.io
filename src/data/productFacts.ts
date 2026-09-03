@@ -34,9 +34,6 @@ export const productFacts = {
 	logoUrl: "https://local.cloud/brand/localcloud-mark.svg",
 	companyName: "LocalCloud Inc.",
 	companyAddress: "5365 California Street, Palo Alto, CA",
-	commercialContactEmail: "data.oculus.llc@gmail.com",
-	commercialContactUrl:
-		"mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20commercial%20licensing%20inquiry",
 	serviceCountLabel: String(availableServiceCount),
 	availabilityStatement: docsContract.licensing.summary,
 	licensingPath: "/docs/licensing/",

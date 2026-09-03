@@ -5,7 +5,7 @@ export const expectedSearchRoutes = [
   { path: '/docs/', intent: 'LocalCloud quick start' },
   { path: '/services/', intent: 'Local GCP service catalog' },
   { path: '/ai/', intent: 'AI agent guide and LocalCloud AGENTS.md template' },
-  { path: '/pricing/', intent: 'LocalCloud Community and commercial licensing' },
+  { path: '/pricing/', intent: 'LocalCloud free public preview and permitted use' },
   { path: '/ai/agents.md', intent: 'Raw LocalCloud agent execution guide' },
   { path: '/ai/AGENTS.md', intent: 'Downloadable LocalCloud AGENTS.md template' },
   { path: '/ai/resources.md', intent: 'Agent Markdown route index' },

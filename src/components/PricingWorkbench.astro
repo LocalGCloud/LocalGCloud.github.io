@@ -1,112 +1,102 @@
 ---
-import { productFacts } from '../data/productFacts';
-
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const docsHref = `${base}docs/`;
 const licenseHref = `${base}docs/licensing/`;
-const contactHref = productFacts.commercialContactUrl;
+
+const workflows = [
+  {
+    number: '01',
+    title: 'Local development',
+    description: 'Build and debug against local Google Cloud endpoints.',
+  },
+  {
+    number: '02',
+    title: 'Testing',
+    description: 'Exercise supported workflows without creating real cloud resources.',
+  },
+  {
+    number: '03',
+    title: 'Internal CI',
+    description: 'Run ongoing automation on Docker-capable team runners.',
+  },
+  {
+    number: '04',
+    title: 'Evaluation and pilots',
+    description: 'Let your organization validate LocalCloud in internal environments.',
+  },
+];
 ---
 
-<section class="open-workbench" aria-labelledby="open-workbench-title">
-  <div class="open-workbench__shell">
-    <header class="open-workbench__hero">
+<section class="preview-workbench" aria-labelledby="preview-workbench-title">
+  <div class="preview-workbench__shell">
+    <header class="preview-workbench__hero">
       <div>
-        <span class="open-workbench__kicker">Simple licensing</span>
-        <h1 id="open-workbench-title">Build freely.<br /><span>Bring business use to the table.</span></h1>
+        <span class="preview-workbench__kicker">Public preview</span>
+        <h1 id="preview-workbench-title">
+          Free to use<br /><span>during public preview.</span>
+        </h1>
       </div>
       <p>
-        LocalCloud is free for individual developers, students, and nonprofit organizations.
-        For-profit companies can contact us for a commercial license.
+        Individuals, teams, nonprofits, and companies can use LocalCloud for local development,
+        testing, CI, evaluation, and internal pilots.
       </p>
     </header>
 
-    <div class="open-workbench__board">
-      <article class="open-workbench__community" aria-labelledby="open-workbench-community">
-        <div class="open-workbench__plan-heading">
-          <div>
-            <span class="open-workbench__label">Community</span>
-            <h2 id="open-workbench-community">Free</h2>
+    <div class="preview-workbench__board">
+      <div class="preview-workbench__status">
+        <span class="preview-workbench__status-label">
+          <span class="preview-workbench__status-light" aria-hidden="true"></span>
+          Preview access
+        </span>
+        <span class="preview-workbench__status-value">Available to everyone</span>
+      </div>
+
+      <div class="preview-workbench__offer">
+        <article class="preview-workbench__summary" aria-labelledby="preview-plan-title">
+          <span class="preview-workbench__label">One plan</span>
+          <h2 id="preview-plan-title">Free</h2>
+          <p>No payment method or license key required.</p>
+
+          <div class="preview-workbench__actions">
+            <a class="preview-workbench__button" href={docsHref}>
+              Get started <span aria-hidden="true">→</span>
+            </a>
+            <a class="preview-workbench__text-link" href={licenseHref}>View license</a>
           </div>
-          <span class="open-workbench__marker">Eligible use</span>
+        </article>
+
+        <div class="preview-workbench__workflows" aria-label="Included public preview workflows">
+          <span class="preview-workbench__label">Included workflows</span>
+          <div class="preview-workbench__workflow-grid">
+            {workflows.map((workflow) => (
+              <article>
+                <span aria-hidden="true">{workflow.number}</span>
+                <div>
+                  <h3>{workflow.title}</h3>
+                  <p>{workflow.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
-
-        <p class="open-workbench__intro">
-          Build, learn, teach, research, and serve a nonprofit mission under the Community License.
-        </p>
-
-        <div class="open-workbench__audiences" aria-label="Eligible Community users">
-          <div>
-            <span aria-hidden="true">01</span>
-            <p><strong>Individual developers</strong><small>Personal learning, projects, and experimentation.</small></p>
-          </div>
-          <div>
-            <span aria-hidden="true">02</span>
-            <p><strong>Students</strong><small>Coursework, research, and building new skills.</small></p>
-          </div>
-          <div>
-            <span aria-hidden="true">03</span>
-            <p><strong>Nonprofit organizations</strong><small>Work that supports a nonprofit organization’s mission.</small></p>
-          </div>
-        </div>
-
-        <div class="open-workbench__actions">
-          <a class="open-workbench__button open-workbench__button--primary" href={docsHref}>Get started <span aria-hidden="true">→</span></a>
-          <a class="open-workbench__text-link" href={licenseHref}>Read the license</a>
-        </div>
-      </article>
-
-      <aside class="open-workbench__commercial" aria-labelledby="open-workbench-commercial">
-        <span class="open-workbench__label">Commercial</span>
-        <h2 id="open-workbench-commercial">Contact us</h2>
-        <p>For any for-profit company using LocalCloud for its business.</p>
-
-        <div class="open-workbench__commercial-rule"></div>
-
-        <dl>
-          <div>
-            <dt>Product</dt>
-            <dd>LocalCloud</dd>
-          </div>
-          <div>
-            <dt>Terms</dt>
-            <dd>Commercial license</dd>
-          </div>
-          <div>
-            <dt>Next step</dt>
-            <dd>Tell us how you plan to use it</dd>
-          </div>
-        </dl>
-
-        <a class="open-workbench__button open-workbench__button--inverse" href={contactHref}>Contact us <span aria-hidden="true">↗</span></a>
-        <a class="open-workbench__commercial-link" href={licenseHref}>Read the license</a>
-      </aside>
-
-      <div class="open-workbench__shared">
-        <span class="open-workbench__shared-mark" aria-hidden="true"></span>
-        <p><strong>One clear choice.</strong> Your eligibility determines which license you need.</p>
-        <span>License terms control</span>
       </div>
     </div>
-
-    <p class="open-workbench__notice">
-      Community use and commercial licensing are governed by the <a href={licenseHref}>LocalCloud license terms</a>.
-    </p>
   </div>
 </section>
 
 <style>
-  .open-workbench {
+  .preview-workbench {
     min-height: calc(100vh - 4.5rem);
     padding: clamp(3.5rem, 8vw, 7.5rem) 0 6rem;
   }
 
-  .open-workbench__shell {
+  .preview-workbench__shell {
     width: min(100% - 2rem, 76rem);
     margin: 0 auto;
   }
 
-  .open-workbench__hero {
+  .preview-workbench__hero {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.55fr);
     align-items: end;
@@ -114,30 +104,35 @@ const contactHref = productFacts.commercialContactUrl;
     padding-bottom: 2.5rem;
   }
 
-  .open-workbench__kicker,
-  .open-workbench__label {
-    color: var(--accent-strong);
+  .preview-workbench__kicker,
+  .preview-workbench__label,
+  .preview-workbench__status {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
-  .open-workbench__hero h1 {
-    max-width: 54rem;
+  .preview-workbench__kicker,
+  .preview-workbench__label {
+    color: var(--accent-strong);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+  }
+
+  .preview-workbench__hero h1 {
+    max-width: 58rem;
     margin-top: 0.85rem;
     font-size: clamp(3.2rem, 7vw, 6.6rem);
     line-height: 0.9;
     letter-spacing: -0.065em;
   }
 
-  .open-workbench__hero h1 span {
+  .preview-workbench__hero h1 span {
     color: var(--accent-strong);
   }
 
-  .open-workbench__hero > p {
-    max-width: 28rem;
+  .preview-workbench__hero > p {
+    max-width: 29rem;
     padding-bottom: 0.35rem;
     color: var(--text-2);
     font-size: 1.03rem;
@@ -145,9 +140,7 @@ const contactHref = productFacts.commercialContactUrl;
     text-wrap: pretty;
   }
 
-  .open-workbench__board {
-    display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+  .preview-workbench__board {
     overflow: hidden;
     border: 1px solid var(--line);
     border-radius: 1.1rem;
@@ -155,97 +148,77 @@ const contactHref = productFacts.commercialContactUrl;
     box-shadow: 0 24px 60px -42px rgba(32, 33, 36, 0.28);
   }
 
-  .open-workbench__community {
-    padding: clamp(2rem, 5vw, 4rem);
-    background: var(--surface);
-  }
-
-  .open-workbench__plan-heading {
+  .preview-workbench__status {
     display: flex;
-    align-items: start;
-    justify-content: space-between;
-    gap: 1.5rem;
-  }
-
-  .open-workbench__plan-heading h2,
-  .open-workbench__commercial h2 {
-    margin-top: 0.45rem;
-    font-size: clamp(3rem, 6vw, 5rem);
-    letter-spacing: -0.06em;
-  }
-
-  .open-workbench__marker {
-    display: inline-flex;
-    min-height: 2rem;
+    min-height: 3.25rem;
     align-items: center;
-    padding: 0 0.75rem;
-    border: 1px solid rgba(19, 115, 51, 0.2);
-    border-radius: 999px;
-    background: var(--success-soft);
-    color: var(--success);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    white-space: nowrap;
-    text-transform: uppercase;
-  }
-
-  .open-workbench__intro {
-    max-width: 39rem;
-    margin-top: 2rem;
-    color: var(--text-2);
-    font-size: 1.08rem;
-    line-height: 1.72;
-    text-wrap: pretty;
-  }
-
-  .open-workbench__audiences {
-    display: grid;
-    margin-top: 2.4rem;
-    border-top: 1px solid var(--line);
-  }
-
-  .open-workbench__audiences > div {
-    display: grid;
-    grid-template-columns: 2rem minmax(0, 1fr);
+    justify-content: space-between;
     gap: 1rem;
-    align-items: start;
-    padding: 1rem 0;
+    padding: 0.75rem 1.15rem;
     border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text-3);
+    font-size: 0.69rem;
+    letter-spacing: 0.09em;
   }
 
-  .open-workbench__audiences > div > span {
-    color: var(--accent-strong);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
+  .preview-workbench__status-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
   }
 
-  .open-workbench__audiences p {
+  .preview-workbench__status-light {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 0.25rem var(--success-soft);
+  }
+
+  .preview-workbench__status-value {
+    color: var(--success);
+    font-weight: 600;
+  }
+
+  .preview-workbench__offer {
     display: grid;
-    grid-template-columns: minmax(9rem, 0.75fr) minmax(0, 1.25fr);
-    gap: 1rem;
+    grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.45fr);
   }
 
-  .open-workbench__audiences strong {
-    color: var(--text);
-    font-size: 0.95rem;
+  .preview-workbench__summary {
+    display: flex;
+    min-height: 30rem;
+    flex-direction: column;
+    padding: clamp(2rem, 5vw, 4rem);
+    border-right: 1px solid var(--line);
   }
 
-  .open-workbench__audiences small {
+  .preview-workbench__summary h2 {
+    margin-top: 0.55rem;
+    font-size: clamp(4rem, 9vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: -0.075em;
+  }
+
+  .preview-workbench__summary > p {
+    max-width: 21rem;
+    margin-top: 1.6rem;
     color: var(--text-2);
-    font-size: 0.86rem;
-    line-height: 1.55;
-    text-wrap: pretty;
+    font-size: 1.06rem;
+    line-height: 1.65;
+    text-wrap: balance;
   }
 
-  .open-workbench__actions {
+  .preview-workbench__actions {
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    margin-top: 2rem;
+    margin-top: auto;
+    padding-top: 2.5rem;
   }
 
-  .open-workbench__button {
+  .preview-workbench__button {
     display: inline-flex;
     min-height: 3rem;
     align-items: center;
@@ -253,235 +226,129 @@ const contactHref = productFacts.commercialContactUrl;
     gap: 1.5rem;
     padding: 0 1.15rem;
     border-radius: 0.7rem;
+    background: var(--accent-strong);
+    color: var(--surface);
     font-size: 0.92rem;
     font-weight: 600;
-    transition-property: color, background-color, transform;
-    transition-duration: 150ms;
-    transition-timing-function: ease-out;
+    transition: transform 150ms ease-out, background-color 150ms ease-out;
   }
 
-  .open-workbench__button:active {
-    transform: scale(0.96);
+  .preview-workbench__button:hover {
+    transform: translateY(-1px);
   }
 
-  .open-workbench__button--primary {
-    min-width: 10.5rem;
-    background: var(--accent-strong);
-    color: #fff;
-  }
-
-  .open-workbench__button--primary:hover {
-    background: var(--accent);
-    color: #fff;
-  }
-
-  .open-workbench__text-link,
-  .open-workbench__commercial-link {
-    min-height: 2.75rem;
-    display: inline-flex;
-    align-items: center;
+  .preview-workbench__text-link {
     color: var(--text-2);
-    font-size: 0.88rem;
+    font-size: 0.9rem;
+    font-weight: 600;
     text-decoration: underline;
     text-decoration-color: var(--line-strong);
     text-underline-offset: 0.25rem;
   }
 
-  .open-workbench__commercial {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    padding: clamp(2rem, 4vw, 3rem);
-    background: var(--accent-strong);
-    color: rgba(255, 255, 255, 0.8);
+  .preview-workbench__button:focus-visible,
+  .preview-workbench__text-link:focus-visible {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: 3px;
   }
 
-  .open-workbench__commercial .open-workbench__label,
-  .open-workbench__commercial h2 {
-    color: #fff;
+  .preview-workbench__workflows {
+    padding: clamp(2rem, 5vw, 4rem);
   }
 
-  .open-workbench__commercial h2 {
-    max-width: 12rem;
-    font-size: clamp(2.7rem, 5vw, 4.4rem);
-  }
-
-  .open-workbench__commercial > p {
+  .preview-workbench__workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: 1.35rem;
-    font-size: 0.96rem;
-    line-height: 1.68;
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+  }
+
+  .preview-workbench__workflow-grid article {
+    display: grid;
+    min-height: 10rem;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 1rem;
+    align-content: start;
+    padding: 1.35rem;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .preview-workbench__workflow-grid article > span {
+    color: var(--accent-strong);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+
+  .preview-workbench__workflow-grid h3 {
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .preview-workbench__workflow-grid p {
+    margin-top: 0.55rem;
+    color: var(--text-2);
+    font-size: 0.86rem;
+    line-height: 1.58;
     text-wrap: pretty;
   }
 
-  .open-workbench__commercial-rule {
-    height: 1px;
-    margin: 2rem 0 1.4rem;
-    background: rgba(255, 255, 255, 0.22);
-  }
-
-  .open-workbench__commercial dl {
-    display: grid;
-    gap: 1rem;
-    margin: 0 0 2rem;
-  }
-
-  .open-workbench__commercial dl div {
-    display: grid;
-    gap: 0.2rem;
-  }
-
-  .open-workbench__commercial dt {
-    color: rgba(255, 255, 255, 0.76);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .open-workbench__commercial dd {
-    margin: 0;
-    color: #fff;
-    font-size: 0.91rem;
-  }
-
-  .open-workbench__button--inverse {
-    width: 100%;
-    margin-top: auto;
-    background: #fff;
-    color: var(--accent-strong);
-  }
-
-  .open-workbench__button--inverse:hover {
-    background: var(--accent-soft);
-    color: var(--accent-strong);
-  }
-
-  .open-workbench__commercial-link {
-    justify-content: center;
-    margin-top: 0.7rem;
-    color: rgba(255, 255, 255, 0.78);
-    text-decoration-color: rgba(255, 255, 255, 0.35);
-  }
-
-  .open-workbench__commercial-link:hover {
-    color: #fff;
-  }
-
-  .open-workbench__shared {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 0.9rem;
-    padding: 0.85rem 1.2rem;
-    border-top: 1px solid var(--line);
-    background: var(--surface-2);
-    color: var(--text-2);
-    font-size: 0.83rem;
-  }
-
-  .open-workbench__shared strong {
-    color: var(--text);
-  }
-
-  .open-workbench__shared > span:last-child {
-    color: var(--text-3);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .open-workbench__shared-mark {
-    width: 0.65rem;
-    height: 0.65rem;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 0 0.3rem rgba(26, 115, 232, 0.11);
-  }
-
-  .open-workbench__notice {
-    margin-top: 1rem;
-    color: var(--text-3);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    text-align: center;
-  }
-
-  .open-workbench__notice a {
-    text-decoration: underline;
-    text-underline-offset: 0.2rem;
-  }
-
-  @keyframes open-workbench-enter {
-    from { opacity: 0; transform: translateY(0.55rem); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .open-workbench__hero {
-      animation: open-workbench-enter 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  @media (max-width: 840px) {
+    .preview-workbench__hero {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
     }
 
-    .open-workbench__board {
-      animation: open-workbench-enter 240ms 80ms cubic-bezier(0.2, 0, 0, 1) both;
-    }
-  }
-
-  @media (max-width: 800px) {
-    .open-workbench {
-      padding-top: 3rem;
+    .preview-workbench__hero > p {
+      max-width: 40rem;
     }
 
-    .open-workbench__hero,
-    .open-workbench__board {
+    .preview-workbench__offer {
       grid-template-columns: 1fr;
     }
 
-    .open-workbench__hero {
-      gap: 1.4rem;
+    .preview-workbench__summary {
+      min-height: auto;
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
     }
 
-    .open-workbench__hero h1 {
-      font-size: clamp(3rem, 15vw, 5rem);
-    }
-
-    .open-workbench__commercial {
-      min-height: 31rem;
-    }
-
-    .open-workbench__shared {
-      grid-column: auto;
-      grid-template-columns: auto minmax(0, 1fr);
-    }
-
-    .open-workbench__shared > span:last-child {
-      display: none;
+    .preview-workbench__actions {
+      margin-top: 2.5rem;
     }
   }
 
-  @media (max-width: 520px) {
-    .open-workbench__actions {
+  @media (max-width: 560px) {
+    .preview-workbench {
+      padding-top: 2.5rem;
+    }
+
+    .preview-workbench__hero h1 {
+      font-size: clamp(2.85rem, 15vw, 4.4rem);
+    }
+
+    .preview-workbench__status {
       align-items: flex-start;
       flex-direction: column;
     }
 
-    .open-workbench__plan-heading {
-      align-items: center;
-    }
-
-    .open-workbench__audiences p {
+    .preview-workbench__workflow-grid {
       grid-template-columns: 1fr;
-      gap: 0.25rem;
     }
 
-    .open-workbench__button--primary {
-      width: 100%;
+    .preview-workbench__workflow-grid article {
+      min-height: auto;
+    }
+
+    .preview-workbench__actions {
+      align-items: flex-start;
+      flex-direction: column;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .open-workbench__button {
+    .preview-workbench__button {
       transition: none;
     }
   }

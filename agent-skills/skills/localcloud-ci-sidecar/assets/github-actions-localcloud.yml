@@ -3,7 +3,7 @@ name: LocalCloud Integration Evaluation
 on:
   workflow_dispatch:
 
-# LICENSE GATE: the reviewed LocalCloud license excludes organization/team CI.
+# LICENSE: public preview permits non-production internal organization/team CI.
 # Use this technical template only after the rights holder grants the intended use.
 # Replace the placeholder with an exact qualified image digest.
 jobs:

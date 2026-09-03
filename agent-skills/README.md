@@ -2,7 +2,7 @@
 
 Portable Agent Skills for using LocalCloud as a local Google Cloud sandbox. The canonical skill content lives in `skills/`; client-specific wrappers reference that content rather than maintaining separate copies.
 
-LocalCloud's versioned contract lists 27 service surfaces with operation-level evidence. Start through the host CLI and trust its generated local endpoints rather than hard-coded ports. The reviewed proprietary license permits limited personal, non-commercial Individual Developer use and excludes employer/organization, commercial, internal-tool, cost-saving, and team-CI use. Validate allowed production-critical behavior against real Google Cloud after clearing emulator variables.
+LocalCloud's versioned contract lists 27 service surfaces with operation-level evidence. Start through the host CLI and trust its generated local endpoints rather than hard-coded ports. The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production development, testing, CI, evaluation, and internal pilots. Validate production-critical behavior against real Google Cloud after clearing emulator variables.
 
 ## Skills included
 

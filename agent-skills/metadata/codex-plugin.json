@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2026-07-localcloud-draft",
   "name": "localcloud-agent-skills",
-  "description": "LocalCloud GCP emulator skills for permitted personal Codex workflows: BigQuery, Pub/Sub, Terraform, automation eligibility, seed data, and SDK tests against localhost.",
+  "description": "LocalCloud GCP emulator skills for permitted non-production Codex workflows: BigQuery, Pub/Sub, Terraform, internal automation, seed data, and SDK tests against localhost.",
   "version": "0.1.0",
   "license": "MIT",
   "canonicalSkillRoot": "../skills",

@@ -2,7 +2,7 @@
   "schemaVersion": "2026-07-localcloud-draft",
   "name": "localcloud-agent-skills",
   "displayName": "LocalCloud Agent Skills",
-  "description": "Portable LocalCloud skills for permitted personal GCP emulator workflows: BigQuery, Pub/Sub, Terraform, automation eligibility, seed data, and SDK tests.",
+  "description": "Portable LocalCloud skills for permitted non-production GCP emulator workflows: BigQuery, Pub/Sub, Terraform, internal automation, seed data, and SDK tests.",
   "version": "0.1.0",
   "license": "MIT",
   "homepage": "https://local.cloud/docs/",

@@ -7,7 +7,7 @@ description: "LocalCloud CI sidecar evaluation: use when reviewing a Docker-base
 
 ## When to use
 
-Use this skill only for a license-permitted evaluation of a LocalCloud service-container workflow. The reviewed proprietary license excludes employer/organization use and team CI; technical CI support is not a license grant.
+Use this skill only for a non-production LocalCloud service-container workflow permitted by the Public Preview License. The license permits individuals and organizations, including for-profit companies, to run ongoing internal CI; technical CI support does not expand the license grant.
 
 ## Inputs to inspect
 

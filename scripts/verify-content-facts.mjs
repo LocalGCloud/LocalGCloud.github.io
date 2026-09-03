@@ -17,7 +17,7 @@ for (const required of [
   if (!llms.includes(required)) errors.push(`llms.txt must contain ${required}`);
 }
 
-for (const prohibited of [/\benterprise\b/i, /sales@/i, /\$\d/, /\bprice\s*:/i]) {
+for (const prohibited of [/\benterprise\b/i, /sales@/i, /\bcommercial license\b/i, /\$\d/, /\bprice\s*:/i]) {
   if (prohibited.test(JSON.stringify(productFacts))) {
     errors.push(`productFacts contains prohibited commercial term: ${prohibited}`);
   }
@@ -26,8 +26,11 @@ for (const prohibited of [/\benterprise\b/i, /sales@/i, /\$\d/, /\bprice\s*:/i])
 
 try {
   const pricing = await readFile(new URL('../dist/pricing/index.html', import.meta.url), 'utf8');
-  for (const required of ['Community', 'Commercial', 'Contact us', productFacts.commercialContactEmail]) {
+  for (const required of ['Public preview', 'Free to use', 'Available to everyone', 'No payment method or license key required']) {
     if (!pricing.includes(required)) errors.push(`rendered pricing page must contain ${required}`);
+  }
+  for (const prohibited of ['Contact us', 'Commercial license']) {
+    if (pricing.includes(prohibited)) errors.push(`rendered pricing page must not contain ${prohibited}`);
   }
 } catch {
   errors.push('dist/pricing/index.html must be published');

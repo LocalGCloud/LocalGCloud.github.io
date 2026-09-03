@@ -77,26 +77,26 @@ for (const destination of [
 
 const licensing = docs.get("src/pages/docs/licensing.mdx");
 for (const phrase of [
-	"Individual Developer",
-	"Students",
-	"Nonprofit organizations",
-	"production use supporting the nonprofit mission",
-	"for-profit company requires a separate written Commercial License",
+	"LocalCloud Public Preview License Agreement",
+	"including for-profit companies",
+	"ongoing internal CI",
+	"No payment method or license key is required",
+	"Preview releases keep their terms",
 	"data.oculus.llc@gmail.com",
-	"Technical availability is not legal permission",
 ])
 	assert(licensing.includes(phrase), `licensing reference omits ${phrase}`);
 
 const pricing = docs.get("src/components/PricingWorkbench.astro");
 for (const phrase of [
-	"Individual developers",
-	"Students",
-	"Nonprofit organizations",
-	"Contact us",
-	"commercial license",
+	"Public preview",
+	"Individuals, teams, nonprofits, and companies",
+	"Internal CI",
+	"No payment method or license key required",
+	"View license",
 ])
 	assert(pricing.includes(phrase), `pricing page omits ${phrase}`);
 assert(!/\$\d/.test(pricing), "pricing page publishes a numeric price");
+assert(!/Contact us|Commercial|commercial/.test(pricing), "pricing page retains a commercial offer");
 
 const header = docs.get("src/components/Header.astro");
 assert(
@@ -132,8 +132,8 @@ for (const path of [
 ]) {
 	const source = docs.get(path);
 	assert(
-		source.includes("Commercial License"),
-		`${path} lacks adjacent licensing gate`,
+		source.includes("Public Preview License"),
+		`${path} lacks adjacent preview-license boundary`,
 	);
 	assert(
 		!/\$\d|\b\d{2,3}-\d{2,3}%|zero cloud costs|eliminates? .*cost/i.test(source),

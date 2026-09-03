@@ -2,7 +2,7 @@
 
 ## License gate
 
-The current proprietary LocalCloud license excludes employer/organization use and team CI. Do not implement a CI sidecar unless the rights holder has granted the intended use under the exact release license.
+The proprietary Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Keep the workflow within the exact release license and validate the selected runner.
 
 ## Reviewed technical pattern
 

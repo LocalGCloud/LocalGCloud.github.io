@@ -45,7 +45,7 @@ A valid verification exercises the real SDK client against LocalCloud and assert
 
 ## Known gaps / when to fall back to real GCP
 
-For an authorized production-readiness pass, unset emulator variables in a clean process and use intentionally supplied credentials and target configuration. Organization/team CI and commercial workflows are excluded by the reviewed proprietary license.
+For an authorized production-readiness pass, unset emulator variables in a clean process and use intentionally supplied credentials and target configuration. The Public Preview License permits organization/team CI only for non-production workflows.
 
 ## Expected output
 

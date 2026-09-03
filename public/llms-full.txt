@@ -2,7 +2,7 @@
 
 LocalCloud provides 27 available Google Cloud service guides in one local Docker runtime. Availability does not imply full Google Cloud parity or default startup. Firestore is available but disabled by default; Google Sheets provides a limited read-only values facade.
 
-LocalCloud is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. The proprietary Community License permits royalty-free Community Use by individual developers, students, and nonprofit organizations; for-profit companies require a separate Commercial License. Excluded uses include for-profit company use without a separate Commercial License, work for a for-profit employer or client under the Community License, commercial product development without a Commercial License, business operations or team CI without a Commercial License.
+LocalCloud is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and internal pilots. Excluded uses include customer-facing or other production use, reselling LocalCloud or providing it as a hosted or managed service, redistribution or sublicensing, modification except where applicable law requires permission.
 
 ## Quick start
 

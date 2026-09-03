@@ -45,11 +45,11 @@ const safetyLines = agentSafeValidationChecklist
 
 export const agentsMdTemplate = `# AGENTS.md — LocalCloud GCP emulator instructions
 
-Use this file as repository-local guidance for AI coding agents working on personal, non-commercial projects permitted by the LocalCloud license.
+Use this file as repository-local guidance for AI coding agents working on non-production projects permitted by the LocalCloud license.
 
 ## LocalCloud facts agents must preserve
-- LocalCloud is a local Google Cloud emulator/runtime for permitted personal learning, evaluation, and non-commercial projects.
-- The Community License covers eligible individual, student, and nonprofit workflows. A for-profit company must obtain a separate Commercial License before using LocalCloud in a repository or team CI.
+- LocalCloud is a local Google Cloud emulator/runtime for development, testing, evaluation, and internal automation.
+- The Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production internal development, testing, CI, evaluation, and internal pilots.
 - It runs ${productFacts.serviceCountLabel} GCP service surfaces in one Docker container.
 - Canonical Docker image: \`${agenticFacts.dockerImage}\`.
 - Default local workflows require no GCP account, no Google credentials, no service-account key, and no billing project.

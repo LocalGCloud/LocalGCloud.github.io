@@ -148,9 +148,9 @@ for (const path of ["public/llms.txt", "public/llms-full.txt"]) {
 		`${path} lacks root operator routes`,
 	);
 	assert(
-		value.includes("individual developers, students, and nonprofit organizations") &&
-			value.includes("for-profit companies require a separate Commercial License"),
-		`${path} lacks Community and commercial license boundaries`,
+		value.includes("including for-profit companies") &&
+			value.includes("internal development, testing, CI, evaluation, and internal pilots"),
+		`${path} lacks public-preview license boundaries`,
 	);
 	assert(value.includes("https://local.cloud/pricing/"), `${path} lacks pricing URL`);
 }

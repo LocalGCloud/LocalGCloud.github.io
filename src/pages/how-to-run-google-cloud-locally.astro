@@ -33,11 +33,11 @@ const faqItems = [
   },
   {
     q: 'Can I run this in CI/CD pipelines?',
-    a: 'The runtime can be containerized, but organization and team-CI use is excluded by the current governing proprietary license. Review the license before use.',
+    a: 'Yes. The Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Review the license and test the exact runner before use.',
   },
   {
     q: 'How is LocalCloud licensed?',
-    a: 'The proprietary Community License is free for eligible individual developers, students, and nonprofit organizations. For-profit companies require a separate Commercial License. Technical Community or Pro tiers do not grant legal permission.',
+    a: 'The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for non-production development, testing, CI, evaluation, and internal pilots. Technical Community or Pro tiers do not expand that legal permission.',
   },
 ];
 ---
@@ -322,14 +322,14 @@ localcloud status</code></pre>
   <section class="site-section site-section--tight">
     <div class="container">
       <div class="reveal">
-        <h2>Automating a permitted personal project</h2>
+        <h2>Automating an internal development project</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Containerized automation is technically possible for a personal, non-commercial project permitted by the license. Employer, organization, commercial, shared-team, and team-CI use is excluded.
+          The Public Preview License permits individuals and organizations, including for-profit companies, to use containerized automation for ongoing internal development, testing, and CI.
         </p>
       </div>
       <div class="mt-8 site-panel p-6 reveal">
-        <h3 class="text-lg font-semibold text-[var(--text)]">Check eligibility before adding automation</h3>
-        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">Do not proceed when the workflow is for an employer, organization, commercial project, shared team, or team CI. For permitted personal automation, pin the image, wait on <code>/readiness</code>, export values from the running LocalCloud runtime, and stop rather than falling back to real Google Cloud.</p>
+        <h3 class="text-lg font-semibold text-[var(--text)]">Keep automation inside the preview boundary</h3>
+        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">For permitted internal automation, pin the image, wait on <code>/readiness</code>, export values from the running LocalCloud runtime, and stop rather than falling back to real Google Cloud. Customer-facing production use remains outside the preview grant.</p>
       </div>
       <div class="mt-6 reveal">
         <p class="text-sm text-[var(--text-2)] leading-7">

@@ -91,7 +91,7 @@ const faqItems = [
   },
   {
     q: 'Does LocalCloud support GitHub Actions, GitLab CI, and Jenkins?',
-    a: 'The runtime can technically run on Docker-capable CI systems, but exact runner networking and service-container behavior must be tested. Organization and team-CI use is excluded by the current governing proprietary license.',
+    a: 'Yes. The Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Exact runner networking and service-container behavior must still be tested.',
   },
   {
     q: 'Will my tests behave differently in CI vs local development?',
@@ -109,8 +109,8 @@ const faqItems = [
 ---
 
 <LandingLayout
-  title="LocalCloud Automation Eligibility and Integration Testing"
-  description="Check license eligibility before adding LocalCloud to personal automation, then use health gates, local endpoints, and explicit production validation."
+  title="LocalCloud CI and Integration Testing"
+  description="Run LocalCloud in non-production team CI with health gates, local endpoints, pinned images, and explicit production validation."
 >
   <script type="application/ld+json" is:inline>
 {
@@ -130,7 +130,7 @@ const faqItems = [
       "name": "Does LocalCloud support GitHub Actions, GitLab CI, and Jenkins?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "LocalCloud can technically run on Docker-capable CI systems, but runner behavior must be tested and organization or team-CI use is excluded by the current governing proprietary license."
+        "text": "The Public Preview License permits individuals and organizations, including for-profit companies, to run LocalCloud in ongoing internal CI. Runner behavior must still be tested."
       }
     },
     {
@@ -149,10 +149,10 @@ const faqItems = [
   <section class="site-section site-section--hero">
     <div class="container">
       <div class="max-w-[48rem] reveal">
-        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Personal automation</span>
-        <h1 class="mt-4">Check license eligibility before automating LocalCloud</h1>
+        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Internal automation</span>
+        <h1 class="mt-4">Run LocalCloud in team CI</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          The Community License covers qualifying individual, student, and nonprofit workflows. A for-profit company must obtain a separate Commercial License before using LocalCloud in CI; then keep the job isolated, pin the image, and validate against real Google Cloud separately.
+          The Public Preview License permits ongoing internal CI for individuals and organizations, including for-profit companies. Keep the job isolated, pin the image, and validate against real Google Cloud separately.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Review local setup</a>
@@ -180,9 +180,9 @@ const faqItems = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>Technical examples for eligible personal automation</h2>
+        <h2>Technical examples for internal automation</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          These templates do not grant permission to use LocalCloud. Use them only for an eligible personal, non-commercial project after reading the governing license. Exercise networking, health, image identity, and cleanup on the exact runner.
+          Use these templates only within the governing Public Preview License. Exercise networking, health, image identity, and cleanup on the exact runner.
         </p>
       </div>
 
@@ -257,7 +257,7 @@ const faqItems = [
           <div>
             <h2 style="color: #e8eaed;">Review the license before automating LocalCloud</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              Employer, organization, commercial, shared-team, and team-CI use is excluded. For an eligible personal workflow, keep LocalCloud isolated and validate production behavior separately.
+              The Public Preview License permits organization and team CI for non-production development and testing. Keep LocalCloud isolated and validate production behavior separately.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

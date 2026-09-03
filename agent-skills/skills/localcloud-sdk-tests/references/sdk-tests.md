@@ -22,4 +22,4 @@ Exercise an operation listed in the service contract and assert an observable re
 
 ## Production and license boundary
 
-Unset all emulator/custom endpoints in a clean process before authorized real-GCP validation. LocalCloud use is governed by the proprietary license; organization/team CI and commercial workflows are excluded by the reviewed text.
+Unset all emulator/custom endpoints in a clean process before authorized real-GCP validation. LocalCloud use is governed by the proprietary Public Preview License; organization/team CI is permitted for non-production workflows.

@@ -61,7 +61,7 @@ export const agenticFacts = {
 	terraformEnvCommand: "localcloud env --format terraform",
 	productionBoundary: productFacts.productionBoundary,
 	noCredentialBoundary:
-		"Permitted workflows use local endpoint values and should stop rather than fall back to real Google Cloud or real credentials. The Community License covers eligible individual, student, and nonprofit use; a for-profit company requires a separate Commercial License.",
+		"Permitted workflows use local endpoint values and should stop rather than fall back to real Google Cloud or real credentials. The Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production internal development, testing, CI, evaluation, and pilots.",
 	releaseGuardrail:
 		"Before production deployment, unset LocalCloud emulator environment variables and validate behavior against real Google Cloud.",
 	evidence: {
@@ -187,10 +187,10 @@ export const agentPromptLibrary: AgentPrompt[] = [
 	},
 	{
 		id: "ci",
-		label: "Check automation eligibility",
-		useCase: "Confirm that a personal automation workflow is permitted before changing it.",
+		label: "Configure internal CI",
+		useCase: "Have an agent add a permitted non-production LocalCloud CI workflow.",
 		prompt:
-			"Read https://local.cloud/docs/licensing/ before changing this automation. Stop if it is for an employer, organization, commercial project, shared team workflow, or team CI. If it is a permitted personal non-commercial workflow, propose the smallest change that starts LocalCloud, waits for readiness, exports emulator env vars, runs integration tests locally, and avoids real GCP secrets.",
+			"Read https://local.cloud/docs/licensing/ before changing this automation. Keep the workflow within the Public Preview License's non-production boundary. Propose the smallest change that starts LocalCloud, waits for readiness, exports emulator env vars, runs integration tests locally, and avoids real GCP secrets.",
 	},
 	{
 		id: "troubleshoot",

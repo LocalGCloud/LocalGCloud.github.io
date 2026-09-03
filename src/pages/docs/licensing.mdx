@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Licensing Reference
-description: LocalCloud Community eligibility, commercial licensing, technical enforcement, and governing terms.
+description: LocalCloud Public Preview permitted use, retained release rights, technical enforcement, and governing terms.
 author: LocalCloud Inc.
 updated: 2026-09-03
 reviewed: 2026-09-03
@@ -16,37 +16,42 @@ export const governingLicenseUrl = `${productFacts.runtimeRepositoryUrl}/blob/ma
 
 # Licensing reference
 
-The governing **LocalCloud Community License Agreement** is a proprietary license issued by **LocalCloud Inc.** The <a href={governingLicenseUrl}>complete license agreement</a> controls; this page summarizes the current terms.
+The governing **LocalCloud Public Preview License Agreement** is a proprietary license issued by **LocalCloud Inc.** The <a href={governingLicenseUrl}>complete license agreement</a> controls; this page summarizes the current terms.
 
-<Callout type="warning" title="Technical availability is not legal permission">
-A service starting successfully, a development image exposing Pro-tier behavior, or documentation showing a workflow does not grant permission beyond the governing agreement.
+<Callout type="info" title="Free public preview">
+Individuals and organizations, including for-profit companies, may use LocalCloud free of charge for the permitted non-production workflows below. No payment method or license key is required.
 </Callout>
 
-## Community License: free
+## Permitted preview use
 
-The Community License grants royalty-free Community Use to exactly these eligible groups:
+The Public Preview License covers:
 
-- **Individual developers** acting personally for learning, experimentation, and personal projects;
-- **Students** acting personally or academically for coursework, teaching, research, and skill development; and
-- **Nonprofit organizations** legally organized and operated as nonprofits for internal operations, development, testing, education, research, and mission-related programs, including production use supporting the nonprofit mission.
+- personal learning, education, teaching, academic research, experimentation, and personal projects;
+- internal software development, debugging, testing, and quality assurance;
+- ongoing internal CI and delivery automation;
+- internal evaluation, proofs of concept, and internal pilots; and
+- internal nonprofit development, testing, research, education, and mission-related work.
 
-Community eligibility does not cover work performed for a for-profit employer, client, or business. A person using LocalCloud for their own for-profit business is also acting for a For-Profit Entity under the agreement.
+Employees and contractors may use LocalCloud on behalf of an organization for these workflows. The organization remains responsible for their compliance with the agreement.
 
-## Commercial License: contact us
+## Uses outside the preview grant
 
-A for-profit company requires a separate written Commercial License before any use by, on behalf of, or for its benefit. This includes commercial product development, internal business systems, employee workflows, team CI, business cost reduction, and paid consulting or contracting.
+The preview grant does not cover customer-facing or other production use, reselling LocalCloud, offering it as a hosted or managed service, redistribution, sublicensing, or modification. The complete agreement contains the controlling definitions and restrictions.
 
-Contact [data.oculus.llc@gmail.com](mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20commercial%20licensing%20inquiry) and describe the company and planned use. An inquiry, negotiation, quote, invoice, or payment does not grant commercial rights until LocalCloud Inc. and the licensee execute a Commercial License.
+LocalCloud is a development and testing environment. Validate release behavior against real Google Cloud before deploying an application to production.
 
-The Community License does not grant rights to an organization outside its defined eligible groups. Contact LocalCloud for a separate written agreement if your organization is neither a qualifying nonprofit nor a for-profit company.
+## Preview releases keep their terms
+
+Each version first distributed under the Public Preview License remains available to its licensees under those terms. LocalCloud Inc. may offer later versions, support, services, or features under different terms, but those later terms do not retroactively replace the grant for a preview release already obtained under the agreement. Rights may still terminate for breach.
 
 ## Technical enforcement
 
 | Runtime condition | Technical behavior | Legal boundary |
 | --- | --- | --- |
-| Development image with enforcement disabled | May expose technical Pro access without an API key. | Does not expand the license grant. |
-| Enforced/production build | Requires `LOCALCLOUD_API_KEY`; validation failure terminates startup. | A technically accepted key does not replace a required written agreement. |
-| Service `minTier` | Controls technical service availability. | Community/Pro labels are access controls, not the two pricing categories. |
+| Current public-preview release | Starts without a license key and grants technical Pro access. | Use remains limited to the Public Preview License. |
+| Development build | May disable enforcement and grant technical Pro access. | Development metadata does not expand the license grant. |
+| Separately enforced build | Requires `LOCALCLOUD_API_KEY`; validation failure terminates startup. | A technically accepted key does not grant production, redistribution, or hosted-service rights. |
+| Service `minTier` | Controls technical service availability when tier enforcement is active. | Community/Pro labels are access controls, not pricing plans. |
 
 ## License metadata conflicts
 
@@ -56,9 +61,9 @@ The LocalCloud runtime, including its <a href={`${productFacts.runtimeRepository
 
 ## Before using LocalCloud
 
-1. Read the <a href={governingLicenseUrl}>complete governing license</a>.
-2. Identify whether you qualify as an Individual Developer, Student, or Nonprofit Organization.
-3. If the use is by or for a for-profit company, obtain a separate Commercial License before use.
-4. Re-check the exact license shipped with the image or release you plan to use.
+1. Read the <a href={governingLicenseUrl}>complete governing license</a> shipped with the release you plan to use.
+2. Keep LocalCloud within the permitted non-production workflows.
+3. Check the compatibility contract for the services and operations your workflow needs.
+4. Validate authorized production behavior against real Google Cloud.
 
-For questions about the agreement or commercial licensing, contact [data.oculus.llc@gmail.com](mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20commercial%20licensing%20inquiry).
+For questions about the agreement, contact [data.oculus.llc@gmail.com](mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20license%20question).

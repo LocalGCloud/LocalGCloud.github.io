@@ -7,14 +7,14 @@ const pricingUrl = new URL(productFacts.pricingPath, productFacts.siteUrl).toStr
 const structuredData = [
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
-    { name: 'Pricing', url: pricingUrl },
+    { name: 'Free Public Preview', url: pricingUrl },
   ]),
 ];
 ---
 
 <LandingLayout
-  title="Pricing"
-  description="LocalCloud is free for individual developers, students, and nonprofit organizations. For-profit companies can contact us for commercial licensing."
+  title="Free Public Preview"
+  description="LocalCloud is free for individuals and organizations during public preview for local development, testing, CI, evaluation, and internal pilots."
   {structuredData}
 >
   <PricingWorkbench />

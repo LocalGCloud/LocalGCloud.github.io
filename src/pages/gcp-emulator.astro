@@ -38,11 +38,11 @@ const faqItems = [
   },
   {
     q: 'Is LocalCloud free?',
-    a: 'The proprietary Community License is free for individual developers acting personally, students acting personally or academically, and nonprofit organizations supporting their mission. For-profit companies require a separate Commercial License.',
+    a: 'The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for non-production development, testing, CI, evaluation, and internal pilots.',
   },
   {
     q: 'Can I use LocalCloud in CI?',
-    a: 'The runtime can be containerized, but organization and team-CI use is excluded by the current governing license. Do not infer legal permission from technical tier availability.',
+    a: 'Yes. The Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Exact runner networking and service-container behavior must still be tested.',
   },
 ];
 
@@ -50,7 +50,7 @@ const pageUrl = new URL('gcp-emulator/', productFacts.siteUrl).toString();
 const structuredData = [
   createSoftwareApplicationSchema(
     pageUrl,
-    'LocalCloud runs bounded Google Cloud service workflows locally in Docker for permitted personal learning, evaluation, and non-commercial projects.',
+    'LocalCloud runs bounded Google Cloud service workflows locally in Docker for non-production development, testing, CI, evaluation, and internal pilots.',
   ),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
@@ -257,9 +257,9 @@ const structuredData = [
           </p>
         </article>
         <article class="site-panel p-5">
-          <span class="site-kicker">Personal automation</span>
+          <span class="site-kicker">Internal automation</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            The Community License covers qualifying individual, student, and nonprofit workflows. A for-profit company must obtain a separate Commercial License before using LocalCloud in automation or team CI.
+            The Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud in ongoing internal automation and team CI.
           </p>
         </article>
         <article class="site-panel p-5">
@@ -269,9 +269,9 @@ const structuredData = [
           </p>
         </article>
         <article class="site-panel p-5">
-          <span class="site-kicker">Repeatable personal setup</span>
+          <span class="site-kicker">Repeatable team setup</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            The CLI can standardize local startup for a permitted personal project. It does not grant permission for employer or organization onboarding.
+            The CLI can standardize local startup for individual and organization projects within the Public Preview License's non-production boundary.
           </p>
         </article>
         <article class="site-panel p-5">
