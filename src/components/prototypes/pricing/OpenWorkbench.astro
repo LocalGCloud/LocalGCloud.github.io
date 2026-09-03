@@ -110,7 +110,6 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
     align-items: end;
     gap: 3rem;
     padding-bottom: 2.5rem;
-    animation: open-workbench-enter 240ms cubic-bezier(0.2, 0, 0, 1) both;
   }
 
   .open-workbench__kicker,
@@ -141,6 +140,7 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
     color: var(--text-2);
     font-size: 1.03rem;
     line-height: 1.72;
+    text-wrap: pretty;
   }
 
   .open-workbench__board {
@@ -151,14 +151,11 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
     border-radius: 1.1rem;
     background: var(--surface);
     box-shadow: 0 24px 60px -42px rgba(32, 33, 36, 0.28);
-    animation: open-workbench-enter 240ms 80ms cubic-bezier(0.2, 0, 0, 1) both;
   }
 
   .open-workbench__community {
     padding: clamp(2rem, 5vw, 4rem);
-    background-image: linear-gradient(var(--line) 1px, transparent 1px);
-    background-size: 100% 3.65rem;
-    background-position: 0 2rem;
+    background: var(--surface);
   }
 
   .open-workbench__plan-heading {
@@ -185,8 +182,9 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
     background: var(--success-soft);
     color: var(--success);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     letter-spacing: 0.08em;
+    white-space: nowrap;
     text-transform: uppercase;
   }
 
@@ -196,6 +194,7 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
     color: var(--text-2);
     font-size: 1.08rem;
     line-height: 1.72;
+    text-wrap: pretty;
   }
 
   .open-workbench__audiences {
@@ -211,13 +210,12 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
     align-items: start;
     padding: 1rem 0;
     border-bottom: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.84);
   }
 
   .open-workbench__audiences > div > span {
     color: var(--accent-strong);
     font-family: var(--font-mono);
-    font-size: 0.73rem;
+    font-size: 0.75rem;
   }
 
   .open-workbench__audiences p {
@@ -235,6 +233,7 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
     color: var(--text-2);
     font-size: 0.86rem;
     line-height: 1.55;
+    text-wrap: pretty;
   }
 
   .open-workbench__actions {
@@ -309,6 +308,7 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
     margin-top: 1.35rem;
     font-size: 0.96rem;
     line-height: 1.68;
+    text-wrap: pretty;
   }
 
   .open-workbench__commercial-rule {
@@ -329,9 +329,9 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
   }
 
   .open-workbench__commercial dt {
-    color: rgba(255, 255, 255, 0.58);
+    color: rgba(255, 255, 255, 0.76);
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
@@ -385,7 +385,7 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
   .open-workbench__shared > span:last-child {
     color: var(--text-3);
     font-family: var(--font-mono);
-    font-size: 0.69rem;
+    font-size: 0.75rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -402,7 +402,7 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
     margin-top: 1rem;
     color: var(--text-3);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     text-align: center;
   }
 
@@ -414,6 +414,16 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
   @keyframes open-workbench-enter {
     from { opacity: 0; transform: translateY(0.55rem); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .open-workbench__hero {
+      animation: open-workbench-enter 240ms cubic-bezier(0.2, 0, 0, 1) both;
+    }
+
+    .open-workbench__board {
+      animation: open-workbench-enter 240ms 80ms cubic-bezier(0.2, 0, 0, 1) both;
+    }
   }
 
   @media (max-width: 800px) {
@@ -449,10 +459,13 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
   }
 
   @media (max-width: 520px) {
-    .open-workbench__plan-heading,
     .open-workbench__actions {
       align-items: flex-start;
       flex-direction: column;
+    }
+
+    .open-workbench__plan-heading {
+      align-items: center;
     }
 
     .open-workbench__audiences p {
@@ -466,11 +479,6 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .open-workbench__hero,
-    .open-workbench__board {
-      animation: none;
-    }
-
     .open-workbench__button {
       transition: none;
     }
