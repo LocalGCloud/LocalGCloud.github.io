@@ -1,5 +1,4 @@
-import { readFile, access } from 'node:fs/promises';
-import { constants } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { productFacts } from '../src/data/productFacts.ts';
 
@@ -11,6 +10,7 @@ const llms = await readFile(publicPath('llms.txt'), 'utf8');
 for (const required of [
   productFacts.availabilityStatement,
   new URL(productFacts.licensingPath, productFacts.siteUrl).toString(),
+  new URL(productFacts.pricingPath, productFacts.siteUrl).toString(),
   'https://local.cloud/compatibility/',
   'https://local.cloud/localstack-for-google-cloud/',
 ]) {
@@ -25,17 +25,12 @@ for (const prohibited of [/\benterprise\b/i, /sales@/i, /\$\d/, /\bprice\s*:/i])
 }
 
 try {
-  await access(publicPath('pricing.md'), constants.F_OK);
-  errors.push('public/pricing.md must not be published');
+  const pricing = await readFile(new URL('../dist/pricing/index.html', import.meta.url), 'utf8');
+  for (const required of ['Community', 'Commercial', 'Contact us', productFacts.commercialContactEmail]) {
+    if (!pricing.includes(required)) errors.push(`rendered pricing page must contain ${required}`);
+  }
 } catch {
-  // Expected: public pricing is intentionally absent.
-}
-
-try {
-  await access(new URL('../dist/pricing/index.html', import.meta.url), constants.F_OK);
-  errors.push('dist/pricing/index.html must not be published');
-} catch {
-  // Expected: no human-readable public pricing route.
+  errors.push('dist/pricing/index.html must be published');
 }
 
 if (errors.length) {

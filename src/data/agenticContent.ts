@@ -530,7 +530,7 @@ export const workflowPages: AgenticContentPage[] = [
 			"Check LocalCloud license eligibility before using a GitHub Actions runner, then apply readiness checks and localhost SDK endpoints to a permitted personal workflow.",
 		h1: "LocalCloud and GitHub Actions eligibility",
 		deck:
-			"The current license excludes employer, organization, commercial, shared-team, and team-CI use. Continue only for a permitted personal, non-commercial repository.",
+			"The Community License covers eligible individual, student, and nonprofit workflows. A for-profit company must obtain a separate Commercial License before using LocalCloud in a repository or team CI.",
 		promptIds: ["ci", "quickstart"],
 		quickFacts: [
 			"No GCP secrets are required for the bounded local job.",

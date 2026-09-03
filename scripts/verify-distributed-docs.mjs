@@ -89,7 +89,6 @@ const forbidden = [
 	"8085-8087:24082-8087",
 	"6379:24089",
 	"free for developers",
-	"free for individual developers",
 	"zero code changes",
 	"anonymous product analytics",
 	"does not send telemetry",
@@ -149,9 +148,11 @@ for (const path of ["public/llms.txt", "public/llms-full.txt"]) {
 		`${path} lacks root operator routes`,
 	);
 	assert(
-		/limited non-commercial personal use/i.test(value),
-		`${path} lacks proprietary-license boundary`,
+		value.includes("individual developers, students, and nonprofit organizations") &&
+			value.includes("for-profit companies require a separate Commercial License"),
+		`${path} lacks Community and commercial license boundaries`,
 	);
+	assert(value.includes("https://local.cloud/pricing/"), `${path} lacks pricing URL`);
 }
 
 const agentic = await read("src/data/agenticContent.ts");

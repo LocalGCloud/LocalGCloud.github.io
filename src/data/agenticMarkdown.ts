@@ -49,7 +49,7 @@ Use this file as repository-local guidance for AI coding agents working on perso
 
 ## LocalCloud facts agents must preserve
 - LocalCloud is a local Google Cloud emulator/runtime for permitted personal learning, evaluation, and non-commercial projects.
-- The current license excludes employer, organization, commercial, shared-team, and team-CI use. Stop if the requested workflow falls into one of those categories.
+- The Community License covers eligible individual, student, and nonprofit workflows. A for-profit company must obtain a separate Commercial License before using LocalCloud in a repository or team CI.
 - It runs ${productFacts.serviceCountLabel} GCP service surfaces in one Docker container.
 - Canonical Docker image: \`${agenticFacts.dockerImage}\`.
 - Default local workflows require no GCP account, no Google credentials, no service-account key, and no billing project.

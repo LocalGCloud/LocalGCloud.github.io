@@ -1,9 +1,11 @@
 ---
+import { productFacts } from '../data/productFacts';
+
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const docsHref = `${base}docs/`;
 const licenseHref = `${base}docs/licensing/`;
-const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20commercial%20licensing%20inquiry';
+const contactHref = productFacts.commercialContactUrl;
 ---
 
 <section class="open-workbench" aria-labelledby="open-workbench-title">
@@ -26,11 +28,11 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
             <span class="open-workbench__label">Community</span>
             <h2 id="open-workbench-community">Free</h2>
           </div>
-          <span class="open-workbench__marker">Open access</span>
+          <span class="open-workbench__marker">Eligible use</span>
         </div>
 
         <p class="open-workbench__intro">
-          Build, learn, teach, research, and serve a nonprofit mission with the complete LocalCloud experience.
+          Build, learn, teach, research, and serve a nonprofit mission under the Community License.
         </p>
 
         <div class="open-workbench__audiences" aria-label="Eligible Community users">
@@ -64,7 +66,7 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
         <dl>
           <div>
             <dt>Product</dt>
-            <dd>Complete LocalCloud</dd>
+            <dd>LocalCloud</dd>
           </div>
           <div>
             <dt>Terms</dt>
@@ -82,13 +84,13 @@ const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20comme
 
       <div class="open-workbench__shared">
         <span class="open-workbench__shared-mark" aria-hidden="true"></span>
-        <p><strong>One LocalCloud.</strong> The same product and capabilities in both categories.</p>
-        <span>Eligibility sets the license</span>
+        <p><strong>One clear choice.</strong> Your eligibility determines which license you need.</p>
+        <span>License terms control</span>
       </div>
     </div>
 
     <p class="open-workbench__notice">
-      Proposed policy preview. The <a href={licenseHref}>current governing license</a> controls until it is revised.
+      Community use and commercial licensing are governed by the <a href={licenseHref}>LocalCloud license terms</a>.
     </p>
   </div>
 </section>

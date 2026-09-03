@@ -2,7 +2,9 @@
 
 **Date:** 2026-09-03
 
-**Status:** Approved for prototype implementation
+**Status:** Completed and promoted to production
+
+**Outcome (2026-09-03):** The user selected Open Workbench. The governing runtime license was revised to support the advertised Community and Commercial paths, the selected direction was promoted to `/pricing/`, and the isolated prototype route was removed.
 
 **Prototype route:** `/prototypes/pricing/`
 

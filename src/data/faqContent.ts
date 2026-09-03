@@ -22,7 +22,7 @@ export const faqSections: FaqSection[] = [
       {
         question: 'Is LocalCloud free?',
         answer:
-          'The governing repository license permits limited personal, non-commercial use by an individual developer and excludes employer, organization, commercial-development, cost-saving, internal-tool, and team-CI use. No commercial license is currently offered by that text. Read the Licensing page and governing license before use; do not rely on broader marketing or package-metadata wording.',
+          'Yes for individual developers acting personally, students acting personally or academically, and legally organized nonprofit organizations supporting their nonprofit mission. Any use by or for a for-profit company requires a separate written commercial license. Read the Licensing page and governing license for the exact terms.',
       },
       {
         question: 'What is the recommended setup?',
@@ -54,7 +54,7 @@ export const faqSections: FaqSection[] = [
       {
         question: 'Can I use LocalCloud in CI/CD?',
         answer:
-          'The runtime can technically run in Docker-based CI, but the current governing proprietary license excludes organization and team-CI use. A technically possible workflow is not necessarily licensed. If that boundary changes, keep local CI credentialless and validate against real Google Cloud in a separate guarded release step.',
+          'The runtime can technically run in Docker-based CI. A nonprofit organization may use it for qualifying mission-related workflows under the Community License; a for-profit company must first obtain a separate commercial license. Keep local CI credentialless and validate release behavior against real Google Cloud in a separate guarded step.',
       },
     ],
   },

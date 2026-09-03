@@ -382,16 +382,15 @@
   "licensing": {
     "status": "verified",
     "governingLicense": "../localcloud/LICENSE",
-    "summary": "The proprietary license permits limited non-commercial personal use by an Individual Developer acting personally; the license text governs.",
-    "permittedUse": "Limited non-commercial personal use by an Individual Developer acting personally.",
+    "summary": "The proprietary Community License permits royalty-free Community Use by individual developers, students, and nonprofit organizations; for-profit companies require a separate Commercial License.",
+    "permittedUse": "Community Use by individual developers acting personally, students acting personally or academically, and legally organized nonprofit organizations supporting their nonprofit mission.",
     "excludedUse": [
-      "employer or organization use",
-      "commercial development",
-      "cost-saving internal tools",
-      "team CI",
-      "shared team workflows"
+      "for-profit company use without a separate Commercial License",
+      "work for a for-profit employer or client under the Community License",
+      "commercial product development without a Commercial License",
+      "business operations or team CI without a Commercial License"
     ],
-    "commercialLicenseAvailable": false,
+    "commercialLicenseAvailable": true,
     "technicalEnforcement": {
       "developmentBuild": "Enforcement may be disabled and technical Pro access granted.",
       "enforcedBuild": "LOCALCLOUD_API_KEY is required; validation failure terminates startup.",
@@ -404,6 +403,7 @@
     },
     "limitations": [
       "Technical tier availability does not grant legal permission.",
+      "Contacting LocalCloud does not grant commercial rights; a separate written Commercial License must take effect.",
       "Conflicting Apache-2.0 package or OCI metadata does not override the governing root LICENSE."
     ],
     "evidence": [

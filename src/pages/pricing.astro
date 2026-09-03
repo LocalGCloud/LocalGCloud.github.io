@@ -1,0 +1,21 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import PricingWorkbench from '../components/PricingWorkbench.astro';
+import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
+
+const pricingUrl = new URL(productFacts.pricingPath, productFacts.siteUrl).toString();
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Pricing', url: pricingUrl },
+  ]),
+];
+---
+
+<LandingLayout
+  title="Pricing"
+  description="LocalCloud is free for individual developers, students, and nonprofit organizations. For-profit companies can contact us for commercial licensing."
+  {structuredData}
+>
+  <PricingWorkbench />
+</LandingLayout>

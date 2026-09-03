@@ -22,6 +22,11 @@ const navLinks = [
     isActive: currentPath.startsWith(`${base}ai`),
   },
   {
+    label: 'Pricing',
+    href: `${base}pricing/`,
+    isActive: currentPath.startsWith(`${base}pricing`),
+  },
+  {
     label: 'GCP Emulator',
     href: `${base}gcp-emulator/`,
     isActive: currentPath.startsWith(`${base}gcp-emulator`),
@@ -56,7 +61,7 @@ const navLinks = [
 
     <nav class="site-nav" aria-label="Primary">
       {navLinks.map((link) => (
-        <a href={link.href} class:list={['site-nav__link', link.isActive && 'is-active']}>
+        <a href={link.href} class:list={['site-nav__link', link.isActive && 'is-active']} aria-current={link.isActive ? 'page' : undefined}>
           {link.label}
         </a>
       ))}
@@ -78,7 +83,7 @@ const navLinks = [
   <div id="site-nav-mobile" class="site-nav__mobile" hidden>
     <div class="container site-nav__mobile-links">
       {navLinks.map((link) => (
-        <a href={link.href} class:list={[link.isActive && 'is-active']}>
+        <a href={link.href} class:list={[link.isActive && 'is-active']} aria-current={link.isActive ? 'page' : undefined}>
           {link.label}
         </a>
       ))}

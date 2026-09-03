@@ -23,6 +23,8 @@ const paths = [
 	"src/data/faqContent.ts",
 	"src/layouts/BaseLayout.astro",
 	"src/components/Footer.astro",
+	"src/components/Header.astro",
+	"src/components/PricingWorkbench.astro",
 	"src/components/SearchModal.astro",
 	"src/components/DocFeedback.astro",
 	"src/components/FeedbackFab.astro",
@@ -32,6 +34,7 @@ const paths = [
 	"src/data/productFacts.ts",
 	"src/data/agenticFacts.ts",
 	"src/data/agenticContent.ts",
+	"src/pages/pricing.astro",
 	"public/llms.txt",
 ];
 const docs = new Map(
@@ -75,19 +78,34 @@ for (const destination of [
 const licensing = docs.get("src/pages/docs/licensing.mdx");
 for (const phrase of [
 	"Individual Developer",
-	"personal non-commercial projects",
-	"employer or organization",
-	"team CI",
-	"internal business tools",
-	"generates revenue, savings, or commercial advantage",
-	"no commercial license is currently offered or available",
+	"Students",
+	"Nonprofit organizations",
+	"production use supporting the nonprofit mission",
+	"for-profit company requires a separate written Commercial License",
+	"data.oculus.llc@gmail.com",
 	"Technical availability is not legal permission",
 ])
 	assert(licensing.includes(phrase), `licensing reference omits ${phrase}`);
 
+const pricing = docs.get("src/components/PricingWorkbench.astro");
 for (const phrase of [
-	"free for developers",
-	"free for individual developers",
+	"Individual developers",
+	"Students",
+	"Nonprofit organizations",
+	"Contact us",
+	"commercial license",
+])
+	assert(pricing.includes(phrase), `pricing page omits ${phrase}`);
+assert(!/\$\d/.test(pricing), "pricing page publishes a numeric price");
+
+const header = docs.get("src/components/Header.astro");
+assert(
+	header.indexOf("label: 'AI'") < header.indexOf("label: 'Pricing'") &&
+		header.indexOf("label: 'Pricing'") < header.indexOf("label: 'GCP Emulator'"),
+	"Pricing navigation must appear immediately after AI",
+);
+
+for (const phrase of [
 	"anonymous product analytics",
 	"does not send telemetry",
 	"phone home",
@@ -114,7 +132,7 @@ for (const path of [
 ]) {
 	const source = docs.get(path);
 	assert(
-		source.includes("proprietary license"),
+		source.includes("Commercial License"),
 		`${path} lacks adjacent licensing gate`,
 	);
 	assert(

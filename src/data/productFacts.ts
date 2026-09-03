@@ -34,10 +34,13 @@ export const productFacts = {
 	logoUrl: "https://local.cloud/brand/localcloud-mark.svg",
 	companyName: "LocalCloud Inc.",
 	companyAddress: "5365 California Street, Palo Alto, CA",
+	commercialContactEmail: "data.oculus.llc@gmail.com",
+	commercialContactUrl:
+		"mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20commercial%20licensing%20inquiry",
 	serviceCountLabel: String(availableServiceCount),
-	availabilityStatement:
-		"Use is governed by the proprietary LocalCloud license; review the license before use.",
+	availabilityStatement: docsContract.licensing.summary,
 	licensingPath: "/docs/licensing/",
+	pricingPath: "/pricing/",
 	category: "Local Google Cloud emulator",
 	description:
 		"LocalCloud provides documented Google Cloud service workflows in one local Docker container. Use is governed by the proprietary license, and compatibility depends on the service, client, and endpoint configuration.",

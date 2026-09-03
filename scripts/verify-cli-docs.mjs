@@ -120,10 +120,6 @@ const forbidden = [
 	{ pattern: "-v /var/run/docker.sock", label: "beginner Docker socket mount" },
 	{ pattern: "zero code changes", label: "blanket code-compatibility claim" },
 	{ pattern: "free for developers", label: "unsafe licensing claim" },
-	{
-		pattern: "free for individual developers",
-		label: "unsafe licensing claim",
-	},
 	{ pattern: "96% SQL", label: "unsupported coverage percentage" },
 	{ pattern: "95% feature", label: "unsupported coverage percentage" },
 	{ pattern: "813 passing", label: "unsupported exact test total" },

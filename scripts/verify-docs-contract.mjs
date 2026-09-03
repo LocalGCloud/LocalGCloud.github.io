@@ -153,7 +153,7 @@ evidence(contract.licensing.evidence, 'licensing.evidence');
 exactKeys(contract.licensing.technicalEnforcement, ['developmentBuild', 'enforcedBuild', 'serviceTiers', 'evidence'], 'licensing.technicalEnforcement');
 for (const key of ['developmentBuild', 'enforcedBuild', 'serviceTiers']) string(contract.licensing.technicalEnforcement[key], `licensing.technicalEnforcement.${key}`);
 evidence(contract.licensing.technicalEnforcement.evidence, 'licensing.technicalEnforcement.evidence');
-assert(contract.licensing.commercialLicenseAvailable === false, 'commercial license availability drifted');
+assert(contract.licensing.commercialLicenseAvailable === true, 'commercial license availability drifted');
 
 const serviceIds = contract.services.map((service) => service.id);
 const uniqueIds = new Set(serviceIds);

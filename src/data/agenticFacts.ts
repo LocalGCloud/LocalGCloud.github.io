@@ -61,7 +61,7 @@ export const agenticFacts = {
 	terraformEnvCommand: "localcloud env --format terraform",
 	productionBoundary: productFacts.productionBoundary,
 	noCredentialBoundary:
-		"Permitted personal workflows use local endpoint values and should stop rather than fall back to real Google Cloud or real credentials. The current license excludes employer, organization, commercial, and team-CI use.",
+		"Permitted workflows use local endpoint values and should stop rather than fall back to real Google Cloud or real credentials. The Community License covers eligible individual, student, and nonprofit use; a for-profit company requires a separate Commercial License.",
 	releaseGuardrail:
 		"Before production deployment, unset LocalCloud emulator environment variables and validate behavior against real Google Cloud.",
 	evidence: {
