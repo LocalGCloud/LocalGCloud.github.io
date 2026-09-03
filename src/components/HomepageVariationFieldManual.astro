@@ -47,16 +47,12 @@ const atlasSlots = atlasCategorySlots
     <section class="field-hero">
       <div class="field-hero__copy">
         <h1 class="field-hero__headline">
-          <span class="field-hero__headline-main">Run Google Cloud</span>
-          <span class="field-hero__headline-tag">Locally.</span>
+          <span class="field-hero__headline-main">Google Cloud</span>
+          <span class="field-hero__headline-tag">In-a-Box.</span>
         </h1>
 
         <p class="field-intro">
-          LocalCloud is a local Google Cloud emulator in one Docker container &mdash; and a credentialless cloud sandbox for AI coding agents. Run {availableServiceCount} Google Cloud services locally, export SDK endpoints, and inspect documented compatibility limits.
-        </p>
-
-        <p class="field-intro-secondary">
-          Point the standard Google Cloud SDKs at localhost for BigQuery, Pub/Sub, Spanner, Bigtable, and Cloud Storage. No cloud project, no service-account keys, no billing account by default.
+          Run {availableServiceCount} Google Cloud services locally. Use the CLI to choose safe loopback ports, export SDK settings, and inspect documented compatibility limits.
         </p>
 
         <div class="field-actions">
@@ -66,13 +62,13 @@ const atlasSlots = atlasCategorySlots
 
         <ul class="field-signal-strip">
           {heroSignals.map((signal) => (
-            <li class="field-signal">
-              <div class="field-signal__value">{signal.value}</div>
-              <div class="field-signal__meta">
-                <div class="field-signal__label">{signal.label}</div>
-                <div class="field-signal__note">{signal.note}</div>
-              </div>
-            </li>
+              <li class="field-signal">
+                <div class="field-signal__value">{signal.value}</div>
+                <div class="field-signal__meta">
+                  <div class="field-signal__label">{signal.label}</div>
+                  <div class="field-signal__note">{signal.note}</div>
+                </div>
+              </li>
           ))}
         </ul>
       </div>
@@ -82,21 +78,25 @@ const atlasSlots = atlasCategorySlots
             src={heroIllustration.src}
             alt={heroIllustration.alt}
             class="field-board__image"
+            width="1200"
+            height="760"
+            fetchpriority="high"
+            decoding="async"
         />
       </figure>
     </section>
 
     <InstallationMethods />
-    <section class="field-ribbon">
-      <article class="field-ribbon__item">
+    <section class="field-ribbon stagger">
+      <article class="field-ribbon__item reveal">
         <span class="field-stamp">SDK-shaped workflows</span>
         <div>Use supported Google Cloud clients with the local endpoints returned by <code>localcloud env</code>.</div>
       </article>
-      <article class="field-ribbon__item">
+      <article class="field-ribbon__item reveal">
         <span class="field-stamp">Faster Inner Loop</span>
         <div>Stay local while you build and test. Switch to shared cloud environments when ready.</div>
       </article>
-      <article class="field-ribbon__item">
+      <article class="field-ribbon__item reveal">
         <span class="field-stamp">Fully Inspectable</span>
         <div>Built-in console, health endpoints, env export, and seeded sample data make the runtime transparent.</div>
       </article>
@@ -104,16 +104,16 @@ const atlasSlots = atlasCategorySlots
 
 
     <section class="field-atlas">
-      <div class="field-section-heading">
-        <!--<span class="field-kicker">Service Catalog</span>-->
-        <h2>Service Catalog:</h2>
+      <div class="field-section-heading reveal">
+        <span class="field-kicker">Service Catalog</span>
+        <h2>{availableServiceCount} Google Cloud services, running locally.</h2>
       </div>
 
       <div class="field-atlas__grid">
         {atlasSlots.map((slot) => (
           <div class:list={['field-atlas__slot', slot.length > 1 && 'field-atlas__slot--split']}>
             {slot.map((column) => (
-              <article class:list={['field-column', `field-column--${column.tone}`]}>
+              <article class:list={['field-column', 'reveal', `field-column--${column.tone}`]}>
                 <div class="field-column__head">
                   <span class="field-kicker">{column.title}</span>
                   <p>{column.note}</p>
@@ -150,43 +150,43 @@ const atlasSlots = atlasCategorySlots
     </section>
 
     <section class="field-blog">
-      <div class="field-section-heading">
+      <div class="field-section-heading reveal">
         <span class="field-kicker">Where to go next</span>
-        <h3>Guides for Google Cloud local development.</h3>
+        <h2>Guides for Google Cloud local development.</h2>
       </div>
 
-      <div class="field-blog__grid">
-        <article class="field-story__card">
+      <div class="field-blog__grid stagger">
+        <article class="field-story__card reveal">
           <span class="field-kicker">AI Agents</span>
           <h3><a href={`${base}local-cloud-for-ai-agents/`}>A Local Cloud for AI Coding Agents</a></h3>
           <p>A code sandbox isolates where an agent runs. LocalCloud gives that code a cloud to talk to, with no credentials by default.</p>
         </article>
 
-        <article class="field-story__card">
+        <article class="field-story__card reveal">
           <span class="field-kicker">Emulator</span>
           <h3><a href={`${base}bigquery-emulator/`}>Run BigQuery Locally</a></h3>
           <p>Develop bounded BigQuery dataset, query, and API workflows locally, with per-operation status and documented limits.</p>
         </article>
 
-        <article class="field-story__card">
+        <article class="field-story__card reveal">
           <span class="field-kicker">Comparison</span>
           <h3><a href={`${base}compare/`}>LocalCloud vs the Alternatives</a></h3>
           <p>Balanced comparisons against LocalStack, localgcp, Google's own emulators, and hosted agent sandboxes.</p>
         </article>
 
-        <article class="field-story__card">
+        <article class="field-story__card reveal">
           <span class="field-kicker">CI / CD</span>
           <h3><a href={`${base}gcp-integration-testing/`}>Local GCP Integration Testing</a></h3>
           <p>Run integration checks against local endpoints with health gates, pinned image identity, and explicit production validation.</p>
         </article>
 
-        <article class="field-story__card">
+        <article class="field-story__card reveal">
           <span class="field-kicker">Guide</span>
           <h3><a href={`${base}how-to-run-google-cloud-locally/`}>How to Run Google Cloud Locally</a></h3>
           <p>Install the CLI, start a loopback-bound runtime, and configure workflows across every available service.</p>
         </article>
 
-        <article class="field-story__card">
+        <article class="field-story__card reveal">
           <span class="field-kicker">Reference</span>
           <h3><a href={`${base}glossary/`}>Local Cloud and Agent Glossary</a></h3>
           <p>Precise definitions for agent environment, cloud emulator, credentialless testing, and the terms around them.</p>
@@ -240,6 +240,10 @@ const atlasSlots = atlasCategorySlots
     display: grid;
     gap: 1.5rem;
     padding: 1.5rem 0 2rem;
+  }
+
+  .field-hero .field-intro {
+    max-width: 34rem;
   }
 
   .field-actions,
@@ -410,13 +414,24 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-board__figure {
+    position: relative;
     margin: 0;
     width: min(100%, 38rem);
-    justify-self: end;
-    border-radius: 1rem;
+    justify-self: center;
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
     overflow: hidden;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 249, 250, 0.96));
-    box-shadow: 0 24px 50px -34px rgba(0, 0, 0, 0.28);
+    box-shadow: var(--shadow-lg), 0 24px 50px -34px rgba(0, 0, 0, 0.28);
+  }
+
+  .field-board__figure::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(120% 80% at 20% 0%, rgba(26, 115, 232, 0.07), transparent 60%);
+    pointer-events: none;
   }
 
   .field-board__image {
@@ -460,21 +475,26 @@ const atlasSlots = atlasCategorySlots
 
   .field-section-heading {
     display: grid;
-    gap: 0.6rem;
+    gap: 0.5rem;
     max-width: 44rem;
-    margin: 2.5rem 0 1.5rem;
+    margin: 3rem 0 1.5rem;
+  }
+
+  .field-section-heading h2 {
+    font-size: clamp(1.6rem, 2.8vw, 2.35rem);
   }
 
   .field-atlas__grid,
   .field-atlas__slot {
     display: grid;
+    align-items: start;
     gap: 1rem;
   }
 
   .field-column {
-    padding: 1rem;
+    padding: 1.1rem;
     border: 1px solid var(--line);
-    border-radius: 1rem;
+    border-radius: 1.25rem;
     background: rgba(255, 255, 255, 0.86);
     box-shadow: var(--shadow-md);
   }
@@ -513,16 +533,40 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-service {
+    position: relative;
     padding: 0.85rem;
     border: 1px solid var(--line);
-    border-radius: 0.85rem;
+    border-radius: 0.9rem;
     background: oklch(from var(--surface) l c h / 0.6);
-    transition: border-color 180ms ease, box-shadow 180ms ease;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
   }
 
   .field-service:hover {
+    transform: translateY(-2px);
     border-color: var(--border-hover);
-    box-shadow: 0 4px 16px -8px rgba(26, 115, 232, 0.18);
+    background: var(--surface);
+    box-shadow: 0 12px 24px -16px rgba(26, 115, 232, 0.4);
+  }
+
+  .field-service::after {
+    content: "";
+    position: absolute;
+    top: 1.35rem;
+    right: 0.9rem;
+    width: 0.85rem;
+    height: 0.85rem;
+    background: var(--accent);
+    opacity: 0;
+    transform: translateX(-0.25rem);
+    transition: opacity 180ms ease, transform 180ms ease;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3Cpolyline points='12 5 19 12 12 19'/%3E%3C/svg%3E") center/contain no-repeat;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3Cpolyline points='12 5 19 12 12 19'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+
+  .field-service:hover::after,
+  .field-service:focus-visible::after {
+    opacity: 1;
+    transform: translateX(0);
   }
 
   .field-service__main {
@@ -544,6 +588,7 @@ const atlasSlots = atlasCategorySlots
 
   .field-service strong {
     display: block;
+    padding-right: 1.4rem;
     color: var(--text);
     font-size: 1rem;
   }
@@ -600,22 +645,67 @@ const atlasSlots = atlasCategorySlots
     border-bottom: 1px solid var(--line);
   }
 
+  .field-story__card {
+    position: relative;
+    transition: background 180ms ease;
+  }
+
+  .field-story__card:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
   .field-blog a {
     color: inherit;
     text-decoration: none;
   }
 
-  .field-blog a:hover {
+  /* Make the whole card clickable while keeping the heading as the accessible link. */
+  .field-blog a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 0.75rem;
+  }
+
+  .field-story__card:hover h3 a {
+    color: var(--accent-strong);
     text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .field-blog a:focus-visible::after {
+    outline: 2px solid rgba(26, 115, 232, 0.55);
+    outline-offset: 2px;
   }
 
   .field-cta {
+    position: relative;
     display: grid;
-    gap: 1rem;
+    gap: 1.25rem;
     align-items: end;
-    margin-top: 2rem;
-    padding: 1.5rem;
+    margin-top: 2.5rem;
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    overflow: hidden;
+    border-color: rgba(255, 255, 255, 0.08);
+    border-radius: 1.5rem;
     background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));
+  }
+
+  .field-cta::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(70% 120% at 100% 0%, rgba(138, 180, 248, 0.22), transparent 60%),
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: auto, 2rem 2rem, 2rem 2rem;
+    pointer-events: none;
+  }
+
+  .field-cta > * {
+    position: relative;
+    z-index: 1;
   }
 
   .field-cta h2,
@@ -634,6 +724,20 @@ const atlasSlots = atlasCategorySlots
     gap: 0.8rem;
   }
 
+  .field-cta .field-kicker {
+    color: rgba(232, 234, 237, 0.72);
+  }
+
+  .field-cta h2 {
+    margin-top: 0.5rem;
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+  }
+
+  .field-cta p {
+    margin-top: 0.75rem;
+    max-width: 46ch;
+  }
+
   @media (min-width: 760px) {
     .field-ribbon,
     .field-story,
@@ -646,7 +750,15 @@ const atlasSlots = atlasCategorySlots
     }
 
     .field-ribbon__item {
-      padding: 1rem;
+      padding: 1.15rem 1.25rem;
+    }
+
+    .field-ribbon__item:first-child {
+      padding-left: 0;
+    }
+
+    .field-ribbon__item:last-child {
+      padding-right: 0;
     }
 
     .field-ribbon__item + .field-ribbon__item {
@@ -663,15 +775,17 @@ const atlasSlots = atlasCategorySlots
       align-items: center;
     }
 
-    .field-hero__copy {
-      grid-column: 2;
-      grid-row: 1;
+    .field-hero {
+      gap: clamp(1.5rem, 4vw, 3rem);
     }
 
     .field-board__figure {
-      grid-column: 1;
-      grid-row: 1;
-      justify-self: start;
+      justify-self: end;
+    }
+
+    .field-cta__actions {
+      justify-content: flex-end;
+      align-self: end;
     }
 
     .field-blog__grid {
@@ -682,13 +796,18 @@ const atlasSlots = atlasCategorySlots
       padding: 1rem;
     }
 
+    /* 3-up grid: divide between columns, and between rows after the first. */
     .field-story__card + .field-story__card {
       border-top: 0;
       border-left: 1px solid var(--line);
     }
 
-    .field-atlas__slot--split {
-      grid-template-rows: repeat(2, minmax(0, 1fr));
+    .field-blog__grid .field-story__card:nth-child(3n + 1) {
+      border-left: 0;
+    }
+
+    .field-blog__grid .field-story__card:nth-child(n + 4) {
+      border-top: 1px solid var(--line);
     }
 
     .field-atlas__grid,
