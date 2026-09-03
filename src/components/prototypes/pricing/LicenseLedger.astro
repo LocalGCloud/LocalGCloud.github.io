@@ -1,0 +1,367 @@
+---
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const docsHref = `${base}docs/`;
+const licenseHref = `${base}docs/licensing/`;
+const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20commercial%20licensing%20inquiry';
+---
+
+<section class="license-ledger" aria-labelledby="license-ledger-title">
+  <div class="license-ledger__shell">
+    <header class="license-ledger__hero">
+      <div>
+        <span class="license-ledger__kicker">Use determines the license</span>
+        <h1 id="license-ledger-title">A clear license for<br />the way you work.</h1>
+      </div>
+      <div class="license-ledger__key" aria-label="Pricing principle">
+        <span>LocalCloud pricing principle</span>
+        <p><strong>Community benefit</strong> stays free.</p>
+        <p><strong>For-profit use</strong> requires a commercial license.</p>
+      </div>
+    </header>
+
+    <div class="license-ledger__table" role="table" aria-label="LocalCloud licensing categories">
+      <div class="license-ledger__row license-ledger__row--head" role="row">
+        <div role="columnheader"><span>Decision record</span></div>
+        <div role="columnheader">
+          <span>Community</span>
+          <strong>Free</strong>
+        </div>
+        <div role="columnheader">
+          <span>Commercial</span>
+          <strong>Contact us</strong>
+        </div>
+      </div>
+
+      <div class="license-ledger__row" role="row">
+        <div role="rowheader">Audience</div>
+        <div role="cell">Individual developers, students, and nonprofit organizations</div>
+        <div role="cell">Any for-profit company using LocalCloud for its business</div>
+      </div>
+
+      <div class="license-ledger__row" role="row">
+        <div role="rowheader">Product access</div>
+        <div role="cell">Complete LocalCloud capabilities</div>
+        <div role="cell">Complete LocalCloud capabilities</div>
+      </div>
+
+      <div class="license-ledger__row" role="row">
+        <div role="rowheader">License basis</div>
+        <div role="cell">Personal, educational, academic, or nonprofit use</div>
+        <div role="cell">For-profit company use and business benefit</div>
+      </div>
+
+      <div class="license-ledger__row license-ledger__row--actions" role="row">
+        <div role="rowheader">Next step</div>
+        <div role="cell">
+          <a class="license-ledger__button license-ledger__button--community" href={docsHref}>Get started <span aria-hidden="true">→</span></a>
+        </div>
+        <div role="cell">
+          <a class="license-ledger__button license-ledger__button--commercial" href={contactHref}>Contact us <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="license-ledger__footer">
+      <p><strong>Same product, different eligibility.</strong> There are no feature tiers in this proposal.</p>
+      <a href={licenseHref}>Read the current governing license <span aria-hidden="true">→</span></a>
+    </div>
+
+    <p class="license-ledger__notice">
+      Proposed policy preview. The current governing license controls until it is revised.
+    </p>
+  </div>
+</section>
+
+<style>
+  .license-ledger {
+    min-height: calc(100vh - 4.5rem);
+    padding: clamp(3.5rem, 7vw, 6.5rem) 0 6rem;
+  }
+
+  .license-ledger__shell {
+    width: min(100% - 2rem, 74rem);
+    margin: 0 auto;
+  }
+
+  .license-ledger__hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.55fr);
+    align-items: end;
+    gap: 3rem;
+    padding-bottom: 2.4rem;
+    border-bottom: 1px solid var(--text);
+    animation: license-ledger-enter 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  .license-ledger__kicker {
+    color: var(--accent-strong);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .license-ledger__hero h1 {
+    margin-top: 0.85rem;
+    font-size: clamp(3.2rem, 6.5vw, 6rem);
+    line-height: 0.91;
+    letter-spacing: -0.06em;
+  }
+
+  .license-ledger__key {
+    display: grid;
+    gap: 0.75rem;
+    padding-left: 1.2rem;
+    border-left: 0.28rem solid var(--accent);
+  }
+
+  .license-ledger__key > span {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.69rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .license-ledger__key p {
+    color: var(--text-2);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .license-ledger__key strong {
+    color: var(--text);
+  }
+
+  .license-ledger__table {
+    margin-top: 2.5rem;
+    border-top: 1px solid var(--text);
+    animation: license-ledger-enter 240ms 70ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  .license-ledger__row {
+    display: grid;
+    grid-template-columns: minmax(10rem, 0.6fr) repeat(2, minmax(0, 1fr));
+    border-bottom: 1px solid var(--line);
+  }
+
+  .license-ledger__row > div {
+    min-width: 0;
+    padding: 1.25rem 1.35rem;
+    color: var(--text-2);
+    font-size: 0.93rem;
+    line-height: 1.58;
+  }
+
+  .license-ledger__row > div + div {
+    border-left: 1px solid var(--line);
+  }
+
+  .license-ledger__row > [role='rowheader'] {
+    padding-left: 0;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .license-ledger__row--head > div {
+    min-height: 8.7rem;
+    padding-top: 1.6rem;
+    background: var(--surface);
+  }
+
+  .license-ledger__row--head > div:first-child {
+    padding-left: 0;
+    background: transparent;
+  }
+
+  .license-ledger__row--head span {
+    display: block;
+    color: var(--accent-strong);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .license-ledger__row--head strong {
+    display: block;
+    margin-top: 0.55rem;
+    color: var(--text);
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 0.96;
+    letter-spacing: -0.05em;
+  }
+
+  .license-ledger__row--head > div:last-child {
+    background: var(--accent-strong);
+  }
+
+  .license-ledger__row--head > div:last-child span,
+  .license-ledger__row--head > div:last-child strong {
+    color: #fff;
+  }
+
+  .license-ledger__row--actions > div {
+    padding-top: 1.4rem;
+    padding-bottom: 1.4rem;
+  }
+
+  .license-ledger__button {
+    display: inline-flex;
+    width: 100%;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 1rem;
+    border: 1px solid var(--accent-strong);
+    border-radius: 0.55rem;
+    font-size: 0.91rem;
+    font-weight: 600;
+    transition-property: color, background-color, transform;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  .license-ledger__button:active {
+    transform: scale(0.96);
+  }
+
+  .license-ledger__button--community {
+    background: var(--surface);
+    color: var(--accent-strong);
+  }
+
+  .license-ledger__button--community:hover {
+    background: var(--accent-soft);
+  }
+
+  .license-ledger__button--commercial {
+    background: var(--accent-strong);
+    color: #fff;
+  }
+
+  .license-ledger__button--commercial:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .license-ledger__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--text);
+  }
+
+  .license-ledger__footer p {
+    color: var(--text-2);
+    font-size: 0.86rem;
+  }
+
+  .license-ledger__footer strong {
+    color: var(--text);
+  }
+
+  .license-ledger__footer a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--accent-strong);
+    font-size: 0.84rem;
+    font-weight: 600;
+  }
+
+  .license-ledger__notice {
+    margin-top: 1rem;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-align: center;
+  }
+
+  @keyframes license-ledger-enter {
+    from { opacity: 0; transform: translateY(0.55rem); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 720px) {
+    .license-ledger {
+      padding-top: 3rem;
+    }
+
+    .license-ledger__hero {
+      grid-template-columns: 1fr;
+      gap: 1.8rem;
+    }
+
+    .license-ledger__hero h1 {
+      font-size: clamp(3rem, 14vw, 4.8rem);
+    }
+
+    .license-ledger__row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .license-ledger__row > [role='rowheader'],
+    .license-ledger__row--head > div:first-child {
+      grid-column: 1 / -1;
+      min-height: auto;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .license-ledger__row > div:nth-child(2) {
+      border-left: 0;
+    }
+
+    .license-ledger__row--head > div:nth-child(2),
+    .license-ledger__row--head > div:nth-child(3) {
+      min-height: 7.2rem;
+      padding: 1rem;
+    }
+
+    .license-ledger__row:not(.license-ledger__row--head) > div:not([role='rowheader']) {
+      padding: 1rem;
+      font-size: 0.84rem;
+    }
+
+    .license-ledger__row--actions .license-ledger__button {
+      min-height: 4.25rem;
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.1rem;
+    }
+
+    .license-ledger__footer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .license-ledger__row--head strong {
+      font-size: 1.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .license-ledger__hero,
+    .license-ledger__table {
+      animation: none;
+    }
+
+    .license-ledger__button {
+      transition: none;
+    }
+  }
+</style>

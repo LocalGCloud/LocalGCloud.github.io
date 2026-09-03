@@ -1,0 +1,478 @@
+---
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const docsHref = `${base}docs/`;
+const licenseHref = `${base}docs/licensing/`;
+const contactHref = 'mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20commercial%20licensing%20inquiry';
+---
+
+<section class="open-workbench" aria-labelledby="open-workbench-title">
+  <div class="open-workbench__shell">
+    <header class="open-workbench__hero">
+      <div>
+        <span class="open-workbench__kicker">Simple licensing</span>
+        <h1 id="open-workbench-title">Build freely.<br /><span>Bring business use to the table.</span></h1>
+      </div>
+      <p>
+        LocalCloud is free for individual developers, students, and nonprofit organizations.
+        For-profit companies can contact us for a commercial license.
+      </p>
+    </header>
+
+    <div class="open-workbench__board">
+      <article class="open-workbench__community" aria-labelledby="open-workbench-community">
+        <div class="open-workbench__plan-heading">
+          <div>
+            <span class="open-workbench__label">Community</span>
+            <h2 id="open-workbench-community">Free</h2>
+          </div>
+          <span class="open-workbench__marker">Open access</span>
+        </div>
+
+        <p class="open-workbench__intro">
+          Build, learn, teach, research, and serve a nonprofit mission with the complete LocalCloud experience.
+        </p>
+
+        <div class="open-workbench__audiences" aria-label="Eligible Community users">
+          <div>
+            <span aria-hidden="true">01</span>
+            <p><strong>Individual developers</strong><small>Personal learning, projects, and experimentation.</small></p>
+          </div>
+          <div>
+            <span aria-hidden="true">02</span>
+            <p><strong>Students</strong><small>Coursework, research, and building new skills.</small></p>
+          </div>
+          <div>
+            <span aria-hidden="true">03</span>
+            <p><strong>Nonprofit organizations</strong><small>Work that supports a nonprofit organization’s mission.</small></p>
+          </div>
+        </div>
+
+        <div class="open-workbench__actions">
+          <a class="open-workbench__button open-workbench__button--primary" href={docsHref}>Get started <span aria-hidden="true">→</span></a>
+          <a class="open-workbench__text-link" href={licenseHref}>Read the license</a>
+        </div>
+      </article>
+
+      <aside class="open-workbench__commercial" aria-labelledby="open-workbench-commercial">
+        <span class="open-workbench__label">Commercial</span>
+        <h2 id="open-workbench-commercial">Contact us</h2>
+        <p>For any for-profit company using LocalCloud for its business.</p>
+
+        <div class="open-workbench__commercial-rule"></div>
+
+        <dl>
+          <div>
+            <dt>Product</dt>
+            <dd>Complete LocalCloud</dd>
+          </div>
+          <div>
+            <dt>Terms</dt>
+            <dd>Commercial license</dd>
+          </div>
+          <div>
+            <dt>Next step</dt>
+            <dd>Tell us how you plan to use it</dd>
+          </div>
+        </dl>
+
+        <a class="open-workbench__button open-workbench__button--inverse" href={contactHref}>Contact us <span aria-hidden="true">↗</span></a>
+        <a class="open-workbench__commercial-link" href={licenseHref}>Read the license</a>
+      </aside>
+
+      <div class="open-workbench__shared">
+        <span class="open-workbench__shared-mark" aria-hidden="true"></span>
+        <p><strong>One LocalCloud.</strong> The same product and capabilities in both categories.</p>
+        <span>Eligibility sets the license</span>
+      </div>
+    </div>
+
+    <p class="open-workbench__notice">
+      Proposed policy preview. The <a href={licenseHref}>current governing license</a> controls until it is revised.
+    </p>
+  </div>
+</section>
+
+<style>
+  .open-workbench {
+    min-height: calc(100vh - 4.5rem);
+    padding: clamp(3.5rem, 8vw, 7.5rem) 0 6rem;
+  }
+
+  .open-workbench__shell {
+    width: min(100% - 2rem, 76rem);
+    margin: 0 auto;
+  }
+
+  .open-workbench__hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.55fr);
+    align-items: end;
+    gap: 3rem;
+    padding-bottom: 2.5rem;
+    animation: open-workbench-enter 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  .open-workbench__kicker,
+  .open-workbench__label {
+    color: var(--accent-strong);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .open-workbench__hero h1 {
+    max-width: 54rem;
+    margin-top: 0.85rem;
+    font-size: clamp(3.2rem, 7vw, 6.6rem);
+    line-height: 0.9;
+    letter-spacing: -0.065em;
+  }
+
+  .open-workbench__hero h1 span {
+    color: var(--accent-strong);
+  }
+
+  .open-workbench__hero > p {
+    max-width: 28rem;
+    padding-bottom: 0.35rem;
+    color: var(--text-2);
+    font-size: 1.03rem;
+    line-height: 1.72;
+  }
+
+  .open-workbench__board {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 1.1rem;
+    background: var(--surface);
+    box-shadow: 0 24px 60px -42px rgba(32, 33, 36, 0.28);
+    animation: open-workbench-enter 240ms 80ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  .open-workbench__community {
+    padding: clamp(2rem, 5vw, 4rem);
+    background-image: linear-gradient(var(--line) 1px, transparent 1px);
+    background-size: 100% 3.65rem;
+    background-position: 0 2rem;
+  }
+
+  .open-workbench__plan-heading {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .open-workbench__plan-heading h2,
+  .open-workbench__commercial h2 {
+    margin-top: 0.45rem;
+    font-size: clamp(3rem, 6vw, 5rem);
+    letter-spacing: -0.06em;
+  }
+
+  .open-workbench__marker {
+    display: inline-flex;
+    min-height: 2rem;
+    align-items: center;
+    padding: 0 0.75rem;
+    border: 1px solid rgba(19, 115, 51, 0.2);
+    border-radius: 999px;
+    background: var(--success-soft);
+    color: var(--success);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .open-workbench__intro {
+    max-width: 39rem;
+    margin-top: 2rem;
+    color: var(--text-2);
+    font-size: 1.08rem;
+    line-height: 1.72;
+  }
+
+  .open-workbench__audiences {
+    display: grid;
+    margin-top: 2.4rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .open-workbench__audiences > div {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.84);
+  }
+
+  .open-workbench__audiences > div > span {
+    color: var(--accent-strong);
+    font-family: var(--font-mono);
+    font-size: 0.73rem;
+  }
+
+  .open-workbench__audiences p {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.75fr) minmax(0, 1.25fr);
+    gap: 1rem;
+  }
+
+  .open-workbench__audiences strong {
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  .open-workbench__audiences small {
+    color: var(--text-2);
+    font-size: 0.86rem;
+    line-height: 1.55;
+  }
+
+  .open-workbench__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .open-workbench__button {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0 1.15rem;
+    border-radius: 0.7rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition-property: color, background-color, transform;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  .open-workbench__button:active {
+    transform: scale(0.96);
+  }
+
+  .open-workbench__button--primary {
+    min-width: 10.5rem;
+    background: var(--accent-strong);
+    color: #fff;
+  }
+
+  .open-workbench__button--primary:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .open-workbench__text-link,
+  .open-workbench__commercial-link {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-2);
+    font-size: 0.88rem;
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 0.25rem;
+  }
+
+  .open-workbench__commercial {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: clamp(2rem, 4vw, 3rem);
+    background: var(--accent-strong);
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .open-workbench__commercial .open-workbench__label,
+  .open-workbench__commercial h2 {
+    color: #fff;
+  }
+
+  .open-workbench__commercial h2 {
+    max-width: 12rem;
+    font-size: clamp(2.7rem, 5vw, 4.4rem);
+  }
+
+  .open-workbench__commercial > p {
+    margin-top: 1.35rem;
+    font-size: 0.96rem;
+    line-height: 1.68;
+  }
+
+  .open-workbench__commercial-rule {
+    height: 1px;
+    margin: 2rem 0 1.4rem;
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .open-workbench__commercial dl {
+    display: grid;
+    gap: 1rem;
+    margin: 0 0 2rem;
+  }
+
+  .open-workbench__commercial dl div {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .open-workbench__commercial dt {
+    color: rgba(255, 255, 255, 0.58);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .open-workbench__commercial dd {
+    margin: 0;
+    color: #fff;
+    font-size: 0.91rem;
+  }
+
+  .open-workbench__button--inverse {
+    width: 100%;
+    margin-top: auto;
+    background: #fff;
+    color: var(--accent-strong);
+  }
+
+  .open-workbench__button--inverse:hover {
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  .open-workbench__commercial-link {
+    justify-content: center;
+    margin-top: 0.7rem;
+    color: rgba(255, 255, 255, 0.78);
+    text-decoration-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .open-workbench__commercial-link:hover {
+    color: #fff;
+  }
+
+  .open-workbench__shared {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem 1.2rem;
+    border-top: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text-2);
+    font-size: 0.83rem;
+  }
+
+  .open-workbench__shared strong {
+    color: var(--text);
+  }
+
+  .open-workbench__shared > span:last-child {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.69rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .open-workbench__shared-mark {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0.3rem rgba(26, 115, 232, 0.11);
+  }
+
+  .open-workbench__notice {
+    margin-top: 1rem;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-align: center;
+  }
+
+  .open-workbench__notice a {
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+  }
+
+  @keyframes open-workbench-enter {
+    from { opacity: 0; transform: translateY(0.55rem); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 800px) {
+    .open-workbench {
+      padding-top: 3rem;
+    }
+
+    .open-workbench__hero,
+    .open-workbench__board {
+      grid-template-columns: 1fr;
+    }
+
+    .open-workbench__hero {
+      gap: 1.4rem;
+    }
+
+    .open-workbench__hero h1 {
+      font-size: clamp(3rem, 15vw, 5rem);
+    }
+
+    .open-workbench__commercial {
+      min-height: 31rem;
+    }
+
+    .open-workbench__shared {
+      grid-column: auto;
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .open-workbench__shared > span:last-child {
+      display: none;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .open-workbench__plan-heading,
+    .open-workbench__actions {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .open-workbench__audiences p {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+
+    .open-workbench__button--primary {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .open-workbench__hero,
+    .open-workbench__board {
+      animation: none;
+    }
+
+    .open-workbench__button {
+      transition: none;
+    }
+  }
+</style>
