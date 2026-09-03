@@ -1,0 +1,347 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import Callout from '../components/Callout.astro';
+import CopyButton from '../components/CopyButton.astro';
+import { agenticFacts } from '../data/agenticFacts';
+import { availableServiceCount } from '../data/services';
+import {
+  createBreadcrumbSchema,
+  createSoftwareApplicationSchema,
+  productFacts,
+} from '../data/productFacts';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+const pageUrl = new URL('local-cloud-for-ai-agents/', productFacts.siteUrl).toString();
+
+const quickStart = agenticFacts.cliQuickStartCommand;
+
+const boundaries = [
+  {
+    label: 'Execution boundary',
+    title: 'Where the generated code runs',
+    body:
+      'Owned by a code sandbox. Containers, microVMs, or a hosted runtime keep an agent from touching your workstation, your repository, or your production hosts.',
+    owners: 'E2B, Modal, Daytona, Docker Sandboxes, Northflank',
+  },
+  {
+    label: 'Dependency boundary',
+    title: 'What the generated code calls',
+    body:
+      'Owned by a local cloud runtime. Google Cloud SDK calls resolve to localhost instead of googleapis.com, so an agent cannot create real cloud resources or real charges.',
+    owners: 'LocalCloud',
+  },
+];
+
+const comparisonRows = [
+  {
+    need: 'Contain arbitrary generated shell and code execution',
+    sandbox: 'Primary purpose. Use a code sandbox.',
+    localcloud: 'Not the isolation layer for arbitrary shell risk.',
+  },
+  {
+    need: 'Stop an agent from creating billable Google Cloud resources',
+    sandbox: 'Not addressed. A sandbox holding real credentials still reaches the real cloud.',
+    localcloud: 'Primary purpose. No default credentials or billing project.',
+  },
+  {
+    need: 'Exercise BigQuery, Pub/Sub, Spanner, or Bigtable behavior',
+    sandbox: 'Requires real Google Cloud access from inside the sandbox.',
+    localcloud: `Local endpoints for ${availableServiceCount} available service guides.`,
+  },
+  {
+    need: 'Run an AWS-shaped local cloud',
+    sandbox: 'Not applicable.',
+    localcloud: 'Not supported. LocalStack is the right tool for AWS.',
+  },
+  {
+    need: 'Give a coding agent a repeatable, inspectable local target',
+    sandbox: 'Varies by provider.',
+    localcloud: 'Health endpoint, generated env export, seed data, and a web console.',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'What is an agent environment?',
+    a: 'An agent environment is everything an AI coding agent can reach while working: where its code executes and what that code is allowed to call. A code sandbox owns the execution half. A local cloud runtime such as LocalCloud owns the dependency half by answering cloud SDK calls on localhost.',
+  },
+  {
+    q: 'Is a code sandbox enough to keep an AI agent from touching my cloud account?',
+    a: 'No. A sandbox isolates where code runs, not what it calls. If the sandbox holds Google Cloud credentials, agent-written code can still create real resources and real charges from inside it. Removing credentials and pointing the SDKs at a local runtime closes that gap.',
+  },
+  {
+    q: 'How do I give an AI agent a cloud to test against without credentials?',
+    a: 'Start LocalCloud, load its generated environment values into the agent process, and let the standard Google Cloud SDKs resolve to localhost. No cloud project, service-account key, or billing account is required by default for the documented local workflows.',
+  },
+  {
+    q: 'Does LocalCloud replace E2B, Modal, or Docker Sandboxes?',
+    a: 'No, and it is not trying to. Those products isolate arbitrary code execution, which LocalCloud does not do. They are complementary: run the agent inside a code sandbox and point its Google Cloud calls at LocalCloud.',
+  },
+  {
+    q: 'Can an AI agent write code against LocalCloud and then ship it to real Google Cloud?',
+    a: 'Local runs are a development and testing step, not a release gate. Compatibility is documented per operation and is narrower than managed Google Cloud, so validate the same code against real Google Cloud in a separate guarded step before production.',
+  },
+  {
+    q: 'Which coding agents work with LocalCloud?',
+    a: 'Any agent that can run shell commands and read environment variables. LocalCloud publishes setup pages for Claude Code, Codex-style CLIs, Cursor, and Gemini CLI, plus a raw AGENTS.md template agents can read directly.',
+  },
+];
+
+const structuredData = [
+  createSoftwareApplicationSchema(
+    pageUrl,
+    'LocalCloud gives AI coding agents a local Google Cloud API target so agent-written cloud code runs without credentials, a billing project, or real cloud side effects.',
+  ),
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Local Cloud for AI Agents', url: pageUrl },
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+    })),
+  },
+];
+
+const agentPages = [
+  { label: 'Claude Code', href: `${base}agents/claude-code-gcp-sandbox/` },
+  { label: 'Codex CLI', href: `${base}agents/codex-cli-gcp-sandbox/` },
+  { label: 'Cursor', href: `${base}agents/cursor-gcp-sandbox/` },
+  { label: 'Gemini CLI', href: `${base}agents/gemini-cli-gcp-sandbox/` },
+];
+---
+
+<LandingLayout
+  title="Local Cloud for AI Agents — A Credentialless Google Cloud Sandbox"
+  description="Code sandboxes isolate where an AI agent runs. LocalCloud gives that code a cloud to talk to: local Google Cloud APIs on localhost, with no credentials or billing project by default."
+  {structuredData}
+>
+  <!-- HERO -->
+  <section class="site-section site-section--hero">
+    <div class="container">
+      <div class="max-w-[48rem] reveal">
+        <span class="site-eyebrow">
+          <span class="site-eyebrow__pulse"></span>
+          Agent environment · dependency boundary
+        </span>
+        <h1 class="mt-4">A local cloud for AI coding agents</h1>
+        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
+          A code sandbox isolates <em>where</em> an AI agent runs. It does not change <em>what</em> the agent's code calls. LocalCloud supplies that missing half: Google Cloud APIs answered on localhost, so agent-written cloud code executes with no credentials, no billing project, and no real cloud side effects.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={`${base}docs/`} class="site-button site-button--primary">Start in the docs</a>
+          <a href={`${base}ai/`} class="site-button site-button--secondary">AGENTS.md template</a>
+          <a href={`${base}compare/e2b-vercel-sandboxes/`} class="site-button site-button--secondary">Compare with hosted sandboxes</a>
+        </div>
+      </div>
+
+      <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
+        <article class="site-panel site-panel--soft p-5">
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">{availableServiceCount}</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Local service guides</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Google Cloud APIs an agent can call without leaving the machine.</p>
+        </article>
+        <article class="site-panel site-panel--soft p-5">
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">0</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Credentials by default</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">No service-account key or billing project is required for documented local workflows.</p>
+        </article>
+        <article class="site-panel site-panel--soft p-5">
+          <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">1</div>
+          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Command to start</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">One CLI lifecycle, one health endpoint, one generated environment export.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE TWO BOUNDARIES -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="site-section-heading reveal">
+        <span class="site-kicker">The distinction that matters</span>
+        <h2>An agent environment has two boundaries</h2>
+        <p>
+          Most agent tooling addresses only the first one. Cloud cost and cloud blast radius live in the second.
+        </p>
+      </div>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-2">
+        {boundaries.map((boundary) => (
+          <article class="site-panel p-6 reveal">
+            <span class="site-kicker">{boundary.label}</span>
+            <h3 class="mt-3 text-xl">{boundary.title}</h3>
+            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{boundary.body}</p>
+            <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[var(--text-3)]">
+              Typically owned by: {boundary.owners}
+            </p>
+          </article>
+        ))}
+      </div>
+
+      <div class="mt-6">
+        <Callout type="warning" title="A sandbox with real credentials is still a real cloud client">
+          Isolating execution does not stop an API call. If a code sandbox holds a service-account key, agent-written code can create datasets, buckets, and instances in your project from inside that sandbox, and the charges are real. Closing the dependency boundary is a separate control.
+        </Callout>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHERE EACH TOOL FITS -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="site-section-heading reveal">
+        <span class="site-kicker">Honest comparison</span>
+        <h2>Where each tool is the right answer</h2>
+        <p>
+          LocalCloud is not a replacement for a code sandbox, and a code sandbox is not a replacement for a local cloud. Pick by which boundary you are trying to close.
+        </p>
+      </div>
+
+      <div class="mt-8 overflow-x-auto reveal">
+        <table class="w-full min-w-[46rem] border-collapse text-left text-sm">
+          <thead>
+            <tr>
+              <th class="border-b border-[var(--line)] px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-3)]">What you need</th>
+              <th class="border-b border-[var(--line)] px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-3)]">Code sandbox</th>
+              <th class="border-b border-[var(--line)] px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-3)]">LocalCloud</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparisonRows.map((row) => (
+              <tr>
+                <td class="border-b border-[var(--line)] px-4 py-4 align-top font-medium text-[var(--text)]">{row.need}</td>
+                <td class="border-b border-[var(--line)] px-4 py-4 align-top leading-7 text-[var(--text-2)]">{row.sandbox}</td>
+                <td class="border-b border-[var(--line)] px-4 py-4 align-top leading-7 text-[var(--text-2)]">{row.localcloud}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href={`${base}compare/e2b-vercel-sandboxes/`} class="site-button site-button--secondary">LocalCloud vs hosted sandboxes</a>
+        <a href={`${base}compare/localstack/`} class="site-button site-button--secondary">LocalCloud vs LocalStack</a>
+        <a href={`${base}compare/google-emulators/`} class="site-button site-button--secondary">LocalCloud vs Google emulators</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK START -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="site-section-heading reveal">
+        <span class="site-kicker">Setup</span>
+        <h2>Give an agent a local cloud target</h2>
+        <p>
+          Start the runtime, load its generated environment values into the agent's shell, and let the standard Google Cloud SDKs resolve to localhost.
+        </p>
+      </div>
+
+      <div class="mt-8 site-panel p-5 reveal sm:p-6">
+        <div class="flex items-start justify-between gap-3">
+          <span class="site-kicker">Host CLI quick start</span>
+          <CopyButton text={quickStart} analyticsLabel="agent-landing-quickstart" />
+        </div>
+        <pre class="mt-4 overflow-x-auto text-sm leading-7"><code>{quickStart}</code></pre>
+        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">
+          Trust the URLs and values the CLI returns. Occupied ports are remapped, so read the generated environment rather than assuming a fixed port. Health is reported at <code>{agenticFacts.healthEndpoint}</code>.
+        </p>
+      </div>
+
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <article class="site-panel site-panel--soft p-5 reveal">
+          <span class="site-kicker">Agent instructions</span>
+          <h3 class="mt-3 text-lg">Machine-readable setup</h3>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
+            LocalCloud publishes a raw <a href={`${base}ai/AGENTS.md`}>AGENTS.md template</a> and Markdown route index that agents can read directly, without parsing marketing HTML.
+          </p>
+        </article>
+        <article class="site-panel site-panel--soft p-5 reveal">
+          <span class="site-kicker">Per-agent guides</span>
+          <h3 class="mt-3 text-lg">Setup by coding agent</h3>
+          <ul class="mt-3 flex flex-wrap gap-2">
+            {agentPages.map((agent) => (
+              <li>
+                <a href={agent.href} class="site-chip site-chip--accent">{agent.label}</a>
+              </li>
+            ))}
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIMITS -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="site-section-heading reveal">
+        <span class="site-kicker">Boundaries</span>
+        <h2>What this does not give you</h2>
+      </div>
+      <ul class="mt-6 grid gap-3 md:grid-cols-3">
+        <li class="site-panel site-panel--soft p-5 text-sm leading-7 text-[var(--text-2)] reveal">
+          {agenticFacts.noCredentialBoundary}
+        </li>
+        <li class="site-panel site-panel--soft p-5 text-sm leading-7 text-[var(--text-2)] reveal">
+          {agenticFacts.productionBoundary}
+        </li>
+        <li class="site-panel site-panel--soft p-5 text-sm leading-7 text-[var(--text-2)] reveal">
+          {agenticFacts.releaseGuardrail}
+        </li>
+      </ul>
+      <p class="mt-6 max-w-[46rem] text-sm leading-7 text-[var(--text-3)]">
+        LocalCloud does not isolate arbitrary code execution. If an agent runs untrusted shell commands, pair it with a code sandbox. Review the
+        <a href={`${base}compatibility/`}> compatibility matrix</a> for per-operation status and the
+        <a href={`${base}docs/licensing/`}> licensing reference</a> for permitted use.
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="site-section-heading reveal">
+        <span class="site-kicker">FAQ</span>
+        <h2>Agent environment questions</h2>
+      </div>
+      <div class="mt-8 grid gap-4">
+        {faqItems.map((faq) => (
+          <article class="site-panel p-5 reveal sm:p-6">
+            <h3 class="text-lg">{faq.q}</h3>
+            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{faq.a}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- RELATED -->
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="site-section-heading reveal">
+        <span class="site-kicker">Keep reading</span>
+        <h2>Related pages</h2>
+      </div>
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <a href={`${base}agents/`} class="site-panel p-5 reveal transition-transform hover:-translate-y-0.5">
+          <h3 class="text-lg">Agent sandbox routes</h3>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Setup pages for Claude Code, Codex CLI, Cursor, and Gemini CLI.</p>
+        </a>
+        <a href={`${base}workflows/`} class="site-panel p-5 reveal transition-transform hover:-translate-y-0.5">
+          <h3 class="text-lg">Agent workflows</h3>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Integration tests, Terraform validation, and automation with health gates.</p>
+        </a>
+        <a href={`${base}glossary/agent-environment/`} class="site-panel p-5 reveal transition-transform hover:-translate-y-0.5">
+          <h3 class="text-lg">Glossary: agent environment</h3>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Definitions for the execution and dependency boundaries.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</LandingLayout>

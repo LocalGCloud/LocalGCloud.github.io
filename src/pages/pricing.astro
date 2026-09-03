@@ -4,11 +4,42 @@ import PricingWorkbench from '../components/PricingWorkbench.astro';
 import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
 
 const pricingUrl = new URL(productFacts.pricingPath, productFacts.siteUrl).toString();
+
+// Machine-readable pricing for AI agents and buying tools that compare products
+// programmatically. Public preview is free for the permitted uses; the license
+// text remains the controlling document.
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: productFacts.name,
+  description:
+    'LocalCloud runs documented Google Cloud service workflows in one local Docker container. Free during public preview for local development, testing, CI, evaluation, and internal pilots.',
+  url: pricingUrl,
+  brand: {
+    '@type': 'Brand',
+    name: productFacts.companyName,
+  },
+  category: productFacts.category,
+  offers: {
+    '@type': 'Offer',
+    name: 'Public Preview',
+    url: pricingUrl,
+    price: '0',
+    priceCurrency: 'USD',
+    availability: 'https://schema.org/InStock',
+    eligibleCustomerType: 'Individuals and organizations, including for-profit companies',
+    license: new URL(productFacts.licensingPath, productFacts.siteUrl).toString(),
+    description:
+      'Free to use during public preview for local development, testing, CI, evaluation, and internal pilots. No payment method or license key required. Customer-facing production use, resale, hosting as a service, redistribution, and sublicensing are excluded.',
+  },
+};
+
 const structuredData = [
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'Free Public Preview', url: pricingUrl },
   ]),
+  productSchema,
 ];
 ---
 

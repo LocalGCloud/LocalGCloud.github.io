@@ -19,6 +19,16 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const categoryLabel = getServiceCategoryLabel(service);
 const isComingSoon = service.catalogState === 'coming-soon';
 const agentTestingPage = isComingSoon ? undefined : serviceTestingPages.find((page) => page.slug === service.slug);
+// Dedicated emulator landing pages that exist as top-level routes.
+const emulatorLandingSlugs: Record<string, string> = {
+  bigquery: 'bigquery-emulator',
+  bigtable: 'bigtable-emulator',
+  spanner: 'spanner-emulator',
+  pubsub: 'pubsub-emulator',
+  firestore: 'firestore-emulator',
+  'cloud-storage': 'cloud-storage-emulator',
+};
+const emulatorLanding = isComingSoon ? undefined : emulatorLandingSlugs[service.slug];
 const documentedOperations = isComingSoon
   ? []
   : service.operations.filter((operation) => operation.status !== 'unsupported' && operation.status !== 'unknown');
@@ -117,7 +127,9 @@ const pageDescription = isComingSoon
 
     <section class="site-section">
       <div class="container"><div class="site-panel p-6 reveal"><h2 class="mb-4 text-2xl font-semibold tracking-tight">Next steps</h2><ul class="site-list">
+        {emulatorLanding && <li><span><a href={`${base}${emulatorLanding}/`}>{service.name} emulator overview</a>: setup, documented workflows, and FAQ.</span></li>}
         {agentTestingPage && <li><span><a href={`${base}services/${service.slug}/ai-agent-local-testing/`}>AI agent local testing</a>: prompts and endpoint routing for local workflows.</span></li>}
+        <li><span><a href={`${base}local-cloud-for-ai-agents/`}>Local cloud for AI agents</a>: give agent-written cloud code a credentialless target.</span></li>
         <li><span><a href={`${base}compatibility/`}>Compatibility</a>: compare all {publishedServiceCount} service guides.</span></li>
         <li><span><a href={`${base}docs/configuration/`}>Configuration</a>: service selection, tiers, and runtime precedence.</span></li>
         {service.slug === 'bigquery' && <li><span><a href={`${base}docs/bigquery-emulator-features/`}>BigQuery emulator features</a>: query profiles and detailed local workflows.</span></li>}

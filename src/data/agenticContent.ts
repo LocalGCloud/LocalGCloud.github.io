@@ -1006,6 +1006,208 @@ export const comparisonPages: AgenticContentPage[] = [
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
+	{
+		kind: "comparison",
+		slug: "localstack",
+		path: "/compare/localstack/",
+		parentLabel: "Compare",
+		parentPath: "/compare/",
+		eyebrow: "Comparison",
+		title: "LocalCloud vs LocalStack for Local Cloud Development",
+		description:
+			"Compare LocalCloud and LocalStack for local cloud development and AI agent sandboxes. LocalStack emulates AWS; LocalCloud emulates Google Cloud. Includes where LocalStack is the better choice.",
+		h1: "LocalCloud vs LocalStack",
+		deck:
+			"LocalStack is a mature local cloud development platform for AWS. LocalCloud is a local Google Cloud runtime. They solve the same shape of problem for different clouds, so the choice usually follows the cloud your application already targets rather than a feature score.",
+		promptIds: ["quickstart", "project-integration"],
+		quickFacts: [
+			"LocalStack targets AWS service APIs; LocalCloud targets Google Cloud service APIs.",
+			`LocalCloud currently lists ${availableServiceCount} available Google Cloud service guides in one Docker image.`,
+			"The two are not interchangeable: AWS SDK calls do not reach LocalCloud, and Google Cloud SDK calls do not reach LocalStack.",
+		],
+		sections: [
+			{
+				kicker: "Where LocalStack is better",
+				title: "Use LocalStack when your application targets AWS",
+				body:
+					"If the code under test calls S3, DynamoDB, Lambda, SQS, or any other AWS API, LocalStack is the correct tool and LocalCloud cannot substitute for it. LocalStack is also the more established project, with a longer public track record, a larger community, and a wider published integration surface. Teams that need a local AWS surface should choose LocalStack.",
+			},
+			{
+				kicker: "Where LocalCloud is better",
+				title: "Use LocalCloud when your application targets Google Cloud",
+				body:
+					"If the code under test calls BigQuery, Pub/Sub, Spanner, Bigtable, or Cloud Storage, LocalCloud gives those Google Cloud SDK calls a local endpoint. LocalStack does not emulate Google Cloud APIs, so a GCP-native team cannot use it to exercise BigQuery or Spanner behavior locally.",
+			},
+			{
+				kicker: "Multi-cloud teams",
+				title: "Running both is a normal outcome",
+				body:
+					"Teams that build on both clouds commonly run LocalStack for the AWS half of a system and LocalCloud for the Google Cloud half. The two runtimes bind different local ports and set different SDK environment variables, so they can run side by side in the same development environment or automation job.",
+			},
+		],
+		table: {
+			columns: ["Decision point", "LocalStack", "LocalCloud"],
+			rows: [
+				[
+					"Cloud emulated",
+					"Amazon Web Services.",
+					"Google Cloud.",
+				],
+				[
+					"SDK routing",
+					"AWS SDK endpoint overrides.",
+					"Google Cloud SDK emulator environment variables and endpoint overrides.",
+				],
+				[
+					"Pick it when",
+					"Your application calls AWS APIs, or you need the most established local cloud project.",
+					"Your application calls Google Cloud APIs and needs BigQuery, Spanner, or Bigtable locally.",
+				],
+				[
+					"Agent sandbox use",
+					"Gives agent-written AWS code a local target.",
+					"Gives agent-written Google Cloud code a local target with no default credentials or billing project.",
+				],
+				[
+					"Licensing",
+					"Review the LocalStack license and plan terms directly.",
+					"Proprietary LocalCloud Public Preview License; review before use.",
+				],
+			],
+		},
+		limitations: standardLimitations,
+		internalLinks: [
+			{
+				label: "LocalStack for Google Cloud",
+				href: "/localstack-for-google-cloud/",
+				note: "What a LocalStack-style workflow looks like on Google Cloud.",
+			},
+			{
+				label: "Local cloud for AI agents",
+				href: "/local-cloud-for-ai-agents/",
+				note: "Why an agent needs a cloud API target, not only a code sandbox.",
+			},
+			{
+				label: "Compatibility",
+				href: "/compatibility/",
+				note: "Current LocalCloud service boundaries.",
+			},
+		],
+		sources: [
+			{
+				label: "LocalStack",
+				href: "https://www.localstack.cloud/",
+				note: "Vendor description of the AWS local cloud development platform.",
+			},
+			{
+				label: "LocalCloud compatibility",
+				href: "/compatibility/",
+				note: "LocalCloud operation-level status.",
+			},
+		],
+		reviewedAt: agenticFacts.evidence.reviewedAt,
+	},
+	{
+		kind: "comparison",
+		slug: "localgcp",
+		path: "/compare/localgcp/",
+		parentLabel: "Compare",
+		parentPath: "/compare/",
+		eyebrow: "Comparison",
+		title: "LocalCloud vs localgcp for Local Google Cloud Development",
+		description:
+			"Compare LocalCloud and localgcp for running Google Cloud services locally, including packaging, service coverage, licensing, and where localgcp is the better choice.",
+		h1: "LocalCloud vs localgcp",
+		deck:
+			"localgcp and LocalCloud both run Google Cloud service emulators on a developer machine. localgcp ships as a single open-source Go binary. LocalCloud ships as a Docker runtime with a console, seed data, Terraform endpoints, and per-operation compatibility documentation.",
+		promptIds: ["quickstart", "project-integration"],
+		quickFacts: [
+			"Both projects target the same problem: Google Cloud APIs without a cloud project.",
+			`LocalCloud currently lists ${availableServiceCount} available service guides with per-operation compatibility status.`,
+			"Packaging and licensing differ more than the core idea does; check both against your own constraints.",
+		],
+		sections: [
+			{
+				kicker: "Where localgcp is better",
+				title: "Choose localgcp for a permissive license and a single binary",
+				body:
+					"localgcp is MIT-licensed and distributes as one Go binary, so it starts without Docker and can be vendored into environments where container runtimes are unavailable or where an open-source license is a hard requirement. If license permissiveness, redistribution, or a no-Docker install path is a constraint, localgcp is the better fit and LocalCloud is not a substitute.",
+			},
+			{
+				kicker: "Where LocalCloud is better",
+				title: "Choose LocalCloud for coverage, inspection, and documented boundaries",
+				body:
+					"LocalCloud publishes a per-operation compatibility contract for each service, ships a web console for inspecting local state, loads deterministic seed data, and exports Terraform-shaped endpoints alongside SDK environment variables. If the workflow needs to inspect what the emulator did, or needs a documented statement of which operations are verified, that surface does not exist in a single-binary emulator.",
+			},
+			{
+				kicker: "How to decide",
+				title: "Compare on constraints, not on service counts",
+				body:
+					"Service counts move and are measured differently by each project. Decide on the constraints that do not move: the license you can accept, whether Docker is available, whether you need per-operation compatibility evidence, and whether you need a console and seed data. Validate the exact services and operations you depend on before committing either way.",
+			},
+		],
+		table: {
+			columns: ["Decision point", "localgcp", "LocalCloud"],
+			rows: [
+				[
+					"Packaging",
+					"Single Go binary; some services orchestrated through Docker on demand.",
+					"Docker runtime started through a host CLI.",
+				],
+				[
+					"Licensing",
+					"MIT, per the project repository.",
+					"Proprietary Public Preview License; free for the permitted uses listed on the pricing page.",
+				],
+				[
+					"Compatibility evidence",
+					"Consult the project README and source.",
+					"Per-operation status published on each service page and the compatibility matrix.",
+				],
+				[
+					"Inspection",
+					"Inspect through SDK and API calls.",
+					"Built-in web console, health endpoint, and generated environment export.",
+				],
+				[
+					"Pick it when",
+					"You need MIT licensing, redistribution, or a Docker-free install.",
+					"You need documented operation boundaries, a console, seed data, or Terraform endpoints.",
+				],
+			],
+		},
+		limitations: standardLimitations,
+		internalLinks: [
+			{
+				label: "Compatibility",
+				href: "/compatibility/",
+				note: "Per-operation LocalCloud status.",
+			},
+			{
+				label: "GCP emulator overview",
+				href: "/gcp-emulator/",
+				note: "How LocalCloud packages local Google Cloud services.",
+			},
+			{
+				label: "Pricing and permitted use",
+				href: "/pricing/",
+				note: "What the Public Preview License permits.",
+			},
+		],
+		sources: [
+			{
+				label: "localgcp",
+				href: "https://github.com/slokam-ai/localgcp",
+				note: "Project repository, license, and service list.",
+			},
+			{
+				label: "LocalCloud licensing",
+				href: "/docs/licensing/",
+				note: "LocalCloud permitted use and boundaries.",
+			},
+		],
+		reviewedAt: agenticFacts.evidence.reviewedAt,
+	},
 ];
 
 const glossary = (
@@ -1143,6 +1345,101 @@ export const glossaryPages: AgenticContentPage[] = [
 		[
 			"Environment variables are the usual routing mechanism.",
 			"Unset overrides before real-cloud validation.",
+		],
+	),
+	glossary(
+		"agent-environment",
+		"Agent environment",
+		"The set of runtimes, tools, files, and network endpoints an AI coding agent can reach while it works on a task. It covers both where the agent executes code and what that code is allowed to call.",
+		[
+			"An agent environment has two halves: an execution boundary and a dependency boundary.",
+			"Code sandboxes such as E2B, Modal, or Docker sandboxes provide the execution boundary.",
+			"LocalCloud provides a Google Cloud dependency boundary so agent-written cloud calls resolve to localhost.",
+		],
+		[
+			{
+				label: "Local cloud for AI agents",
+				href: "/local-cloud-for-ai-agents/",
+				note: "How the two boundaries fit together.",
+			},
+		],
+	),
+	glossary(
+		"agent-sandbox-vs-cloud-emulator",
+		"Agent sandbox vs cloud emulator",
+		"Two different controls that are often confused. An agent sandbox isolates where generated code runs. A cloud emulator replaces what that code talks to. Using one does not give you the other.",
+		[
+			"A sandbox with real cloud credentials can still create real cloud resources and real charges.",
+			"An emulator without a sandbox still lets generated shell commands touch the host.",
+			"Most agent setups that handle cloud code want both controls in place.",
+		],
+		[
+			{
+				label: "LocalCloud vs hosted agent sandboxes",
+				href: "/compare/e2b-vercel-sandboxes/",
+				note: "Where each boundary applies.",
+			},
+		],
+	),
+	glossary(
+		"credentialless-agent-testing",
+		"Credentialless agent testing",
+		"Running an AI agent's generated code against local service endpoints without providing cloud credentials, service-account keys, or a billing project, so a mistake cannot create cloud resources or charges.",
+		[
+			"Removes the blast radius of an agent calling a destructive cloud API.",
+			"Does not remove the need to validate the same code against real Google Cloud before release.",
+			"Keep local automation credentialless and put real-cloud validation in a separate guarded step.",
+		],
+	),
+	glossary(
+		"local-cloud-api-surface",
+		"Local cloud API surface",
+		"The set of cloud service endpoints, protocols, and operations a local runtime actually implements. It is the practical definition of what you can test locally, and it is narrower than the managed cloud it imitates.",
+		[
+			"Measure a local runtime by its operation-level surface, not by a service count.",
+			"LocalCloud publishes per-operation status on each service page and the compatibility matrix.",
+			"Unimplemented operations should fail loudly rather than silently reaching real Google Cloud.",
+		],
+		[
+			{
+				label: "Compatibility matrix",
+				href: "/compatibility/",
+				note: "Per-operation LocalCloud status.",
+			},
+		],
+	),
+	glossary(
+		"sandboxed-cloud-sdk",
+		"Sandboxed cloud SDK",
+		"A standard cloud client library configured so its requests resolve to a local emulator instead of the public cloud endpoint, without changing application code.",
+		[
+			"Routing is normally done with emulator environment variables loaded into the process.",
+			"Some clients ignore those variables and need explicit endpoint configuration.",
+			"Confirm the client is not silently falling back to real Google Cloud before trusting a local result.",
+		],
+		[
+			{
+				label: "SDK examples",
+				href: "/docs/sdk-examples/",
+				note: "Routing standard Google Cloud clients at LocalCloud.",
+			},
+		],
+	),
+	glossary(
+		"cloud-emulator",
+		"Cloud emulator",
+		"A local program that implements a cloud provider's service APIs so application code can be developed and tested without calling the managed cloud. Distinct from a cloud-hosted device emulator, which runs a mobile operating system on remote hardware.",
+		[
+			"In this documentation, cloud emulator always means an emulator of cloud service APIs.",
+			"Emulators trade managed-cloud fidelity for speed, isolation, and zero cloud cost.",
+			"Every emulator has documented gaps; production behavior is validated against the real provider.",
+		],
+		[
+			{
+				label: "What is a GCP emulator?",
+				href: "/docs/what-is-gcp-emulator/",
+				note: "Longer explanation with endpoint routing.",
+			},
 		],
 	),
 ];

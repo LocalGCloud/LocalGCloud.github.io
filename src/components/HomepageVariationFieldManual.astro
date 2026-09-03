@@ -47,12 +47,16 @@ const atlasSlots = atlasCategorySlots
     <section class="field-hero">
       <div class="field-hero__copy">
         <h1 class="field-hero__headline">
-          <span class="field-hero__headline-main">Google Cloud</span>
-          <span class="field-hero__headline-tag">In-a-Box.</span>
+          <span class="field-hero__headline-main">Run Google Cloud</span>
+          <span class="field-hero__headline-tag">Locally.</span>
         </h1>
 
         <p class="field-intro">
-          Run {availableServiceCount} Google Cloud services locally. Use the CLI to choose safe loopback ports, export SDK settings, and inspect documented compatibility limits.
+          LocalCloud is a local Google Cloud emulator in one Docker container &mdash; and a credentialless cloud sandbox for AI coding agents. Run {availableServiceCount} Google Cloud services locally, export SDK endpoints, and inspect documented compatibility limits.
+        </p>
+
+        <p class="field-intro-secondary">
+          Point the standard Google Cloud SDKs at localhost for BigQuery, Pub/Sub, Spanner, Bigtable, and Cloud Storage. No cloud project, no service-account keys, no billing account by default.
         </p>
 
         <div class="field-actions">
@@ -147,27 +151,45 @@ const atlasSlots = atlasCategorySlots
 
     <section class="field-blog">
       <div class="field-section-heading">
-        <span class="field-kicker">From the Blog</span>
+        <span class="field-kicker">Where to go next</span>
         <h3>Guides for Google Cloud local development.</h3>
       </div>
 
       <div class="field-blog__grid">
         <article class="field-story__card">
-          <span class="field-kicker">Comparison</span>
-          <h3><a href={`${base}docs/localcloud-vs-google-emulators/`}>LocalCloud vs Google Emulators</a></h3>
-          <p>Why teams switch from individual emulators to one container — coverage, setup time, and the BigQuery gap.</p>
+          <span class="field-kicker">AI Agents</span>
+          <h3><a href={`${base}local-cloud-for-ai-agents/`}>A Local Cloud for AI Coding Agents</a></h3>
+          <p>A code sandbox isolates where an agent runs. LocalCloud gives that code a cloud to talk to, with no credentials by default.</p>
         </article>
 
         <article class="field-story__card">
-          <span class="field-kicker">Guide</span>
-          <h3><a href={`${base}docs/bigquery-emulator-features/`}>How to Run BigQuery Locally</a></h3>
-          <p>Develop bounded BigQuery workflows locally and review release-verification caveats before relying on a feature.</p>
+          <span class="field-kicker">Emulator</span>
+          <h3><a href={`${base}bigquery-emulator/`}>Run BigQuery Locally</a></h3>
+          <p>Develop bounded BigQuery dataset, query, and API workflows locally, with per-operation status and documented limits.</p>
+        </article>
+
+        <article class="field-story__card">
+          <span class="field-kicker">Comparison</span>
+          <h3><a href={`${base}compare/`}>LocalCloud vs the Alternatives</a></h3>
+          <p>Balanced comparisons against LocalStack, localgcp, Google's own emulators, and hosted agent sandboxes.</p>
         </article>
 
         <article class="field-story__card">
           <span class="field-kicker">CI / CD</span>
-          <h3><a href={`${base}docs/terraform/`}>Configure Terraform for LocalCloud</a></h3>
-          <p>Choose the local endpoint or transparent-network workflow required by your tested resources.</p>
+          <h3><a href={`${base}gcp-integration-testing/`}>Local GCP Integration Testing</a></h3>
+          <p>Run integration checks against local endpoints with health gates, pinned image identity, and explicit production validation.</p>
+        </article>
+
+        <article class="field-story__card">
+          <span class="field-kicker">Guide</span>
+          <h3><a href={`${base}how-to-run-google-cloud-locally/`}>How to Run Google Cloud Locally</a></h3>
+          <p>Install the CLI, start a loopback-bound runtime, and configure workflows across every available service.</p>
+        </article>
+
+        <article class="field-story__card">
+          <span class="field-kicker">Reference</span>
+          <h3><a href={`${base}glossary/`}>Local Cloud and Agent Glossary</a></h3>
+          <p>Precise definitions for agent environment, cloud emulator, credentialless testing, and the terms around them.</p>
         </article>
       </div>
     </section>
@@ -304,6 +326,8 @@ const atlasSlots = atlasCategorySlots
 
   .field-hero__headline-main {
     white-space: nowrap;
+    font-size: clamp(2.6rem, 5.75vw, 4.85rem);
+    line-height: 0.95;
   }
 
   .field-hero__headline-tag {
@@ -312,6 +336,14 @@ const atlasSlots = atlasCategorySlots
     font-size: clamp(2.35rem, 4.7vw, 4.45rem);
     line-height: 0.9;
     letter-spacing: -0.04em;
+  }
+
+  .field-intro-secondary {
+    margin-top: 0.85rem;
+    max-width: 46rem;
+    font-size: 0.98rem;
+    line-height: 1.72;
+    color: var(--text-3);
   }
 
   .field-intro,

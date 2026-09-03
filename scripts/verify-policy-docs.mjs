@@ -99,9 +99,15 @@ assert(!/\$\d/.test(pricing), "pricing page publishes a numeric price");
 assert(!/Contact us|Commercial|commercial/.test(pricing), "pricing page retains a commercial offer");
 
 const header = docs.get("src/components/Header.astro");
+const aiNavIndex = header.indexOf("label: 'AI Agents'");
+const pricingNavIndex = header.indexOf("label: 'Pricing'");
+const emulatorNavIndex = header.indexOf("label: 'GCP Emulator'");
 assert(
-	header.indexOf("label: 'AI'") < header.indexOf("label: 'Pricing'") &&
-		header.indexOf("label: 'Pricing'") < header.indexOf("label: 'GCP Emulator'"),
+	aiNavIndex !== -1 && pricingNavIndex !== -1 && emulatorNavIndex !== -1,
+	"header must expose AI Agents, Pricing, and GCP Emulator navigation entries",
+);
+assert(
+	aiNavIndex < pricingNavIndex && pricingNavIndex < emulatorNavIndex,
 	"Pricing navigation must appear immediately after AI",
 );
 

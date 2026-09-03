@@ -32,6 +32,16 @@ const faqs = [
     answer:
       'LocalCloud is designed for standard Google Cloud SDK and API workflows. Configure local emulator endpoints for development, then remove those local settings when validating against real Google Cloud.',
   },
+  {
+    question: 'When should I use LocalStack instead of LocalCloud?',
+    answer:
+      'Use LocalStack whenever the code under test calls AWS APIs. LocalCloud does not emulate AWS and is not a substitute for it. LocalStack is also the more established project, with a longer public track record and a wider published integration surface.',
+  },
+  {
+    question: 'Can I use LocalCloud as a local cloud sandbox for AI agents?',
+    answer:
+      'Yes. LocalCloud gives agent-written Google Cloud code a localhost target with no credentials or billing project by default, so an AI coding agent cannot create real cloud resources by mistake. It closes the dependency boundary; pair it with a code sandbox if you also need to contain arbitrary code execution.',
+  },
 ];
 
 const faqSchema = {
@@ -136,6 +146,26 @@ const structuredData = [
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section site-section--tight">
+    <div class="container">
+      <div class="max-w-[48rem] reveal">
+        <span class="site-kicker">Straight answer</span>
+        <h2 class="mt-4">When LocalStack is the better choice</h2>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          If your application calls AWS APIs, use LocalStack. LocalCloud cannot serve S3, DynamoDB, Lambda, or SQS calls, and no amount of configuration will change that. LocalStack is also the older and more widely deployed project. LocalCloud is the right pick only when the code under test targets Google Cloud &mdash; BigQuery, Pub/Sub, Spanner, Bigtable, or Cloud Storage.
+        </p>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          Teams building on both clouds commonly run both. The two runtimes bind different local ports and set different SDK environment variables, so they coexist in one development environment.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={`${base}compare/localstack/`} class="site-button site-button--secondary">Full LocalCloud vs LocalStack comparison</a>
+          <a href={`${base}local-cloud-for-ai-agents/`} class="site-button site-button--secondary">Local cloud for AI agents</a>
+          <a href={`${base}compare/`} class="site-button site-button--secondary">All comparisons</a>
+        </div>
       </div>
     </div>
   </section>

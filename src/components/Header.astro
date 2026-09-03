@@ -17,9 +17,13 @@ const navLinks = [
     isActive: currentPath.startsWith(`${base}services`),
   },
   {
-    label: 'AI',
-    href: `${base}ai/`,
-    isActive: currentPath.startsWith(`${base}ai`),
+    label: 'AI Agents',
+    href: `${base}local-cloud-for-ai-agents/`,
+    isActive:
+      currentPath.startsWith(`${base}local-cloud-for-ai-agents`) ||
+      currentPath.startsWith(`${base}ai`) ||
+      currentPath.startsWith(`${base}agents`) ||
+      currentPath.startsWith(`${base}workflows`),
   },
   {
     label: 'Pricing',
@@ -32,9 +36,19 @@ const navLinks = [
     isActive: currentPath.startsWith(`${base}gcp-emulator`),
   },
   {
+    label: 'Compare',
+    href: `${base}compare/`,
+    isActive: currentPath.startsWith(`${base}compare`) || currentPath.startsWith(`${base}localstack-for-google-cloud`),
+  },
+  {
     label: 'Guides',
     href: `${base}how-to-run-google-cloud-locally/`,
-    isActive: currentPath.startsWith(`${base}how-to-run-google-cloud-locally`) || currentPath.startsWith(`${base}optimize-gcp-costs`) || currentPath.startsWith(`${base}local-cloud-development`),
+    isActive:
+      currentPath.startsWith(`${base}how-to-run-google-cloud-locally`) ||
+      currentPath.startsWith(`${base}optimize-gcp-costs`) ||
+      currentPath.startsWith(`${base}local-cloud-development`) ||
+      currentPath.startsWith(`${base}gcp-integration-testing`) ||
+      currentPath.startsWith(`${base}glossary`),
   },
 ];
 ---

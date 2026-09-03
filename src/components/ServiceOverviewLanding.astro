@@ -2,6 +2,11 @@
 import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from './ServiceIcon.astro';
 import { getServiceSignalLabel, services } from '../data/services';
+import {
+  createBreadcrumbSchema,
+  createSoftwareApplicationSchema,
+  productFacts,
+} from '../data/productFacts';
 
 interface Props { slug: string; title: string; description: string; }
 const { slug, title, description } = Astro.props;
@@ -15,14 +20,67 @@ const documentedOperations = isComingSoon
   : service.operations.filter((operation) => operation.status !== 'unsupported' && operation.status !== 'unknown');
 const operationBoundaries = documentedOperations.filter((operation) => operation.limitations.length > 0);
 const unavailableOperations = service.operations.filter((operation) => operation.status === 'unsupported' || operation.status === 'unknown');
+
+// Astro.url.pathname is the emulator landing route (for example /bigquery-emulator/).
+const pageUrl = new URL(Astro.url.pathname, productFacts.siteUrl).toString();
+
+// FAQ answers are generated from the service contract so they stay accurate as
+// the upstream documentation snapshot changes.
+const faqItems = isComingSoon
+  ? [
+      {
+        q: `Is there a local ${service.name} emulator in LocalCloud?`,
+        a: `${service.name} is on the LocalCloud roadmap and is not available yet. Check the service catalog for the current status before planning work that depends on it.`,
+      },
+    ]
+  : [
+      {
+        q: `How do I run ${service.name} locally?`,
+        a: `Install the LocalCloud host CLI, start the runtime, and load the generated environment values into your application process. ${service.name} is then reachable at the endpoints the CLI reports, and standard Google Cloud clients resolve to localhost instead of googleapis.com.`,
+      },
+      {
+        q: `Which environment variable points the SDK at the local ${service.name}?`,
+        a: `LocalCloud exports ${service.envVar}. Read the value from the generated environment rather than assuming a fixed port, because occupied ports are remapped at startup.`,
+      },
+      {
+        q: `What ${service.name} workflows are documented locally?`,
+        a: `${documentedOperations.length} ${service.name} workflows are documented with operation-level status: ${documentedOperations.slice(0, 6).map((operation) => operation.label).join(', ')}${documentedOperations.length > 6 ? ', and more' : ''}. The compatibility matrix lists the status of every operation.`,
+      },
+      {
+        q: `Does the local ${service.name} behave exactly like Google Cloud?`,
+        a: `No. LocalCloud implements documented local workflows with published boundaries, and compatibility is narrower than managed Google Cloud. Validate behavior against real ${service.name} before production deployment.`,
+      },
+      {
+        q: `Can an AI coding agent use the local ${service.name}?`,
+        a: `Yes. Because no cloud credentials or billing project are required by default, agent-written ${service.name} code can run against localhost without creating real cloud resources or charges.`,
+      },
+    ];
+
+const structuredData = [
+  createSoftwareApplicationSchema(pageUrl, description),
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Services', url: new URL('services/', productFacts.siteUrl).toString() },
+    { name: `${service.name} Emulator`, url: pageUrl },
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+    })),
+  },
+];
 ---
 
-<LandingLayout title={title} description={description}>
+<LandingLayout {title} {description} {structuredData}>
   <section class="site-section site-section--hero"><div class="container"><div class="max-w-[52rem] reveal">
     <div class="flex items-center gap-4"><span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white"><ServiceIcon iconId={service.iconId} name={service.name} size={44} /></span><span class="site-chip site-chip--accent">{getServiceSignalLabel(service)}</span></div>
     <h1 class="mt-6">{isComingSoon ? `${service.name} support is coming soon` : `Run ${service.name} workflows locally`}</h1>
     <p class="mt-6 text-lg leading-8 text-[var(--text-2)]">{service.description}</p>
-    <div class="mt-8 flex gap-3"><a class="site-button site-button--primary" href={`${base}services/${service.slug}/`}>{isComingSoon ? 'View roadmap details' : 'View service guide'}</a><a class="site-button site-button--secondary" href={`${base}compatibility/`}>Compatibility matrix</a></div>
+    <div class="mt-8 flex flex-wrap gap-3"><a class="site-button site-button--primary" href={`${base}services/${service.slug}/`}>{isComingSoon ? 'View roadmap details' : 'View service guide'}</a><a class="site-button site-button--secondary" href={`${base}compatibility/`}>Compatibility matrix</a><a class="site-button site-button--secondary" href={`${base}gcp-emulator/`}>All local GCP services</a></div>
   </div></div></section>
 
   {!isComingSoon && (
@@ -48,6 +106,44 @@ const unavailableOperations = service.operations.filter((operation) => operation
       </article>
     </div></section>
   )}
+
+  <section class="site-section site-section--tight"><div class="container">
+    <div class="site-section-heading reveal">
+      <span class="site-kicker">FAQ</span>
+      <h2>Common questions</h2>
+    </div>
+    <div class="mt-6 grid gap-4">
+      {faqItems.map((faq) => (
+        <article class="site-panel p-5 reveal">
+          <h3 class="text-lg">{faq.q}</h3>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{faq.a}</p>
+        </article>
+      ))}
+    </div>
+  </div></section>
+
+  <section class="site-section site-section--tight"><div class="container">
+    <div class="site-section-heading reveal">
+      <span class="site-kicker">Keep reading</span>
+      <h2>Related pages</h2>
+    </div>
+    <div class="mt-6 grid gap-4 md:grid-cols-3">
+      {!isComingSoon && (
+        <a href={`${base}services/${service.slug}/ai-agent-local-testing/`} class="site-panel p-5 reveal transition-transform hover:-translate-y-0.5">
+          <h3 class="text-lg">{service.name} for AI agents</h3>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Point an AI coding agent at the local {service.name} endpoint.</p>
+        </a>
+      )}
+      <a href={`${base}local-cloud-for-ai-agents/`} class="site-panel p-5 reveal transition-transform hover:-translate-y-0.5">
+        <h3 class="text-lg">Local cloud for AI agents</h3>
+        <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Why an agent needs a cloud API target, not only a code sandbox.</p>
+      </a>
+      <a href={`${base}gcp-integration-testing/`} class="site-panel p-5 reveal transition-transform hover:-translate-y-0.5">
+        <h3 class="text-lg">Integration testing</h3>
+        <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Run local Google Cloud checks with health gates and pinned images.</p>
+      </a>
+    </div>
+  </div></section>
 
   <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning"><div class="callout__body"><p class="callout__title">Local development boundary</p><div class="callout__content"><p>Review the governing proprietary license before use. Validate production behavior separately against real Google Cloud.</p></div></div></aside></div></section>
 </LandingLayout>

@@ -34,6 +34,12 @@ Trust URLs and endpoint values returned by the selected CLI runtime; occupied ca
 - Pricing: https://local.cloud/pricing/
 - Licensing: https://local.cloud/docs/licensing/
 - LocalStack for Google Cloud: https://local.cloud/localstack-for-google-cloud/
+- Local cloud for AI agents: https://local.cloud/local-cloud-for-ai-agents/
+- Agent sandbox setup routes: https://local.cloud/agents/
+- Agent and automation workflows: https://local.cloud/workflows/
+- Comparisons and alternatives: https://local.cloud/compare/
+- Glossary: https://local.cloud/glossary/
+- AGENTS.md template: https://local.cloud/ai/AGENTS.md
 - CLI releases: https://github.com/LocalGCloud/localcloud-cli/releases
 
 ## Services

@@ -11,7 +11,10 @@ const requiredSchemaTypes = new Map([
   ['/gcp-emulator/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
   ['/localstack-for-google-cloud/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
   ['/compatibility/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
-  ['/pricing/', ['Organization', 'BreadcrumbList']],
+  ['/pricing/', ['Organization', 'BreadcrumbList', 'Product']],
+  ['/local-cloud-for-ai-agents/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
+  ['/compare/localstack/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
+  ['/compare/localgcp/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
 ]);
 
 const isHtmlRoute = (route) => route.path === '/' || route.path.endsWith('/');
