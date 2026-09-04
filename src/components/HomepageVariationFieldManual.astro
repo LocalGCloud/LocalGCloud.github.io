@@ -87,19 +87,21 @@ const atlasSlots = atlasCategorySlots
     </section>
 
     <InstallationMethods />
-    <section class="field-ribbon stagger">
-      <article class="field-ribbon__item reveal">
-        <span class="field-stamp">SDK-shaped workflows</span>
-        <div>Use supported Google Cloud clients with the local endpoints returned by <code>localcloud env</code>.</div>
-      </article>
-      <article class="field-ribbon__item reveal">
-        <span class="field-stamp">Faster Inner Loop</span>
-        <div>Stay local while you build and test. Switch to shared cloud environments when ready.</div>
-      </article>
-      <article class="field-ribbon__item reveal">
-        <span class="field-stamp">Fully Inspectable</span>
-        <div>Built-in console, health endpoints, env export, and seeded sample data make the runtime transparent.</div>
-      </article>
+    <section class="field-ribbon">
+      <div class="field-ribbon__grid stagger">
+        <article class="field-ribbon__item reveal">
+          <span class="field-stamp">SDK-shaped workflows</span>
+          <div>Use supported Google Cloud clients with the local endpoints returned by <code>localcloud env</code>.</div>
+        </article>
+        <article class="field-ribbon__item reveal">
+          <span class="field-stamp">Faster Inner Loop</span>
+          <div>Stay local while you build and test. Switch to shared cloud environments when ready.</div>
+        </article>
+        <article class="field-ribbon__item reveal">
+          <span class="field-stamp">Fully Inspectable</span>
+          <div>Built-in console, health endpoints, env export, and seeded sample data make the runtime transparent.</div>
+        </article>
+      </div>
     </section>
 
 
@@ -239,7 +241,7 @@ const atlasSlots = atlasCategorySlots
   .field-hero {
     display: grid;
     gap: 1.5rem;
-    padding: 1.5rem 0 2rem;
+    padding: 1.5rem 1rem 2rem;
   }
 
   .field-hero .field-intro {
@@ -249,7 +251,7 @@ const atlasSlots = atlasCategorySlots
   .field-actions,
   .field-signal-strip,
   .field-board__title,
-  .field-ribbon,
+  .field-ribbon__grid,
   .field-atlas__grid,
   .field-story,
   .field-cta {
@@ -418,8 +420,9 @@ const atlasSlots = atlasCategorySlots
     margin: 0;
     width: min(100%, 38rem);
     justify-self: center;
-    border: 1px solid var(--line);
     border-radius: 1.25rem;
+    outline: 1px solid oklch(0 0 0 / 0.1);
+    outline-offset: -1px;
     overflow: hidden;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 249, 250, 0.96));
     box-shadow: var(--shadow-lg), 0 24px 50px -34px rgba(0, 0, 0, 0.28);
@@ -447,8 +450,11 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-ribbon {
-    gap: 0;
     margin-top: 1rem;
+  }
+
+  .field-ribbon__grid {
+    gap: 0;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
   }
@@ -492,9 +498,10 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-column {
+    /* Concentric: 0.9rem service-card radius + 1.1rem padding = 2rem. */
     padding: 1.1rem;
     border: 1px solid var(--line);
-    border-radius: 1.25rem;
+    border-radius: 2rem;
     background: rgba(255, 255, 255, 0.86);
     box-shadow: var(--shadow-md);
   }
@@ -548,6 +555,10 @@ const atlasSlots = atlasCategorySlots
     box-shadow: 0 12px 24px -16px rgba(26, 115, 232, 0.4);
   }
 
+  .field-service:active {
+    transform: scale(0.96);
+  }
+
   .field-service::after {
     content: "";
     position: absolute;
@@ -582,7 +593,7 @@ const atlasSlots = atlasCategorySlots
     width: 3rem;
     height: 3rem;
     border: 1px solid var(--line);
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     background: rgba(255, 255, 255, 0.9);
   }
 
@@ -651,7 +662,7 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-story__card:hover {
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--surface-2);
   }
 
   .field-blog a {
@@ -664,7 +675,6 @@ const atlasSlots = atlasCategorySlots
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 0.75rem;
   }
 
   .field-story__card:hover h3 a {
@@ -683,7 +693,7 @@ const atlasSlots = atlasCategorySlots
     display: grid;
     gap: 1.25rem;
     align-items: end;
-    margin-top: 2.5rem;
+    margin: 2.5rem 1rem 0;
     padding: clamp(1.5rem, 3.5vw, 2.5rem);
     overflow: hidden;
     border-color: rgba(255, 255, 255, 0.08);
@@ -739,13 +749,12 @@ const atlasSlots = atlasCategorySlots
   }
 
   @media (min-width: 760px) {
-    .field-ribbon,
     .field-story,
     .field-cta {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .field-ribbon {
+    .field-ribbon__grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 

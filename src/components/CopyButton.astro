@@ -8,12 +8,72 @@ const { text, class: className = '', analyticsLabel } = Astro.props;
   data-copy={text}
   data-analytics-label={analyticsLabel}
   aria-label="Copy to clipboard"
+  title="Copy to clipboard"
   style="font-family: var(--font-mono);"
 >
-  <svg class="w-3.5 h-3.5 copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-  <svg class="w-3.5 h-3.5 check-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+  <span class="copy-btn__icons" aria-hidden="true">
+    <svg class="copy-btn__icon copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+    <svg class="copy-btn__icon check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" /></svg>
+  </span>
   <span class="copy-label" aria-live="polite">Copy</span>
 </button>
+
+<style>
+  .copy-btn:active {
+    scale: 0.96;
+  }
+
+  .copy-label {
+    white-space: nowrap;
+  }
+
+  .copy-btn__icons {
+    position: relative;
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .copy-btn__icon {
+    width: 100%;
+    height: 100%;
+    transition:
+      opacity 300ms cubic-bezier(0.2, 0, 0, 1),
+      scale 300ms cubic-bezier(0.2, 0, 0, 1),
+      filter 300ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  /* Both icons stay in the DOM and cross-fade; the check overlays the copy glyph. */
+  .copy-btn__icon.check-icon {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    scale: 0.25;
+    filter: blur(4px);
+  }
+
+  .copy-btn.is-copied .copy-icon {
+    opacity: 0;
+    scale: 0.25;
+    filter: blur(4px);
+  }
+
+  .copy-btn.is-copied .check-icon {
+    opacity: 1;
+    scale: 1;
+    filter: blur(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .copy-btn:active {
+      scale: 1;
+    }
+
+    .copy-btn__icon {
+      transition: none;
+    }
+  }
+</style>
 
 <script>
   const resetTimers = new WeakMap<Element, number>();
@@ -27,8 +87,6 @@ const { text, class: className = '', analyticsLabel } = Astro.props;
       if (!text) return;
 
       const label = btn.querySelector('.copy-label');
-      const copyIcon = btn.querySelector('.copy-icon');
-      const checkIcon = btn.querySelector('.check-icon');
       const activeTimer = resetTimers.get(btn);
       if (activeTimer) window.clearTimeout(activeTimer);
 
@@ -41,18 +99,18 @@ const { text, class: className = '', analyticsLabel } = Astro.props;
         copied = false;
       }
 
-      copyIcon?.classList.toggle('hidden', copied);
-      checkIcon?.classList.toggle('hidden', !copied);
-      if (label) {
-        label.textContent = copied
-          ? 'Copied!'
-          : 'Copy failed. Select the text and copy manually.';
-      }
+      btn.classList.toggle('is-copied', copied);
+      // Keep the label short: it sits inline in a narrow command box.
+      // The long-form guidance goes in the tooltip.
+      if (label) label.textContent = copied ? 'Copied!' : 'Copy failed';
+      btn.title = copied
+        ? 'Copied to clipboard'
+        : 'Copy failed — select the command and copy it manually';
 
       const timer = window.setTimeout(() => {
-        copyIcon?.classList.remove('hidden');
-        checkIcon?.classList.add('hidden');
+        btn.classList.remove('is-copied');
         if (label) label.textContent = 'Copy';
+        btn.title = 'Copy to clipboard';
         resetTimers.delete(btn);
       }, copied ? 2000 : 5000);
       resetTimers.set(btn, timer);
