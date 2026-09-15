@@ -14,7 +14,7 @@ Use this kit for community launches of LocalCloud as a local Google Cloud sandbo
 | Seed data guide | `/docs/seed-data/` |
 | Service catalog | `/services/` |
 | Compatibility and limitations | `/compatibility/` |
-| GitHub | `https://github.com/LocalStack-Google/localcloud-site` |
+| GitHub | `https://github.com/LocalGCloud/LocalGCloud.github.io` |
 | Docker image | `jaysen2apache/localcloud` |
 | Demo script | `agentic-demo-script.md` |
 | Asset templates | `agentic-launch-asset-templates.md` |

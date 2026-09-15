@@ -667,7 +667,10 @@ version_output=$("$extract_dir/localcloud" --version 2>/dev/null) || fail \
     "the downloaded LocalCloud executable did not run" \
     "Use the manual Docker instructions at $MANUAL_URL."
 case $version_output in
-    'localcloud '*) installed_version=${version_output#localcloud } ;;
+    'localcloud '*)
+        installed_version=${version_output#localcloud }
+        installed_version=${installed_version%% *}
+        ;;
     *) fail \
         "the downloaded executable returned an invalid version" \
         "Download and inspect the release manually before installing it."
@@ -692,7 +695,14 @@ if [ -x "$destination" ] &&
     [ ! -L "$runtime_destination" ] &&
     [ -x "$runtime_destination/localcloud" ]; then
     current_output=$("$destination" --version 2>/dev/null || true)
-    if [ "$current_output" = "$version_output" ]; then
+    current_version=
+    case $current_output in
+        'localcloud '*)
+            current_version=${current_output#localcloud }
+            current_version=${current_version%% *}
+            ;;
+    esac
+    if [ "$current_version" = "$installed_version" ]; then
         same_version=1
     fi
 fi

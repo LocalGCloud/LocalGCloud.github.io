@@ -110,7 +110,7 @@ const productFactsSource = await read("src/data/productFacts.ts");
 for (const repository of [
 	'https://github.com/LocalGCloud/localcloud-cli',
 	'https://github.com/jhsenjaliya/localcloud',
-	'https://github.com/LocalStack-Google/localcloud-site',
+	'https://github.com/LocalGCloud/LocalGCloud.github.io',
 ]) {
 	assert(productFactsSource.includes(repository), `productFacts omits repository owner ${repository}`);
 }

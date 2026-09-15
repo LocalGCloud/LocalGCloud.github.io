@@ -22,6 +22,9 @@ const sourceInstaller = new URL('../public/install.sh', import.meta.url);
 const renderedInstaller = new URL('../dist/install.sh', import.meta.url);
 const assetName = 'localcloud-darwin-arm64.tar.gz';
 const versions = ['0.1.0', '0.1.1'];
+const versionOutput = (version) => version === '0.1.0'
+  ? `localcloud ${version}`
+  : `localcloud ${version} (commit abcdef123456, released 2026-09-04)`;
 const requestedPaths = [];
 let corruptChecksumsFor = null;
 
@@ -60,7 +63,7 @@ case \${1:-} in
     if [ "\${LOCALCLOUD_TEST_MARKER_CONFLICT:-0}" = "1" ]; then
       mkdir -p "$LOCALCLOUD_INSTALL_DIR/.localcloud-script-install"
     fi
-    printf 'localcloud ${version}\\n'
+    printf '${versionOutput(version)}\\n'
     ;;
   --help)
     printf 'LocalCloud help\\n'
@@ -310,7 +313,15 @@ esac
   assert(repairedUpgrade.stdout.includes('Repaired LocalCloud alias lc -> localcloud'), 'upgrade did not repair the missing managed alias');
   assert((await readlink(installedAlias)) === 'localcloud', 'upgrade repaired lc with the wrong target');
   const upgradedVersion = await execFile(installedAlias, ['--version'], { env: baseEnvironment });
-  assert(upgradedVersion.stdout === 'localcloud 0.1.1\n', 'repaired alias did not run the upgraded CLI');
+  assert(upgradedVersion.stdout === `${versionOutput('0.1.1')}\n`, 'repaired alias did not run the upgraded CLI');
+  const upgradedBinary = join(installDir, '.localcloud-runtime-0.1.1', 'localcloud');
+  const changedMetadata = (await readFile(upgradedBinary, 'utf8'))
+    .replace('abcdef123456', '123456abcdef')
+    .replace('2026-09-04', '2026-09-05');
+  await writeFile(upgradedBinary, changedMetadata);
+  const provenanceNoop = await runInstaller(['--version', '0.1.1', '--no-start'], baseEnvironment);
+  assert(provenanceNoop.stdout.includes('already installed'), 'provenance-bearing reinstall was not a no-op');
+  assert((await readFile(upgradedBinary, 'utf8')) === changedMetadata, 'metadata-only differences replaced the same CLI version');
   await assertPathMissing(
     installedRuntime010,
     'upgrade left the previous managed runtime directory',

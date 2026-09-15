@@ -51,14 +51,9 @@ const atlasSlots = atlasCategorySlots
           <span class="field-hero__headline-tag">In-a-Box.</span>
         </h1>
 
-        <p class="field-intro">
-          Run {availableServiceCount} Google Cloud services locally. Use the CLI to choose safe loopback ports, export SDK settings, and inspect documented compatibility limits.
-        </p>
-
-        <div class="field-actions">
-          <a href="#manual-quickstart" class="site-button site-button--primary">Open the Quick Start</a>
-          <a href={`${base}docs/`} class="site-button site-button--secondary">Read the Docs</a>
-        </div>
+        <!--<p class="field-intro">-->
+        <!--  Run {availableServiceCount} Google Cloud services locally. Use the CLI to choose safe loopback ports, export SDK settings, and inspect documented compatibility limits.-->
+        <!--</p>-->
 
         <ul class="field-signal-strip">
           {heroSignals.map((signal) => (
@@ -71,6 +66,11 @@ const atlasSlots = atlasCategorySlots
               </li>
           ))}
         </ul>
+
+        <div class="field-actions justify-center" >
+          <a href="#manual-quickstart" class="site-button site-button--primary">Open the Quick Start</a>
+          <a href={`${base}docs/`} class="site-button site-button--secondary">Read the Docs</a>
+        </div>
       </div>
 
       <figure class="field-board__figure">

@@ -15,8 +15,8 @@ const launchCommand = "localcloud start\nlocalcloud console";
   <div class="installation-methods__panel reveal">
     <header class="installation-methods__header">
       <span class="installation-methods__kicker">Quick Start</span>
-      <h2 id="manual-quickstart-title" class="installation-methods__title">Install, start, connect.</h2>
-      <p class="installation-methods__lede">Requires docker.</p>
+      <h2 id="manual-quickstart-title" class="installation-methods__title">Install, Start & Use.</h2>
+      <p class="installation-methods__lede">Requires docker .</p>
     </header>
 
     <ol class="installation-methods__workflow">
@@ -57,7 +57,7 @@ const launchCommand = "localcloud start\nlocalcloud console";
         <div class="installation-methods__step-copy">
           <span class="installation-methods__step" aria-hidden="true">2</span>
           <h3>Start LocalCloud and open the console</h3>
-          <p>If canonical ports are occupied, the CLI dynamically remaps host ports — use the endpoint values it returns.</p>
+          <p>If canonical ports are occupied, the CLI remaps host ports — use the endpoint values it returns.</p>
         </div>
 
         <div class="installation-methods__step-content">
@@ -69,12 +69,12 @@ const launchCommand = "localcloud start\nlocalcloud console";
       </li>
     </ol>
 
-    <p class="installation-methods__meta">
-      Reviewed CLI source {docsContract.provenance.cliRevision.slice(0, 12)} ·
-      <a href={`${productFacts.cliRepositoryUrl}/releases`}>Checksums and Sigstore bundles</a> ·
-      <a href={productFacts.homebrewTapUrl}>Homebrew tap</a> ·
-      <a href="/docs/licensing/">License terms</a>
-    </p>
+    <!--<p class="installation-methods__meta">-->
+    <!--  Reviewed CLI source {docsContract.provenance.cliRevision.slice(0, 12)} ·-->
+    <!--  <a href={`${productFacts.cliRepositoryUrl}/releases`}>Checksums and Sigstore bundles</a> ·-->
+    <!--  <a href={productFacts.homebrewTapUrl}>Homebrew tap</a> ·-->
+    <!--  <a href="/docs/licensing/">License terms</a>-->
+    <!--</p>-->
   </div>
 </section>
 
@@ -263,14 +263,13 @@ const launchCommand = "localcloud start\nlocalcloud console";
     color: var(--text);
   }
 
-  /* Concentric: 0.75rem command-box radius - 0.25rem margin = 0.5rem. */
   .installation-methods__command :global(.installation-methods__copy) {
     position: static;
     align-self: center;
     margin: 0.25rem;
     transform: none;
     border-color: rgba(26, 115, 232, 0.18);
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     background: var(--surface);
     color: var(--accent-strong);
   }
@@ -302,29 +301,16 @@ const launchCommand = "localcloud start\nlocalcloud console";
   }
 
   @media (max-width: 759px) {
+    .installation-methods {
+      padding: 0;
+    }
+
     .installation-methods__panel {
       padding: 1rem;
     }
 
     .installation-methods__step-copy p {
       grid-column: 1 / -1;
-    }
-  }
-
-  /* Narrow screens: give the command the full box width so URLs don't break mid-token. */
-  @media (max-width: 560px) {
-    .installation-methods__command {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .installation-methods__command pre > code {
-      padding: 0.7rem 0.7rem 0.3rem;
-      font-size: 0.8rem;
-    }
-
-    .installation-methods__command :global(.installation-methods__copy) {
-      justify-self: end;
-      margin: 0 0.25rem 0.25rem;
     }
   }
 </style>

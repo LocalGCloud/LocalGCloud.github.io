@@ -51,7 +51,7 @@ Docs: https://local.cloud/docs/
 SDK examples: https://local.cloud/docs/sdk-examples/
 Terraform: https://local.cloud/docs/terraform/
 Seed data: https://local.cloud/docs/seed-data/
-GitHub/site repo: https://github.com/LocalStack-Google/localcloud-site
+GitHub/site repo: https://github.com/LocalGCloud/LocalGCloud.github.io
 
 I’ll be in the comments today. I’m especially looking for feedback on compatibility expectations, agent safety guardrails, and which GCP workflows are most useful to validate locally.
 ```

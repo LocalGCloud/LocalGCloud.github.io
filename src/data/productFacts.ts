@@ -18,9 +18,9 @@ export const productFacts = {
 	siteUrl: "https://local.cloud/",
 	cliRepositoryUrl: "https://github.com/LocalGCloud/localcloud-cli",
 	runtimeRepositoryUrl: "https://github.com/jhsenjaliya/localcloud",
-	siteRepositoryUrl: "https://github.com/LocalStack-Google/localcloud-site",
+	siteRepositoryUrl: "https://github.com/LocalGCloud/LocalGCloud.github.io",
 	agentSkillsUrl:
-		"https://github.com/LocalStack-Google/localcloud-site/tree/main/agent-skills",
+		"https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills",
 	dockerImageRepository: docsContract.product.runtimeImage.repository,
 	dockerImageTag: docsContract.product.runtimeImage.tag,
 	dockerImage: `${docsContract.product.runtimeImage.repository}:${docsContract.product.runtimeImage.tag}`,
