@@ -1,10 +1,10 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Licensing
-description: LocalCloud Public Preview permitted use, retained release rights, technical enforcement, and governing terms.
+description: LocalCloud Public Preview license terms and compliance resources.
 author: LocalCloud Inc.
-updated: 2026-09-03
-reviewed: 2026-09-03
+updated: 2026-09-14
+reviewed: 2026-09-14
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -14,56 +14,22 @@ import { productFacts } from '../../data/productFacts';
 export const licensing = docsContract.licensing;
 export const governingLicenseUrl = `${productFacts.runtimeRepositoryUrl}/blob/main/LICENSE`;
 
-# Licensing reference
+# Licensing
 
-The governing **LocalCloud Public Preview License Agreement** is a proprietary license issued by **LocalCloud Inc.** The <a href={governingLicenseUrl}>complete license agreement</a> controls; this page summarizes the current terms.
+LocalCloud is free to use during public preview under the **LocalCloud Public Preview License Agreement**.
 
 <Callout type="info" title="Free public preview">
-Individuals and organizations, including for-profit companies, may use LocalCloud free of charge for the permitted non-production workflows below. No payment method or license key is required.
+Individuals and organizations, including for-profit companies, may use LocalCloud free of charge for development, testing, ongoing internal CI, and evaluation. No payment method or license key is required.
 </Callout>
 
-## Permitted preview use
+LocalCloud is designed as a local development and testing environment. Release behavior should be validated against real Google Cloud before deploying an application to production. The preview grant does not cover customer-facing production use, reselling LocalCloud, offering it as a hosted or managed service, redistribution, or sublicensing.
 
-The Public Preview License covers:
+## Resources
 
-- personal learning, education, teaching, academic research, experimentation, and personal projects;
-- internal software development, debugging, testing, and quality assurance;
-- ongoing internal CI and delivery automation;
-- internal evaluation, proofs of concept, and internal pilots; and
-- internal nonprofit development, testing, research, education, and mission-related work.
+For engineering, security, and procurement teams reviewing LocalCloud for organizational use:
 
-Employees and contractors may use LocalCloud on behalf of an organization for these workflows. The organization remains responsible for their compliance with the agreement.
+- **Governing License Agreement**: The complete legal terms are available in the <a href={governingLicenseUrl} target="_blank" rel="noopener noreferrer">governing LICENSE agreement</a> in the runtime repository. The full license text controls.
+- **Privacy and Outbound Data**: Detailed information regarding runtime telemetry, optional controls, and local data boundaries is documented in the [Privacy and Outbound Data Reference](/docs/privacy/).
+- **Runtime Components**: The LocalCloud runtime, including its <a href={`${productFacts.runtimeRepositoryUrl}/blob/main/docs/MCP_INTEGRATION.md`}>built-in MCP integration</a> (accessible via the `/mcp` HTTP endpoint or the `localcloud mcp` stdio bridge), is covered under the same governing license.
+- **Preview releases keep their terms**: Each version distributed under the Public Preview License remains available to its licensees under those terms. Later versions or services may be offered under different terms, but they do not retroactively alter the grant for preview releases already obtained under the agreement.
 
-## Uses outside the preview grant
-
-The preview grant does not cover customer-facing or other production use, reselling LocalCloud, offering it as a hosted or managed service, redistribution, sublicensing, or modification. The complete agreement contains the controlling definitions and restrictions.
-
-LocalCloud is a development and testing environment. Validate release behavior against real Google Cloud before deploying an application to production.
-
-## Preview releases keep their terms
-
-Each version first distributed under the Public Preview License remains available to its licensees under those terms. LocalCloud Inc. may offer later versions, support, services, or features under different terms, but those later terms do not retroactively replace the grant for a preview release already obtained under the agreement. Rights may still terminate for breach.
-
-## Technical enforcement
-
-| Runtime condition | Technical behavior | Legal boundary |
-| --- | --- | --- |
-| Current public-preview release | Starts without a license key and grants technical Pro access. | Use remains limited to the Public Preview License. |
-| Development build | May disable enforcement and grant technical Pro access. | Development metadata does not expand the license grant. |
-| Separately enforced build | Requires `LOCALCLOUD_API_KEY`; validation failure terminates startup. | A technically accepted key does not grant production, redistribution, or hosted-service rights. |
-| Service `minTier` | Controls technical service availability when tier enforcement is active. | Community/Pro labels are access controls, not pricing plans. |
-
-## License metadata conflicts
-
-Some historical package and image metadata previously declared `Apache-2.0`, including a runtime OCI label. Those declarations conflict with the governing proprietary root license and must not be used to infer LocalCloud runtime permissions.
-
-The LocalCloud runtime, including its <a href={`${productFacts.runtimeRepositoryUrl}/blob/main/docs/MCP_INTEGRATION.md`}>built-in MCP integration</a>, remains governed by the runtime repository license. Technical access through the canonical `/mcp` endpoint or the `localcloud mcp` stdio bridge does not create a separate grant.
-
-## Before using LocalCloud
-
-1. Read the <a href={governingLicenseUrl}>complete governing license</a> shipped with the release you plan to use.
-2. Keep LocalCloud within the permitted non-production workflows.
-3. Check the compatibility contract for the services and operations your workflow needs.
-4. Validate authorized production behavior against real Google Cloud.
-
-For questions about the agreement, contact [data.oculus.llc@gmail.com](mailto:data.oculus.llc@gmail.com?subject=LocalCloud%20license%20question).

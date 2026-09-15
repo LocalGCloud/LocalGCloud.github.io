@@ -82,7 +82,6 @@ for (const phrase of [
 	"ongoing internal CI",
 	"No payment method or license key is required",
 	"Preview releases keep their terms",
-	"data.oculus.llc@gmail.com",
 ])
 	assert(licensing.includes(phrase), `licensing reference omits ${phrase}`);
 
