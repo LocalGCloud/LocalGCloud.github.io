@@ -50,7 +50,7 @@ const categoryGroups = serviceCategoryOrder
         <div class="container">
           <div class="site-section-heading reveal">
             <span class="site-kicker">{group.title}</span>
-            <h2>{group.title} services</h2>
+            <h2>{group.id === 'auxiliary' ? 'Auxiliary integration APIs' : `${group.title} services`}</h2>
             <p>{group.description}</p>
           </div>
           <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 stagger">
@@ -74,7 +74,7 @@ const categoryGroups = serviceCategoryOrder
                   <span class="site-chip site-chip--accent">{getServiceSignalLabel(service)}</span>
                 </div>
                 <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">{service.description}</p>
-                <div class="mt-5 text-sm font-medium text-[var(--text)]">View service guide</div>
+                <div class="mt-5 text-sm font-medium text-[var(--text)]">{service.category === 'auxiliary' ? 'View integration guide' : 'View service guide'}</div>
               </a>
             ))}
           </div>

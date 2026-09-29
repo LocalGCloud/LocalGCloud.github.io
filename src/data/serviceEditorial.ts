@@ -7,7 +7,8 @@ export type ServiceCategory =
   | 'integration'
   | 'security'
   | 'operations'
-  | 'compute';
+  | 'compute'
+  | 'auxiliary';
 
 export interface ServiceEditorial {
   slug: string;
@@ -23,7 +24,7 @@ const editorial = {
   bigtable: { slug: 'bigtable', category: 'databases', iconId: 'bigtable', description: 'Row mutation, read, table administration, and PostgreSQL-backed data workflows.' },
   spanner: { slug: 'spanner', category: 'databases', iconId: 'spanner', description: 'Spanner data and administration workflows over gRPC and REST.' },
   bigquery: { slug: 'bigquery', category: 'analytics', iconId: 'bigquery', description: 'Dataset, table, query, scripting, and API workflows.' },
-  sheets: { slug: 'google-sheets', category: 'integration', iconId: 'sheets', description: 'Read-only stored spreadsheet values selected by exact A1 range and project scope.' },
+  sheets: { slug: 'google-sheets', category: 'auxiliary', iconId: 'sheets', description: 'Auxiliary read-only values lookup API for BigQuery external tables and fixture seeding, selected by exact A1 range.' },
   secretmanager: { slug: 'secret-manager', category: 'security', iconId: 'secretmanager', description: 'Secret and version lifecycle workflows for local development.' },
   cloudtasks: { slug: 'cloud-tasks', category: 'integration', iconId: 'cloudtasks', description: 'Queue and task lifecycle workflows.' },
   cloudscheduler: { slug: 'cloud-scheduler', category: 'integration', iconId: 'cloudscheduler', description: 'Schedule and job lifecycle workflows.' },

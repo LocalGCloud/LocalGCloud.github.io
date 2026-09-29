@@ -19,6 +19,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const categoryLabel = getServiceCategoryLabel(service);
 const isComingSoon = service.catalogState === 'coming-soon';
 const isUnsupported = service.status === 'unsupported' || service.status === 'unknown';
+const isAuxiliary = service.category === 'auxiliary';
 const agentTestingPage = isComingSoon ? undefined : serviceTestingPages.find((page) => page.slug === service.slug);
 // Dedicated emulator landing pages that exist as top-level routes.
 const emulatorLandingSlugs: Record<string, string> = {
@@ -39,11 +40,15 @@ const pageTitle = isUnsupported
   ? `${service.name} — ${service.status} in LocalCloud`
   : isComingSoon
   ? `${service.name} Support Coming Soon — LocalCloud`
+  : isAuxiliary
+  ? `${service.name} Integration API — LocalCloud`
   : `${service.name} Local Emulator — LocalCloud`;
 const pageDescription = isUnsupported
   ? `Review why ${service.name} is currently ${service.status} in LocalCloud and consult the operation boundaries.`
   : isComingSoon
   ? `${service.name} support is coming soon to LocalCloud.`
+  : isAuxiliary
+  ? `Connect to the ${service.name} auxiliary integration API and review ${documentedOperations.length} documented lookup workflows and runtime details.`
   : `Connect to ${service.name} locally and review ${documentedOperations.length} documented workflows, runtime details, and service boundaries.`;
 ---
 
@@ -75,6 +80,9 @@ const pageDescription = isUnsupported
 					{!isUnsupported && isServiceDisabledByDefault(service) && (
             <p class="mt-3 text-sm text-[var(--accent-strong)]">Note: {service.name} is disabled by default to save workstation resources. Start it with <code>localcloud start --services {service.slug}</code>.</p>
           )}
+          {isAuxiliary && (
+            <p class="mt-3 text-sm text-[var(--text-2)]">Note: {service.name} is provided as an auxiliary integration API for data lookups (such as BigQuery external tables and fixture seeding) rather than an individual Google Cloud service.</p>
+          )}
         </div>
 
         {isComingSoon ? (
@@ -85,7 +93,7 @@ const pageDescription = isUnsupported
           </aside>
         ) : (
           <aside class="site-panel service-hero-connection p-5 reveal sm:p-6">
-            <div class="flex flex-wrap items-center justify-between gap-3"><span class="site-kicker">{isUnsupported ? 'Registry reference — unsupported integration' : 'Connection'}</span>{!isUnsupported && <CopyButton text={service.envVar} />}</div>
+            <div class="flex flex-wrap items-center justify-between gap-3"><span class="site-kicker">{isUnsupported ? 'Registry reference — unsupported integration' : isAuxiliary ? 'Auxiliary API connection' : 'Connection'}</span>{!isUnsupported && <CopyButton text={service.envVar} />}</div>
             <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4"><p class="site-micro">Environment variable</p><code class="mt-3 block break-all border-0 bg-transparent p-0 text-[0.92rem] leading-7 text-[var(--accent-strong)]">{service.envVar}</code></div>
             <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4">
               <p class="site-micro">Runtime details</p>

@@ -34,7 +34,7 @@ const faqItems = [
   },
   {
     q: 'Which services are included?',
-    a: `LocalCloud currently provides ${availableServiceCount} documented local integrations. Firestore is disabled by default and has operation-specific qualification boundaries, and Google Sheets provides a limited read-only values facade.`,
+    a: `LocalCloud currently provides ${availableServiceCount} documented local integrations across 26 primary Google Cloud services and 1 auxiliary API. Firestore is disabled by default and has operation-specific qualification boundaries, and Google Sheets provides an auxiliary read-only values facade for BigQuery external tables and fixture seeding.`,
   },
   {
     q: 'Is LocalCloud free?',
@@ -206,7 +206,10 @@ const structuredData = [
           <tbody>
             {services.map((service) => (
               <tr>
-                <td class="p-3 font-medium">{service.name}</td>
+                <td class="p-3 font-medium">
+                  {service.name}
+                  {service.category === 'auxiliary' && <span class="ml-2 text-xs font-normal text-[var(--text-3)]">(Auxiliary integration API)</span>}
+                </td>
                 <td class="p-3 text-center">{service.catalogState === 'coming-soon' ? 'Coming soon' : 'Available'}</td>
                 <td class="p-3 text-center">{service.catalogState === 'coming-soon' ? 'Roadmap addition' : `${service.supported.length} documented workflows`}</td>
               </tr>
@@ -224,7 +227,7 @@ const structuredData = [
         {categoryGroups.map(group => (
           <div class="site-panel p-6 reveal">
             <span class="site-kicker">{group.title}</span>
-            <h3 class="mt-2 text-xl">{group.title} services</h3>
+            <h3 class="mt-2 text-xl">{group.id === 'auxiliary' ? 'Auxiliary integration APIs' : `${group.title} services`}</h3>
             <p class="mt-2 text-sm text-[var(--text-2)]">{group.description}</p>
             <ul class="site-list mt-4">
               {group.items.map(svc => (

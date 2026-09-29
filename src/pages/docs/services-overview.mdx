@@ -34,7 +34,7 @@ A service guide separates the facts that affect normal use:
     <tbody>
       {services.map((service) => (
         <tr>
-          <td><a href={`/services/${service.slug}/`}>{service.name}</a></td>
+          <td><a href={`/services/${service.slug}/`}>{service.name}</a>{service.category === 'auxiliary' && <span className="ml-1 text-xs text-[var(--text-3)]"> (Auxiliary API)</span>}</td>
           {service.catalogState === 'coming-soon' ? (
             <td colSpan={5}><strong>Coming soon.</strong> Connection details and documented workflows will be published when available.</td>
           ) : (
@@ -54,7 +54,7 @@ A service guide separates the facts that affect normal use:
 
 ## Categories
 
-The catalog groups services by user goal—storage, databases, analytics, messaging/workflow, security, operations, and compute/runtime—but implementation boundaries differ inside every category. Some are external emulator processes, some are local facades, and some require Docker-socket or transparent-network opt-ins.
+The catalog groups services by user goal—storage, databases, analytics, messaging/workflow, security, operations, compute/runtime, and auxiliary integration APIs—but implementation boundaries differ inside every category. Some are external emulator processes, some are local facades, and some require Docker-socket or transparent-network opt-ins.
 
 ## How to use the catalog
 

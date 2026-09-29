@@ -17,6 +17,7 @@ export const serviceCategoryOrder: ServiceCategory[] = [
 	"operations",
 	"storage",
 	"analytics",
+	"auxiliary",
 ];
 
 export const serviceCategoryMeta: Record<
@@ -53,6 +54,11 @@ export const serviceCategoryMeta: Record<
 		label: "Compute & Runtime",
 		description:
 			"Function, container, cluster, VM, and AI control-plane workflows.",
+	},
+	auxiliary: {
+		label: "Auxiliary Integration APIs",
+		description:
+			"Data lookup and fixture seeding APIs for other cloud services (e.g. BigQuery external tables); not offered as an individual Google Cloud service.",
 	},
 };
 
@@ -158,12 +164,20 @@ export const services: Service[] = docsContract.services.flatMap(
 );
 
 export const publishedServiceCount = services.length;
+export const primaryServices = services.filter((service) => service.category !== "auxiliary");
+export const auxiliaryServices = services.filter((service) => service.category === "auxiliary");
+export const primaryServiceCount = primaryServices.length;
+export const auxiliaryServiceCount = auxiliaryServices.length;
 export const availableServiceCount = services.filter(
 	(service) => service.catalogState === "available" && service.status !== "unsupported" && service.status !== "unknown",
 ).length;
 export const comingSoonServiceCount = services.filter(
 	(service) => service.catalogState === "coming-soon",
 ).length;
+
+export function isAuxiliaryService(service: Service): boolean {
+	return service.category === "auxiliary";
+}
 
 export function isServiceSupported(service: Service): boolean {
 	return service.marketingStatus === "supported";

@@ -3,7 +3,7 @@
   "reviewedAt": "2026-09-29",
   "provenance": {
     "runtimeRevision": "58aa43a3fca4e7b6a0d392fb05c7d7cf5d52d928",
-    "cliRevision": "0faa05d0af166ef10c89dc42505918513cdc2f8c",
+    "cliRevision": "1c5f561635859af90d4273b7232574840f5a68d5",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -74,7 +74,7 @@
       "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:83878b710a1198c6ec89c5eedc8a3c31a774f9844a7f4e715615deacab4b222e",
       "../localcloud-cli/README.md": "sha256:498c3dc908789eba2ba05e78b2ffe66eb8d2884fb3868038751accdf515c365b",
       "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c2db3ed46e034f468327aa49d3a44874f06b25187339d29ea03013fc4abd6e14",
-      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:22f229a5fd968a706599ab64ac1cd2ee5070bca2e5715c49cbce067e86d2bf10",
+      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:d206674dd5d481e1fa752d662bb641ac6463a9a1ec8a38cf3f2aa5d53fbfa507",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:cec194d0570da7ac1240af1ffc2737c36468015b8b1871597d66334c9850f40d",
       "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:d505d66829fb6aaaaea36543d2c8a19140e0cee0f8f7667155a8f0e86208130e",
       "public/install.sh": "sha256:2c660fac584a1db052ef80956c0001fa6d71034fceb1e6617f81965741bcc796"
@@ -177,7 +177,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.5 from revision 0faa05d0af166ef10c89dc42505918513cdc2f8c. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.6 from revision 1c5f561635859af90d4273b7232574840f5a68d5. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",

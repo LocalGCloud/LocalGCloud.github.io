@@ -32,6 +32,7 @@ Presenting internal verification caveats verbatim (such as marking services "par
 ### Principle 3: Operational Configuration is NOT Support Status
 - **Disabled-by-default ≠ Unsupported:** Services such as **Firestore** are fully supported, but disabled by default to keep LocalCloud lightweight (conserving workstation RAM and CPU). They must be marked as **Supported** with a clear note explaining how to enable them (e.g., `localcloud start --services firestore` or via `localcloud.yaml`).
 - **Full Execution Emulators (e.g., Dataproc):** LocalCloud provides runtime container execution for Dataproc clusters and serverless batch jobs via Docker. Describe this capability proactively rather than highlighting internal virtualization differences.
+- **Auxiliary Integration APIs (e.g., Google Sheets):** Utility services provided for other cloud services to use (such as BigQuery external tables and fixture seeding) are categorized as **Auxiliary Integration APIs**, not primary cloud services under Messaging & Workflow.
 
 ### Principle 4: Positive Capability Framing
 - Frame features by what developers **can** achieve:

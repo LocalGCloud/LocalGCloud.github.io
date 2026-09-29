@@ -112,7 +112,7 @@ The default-disabled entries are {docsContract.services.filter((service) => !ser
     {docsContract.services.map((service) => (
       <tr>
         <td><code>{service.id}</code></td>
-        <td>{service.name}</td>
+        <td>{service.name}{service.id === 'sheets' ? ' (Auxiliary integration API)' : ''}</td>
         <td>{service.registryDefaultEnabled ? 'yes' : 'no'}</td>
         <td>{service.minTier}</td>
       </tr>
