@@ -10,7 +10,7 @@ LocalCloud packages a Java gateway, the web console, local facades, and external
 
 ## Request flow
 
-1. `localcloud start` selects a Docker data volume, discovers or creates one compatible loopback-bound runtime, and maps published canonical ports in the **5380–5405** range.
+1. `localcloud start --local-only` selects a Docker data volume, discovers or creates one compatible loopback-bound runtime, and maps published canonical ports in the **5380–5405** range.
 2. `localcloud env` resolves that runtime and returns environment variables and endpoint values for the selected project and caller.
 3. SDK, REST, gRPC, and Terraform requests reach a direct emulator port or the gateway on canonical container port `5380` (HTTP) or `5381` (HTTPS / TLS).
 4. The gateway handles operator routes and routes facade/API traffic to local implementations.
@@ -19,7 +19,7 @@ LocalCloud packages a Java gateway, the web console, local facades, and external
 
 The named Docker volume mounted at `/var/lib/localcloud` is the only durable runtime selector; the default is `localcloud-data`. The CLI verifies the configured image and selects the unique compatible container using that volume. Immutable container ID is live process identity. A recorded ID is only a revalidated tie-break hint.
 
-CLI-created container, network, and volume resources carry exact ownership labels. Ownership is independent per resource. The CLI can start, stop, restart, inspect, and use an attached compatible container, but it never removes or relabels a Docker resource it does not own. Ambiguous volume use, incompatible images, invalid labels, and shared-volume conflicts fail before mutation. Full `reset --all-projects` requires a fully managed runtime.
+CLI-created container, network, and volume resources carry exact ownership labels. Ownership is independent per resource. The CLI can start, stop, restart, inspect, and use an attached compatible container, but it never removes or relabels a Docker resource it does not own. Ambiguous volume use, incompatible images, invalid labels, and shared-volume conflicts fail before mutation. `localcloud reset --all-projects` prints manual full-recreation steps and deletes nothing.
 
 Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env`, `/services`, `/seed`, `/reseed`, `/import`, `/reset`, `/terraform/readiness`, `/graphql`, `/api-docs`, and `/docs`.
 
@@ -28,13 +28,13 @@ Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env
 | Component | Current Implementation | Persistence Boundary |
 | :--- | :--- | :--- |
 | **Gateway & Facades** | Java / Armeria services | Facade records use internal PostgreSQL beneath `/var/lib/localcloud/pgdata`; operation-specific limits apply. |
-| **Cloud Storage** | `fake-gcs-server` process | Object blobs and bucket metadata stored beneath `/var/lib/localcloud/gcs`. |
-| **Pub/Sub** | Google emulator process | Volatile across process restart; topics, subscriptions, and messages require recreation/reseeding. |
-| **Firestore** | Google emulator process | Starts on-demand (disabled by default); seed loading is not complete. |
+| **Cloud Storage** | `fake-gcs-server` process | Object blobs and bucket metadata stored beneath `/var/lib/localcloud/gcs-data`. |
+| **Pub/Sub** | In-process Java facade | Topics, subscriptions, and queued messages use PostgreSQL under `/var/lib/localcloud/pgdata`. Delivery workers and connections restart; qualify exact replay and redelivery behavior. |
+| **Firestore** | External emulator configuration | Documented local document/query workflows; disabled by default. Checkpoint, timestamp, listener, and transaction behavior requires exact-artifact qualification. |
 | **Bigtable** | Custom emulator process | Backed by PostgreSQL under the mounted data root. Port `5385`. |
-| **BigQuery** | Native GoogleSQL (ZetaSQL 2026.9.2) + DuckDB 1.5.5 OLAP | Supervised native in-container process; columnar DuckDB storage beneath `/var/lib/localcloud/bigquery`. Ports `5388` (REST) and `5389` (Storage Read gRPC with TLS). |
+| **BigQuery** | Native GoogleSQL analysis + DuckDB execution | Supervised native in-container process; columnar DuckDB storage beneath `/var/lib/localcloud/bigquery-data`. Ports `5388` (REST) and `5389` (Storage Read gRPC with TLS). |
 | **Spanner** | Extended Cloud Spanner emulator | LevelDB row data plus JSON metadata beneath `/var/lib/localcloud/spanner-data`. Ports `5386` (gRPC) and `5387` (REST). |
-| **Memorystore** | Valkey-compatible process | Ports `5390` (plaintext) and `5394` (TLS). High-fidelity Redis compatibility. |
+| **Memorystore** | Valkey-compatible process | Ports `5390` (plaintext) and `5394` (TLS). Check the documented RESP command and recovery subset. |
 | **Cloud SQL** | PostgreSQL 16 (`5391`) + companion MySQL 8.4 (`5406`) | Native PostgreSQL 16 inside container; MySQL 8.4 hosted via companion container. |
 
 A retained volume improves restart/container-replacement behavior only for stores that actually persist. It does not provide production replication, backups, disaster recovery, transaction parity, or durability guarantees.
@@ -84,7 +84,7 @@ The host CLI may dynamically remap these ports if conflicts arise; generated end
 
 ## Transparent networking and Docker socket
 
-Both features are disabled by default in the host CLI.
+Transparent networking is disabled by default. Docker access defaults to `auto`; the socket is mounted when selected services declare that dependency. Set `host.docker_socket: false` to opt out. Unflagged CLI lifecycle commands publish ports on all host interfaces; the example above selects loopback explicitly.
 
 - **Transparent networking** maps host `53/udp` to container `5410/udp`, host `80` to gateway `5380`, and host `443` to the configured native TLS port (`5381`). It requires scoped host DNS changes and certificate trust and is used only for clients that ignore custom endpoint variables.
 - **Docker socket access** grants the container control over the host Docker daemon. It is required only for runtime workflows that deliberately create subordinate containers or clusters (such as Cloud SQL MySQL or GKE k3d). In-container BigQuery runs natively via Supervisord and does not require Docker socket access.

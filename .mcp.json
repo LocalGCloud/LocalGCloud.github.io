@@ -7,6 +7,12 @@
         "agentation-mcp",
         "server"
       ]
+    },
+    "graft": {
+      "command": "graft",
+      "args": [
+        "mcp"
+      ]
     }
   }
 }

@@ -8,7 +8,7 @@ The proprietary Public Preview License permits non-production internal CI for in
 
 ```bash
 for i in $(seq 1 30); do
-  if curl -fsS http://localhost:24080/health >/dev/null; then
+  if curl -fsS http://localhost:5380/readiness >/dev/null; then
     echo "LocalCloud is ready"
     break
   fi
@@ -19,12 +19,12 @@ for i in $(seq 1 30); do
   fi
 done
 
-eval "$(curl -fsS http://localhost:24080/env?format=shell)"
+eval "$(curl -fsS http://localhost:5380/env?format=shell)"
 ```
 
 ## Ports and memory
 
-- Canonical LocalCloud range: `24080-24092`.
+- Canonical LocalCloud range: `5380-5405`.
 - Publish only ports needed by the selected tests.
 - Keep ports loopback-bound where the runner supports it.
 - Reviewed CLI default memory: `4g`.

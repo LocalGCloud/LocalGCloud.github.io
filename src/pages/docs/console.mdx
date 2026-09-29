@@ -44,4 +44,4 @@ Any displayed cost value is **indicative pricing only — not live Google Cloud 
 
 ## Security boundary
 
-The console and many administrative paths are accessible even when IAM strict or `gcp-live` mode is enabled. Keep the runtime loopback-bound. Docker-socket access and transparent networking are separate opt-ins with broader host/network impact.
+The console and many administrative paths are accessible even when IAM strict or `gcp-live` mode is enabled. Keep the runtime loopback-bound. Docker access uses `auto` by default and can mount the host socket for selected services; set it to `false` to opt out. Transparent networking is a separate opt-in.

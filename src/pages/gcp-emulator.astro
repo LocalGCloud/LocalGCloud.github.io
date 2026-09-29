@@ -34,7 +34,7 @@ const faqItems = [
   },
   {
     q: 'Which services are included?',
-    a: `LocalCloud currently provides ${availableServiceCount} available services. Firestore is available but disabled by default, and Google Sheets provides a limited read-only values facade.`,
+    a: `LocalCloud currently provides ${availableServiceCount} documented local integrations. Firestore is disabled by default and has operation-specific qualification boundaries, and Google Sheets provides a limited read-only values facade.`,
   },
   {
     q: 'Is LocalCloud free?',
@@ -73,7 +73,7 @@ const structuredData = [
 
 <LandingLayout
   title="GCP Emulator — Run Google Cloud Services Locally in Docker"
-  description={`Run ${availableServiceCount} Google Cloud services locally with LocalCloud. Install the host CLI, export actual loopback endpoints, and review per-service workflows.`}
+  description={`Run ${availableServiceCount} documented local integrations locally with LocalCloud. Install the host CLI, export actual loopback endpoints, and review per-service workflows.`}
   {structuredData}
 >
   <!-- HERO -->
@@ -86,7 +86,7 @@ const structuredData = [
         </span>
         <h1 class="mt-4">Run Google Cloud locally in one Docker container</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          LocalCloud provides {availableServiceCount} available Google Cloud services. Use the host CLI to start a loopback-bound runtime and export its actual SDK endpoint settings.
+          LocalCloud provides {availableServiceCount} documented local integrations. Use the host CLI to start a loopback-bound runtime and export its actual SDK endpoint settings.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start with the CLI</a>
@@ -265,7 +265,7 @@ const structuredData = [
         <article class="site-panel p-5">
           <span class="site-kicker">BigQuery pipeline testing</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Exercise 10 documented DuckDB-backed BigQuery workflows locally, including datasets, tables, queries, scripting, and API profiles.
+            Exercise documented DuckDB-backed BigQuery workflows locally, including datasets, tables, queries, scripting, and API profiles.
           </p>
         </article>
         <article class="site-panel p-5">
@@ -319,7 +319,7 @@ gcloud emulators spanner start --host-port=localhost:5386
           <span style="color: rgba(255,255,255,0.7);" class="site-kicker">LocalCloud</span>
           <pre class="mt-4 border-0 bg-transparent"><code class="text-[0.8rem] leading-[1.7]" style="color: #e8eaed;">{docsContract.cli.installCommand}
 localcloud doctor
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 localcloud console
 

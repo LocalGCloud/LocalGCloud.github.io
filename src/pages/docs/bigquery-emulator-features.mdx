@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: BigQuery Emulator Features
-description: Comprehensive GoogleSQL and DuckDB-powered BigQuery emulator features, logical categories, endpoints, and runtime boundaries in LocalCloud.
+description: GoogleSQL and DuckDB architecture, documented BigQuery operations, endpoints, and qualification boundaries.
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -11,29 +11,28 @@ export const bigquery = getDocumentationService('bigquery');
 
 # BigQuery emulator feature reference
 
-LocalCloud packages an advanced, production-grade local BigQuery engine. The architecture combines the official **GoogleSQL Analyzer (pinned ZetaSQL 2026.9.2)** for exact semantic resolution with **DuckDB 1.5.5 vectorized columnar OLAP execution**.
+The current LocalCloud source packages a native **GoogleSQL Analyzer** and **DuckDB** query engine. Supervisord manages the BigQuery process inside the LocalCloud Docker container. Running LocalCloud requires Docker; the default BigQuery process does not need a Docker-socket mount. An optional custom BigQuery image uses a companion container and requires Docker access.
 
-By default, BigQuery runs as a native in-container process managed by Supervisord inside LocalCloud, requiring **no Docker daemon** on the host.
-
-<Callout type="note" title="Zero silent wrong results (fail-closed)">
-Tested against the authoritative GoogleSQL Reference Evaluator across an 88-query edge-case hazard benchmark, the GoogleSQL + DuckDB engine produced **0 silent wrong results**. Unsupported or unlowered syntax fails closed with an explicit error rather than silently returning incorrect data or integer wraps.
+<Callout type="warning" title="Source evidence and release qualification">
+The operation table describes the current source contract. The mutable LocalCloud image tag has no qualified assembled-image digest in this snapshot. Test the exact image and client you use; source-level implementation and a finite query benchmark do not establish complete semantic parity.
 </Callout>
 
 ## Connection and endpoints
 
-| Surface | Endpoint | Boundary & details |
+| Surface | Canonical endpoint | Boundary |
 | --- | --- | --- |
-| **REST API** | `http://localhost:5388` | Core BigQuery v2 REST query, table, dataset, and job lifecycle APIs. |
-| **Storage API (gRPC)** | `localhost:5389` | High-throughput Storage Read (Arrow IPC & AVRO) and Storage Write API. **TLS is always required** on this listener. |
-| **SDK environment** | `BIGQUERY_EMULATOR_HOST=http://localhost:5388` | Standard emulator variable recognized by official Google Cloud SDKs. |
-| **Gateway proxy** | `http://localhost:5380/bigquery/v2/` | Optional gateway access subject to edge IAM policy evaluation. |
-| **Execution mode** | Native in-container (Supervisord) | Native Linux process; Docker daemon is required only if an optional custom companion image is configured. |
-| **Persistence** | Mounted volume `/var/lib/localcloud/bigquery-data` | DuckDB database files and JSON metadata survive container restarts when a persistent data volume is mounted. |
+| REST API | `http://localhost:5388` | BigQuery dataset, table, job, and query routes. |
+| Storage API | `localhost:5389` | Separate gRPC listener with TLS; configure the Storage client and trust the LocalCloud CA. |
+| Environment export | `BIGQUERY_EMULATOR_HOST=http://localhost:5388` | Use the actual value from `localcloud env`; some SDKs need explicit client options. |
+| Gateway proxy | `http://localhost:5380/bigquery/v2/` | Gateway authentication and routing differ from direct listeners. |
+| Persistence | `/var/lib/localcloud/bigquery-data` | DuckDB and metadata beneath the mounted LocalCloud data volume. |
 
-## Supported operations
+The CLI may remap host ports. The [Python SDK example](/docs/sdk-examples/#bigquery-deterministic-query) passes the generated REST endpoint explicitly and uses anonymous credentials. A REST client configuration does not configure the Storage API client.
+
+## Current operation contract
 
 <table>
-  <thead><tr><th>Operation area</th><th>Status</th><th>Local capability & boundary</th></tr></thead>
+  <thead><tr><th>Operation area</th><th>Status</th><th>Boundary</th></tr></thead>
   <tbody>
     {bigquery.operations.map((operation) => (
       <tr><td>{operation.label}</td><td><code>{operation.status}</code></td><td>{operation.limitations.join(' ')}</td></tr>
@@ -41,61 +40,24 @@ Tested against the authoritative GoogleSQL Reference Evaluator across an 88-quer
   </tbody>
 </table>
 
-## Feature categories
+## Feature areas to qualify
 
-LocalCloud organizes BigQuery's capabilities into logical, production-grade functional areas:
+- **GoogleSQL execution:** test the exact types, expressions, joins, scripting, and error behavior used by the application.
+- **BQML:** selected local models are implemented; model types, feature shapes, and `TRANSFORM` variants have documented gaps.
+- **Vector Search and text search:** check the specific index, function, and option against the feature inventory.
+- **Geography:** spherical functions have bounded geometry and input support, including remaining snapping, covering, and union gaps.
+- **Security and governance:** row policies, masking, and IAM-shaped APIs require path-specific tests. Nested policy tags and taxonomy operations have recorded boundaries.
+- **External tables and federation:** validate the exact source format and connector. An emulator fixture or stored connection does not prove a live federated query.
+- **Storage API and Spark:** qualify transport, TLS, schema, read/write method, connector version, and architecture separately.
 
-### 1. Machine Learning & Predictive Analytics (BQML)
-- **Model Training**: Create and train machine learning models directly in SQL using `CREATE MODEL` with tabular algorithms (linear regression, logistic regression, k-means, matrix factorization).
-- **Inference & Evaluation**: Full support for `ML.PREDICT`, `ML.EVALUATE`, and `ML.WEIGHTS` composed with standard queries, CTEs, and write destinations.
-- **Preprocessing**: Feature transformation pipelines using `TRANSFORM` clauses embedded in model definitions.
+The [coverage and known boundaries](/docs/bigquery-coverage-gaps/) page publishes the dependency's recorded matrix counts and partial records. The [comparison guide](/docs/bigquery-feature-comparison/) explains how to compare local engines without treating benchmark samples as global correctness guarantees.
 
-### 2. Generative AI & Embeddings
-- **Local LLM Text Generation**: Invoke `ML.GENERATE_TEXT` directly within SQL queries connected to local OpenAI-compatible endpoints (such as Ollama, llama.cpp, or vLLM).
-- **Text & Multimodal Embeddings**: Generate vector embeddings in batch or stream via `ML.GENERATE_EMBEDDING` for semantic search and retrieval pipelines without external API costs.
+## Runtime and production boundaries
 
-### 3. Vector Search & Full-Text Search
-- **Vector Indexes**: Create and manage vector indexes with `CREATE VECTOR INDEX`, `DROP VECTOR INDEX`, and `ALTER VECTOR INDEX REBUILD`.
-- **Vector Search Execution**: Fast semantic retrieval with `VECTOR_SEARCH` supporting Cosine, Euclidean, and Dot-Product distance metrics.
-- **Search Indexes & Scoring**: Full-text indexing with `CREATE SEARCH INDEX`, tokenization, exact `SEARCH` queries, and statistical relevance functions (`TF_IDF`, `BAG_OF_WORDS`).
+<ul>
+  {bigquery.limitations.map((limitation) => <li>{limitation}</li>)}
+  <li>{bigquery.persistence.restartBehavior}</li>
+  {bigquery.persistence.recoveryLimitations.map((limitation) => <li>{limitation}</li>)}
+</ul>
 
-### 4. Geospatial Analytics & GIS (S2 Spherical Geometry)
-- **Spherical S2 Calculations**: Complete native geography functions executed with spherical accuracy: `ST_BOUNDINGBOX`, `ST_INTERSECTSBOX`, `ST_LINEINTERPOLATEPOINT`, `ST_LINELOCATEPOINT`, `ST_LINESUBSTRING`, `ST_MAXDISTANCE`, `ST_CLOSESTPOINT`, `ST_CENTROID_AGG`, and `ST_EXTENT`.
-- **Spatial Clustering & GeoJSON**: Spherical DBSCAN clustering per window partition (`ST_CLUSTERDBSCAN`), and native GeoJSON export (`ST_ASGEOJSON`) for points, linestrings, polygons, and multi-part geometries.
-
-### 5. Property Graph Queries (GoogleSQL GQL)
-- **Graph Schema Declarations**: Define labeled property graphs directly in BigQuery DDL using `CREATE PROPERTY GRAPH` over node and edge tables.
-- **Pattern Matching (`GRAPH_TABLE`)**: Query complex entity relationships, cyclic traversals, and path patterns using the GoogleSQL `GRAPH_TABLE` operator.
-
-### 6. Enterprise Security, Privacy & Data Governance
-- **Row-Level Security (RLS)**: Enforced across all query and extraction surfaces (interactive queries, views, Storage Read API, tabledata export, copy jobs, and DML). Managed via row-access policy DDL.
-- **Dynamic Data Masking**: Column-level policy tags, predefined masking routines (SHA256, email masks, null masks), and custom masking routines backed by Data Policy API v1.
-- **IAM Conditions**: Policy version 3 conditional role bindings evaluated by Google's CEL runtime (`cel-expr-python`) on table and dataset permissions.
-- **Differential Privacy**: Privacy-preserving analytics using `WITH DIFFERENTIAL_PRIVACY` (`COUNT`, `SUM`, `AVG`, `PERCENTILE_CONT`).
-
-### 7. GoogleSQL Dialect & Columnar Execution
-- **ZetaSQL Semantic Resolution**: Pinned GoogleSQL Analyzer 2026.9.2 provides authoritative type checking, resolution, and name binding.
-- **Columnar Engine**: DuckDB 1.5.5 executes analytical scans, joins, aggregations, and window functions 10–100x faster than row-oriented emulators.
-- **Rich Data Types**: Full fidelity for 76-digit `BIGNUMERIC`, `NUMERIC(38,9)`, `GEOGRAPHY`, `JSON`, `STRUCT`, and native `ARRAY` operations.
-- **Advanced Query Features**: Recursive CTEs, value tables (`SELECT AS STRUCT` / `AS VALUE`), dynamic window parameters (`@offset` parameter bindings), persistent Table-Valued Functions (TVFs with `RETURNS TABLE`), time travel (`FOR SYSTEM_TIME AS OF`), and Table Clones/Copies.
-
-### 8. High-Throughput Ingestion & Database Federation
-- **Cloud Storage External Tables**: Vectorized reading of CSV, JSONL, Parquet, Avro, and ORC files directly from emulated Cloud Storage (`gs://`), with schema autodetect and Hive partitioning.
-- **Storage Read/Write API**: High-throughput gRPC streaming on port `5389` delivering Arrow IPC and AVRO streams for Apache Spark, Dataproc, and data pipelines.
-- **Database Federation (`EXTERNAL_QUERY`)**: Direct live federated queries against PostgreSQL and MySQL databases via bundled DuckDB database extensions.
-
-### 9. Procedural Scripting, Procedures & Sessions
-- **Control Flow**: Multi-statement scripting with `DECLARE`, `SET`, `IF`, `WHILE`, `LOOP`, `REPEAT`, `FOR...IN`, and `BEGIN...EXCEPTION` blocks.
-- **Dynamic SQL & Stored Procedures**: Dynamic statement execution with `EXECUTE IMMEDIATE (USING / INTO)` and callable stored procedures (`CREATE PROCEDURE` / `CALL`).
-- **Sessions & Temp Objects**: Isolated multi-statement user sessions (`createSession`, `BQ.ABORT_SESSION`) with temporary tables and temporary functions.
-
-### 10. Operational Metadata (`INFORMATION_SCHEMA`)
-- Full metadata catalog views for `SCHEMATA`, `TABLES`, `VIEWS`, `COLUMNS`, `COLUMN_FIELD_PATHS`, `ROUTINES`, `PARAMETERS`, `TABLE_OPTIONS`, `TABLE_STORAGE`, `OBJECT_PRIVILEGES`, `MATERIALIZED_VIEWS`, `JOBS_BY_USER`, `JOBS_BY_PROJECT`, `JOBS_TIMELINE`, and `SESSIONS_BY_*`.
-- Query dry runs with precise byte estimates and `maximumBytesBilled` budget enforcement.
-
-## Production boundary
-
-While LocalCloud provides near-complete local functional parity for development and CI testing, certain infrastructure-scale capabilities remain exclusive to Google Cloud production:
-- Distributed Borg reservations, multi-tenant slot allocation, and physical BI Engine memory tiers.
-- Cross-region multi-continent dataset replication and geo-distributed disaster recovery.
-- Cloud Billing charges, physical multi-tenant quotas, and live Google Cloud Audit Logs.
+Validate required production IAM, billing, quotas, reservations, concurrency, managed integrations, and recovery in Google Cloud. Local functional gaps also need validation; they are not all cloud-only infrastructure limitations.

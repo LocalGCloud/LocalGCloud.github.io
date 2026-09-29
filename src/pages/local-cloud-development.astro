@@ -136,7 +136,7 @@ const faqItems = [
       <div class="reveal">
         <h2>Google Cloud local development with LocalCloud</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud exposes {availableServiceCount} available Google Cloud services in one managed container. Firestore is available but disabled by default. The CLI returns local endpoint settings for the actual host ports.
+          LocalCloud exposes {availableServiceCount} documented local integrations in one managed container. Firestore is disabled by default; review its documented operation boundaries. The CLI returns local endpoint settings for the actual host ports.
         </p>
       </div>
 
@@ -144,7 +144,7 @@ const faqItems = [
         <h3 class="text-lg font-semibold text-[var(--text)]">Quick start</h3>
         <pre class="mt-4 overflow-x-auto text-xs"><code>{docsContract.cli.installCommand}
 localcloud doctor
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 localcloud console</code></pre>
       </div>
@@ -153,7 +153,7 @@ localcloud console</code></pre>
         <article class="site-panel p-6">
           <h3 class="text-lg font-semibold text-[var(--text)]">Supported GCP services</h3>
           <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
-            <div><strong class="text-[var(--text)]">Data & Analytics:</strong> BigQuery, Cloud Storage, Firestore, Dataproc</div>
+            <div><strong class="text-[var(--text)]">Data & Analytics:</strong> BigQuery, Cloud Storage, Spanner, Bigtable</div>
             <div><strong class="text-[var(--text)]">Messaging:</strong> Pub/Sub, Cloud Tasks</div>
             <div><strong class="text-[var(--text)]">Databases:</strong> Spanner, Bigtable, Cloud SQL, AlloyDB</div>
             <div><strong class="text-[var(--text)]">Compute:</strong> Cloud Functions, Cloud Run, GKE, Compute Engine (Pro)</div>
@@ -198,8 +198,8 @@ localcloud console</code></pre>
             Use different environment variables for local vs production. Never accidentally hit production APIs during local development.
           </p>
           <pre class="mt-4 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code># .env.local
-BIGQUERY_EMULATOR_HOST=http://localhost:24087
-STORAGE_EMULATOR_HOST=http://localhost:24081
+BIGQUERY_EMULATOR_HOST=http://localhost:5388
+STORAGE_EMULATOR_HOST=http://localhost:5382
 
 # .env.production
 # (no emulator variables — uses real GCP)</code></pre>

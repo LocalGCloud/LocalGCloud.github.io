@@ -9,7 +9,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const categoryTones = ['sky', 'sage', 'ember'] as const;
 
 const heroSignals = [
-  { value: String(availableServiceCount), label: 'available services', note: 'plus clearly marked upcoming additions' },
+  { value: String(availableServiceCount), label: 'documented integrations', note: 'operation-specific compatibility boundaries' },
   { value: '1', label: 'data-volume runtime', note: 'CLI-selected loopback ports and persistent data' },
 ];
 
@@ -52,7 +52,7 @@ const atlasSlots = atlasCategorySlots
         </h1>
 
         <!--<p class="field-intro">-->
-        <!--  Run {availableServiceCount} Google Cloud services locally. Use the CLI to choose safe loopback ports, export SDK settings, and inspect documented compatibility limits.-->
+        <!--  Use {availableServiceCount} documented local integrations. Use the CLI to choose safe loopback ports, export SDK settings, and inspect documented compatibility limits.-->
         <!--</p>-->
 
         <ul class="field-signal-strip">
@@ -108,7 +108,7 @@ const atlasSlots = atlasCategorySlots
     <section class="field-atlas">
       <div class="field-section-heading reveal">
         <span class="field-kicker">Service Catalog</span>
-        <h2>{availableServiceCount} Google Cloud services, running locally.</h2>
+        <h2>{availableServiceCount} documented local integrations.</h2>
       </div>
 
       <div class="field-atlas__grid">
@@ -135,7 +135,9 @@ const atlasSlots = atlasCategorySlots
                       </div>
 
                       <div class="field-service__tags">
-                        {service.catalogState === 'coming-soon' ? (
+                        {service.marketingStatus === 'unsupported' ? (
+                          <span>Unsupported</span>
+                        ) : service.catalogState === 'coming-soon' ? (
                           <span>Coming soon</span>
                         ) : (
                           <span>{service.endpointLabel}</span>

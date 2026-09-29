@@ -24,7 +24,7 @@ Other routes:
 | --- | --- |
 | `POST /seed` | Load a YAML body. |
 | `POST /import` | Alias of `/seed`. |
-| `POST /reseed` | Reload `LOCALCLOUD_SEED_FILE`, default `/etc/localcloud/seed.yaml`. |
+| `POST /reseed` | Reload `LOCALCLOUD_SEED_FILE`, default `/opt/localcloud/seed.yaml`; replace default sample resources in the selected project, including changes inside them. |
 | `POST /reset?project=...` | Clear one project; `{"restore_seed":true}` reapplies that project's most recently loaded seed when available. |
 
 ## Accepted envelopes
@@ -100,9 +100,9 @@ projects:
 
 ## Supported seed registrars
 
-The reviewed `SeedService` implementation registers `gcs`, `pubsub`, `bigquery`, `spanner`, `secretmanager`, `cloudtasks`, `memorystore`, `workflows`, `cloudscheduler` (alias `scheduler`), `cloudfunctions` (alias `functions`), `alloydb`, `dataproc`, `cloudiam` (alias `iam`), `cloudsql`, `bigtable`, and `sheets`.
+The reviewed `SeedService` implementation registers `gcs`, `pubsub`, `bigquery`, `spanner`, `secretmanager`, `cloudtasks`, `memorystore`, `workflows`, `cloudscheduler` (alias `scheduler`), `cloudfunctions` (alias `functions`), `alloydb`, `dataproc`, `cloudiam` (alias `iam`), `cloudsql`, `bigtable`, `sheets`, `firestore`, and `kms`.
 
-A registrar can still be unavailable if its service is disabled, its tier is unavailable, or its implementation was not registered in the assembled runtime. **Firestore has no enabled seed registrar** and is rejected; create Firestore test data through the SDK instead.
+A registrar can still be unavailable if its service is disabled, its tier is unavailable, or its implementation was not registered in the assembled runtime. **Firestore has a seed registrar** and is disabled by default. Enable it explicitly and consult its operation contract. A registrar or successful fixture import does not establish complete query, listener, or recovery fidelity.
 
 ## Volatile restart mode
 
@@ -112,11 +112,11 @@ curl -fsS -X POST 'http://localhost:5380/seed?mode=volatile' \
   --data-binary @seed.yaml
 ```
 
-Volatile mode seeds only Pub/Sub and Bigtable from the current implementation. Firestore is listed internally as volatile but has no implemented registrar, so it remains unavailable. Persistent services are skipped because their service stores are expected to retain data on the volume; this is not a production durability guarantee.
+The current `VOLATILE_SEED_SERVICES` set is empty, so volatile mode selects no services. Pub/Sub now uses PostgreSQL persistence. Use normal explicit seeding for test-owned fixtures; retaining a volume is not a production durability guarantee.
 
 ## Startup file
 
-Manual Docker users can mount the seed and persistent data together:
+Container startup and the Console own automatic samples. The CLI does not discover, mount, or apply seed files; `host.seed` is accepted but ignored. Set `server.auto_seed: false` to disable bootstrap samples. Manual Docker users can mount the seed and persistent data together:
 
 ```bash
 docker volume create localcloud-data
@@ -124,7 +124,7 @@ docker volume create localcloud-data
 docker run -d --name localcloud \
   -p 127.0.0.1:5380-5405:5380-5405 \
   -m 4g \
-  -v "$PWD/seed.yaml:/etc/localcloud/seed.yaml:ro" \
+  -v "$PWD/seed.yaml:/opt/localcloud/seed.yaml:ro" \
   -v localcloud-data:/var/lib/localcloud \
   jaysen2apache/localcloud:latest
 ```

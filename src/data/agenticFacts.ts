@@ -17,7 +17,7 @@ export interface AgenticEndpoint {
 export interface AgenticServiceMetadata {
 	name: string;
 	slug: string;
-	status: "supported" | "partial" | "release-unverified" | "planned";
+	status: "supported" | "partial" | "release-unverified" | "planned" | "unsupported" | "unknown";
 	port: string;
 	protocol: string;
 	endpointLabel: string;
@@ -51,6 +51,7 @@ export const agenticFacts = {
 	consoleUrl: `http://localhost:${docsContract.operator.gatewayPort}`,
 	adminBaseUrl: `http://localhost:${docsContract.operator.gatewayPort}`,
 	healthEndpoint: `http://localhost:${docsContract.operator.gatewayPort}${docsContract.operator.endpoints.health}`,
+	readinessEndpoint: `http://localhost:${docsContract.operator.gatewayPort}${docsContract.operator.endpoints.readiness}`,
 	shellEnvEndpoint: `http://localhost:${docsContract.operator.gatewayPort}${docsContract.operator.endpoints.environment}?format=shell`,
 	terraformEnvEndpoint: `http://localhost:${docsContract.operator.gatewayPort}${docsContract.operator.endpoints.environment}?format=terraform`,
 	cliInstallCommand: docsContract.cli.installCommand,
@@ -82,7 +83,12 @@ export const agenticEndpoints: AgenticEndpoint[] = [
 		label: "Health check",
 		url: agenticFacts.healthEndpoint,
 		purpose:
-			"Wait for LocalCloud readiness before SDK, Terraform, seed, or other local workflows.",
+			"Inspect runtime health; use the readiness endpoint before application traffic.",
+	},
+	{
+		label: "Readiness check",
+		url: agenticFacts.readinessEndpoint,
+		purpose: "Wait for configured services to be ready, then verify the exact SDK/API workflow.",
 	},
 	{
 		label: "Shell environment export",
@@ -99,10 +105,10 @@ export const agenticEndpoints: AgenticEndpoint[] = [
 
 const agenticStatusByEvidence = {
 	verified: "supported",
-	partial: "partial",
-	"release-unverified": "release-unverified",
-	unsupported: "planned",
-	unknown: "planned",
+	partial: "supported",
+	"release-unverified": "supported",
+	unsupported: "unsupported",
+	unknown: "unknown",
 } as const satisfies Record<
 	Service["status"],
 	AgenticServiceMetadata["status"]
@@ -139,7 +145,7 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 							)
 							.map(
 								(operation) =>
-									`${operation.label} (${operation.status})${operation.limitations.length ? ` — ${operation.limitations.join(" ")}` : ""}`,
+									`${operation.label}${operation.limitations.length ? ` — ${operation.limitations.join(" ")}` : ""}`,
 							),
 			gaps:
 				service.catalogState === "coming-soon"
@@ -161,11 +167,13 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 			caveat:
 				service.catalogState === "coming-soon"
 					? "Service support is coming soon; do not configure a local endpoint yet."
-					: service.status === "release-unverified"
-						? `Release-unverified: source behavior is not yet qualified in an identified assembled image. Limits: ${service.notSupported.join(", ")}.`
-						: service.notSupported.length
-							? `Local development coverage is partial. Known limits: ${service.notSupported.join(", ")}.`
-							: "Verified for bounded local workflows; still validate production behavior against real Google Cloud.",
+					: service.status === "unsupported" || service.status === "unknown"
+						? `${service.status === "unsupported" ? "Unsupported" : "Evidence unknown"}: no supported application integration is established. Review the service guide before configuring clients.`
+					: !service.registryDefaultEnabled
+						? `Supported locally; disabled by default to save resources. Enable via localcloud start --services ${service.slug}.`
+					: service.notSupported.length
+						? `Documented local workflows with these boundaries: ${service.notSupported.slice(0, 2).join("; ")}.`
+						: "Supported for local workflows; validate production behavior against real Google Cloud.",
 		};
 	},
 );
@@ -211,14 +219,14 @@ export const agentPromptLibrary: AgentPrompt[] = [
 		label: "Pub/Sub local test",
 		useCase: "Ask an agent to validate Pub/Sub event code locally.",
 		prompt:
-			"Use LocalCloud to test Pub/Sub locally. Read https://local.cloud/ai/agents.md, set PUBSUB_EMULATOR_HOST=localhost:24082, create a topic and subscription, publish one test message, pull or stream it, ack it, and verify the payload without using real GCP credentials.",
+			"Use LocalCloud to test Pub/Sub locally. Read https://local.cloud/ai/agents.md, set PUBSUB_EMULATOR_HOST=localhost:5383, create a topic and subscription, publish one test message, pull or stream it, ack it, and verify the payload without using real GCP credentials.",
 	},
 	{
 		id: "cloud-storage",
 		label: "Cloud Storage local test",
 		useCase: "Ask an agent to validate bucket/object code locally.",
 		prompt:
-			"Use LocalCloud to test Cloud Storage locally. Read https://local.cloud/ai/agents.md, set STORAGE_EMULATOR_HOST=http://localhost:24081, create a bucket, upload a small object, list it, download it, and verify content without using real GCP credentials.",
+			"Use LocalCloud to test Cloud Storage locally. Read https://local.cloud/ai/agents.md, set STORAGE_EMULATOR_HOST=http://localhost:5382, create a bucket, upload a small object, list it, download it, and verify content without using real GCP credentials.",
 	},
 ];
 

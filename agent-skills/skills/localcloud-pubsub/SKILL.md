@@ -24,7 +24,7 @@ Ask only for unavailable project-specific details.
 
 - Start through the host CLI, then load the generated environment with `eval "$(localcloud env)"`.
 - The reviewed default project is `local-gcp-project`; trust the generated Pub/Sub endpoint because host ports may be remapped.
-- Pub/Sub is partial and volatile across restart; review operation-level evidence before testing.
+- Pub/Sub has partial operation coverage and persists state in PostgreSQL under the mounted data volume; review operation-level evidence before testing.
 - Confirm the governing proprietary license permits the intended use before running LocalCloud.
 
 ## Step-by-step workflow

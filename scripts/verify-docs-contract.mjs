@@ -29,8 +29,18 @@ const evidenceStates = new Set(['verified', 'partial', 'release-unverified', 'un
 const state = (value, path) => assert(evidenceStates.has(value), `${path} has unknown evidence state ${value}`);
 const evidence = (value, path) => strings(value, path, { nonempty: true });
 
-exactKeys(contract, ['schemaVersion', 'reviewedAt', 'provenance', 'product', 'operator', 'cli', 'seed', 'terraform', 'privacy', 'licensing', 'services'], 'root');
-assert(contract.schemaVersion === 3, 'unsupported schema version');
+exactKeys(contract, ['schemaVersion', 'reviewedAt', 'provenance', 'product', 'operator', 'cli', 'seed', 'terraform', 'privacy', 'licensing', 'services', 'bigqueryCoverage'], 'root');
+assert(contract.schemaVersion === 4, 'unsupported schema version');
+exactKeys(contract.bigqueryCoverage, ['revision', 'total', 'development', 'production', 'partialCapabilities'], 'bigqueryCoverage');
+assert(/^[a-f0-9]{40}$/.test(contract.bigqueryCoverage.revision), 'BigQuery coverage revision must be a full commit');
+for (const dimension of ['development', 'production']) {
+  const counts = contract.bigqueryCoverage[dimension];
+  exactKeys(counts, ['implemented', 'partial', 'unsupported', 'unknown'], `bigqueryCoverage.${dimension}`);
+  for (const count of Object.values(counts)) assert(Number.isInteger(count) && count >= 0, 'coverage counts must be non-negative integers');
+  assert(Object.values(counts).reduce((sum, count) => sum + count, 0) === contract.bigqueryCoverage.total, 'coverage counts must reconcile');
+}
+assert(contract.bigqueryCoverage.partialCapabilities.length === contract.bigqueryCoverage.development.partial, 'partial coverage inventory differs from the count');
+assert(new Set(contract.bigqueryCoverage.partialCapabilities.map((item) => item.id)).size === contract.bigqueryCoverage.partialCapabilities.length, 'partial capability IDs must be unique');
 assert(/^\d{4}-\d{2}-\d{2}$/.test(contract.reviewedAt), 'reviewedAt must be an ISO date');
 
 exactKeys(contract.provenance, ['runtimeRevision', 'cliRevision', 'assembledImageDigest', 'qualification', 'sources', 'sourceDigests', 'worktreeSources', 'dependencyRevalidations'], 'provenance');
@@ -87,12 +97,13 @@ assert(!contract.operator.manualDockerCommand.includes('/var/run/docker.sock'), 
 
 exactKeys(contract.cli, ['installScriptUrl', 'installCommand', 'homebrewCommand', 'supportedHosts', 'requiresDocker', 'frozenBinaryRequiresPython', 'commands', 'quickStart', 'doctorSuccessStatus', 'startSuccessStatuses', 'dataDefault', 'dockerSocketDefault', 'transparentNetworkDefault', 'bindAddress', 'dynamicPortMapping', 'environmentFormats', 'integrity', 'releaseBoundary'], 'cli');
 for (const key of ['installScriptUrl', 'installCommand', 'homebrewCommand', 'doctorSuccessStatus', 'dataDefault', 'bindAddress', 'integrity', 'releaseBoundary']) string(contract.cli[key], `cli.${key}`);
-for (const key of ['requiresDocker', 'frozenBinaryRequiresPython', 'dockerSocketDefault', 'transparentNetworkDefault', 'dynamicPortMapping']) boolean(contract.cli[key], `cli.${key}`);
+for (const key of ['requiresDocker', 'frozenBinaryRequiresPython', 'transparentNetworkDefault', 'dynamicPortMapping']) boolean(contract.cli[key], `cli.${key}`);
 for (const key of ['supportedHosts', 'commands', 'quickStart', 'startSuccessStatuses', 'environmentFormats']) strings(contract.cli[key], `cli.${key}`, { nonempty: true });
 assert(contract.cli.doctorSuccessStatus === 'ok', 'CLI doctor success state drifted');
 assert(JSON.stringify(contract.cli.startSuccessStatuses) === JSON.stringify(['started', 'already_running', 'reconfigured', 'restarted']), 'CLI start states drifted');
-assert(contract.cli.bindAddress === '127.0.0.1', 'CLI must remain loopback-bound');
-assert(contract.cli.dockerSocketDefault === false, 'Docker socket must remain opt-in');
+assert(contract.cli.bindAddress === '0.0.0.0', 'CLI default publishes on all host interfaces');
+assert(contract.cli.dockerSocketDefault === 'auto', 'Docker access mode must follow the current auto default');
+assert(contract.cli.quickStart.includes('localcloud start --local-only'), 'quick start must explicitly select loopback binding');
 assert(contract.cli.transparentNetworkDefault === false, 'transparent networking must remain opt-in');
 assert(contract.cli.integrity.includes('SHA-256') && contract.cli.integrity.includes('does not verify'), 'installer integrity boundary is incomplete');
 
@@ -107,7 +118,7 @@ array(contract.seed.acceptedEnvelopes, 'seed.acceptedEnvelopes', { nonempty: tru
   string(item.description, `seed.acceptedEnvelopes[${index}].description`);
   evidence(item.evidence, `seed.acceptedEnvelopes[${index}].evidence`);
 });
-assert(!contract.seed.supportedServices.includes('firestore'), 'Firestore must not be advertised as seedable');
+assert(contract.seed.volatileServices.length === 0, 'current volatile seed set must be empty');
 
 exactKeys(contract.terraform, ['status', 'readinessEndpoint', 'modeVariable', 'providerConstraint', 'credentialRequirement', 'networkModes', 'qualifiedResources', 'limitations', 'evidence'], 'terraform');
 state(contract.terraform.status, 'terraform.status');
@@ -273,8 +284,8 @@ for (const fact of ['registryDefaultEnabled', 'assembledDefaultEnabled', 'defaul
   assert(routeSources.get('src/data/agenticFacts.ts').includes(fact), `agentic metadata omits ${fact}`);
 }
 const agenticContentSource = routeSources.get('src/data/agenticContent.ts');
-assert(agenticContentSource.includes('.filter((service) => service.status !== "planned")'), 'agent-testing pages must exclude coming-soon services');
-assert(!agenticContentSource.includes('BigQuery, Pub/Sub, Firestore'), 'agent content still claims Firestore is available');
+assert(agenticContentSource.includes('["supported", "partial", "release-unverified"].includes(service.status)'), 'agent-testing pages must exclude unsupported, unknown, and planned services');
+
 const compatibilitySource = routeSources.get('src/pages/compatibility.astro');
 assert(compatibilitySource.includes("service.catalogState === 'coming-soon'") && compatibilitySource.includes('colspan="6"'), 'compatibility page does not collapse coming-soon services to a roadmap row');
 assert(compatibilitySource.includes('service.operations.map'), 'compatibility page does not render operation-level evidence');
@@ -288,4 +299,4 @@ for (const retiredPath of ['../localcloud/services.yaml', '../localcloud/localcl
   assert(!JSON.stringify(contract).includes(retiredPath), `retired evidence path remains: ${retiredPath}`);
 }
 
-console.log(`Documentation contract verified: ${contract.services.length} runtime surfaces, ${editorialEntries.size} overlays/icons, ${publicServiceIds.length} public service routes, ${publicServiceIds.length} available agent-testing routes, schema v${contract.schemaVersion}.`);
+console.log(`Documentation contract verified: ${contract.services.length} runtime surfaces, ${editorialEntries.size} overlays/icons, ${publicServiceIds.length} public service routes, ${contract.services.filter((service) => service.published && service.availability === "available" && !["unsupported", "unknown"].includes(service.status)).length} available agent-testing routes, schema v${contract.schemaVersion}.`);

@@ -10,10 +10,11 @@ import { productFacts } from "./productFacts";
 const serviceStatusLabel = (
 	status: (typeof agenticServiceMetadata)[number]["status"],
 ) => {
-	if (status === "supported") return "Supported locally";
-	if (status === "partial") return "Partial local coverage";
-	if (status === "release-unverified")
-		return "Release-unverified / qualify the assembled image first";
+	if (status === "supported" || status === "partial" || status === "release-unverified") {
+		return "Supported locally";
+	}
+	if (status === "unsupported") return "Unsupported";
+	if (status === "unknown") return "Evidence unknown";
 	return "Coming soon";
 };
 
@@ -26,7 +27,7 @@ const endpointLines = agenticEndpoints
 
 const serviceLines = agenticServiceMetadata
 	.map((service) =>
-		service.status === "planned"
+		["planned", "unsupported", "unknown"].includes(service.status)
 			? `- **${service.name}** (${serviceStatusLabel(service.status)}) — ${service.caveat} Docs: ${service.docsUrl}`
 			: `- **${service.name}** (${serviceStatusLabel(service.status)}, ${service.endpointLabel}) — set \`${service.envVar}\`. ${service.caveat} Docs: ${service.docsUrl}`,
 	)
@@ -50,7 +51,7 @@ Use this file as repository-local guidance for AI coding agents working on non-p
 ## LocalCloud facts agents must preserve
 - LocalCloud is a local Google Cloud emulator/runtime for development, testing, evaluation, and internal automation.
 - The Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production internal development, testing, CI, evaluation, and internal pilots.
-- It runs ${productFacts.serviceCountLabel} GCP service surfaces in one Docker container.
+- It provides ${productFacts.serviceCountLabel} documented local integrations; the catalog also retains unsupported entries and the auxiliary Google Sheets fixture API.
 - Canonical Docker image: \`${agenticFacts.dockerImage}\`.
 - Default local workflows require no GCP account, no Google credentials, no service-account key, and no billing project.
 - Standard Google Cloud SDKs and Terraform should point at localhost emulator endpoints before local verification.
@@ -58,16 +59,16 @@ Use this file as repository-local guidance for AI coding agents working on non-p
 
 ## Start or reuse LocalCloud
 \`\`\`bash
-${agenticFacts.dockerPullCommand}
-${agenticFacts.dockerRunCommand}
-${agenticFacts.envExportCommand}
+${agenticFacts.cliQuickStartCommand}
 \`\`\`
 
 If the \`localcloud\` container already exists, reuse or start it instead of creating a duplicate container.
 
 ## Required readiness check
+
+The URL below uses the canonical gateway port. If the CLI remaps it, use the gateway URL returned by \`localcloud status\` for this runtime.
 \`\`\`bash
-curl -fsS ${agenticFacts.healthEndpoint}
+curl -fsS ${agenticFacts.readinessEndpoint}
 \`\`\`
 
 Do not fall back to real Google Cloud when LocalCloud or Docker is unavailable. Stop and report the blocker.
@@ -77,7 +78,7 @@ Do not fall back to real Google Cloud when LocalCloud or Docker is unavailable. 
 2. Start LocalCloud or verify that the existing \`${agenticFacts.containerName}\` container is healthy.
 3. Export emulator environment variables from \`${agenticFacts.shellEnvEndpoint}\` for shell/SDK workflows or \`${agenticFacts.terraformEnvEndpoint}\` for Terraform workflows.
 4. Run the narrowest local smoke check that proves the relevant service path works through localhost.
-5. If a feature is unsupported or partial locally, document the gap and link to https://local.cloud/compatibility/ or the service page.
+5. If a feature is unsupported locally, document the gap and link to https://local.cloud/compatibility/ or the service page.
 6. For production readiness, unset emulator variables and validate against real Google Cloud separately.
 
 ## Useful LocalCloud URLs
@@ -100,14 +101,14 @@ export const agentsExecutionGuide = `# LocalCloud agent execution guide
 
 ${agenticFacts.positioning}
 
-This hosted guide is for coding agents that need a safe local Google Cloud target. For a repository-local policy file, copy the AGENTS.md template from https://local.cloud/ai/AGENTS.md into your project.
+This hosted guide is for coding agents that need a safe local Google Cloud target. For a repository-local policy file, copy the AGENTS.md template from https://local.cloud/ai/agent-template.md into your project.
 
 ## Fast path
+
+Use the actual CLI-reported gateway URL for the readiness check if port 5380 is remapped.
 \`\`\`bash
-${agenticFacts.dockerPullCommand}
-${agenticFacts.dockerRunCommand}
-${agenticFacts.envExportCommand}
-curl -fsS ${agenticFacts.healthEndpoint}
+${agenticFacts.cliQuickStartCommand}
+curl -fsS ${agenticFacts.readinessEndpoint}
 \`\`\`
 
 ## Boundaries
@@ -130,7 +131,7 @@ ${safetyLines}
 
 ## Human and agent links
 - Human landing page: https://local.cloud/ai/
-- AGENTS.md template: https://local.cloud/ai/AGENTS.md
+- AGENTS.md template: https://local.cloud/ai/agent-template.md
 - Markdown resource index: https://local.cloud/ai/resources.md
 - Service catalog: https://local.cloud/services/
 - Compatibility and limitations: https://local.cloud/compatibility/
@@ -149,7 +150,7 @@ Default LocalCloud agent workflows require no GCP account, no Google credentials
 
 ## Core Markdown routes
 - https://local.cloud/ai/agents.md — execution guide for starting LocalCloud safely.
-- https://local.cloud/ai/AGENTS.md — downloadable repository-local AGENTS.md template.
+- https://local.cloud/ai/agent-template.md — downloadable repository-local AGENTS.md template.
 - https://local.cloud/ai/resources.md — this index and canonical policy.
 - https://local.cloud/ai/services.md — service matrix generated from shared LocalCloud service metadata.
 - https://local.cloud/ai/compatibility.md — safety boundaries and validation rules for agents.
@@ -213,7 +214,7 @@ Use the raw Markdown routes for compact agent context, then follow canonical HTM
 
 ## Agent routes
 - https://local.cloud/ai/agents.md — execution guide.
-- https://local.cloud/ai/AGENTS.md — repository-local template.
+- https://local.cloud/ai/agent-template.md — repository-local template.
 - https://local.cloud/ai/services.md — service matrix.
 - https://local.cloud/ai/compatibility.md — boundaries and validation rules.
 - ${productFacts.agentSkillsUrl} — portable Agent Skills package.

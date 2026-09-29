@@ -6,7 +6,7 @@ import rehypeTableRegions from './src/utils/rehype-table-regions.mjs';
 
 const rawAgentPages = [
   'https://local.cloud/ai/agents.md',
-  'https://local.cloud/ai/AGENTS.md',
+  'https://local.cloud/ai/agent-template.md',
   'https://local.cloud/ai/resources.md',
   'https://local.cloud/ai/services.md',
   'https://local.cloud/ai/compatibility.md',

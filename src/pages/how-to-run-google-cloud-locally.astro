@@ -2,25 +2,25 @@
 import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { docsContract } from '../data/docs-contract';
-import { availableServiceCount, publishedServiceCount } from '../data/services';
+import { availableServiceCount, publishedServiceCount, getServiceSignalLabel, services as catalogServices } from '../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
 const quickStartCmd = `${docsContract.cli.installCommand}
 localcloud doctor
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 localcloud console`;
 
-const services = [
-  { name: 'BigQuery', port: '24087 / 24088', availability: '10 documented workflows', env: 'BIGQUERY_EMULATOR_HOST' },
-  { name: 'Cloud Storage', port: '24081', availability: '2 documented workflows', env: 'STORAGE_EMULATOR_HOST' },
-  { name: 'Firestore', port: '24083', availability: '2 documented workflows', env: 'FIRESTORE_EMULATOR_HOST' },
-  { name: 'Pub/Sub', port: '24082', availability: '4 documented workflows', env: 'PUBSUB_EMULATOR_HOST' },
-  { name: 'Spanner', port: '24085 / 24086', availability: '5 documented workflows', env: 'SPANNER_EMULATOR_HOST' },
-  { name: 'Bigtable', port: '24084', availability: '13 documented workflows', env: 'BIGTABLE_EMULATOR_HOST' },
-];
+const services = catalogServices
+  .filter((service) => ['bigquery', 'gcs', 'firestore', 'pubsub', 'spanner', 'bigtable'].includes(service.id))
+  .map((service) => ({
+    name: service.name,
+    port: service.status === 'unsupported' ? 'Unsupported' : service.port,
+    availability: getServiceSignalLabel(service),
+    env: service.status === 'unsupported' ? 'No supported integration' : service.envVar,
+  }));
 
 const faqItems = [
   {
@@ -44,7 +44,7 @@ const faqItems = [
 
 <LandingLayout
   title="How to Run Google Cloud Services Locally — Complete Guide"
-  description={`Install the LocalCloud CLI, start a loopback-bound runtime, and configure local workflows across ${availableServiceCount} available services.`}
+  description={`Install the LocalCloud CLI, start a loopback-bound runtime, and configure local workflows across ${availableServiceCount} documented local integrations.`}
 >
   <script type="application/ld+json" is:inline>
 {
@@ -187,7 +187,7 @@ const faqItems = [
       <div class="reveal">
         <h2>What Google Cloud services can run locally?</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud exposes {availableServiceCount} available services in one managed container. Review each service guide for exact workflows, default enablement, and limitations.
+          LocalCloud exposes {availableServiceCount} documented local integrations in one managed container. Review each service guide for exact workflows, default enablement, and limitations.
         </p>
       </div>
       <div class="mt-8 overflow-x-auto reveal">
@@ -214,7 +214,7 @@ const faqItems = [
       </div>
       <div class="mt-6 reveal">
         <p class="text-sm text-[var(--text-2)] leading-7">
-          Browse <a href={`${base}services/`} class="underline">all {publishedServiceCount} service guides</a>. Firestore is available but disabled by default; Google Sheets is an available read-only facade with limited A1-range behavior.
+          Browse <a href={`${base}services/`} class="underline">all {publishedServiceCount} service guides</a>. Firestore is disabled by default; Google Sheets is an available read-only facade with limited A1-range behavior.
         </p>
       </div>
     </div>
@@ -292,7 +292,7 @@ localcloud status</code></pre>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 reveal">
         <a href={`${base}bigquery-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">BigQuery</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Develop 10 documented DuckDB-backed dataset, table, query, scripting, and API workflows.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Develop documented DuckDB-backed dataset, table, query, scripting, and API workflows.</p>
         </a>
         <a href={`${base}cloud-storage-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Cloud Storage</div>
@@ -300,11 +300,11 @@ localcloud status</code></pre>
         </a>
         <a href={`${base}firestore-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Firestore</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Firestore document CRUD and query workflows are available on port 24083. Enable Firestore explicitly before use and review its query, index, seed, and persistence limits.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Firestore supports documented local document and query workflows and is disabled by default. Enable it explicitly and qualify transactions, listeners, security rules, and recovery for the exact image.</p>
         </a>
         <a href={`${base}pubsub-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Pub/Sub</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Use partial topic, subscription, publish, pull, and acknowledgement workflows; state is volatile across restart.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Use partial topic, subscription, publish, pull, and acknowledgement workflows; state is stored in PostgreSQL under the mounted data volume.</p>
         </a>
         <a href={`${base}spanner-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Spanner</div>
@@ -312,7 +312,7 @@ localcloud status</code></pre>
         </a>
         <a href={`${base}bigtable-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Bigtable</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Use 13 documented Bigtable data, administration, persistence, and query workflows.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Use documented Bigtable data, administration, persistence, and query workflows.</p>
         </a>
       </div>
     </div>
@@ -364,7 +364,7 @@ localcloud status</code></pre>
           <div>
             <h2 style="color: #e8eaed;">Start running GCP services locally</h2>
             <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              One data-volume runtime, {availableServiceCount} available services, and explicit service boundaries.
+              One data-volume runtime, {availableServiceCount} documented local integrations, and explicit service boundaries.
             </p>
           </div>
           <div class="flex flex-wrap gap-3">

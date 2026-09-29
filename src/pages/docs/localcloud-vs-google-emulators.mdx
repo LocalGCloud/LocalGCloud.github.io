@@ -25,7 +25,7 @@ Choose a Google-maintained emulator when:
 
 Consider LocalCloud when:
 
-- an allowed personal evaluation needs several GCP-shaped local service surfaces in one runtime;
+- an allowed personal or organizational development workflow needs several GCP-shaped local service surfaces in one runtime;
 - you need one service catalog with explicit operation-level evidence;
 - the host CLI's generated endpoints and common operator routes simplify the local workflow; and
 - you accept that every service is partial, release-unverified, or otherwise bounded rather than production-equivalent.
@@ -33,10 +33,10 @@ Consider LocalCloud when:
 ## LocalCloud contract summary
 
 <table>
-  <thead><tr><th>Service</th><th>Support level</th><th>Implementation</th><th>Local boundary</th></tr></thead>
+  <thead><tr><th>Service</th><th>Status</th><th>Implementation</th><th>Overview</th></tr></thead>
   <tbody>
     {services.map((service) => (
-      <tr><td>{service.name}</td><td><code>{service.status}</code></td><td>{service.implementation}</td><td>{service.description}</td></tr>
+      <tr><td>{service.name}</td><td><code>{service.marketingStatus === 'unsupported' ? 'unsupported' : !service.registryDefaultEnabled ? 'disabled by default' : 'supported'}</code></td><td>{service.implementation}</td><td>{service.description}</td></tr>
     ))}
   </tbody>
 </table>
@@ -48,12 +48,12 @@ A service listing does not imply default startup, full parity, or legal permissi
 ```bash
 curl -fsSL https://local.cloud/install.sh | sh
 localcloud doctor
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 localcloud console
 ```
 
-The CLI binds to loopback and can remap occupied canonical ports. Trust the generated environment values.
+With `--local-only`, the CLI binds to loopback and can remap occupied canonical ports. Trust the generated environment values.
 
 ## Production and legal boundary
 

@@ -8,13 +8,13 @@ import { availableServiceCount, comingSoonServiceCount, publishedServiceCount, s
 
 # Services overview
 
-The runtime includes {serviceRegistryCount} service entries and publishes {publishedServiceCount} guides. All {availableServiceCount} services are available; {comingSoonServiceCount} are marked as coming soon. Availability does not mean full Google Cloud parity or that a service starts by default.
+The runtime includes {serviceRegistryCount} service entries and publishes {publishedServiceCount} guides. {availableServiceCount} entries have documented local integration workflows; unsupported and unknown entries remain in the catalog for reference. Google Sheets is an auxiliary fixture API, not a separate Google Cloud service. Availability does not mean full Google Cloud parity or that a service starts by default.
 
 A service guide separates the facts that affect normal use:
 
 1. **Starts by default** — whether `services.enabled: default` starts the service.
 2. **Minimum tier** — Community or Pro; this is a technical boundary, not a license grant.
-3. **Support level** — verified, partial, release-unverified, unsupported, or unknown.
+3. **Status** — Supported (ready for local use) or Unsupported (cloud-only).
 4. **Persistence** — whether data is volatile, metadata-only, service data, or stateless.
 5. **Connection** — the canonical container port and protocol. Use `localcloud env` for the actual host endpoint.
 6. **Known limits** — operations or Google Cloud behavior that LocalCloud does not provide.
@@ -26,7 +26,7 @@ A service guide separates the facts that affect normal use:
         <th>Service</th>
         <th>Starts by default</th>
         <th>Tier</th>
-        <th>Support level</th>
+        <th>Status</th>
         <th>Persistence</th>
         <th>Connection</th>
       </tr>
@@ -41,7 +41,7 @@ A service guide separates the facts that affect normal use:
             <>
               <td>{service.registryDefaultEnabled ? 'yes' : 'no'}</td>
               <td>{service.minTier}</td>
-              <td>{service.status}</td>
+              <td>{service.status === 'unsupported' || service.status === 'unknown' ? 'Unsupported' : !service.registryDefaultEnabled ? 'Disabled by default' : 'Supported'}</td>
               <td>{service.persistence.scope} ({service.persistence.qualification})</td>
               <td>{service.endpointLabel}</td>
             </>

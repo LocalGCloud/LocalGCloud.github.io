@@ -1,130 +1,63 @@
 ---
 layout: ../../layouts/DocsLayout.astro
-title: BigQuery Emulator Coverage & Known Boundaries
-description: Up-to-date capability census, implemented feature categories, bounded partial behaviors, and cloud-only operations in LocalCloud BigQuery.
+title: BigQuery Emulator Coverage and Known Boundaries
+description: Source-linked BigQuery coverage matrix counts, partial records, and evidence limits.
 ---
 
 import Callout from '../../components/Callout.astro';
+import { docsContract } from '../../data/docs-contract';
 
-# BigQuery emulator coverage & known boundaries
+export const coverage = docsContract.bigqueryCoverage;
+export const matrixUrl = `https://github.com/jhsenjaliya/bigquery-emulator-on-duckdb/blob/${coverage.revision}/docs/coverage-matrix.csv`;
 
-LocalCloud's BigQuery emulator executes queries natively using Google's pinned **ZetaSQL 2026.9.2** analyzer paired with the **DuckDB 1.5.5** columnar OLAP execution engine. This architecture provides authentic GoogleSQL parsing, strict type checking, and vectorized analytical query execution inside the LocalCloud container on ports **5388** (REST / SQL) and **5389** (Storage Read gRPC with TLS).
+# BigQuery coverage and known boundaries
 
-This document details the capability census, abstracts supported features into logical categories for developers, and documents the exact boundaries of partial and cloud-only operations.
+LocalCloud's current source uses native GoogleSQL analysis and DuckDB execution. The [feature reference](/docs/bigquery-emulator-features/) covers LocalCloud endpoints and runtime operation boundaries.
 
-<Callout type="tip" title="Production Parity for Local Development">
-In LocalCloud's capability framework, <strong>implemented</strong> means the behavior is functionally and semantically correct locally. Developers can write tests and verify query logic identically to Google Cloud BigQuery. Cloud-scale hardware quotas, fleet slot scheduling, and multi-tenant billing are intentionally out of scope for a local developer emulator.
+This page projects the dependency's versioned `docs/coverage-matrix.csv`. The matrix includes canonical and derived records; its total is a count of records, not a count of distinct canonical GoogleSQL capabilities or executed tests.
+
+<Callout type="warning" title="Recorded source coverage">
+These are the dependency's recorded classifications, not independent proof of semantic equivalence or qualification of LocalCloud's mutable assembled image. Unknown records are unassessed. Unsupported records include locally testable feature gaps as well as managed-cloud behavior.
 </Callout>
 
----
+## Matrix summary
 
-## Capability census summary
+<p>Dependency revision: <code>{coverage.revision}</code>. <a href={matrixUrl}>Read the complete matrix and evidence references</a>.</p>
 
-The emulator is continuously evaluated against a canonical census of **1,534 capabilities** spanning GoogleSQL syntax, analytical functions, procedural scripting, machine learning, vector search, security policies, and client APIs:
+<table>
+  <thead><tr><th>Dimension</th><th>Implemented</th><th>Partial</th><th>Unsupported</th><th>Unknown</th><th>Total records</th></tr></thead>
+  <tbody>
+    {Object.entries({ Development: coverage.development, 'Production parity': coverage.production }).map(([dimension, counts]) => (
+      <tr><td>{dimension}</td><td>{counts.implemented}</td><td>{counts.partial}</td><td>{counts.unsupported}</td><td>{counts.unknown}</td><td>{coverage.total}</td></tr>
+    ))}
+  </tbody>
+</table>
 
-| Dimension | Implemented | Partial | Unsupported | Unknown / Edge | Total Census |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Development** | 1,065 | 11 | 73 | 385 | 1,534 |
-| **Production Parity** | 1,065 | 11 | 73 | 385 | 1,534 |
+“Implemented” is a matrix classification tied to its listed implementation and test references. Review those references for the exact feature, input shape, client, and validation tier. “Partial” records contain concrete remaining boundaries; derived rows can overlap their child features.
 
-- **Implemented (1,065)**: The named developer-visible operation behaves identically to production BigQuery through SQL, REST API, or Storage API paths.
-- **Partial (11)**: The core feature works locally, but specific edge variants (such as nested record tagging or specialized model types) have defined boundaries.
-- **Unsupported (73)**: Cloud control-plane infrastructure, fleet reservations, or hardware-dependent features that have no local standalone equivalent.
-- **Unknown / Edge (385)**: Unassessed esoteric corner cases or internal telemetry hooks.
+## Partial records
 
----
+<p>The matrix currently records {coverage.partialCapabilities.length} partial development records. This table retains their source notes, including local input gaps and connector qualification limits.</p>
 
-## Logically abstracted implemented categories
+<table>
+  <thead><tr><th>Capability</th><th>Recorded boundary</th><th>Evidence notes</th></tr></thead>
+  <tbody>
+    {coverage.partialCapabilities.map((capability) => (
+      <tr><td><strong>{capability.name}</strong><br /><code>{capability.id}</code></td><td>{capability.boundary}</td><td>{capability.notes}</td></tr>
+    ))}
+  </tbody>
+</table>
 
-Rather than memorizing hundreds of discrete function signatures, developers can rely on full support across these high-level architectural categories:
+## Unsupported and unknown records
 
-### 1. Machine learning & GenAI (`BQML`)
-LocalCloud supports in-database machine learning workflows end-to-end:
-- **Model Training**: `CREATE MODEL` for Linear Regression, Logistic Regression, K-Means clustering, Matrix Factorization, and Boosted Trees.
-- **Inference & Evaluation**: `ML.PREDICT`, `ML.EVALUATE`, `ML.WEIGHTS`, and `ML.CONFUSION_MATRIX` composed into analytical queries.
-- **Feature Preprocessing**: `ML.TRANSFORM` for inline scaling, normalization, and feature encoding.
-- **Generative AI & LLMs**: `ML.GENERATE_TEXT` and `ML.GENERATE_EMBEDDING` connected to local OpenAI-compatible endpoints or Ollama instances running on the developer workstation.
+Use the complete matrix to inspect every unsupported or unknown record. These states must not be reduced to cloud scale alone: syntax, model variants, external sources, collation, and individual API methods can have developer-visible gaps. A successful dry run, stored configuration, or metadata operation does not prove execution support.
 
-### 2. Vector search & semantic retrieval
-Build and test retrieval-augmented generation (RAG) and similarity search locally:
-- **Vector Operations**: Native `VECTOR_SEARCH` with distance metrics including Cosine, Euclidean, and Dot Product.
-- **Index Management**: `CREATE VECTOR INDEX`, `DROP VECTOR INDEX`, and `ALTER VECTOR INDEX REBUILD`.
-- **Text Analysis & Tokenization**: `SEARCH` full-text index matching, `TF_IDF`, and `BAG_OF_WORDS`.
+## Qualification workflow
 
-### 3. Geospatial analytics (GoogleSQL Geo / S2)
-Comprehensive spherical geometry backed by S2 geometry algorithms:
-- **Spatial Filters & Bounds**: `ST_BOUNDINGBOX`, `ST_INTERSECTSBOX`, and planar/spherical spatial predicates.
-- **Interpolation & Measurement**: `ST_LINEINTERPOLATEPOINT`, `ST_LINELOCATEPOINT`, `ST_LINESUBSTRING`, `ST_MAXDISTANCE`, and `ST_CLOSESTPOINT`.
-- **Aggregation & Clustering**: `ST_CENTROID_AGG`, `ST_EXTENT`, and `ST_CLUSTERDBSCAN` (density-based spatial clustering per window partition).
-- **Format Conversion**: Full GeoJSON parsing and generation (`ST_ASGEOJSON`) for points, linestrings, polygons, and geometry collections.
+1. Check the required capability ID and its exact operation and input boundary.
+2. Confirm the dependency identity used by the LocalCloud image; dependency HEAD can differ from a packaged payload.
+3. Run the application's query or API workflow, assert the result and errors, and test restart when persistent state matters.
+4. Record client versions, platform, dependency revision, assembled-image digest, failures, and skips.
+5. Validate required production behavior against Google Cloud using a separate environment.
 
-### 4. Security, governance & fine-grained access
-Test security compliance and multi-tenant policies in CI before deploying to production:
-- **Row-Level Security (RLS)**: Row-access policies evaluated consistently across queries, views, Storage Read API streams, tabledata exports, copy jobs, and DML updates.
-- **Data Masking**: Column data masking policies using predefined rules (nullify, default, hash), custom masking routines, and Data Policy API v1 integration.
-- **CEL IAM Conditions**: Role bindings evaluated at runtime using Google's Common Expression Language (`cel-expr-python`) runtime across dataset, table, and routine resources.
-
-### 5. Advanced storage, versioning & table lifecycle
-Modern BigQuery data lifecycle management:
-- **Time Travel**: `FOR SYSTEM_TIME AS OF` queries reading past table snapshots within the retention window.
-- **Clones & Copies**: Zero-copy `CREATE TABLE CLONE` (including cross-project destinations and historical timestamp sources) and `CREATE TABLE COPY`.
-- **Materialized Views**: Fast incremental aggregations with automatic query rewrites and always-fresh reads.
-- **Advanced Querying**: Recursive CTEs (`WITH RECURSIVE`), Pipe SQL syntax (`|>`), wildcard tables (`_TABLE_SUFFIX`), and persistent table functions (`RETURNS TABLE`).
-- **Interactive Sessions**: Stateful scripting sessions via `createSession` and `BQ.ABORT_SESSION`.
-
-### 6. Storage Read API & connector ecosystem
-- **Arrow IPC Streams**: High-throughput columnar reading over gRPC (port **5389** with TLS) returning Apache Arrow record batches.
-- **Spark Connector**: Compatible with the official Google Cloud Spark BigQuery connector and PyArrow data pipelines.
-
-### 7. Data federation & external tables
-- **Federated Relational Queries**: `EXTERNAL_QUERY` bridging live PostgreSQL 16 (port **5391**) and MySQL 8.4 (port **5406**) instances running inside LocalCloud.
-- **Object Storage Tables**: External tables queried directly from emulated Cloud Storage `gs://` buckets supporting Parquet, CSV (with automatic schema autodetect and header resolution), JSONL, Avro, and ORC.
-
----
-
-## Known boundaries: the 11 partial capabilities
-
-For 11 specific capabilities, core usage works but specialized sub-features have defined boundaries:
-
-| Category | Capability | Local Behavior & Current Boundary |
-| :--- | :--- | :--- |
-| **Security** | Column-Level Security (2 rows) | Root column policy tags and masking rules work fully. Policy tags on nested `RECORD` fields are refused. Taxonomy import/export across locations is not emulated. |
-| **Machine Learning** | Advanced ML Models & Deep Architectures (4 rows) | Tabular regression, classification, clustering, and boosted trees work natively. Deep neural networks (`DNN_*`), imported TensorFlow graphs, and AutoML training are refused locally. `TRANSFORM` clauses reject `* REPLACE` expansions. |
-| **Table DDL** | Ingestion-Time Partitioning (1 row) | Partitioning by explicit date/timestamp/integer columns (`PARTITION BY col`) is fully supported. Legacy ingestion-time pseudo-columns (`_PARTITIONTIME`, `_PARTITIONDATE`) in DDL are rejected by the pinned analyzer. |
-| **Geospatial** | Specialized Snapping & Unions (3 rows) | Point and polygon operations are complete. Complex linestring snapping (`ST_SNAPTOGRID` with arbitrary multi-lines) and mixed point/polygon geometric unions lack `S2Builder` in local bindings. |
-| **Connectors** | Spark Multi-Architecture Binary Profile (1 row) | The local Spark Storage Read gate passes 11/11 cases on arm64; dual-architecture verification awaits published multi-platform image digests. |
-
----
-
-## Unsupported capabilities: cloud-only operations
-
-The **73 unsupported capabilities** represent cloud-managed infrastructure, multi-tenant fleet operations, or external services that do not apply to local developer environments:
-
-1. **Fleet & Capacity Infrastructure**:
-   - Slot reservation management (`RESERVATIONS`, capacity commitments, slot leasing).
-   - BI Engine in-memory caching tiers (DuckDB already executes fully in-memory).
-   - Multi-tenant streaming fleet telemetry (`STREAMING_TIMELINE` grouped by minute across distributed fleets).
-2. **Cloud-Managed Security & Remote Services**:
-   - Customer-Managed Encryption Keys (CMEK) via physical Cloud HSM modules (LocalCloud uses local AEAD keyset chains).
-   - Remote user-defined functions invoking external Google Cloud Functions or Cloud Run without local mock definitions.
-   - Cloud Data Loss Prevention (DLP) remote inspection routines.
-   - Analytics Hub organization-wide data exchange listings.
-3. **Legacy Syntax & Remote Clouds**:
-   - Legacy SQL hints (`#legacySQL`).
-   - Direct querying of proprietary remote cloud object stores (AWS S3, Azure Blob) without local S3 proxy emulation.
-   - Custom Unicode collation rules (`COLLATE 'und:ci'`).
-
----
-
-## Development vs. production guidelines
-
-```
-Local Development & Testing (LocalCloud)       Production BigQuery (Google Cloud)
-├── Full GoogleSQL syntax verification        ├── Multi-petabyte distributed scans
-├── Unit & integration test suites            ├── Multi-region high availability
-├── Schema migrations & DDL verification      ├── Hardware Cloud HSM (CMEK) keys
-├── BQML, Vector Search & RLS validation      ├── Slot reservations & flat-rate billing
-└── Offline local debugging & CI runs         └── Enterprise Analytics Hub syndication
-```
-
-LocalCloud BigQuery provides comprehensive behavioral fidelity for everything required to develop, test, and qualify data pipelines and applications locally. Reserve Google Cloud BigQuery for production deployment, massive distributed scale, and cloud-native managed services.
+[Comparison guide](/docs/bigquery-feature-comparison/) · [Operation compatibility](/compatibility/) · [SDK examples](/docs/sdk-examples/)

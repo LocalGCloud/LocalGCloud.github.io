@@ -1,7 +1,7 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from './ServiceIcon.astro';
-import { getServiceSignalLabel, services } from '../data/services';
+import { getServiceSignalLabel, isServiceDisabledByDefault, services } from '../data/services';
 import {
   createBreadcrumbSchema,
   createSoftwareApplicationSchema,
@@ -15,6 +15,7 @@ if (!service) throw new Error(`Missing service contract for ${slug}`);
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const isComingSoon = service.catalogState === 'coming-soon';
+const isUnsupported = service.status === 'unsupported' || service.status === 'unknown';
 const documentedOperations = isComingSoon
   ? []
   : service.operations.filter((operation) => operation.status !== 'unsupported' && operation.status !== 'unknown');
@@ -26,7 +27,9 @@ const pageUrl = new URL(Astro.url.pathname, productFacts.siteUrl).toString();
 
 // FAQ answers are generated from the service contract so they stay accurate as
 // the upstream documentation snapshot changes.
-const faqItems = isComingSoon
+const faqItems = isUnsupported
+  ? [{ q: `Can I use ${service.name} in LocalCloud?`, a: `${service.name} is currently ${service.status}. Its registry entry or configuration does not establish a supported application integration. Read the service guide and operation matrix before planning a workflow.` }]
+  : isComingSoon
   ? [
       {
         q: `Is there a local ${service.name} emulator in LocalCloud?`,
@@ -36,11 +39,11 @@ const faqItems = isComingSoon
   : [
       {
         q: `How do I run ${service.name} locally?`,
-        a: `Install the LocalCloud host CLI, start the runtime, and load the generated environment values into your application process. ${service.name} is then reachable at the endpoints the CLI reports, and standard Google Cloud clients resolve to localhost instead of googleapis.com.`,
+        a: `Install the LocalCloud host CLI, start the runtime, and use the generated endpoint values in your application. Configure explicit client endpoint options when the SDK does not read an emulator variable. Validate the exact client and operation against the local endpoint.`,
       },
       {
         q: `Which environment variable points the SDK at the local ${service.name}?`,
-        a: `LocalCloud exports ${service.envVar}. Read the value from the generated environment rather than assuming a fixed port, because occupied ports are remapped at startup.`,
+        a: `LocalCloud exports ${service.envVar}. Use the generated value because occupied ports may be remapped. Some SDKs also require explicit client options; exporting an environment variable alone does not establish local routing.`,
       },
       {
         q: `What ${service.name} workflows are documented locally?`,
@@ -57,7 +60,7 @@ const faqItems = isComingSoon
     ];
 
 const structuredData = [
-  createSoftwareApplicationSchema(pageUrl, description),
+  createSoftwareApplicationSchema(pageUrl, isUnsupported ? service.description : description),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'Services', url: new URL('services/', productFacts.siteUrl).toString() },
@@ -75,11 +78,14 @@ const structuredData = [
 ];
 ---
 
-<LandingLayout {title} {description} {structuredData}>
+<LandingLayout title={isUnsupported ? `${service.name} — ${service.status} in LocalCloud` : title} description={isUnsupported ? service.description : description} {structuredData}>
   <section class="site-section site-section--hero"><div class="container"><div class="max-w-[52rem] reveal">
     <div class="flex items-center gap-4"><span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white"><ServiceIcon iconId={service.iconId} name={service.name} size={44} /></span><span class="site-chip site-chip--accent">{getServiceSignalLabel(service)}</span></div>
-    <h1 class="mt-6">{isComingSoon ? `${service.name} support is coming soon` : `Run ${service.name} workflows locally`}</h1>
+    <h1 class="mt-6">{isUnsupported ? `${service.name} is currently ${service.status}` : isComingSoon ? `${service.name} support is coming soon` : `Run ${service.name} workflows locally`}</h1>
     <p class="mt-6 text-lg leading-8 text-[var(--text-2)]">{service.description}</p>
+    {!isUnsupported && isServiceDisabledByDefault(service) && (
+      <p class="mt-3 text-sm text-[var(--accent-strong)]">Note: {service.name} is disabled by default to save workstation resources. Start it with <code>localcloud start --services {service.slug}</code>.</p>
+    )}
     <div class="mt-8 flex flex-wrap gap-3"><a class="site-button site-button--primary" href={`${base}services/${service.slug}/`}>{isComingSoon ? 'View roadmap details' : 'View service guide'}</a><a class="site-button site-button--secondary" href={`${base}compatibility/`}>Compatibility matrix</a><a class="site-button site-button--secondary" href={`${base}gcp-emulator/`}>All local GCP services</a></div>
   </div></div></section>
 
@@ -128,7 +134,7 @@ const structuredData = [
       <h2>Related pages</h2>
     </div>
     <div class="mt-6 grid gap-4 md:grid-cols-3">
-      {!isComingSoon && (
+      {!isComingSoon && !isUnsupported && (
         <a href={`${base}services/${service.slug}/ai-agent-local-testing/`} class="site-panel p-5 reveal transition-transform hover:-translate-y-0.5">
           <h3 class="text-lg">{service.name} for AI agents</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Point an AI coding agent at the local {service.name} endpoint.</p>

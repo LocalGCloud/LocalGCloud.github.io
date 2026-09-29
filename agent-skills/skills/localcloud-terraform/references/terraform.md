@@ -13,10 +13,10 @@ host:
 ```
 
 ```bash
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env --format terraform)"
 export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.localcloud/fake-service-account.json"
-curl -fsS http://localhost:24080/terraform/readiness?mode=endpoint
+curl -fsS http://localhost:5380/terraform/readiness?mode=endpoint
 ```
 
 The CLI can remap the gateway port; use its actual readiness URL. Provider v7 requires valid fake service-account JSON, not `/dev/null`.
@@ -52,13 +52,13 @@ host:
     LOCALCLOUD_TERRAFORM_MODE: "true"
 tls:
   enabled: true
-  port: 24443
+  port: 5381
 ```
 
 Transparent mode also requires explicit LocalCloud DNS/HTTP/HTTPS routing, a trusted LocalCloud CA, and:
 
 ```bash
-curl -fsS http://localhost:24080/terraform/readiness?mode=transparent
+curl -fsS http://localhost:5380/terraform/readiness?mode=transparent
 ```
 
 ## Currently supported resources
@@ -76,8 +76,8 @@ Do not treat other resources as supported without a documented provider-version 
 ## Endpoint details
 
 - Storage includes `/storage/v1/`.
-- Pub/Sub and Bigtable Terraform endpoints use gateway port `24080`.
-- Spanner uses `http://localhost:24086/v1/`; this is REST, not PostgreSQL wire.
+- Pub/Sub and Bigtable Terraform endpoints use gateway port `5380`.
+- Spanner uses `http://localhost:5387/v1/`; this is REST, not PostgreSQL wire.
 - Cloud Tasks uses `/v2/`.
 - All generated Terraform endpoints end in `/`.
 - BigQuery requires transparent routing despite its generated custom endpoint.

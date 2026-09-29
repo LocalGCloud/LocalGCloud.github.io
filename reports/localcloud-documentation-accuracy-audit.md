@@ -1,5 +1,62 @@
 # LocalCloud Documentation Accuracy Audit
 
+## Current verification — 2026-09-29
+
+**Scope:** The working-copy website, all documentation routes, service and compatibility pages, generated agent/workflow/comparison content, raw Markdown endpoints, LLM files, and distributed Agent Skills. Historical planning and audit documents are retained as historical records.
+
+**Evidence tier:** Current source and static-site validation. This audit does not qualify a released CLI binary, an immutable LocalCloud image, or the deployed website. Sibling runtime/CLI worktrees contain changes beyond HEAD; the schema-v4 contract records source SHA-256 digests and the modified source paths.
+
+### Current source identities
+
+| Source | Revision or authority |
+| --- | --- |
+| Runtime | `1e0c1860476b3eeccc8e420e7196c55daec34bb2`, plus recorded working-tree digests |
+| CLI | `4bb959e94a6d53ed357e5ea3713e60e79344674e`; source version `0.1.5`, plus recorded working-tree digests |
+| BigQuery dependency matrix | `f91f3f5b80074de36560266ca3d7228cb3df30e4`; clean reviewed matrix |
+| Runtime facts | `../localcloud/localcloud.defaults.yaml` |
+| Operation classifications | `../localcloud/documentation.yaml`, checked against relevant implementation paths |
+| Runtime license | `../localcloud/LICENSE`, Public Preview Agreement version 2.0 |
+
+Graft queries supplied file spans, implementation paths, and call relationships. Graph coverage was incomplete: Gortex does not cover this site checkout, and the codebase-memory graph only indexes the CLI. Literal/non-code searches and exact source reads supplied missing evidence. Graph results alone were not treated as exhaustive verification.
+
+### Corrections completed
+
+| Area | Corrected information and coverage |
+| --- | --- |
+| Catalog and service status | 27 catalog guides, 25 documented local integrations including the auxiliary Sheets facade, and 22 default-selected services. Compute Engine and Vertex AI remain unsupported. Firestore and Dataproc follow the latest source contract. Unsupported entries retain boundaries and have no supported agent-testing route or connection-copy action. |
+| CLI and configuration | CLI 0.1.5 source boundary, 4g memory default, Docker access mode `auto`, transparent networking off, default publication on all host interfaces, and explicit `--local-only` setup. Configuration precedence, recursive merging, null deletion, and manual-only `reset --all-projects` behavior now match source. |
+| Ports and readiness | Canonical ports use 5380–5405, gateway 5380 and native TLS 5381. Readiness checks use `/readiness`; CLI remapping requires returned URLs. Old ports and MCP guide locations are checked across distributed content. |
+| Persistence and seeding | Pub/Sub is an in-process Java facade with PostgreSQL state. BigQuery is a native process inside the Docker runtime with data beneath `/var/lib/localcloud/bigquery-data`. The default seed file is `/opt/localcloud/seed.yaml`; 18 registrars include Firestore and KMS; volatile mode selects no services. CLI `host.seed` is accepted but ignored. Reseeding replaces sample resources and can discard changes inside them. |
+| BigQuery claims | Removed unqualified speed, complete-parity, and global zero-wrong-result promises. Counts and all partial records are generated from the matrix: 1,537 records; 1,067 implemented, 12 partial, 73 unsupported, 385 unknown in each dimension. These are recorded classifications, including derived rows, not distinct canonical capability counts or independent execution proof. Public limitations use concrete matrix gaps instead of upstream global guarantees. |
+| Bigtable and Spanner | Feature references retain operation boundaries, persistence limits, and exact-image qualifications. Historical Bigtable cached-artifact claims were removed. Spanner REST is distinguished from PostgreSQL wire access; PGAdapter is not packaged. Broad standalone dependency claims no longer establish LocalCloud image support. |
+| SDK examples | Python BigQuery passes the generated local REST endpoint explicitly and uses anonymous credentials. REST configuration is distinguished from Storage API client/TLS configuration. |
+| Privacy | Telemetry uses ordinary TLS verification. Production wiring records external `FAILED` transitions as `service_error`; registry snapshots contain no exit code. The opt-out event and other outbound paths remain disclosed, along with website analytics and GitHub feedback destinations. |
+| Comparisons | Replaced obsolete goccy transport claims and unsupported performance rankings with primary-source architecture references. localgcp's native paths and Docker-backed paths are distinguished. |
+| Published links | Corrected the runtime MCP guide to `docs/guides/mcp-integration.md`. Changed the template download URL to `/ai/agent-template.md`, retaining the `AGENTS.md` download filename; the former `/ai/AGENTS.md` collided with `/ai/agents.md` in macOS static builds. Fixed the immersive-demo skip target. |
+| Regression checks | Added schema-v4 coverage validation, current-source matrix comparison, status-aware generated content, and checks of local navigation links and anchors across every rendered HTML page. |
+
+External references reviewed: [goccy README and matrix](https://github.com/goccy/bigquery-emulator), [localgcp README](https://github.com/slokam-ai/localgcp), [Python BigQuery reference](https://github.com/googleapis/python-bigquery/blob/main/docs/reference.rst), and [Astro static endpoint documentation](https://docs.astro.build/en/guides/endpoints/). Repository links follow the current [site repository](https://github.com/LocalGCloud/LocalGCloud.github.io).
+
+### Validation
+
+- `pnpm build`: passed generation, contract, live sibling-source parity, CLI examples, seed/configuration examples, policy, distributed documentation, Astro output, rendered tables, sitemap, SEO, product facts, all local navigation links and anchors, and search indexing. 128 HTML pages checked/indexed; 34 priority SEO routes checked.
+- `pnpm test:installer`: passed fixture-based install, version pinning, checksum/archive validation paths, prompts, preservation, repair, platform rejection, and uninstall. This is installer mechanics evidence, not released-binary qualification.
+- `git diff --check`: passed.
+
+### Remaining limitations and decision
+
+1. **Different repository licenses:** this site's root `LICENSE` still contains the individual-only agreement, while the runtime carries the Public Preview Agreement permitting organizational non-production development/CI. The public licensing page now explicitly distinguishes these artifacts. Neither agreement was changed. The owner must decide whether to align this repository and its distributed Agent Skills with the runtime's existing agreement.
+2. **Release evidence:** the mutable LocalCloud image has no qualified immutable digest in the reviewed contract. Positive source classifications and dependency tests do not establish exact-image or released-CLI behavior. SDK, Terraform, seed/restart, transport, and architecture-sensitive workflows need qualification against the chosen artifacts before release claims.
+3. **Upstream prose:** runtime BigQuery prose includes fixed canonical totals and broad semantic guarantees. Matrix rows include canonical and derived scopes, and finite probes cannot prove complete parity. The website uses the reviewed matrix and bounded wording; underlying runtime documentation was not edited in this site task.
+4. **Changing source:** runtime and site files changed concurrently during the audit. The final snapshot follows the latest verified source state. Subsequent changes must pass the digest and parity checks again.
+
+---
+
+## Historical audit and remediation records — superseded
+
+The following 2026-08-13 and 2026-08-26 records explain earlier findings. Their counts, ports, CLI versions, license statements, and unresolved implementation claims are historical and do not describe the current site.
+
+
 **Audit date:** 2026-08-13  
 **Site repository:** `localcloud-site`  
 **Primary product repository:** `../localcloud`  

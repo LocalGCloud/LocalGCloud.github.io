@@ -483,7 +483,7 @@ const promptForService = (slug: string) => {
 };
 
 export const serviceTestingPages: AgenticContentPage[] = agenticServiceMetadata
-	.filter((service) => service.status !== "planned")
+	.filter((service) => ["supported", "partial", "release-unverified"].includes(service.status))
 	.map((service) =>
 		servicePage(service.slug, promptForService(service.slug), {
 			limitations:
@@ -507,13 +507,13 @@ const githubActionsSnippet = [
 	`        run: |`,
 	"          # Public preview permits non-production internal organization and team CI.",
 	"          # Pin a qualified image digest before relying on this workflow.",
-	`          docker run -d --name localcloud -p 127.0.0.1:24080-24092:24080-24092 -m ${agenticFacts.memoryRequirement} ${agenticFacts.dockerImage}`,
-	"          for i in $(seq 1 60); do curl -fsS http://localhost:24080/health && exit 0; sleep 2; done",
+	`          docker run -d --name localcloud -p 127.0.0.1:5380-5405:5380-5405 -m ${agenticFacts.memoryRequirement} ${agenticFacts.dockerImage}`,
+	"          for i in $(seq 1 60); do curl -fsS http://localhost:5380/readiness && exit 0; sleep 2; done",
 	"          docker logs localcloud",
 	"          exit 1",
 	"      - name: Export emulator env and test",
 	"        run: |",
-	'          eval "$(curl -fsS http://localhost:24080/env?format=shell)"',
+	'          eval "$(curl -fsS http://localhost:5380/env?format=shell)"',
 	"          ./scripts/integration-test.sh",
 ].join("\n");
 
@@ -534,7 +534,7 @@ export const workflowPages: AgenticContentPage[] = [
 		promptIds: ["ci", "quickstart"],
 		quickFacts: [
 			"No GCP secrets are required for the bounded local job.",
-			"Readiness gate: http://localhost:24080/health.",
+			"Readiness gate: http://localhost:5380/readiness.",
 			"Keep the workflow non-production and review the proprietary Public Preview License.",
 		],
 		sections: [
@@ -614,7 +614,7 @@ export const workflowPages: AgenticContentPage[] = [
 				code: [
 					agenticFacts.terraformEnvCommand,
 					'export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.localcloud/fake-service-account.json"',
-					"curl -fsS http://localhost:24080/terraform/readiness?mode=endpoint",
+					"curl -fsS http://localhost:5380/terraform/readiness?mode=endpoint",
 					"terraform init",
 					"terraform plan",
 				].join("\n"),
@@ -646,7 +646,7 @@ export const workflowPages: AgenticContentPage[] = [
 			"Run agent-written GCP integration tests locally with LocalCloud, SDK env vars, deterministic seed data, and real-GCP release caveats.",
 		h1: "Local GCP integration tests for agents",
 		deck:
-			"Agent-written integration tests are safer when they run against disposable localhost services first. LocalCloud gives those tests BigQuery, Pub/Sub, Cloud Storage, Firestore, Spanner, Bigtable, and more in one container.",
+			"Agent-written integration tests are safer when they run against disposable localhost services first. LocalCloud gives those tests BigQuery, Pub/Sub, Cloud Storage, Spanner, Bigtable, and more in one container.",
 		promptIds: ["project-integration", "quickstart", "troubleshoot"],
 		quickFacts: [
 			"Use real SDK clients; avoid mocks for service behavior.",
@@ -733,13 +733,13 @@ export const workflowPages: AgenticContentPage[] = [
 				label: "Public preview automation instruction",
 				language: "text",
 				code:
-					"Read the LocalCloud Public Preview License and keep this workflow non-production. Prepare the smallest automation change that starts LocalCloud, waits for http://localhost:24080/health, exports emulator env vars, runs existing integration tests, and does not add real GCP secrets.",
+					"Read the LocalCloud Public Preview License and keep this workflow non-production. Prepare the smallest automation change that starts LocalCloud, waits for http://localhost:5380/readiness, exports emulator env vars, runs existing integration tests, and does not add real GCP secrets.",
 			},
 			{
 				label: "Reusable health gate",
 				language: "bash",
 				code:
-					"for i in $(seq 1 60); do\n  if curl -fsS http://localhost:24080/health; then exit 0; fi\n  sleep 2\ndone\nexit 1",
+					"for i in $(seq 1 60); do\n  if curl -fsS http://localhost:5380/readiness; then exit 0; fi\n  sleep 2\ndone\nexit 1",
 			},
 		],
 		limitations: standardLimitations,
@@ -772,7 +772,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		promptIds: ["quickstart", "project-integration"],
 		quickFacts: [
 			"Google gcloud emulators include service-specific emulator groups.",
-			`LocalCloud currently lists ${availableServiceCount} available services in one Docker image; Firestore is available but disabled by default.`,
+			`LocalCloud currently lists ${availableServiceCount} documented local integrations in one Docker image; Firestore is disabled by default; review operation-specific qualification boundaries.`,
 			"Neither path removes the need for real-GCP validation before production.",
 		],
 		sections: [
@@ -795,7 +795,7 @@ export const comparisonPages: AgenticContentPage[] = [
 				[
 					"Scope",
 					"Individual emulator groups managed through gcloud or service-specific images.",
-			"27 available service guides for one Docker container.",
+			"A catalog of operation-specific guides through one LocalCloud runtime entry point.",
 				],
 				[
 					"Agent setup",
@@ -866,7 +866,7 @@ export const comparisonPages: AgenticContentPage[] = [
 				kicker: "Where LocalCloud is better",
 				title: "Use LocalCloud when the risk is accidental cloud side effects",
 				body:
-					"If the agent is writing BigQuery, Pub/Sub, Storage, Firestore, or Terraform code, LocalCloud gives the code a local GCP-like API target with no default cloud account or billing project.",
+					"If the agent is writing BigQuery, Pub/Sub, Storage, or Terraform code, LocalCloud gives the code a local GCP-like API target with no default cloud account or billing project.",
 			},
 		],
 		table: {
@@ -931,7 +931,7 @@ export const comparisonPages: AgenticContentPage[] = [
 			"Agents writing BigQuery code need fast SQL feedback without surprise query costs. LocalCloud includes a BigQuery surface inside a broader GCP emulator runtime; standalone emulators and real BigQuery can be better depending on fidelity, scope, and deployment risk.",
 		promptIds: ["bigquery", "project-integration"],
 		quickFacts: [
-			"LocalCloud BigQuery runs beside Pub/Sub, Storage, Firestore, Spanner, and other available services.",
+			"LocalCloud BigQuery runs beside Pub/Sub, Storage, Spanner, and other available services.",
 			"Standalone bigquery-emulator is a focused open-source BigQuery-compatible server.",
 			"Real BigQuery remains the source of truth for production behavior.",
 		],
@@ -1022,7 +1022,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		promptIds: ["quickstart", "project-integration"],
 		quickFacts: [
 			"LocalStack targets AWS service APIs; LocalCloud targets Google Cloud service APIs.",
-			`LocalCloud currently lists ${availableServiceCount} available Google Cloud service guides in one Docker image.`,
+			`LocalCloud currently lists ${availableServiceCount} documented local integration guides in one Docker image.`,
 			"The two are not interchangeable: AWS SDK calls do not reach LocalCloud, and Google Cloud SDK calls do not reach LocalStack.",
 		],
 		sections: [
@@ -1123,7 +1123,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		promptIds: ["quickstart", "project-integration"],
 		quickFacts: [
 			"Both projects target the same problem: Google Cloud APIs without a cloud project.",
-			`LocalCloud currently lists ${availableServiceCount} available service guides with per-operation compatibility status.`,
+			`LocalCloud currently lists ${availableServiceCount} documented local integrations with per-operation compatibility status.`,
 			"Packaging and licensing differ more than the core idea does; check both against your own constraints.",
 		],
 		sections: [
@@ -1131,13 +1131,13 @@ export const comparisonPages: AgenticContentPage[] = [
 				kicker: "Where localgcp is better",
 				title: "Choose localgcp for a permissive license and a single binary",
 				body:
-					"localgcp is MIT-licensed and distributes as one Go binary, so it starts without Docker and can be vendored into environments where container runtimes are unavailable or where an open-source license is a hard requirement. If license permissiveness, redistribution, or a no-Docker install path is a constraint, localgcp is the better fit and LocalCloud is not a substitute.",
+					"localgcp is MIT-licensed and distributes as one Go binary, with Docker required for its container-backed services. Evaluate its documented service paths and license when an open-source distribution is required. Native service paths can run without Docker; its container-backed services still require it.",
 			},
 			{
 				kicker: "Where LocalCloud is better",
 				title: "Choose LocalCloud for coverage, inspection, and documented boundaries",
 				body:
-					"LocalCloud publishes a per-operation compatibility contract for each service, ships a web console for inspecting local state, loads deterministic seed data, and exports Terraform-shaped endpoints alongside SDK environment variables. If the workflow needs to inspect what the emulator did, or needs a documented statement of which operations are verified, that surface does not exist in a single-binary emulator.",
+					"LocalCloud publishes a per-operation compatibility contract for each service, ships a web console for inspecting local state, loads deterministic seed data, and exports Terraform-shaped endpoints alongside SDK environment variables. If the workflow needs to inspect what the emulator did, or needs a documented statement of which operations are verified, compare those surfaces with the other project's current documentation before choosing.",
 			},
 			{
 				kicker: "How to decide",
@@ -1171,7 +1171,7 @@ export const comparisonPages: AgenticContentPage[] = [
 				],
 				[
 					"Pick it when",
-					"You need MIT licensing, redistribution, or a Docker-free install.",
+					"You need MIT licensing or redistribution and its documented service paths meet your needs.",
 					"You need documented operation boundaries, a console, seed data, or Terraform endpoints.",
 				],
 			],
@@ -1297,7 +1297,7 @@ export const glossaryPages: AgenticContentPage[] = [
 		[
 			{
 				label: "LocalCloud MCP integration",
-				href: `${productFacts.runtimeRepositoryUrl}/blob/main/docs/MCP_INTEGRATION.md`,
+				href: `${productFacts.runtimeRepositoryUrl}/blob/main/docs/guides/mcp-integration.md`,
 				note: "Canonical runtime-owned endpoint and stdio bridge documentation.",
 			},
 		],
@@ -1594,7 +1594,7 @@ export const blogDemoPages: AgenticContentPage[] = [
 				label: "BigQuery agent prompt",
 				language: "text",
 				code:
-					"Use LocalCloud BigQuery to test this pipeline locally. Set BIGQUERY_EMULATOR_HOST=http://localhost:24087, seed a tiny dataset, run the representative query, assert the expected rows, and list any SQL features that need real BigQuery validation.",
+					"Use LocalCloud BigQuery to test this pipeline locally. Set BIGQUERY_EMULATOR_HOST=http://localhost:5388, seed a tiny dataset, run the representative query, assert the expected rows, and list any SQL features that need real BigQuery validation.",
 			},
 		],
 		limitations: [

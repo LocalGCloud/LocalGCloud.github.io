@@ -11,6 +11,7 @@ import Steps from '../../components/Steps.astro';
 import Step from '../../components/Step.astro';
 import CodeTabs from '../../components/CodeTabs.astro';
 import { publishedServiceCount } from '../../data/services';
+import { docsContract } from '../../data/docs-contract';
 
 # Get started with LocalCloud
 
@@ -46,7 +47,9 @@ The install script downloads the appropriate macOS or Linux release, verifies it
 In an interactive terminal, the installer can offer to run diagnostics and start LocalCloud after you confirm. In automation or with `--no-start`, it prints absolute-path next steps instead. If it adds the CLI to your shell startup file, run the exact `source` command printed by the installer before continuing.
 
 <Callout type="note" title="Check your CLI version">
-These instructions cover LocalCloud CLI 0.1.2. Run <code>localcloud --version</code> to confirm the installed version, and use the checksum published with the release you install.
+{docsContract.cli.releaseBoundary}
+
+Run `localcloud --version` before following version-specific instructions.
 </Callout>
 
 ## Start your first runtime
@@ -64,7 +67,7 @@ A usable Docker installation exits successfully and reports `status: ok`. `docto
   <Step title="Start LocalCloud">
 
 ```bash
-localcloud start
+localcloud start --local-only
 ```
 
 A successful command reports `started`, `already_running`, `restarted`, or
@@ -75,11 +78,11 @@ built-in `localcloud-data` fallback. Other built-in defaults are:
 - project `local-gcp-project`
 - caller `local-developer`
 - persistent data
-- Docker socket access **off**
+- Docker access mode **auto**: the socket is mounted only when selected services require it; set `host.docker_socket: false` to opt out
 - transparent networking **off**
-- gateway TLS **on**
+- gateway TLS **off**; enable it explicitly when needed
 
-The CLI binds published ports to `127.0.0.1`. If a canonical port is occupied,
+The example selects `--local-only`, which binds published ports to `127.0.0.1`. Without that flag, the current CLI publishes ports on all host interfaces. Use it again on subsequent `start`, `restart`, and `reset` commands to retain loopback binding. If a canonical port is occupied,
 it can dynamically remap host ports. Use `--verbose` to inspect the complete
 runtime payload, including immutable container ID, ownership, image identity,
 mount details, and `sdk_env`.
@@ -149,7 +152,7 @@ runtime identity and its storage. Without the flag or a configured
 `data_volume`, runtime commands use the revalidated active-runtime record before
 falling back to `localcloud-data`.
 `localcloud stop` stops that selected runtime and retains persistent storage.
-The CLI may operate a compatible container created by another tool, but never
+`localcloud reset --all-projects` prints manual recreation steps and deletes nothing. The CLI may operate a compatible container created by another tool, but never
 removes or relabels Docker resources it does not own. Running the
 installer with `--uninstall` removes only a script-managed CLI and its PATH
 block; containers and persistent volumes remain intact.
@@ -171,11 +174,11 @@ docker run -d --name localcloud \
 Verify the runtime and configure the shell through root operator endpoints:
 
 ```bash
-curl -fsS http://localhost:5380/health
+curl -fsS http://localhost:5380/readiness
 eval "$(curl -fsS 'http://localhost:5380/env?format=shell')"
 ```
 
-The default command does not mount `/var/run/docker.sock` and does not expose ports on every host interface. GKE, Compute Engine, Cloud Run, and Dataproc execution can require explicit Docker-socket access; transparent DNS/HTTPS routing is also opt-in. Configure those capabilities only after reviewing their security implications.
+The default command does not mount `/var/run/docker.sock` and does not expose ports on every host interface. Docker-backed service execution and custom companion images can require Docker-socket access; transparent DNS/HTTPS routing is also opt-in. Configure those capabilities only after reviewing their security implications.
 
 ## Next steps
 

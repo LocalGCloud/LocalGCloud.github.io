@@ -29,7 +29,7 @@ host:
 ```
 
 ```bash
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env --format terraform)"
 export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.localcloud/fake-service-account.json"
 curl -fsS http://localhost:5380/terraform/readiness?mode=endpoint

@@ -27,9 +27,9 @@ export const faqSections: FaqSection[] = [
       {
         question: 'What is the recommended setup?',
         answer: 'Install the host CLI, verify Docker, start the selected data-volume runtime, load its generated environment values, and open the returned console URL.',
-        code: 'curl -fsSL https://local.cloud/install.sh | sh\nlocalcloud doctor\nlocalcloud start\neval "$(localcloud env)"\nlocalcloud console',
+        code: 'curl -fsSL https://local.cloud/install.sh | sh\nlocalcloud doctor\nlocalcloud start --local-only\neval "$(localcloud env)"\nlocalcloud console',
         afterCode:
-          'The CLI binds to loopback, keeps persistence by default, and can remap occupied ports. Trust the URLs and environment values it returns.',
+          'Start with --local-only to bind host ports to loopback. The CLI keeps persistence by default, and can remap occupied ports. Trust the URLs and environment values it returns.',
       },
     ],
   },
@@ -68,18 +68,18 @@ export const faqSections: FaqSection[] = [
       {
         question: 'How long does startup take?',
         answer:
-          'There is no maintained cross-platform startup benchmark. Gate automation on localcloud start status plus /health or the workflow-specific readiness endpoint rather than a fixed duration.',
+          'There is no maintained cross-platform startup benchmark. Gate automation on localcloud start status plus /readiness or the workflow-specific readiness endpoint rather than a fixed duration.',
       },
       {
         question: 'Is data persisted between restarts?',
         answer:
-          'The CLI uses persistent storage by default, but persistence is service-specific. Pub/Sub is volatile; other services use different stores and recovery limits. A mounted volume does not provide production durability, replication, or backup semantics.',
+          'The CLI uses persistent storage by default. Pub/Sub uses PostgreSQL; other services use different stores and recovery limits. A mounted volume does not provide production durability, replication, or backup semantics.',
       },
       {
         question: 'How do I isolate or reuse a LocalCloud runtime?',
         answer:
           'The Docker volume mounted at /var/lib/localcloud is durable runtime identity. Use --data-volume NAME on any runtime command for isolated storage. The CLI can attach to a compatible container already using that volume, but it never removes or relabels Docker resources it does not own.',
-        code: 'localcloud start --data-volume payments-localcloud-data\nlocalcloud status --data-volume payments-localcloud-data --verbose',
+        code: 'localcloud start --local-only --data-volume payments-localcloud-data\nlocalcloud status --data-volume payments-localcloud-data --verbose',
       },
       {
         question: 'Is LocalCloud fully offline?',
@@ -94,19 +94,19 @@ export const faqSections: FaqSection[] = [
       {
         question: 'What if a port is already in use?',
         answer: 'Use the host CLI so it can remap occupied canonical ports, then reload the generated environment values.',
-        code: 'localcloud start\neval "$(localcloud env)"',
+        code: 'localcloud start --local-only\neval "$(localcloud env)"',
         afterCode: 'Do not replace returned endpoint values with a hard-coded port.',
       },
       {
         question: 'What if a service is not responding?',
         answer: 'Inspect the selected data-volume runtime and its logs. For manual Docker on canonical ports, /services exposes service state.',
-        code: 'localcloud status\nlocalcloud logs --tail 50\ncurl -fsS http://localhost:24080/services',
+        code: 'localcloud status\nlocalcloud logs --tail 50\ncurl -fsS http://localhost:5380/services',
         afterCode: 'Confirm the service is enabled, its required tier is available, and its documented support level is suitable for the workflow.',
       },
       {
         question: 'Why do GKE, Compute Engine, or Cloud Run need Docker access?',
         answer:
-          'The host CLI disables Docker-socket access by default. Enable it only for workflows that require subordinate Docker containers or k3d; a read-write socket mount grants broad control of the host Docker daemon.',
+          'The host CLI uses host.docker_socket: auto and mounts the socket when enabled services require it. Set host.docker_socket: false to opt out. Enable it explicitly only for workflows that require subordinate Docker containers or k3d; a read-write socket mount grants broad control of the host Docker daemon.',
       },
     ],
   },

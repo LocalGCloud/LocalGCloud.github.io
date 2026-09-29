@@ -4,7 +4,7 @@
 
 - "Use LocalCloud Pub/Sub to test this event handler with a local topic and subscription."
 - "Add a Pub/Sub emulator test that publishes, pulls, acks, and verifies the payload."
-- "Check our streaming pull subscriber against PUBSUB_EMULATOR_HOST=localhost:24082."
+- "Check our streaming pull subscriber against PUBSUB_EMULATOR_HOST=localhost:5383."
 
 ## Negative prompts
 

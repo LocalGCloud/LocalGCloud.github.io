@@ -13,11 +13,11 @@ jobs:
       localcloud:
         image: jaysen2apache/localcloud@sha256:REPLACE_WITH_QUALIFIED_DIGEST
         ports:
-          - 24080:24080
+          - 5380:5380
           # Add only canonical service ports required by this test.
         options: >-
           --memory 4g
-          --health-cmd "curl -f http://localhost:24080/health"
+          --health-cmd "curl -f http://localhost:5380/readiness"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
@@ -28,7 +28,7 @@ jobs:
       - name: Wait for LocalCloud
         run: |
           for i in $(seq 1 30); do
-            if curl -fsS http://localhost:24080/health >/dev/null; then
+            if curl -fsS http://localhost:5380/readiness >/dev/null; then
               exit 0
             fi
             sleep 2
@@ -38,7 +38,7 @@ jobs:
 
       - name: Export LocalCloud environment
         run: |
-          curl -fsS http://localhost:24080/env?format=shell \
+          curl -fsS http://localhost:5380/env?format=shell \
             | sed 's/^export //' >> "$GITHUB_ENV"
 
       - name: Run narrow LocalCloud integration tests

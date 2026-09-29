@@ -1,4 +1,4 @@
-import { agentsMdTemplate } from '../../../data/agenticMarkdown';
+import { agentsMdTemplate } from '../../data/agenticMarkdown';
 
 export function GET() {
   return new Response(agentsMdTemplate, {

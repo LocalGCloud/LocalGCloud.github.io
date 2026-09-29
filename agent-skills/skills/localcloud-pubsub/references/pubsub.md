@@ -3,7 +3,7 @@
 ## Local setup
 
 ```bash
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 ```
 
@@ -29,4 +29,4 @@ assert response.received_messages
 
 ## Boundaries
 
-Pub/Sub state is volatile across restart. Review operation-level evidence for schema, delivery, push, BigQuery, and Cloud Storage subscription behavior. Local success is not production IAM or delivery proof. Use is subject to the proprietary license.
+Pub/Sub state is stored in PostgreSQL under the mounted data volume. Review operation-level evidence for schema, delivery, push, BigQuery, and Cloud Storage subscription behavior. Local success is not production IAM or delivery proof. Use is subject to the proprietary license.

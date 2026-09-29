@@ -12,7 +12,7 @@ import { docsContract } from '../../data/docs-contract';
 The LocalCloud CLI reads `localcloud.yaml`, starts the Docker runtime, and returns the endpoints assigned to that runtime. Start with the defaults, then add only the settings you need.
 
 ```bash
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 ```
 
@@ -29,8 +29,8 @@ context:
 
 host:
   data_volume: localcloud-data
-  seed: auto
   data: persistent
+  docker_socket: auto
   memory: 4g
   transparent_network: false
   environment: {}
@@ -54,15 +54,20 @@ server:
 Run `localcloud start` from the directory containing the file, or pass another file explicitly:
 
 ```bash
-localcloud start ./config/personal-localcloud.yaml
+localcloud start ./config/personal-localcloud.yaml --local-only
 ```
 
-LocalCloud resolves configuration in a strict precedence order:
-1. Command-line flags (`--memory`, `--services`, `--data-volume`, `--project-id`, `--user`)
-2. Environment variable `LOCALCLOUD_CONFIG`
-3. Current working directory `./localcloud.yaml`
-4. The active runtime profile's persisted configuration
-5. Built-in defaults packaged with the Docker image
+Configuration file selection uses this order:
+1. Explicit positional path, such as `localcloud start ./config/personal-localcloud.yaml --local-only`.
+2. `LOCALCLOUD_CONFIG`.
+3. `./localcloud.yaml`.
+4. The runtime's remembered configuration path.
+5. `$HOME/.localcloud/localcloud.yaml`.
+6. Built-in defaults.
+
+The file is a recursive partial overlay: omitted values inherit defaults and mapping members set to `null` are deleted. Command-line flags override their corresponding fields. An explicit, environment, or remembered path that is missing fails rather than silently falling back.
+
+The current unflagged CLI publishes ports on all host interfaces. Use `--local-only` on `start`, `restart`, and `reset` to select loopback binding. `host.docker_socket: auto` mounts the host socket when enabled services declare a Docker dependency; `false` is a hard opt-out. TLS and transparent networking are disabled by default.
 
 <Callout type="note" title="Schema Migration">
 Legacy flat top-level keys such as <code>project:</code>, <code>data_volume:</code>, and <code>server.iam:</code> are rejected. Use hierarchical keys: <code>context.project</code>, <code>host.data_volume</code>, and service-owned configurations under <code>services.catalog.&lt;service&gt;.config</code>.
@@ -72,7 +77,7 @@ Legacy flat top-level keys such as <code>project:</code>, <code>data_volume:</co
 
 ## Select services
 
-Use the default service bundle (starts 22 core services):
+Use the default service selection:
 
 ```yaml
 services:
@@ -90,7 +95,9 @@ services:
     - pubsub
 ```
 
-All 27 services are available in the runtime catalog, and **22 start by default**. Five services are disabled by default (`firestore`, `gke`, `compute`, `cloudrun`, `vertexai`) because they require dedicated child container orchestration, localized image pulling, or specialized seed data contracts.
+The registry contains {docsContract.services.length} API surfaces, including the auxiliary Google Sheets fixture integration. {docsContract.services.filter((service) => service.registryDefaultEnabled).length} are selected by default. Registry availability and default selection do not establish operation support or readiness. The currently unsupported entries are {docsContract.services.filter((service) => service.status === "unsupported").map((service) => service.name).join(", ")}. Check each service’s operation boundaries before use.
+
+The default-disabled entries are {docsContract.services.filter((service) => !service.registryDefaultEnabled).map((service) => service.name).join(', ')}. Review the operation matrix before enabling them.
 
 <table>
   <thead>
@@ -167,7 +174,7 @@ services:
 
 ## Environment variable overrides
 
-Environment variables take precedence over `localcloud.yaml` settings. Follow the canonical `LOCALCLOUD_<SERVICE>_<KEY>` naming convention:
+Documented runtime environment overrides can take precedence over corresponding runtime fields. Do not infer an override from a naming pattern; use the service configuration reference. `LOCALCLOUD_CONFIG`, CLI context flags, and runtime overrides have different owners.
 
 | Variable | Default | Purpose |
 | :--- | :--- | :--- |
@@ -205,7 +212,7 @@ host:
   transparent_network: false
 ```
 
-- **Loopback Ports (Default)**: Services listen on published canonical ports **5380–5405**. Client SDKs connect via environment variables (e.g. `STORAGE_EMULATOR_HOST=localhost:5382`).
+- **Loopback Ports (Default)**: Services listen on published canonical ports **5380–5405**. Client SDKs use generated values, including the URL scheme where required (e.g. `STORAGE_EMULATOR_HOST=http://localhost:5382`). Some clients need explicit endpoint options.
 - **Transparent Networking**: Uses local DNS on UDP port `5410` (mapped to host `53/udp`), routing standard Google Cloud domains (`storage.googleapis.com`, `bigquery.googleapis.com`) directly to LocalCloud.
 
 ---
@@ -233,3 +240,7 @@ services:
 volumes:
   localcloud-data:
 ```
+
+## Sample data ownership
+
+Container startup owns automatic samples. Set `server.auto_seed: false` to disable bootstrap samples. The retired `host.seed` setting is accepted but ignored, and managed CLI lifecycle commands do not mount or apply `seed.yaml`. Use the [seed endpoints](/docs/seed-data/) for explicit fixtures and the Console Re-seed Data action for sample replacement.

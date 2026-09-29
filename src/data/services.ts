@@ -71,6 +71,7 @@ export interface Service {
 	defaultQualification: EvidenceState;
 	defaultLimitation: string;
 	minTier: "community" | "pro";
+	marketingStatus: "supported" | "unsupported";
 	status: EvidenceState;
 	catalogState: "available" | "coming-soon";
 	envVar: string;
@@ -118,6 +119,8 @@ export const services: Service[] = docsContract.services.flatMap(
 		);
 		const catalogState =
 			contractService.availability === "available" ? "available" : "coming-soon";
+		const isUnsupported =
+			contractService.status === "unsupported" || contractService.status === "unknown";
 		const service: Service = {
 			id: contractService.id,
 			name: contractService.name,
@@ -133,10 +136,13 @@ export const services: Service[] = docsContract.services.flatMap(
 			defaultQualification: contractService.assembledDefault.qualification,
 			defaultLimitation: contractService.assembledDefault.limitation,
 			minTier: contractService.minTier,
+			marketingStatus: isUnsupported ? "unsupported" : "supported",
 			status: contractService.status,
 			catalogState,
 			envVar: `${contractService.envVar}=${contractService.envValue}`,
-			description: editorial.description,
+			description: isUnsupported
+				? contractService.limitations[0] ?? `${contractService.name} is currently unsupported in LocalCloud.`
+				: editorial.description,
 			operations: contractService.operations,
 			supported:
 				catalogState === "coming-soon"
@@ -153,31 +159,36 @@ export const services: Service[] = docsContract.services.flatMap(
 
 export const publishedServiceCount = services.length;
 export const availableServiceCount = services.filter(
-	(service) => service.catalogState === "available",
+	(service) => service.catalogState === "available" && service.status !== "unsupported" && service.status !== "unknown",
 ).length;
 export const comingSoonServiceCount = services.filter(
 	(service) => service.catalogState === "coming-soon",
 ).length;
 
+export function isServiceSupported(service: Service): boolean {
+	return service.marketingStatus === "supported";
+}
+
+export function isServiceDisabledByDefault(service: Service): boolean {
+	return service.marketingStatus === "supported" && !service.registryDefaultEnabled;
+}
+
 export function getServiceSignalLabel(service: Service): string {
 	if (service.catalogState === "coming-soon") return "Coming soon";
+	if (service.marketingStatus === "unsupported") return "Unsupported";
+	if (isServiceDisabledByDefault(service)) return "Disabled by default";
 	const count = service.supported.length;
 	return `${count} documented ${count === 1 ? "workflow" : "workflows"}`;
 }
 
 export function getServiceStatusLabel(service: Service): string {
-	switch (service.status) {
-		case "verified":
-			return "Verified local workflows";
-		case "partial":
-			return "Partial local emulation";
-		case "release-unverified":
-			return "Release-unverified";
-		case "unsupported":
-			return "Unsupported";
-		case "unknown":
-			return "Evidence unknown";
+	if (service.marketingStatus === "unsupported") {
+		return "Unsupported";
 	}
+	if (isServiceDisabledByDefault(service)) {
+		return "Disabled by default";
+	}
+	return "Supported";
 }
 
 export function getServiceImplementationLabel(service: Service): string {

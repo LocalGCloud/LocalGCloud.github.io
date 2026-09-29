@@ -27,7 +27,7 @@ It does not automatically provide zero cost, complete offline operation, identic
 Some Google clients honor emulator variables such as `PUBSUB_EMULATOR_HOST`; some accept explicit client endpoints; Terraform exposes provider-specific custom-endpoint variables; and some clients require transparent DNS/HTTPS routing. The recommended LocalCloud flow generates values for the selected data-volume runtime:
 
 ```bash
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 ```
 
@@ -37,7 +37,7 @@ The CLI can remap occupied host ports, so do not replace returned values with ca
 
 | Type | Meaning in LocalCloud |
 | --- | --- |
-| External emulator | A separate process supervised inside the container, such as Pub/Sub, Firestore, BigQuery, Bigtable, Spanner, Cloud Storage, or Valkey. |
+| External emulator | A separate process supervised inside the container, such as BigQuery, Bigtable, Spanner, Cloud Storage, or Valkey. |
 | Extended emulator | An upstream-derived artifact with local additions; the source revision and assembled image must be qualified together. |
 | Local facade | Gateway implementation of bounded REST/gRPC workflows backed by local stores or processes. |
 | Operator surface | Root routes such as `/health`, `/services`, `/env`, `/seed`, and `/terraform/readiness`; these are not Google Cloud APIs. |

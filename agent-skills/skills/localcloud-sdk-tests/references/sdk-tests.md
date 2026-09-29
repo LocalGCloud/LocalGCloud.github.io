@@ -3,7 +3,7 @@
 ## Generated environment
 
 ```bash
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 ```
 

@@ -11,3 +11,8 @@ dist
 .impeccable
 .ignore
 graft
+.claude
+.omp
+.opencode
+.rules
+.tgrep

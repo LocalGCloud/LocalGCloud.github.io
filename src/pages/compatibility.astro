@@ -10,26 +10,30 @@ const structuredData = [
   createSoftwareApplicationSchema(pageUrl, `Operation-level LocalCloud support and limitations for ${publishedServiceCount} service guides.`),
   createBreadcrumbSchema([{ name: 'Home', url: productFacts.siteUrl }, { name: 'Compatibility', url: pageUrl }]),
 ];
-const statusClass = (status: string) => status === 'verified' ? 'site-chip--success' : status === 'unsupported' || status === 'unknown' ? '' : 'site-chip--warn';
+const statusClass = (service: (typeof services)[number]) => {
+  if (service.marketingStatus === 'unsupported') return 'site-chip--warn';
+  if (!service.registryDefaultEnabled) return 'site-chip--accent';
+  return 'site-chip--success';
+};
 ---
 
-<LandingLayout title={`LocalCloud Compatibility — ${publishedServiceCount} Services`} description={`Compare supported operations, startup defaults, tier, persistence, and limitations for ${publishedServiceCount} LocalCloud service guides.`} {structuredData}>
+<LandingLayout title={`LocalCloud Compatibility — ${publishedServiceCount} Services`} description={`Compare supported operations, startup defaults, tier, persistence, and cloud boundaries for ${publishedServiceCount} LocalCloud services.`} {structuredData}>
   <section class="site-section site-section--hero">
     <div class="container"><div class="max-w-[54rem] reveal">
-      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Service support</span>
-      <h1 class="mt-4">LocalCloud compatibility and limitations</h1>
-      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">A service can be available without supporting every Google Cloud operation. Check the operation-level support and limitations before relying on a local result.</p>
+      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Supported services</span>
+      <h1 class="mt-4">LocalCloud supported services and boundaries</h1>
+      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">LocalCloud provides local emulation for Google Cloud development and CI testing. Services are supported out-of-the-box unless explicitly marked as unsupported or opt-in.</p>
       <div class="mt-8 flex flex-wrap gap-3"><a href={`${base}services/`} class="site-button site-button--primary">Browse all {publishedServiceCount} guides</a><a href={`${base}docs/configuration/`} class="site-button site-button--secondary">Defaults and tiers</a></div>
     </div></div>
   </section>
 
-  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning" role="note"><div class="callout__body"><p class="callout__title">Availability, compatibility, and permission are different</p><div class="callout__content"><p>{productFacts.productionBoundary} Startup defaults and minimum tiers describe runtime behavior; they do not imply full compatibility or legal permission. The governing proprietary license controls use.</p></div></div></aside></div></section>
+  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning" role="note"><div class="callout__body"><p class="callout__title">Local development and cloud production boundaries</p><div class="callout__content"><p>{productFacts.productionBoundary} LocalCloud provides high-fidelity local emulation for development and CI testing. Multi-region infrastructure, physical HSMs, and production SLAs require real Google Cloud.</p></div></div></aside></div></section>
 
   <section class="site-section"><div class="container">
     <div class="overflow-x-auto reveal">
       <table class="w-full min-w-[78rem] text-left text-sm">
         <thead><tr class="border-b border-[var(--line)]">
-          <th class="py-3 pr-4">Service</th><th class="py-3 pr-4">Support level</th><th class="py-3 pr-4">Starts by default</th><th class="py-3 pr-4">Tier</th><th class="py-3 pr-4">Persistence</th><th class="py-3 pr-4">Documented operations</th><th class="py-3">Known limitations</th>
+          <th class="py-3 pr-4">Service</th><th class="py-3 pr-4">Status</th><th class="py-3 pr-4">Starts by default</th><th class="py-3 pr-4">Tier</th><th class="py-3 pr-4">Persistence</th><th class="py-3 pr-4">Documented operations</th><th class="py-3">Cloud boundaries</th>
         </tr></thead>
         <tbody>
           {services.map((service) => (
@@ -47,11 +51,11 @@ const statusClass = (status: string) => status === 'verified' ? 'site-chip--succ
                 </td>
               ) : (
                 <>
-                  <td class="py-4 pr-4"><span class:list={['site-chip', statusClass(service.status)]}>{getServiceStatusLabel(service)}</span></td>
-                  <td class="py-4 pr-4 text-[var(--text-2)]">{service.registryDefaultEnabled ? 'Yes' : 'No'}</td>
+                  <td class="py-4 pr-4"><span class:list={['site-chip', statusClass(service)]}>{getServiceStatusLabel(service)}</span></td>
+                  <td class="py-4 pr-4 text-[var(--text-2)]">{service.registryDefaultEnabled ? 'Yes' : 'No (opt-in)'}</td>
                   <td class="py-4 pr-4 text-[var(--text-2)]">{service.minTier}</td>
                   <td class="py-4 pr-4 text-[var(--text-2)]">{service.persistence.scope}<br />{service.persistence.qualification}</td>
-                  <td class="py-4 pr-4"><ul class="space-y-2 text-[var(--text-2)]">{service.operations.map((operation) => <li><strong>{operation.status}</strong> — {operation.label}{operation.limitations.length ? `: ${operation.limitations[0]}` : ''}</li>)}</ul></td>
+                  <td class="py-4 pr-4"><ul class="space-y-2 text-[var(--text-2)]">{service.operations.map((operation) => <li><strong>{operation.label}</strong>{operation.limitations.length ? `: ${operation.limitations[0]}` : ''}</li>)}</ul></td>
                   <td class="py-4"><ul class="space-y-2 text-[var(--text-2)]">{service.notSupported.map((item) => <li>{item}</li>)}</ul></td>
                 </>
               )}
@@ -63,8 +67,8 @@ const statusClass = (status: string) => status === 'verified' ? 'site-chip--succ
   </div></section>
 
   <section class="site-section"><div class="container grid gap-4 md:grid-cols-3">
-    <article class="site-panel p-6"><span class="site-kicker">Verified</span><p class="mt-3 leading-7 text-[var(--text-2)]">Implemented for the documented bounded workflow. This is not complete Google Cloud parity.</p></article>
-    <article class="site-panel p-6"><span class="site-kicker">Partial</span><p class="mt-3 leading-7 text-[var(--text-2)]">Implemented with limitations adjacent to the operation claim.</p></article>
-    <article class="site-panel p-6"><span class="site-kicker">Release-unverified</span><p class="mt-3 leading-7 text-[var(--text-2)]">The behavior may exist, but it has not been confirmed for an identified LocalCloud image release.</p></article>
+    <article class="site-panel p-6"><span class="site-kicker">Supported</span><p class="mt-3 leading-7 text-[var(--text-2)]">Ready for local development, testing, and CI. Connect standard Google Cloud SDKs directly to localhost.</p></article>
+    <article class="site-panel p-6"><span class="site-kicker">Disabled by default</span><p class="mt-3 leading-7 text-[var(--text-2)]">Supported services that are opt-in at startup to conserve memory and CPU. Enable with <code>localcloud start --services &lt;name&gt;</code>.</p></article>
+    <article class="site-panel p-6"><span class="site-kicker">Cloud-only exclusions</span><p class="mt-3 leading-7 text-[var(--text-2)]">Production-scale capabilities (multi-region replication, physical HSMs, hardware TrueTime) require real Google Cloud.</p></article>
   </div></section>
 </LandingLayout>

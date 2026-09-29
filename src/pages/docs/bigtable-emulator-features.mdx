@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Bigtable Emulator Features
-description: Evidence-scoped Bigtable behavior observed in a cached dependency artifact, with LocalCloud release qualification limits.
+description: Current Bigtable operation contracts, PostgreSQL persistence, SQL boundaries, and release qualification.
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -11,29 +11,24 @@ export const bigtable = getDocumentationService('bigtable');
 
 # Bigtable emulator feature reference
 
-Use this page to understand the bounded Bigtable behavior observed during the documentation audit. Do not treat it as production Bigtable parity or as proof of behavior in a released LocalCloud image.
+LocalCloud runs a separately maintained Bigtable emulator for row and administration APIs. The current Docker build pins a source commit. Historical cached-artifact observations do not establish support in the current assembled image.
 
-<Callout type="warning" title="Dependency identity is unresolved">
-LocalCloud builds from a mutable `v0.0.1` input with checksum verification disabled. The inspected machine-local cached module, local tag, and current dependency checkout differ. Extended behavior below was observed in the cached artifact and remains **release-unverified** until an immutable dependency and assembled LocalCloud image are qualified.
+<Callout type="warning" title="Operation and image qualification">
+The runtime contract records partial behavior with concrete boundaries. The mutable LocalCloud image tag remains release-unverified. Confirm the packaged dependency identity and test the exact row, administration, and recovery paths you need.
 </Callout>
 
-## Connection and product persistence
+## Connection and persistence
 
-| Surface | Value | Boundary |
+| Surface | Canonical value | Boundary |
 | --- | --- | --- |
-| Primary API | gRPC on `localhost:5385` | Standard unauthenticated emulator endpoint. |
-| SDK variable | `BIGTABLE_EMULATOR_HOST=localhost:5385` | Client compatibility must still be tested per SDK/version. |
-| LocalCloud backing store | PostgreSQL under the mounted `/var/lib/localcloud` volume | The standalone cached artifact can also use SQLite; LocalCloud Docker is configured for PostgreSQL. |
-| Aggregate state | `release-unverified` | No identified assembled image qualification exists. |
-
-## Meaning of a positive state
-
-“Implemented” here means suitable for the documented bounded local workflow in the inspected artifact. It does **not** mean full API, topology, consistency, security, connector, quota, or operational parity.
+| Primary API | gRPC on `localhost:5385` | Use `BIGTABLE_EMULATOR_HOST` from `localcloud env` for actual mapped ports. |
+| Backing store | PostgreSQL under the mounted LocalCloud volume | A standalone dependency's SQLite configuration is not the LocalCloud default. |
+| Console SQL | LocalCloud SQL-to-row-API translator | Separate from native GoogleSQL `PrepareQuery` / `ExecuteQuery` and session protocols. |
 
 ## Current operation contract
 
 <table>
-  <thead><tr><th>Operation area</th><th>State</th><th>Boundary</th></tr></thead>
+  <thead><tr><th>Operation area</th><th>Status</th><th>Boundary</th></tr></thead>
   <tbody>
     {bigtable.operations.map((operation) => (
       <tr><td>{operation.label}</td><td><code>{operation.status}</code></td><td>{operation.limitations.join(' ')}</td></tr>
@@ -41,41 +36,12 @@ LocalCloud builds from a mutable `v0.0.1` input with checksum verification disab
   </tbody>
 </table>
 
-## Cached-artifact feature interpretation
+## Runtime and recovery limits
 
-| Area | Observed local behavior | Required boundary |
-| --- | --- | --- |
-| Core Data API | Row reads, mutations, conditional mutations, read-modify-write, sampling, and filters. | Simplified local semantics; no production quota, concurrency, distribution, or performance guarantees. |
-| Table Admin | Table and family lifecycle, GC rules, ranges, consistency tokens, and deletion protection. | Undelete and snapshot APIs remain unsupported. |
-| Instance Admin | Instance lifecycle plus cluster and app-profile metadata CRUD. | Cluster topology, routing, isolation, replication, failover, autoscaling, and multi-region behavior are not enforced. |
-| Change streams | Single full-table partition, mutation records, continuation tokens, start time, and heartbeat behavior. | No real partition topology, splitting, merging, or assembled-image qualification. |
-| Backups | Backup metadata lifecycle and schema-only restore. | Rows are not snapshotted or restored; this is not a recovery guarantee. |
-| IAM | Policy-shaped calls and permissive responses. | Requested permissions can be granted without access-control enforcement; do not test security policy with this stub. |
-| Logical views | Metadata CRUD. | Stored queries are not executed. |
-| Materialized views | Local write-time shadow-table propagation. | No existing-row backfill; parser and schema synchronization are limited. |
+<ul>
+  {bigtable.limitations.map((limitation) => <li>{limitation}</li>)}
+  <li>{bigtable.persistence.restartBehavior}</li>
+  {bigtable.persistence.recoveryLimitations.map((limitation) => <li>{limitation}</li>)}
+</ul>
 
-## Unsupported production behavior
-
-- GoogleSQL `PrepareQuery` and `ExecuteQuery`.
-- Production replication, failover, multi-cluster routing, and multi-region consistency.
-- CMEK, HSM-backed encryption behavior, and production IAM enforcement.
-- Autoscaling, quotas, billing, audit logging, Key Visualizer, and production monitoring.
-- Broad connector parity for HBase, Beam, Spark, Flink, or Kafka without a tested matrix.
-- Snapshot and undelete APIs where the artifact returns `Unimplemented`.
-
-## Persistence and recovery
-
-Within LocalCloud Docker, Bigtable data is intended to use PostgreSQL under the mounted LocalCloud volume. Do not describe SQLite as the LocalCloud default. Retaining a volume is necessary for container replacement; release qualification must also exercise restart and recovery behavior.
-
-The standalone cached artifact can support PostgreSQL or SQLite, but that artifact is not yet reconciled with the mutable build input or dependency HEAD.
-
-## Publication exit criteria
-
-Before changing these states to verified, record:
-
-- immutable Bigtable source revision and module checksum;
-- dependency artifact identity;
-- assembled LocalCloud image digest;
-- gRPC qualification for core data, administration, change streams, views, and persistence;
-- durable test evidence; and
-- the LocalCloud release that consumed that evidence.
+Metadata-only backup, view, or IAM operations do not prove data restoration, query execution, or authorization enforcement. Assert exact row bytes through the application data client and qualify required connector behavior separately. Validate production-managed behavior in Google Cloud.

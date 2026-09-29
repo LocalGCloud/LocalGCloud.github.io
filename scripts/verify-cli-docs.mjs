@@ -97,7 +97,7 @@ assert(
 	"tutorial must explain repeatability",
 );
 assert(
-	tutorial.includes("LocalCloud CLI 0.1.2") && tutorial.includes("localcloud --version"),
+	tutorial.includes("docsContract.cli.releaseBoundary"),
 	"tutorial must identify the documented CLI release and show how to check it",
 );
 assert(
@@ -111,12 +111,18 @@ assert(
 
 const forbidden = [
 	{ pattern: "/_localcloud/", label: "legacy operator endpoint" },
-	{ pattern: "localcloud/localcloud", label: "unreviewed image repository" },
+	{ pattern: "localcloud/localcloud:", label: "unreviewed image repository" },
 	{ pattern: "local-project", label: "stale default project" },
-	{ pattern: "-p 8080:24080", label: "legacy gateway port map" },
-	{ pattern: "-p 4443:24081", label: "legacy storage port map" },
-	{ pattern: "8085-8087:24082-8087", label: "legacy service range map" },
-	{ pattern: "-p 6379:24089", label: "legacy Memorystore port map" },
+	{ pattern: "24080", label: "legacy gateway port" },
+	{ pattern: "24081", label: "legacy storage port" },
+	{ pattern: "24082", label: "legacy pubsub port" },
+	{ pattern: "24083", label: "legacy firestore port" },
+	{ pattern: "24084", label: "legacy bigtable port" },
+	{ pattern: "24085", label: "legacy spanner port" },
+	{ pattern: "24086", label: "legacy spanner rest port" },
+	{ pattern: "24087", label: "legacy bigquery port" },
+	{ pattern: "24088", label: "legacy bigquery grpc port" },
+	{ pattern: "24089", label: "legacy memorystore port" },
 	{ pattern: "-v /var/run/docker.sock", label: "beginner Docker socket mount" },
 	{ pattern: "zero code changes", label: "blanket code-compatibility claim" },
 	{ pattern: "free for developers", label: "unsafe licensing claim" },

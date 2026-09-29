@@ -6,6 +6,7 @@ import { parse } from "yaml";
 const root = new URL("../", import.meta.url);
 const runtimeRoot = new URL("../../localcloud/", import.meta.url);
 const cliRoot = new URL("../../localcloud-cli/", import.meta.url);
+const bigqueryRoot = new URL("../../local_cloud_dependencies/bigquery-emulator-on-duckdb/", import.meta.url);
 const contractUrl = new URL("src/data/docs-contract.snapshot.json", root);
 
 const read = (url) => readFile(url, "utf8");
@@ -30,6 +31,7 @@ const sha256 = async (url) =>
 	`sha256:${createHash("sha256").update(await read(url)).digest("hex")}`;
 
 const contract = JSON.parse(await read(contractUrl));
+contract.schemaVersion = 4;
 const defaults = parse(await read(new URL("localcloud.defaults.yaml", runtimeRoot)));
 const documentation = parse(await read(new URL("documentation.yaml", runtimeRoot)));
 const cliVersionSource = await read(
@@ -59,15 +61,26 @@ contract.reviewedAt = `${localDateParts.year}-${localDateParts.month}-${localDat
 contract.provenance.runtimeRevision = revision(runtimeRoot);
 contract.provenance.cliRevision = revision(cliRoot);
 const sourceFiles = [
+	{ path: "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv", url: new URL("docs/coverage-matrix.csv", bigqueryRoot), repository: bigqueryRoot, repositoryPath: "docs/coverage-matrix.csv" },
 	{ path: "../localcloud/localcloud.defaults.yaml", url: new URL("localcloud.defaults.yaml", runtimeRoot), repository: runtimeRoot, repositoryPath: "localcloud.defaults.yaml" },
 	{ path: "../localcloud/documentation.yaml", url: new URL("documentation.yaml", runtimeRoot), repository: runtimeRoot, repositoryPath: "documentation.yaml" },
 	{ path: "../localcloud/docs/status/service-status.md", url: new URL("docs/status/service-status.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/status/service-status.md" },
 	{ path: "../localcloud/docs/architecture/networking-and-tls.md", url: new URL("docs/architecture/networking-and-tls.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/architecture/networking-and-tls.md" },
 	{ path: "../localcloud/docs/guides/mcp-integration.md", url: new URL("docs/guides/mcp-integration.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/guides/mcp-integration.md" },
 	{ path: "../localcloud/specs/api/catalog.json", url: new URL("specs/api/catalog.json", runtimeRoot), repository: runtimeRoot, repositoryPath: "specs/api/catalog.json" },
+	...[
+		"Dockerfile", "LICENSE", "docker/bigquery-start.sh",
+		"localcloud-server/src/main/java/com/localcloud/admin/SeedService.java",
+		"localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java",
+		"localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java",
+		"localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java",
+	].map((path) => ({ path: `../localcloud/${path}`, url: new URL(path, runtimeRoot), repository: runtimeRoot, repositoryPath: path })),
 	{ path: "../localcloud-cli/README.md", url: new URL("README.md", cliRoot), repository: cliRoot, repositoryPath: "README.md" },
 	{ path: "../localcloud-cli/src/localcloud_cli/config.py", url: new URL("src/localcloud_cli/config.py", cliRoot), repository: cliRoot, repositoryPath: "src/localcloud_cli/config.py" },
 	{ path: "../localcloud-cli/src/localcloud_cli/__init__.py", url: new URL("src/localcloud_cli/__init__.py", cliRoot), repository: cliRoot, repositoryPath: "src/localcloud_cli/__init__.py" },
+	...[
+		"src/localcloud_cli/constants.py", "src/localcloud_cli/docker_runtime.py",
+	].map((path) => ({ path: `../localcloud-cli/${path}`, url: new URL(path, cliRoot), repository: cliRoot, repositoryPath: path })),
 	{ path: "public/install.sh", url: new URL("public/install.sh", root), repository: root, repositoryPath: "public/install.sh" },
 ];
 contract.provenance.sources = sourceFiles.map((source) => source.path);
@@ -79,8 +92,27 @@ contract.provenance.sourceDigests = Object.fromEntries(
 contract.provenance.worktreeSources = sourceFiles
 	.filter((source) => changed(source.repository, source.repositoryPath))
 	.map((source) => source.path);
+contract.bigqueryCoverage = JSON.parse(execFileSync("python3", ["-c", `
+import csv, json
+from collections import Counter
+with open('docs/coverage-matrix.csv', newline='') as source:
+    rows = list(csv.DictReader(source))
+print(json.dumps({
+    'total': len(rows),
+    'development': dict(Counter(row['development_status'] for row in rows)),
+    'production': dict(Counter(row['production_parity'] for row in rows)),
+    'partialCapabilities': [{'id': row['capability_id'], 'name': row['feature_name'], 'boundary': row['production_limitations'], 'notes': row['notes']} for row in rows if row['development_status'] == 'partial'],
+}))
+`], { cwd: bigqueryRoot, encoding: "utf8" }));
+contract.bigqueryCoverage.revision = revision(bigqueryRoot);
 contract.product.serviceCount = Object.keys(runtimeCatalog).length;
 contract.product.defaultProject = defaults.context.project;
+const cliConstants = await read(new URL("src/localcloud_cli/constants.py", cliRoot));
+contract.product.memory = cliConstants.match(/^DEFAULT_MEMORY = "([^"]+)"/m)?.[1];
+if (!contract.product.memory) throw new Error("Unable to read CLI memory default");
+contract.cli.dockerSocketDefault = defaults.host.docker_socket;
+contract.cli.bindAddress = "0.0.0.0";
+contract.cli.quickStart = ["localcloud doctor", "localcloud start --local-only", 'eval "$(localcloud env)"', "localcloud console"];
 contract.operator.gatewayPort = defaults.server.gateway.port;
 contract.operator.publishedPorts = {
 	services: "5380-5405",
@@ -127,6 +159,27 @@ const statusMap = {
 	prod_only: "unsupported",
 };
 
+const seedSource = await read(new URL("localcloud-server/src/main/java/com/localcloud/admin/SeedService.java", runtimeRoot));
+const seedServices = seedSource.match(/IMPLEMENTED_SEED_SERVICES = Set\.of\(([\s\S]*?)\);/)?.[1];
+const volatileServices = seedSource.match(/VOLATILE_SEED_SERVICES = Set\.of\(([\s\S]*?)\);/)?.[1];
+if (seedServices === undefined || volatileServices === undefined) throw new Error("Unable to read seed registrars");
+contract.seed.supportedServices = [...seedServices.matchAll(/"([a-z]+)"/g)].map((match) => match[1]);
+contract.seed.volatileServices = [...volatileServices.matchAll(/"([a-z]+)"/g)].map((match) => match[1]);
+contract.seed.defaultSeedFile = seedSource.match(/getOrDefault\("LOCALCLOUD_SEED_FILE", "([^"]+)"\)/)?.[1];
+if (!contract.seed.defaultSeedFile) throw new Error("Unable to read the default seed file");
+contract.seed.limitations = [
+	"Seed registrars do not establish supported application integrations; consult operation-level compatibility.",
+	"POST /reseed replaces sample resources in the selected project, including changes made inside them; unrelated resources are retained.",
+	"Managed CLI lifecycle commands do not mount or apply seed files; host.seed is accepted but ignored. Container bootstrap and Console reseeding own samples.",
+	"LOCALCLOUD_TERRAFORM_MODE=true skips seeding. Volatile mode currently has no eligible services.",
+];
+contract.operator.endpoints.readiness = "/readiness";
+contract.privacy.runtimeTelemetry.limitations = [
+	"Disabling telemetry emits a telemetry_disabled event when an event API key is configured before suppressing normal telemetry.",
+	"External lifecycle failures enqueue service_error events; registry snapshots have no exit code. The client uses normal TLS certificate verification.",
+];
+if (!contract.privacy.runtimeTelemetry.events.includes("service_error")) contract.privacy.runtimeTelemetry.events.push("service_error");
+
 const servicePort = (service) => service.plaintextPort ?? service.port;
 const envValue = (service) => {
 	const raw = servicePort(service);
@@ -140,6 +193,7 @@ contract.services = contract.services.map((service) => {
 	if (!runtime || !docs) {
 		throw new Error(`Upstream documentation is missing service ${service.id}`);
 	}
+	if (!statusMap[docs.coverage_status]) throw new Error(`Unknown service status ${docs.coverage_status} for ${service.id}`);
 
 	const operations = docs.operations.map((operation) => {
 		const status = statusMap[operation.status];
@@ -149,7 +203,9 @@ contract.services = contract.services.map((service) => {
 			);
 		}
 		const limitations = [];
-		if (operation.notes && status !== "verified") limitations.push(operation.notes);
+		if (service.id === "bigquery" && operation.id === "sql.query") {
+			limitations.push("Query coverage varies by capability and input. Review the dependency matrix, including partial and unsupported records; qualify semantics and errors with application queries.");
+		} else if (operation.notes) limitations.push(operation.notes);
 		if (status === "unsupported" && limitations.length === 0) {
 			limitations.push("This operation is not available in LocalCloud.");
 		}
@@ -169,6 +225,22 @@ contract.services = contract.services.map((service) => {
 
 	return {
 		...service,
+		implementation: runtime.type === "facade" ? "local-facade" : service.implementation,
+		persistence: service.id === "pubsub" ? {
+			scope: "service-data",
+			backingStore: "PostgreSQL under /var/lib/localcloud/pgdata",
+			restartBehavior: "Topics, subscriptions, and queued messages persist in PostgreSQL. Delivery workers and active connections restart; qualify the exact replay and redelivery workflow.",
+			recoveryLimitations: ["A mounted volume does not provide production delivery, replication, or recovery guarantees; qualify the assembled image."],
+			qualification: "release-unverified",
+			evidence: ["../localcloud/documentation.yaml", "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java"],
+		} : service.id === "firestore" ? {
+			scope: "service-data",
+			backingStore: "External emulator exports and checkpoint metadata beneath the mounted LocalCloud data root",
+			restartBehavior: "Historical isolated clean-restart evidence restored document contents but changed timestamps. Qualify recovery in the exact assembled image.",
+			recoveryLimitations: ["Checkpoints and seed registration do not establish timestamp, precondition, listener, or transaction fidelity."],
+			qualification: "release-unverified",
+			evidence: ["../localcloud/documentation.yaml"],
+		} : service.persistence,
 		availability: runtime.availability,
 		name: runtime.displayName,
 		port: rawPort === "gateway" ? defaults.server.gateway.port : rawPort,
@@ -190,8 +262,13 @@ contract.services = contract.services.map((service) => {
 			limitation:
 				"Default enablement follows the current runtime catalog and remains subject to license-tier gates.",
 		},
-		status: statusMap[docs.coverage_status] ?? service.status,
-		limitations: docs.limitations ?? [],
+		status: statusMap[docs.coverage_status],
+		// The matrix records concrete gaps; upstream prose still has stale totals and global parity claims.
+		limitations: service.id === "bigquery" ? [
+			"Coverage classifications are source records, not proof of full Google Cloud semantic parity or assembled-image qualification.",
+			...contract.bigqueryCoverage.partialCapabilities.map((capability) => `${capability.id}: ${capability.boundary}`),
+			"Google-managed reservations, fleet scale, replication, and IAM integrations require production validation.",
+		] : docs.limitations ?? [],
 		operations,
 		evidence: [
 			"../localcloud/localcloud.defaults.yaml",

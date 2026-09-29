@@ -84,10 +84,20 @@ const forbidden = [
 	"GOOGLE_CLOUD_PROJECT=local-project",
 	'project="local-project"',
 	'projectId: "local-project"',
-	"8080:24080",
-	"4443:24081",
-	"8085-8087:24082-8087",
-	"6379:24089",
+	"24080",
+	"24081",
+	"24082",
+	"24083",
+	"24084",
+	"24085",
+	"24086",
+	"24087",
+	"24088",
+	"24089",
+	"24090",
+	"24091",
+	"24092",
+	"24443",
 	"free for developers",
 	"zero code changes",
 	"anonymous product analytics",
@@ -105,7 +115,7 @@ for (const phrase of forbidden) {
 }
 
 const runtimeMcpGuideExpression =
-	"${productFacts.runtimeRepositoryUrl}/blob/main/docs/MCP_INTEGRATION.md";
+	"${productFacts.runtimeRepositoryUrl}/blob/main/docs/guides/mcp-integration.md";
 const productFactsSource = await read("src/data/productFacts.ts");
 for (const repository of [
 	'https://github.com/LocalGCloud/localcloud-cli',
@@ -131,14 +141,16 @@ for (const path of [
 	);
 }
 
+const contract = JSON.parse(await read("src/data/docs-contract.snapshot.json"));
+const availableCount = contract.services.filter((service) => service.published && service.availability === "available" && !["unsupported", "unknown"].includes(service.status)).length;
 for (const path of ["public/llms.txt", "public/llms-full.txt"]) {
 	const value = await read(path);
 	assert(
-		value.includes("27 available Google Cloud service guides"),
+		value.includes(`${availableCount} documented local integrations`),
 		`${path} lacks public service counts`,
 	);
 	assert(
-		value.includes("Firestore is available but disabled by default") &&
+		value.includes("Firestore is disabled by default") &&
 			value.includes("Google Sheets provides a limited read-only values facade"),
 		`${path} lacks service classification policy`,
 	);
@@ -153,6 +165,9 @@ for (const path of ["public/llms.txt", "public/llms-full.txt"]) {
 		`${path} lacks public-preview license boundaries`,
 	);
 	assert(value.includes("https://local.cloud/pricing/"), `${path} lacks pricing URL`);
+	for (const service of contract.services.filter((service) => ["unsupported", "unknown"].includes(service.status))) {
+		assert(value.includes(`${service.name} — ${service.status}.`), `${path} misstates ${service.name} support`);
+	}
 }
 
 const agentic = await read("src/data/agenticContent.ts");

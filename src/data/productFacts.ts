@@ -29,8 +29,6 @@ export const productFacts = {
 	installScriptCommand: docsContract.cli.installCommand,
 	homebrewInstallCommand: docsContract.cli.homebrewCommand,
 	homebrewTapUrl: "https://github.com/LocalGCloud/homebrew-tap",
-	releaseVersion: "0.1.2",
-	releaseTag: "v0.1.2",
 	logoUrl: "https://local.cloud/brand/localcloud-mark.svg",
 	companyName: "LocalCloud Inc.",
 	companyAddress: "5365 California Street, Palo Alto, CA",

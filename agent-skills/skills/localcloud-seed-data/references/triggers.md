@@ -4,7 +4,7 @@
 
 - "Create deterministic LocalCloud seed data for our BigQuery and Pub/Sub integration tests."
 - "Load this LocalCloud seed YAML through the admin API and reset tests to a known state."
-- "Add fake local Secret Manager and Firestore fixtures without using production data."
+- "Add fake local Secret Manager and Cloud Storage fixtures without using production data."
 
 ## Negative prompts
 

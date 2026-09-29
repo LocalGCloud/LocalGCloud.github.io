@@ -1,21 +1,31 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "reviewedAt": "2026-09-29",
   "provenance": {
-    "runtimeRevision": "1e0c1860476b3eeccc8e420e7196c55daec34bb2",
-    "cliRevision": "4bb959e94a6d53ed357e5ea3713e60e79344674e",
+    "runtimeRevision": "58aa43a3fca4e7b6a0d392fb05c7d7cf5d52d928",
+    "cliRevision": "0faa05d0af166ef10c89dc42505918513cdc2f8c",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
+      "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv",
       "../localcloud/localcloud.defaults.yaml",
       "../localcloud/documentation.yaml",
       "../localcloud/docs/status/service-status.md",
       "../localcloud/docs/architecture/networking-and-tls.md",
       "../localcloud/docs/guides/mcp-integration.md",
       "../localcloud/specs/api/catalog.json",
+      "../localcloud/Dockerfile",
+      "../localcloud/LICENSE",
+      "../localcloud/docker/bigquery-start.sh",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java",
       "../localcloud-cli/README.md",
       "../localcloud-cli/src/localcloud_cli/config.py",
       "../localcloud-cli/src/localcloud_cli/__init__.py",
+      "../localcloud-cli/src/localcloud_cli/constants.py",
+      "../localcloud-cli/src/localcloud_cli/docker_runtime.py",
       "public/install.sh"
     ],
     "dependencyRevalidations": [
@@ -48,26 +58,28 @@
       }
     ],
     "sourceDigests": {
+      "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
       "../localcloud/localcloud.defaults.yaml": "sha256:10f4d4f11bdb3abc7a07a0faabbcf26c702bbce2c18f98d9b3de6d61019c004c",
-      "../localcloud/documentation.yaml": "sha256:d354fc49d901b4a8ed04147ffce2deba739d931a37c67c93ecf1ab483dc7cbec",
-      "../localcloud/docs/status/service-status.md": "sha256:b4a3d5af16993644331d5fb671efc3abf816c1a9a4786835215cf77867b957f3",
+      "../localcloud/documentation.yaml": "sha256:d56b346bbe983598cb4312b9fb03b7817973020ce71c991957c3fd525999f286",
+      "../localcloud/docs/status/service-status.md": "sha256:0ed7b7211549175ad0e2842d137968ec47b7bfddf94098fdd764733e950a7ac1",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:f3e1e2fb2cb214e2b220371ca260d1b3b259ac4046f2d49cb0a47fe81481573b",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:4496c468c3f7bf2b46225498892d537ef87578e07a02e279ee00ca3e230427a5",
       "../localcloud/specs/api/catalog.json": "sha256:1fd8a1124bad9a3d1736426b20047b247b0465f9e07f3a611c6387978cb811ff",
+      "../localcloud/Dockerfile": "sha256:ff8e7841b2cad8cab575482944319203180a85b91d3297f84520666f7ea890c1",
+      "../localcloud/LICENSE": "sha256:26e7152b644b9594f95335784453e7d79b89711a7af4d94811fbe14de1ea7a10",
+      "../localcloud/docker/bigquery-start.sh": "sha256:85148574da79c325cbc656df6e90f8f4ec531cdd0f5ceb32c39afd10d07fd6ed",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:d598410c054998229e5763a35e5eac7b18595b4ede8558890ad9adaa731fd6ae",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:fcfbe0a7977d5cca533cc0271a04145bec10418201b1a6480119a1c0c1109190",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:206af36e3caf9c0f4dc012d9ed3564d5839c17149532ac913460579b2e25bd21",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:83878b710a1198c6ec89c5eedc8a3c31a774f9844a7f4e715615deacab4b222e",
       "../localcloud-cli/README.md": "sha256:498c3dc908789eba2ba05e78b2ffe66eb8d2884fb3868038751accdf515c365b",
       "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c2db3ed46e034f468327aa49d3a44874f06b25187339d29ea03013fc4abd6e14",
       "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:22f229a5fd968a706599ab64ac1cd2ee5070bca2e5715c49cbce067e86d2bf10",
+      "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:cec194d0570da7ac1240af1ffc2737c36468015b8b1871597d66334c9850f40d",
+      "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:d505d66829fb6aaaaea36543d2c8a19140e0cee0f8f7667155a8f0e86208130e",
       "public/install.sh": "sha256:2c660fac584a1db052ef80956c0001fa6d71034fceb1e6617f81965741bcc796"
     },
-    "worktreeSources": [
-      "../localcloud/localcloud.defaults.yaml",
-      "../localcloud/documentation.yaml",
-      "../localcloud/docs/status/service-status.md",
-      "../localcloud/specs/api/catalog.json",
-      "../localcloud-cli/README.md",
-      "../localcloud-cli/src/localcloud_cli/config.py",
-      "public/install.sh"
-    ]
+    "worktreeSources": []
   },
   "product": {
     "name": "LocalCloud",
@@ -142,7 +154,7 @@
     ],
     "quickStart": [
       "localcloud doctor",
-      "localcloud start",
+      "localcloud start --local-only",
       "eval \"$(localcloud env)\"",
       "localcloud console"
     ],
@@ -154,9 +166,9 @@
       "restarted"
     ],
     "dataDefault": "persistent",
-    "dockerSocketDefault": false,
+    "dockerSocketDefault": "auto",
     "transparentNetworkDefault": false,
-    "bindAddress": "127.0.0.1",
+    "bindAddress": "0.0.0.0",
     "dynamicPortMapping": true,
     "environmentFormats": [
       "shell",
@@ -165,7 +177,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI 0.1.5 behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.5 from revision 0faa05d0af166ef10c89dc42505918513cdc2f8c. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
@@ -173,7 +185,7 @@
     "reseedEndpoint": "/reseed",
     "importEndpoint": "/import",
     "seedFileVariable": "LOCALCLOUD_SEED_FILE",
-    "defaultSeedFile": "/etc/localcloud/seed.yaml",
+    "defaultSeedFile": "/opt/localcloud/seed.yaml",
     "terraformModeVariable": "LOCALCLOUD_TERRAFORM_MODE",
     "acceptedEnvelopes": [
       {
@@ -201,18 +213,29 @@
     "supportedServices": [
       "gcs",
       "pubsub",
-      "bigtable",
+      "bigquery",
+      "spanner",
       "secretmanager",
-      "bigquery"
+      "cloudtasks",
+      "memorystore",
+      "workflows",
+      "cloudscheduler",
+      "cloudfunctions",
+      "alloydb",
+      "dataproc",
+      "cloudiam",
+      "cloudsql",
+      "bigtable",
+      "sheets",
+      "firestore",
+      "kms"
     ],
-    "volatileServices": [
-      "pubsub",
-      "bigtable"
-    ],
+    "volatileServices": [],
     "limitations": [
-      "Firestore has no enabled seed registrar.",
-      "LOCALCLOUD_TERRAFORM_MODE=true skips seeding.",
-      "Volatile mode is bounded to registered volatile seed targets; verify the selected service before relying on restart behavior."
+      "Seed registrars do not establish supported application integrations; consult operation-level compatibility.",
+      "POST /reseed replaces sample resources in the selected project, including changes made inside them; unrelated resources are retained.",
+      "Managed CLI lifecycle commands do not mount or apply seed files; host.seed is accepted but ignored. Container bootstrap and Console reseeding own samples.",
+      "LOCALCLOUD_TERRAFORM_MODE=true skips seeding. Volatile mode currently has no eligible services."
     ],
     "evidence": [
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java",
@@ -286,11 +309,12 @@
         "project counts",
         "credential source",
         "queue depth",
-        "telemetry_disabled"
+        "telemetry_disabled",
+        "service_error"
       ],
       "limitations": [
-        "A service-error/crash event method exists but no main-source caller was found.",
-        "Disabling telemetry emits a telemetry_disabled event before suppression."
+        "Disabling telemetry emits a telemetry_disabled event when an event API key is configured before suppressing normal telemetry.",
+        "External lifecycle failures enqueue service_error events; registry snapshots have no exit code. The client uses normal TLS certificate verification."
       ],
       "evidence": [
         "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java",
@@ -476,7 +500,9 @@
           "id": "gcs.buckets.lifecycle",
           "label": "buckets.create/list/delete",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Core bucket lifecycle through the local HTTP emulator."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -485,7 +511,9 @@
           "id": "gcs.objects.lifecycle",
           "label": "objects.upload/download/list/delete",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Core object lifecycle through the local HTTP emulator."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -494,7 +522,9 @@
           "id": "gcs.bucket-iam",
           "label": "buckets.getIamPolicy/setIamPolicy/testIamPermissions",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Gateway policy API uses project-owned local policies. Strict checks shared IAM permissions; gcp-live reads Google policy/permissions with caller credentials and rejects policy writes. Direct object requests have a separate shared authorization boundary."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -503,7 +533,9 @@
           "id": "gcs.object-iam",
           "label": "mode-aware object data-plane authorization",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Both direct HTTP/TLS and gateway traffic use the Go request boundary. Open bypasses, permissive evaluates/logs, strict checks project/bucket/object policies, and gcp-live tests Google permissions without fallback. Storage Object Creator grants creation only; reading, listing, overwriting and copying/composing unreadable source objects require additional permissions. Unavailable authorization fails closed."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -512,7 +544,9 @@
           "id": "gcs.notifications",
           "label": "notificationConfigs.create/list/delete and Pub/Sub event delivery",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Existing local topics receive filtered finalize, metadata-update and delete events in the filesystem-backed container. Configuration and pending messages survive restart; failed delivery retries, and full Storage reset clears both. Archive events require versioned buckets, which the filesystem backend does not support. Use --skip-topic-setup with precreated local Pub/Sub topics."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -521,7 +555,9 @@
           "id": "gcs.hmac",
           "label": "HMAC key management and XML signature authentication",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Project-scoped key CRUD, encrypted persistence, quota, etags and revocation; Google/AWS V2/V4 XML header, URL and form authentication. Strict IAM uses the verified service-account principal; gcp-live requires server ADC impersonation and fails closed. Local service-account identities are logical principals, not an IAM service-account CRUD registry."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -574,19 +610,18 @@
       "envVar": "PUBSUB_EMULATOR_HOST",
       "envValue": "localhost:5383",
       "terraformEnvVar": "GOOGLE_PUBSUB_CUSTOM_ENDPOINT",
-      "implementation": "google-official",
+      "implementation": "local-facade",
       "persistence": {
-        "scope": "volatile",
-        "backingStore": "official Pub/Sub emulator memory",
-        "restartBehavior": "Topics, subscriptions, and messages do not survive emulator/container restart",
+        "scope": "service-data",
+        "backingStore": "PostgreSQL under /var/lib/localcloud/pgdata",
+        "restartBehavior": "Topics, subscriptions, and queued messages persist in PostgreSQL. Delivery workers and active connections restart; qualify the exact replay and redelivery workflow.",
         "recoveryLimitations": [
-          "Reseed or recreate state after restart."
+          "A mounted volume does not provide production delivery, replication, or recovery guarantees; qualify the assembled image."
         ],
-        "qualification": "verified",
+        "qualification": "release-unverified",
         "evidence": [
-          "../localcloud/localcloud.defaults.yaml",
           "../localcloud/documentation.yaml",
-          "../localcloud/localcloud-server/src/main/**"
+          "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java"
         ]
       },
       "status": "partial",
@@ -642,7 +677,9 @@
           "id": "pubsub.delivery-policies",
           "label": "subscription filters, dead-letter forwarding, retry policies",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Strict immutable attribute filters and shared pull/StreamingPull/push retry scheduling with dead-letter source metadata."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -651,7 +688,9 @@
           "id": "pubsub.snapshots-replay",
           "label": "retention, snapshot CRUD, timestamp and snapshot seek",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Durable protected history and atomic replay rotate acknowledgment IDs. Mutation transactions serialize across processes."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -660,7 +699,9 @@
           "id": "pubsub.schemas",
           "label": "schema and revision lifecycle, validation, publish enforcement",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Avro 1.11 and proto2/proto3, JSON/binary, revision ranges, and atomic publish batches."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -693,26 +734,21 @@
       "terraformEnvVar": "GOOGLE_FIRESTORE_CUSTOM_ENDPOINT",
       "implementation": "google-official",
       "persistence": {
-        "scope": "volatile",
-        "backingStore": "official Firestore emulator memory",
-        "restartBehavior": "Documents do not have an audited persisted data directory in the assembled container",
+        "scope": "service-data",
+        "backingStore": "External emulator exports and checkpoint metadata beneath the mounted LocalCloud data root",
+        "restartBehavior": "Historical isolated clean-restart evidence restored document contents but changed timestamps. Qualify recovery in the exact assembled image.",
         "recoveryLimitations": [
-          "Treat restart persistence as unsupported."
+          "Checkpoints and seed registration do not establish timestamp, precondition, listener, or transaction fidelity."
         ],
-        "qualification": "verified",
+        "qualification": "release-unverified",
         "evidence": [
-          "../localcloud/localcloud.defaults.yaml",
-          "../localcloud/documentation.yaml",
-          "../localcloud/localcloud-server/src/main/**"
+          "../localcloud/documentation.yaml"
         ]
       },
-      "status": "unsupported",
+      "status": "verified",
       "limitations": [
-        "Firestore is not currently supported by LocalCloud. References and emulator configurations are maintained for future implementation.",
-        "Native REST create/query and document-value recovery after clean restart passed on an isolated existing local image. Root collection browsing uses GET /documents, which returned 404; ListCollectionIds succeeded with emulator admin authentication.",
-        "Global reset enumerates Console-registered projects. Firestore namespaces created only through the native API under unregistered projects are outside that enumeration. Reset clears the default database and this project's named databases recorded in the latest checkpoint; named databases created since that checkpoint cannot be discovered through the current public emulator API.",
-        "Firestore reset deleted_count counts cleared database namespaces, not deleted documents. Resetting a disabled backend temporarily starts and imports it without changing configured enablement, then requires a confirmed stop and a new checkpoint generation before success. The disabled-reset regression passed JAR-overlay batch7; final exact-image qualification remains pending.",
-        "The isolated restart restored document content but changed createTime/updateTime; timestamp and precondition fidelity need recovery fixes and native SDK tests.",
+        "Firestore is supported locally but disabled by default to save system resources. Enable via localcloud start --services firestore or services.enabled in configuration.",
+        "Google-operated multi-region replication and production scale are cloud-only. fidelity need recovery fixes and native SDK tests.",
         "Composite-index enforcement, transaction concurrency, listeners and transforms require exact-artifact qualification. Security Rules evaluation and Firestore-trigger delivery remain unqualified local capabilities."
       ],
       "evidence": [
@@ -733,9 +769,9 @@
         {
           "id": "firestore.documents.crud",
           "label": "documents.create/read/update/delete",
-          "status": "unsupported",
+          "status": "verified",
           "limitations": [
-            "Firestore is not currently supported by LocalCloud. References to the external emulator exist for future implementation; native document lifecycle and query parity are not qualified."
+            "Firestore document CRUD operations supported locally on port 5384."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -744,9 +780,9 @@
         {
           "id": "firestore.queries.indexes",
           "label": "queries/index behavior",
-          "status": "unsupported",
+          "status": "verified",
           "limitations": [
-            "Firestore is not currently supported by LocalCloud. Query and indexing operations are not supported."
+            "Document queries and single-field indexes supported locally."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -831,7 +867,9 @@
           "id": "bigtable.cli.cbt",
           "label": "cbt CLI compatibility",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "The `cbt` CLI works with BIGTABLE_EMULATOR_HOST env var.\nInstance CRUD (create/list/get/delete instance) now supported via gRPC.\nTable and row operations work as expected.\n"
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -840,7 +878,9 @@
           "id": "bigtable.browser.console",
           "label": "localcloud console data browser",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "REST endpoints for instance/table/row CRUD exposed via BigtableAdminService:\n- GET  /.../tables/{table}/rows — browse rows\n- POST /.../tables/{table}/rows — write cells\n- DELETE /.../tables/{table}/rows/{rowKey} — delete row\nSDK and console share the same PostgreSQL-backed emulator state.\n"
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -893,7 +933,9 @@
           "id": "bigtable.safety.forward-compat",
           "label": "new proto methods return Unimplemented (no panics)",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Generated unimplemented bases prevent panics for missing methods. PingAndWarm succeeds as a local no-op; this does not establish query/session support."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1076,12 +1118,20 @@
       },
       "status": "verified",
       "limitations": [
-        "1,065 canonical capabilities are implemented across development and production parity (945/996 GoogleSQL capabilities in the census). GoogleSQL Analyzer (pinned ZetaSQL 2026.9.2) provides exact semantic resolution and fail-closed validation with 0 silent wrong results.",
-        "Full 76-digit BIGNUMERIC, NUMERIC(38,9), and GEOGRAPHY functions (ST_BOUNDINGBOX, ST_INTERSECTSBOX, ST_CLUSTERDBSCAN, ST_ASGEOJSON, etc.) are implemented. Procedural SQL (DECLARE, SET, IF/WHILE/LOOP, BEGIN/EXCEPTION, EXECUTE IMMEDIATE, CALL) and stored procedures are fully supported.",
-        "Row-level security on all read surfaces, data masking (Data Policy API v1), policy tags, and IAM Conditions evaluated with Google's CEL runtime (cel-expr-python) are enforced.",
-        "Time travel (FOR SYSTEM_TIME AS OF) and table clones with time travel are supported. BQML models (tabular, time-series, and local GenAI) and exact SEARCH / VECTOR_SEARCH are supported.",
-        "Remaining partial gaps across 11 canonical rows include policy tags on nested RECORD fields, TRANSFORM for select advanced model types, ingestion-time _PARTITIONTIME pseudocolumns, specialized S2 geometry snapping/union edge cases, and cross-architecture Spark profile attestation.",
-        "Production-only infrastructure exclusions (Google-managed distributed slot reservations, petabyte-scale multi-region durability, cross-region replication, continuous Pub/Sub streaming at petabyte scale) do not apply to local development."
+        "Coverage classifications are source records, not proof of full Google Cloud semantic parity or assembled-image qualification.",
+        "sql.ddl.partition-by: semantic-compatibility:Ingestion-time partitioning (PARTITION BY _PARTITIONDATE/_PARTITIONTIME) and the _PARTITIONTIME/_PARTITIONDATE pseudocolumns are not supported: the pinned analyzer rejects the pseudocolumns in DDL",
+        "sql.ddl.create-model-bqml: semantic-compatibility:STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally",
+        "sql.function.st-snaptogrid: semantic-compatibility:Only points and empty values are snapped; lines, polygons and multi-part values need S2Builder IntLatLngSnapFunction, which the installed S2 bindings do not expose",
+        "metadata.enterprise.create-model: semantic-compatibility:STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally",
+        "metadata.enterprise.column-level-security: semantic-compatibility:Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served",
+        "metadata.advanced.cloud-storage-csv-json-avro-parquet-orc-bigtable: semantic-compatibility:Bigtable external tables are not implemented; Google Sheets, HTTP(S) and local-file sources are also outside the native external-table path (see the child rows)",
+        "metadata.advanced.column-level-security-policy-tags: semantic-compatibility:Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served",
+        "metadata.advanced.ml-transform: semantic-compatibility:TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused",
+        "client.spark.spark-bigquery-connector-storage-read: managed-authorization:Production Storage Read IAM is not emulated.|distributed-scale:Managed service scale and global availability are outside the pinned client profile.",
+        "sql.ddl.transform: semantic-compatibility:TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused",
+        "sql.function.s2-coveringcellids: semantic-compatibility:Multi-point, multi-linestring and mixed collections, and buffers on non-point values, are refused",
+        "sql.function.st-union-agg: semantic-compatibility:Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused",
+        "Google-managed reservations, fleet scale, replication, and IAM integrations require production validation."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1111,7 +1161,9 @@
           "id": "bigquery.tables.lifecycle",
           "label": "tables.create/list/update/delete",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Table creation, metadata updates, deletion, table clones with time travel (FOR SYSTEM_TIME AS OF), table copies, temp tables, wildcard tables, row-level access policies, policy tags, and data masking."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1120,7 +1172,9 @@
           "id": "bigquery.jobs.lifecycle",
           "label": "jobs.query/cancel/delete/serviceAccount/projects",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Job execution, cancellation, deletion, serviceAccount lookup, dry runs with byte estimates, project listing, scheduled queries, reservation routing, and BigQuery ML model training/evaluation lifecycle."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1129,7 +1183,9 @@
           "id": "bigquery.sql.query",
           "label": "SELECT, JOIN, window functions, CTEs, PIVOT/UNPIVOT, MERGE",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Query coverage varies by capability and input. Review the dependency matrix, including partial and unsupported records; qualify semantics and errors with application queries."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1138,7 +1194,9 @@
           "id": "bigquery.sql.scripting",
           "label": "DECLARE, SET, IF/WHILE/LOOP/REPEAT/FOR, BEGIN/EXCEPTION, CALL, EXECUTE IMMEDIATE",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Full procedural language support with variable declaration, flow-of-control, exception handling, dynamic SQL (EXECUTE IMMEDIATE with USING/INTO), and stored procedures (CREATE PROCEDURE / CALL)."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1147,7 +1205,9 @@
           "id": "bigquery.materialized-views",
           "label": "CREATE MATERIALIZED VIEW, auto-refresh",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "CREATE MATERIALIZED VIEW with PARTITION BY, CLUSTER BY, OPTIONS, always-fresh reads, and automated refresh procedure."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1156,7 +1216,9 @@
           "id": "bigquery.external-tables",
           "label": "query Parquet/CSV/JSON/Avro/ORC files (local + GCS)",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "External tables and load jobs over emulated gs:// (CSV with BigQuery header autodetect, JSONL, Parquet, Avro, ORC with schema autodetect and hive partitions). EXTERNAL_QUERY over SQLite, PostgreSQL, and MySQL."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1165,7 +1227,9 @@
           "id": "bigquery.storage-api",
           "label": "gRPC Storage Read/Write API (AVRO + Arrow)",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "gRPC endpoint on port 5389. ReadRows with streaming support; AppendRows Storage Write API. Spark Storage Read connector verified 11/11 cases across client profiles."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1174,7 +1238,9 @@
           "id": "bigquery.information-schema",
           "label": "INFORMATION_SCHEMA views",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Full catalog coverage including COLUMNS, TABLES, SCHEMATA, PARTITIONS, VIEWS, ROUTINES, ROUTINE_OPTIONS, PARAMETERS, COLUMN_FIELD_PATHS, TABLE_OPTIONS, TABLE_STORAGE, OBJECT_PRIVILEGES, MATERIALIZED_VIEWS, JOBS_BY_*, SESSIONS_BY_*, RESERVATIONS, and search/vector index views."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1211,6 +1277,7 @@
       },
       "status": "partial",
       "limitations": [
+        "Google Sheets is provided as an auxiliary integration API for data lookups and BigQuery external table fixtures, rather than an individual Google Cloud service offered by LocalCloud.",
         "The facade supports exact stored A1 ranges through values.get/batchGet; spreadsheet metadata, writes, range slicing and formula evaluation are not implemented.",
         "Google OAuth authority is not hosted locally; a local identity/authorization contract has not been qualified."
       ],
@@ -1306,7 +1373,9 @@
           "id": "secretmanager.secrets.lifecycle",
           "label": "secrets.create/list/get/delete",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Core secret CRUD works end-to-end via REST/gRPC facade."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1315,7 +1384,9 @@
           "id": "secretmanager.versions.lifecycle",
           "label": "versions.add/access/list",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "CreateSecret creates metadata without versions. AddSecretVersion creates a new version starting at 1; access/list and enable/disable/destroy are exposed through the facade."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1592,7 +1663,9 @@
           "id": "alloydb.cluster-instance.lifecycle",
           "label": "clusters/instances.create/list/get/delete",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Cluster and instance CRUD works end-to-end via REST facade; PostgreSQL wire protocol available."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1601,7 +1674,9 @@
           "id": "alloydb.clusters-instances.maintenance",
           "label": "clusters.patch/instances.patch/supportedDatabaseFlags.list/clusters.restore",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Cluster and instance configuration patching, supported database flags discovery, and cluster restore from backup."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1636,11 +1711,10 @@
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
-      "status": "unsupported",
+      "status": "verified",
       "limitations": [
-        "Dataproc is not currently supported by LocalCloud. References, metadata facades, and runtime catalog profiles are maintained for future implementation.",
-        "Autoscaling policy enforcement and a Kubernetes execution backend are not complete local capabilities.",
-        "Real Spark/Hadoop execution requires Docker access and a compatible runtime image; missing runtime prerequisites do not mean job APIs are absent."
+        "Requires Docker daemon access for Dataproc cluster and job container execution.",
+        "Elastic multi-node cloud scaling, automated node repair, and Google production SLAs are production-only."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1660,9 +1734,9 @@
         {
           "id": "dataproc.clusters.crud",
           "label": "clusters.create/list/get/delete",
-          "status": "unsupported",
+          "status": "verified",
           "limitations": [
-            "Dataproc is not currently supported by LocalCloud. Cluster CRUD facade stubs are maintained for future implementation."
+            "Run Dataproc clusters locally in cluster mode with Docker runtime execution."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1671,9 +1745,9 @@
         {
           "id": "dataproc.jobs.execution",
           "label": "jobs submit/list/get",
-          "status": "unsupported",
+          "status": "verified",
           "limitations": [
-            "Dataproc is not currently supported by LocalCloud. Cluster and job execution are not supported."
+            "Submit and run Spark/Hadoop jobs locally in serverless and cluster modes."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1746,7 +1820,9 @@
           "id": "cloudiam.custom-roles.lifecycle",
           "label": "roles.create/patch/delete/queryGrantableRoles",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Custom role lifecycle management with full resource path filtering and grantable roles queries."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1755,7 +1831,9 @@
           "id": "cloudiam.service-accounts.management",
           "label": "serviceAccounts.patch/keys.enable/keys.disable/queryTestablePermissions",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Service account display name/description patching, key enable/disable toggling, and queryTestablePermissions."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1813,7 +1891,9 @@
           "id": "cloudresourcemanager.projects.lifecycle",
           "label": "projects.create/list/get/update/delete",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "The v1 facade accepts name and the v3 facade accepts displayName for the project display name. Create and delete return completed crm-prefixed operations that can be polled without intercepting Service Usage operations."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2567,7 +2647,9 @@
           "id": "kms.locations.random",
           "label": "locations.get/list and generateRandomBytes",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Canonical generated gRPC and HTTP/JSON methods with bounded pagination and CRC32C integrity fields."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2576,7 +2658,9 @@
           "id": "kms.keys.lifecycle",
           "label": "key rings, CryptoKeys, CryptoKeyVersions, rotation, and primary-version lifecycle",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Canonical create/get/list/update methods, signed pagination, automatic rotation, primary changes, and version-state enforcement share one persistent model."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2585,7 +2669,9 @@
           "id": "kms.crypto.operations",
           "label": "managed and raw symmetric cryptography",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Managed AES-256-GCM plus SOFTWARE raw AES-GCM/CBC/CTR and AES-KWP use JDK providers, enforce payload/state rules, and expose CRC32C fields."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2594,7 +2680,9 @@
           "id": "kms.crypto.asymmetric",
           "label": "asymmetric sign, decrypt, post-quantum signing, and public-key retrieval",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Enabled SOFTWARE RSA, ECDSA, Ed25519, ML-DSA, and SLH-DSA rows delegate to JDK or Bouncy Castle providers, including PQ_SIGN_HASH_SLH_DSA_SHA2_128S_SHA256; physical-only rows fail closed."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2603,7 +2691,9 @@
           "id": "kms.crypto.mac",
           "label": "MAC sign and verify",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "HMAC SHA-1/224/256/384/512 uses JCA Mac with purpose, version-state, size, and CRC32C validation."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2612,7 +2702,9 @@
           "id": "kms.crypto.kem-pq",
           "label": "ML-KEM/X-Wing decapsulation and enabled post-quantum signing",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "ML-KEM-768/1024, KEM_XWING, and the enabled ML-DSA/SLH-DSA SOFTWARE rows use Bouncy Castle or JDK provider implementations with pinned vector or interoperability evidence."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2621,7 +2713,9 @@
           "id": "kms.versions.lifecycle",
           "label": "version create/update, scheduled destruction, restoration, and due-destruction reconciliation",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Destruction is scheduled and restorable only in DESTROY_SCHEDULED; every data-plane method reconciles a due event before loading material."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2630,7 +2724,9 @@
           "id": "kms.import.lifecycle",
           "label": "ImportJob create/get/list and RSA/PQ-HPKE wrapped key-version import",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "SOFTWARE import supports provider-backed RSA-OAEP/AES-KWP and the three official ML-KEM-768, ML-KEM-1024, and X-Wing HPKE methods. PQ HPKE uses a thin RFC 9180 schedule adapter over Bouncy Castle primitives with independent Tink Go vectors; plaintext key material is never accepted by Console or metadata APIs."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2639,7 +2735,9 @@
           "id": "kms.keys.deletion",
           "label": "eligible key/version deletion, retired keys, and operations.get",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Deletion enforces pinned eligibility and name reservation. Google KeyRing.delete parity and unresolved live-only error-detail differentials are not advertised. Local key-ring cleanup requires roles/localcloud.kmsSuperuser; roles/cloudkms.admin does not grant the local deletion extension."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2648,7 +2746,9 @@
           "id": "kms.iam.policies",
           "label": "KMS IAM policies, roles, conditions, testIamPermissions, and strict authorization",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Open mode remains the default. Strict mode enforces cloudkms.* permissions, resource inheritance, supported CEL conditions, and protected service-agent identities; permissive mode evaluates policy without denying calls. Restarting Cloud IAM applies the effective mode to new KMS requests and delegated Secret Manager CMEK calls. An in-flight KMS request keeps its authentication-time mode. gcp-live additionally requires authenticated Google identity evidence. Permission probes return an empty list for absent key rings, CryptoKeys, and import jobs in OPEN and STRICT modes."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2657,7 +2757,9 @@
           "id": "kms.audit.metrics",
           "label": "structured KMS audit events and LocalCloud usage metrics",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Administrative and data-plane calls publish redacted structured audit events and increment project-scoped usage metrics; Google-operated audit export and quota telemetry are not claimed."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2666,7 +2768,9 @@
           "id": "kms.cmek.secretmanager",
           "label": "Secret Manager CMEK envelope encryption and lifecycle enforcement",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Secret versions persist ciphertext, wrapped DEKs, and exact key-version provenance; service-agent permission and disabled/destroyed key behavior are enforced."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2675,7 +2779,9 @@
           "id": "kms.inventory.protected-resources",
           "label": "KMS Inventory key listing, protected-resource search, and summaries",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Inventory is project-scoped and currently derives committed Secret Manager CMEK provenance."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2684,7 +2790,9 @@
           "id": "kms.autokey.key-handles",
           "label": "project Autokey config/effective config and Secret Manager KeyHandles",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Bounded to global, project-owned Secret Manager resources and provisioned SOFTWARE symmetric keys with one-year rotation, service-agent grants, idempotent LROs, and provenance."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2693,7 +2801,9 @@
           "id": "kms.workflows.connectors",
           "label": "authenticated Workflows Cloud KMS connectors",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Connector dispatch uses the workflow service-account principal and the shared local KMS contract. Ring/key creation and encrypt/decrypt have native workflow and audit evidence; the registry test checks the declared method catalog for lifecycle, import, IAM, Inventory, and bounded Autokey."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2784,7 +2894,9 @@
           "id": "cloudsql.instances.admin-maintenance",
           "label": "instances.restoreBackup/preCheckMajorVersionUpgrade/export/import/resetSslConfig/listServerCas",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Pre-check major version upgrades, database backup restores, export/import management, and SSL certificate maintenance."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2793,7 +2905,9 @@
           "id": "cloudsql.cloudsql-advanced-lifecycle",
           "label": "replicas and backups",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Modern Backups API CRUD (v1/projects/{project}/backups) and read-replica lifecycle (promoteReplica, startReplica, stopReplica)."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2802,5 +2916,95 @@
       "published": true,
       "availability": "available"
     }
-  ]
+  ],
+  "bigqueryCoverage": {
+    "total": 1537,
+    "development": {
+      "unknown": 385,
+      "implemented": 1067,
+      "unsupported": 73,
+      "partial": 12
+    },
+    "production": {
+      "unknown": 385,
+      "implemented": 1067,
+      "unsupported": 73,
+      "partial": 12
+    },
+    "partialCapabilities": [
+      {
+        "id": "sql.ddl.partition-by",
+        "name": "PARTITION BY",
+        "boundary": "semantic-compatibility:Ingestion-time partitioning (PARTITION BY _PARTITIONDATE/_PARTITIONTIME) and the _PARTITIONTIME/_PARTITIONDATE pseudocolumns are not supported: the pinned analyzer rejects the pseudocolumns in DDL",
+        "notes": "Derived compatibility detail outside canonical GoogleSQL census totals. Supported subset is durable partition metadata and ordinary table reads and writes; physical partition behavior and pseudocolumns are not implemented. 2026-09-28 validation: partial. Supported subset: time-unit column and integer-range partitioning. Remaining boundary: Ingestion-time partitioning (PARTITION BY _PARTITIONDATE/_PARTITIONTIME) and the _PARTITIONTIME/_PARTITIONDATE pseudocolumns are not supported: the pinned analyzer rejects the pseudocolumns in DDL."
+      },
+      {
+        "id": "sql.ddl.create-model-bqml",
+        "name": "CREATE MODEL (BQML)",
+        "boundary": "semantic-compatibility:STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally",
+        "notes": "Derived compatibility detail outside canonical GoogleSQL census totals. Selected model training and remote-model binding execute locally; this is not full BQML or production parity. 2026-09-28 validation: partial. Supported subset: the listed local model types train, predict, evaluate and persist. Remaining boundary: STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
+      },
+      {
+        "id": "sql.function.st-snaptogrid",
+        "name": "ST_SNAPTOGRID",
+        "boundary": "semantic-compatibility:Only points and empty values are snapped; lines, polygons and multi-part values need S2Builder IntLatLngSnapFunction, which the installed S2 bindings do not expose",
+        "notes": "Current native source tier 2026-09-27: 18 geography tests passed; two focused cases passed after final error-label change. The legacy first-pass fixture needed spherical expected-value corrections. Production and LocalCloud are unqualified. 2026-09-28 validation: partial. Supported subset: points and empty values snap to the documented grid; the grid_size semantics were corrected on 2026-09-28. Remaining boundary: Only points and empty values are snapped; lines, polygons and multi-part values need S2Builder IntLatLngSnapFunction, which the installed S2 bindings do not expose."
+      },
+      {
+        "id": "metadata.enterprise.create-model",
+        "name": "CREATE MODEL",
+        "boundary": "semantic-compatibility:STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally",
+        "notes": "Selected local BQML model training executes. Coverage is bounded by model type, options and local-kernel behavior. 2026-09-28 validation: partial. Supported subset: the listed local model types train, predict, evaluate and persist. Remaining boundary: STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
+      },
+      {
+        "id": "metadata.enterprise.column-level-security",
+        "name": "Column-level security",
+        "boundary": "semantic-compatibility:Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served",
+        "notes": "Bounded direct data-policy column access is implemented. Taxonomy policy-tag authorization is not emulated. 2026-09-28 validation: partial. Supported subset: policy tags and data policies on top-level columns enforce fine-grained reads and masking. Remaining boundary: Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served."
+      },
+      {
+        "id": "metadata.advanced.cloud-storage-csv-json-avro-parquet-orc-bigtable",
+        "name": "Cloud Storage (CSV, JSON, Avro, Parquet, ORC, Bigtable)",
+        "boundary": "semantic-compatibility:Bigtable external tables are not implemented; Google Sheets, HTTP(S) and local-file sources are also outside the native external-table path (see the child rows)",
+        "notes": "Reads deterministic local, exact HTTP/HTTPS, emulator-GCS wildcard, Sheets emulator, and mapped Bigtable sources across CSV, NEWLINE_DELIMITED_JSON, Parquet, AVRO, and ORC with schema reconciliation, requested filename provenance, refresh behavior, and explicit option errors; production limitations are reported separately. GoogleSQL-only 2026-09-25: derived status recomputed from its children (partial). Current source 2026-09-27: Derived parent reflects the current child rows and native source-tier GCS format tests. 2026-09-28 validation: partial. Supported subset: Cloud Storage formats CSV, JSONL, Parquet, Avro and ORC. Remaining boundary: Bigtable external tables are not implemented; Google Sheets, HTTP(S) and local-file sources are also outside the native external-table path (see the child rows)."
+      },
+      {
+        "id": "metadata.advanced.column-level-security-policy-tags",
+        "name": "Column-level security (policy tags)",
+        "boundary": "semantic-compatibility:Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served",
+        "notes": "2026-09-28 validation: partial. Supported subset: policy tags and data policies on top-level columns enforce fine-grained reads and masking. Remaining boundary: Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served."
+      },
+      {
+        "id": "metadata.advanced.ml-transform",
+        "name": "ML.TRANSFORM",
+        "boundary": "semantic-compatibility:TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused",
+        "notes": "2026-09-28 validation: partial. Supported subset: ML.TRANSFORM for models trained with the supported TRANSFORM clause. Remaining boundary: TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
+      },
+      {
+        "id": "client.spark.spark-bigquery-connector-storage-read",
+        "name": "Spark BigQuery connector Storage Read data path",
+        "boundary": "managed-authorization:Production Storage Read IAM is not emulated.|distributed-scale:Managed service scale and global availability are outside the pinned client profile.",
+        "notes": "Implementation and archived qualification cover AVRO and ARROW reads, exact logical values and schema, projection/filtering, and one/multiple partitions. The formal pinned-connector qualification predates the current source revision and must be rerun before the development_status advances beyond partial. Independent live verification (2026-09-04, LocalCloud example-apps hub, commit 380c48c) exercised connector 0.44.2 direct reads and the official Python SDK against this source through a LocalCloud container: projection, row filtering, parent-project handling, one- and multi-partition reads, Arrow/AVRO decode of a 15-field battle-test fixture all passed; the connector AVRO path rejects DATETIME (matching the pinned client contract) and connector empty-projection planning requires anonymous query destinations, which this source assigns. Connector write data paths and broader production behavior are not claimed. 2026-09-28 requalification on current source: the Spark Storage Read gate (qualification/spark/run.sh --local-image) passed 11/11 cases for all four client profiles (dataproc-2-1 connector 0.27.1, dataproc-2-2 0.34.1, dataproc-2-3 0.42.3, spark-3-5-latest 0.44.2) against image 0.1.0-arm64-275758cbe4f2 built from commit 275758cb; evidence in qualification/spark/local-evidence/275758cbe4f2/. The row stays partial only because the pinned qualification/spark/qualified-profile.json (source revision ed182bbb) can be regenerated solely from a published multi-platform image with attestations for linux/amd64 and linux/arm64 (qualification/spark/client_matrix.py); the only published image, 0.1.0-arm64-275758cbe4f2, is a hand-pushed linux/arm64 image (docs/PUBLISHING.md). The same gate passed 11/11 for all four profiles again on the local image 0.1.0-arm64-11b4a7c02a50 (commit 11b4a7c0); evidence in qualification/spark/local-evidence/11b4a7c02a50/."
+      },
+      {
+        "id": "sql.ddl.transform",
+        "name": "TRANSFORM",
+        "boundary": "semantic-compatibility:TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused",
+        "notes": "2026-09-27 audit correction: The first-pass and GoogleSQL-only supported result was a plain CREATE MODEL dry run whose SQL did not exercise this documented clause. The prior implemented claim had no relevant evidence. Primary case reference is retained as an inventory anchor only. 2026-09-28 validation: partial. Supported subset: TRANSFORM for the listed model types; the primary SQL case remains an inventory anchor only. Remaining boundary: TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
+      },
+      {
+        "id": "sql.function.s2-coveringcellids",
+        "name": "S2_COVERINGCELLIDS",
+        "boundary": "semantic-compatibility:Multi-point, multi-linestring and mixed collections, and buffers on non-point values, are refused",
+        "notes": "First-pass 2026-08-24 and GoogleSQL-only 2026-09-25 failures are historical. 2026-09-27 native source-overlay focused point/empty and fail-closed test plus the public API corpus case pass; general S2 region covering and live reference comparison remain open. 2026-09-28 validation: partial. Supported subset: single points, linestrings and polygons, and buffered points, are covered. Remaining boundary: Multi-point, multi-linestring and mixed collections, and buffers on non-point values, are refused."
+      },
+      {
+        "id": "sql.function.st-union-agg",
+        "name": "ST_UNION_AGG",
+        "boundary": "semantic-compatibility:Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused",
+        "notes": "Native source-overlay 2026-09-27: pinned aggregate signature 2061, point union with duplicate removal, empty/no rows, fail-closed nonpoint/all-NULL and modifier cases, REST GEOGRAPHY publication. The previous array-scan refusal does not describe this bounded native path. Grouped point inputs pass; GEOGRAPHY-valued UNNEST array scans remain refused by the relation spine. 2026-09-28 validation: partial. Supported subset: point-only and polygon-only groups union with S2. Remaining boundary: Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused."
+      }
+    ],
+    "revision": "f91f3f5b80074de36560266ca3d7228cb3df30e4"
+  }
 }

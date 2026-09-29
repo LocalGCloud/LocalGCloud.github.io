@@ -11,11 +11,11 @@ Use this skill for deterministic local fixtures, seed YAML, startup seed mounts,
 
 ## Contract to preserve
 
-- Load YAML with `POST /seed`; `POST /import` is an alias and `POST /reseed` reads `LOCALCLOUD_SEED_FILE` (default `/etc/localcloud/seed.yaml`).
+- Load YAML with `POST /seed`; `POST /import` is an alias and `POST /reseed` reads `LOCALCLOUD_SEED_FILE` (default `/opt/localcloud/seed.yaml`).
 - Accepted envelopes are flat service keys, `services:`, or multi-project `projects:`.
 - Use `gcs`, `secretmanager.secrets`, and top-level `bigquery.tables` entries that each name a dataset.
-- Firestore has no implemented seed registrar. Create Firestore fixtures through the SDK.
-- `mode=volatile` is for Pub/Sub and Bigtable. Do not claim Firestore seeding.
+- Firestore has a seed registrar and is disabled by default; enable it explicitly and check its operation boundaries. Fixture registration does not establish complete query or recovery fidelity.
+- `mode=volatile` currently selects no services; the volatile registrar set is empty.
 - `LOCALCLOUD_TERRAFORM_MODE=true` skips seed operations.
 - Examples contain synthetic data and fake local secrets only.
 
@@ -24,7 +24,7 @@ Use this skill for deterministic local fixtures, seed YAML, startup seed mounts,
 1. Inspect application fixtures and identify the smallest required service set.
 2. Confirm every seeded service is enabled and available at the current tier.
 3. Create stable IDs and minimal fake records using [assets/sample-seed.yaml](assets/sample-seed.yaml).
-4. Load through `/seed`, or mount a read-only seed at `/etc/localcloud/seed.yaml`.
+4. Load through `/seed`, or mount a read-only seed at `/opt/localcloud/seed.yaml`.
 5. Assert data through the application's normal SDK/API path.
 6. Reset only the intended project with `POST /reset?project=...`; use `{"restore_seed":true}` only when the last loaded seed should be restored.
 7. Report unavailable registrars instead of silently changing to real Google Cloud.

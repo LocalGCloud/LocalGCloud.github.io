@@ -3,8 +3,8 @@ layout: ../../layouts/DocsLayout.astro
 title: Privacy and Outbound Data Reference
 description: Runtime telemetry, website analytics, outbound connections, controls, and current limitations for LocalCloud.
 author: LocalCloud
-updated: 2026-08-13
-reviewed: 2026-08-13
+updated: 2026-09-29
+reviewed: 2026-09-29
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -33,11 +33,11 @@ When active, the runtime sends events to `https://us.i.posthog.com/i/v0/e/` (the
 | --- | --- | --- |
 | `server_started` | Startup | Version, OS/architecture, Java version, maximum memory, enabled service IDs/count, total service count, credential source, distinct identifier. |
 | `heartbeat` | Hourly after the first hour | Uptime, memory, enabled/disabled services, healthy-service count, per-service request deltas and cumulative counts, estimated-cost field, project count, credential source, errors-last-hour, queue depth, telemetry collection errors, distinct identifier. |
-| `service_error` | Method exists for immediate service errors | Service ID, error type, exit code, version, architecture. No main-source caller was found during the audit, so do not assume this event is currently wired. |
+| `service_error` | External service transitions into `FAILED` | Service ID, bounded failure code, release version/commit, and architecture. Registry callbacks omit exit code because lifecycle snapshots do not contain one; intentional stops and dependency errors are excluded. |
 | `telemetry_delivery_error` / `telemetry_internal_error` | Delivery or telemetry-internal failures | Operation, failed event, status/error type, and bounded error message. |
 | `telemetry_disabled` | Startup when `LOCALCLOUD_TELEMETRY=false` and an event key exists | Version, architecture, and distinct identifier. |
 
-Failed events are stored in PostgreSQL and retried on the next cycle. The reviewed queue is capped at seven days of hourly events. The telemetry HTTP client installs a trust-all TLS manager; this weakens certificate verification for that client and is a security consideration.
+Failed events are stored in PostgreSQL and retried on the next cycle. The reviewed queue is capped at seven days of hourly events. The telemetry HTTP client uses normal TLS certificate verification and a five-second connection timeout.
 
 ### Telemetry control caveat
 
@@ -76,12 +76,12 @@ The website loads PostHog from `https://us.i.posthog.com` across HTML routes. Th
 - time-on-page events at 30 and 120 seconds;
 - documentation search-open and search-query events, including query text and result count;
 - helpful/not-helpful feedback and optional free-text documentation comments;
-- feedback-menu, feature-request, content-issue, and feedback-dismiss interactions; and
+- feedback-menu, feature-request, and content-issue interactions; and
 - landing page and landing referrer registration.
 
 Session recording, heatmaps, dead-click capture, and performance capture are disabled in the reviewed configuration. PostHog and browser storage behavior, IP processing, retention, deletion, and data-subject requests are governed by the deployed PostHog configuration and applicable policy; this repository does not currently expose a complete retention schedule or site consent/opt-out control.
 
-Do not submit credentials, personal data, customer data, or confidential information in search or feedback fields. Search text and optional documentation comments are transmitted to PostHog.
+Do not submit credentials, personal data, customer data, or confidential information in search or feedback fields. Search text and optional documentation comments are transmitted to PostHog. Issue content submitted through the feedback flow is sent to GitHub.
 
 ## Local application data
 

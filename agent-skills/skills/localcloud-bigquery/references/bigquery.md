@@ -3,7 +3,7 @@
 ## Local setup
 
 ```bash
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 ```
 
@@ -12,13 +12,14 @@ Confirm the generated environment contains `BIGQUERY_EMULATOR_HOST` and `GOOGLE_
 ## Representative Python flow
 
 ```python
+import os
 from google.auth.credentials import AnonymousCredentials
 from google.cloud import bigquery
 
 client = bigquery.Client(
     project="local-gcp-project",
     credentials=AnonymousCredentials(),
-    client_options={"api_endpoint": "http://localhost:24087"},
+    client_options={"api_endpoint": os.environ["BIGQUERY_EMULATOR_HOST"]},
 )
 client.create_dataset("analytics", exists_ok=True)
 rows = list(client.query("SELECT 1 AS value"))

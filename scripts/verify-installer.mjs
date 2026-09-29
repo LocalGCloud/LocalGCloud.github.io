@@ -130,6 +130,34 @@ async function runInstaller(args, environment, { expectFailure = false } = {}) {
   }
 }
 
+async function runInstallerWithoutTty(args, environment, { expectFailure = false } = {}) {
+  const helper = String.raw`
+import os, sys
+pid = os.fork()
+if pid == 0:
+    os.setsid()
+    os.execvpe(sys.argv[1], sys.argv[1:], os.environ.copy())
+_, status = os.waitpid(pid, 0)
+sys.exit(os.waitstatus_to_exitcode(status))
+`;
+  try {
+    const result = await execFile('python3', ['-c', helper, 'sh', sourceInstaller.pathname, ...args], {
+      env: environment,
+      maxBuffer: 4 * 1024 * 1024,
+    });
+    if (expectFailure) throw new Error(`installer unexpectedly succeeded: ${result.stdout}`);
+    return { ...result, code: 0 };
+  } catch (error) {
+    if (!expectFailure) throw error;
+    assert(error.code !== 0, 'installer failure did not return a non-zero status');
+    return {
+      code: error.code,
+      stdout: error.stdout ?? '',
+      stderr: error.stderr ?? '',
+    };
+  }
+}
+
 async function runInstallerInPseudoTty(args, environment, answer) {
   const helper = String.raw`
 import errno, os, pty, select, sys, time
@@ -347,7 +375,7 @@ esac
   assert((await readFile(commandLog, 'utf8')) === 'doctor\nstart\n', 'interactive acceptance did not invoke doctor then start exactly once');
 
   await writeFile(commandLog, '');
-  const nonTty = await runInstaller([], baseEnvironment);
+  const nonTty = await runInstallerWithoutTty([], baseEnvironment);
   assert(nonTty.stdout.includes('Next steps:'), 'genuine non-TTY install did not print next steps');
   assert(!nonTty.stdout.includes('Run LocalCloud doctor and start now?'), 'genuine non-TTY install unexpectedly prompted');
   assert(nonTty.stdout.includes('lc doctor') && nonTty.stdout.includes('lc start'), 'non-TTY recovery did not prefer lc');

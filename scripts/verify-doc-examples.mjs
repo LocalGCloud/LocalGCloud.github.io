@@ -39,6 +39,8 @@ const allowedServices = new Set([
 	"cloudsql",
 	"bigtable",
 	"sheets",
+	"firestore",
+	"kms",
 ]);
 
 const validateSeedDocument = (document, label) => {
@@ -68,10 +70,6 @@ const validateSeedDocument = (document, label) => {
 				allowedServices.has(key),
 				`${label} uses unsupported service key ${key}`,
 			);
-		assert(
-			!Object.hasOwn(services, "firestore"),
-			`${label} advertises unsupported Firestore seeding`,
-		);
 		assert(
 			!Object.hasOwn(services, "storage"),
 			`${label} uses storage instead of gcs`,
@@ -176,10 +174,20 @@ for (const stale of [
 	"/_localcloud/",
 	'project="local-project"',
 	"GOOGLE_CLOUD_PROJECT=local-project",
-	"defaultProject: 'local-project'",
-	"8080:24080",
-	"4443:24081",
-	"8085-8087:24082-8087",
+	"24080",
+	"24081",
+	"24082",
+	"24083",
+	"24084",
+	"24085",
+	"24086",
+	"24087",
+	"24088",
+	"24089",
+	"24090",
+	"24091",
+	"24092",
+	"24443",
 	"6379:6379",
 	"free for developers",
 	"~96%",
@@ -271,8 +279,8 @@ const bigqueryHistory =
 for (const phrase of [
 	"GoogleSQL",
 	"DuckDB",
-	"1,534",
-	"1,065",
+	"coverage-matrix.csv",
+	"recorded classifications",
 ]) {
 	assert(
 		bigqueryHistory.includes(phrase),
@@ -283,11 +291,11 @@ const bigtableFeatures = docs.get(
 	"src/pages/docs/bigtable-emulator-features.mdx",
 );
 for (const phrase of [
-	"machine-local cached module",
+	"Docker build pins a source commit",
 	"PostgreSQL under the mounted",
-	"Single full-table partition",
-	"schema-only restore",
-	"Stored queries are not executed",
+	"bigtable.operations.map",
+	"Metadata-only backup",
+	"PrepareQuery",
 ]) {
 	assert(
 		bigtableFeatures.includes(phrase),
@@ -394,7 +402,7 @@ for (const key of [
 ])
 	assert(seed.includes(key), `seed guide omits ${key}`);
 assert(
-	seed.includes("Firestore has no enabled seed registrar"),
+	seed.includes("Firestore has a seed registrar"),
 	"seed guide omits Firestore limitation",
 );
 
@@ -403,6 +411,7 @@ assert(
 	sdk.includes("AnonymousCredentials"),
 	"SDK guide BigQuery example can trigger ADC discovery",
 );
+assert(sdk.includes('client_options={"api_endpoint": os.environ["BIGQUERY_EMULATOR_HOST"]}'), "BigQuery example must use the generated local endpoint explicitly");
 const agentic = docs.get("src/data/agenticContent.ts");
 assert(
 	!agentic.includes("bigquery.Client("),

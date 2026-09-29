@@ -20,7 +20,7 @@ const workflowCards = [
   {
     step: '01',
     title: 'Start the sandbox',
-    body: 'Pull the canonical Docker image, start or reuse the localcloud container, and wait for the localhost health endpoint.',
+    body: 'Pull the canonical Docker image, start or reuse the localcloud container, and wait for the runtime readiness endpoint.',
     command: `${agenticFacts.dockerPullCommand}\n${agenticFacts.dockerRunCommand}`,
   },
   {
@@ -32,8 +32,8 @@ const workflowCards = [
   {
     step: '03',
     title: 'Run the narrow check',
-    body: 'Create the smallest dataset, topic, bucket, secret, queue, or table that proves the project path works locally.',
-    command: `curl -fsS ${agenticFacts.healthEndpoint}`,
+    body: 'Check readiness, then use the project’s SDK tests to create and read the smallest resource that proves its service path works.',
+    command: `curl -fsS ${agenticFacts.readinessEndpoint}`,
   },
   {
     step: '04',
@@ -44,7 +44,7 @@ const workflowCards = [
 ];
 
 const supportedCount = agenticServiceMetadata.filter((service) => service.status === 'supported').length;
-const partialCount = agenticServiceMetadata.filter((service) => service.status === 'partial').length;
+const unsupportedCount = agenticServiceMetadata.filter((service) => service.status === 'unsupported').length;
 const plannedCount = agenticServiceMetadata.filter((service) => service.status === 'planned').length;
 
 const structuredData = [
@@ -80,7 +80,7 @@ const structuredData = [
           </p>
           <div class="mt-8 flex flex-wrap gap-3">
             <a class="site-button site-button--primary" href={`${base}ai/agents.md`}>Open raw agent guide</a>
-            <a class="site-button site-button--secondary" href={`${base}ai/AGENTS.md`}>Download AGENTS.md template</a>
+            <a class="site-button site-button--secondary" href={`${base}ai/agent-template.md`}>Download AGENTS.md template</a>
             <a class="site-button site-button--secondary" href={agentSkillsUrl}>Browse Agent Skills</a>
             <a class="site-button site-button--secondary" href={`${base}compatibility/`}>Review compatibility</a>
           </div>
@@ -94,7 +94,7 @@ const structuredData = [
               <dd class="font-mono text-[var(--text)]">{agenticFacts.dockerImage}</dd>
             </div>
             <div class="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
-              <dt class="text-[var(--text-3)]">Services</dt>
+              <dt class="text-[var(--text-3)]">Documented integrations</dt>
               <dd class="font-mono text-[var(--text)]">{productFacts.serviceCountLabel}</dd>
             </div>
             <div class="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
@@ -212,13 +212,13 @@ const structuredData = [
       <div class="container">
         <div class="site-section-heading reveal">
           <span class="site-kicker">Service matrix</span>
-          <h2>{productFacts.serviceCountLabel} available services plus {plannedCount} coming soon</h2>
+          <h2>{productFacts.serviceCountLabel} documented local integrations</h2>
           <p>Service metadata is generated from the shared catalog. Use service pages and compatibility docs for capability-specific claims.</p>
         </div>
         <div class="mb-5 flex flex-wrap gap-3 reveal">
           <span class="site-chip site-chip--success">{supportedCount} supported locally</span>
-          <span class="site-chip site-chip--warn">{partialCount} partial coverage</span>
-          <span class="site-chip site-chip--accent">{plannedCount} planned</span>
+          {unsupportedCount > 0 && <span class="site-chip site-chip--warn">{unsupportedCount} unsupported</span>}
+          {plannedCount > 0 && <span class="site-chip site-chip--accent">{plannedCount} planned</span>}
         </div>
         <div class="ai-service-matrix site-panel reveal">
           <table class="border-collapse text-left text-sm">
@@ -242,7 +242,7 @@ const structuredData = [
                       {service.status === 'planned' ? 'coming soon' : service.status}
                     </span>
                   </td>
-                  <td class="p-4 align-top font-mono text-xs text-[var(--text-2)]">{service.status === 'planned' ? 'Published when available' : service.envVar}</td>
+                  <td class="p-4 align-top font-mono text-xs text-[var(--text-2)]">{service.status === 'planned' ? 'Published when available' : ['unsupported', 'unknown'].includes(service.status) ? 'No supported integration' : service.envVar}</td>
                   <td class="p-4 align-top text-[var(--text-2)]">{service.caveat}</td>
                 </tr>
               ))}
@@ -286,7 +286,7 @@ const structuredData = [
           <h2 class="mt-3">AGENTS.md template</h2>
           <p class="mt-4 text-[var(--text-2)]">AGENTS.md belongs inside a repository and tells coding agents how to behave in that codebase. Copy this template into a repo when you want LocalCloud to be the default safe GCP target.</p>
           <div class="mt-5 flex flex-wrap gap-3">
-            <a class="site-button site-button--primary" href={`${base}ai/AGENTS.md`} download="AGENTS.md">Download template</a>
+            <a class="site-button site-button--primary" href={`${base}ai/agent-template.md`} download="AGENTS.md">Download template</a>
             <button type="button" class="site-button site-button--secondary" data-copy-text={agentsMdTemplate}>Copy template</button>
           </div>
         </article>

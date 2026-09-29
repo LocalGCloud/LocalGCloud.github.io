@@ -76,6 +76,13 @@ export interface DocumentationServiceContract {
 }
 
 export interface DocumentationContract {
+  bigqueryCoverage: {
+    revision: string;
+    total: number;
+    development: Record<'implemented' | 'partial' | 'unsupported' | 'unknown', number>;
+    production: Record<'implemented' | 'partial' | 'unsupported' | 'unknown', number>;
+    partialCapabilities: Array<{ id: string; name: string; boundary: string; notes: string }>;
+  };
   schemaVersion: number;
   reviewedAt: string;
   provenance: {
@@ -123,7 +130,7 @@ export interface DocumentationContract {
     doctorSuccessStatus: string;
     startSuccessStatuses: string[];
     dataDefault: string;
-    dockerSocketDefault: boolean;
+    dockerSocketDefault: 'auto' | boolean;
     transparentNetworkDefault: boolean;
     bindAddress: string;
     dynamicPortMapping: boolean;
@@ -207,7 +214,7 @@ function loadDocumentationContract(value: unknown): DocumentationContract {
     throw new Error('Documentation contract snapshot must be an object');
   }
   const candidate = value as Record<string, unknown>;
-  if (candidate.schemaVersion !== 3 || !Array.isArray(candidate.services)) {
+  if (candidate.schemaVersion !== 4 || !Array.isArray(candidate.services)) {
     throw new Error('Documentation contract snapshot has an unsupported schema');
   }
   return value as DocumentationContract;

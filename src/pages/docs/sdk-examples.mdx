@@ -9,7 +9,7 @@ description: Route standard Google Cloud SDK clients to LocalCloud and run bound
 LocalCloud accepts selected Google Cloud SDK workflows, but compatibility is service- and operation-specific. Start the runtime and load the endpoint values generated for the selected data volume before running any example:
 
 ```bash
-localcloud start
+localcloud start --local-only
 eval "$(localcloud env)"
 ```
 
@@ -60,7 +60,7 @@ main().catch((error) => {
 
 ## Pub/Sub: Python
 
-Pub/Sub state is volatile across emulator process restarts. Use stable names and tolerate resources that already exist during one run.
+Pub/Sub topics, subscriptions, and queued messages are stored in PostgreSQL under the mounted data volume. Use stable names and tolerate resources that already exist during one run.
 
 ```python
 from google.api_core.exceptions import AlreadyExists
@@ -93,15 +93,17 @@ for received in response.received_messages:
 
 ## BigQuery: deterministic query
 
-LocalCloud BigQuery natively executes GoogleSQL via DuckDB 1.5.5 OLAP. Test queries directly with official client libraries:
+The Python BigQuery client needs an explicit REST API endpoint. Read the generated variable, then pass it through `client_options` with anonymous credentials. A missing variable fails before a client is created. [Client configuration reference](https://cloud.google.com/python/docs/reference/bigquery/latest/google.cloud.bigquery.client.Client).
 
 ```python
+import os
 from google.auth.credentials import AnonymousCredentials
 from google.cloud import bigquery
 
 client = bigquery.Client(
     project="local-gcp-project",
     credentials=AnonymousCredentials(),
+    client_options={"api_endpoint": os.environ["BIGQUERY_EMULATOR_HOST"]},
 )
 rows = list(client.query("SELECT 1 AS ok").result())
 assert rows[0].ok == 1

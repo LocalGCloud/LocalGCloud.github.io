@@ -19,10 +19,10 @@ Use this skill only for a non-production LocalCloud service-container workflow p
 ## LocalCloud setup assumptions
 
 - Prefer the host CLI for personal local workflows. A service-container job must pin a qualified image digest rather than relying on a mutable tag.
-- Canonical container ports are `24080-24092`; publish only required ports and bind loopback where the runner permits it.
+- Canonical container ports are `5380-5405`; publish only required ports and bind loopback where the runner permits it.
 - Health is `/health`; generated shell environment is `/env?format=shell`.
 - Allocate the reviewed CLI default `4g` unless measured evidence supports another value.
-- Docker-socket and transparent-network access remain off unless explicitly required and trusted.
+- Manual Docker examples omit the socket. CLI Docker access defaults to auto; set host.docker_socket: false to opt out. Transparent networking remains opt-in.
 
 ## Step-by-step workflow
 
