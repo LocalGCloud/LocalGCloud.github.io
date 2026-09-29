@@ -78,7 +78,7 @@ case \${1:-} in
   start)
     [ -z "\${LOCALCLOUD_TEST_LOG:-}" ] || printf 'start\\n' >> "$LOCALCLOUD_TEST_LOG"
     [ -z "\${LOCALCLOUD_TEST_STATE:-}" ] || : > "$LOCALCLOUD_TEST_STATE"
-    printf '{"status":"started","container":{"state":"running","url":"http://localhost:24080"}}\\n'
+    printf '{"status":"started","container":{"state":"running","url":"http://localhost:5380"}}\\n'
     ;;
   *)
     printf '{"status":"ok"}\\n'
@@ -342,7 +342,7 @@ esac
   await writeFile(commandLog, '');
   const acceptedPrompt = await runInstallerInPseudoTty([], baseEnvironment, 'y');
   assert(acceptedPrompt.stdout.includes('Run LocalCloud doctor and start now?'), 'interactive acceptance did not display the startup prompt');
-  assert(acceptedPrompt.stdout.includes('LocalCloud is running at http://localhost:24080'), 'interactive acceptance did not report the selected console URL');
+  assert(acceptedPrompt.stdout.includes('LocalCloud is running at http://localhost:5380'), 'interactive acceptance did not report the selected console URL');
   assert(acceptedPrompt.stdout.includes('lc console') && acceptedPrompt.stdout.includes('lc env'), 'interactive acceptance omitted lc post-start next steps');
   assert((await readFile(commandLog, 'utf8')) === 'doctor\nstart\n', 'interactive acceptance did not invoke doctor then start exactly once');
 

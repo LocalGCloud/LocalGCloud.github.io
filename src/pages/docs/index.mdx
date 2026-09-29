@@ -162,7 +162,7 @@ Use this fallback on unsupported CLI hosts or when you deliberately do not want 
 docker volume create localcloud-data
 
 docker run -d --name localcloud \
-  -p 127.0.0.1:24080-24092:24080-24092 \
+  -p 127.0.0.1:5380-5405:5380-5405 \
   -m 4g \
   -v localcloud-data:/var/lib/localcloud \
   jaysen2apache/localcloud:latest
@@ -171,8 +171,8 @@ docker run -d --name localcloud \
 Verify the runtime and configure the shell through root operator endpoints:
 
 ```bash
-curl -fsS http://localhost:24080/health
-eval "$(curl -fsS 'http://localhost:24080/env?format=shell')"
+curl -fsS http://localhost:5380/health
+eval "$(curl -fsS 'http://localhost:5380/env?format=shell')"
 ```
 
 The default command does not mount `/var/run/docker.sock` and does not expose ports on every host interface. GKE, Compute Engine, Cloud Run, and Dataproc execution can require explicit Docker-socket access; transparent DNS/HTTPS routing is also opt-in. Configure those capabilities only after reviewing their security implications.

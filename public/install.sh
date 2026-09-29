@@ -847,7 +847,7 @@ case $answer in
         }
         printf '%s\n' "$start_output"
         console_url=$(printf '%s\n' "$start_output" | sed -n 's/.*"url": "\(http[^" ]*\)".*/\1/p')
-        [ -n "$console_url" ] || console_url=http://localhost:24080
+        [ -n "$console_url" ] || console_url=http://localhost:5380
         printf 'LocalCloud is running at %s\n' "$console_url"
         printf '%s\n' 'Next:' "  $next_command console" "  eval \"\$($next_command env)\""
         ;;

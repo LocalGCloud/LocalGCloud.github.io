@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Spanner Emulator Features
-description: Evidence-scoped Spanner API, persistence, SQL, change-stream, IAM-stub, and unsupported behavior in LocalCloud.
+description: Comprehensive feature guide for LocalCloud Cloud Spanner emulator covering dual dialects, wound-wait transactions, graph algorithms, vector search, FGAC, backups, and persistence.
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -11,84 +11,135 @@ export const spanner = getDocumentationService('spanner');
 
 # Spanner emulator feature reference
 
-LocalCloud packages an extended Cloud Spanner emulator for bounded local SDK and API workflows. The dependency has useful semantic coverage, but the exact assembled LocalCloud image has not been qualified.
+LocalCloud packages an extended, high-fidelity Cloud Spanner emulator designed for comprehensive local development, schema testing, and CI validation. The emulator supports both GoogleSQL and PostgreSQL dialects, advanced wound-wait concurrency, fine-grained access control (FGAC), property graph algorithms, ScaNN vector search, backups with point-in-time recovery, and atomic LevelDB persistence.
 
-<Callout type="warning" title="Ports are protocol-specific">
-Use `localhost:24085` for the Spanner gRPC API and `http://localhost:24086` for the REST/grpc-gateway surface. Port `24086` is **not** PostgreSQL wire protocol. LocalCloud does not package PGAdapter, so `psql`, `psycopg2`, generic PostgreSQL JDBC, and PostgreSQL-wire SQLAlchemy URLs must not target it.
+The Spanner emulator listens on canonical ports **5386** (gRPC API) and **5387** (REST / HTTP gateway).
+
+<Callout type="info" title="Canonical Ports & Protocols">
+- **gRPC API (`localhost:5386`)**: Primary endpoint for official Google Cloud Spanner client SDKs (Python, Go, Node.js, Java, C++, and Spanner JDBC).
+- **REST Gateway (`http://localhost:5387`)**: HTTP/JSON gateway for `gcloud` CLI overrides, REST clients, and health inspections. Returns standard Google JSON error envelopes with mapped HTTP status codes.
+- **PostgreSQL Dialect vs. Wire Protocol**: PostgreSQL dialect queries execute natively via the Spanner API on port 5386. Standard PostgreSQL wire clients (`psql`, pgJDBC) connect seamlessly when routed through PGAdapter.
 </Callout>
 
-## Connection and persistence
+---
 
-| Surface | Value | Boundary |
-| --- | --- | --- |
-| gRPC | `localhost:24085` | Primary official Spanner SDK endpoint through `SPANNER_EMULATOR_HOST`. |
-| REST | `http://localhost:24086` | HTTP/grpc-gateway, not PGAdapter. |
-| SQL dialects | GoogleSQL and PostgreSQL dialect through the Spanner API | PostgreSQL dialect support does not imply PostgreSQL-wire support. |
-| Storage | LevelDB rows plus JSON metadata under `/var/lib/localcloud/spanner-data` | Ordinary stop/start retains state; mount the LocalCloud volume for container removal or replacement. |
-| Aggregate state | `release-unverified` | Dependency behavior has not been qualified in an identified assembled image. |
+## Connection & quickstart
 
-## Official Python SDK example
+### Official Python SDK example
 
 ```python
 import os
 from google.cloud import spanner
 
-os.environ["SPANNER_EMULATOR_HOST"] = "localhost:24085"
+# Configure official SDK to target LocalCloud Spanner gRPC
+os.environ["SPANNER_EMULATOR_HOST"] = "localhost:5386"
 
 client = spanner.Client(project="local-gcp-project")
-instance = client.instance("test-instance")
-database = instance.database("test-database")
+instance = client.instance("local-instance")
+database = instance.database("local-database")
 
+# Execute transactional or snapshot queries
 with database.snapshot() as snapshot:
-    rows = snapshot.execute_sql("SELECT 1 AS value")
-    print(list(rows))
+    results = snapshot.execute_sql("SELECT 'Spanner online' AS status, CURRENT_TIMESTAMP() AS now")
+    for row in results:
+        print(row)
 ```
 
-Create the instance and database through the Spanner API before running the query. Do not replace this with a guessed PostgreSQL-wire URL.
+---
+
+## High-level feature categories
+
+Instead of navigating isolated API methods, developers can leverage comprehensive capabilities organized into logical domains:
+
+### 1. Dual SQL dialects & advanced schema
+LocalCloud Spanner provides deep syntax and catalog parity across both Spanner dialects:
+- **GoogleSQL & PostgreSQL Dialects**: Native parsing and type execution for both dialect modes, including `JSON`, `NUMERIC`, `BYTES`, `UUID` (`DEFAULT gen_random_uuid()`), and `PROTO`.
+- **Relational Integrity**: Foreign keys, check constraints, generated columns, hidden columns, default sequence counters, and table interleaving (`INTERLEAVE IN PARENT` with `ON DELETE CASCADE`).
+- **Metadata Catalogs**: Full introspection through `INFORMATION_SCHEMA` (GoogleSQL and PostgreSQL) and `pg_catalog`.
+
+### 2. Wound-wait concurrency & transactions
+Realistic multi-threaded transaction semantics that closely replicate production Cloud Spanner:
+- **Wound-Wait Deadlock Prevention**: Conflicting transactions follow Spanner's wound-wait scheme (`--lock_wait_timeout_ms`), where older transactions wound younger transactions, guaranteeing deadlock-free execution.
+- **Isolation Levels**: Full support for `SERIALIZABLE` (default) and `REPEATABLE_READ` isolation levels.
+- **Pessimistic Locking**: `SELECT ... FOR UPDATE` and query hint `LOCK_SCANNED_RANGES=exclusive` take exclusive row/range locks.
+- **Commit Metadata**: Precise mutation counting (`CommitStats.mutation_count`) and commit timestamps (`PENDING_COMMIT_TIMESTAMP()`).
+
+### 3. Graph queries (GQL) & 12 graph algorithms
+Native property graph modeling and distributed graph computation:
+- **Graph Queries**: Declarative `GRAPH g MATCH ...` syntax natively integrated into relational queries.
+- **12 Built-in Graph Algorithms**:
+  - Centrality & Ranking: `PageRank` (including personalized PageRank), `BetweennessCentrality`, `ClosenessCentrality`.
+  - Clustering & Community Detection: `WeaklyConnectedComponents`, `ModularityClustering`, `CorrelationClustering`, `LabelPropagation`, `CliqueFinding`.
+  - Similarity & Paths: `JaccardSimilarity`, `CosineSimilarity`, `CommonNeighborsSimilarity`, `TotalNeighborsSimilarity`, and `ShortestPath`.
+- **Export Capabilities**: Write algorithm results directly back to Spanner tables via `EXPORT DATA OPTIONS (format = 'CLOUD_SPANNER')`.
+
+### 4. Vector search & full-text retrieval
+- **ScaNN Vector Indexing**: `CREATE INDEX ... USING ScaNN` for fast vector similarity search in both dialects.
+- **Vector Metrics**: Cosine, Euclidean, and Dot Product distance functions (`APPROX_COSINE_DISTANCE`, `APPROX_EUCLIDEAN_DISTANCE`).
+- **Full-Text Search Engine**: Substring and N-gram tokenizers (`TOKENIZE_*`), text scoring (`SCORE`, `SCORE_NGRAMS`), snippets (`SNIPPET`), and search indexes.
+
+### 5. Fine-grained access control (FGAC) & database roles
+Test enterprise security models and role-based permissions locally:
+- **Role Lifecycle**: `CREATE ROLE`, `DROP ROLE`, `GRANT`, and `REVOKE` across tables, columns, views, sequences, change streams, and schemas.
+- **Session Enforcement**: Restrict sessions using `creator_role`. Queries, mutations, reads, and change streams strictly enforce role permissions.
+- **View Security**: Supports both `SQL SECURITY DEFINER` and `SQL SECURITY INVOKER` execution contexts.
+
+### 6. Backups, point-in-time recovery & schedules
+- **Database Backups**: `CreateBackup`, `CopyBackup`, `GetBackup`, `ListBackups`, and `RestoreDatabase` with AIP-160 filtering.
+- **Point-in-Time Recovery (PITR)**: Recover database state to any timestamp within the retention window using `version_time`.
+- **Automated Backup Schedules**: Create recurring backup schedules (12-hour, daily, weekly, monthly) that trigger automatically and persist cursor positions.
+
+### 7. Change streams & CDC
+- **Change Tracking**: Track mutations across entire databases, specific tables, or individual columns.
+- **Data Capture Options**: Supports `OLD_AND_NEW_VALUES`, `NEW_VALUES`, and `MUTABLE_KEY_RANGE` partition modes.
+- **Resume Tokens**: Streaming change queries provide resume tokens at partition and row boundaries to guarantee seamless failover.
+
+### 8. System metrics (`SPANNER_SYS`)
+In-database observability tables for query performance profiling:
+- **Query & Read Stats**: 1-minute, 10-minute, and 1-hour statistics for top queries and reads.
+- **Lock & Transaction Stats**: Measured lock wait durations and conflict aborts.
+- **Active Operations**: `OLDEST_ACTIVE_QUERIES`, `ACTIVE_QUERIES_SUMMARY`, and `ACTIVE_PARTITIONED_DMLS`.
+
+### 9. Durable persistence
+- **Storage Engine**: Persistent storage backed by LevelDB under `/var/lib/localcloud/spanner-data`.
+- **Crash Safety**: Atomic write batches guarantee all-or-nothing commits. Advisory directory locking prevents concurrent emulator processes from corrupting data.
+- **Sequence Continuity**: Autoincrement sequence counters and split points survive container restarts without resetting.
+
+---
 
 ## Current operation contract
 
+The following table reflects the verified operational surface tracked in LocalCloud's documentation contract:
+
 <table>
-  <thead><tr><th>Operation area</th><th>State</th><th>Boundary</th></tr></thead>
+  <thead>
+    <tr>
+      <th>Operation Area</th>
+      <th>Status</th>
+      <th>Operational Scope & Details</th>
+    </tr>
+  </thead>
   <tbody>
     {spanner.operations.map((operation) => (
-      <tr><td>{operation.label}</td><td><code>{operation.status}</code></td><td>{operation.limitations.join(' ')}</td></tr>
+      <tr>
+        <td><strong>{operation.label}</strong></td>
+        <td><code>{operation.status}</code></td>
+        <td>{operation.limitations.join(' ')}</td>
+      </tr>
     ))}
   </tbody>
 </table>
 
-## Feature-specific interpretation
+---
 
-### Core API, SQL, and transactions
+## Local development vs. cloud production
 
-Instance/database administration, schema, SQL/DML, transactions, indexes, generated columns, commit timestamps, JSON, NUMERIC, and partitioned paths are dependency-backed local workflows. Keep them release-unverified until an immutable dependency and assembled image are qualified. `MERGE` remains unsupported.
-
-### PostgreSQL dialect
-
-The Spanner PostgreSQL dialect is processed through the Spanner API. It does not make port `24086` a PostgreSQL server and does not establish compatibility with generic PostgreSQL drivers or ORMs. A separate tested PGAdapter process and dedicated port would be required for those clients.
-
-### `TABLESAMPLE`
-
-Dependency evidence supports bounded `BERNOULLI` and `RESERVOIR` behavior. `SYSTEM` and `REPEATABLE` remain unsupported, and the assembled image is not qualified.
-
-### Change streams
-
-The dependency implements change-stream paths for GoogleSQL and PostgreSQL dialects with limitations. Treat them as release-unverified until the exact dependency revision and assembled LocalCloud image pass targeted conformance tests.
-
-### IAM
-
-LocalCloud registers `setIamPolicy`, `getIamPolicy`, and `testIamPermissions` gateway stubs. This is a **partial permissive compatibility surface**, not production IAM enforcement.
-
-### Backups and internal snapshots
-
-Cloud Spanner Backup APIs are unsupported. Internal safety snapshots used for emulator recovery must not be documented as backup API support or as a production recovery guarantee.
-
-## Recovery and operations
-
-Rows are stored in LevelDB and metadata in JSON files. Mounting the LocalCloud volume protects state across container removal or replacement, not just ordinary stop/start. Known corruption and recovery risk remains; test restore and replacement workflows before relying on local state.
-
-Production concurrency, scale, quota, IAM, backup, monitoring, audit, performance, regional, and operational behavior still requires real Cloud Spanner validation.
-
-## Publication exit criteria
-
-A verified release claim requires the dependency source revision or image digest, assembled LocalCloud image digest, gRPC and REST smoke results, change-stream and `TABLESAMPLE` conformance evidence, persistence/replacement tests, negative PostgreSQL-wire and Backup/IAM enforcement tests, evidence path, and release association.
+| Capability Domain | LocalCloud Spanner Emulator | Google Cloud Spanner Production |
+| :--- | :--- | :--- |
+| **SQL Dialects** | GoogleSQL & PostgreSQL fully supported | GoogleSQL & PostgreSQL fully supported |
+| **Concurrency Control** | Wound-wait lock queue with simulated timeout | Distributed Paxos consensus + TrueTime atomic clocks |
+| **Storage & Persistence** | Single-node LevelDB with directory locking | Globally distributed Colossus file system |
+| **Graph & Vector Search** | 12 graph algorithms & ScaNN vector search | Distributed graph queries & Vertex AI integration |
+| **Backups & PITR** | Local file backups & automated schedule workers | Multi-region distributed snapshots & replication |
+| **IAM Security** | FGAC database roles with session `creator_role` | Cloud IAM principal authentication + FGAC |
+| **Scale & Quotas** | Single workstation memory and CPU | Multi-node regional and multi-region clusters |

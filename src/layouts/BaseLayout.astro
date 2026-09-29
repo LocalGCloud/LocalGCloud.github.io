@@ -32,7 +32,9 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalURL} />
-    <link rel="icon" href={`${base}brand/localcloud-mark.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="alternate icon" href={`${base}brand/localcloud-mark.svg`} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={`${base}brand/localcloud-app-icon.svg`} />
     <meta name="theme-color" content="#eaf2ff" />
     <meta name="author" content="LocalCloud Inc." />
 

@@ -27,7 +27,7 @@ if (!(await exists(new URL("localcloud.defaults.yaml", runtimeRoot)))) {
 const assert = (condition, message) => {
 	if (!condition) throw new Error(`Upstream documentation: ${message}`);
 };
-assert(await exists(new URL("docs/MCP_INTEGRATION.md", runtimeRoot)), "runtime MCP guide is missing");
+assert(await exists(new URL("docs/guides/mcp-integration.md", runtimeRoot)), "runtime MCP guide is missing");
 const revision = (url) =>
 	execFileSync("git", ["rev-parse", "HEAD"], {
 		cwd: url,
@@ -55,9 +55,9 @@ assert(contract.provenance.cliRevision === revision(cliRoot), "snapshot is not s
 const upstreamSources = new Map([
 	["../localcloud/localcloud.defaults.yaml", new URL("localcloud.defaults.yaml", runtimeRoot)],
 	["../localcloud/documentation.yaml", new URL("documentation.yaml", runtimeRoot)],
-	["../localcloud/docs/SERVICE_STATUS.md", new URL("docs/SERVICE_STATUS.md", runtimeRoot)],
-	["../localcloud/docs/TLS_AND_TRANSPARENT_NETWORKING.md", new URL("docs/TLS_AND_TRANSPARENT_NETWORKING.md", runtimeRoot)],
-	["../localcloud/docs/MCP_INTEGRATION.md", new URL("docs/MCP_INTEGRATION.md", runtimeRoot)],
+	["../localcloud/docs/status/service-status.md", new URL("docs/status/service-status.md", runtimeRoot)],
+	["../localcloud/docs/architecture/networking-and-tls.md", new URL("docs/architecture/networking-and-tls.md", runtimeRoot)],
+	["../localcloud/docs/guides/mcp-integration.md", new URL("docs/guides/mcp-integration.md", runtimeRoot)],
 	["../localcloud/specs/api/catalog.json", new URL("specs/api/catalog.json", runtimeRoot)],
 	["../localcloud-cli/README.md", new URL("README.md", cliRoot)],
 	["../localcloud-cli/src/localcloud_cli/config.py", new URL("src/localcloud_cli/config.py", cliRoot)],
@@ -77,14 +77,16 @@ for (const service of contract.services) {
 	assert(upstream, `${service.id} is absent from localcloud.defaults.yaml`);
 	assert(service.availability === upstream.availability, `${service.id} availability differs`);
 	assert(service.registryDefaultEnabled === upstream.defaultEnabled, `${service.id} default enablement differs`);
-	assert(service.port === (upstream.port === "gateway" ? defaults.server.gateway.port : upstream.port), `${service.id} port differs`);
+	const expectedPort = (upstream.plaintextPort ?? upstream.port) === "gateway" ? defaults.server.gateway.port : (upstream.plaintextPort ?? upstream.port);
+	assert(service.port === expectedPort, `${service.id} port differs`);
 	assert(service.protocol === upstream.protocol, `${service.id} protocol differs`);
 	assert(service.type === upstream.type, `${service.id} runtime type differs`);
 	assert(service.minTier === upstream.minTier, `${service.id} minimum tier differs`);
 }
 
 assert(contract.operator.gatewayPort === defaults.server.gateway.port, "gateway port differs");
-assert(contract.operator.publishedPorts.transparentDns === "53/udp -> 24093/udp", "transparent DNS mapping differs");
+assert(contract.operator.publishedPorts.services === "5380-5405", "services published range differs");
+assert(contract.operator.publishedPorts.transparentDns === "53/udp -> 5410/udp", "transparent DNS mapping differs");
 assert(contract.operator.publishedPorts.transparentHttp === `80 -> ${defaults.server.gateway.port}`, "transparent HTTP mapping differs");
 assert(contract.operator.publishedPorts.transparentHttps === `443 -> tls.port (default ${defaults.tls.port})`, "transparent HTTPS mapping differs");
 

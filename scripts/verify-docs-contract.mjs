@@ -81,7 +81,7 @@ assert(contract.operator.endpoints.environment === '/env', 'environment endpoint
 assert(contract.operator.endpoints.seed === '/seed', 'seed endpoint must be /seed');
 assert(contract.operator.endpoints.reset === '/reset', 'reset endpoint must be /reset');
 assert(contract.operator.endpoints.terraformReadiness === '/terraform/readiness', 'Terraform readiness endpoint drifted');
-assert(contract.operator.manualDockerCommand.includes('127.0.0.1:24080-24092:24080-24092'), 'manual Docker must be loopback-bound');
+assert(contract.operator.manualDockerCommand.includes('127.0.0.1:5380-5405:5380-5405'), 'manual Docker must be loopback-bound');
 assert(contract.operator.manualDockerCommand.includes('jaysen2apache/localcloud:latest'), 'manual Docker image drifted');
 assert(!contract.operator.manualDockerCommand.includes('/var/run/docker.sock'), 'manual beginner Docker must not mount Docker socket');
 

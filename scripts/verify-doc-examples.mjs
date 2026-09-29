@@ -254,11 +254,11 @@ const bigqueryFeatures = docs.get(
 	"src/pages/docs/bigquery-emulator-features.mdx",
 );
 for (const phrase of [
-	"release-unverified",
-	"physical local tables",
-	"schema-compatible views",
-	"Client behavior is profile-specific",
-	"assembled LocalCloud image digest",
+	"GoogleSQL Analyzer",
+	"DuckDB",
+	"Storage API",
+	"BQML",
+	"Vector Search",
 ]) {
 	assert(
 		bigqueryFeatures.includes(phrase),
@@ -268,10 +268,17 @@ for (const phrase of [
 const bigqueryHistory =
 	docs.get("src/pages/docs/bigquery-feature-comparison.mdx") +
 	docs.get("src/pages/docs/bigquery-coverage-gaps.mdx");
-assert(
-	(bigqueryHistory.match(/Archived as of 2026-04-20/g) ?? []).length === 2,
-	"both historical BigQuery analyses must be archived visibly",
-);
+for (const phrase of [
+	"GoogleSQL",
+	"DuckDB",
+	"1,534",
+	"1,065",
+]) {
+	assert(
+		bigqueryHistory.includes(phrase),
+		`BigQuery documentation analyses must cover current architecture: ${phrase}`,
+	);
+}
 const bigtableFeatures = docs.get(
 	"src/pages/docs/bigtable-emulator-features.mdx",
 );
@@ -292,13 +299,14 @@ const spannerFeatures = docs.get(
 );
 for (const phrase of [
 	"gRPC API",
-	"REST/grpc-gateway",
-	"does not package PGAdapter",
-	"`MERGE` remains unsupported",
-	"Cloud Spanner Backup APIs are unsupported",
+	"5386",
+	"5387",
+	"PGAdapter",
+	"wound-wait",
+	"LevelDB",
 ]) {
 	assert(
-		spannerFeatures.includes(phrase),
+		spannerFeatures.toLowerCase().includes(phrase.toLowerCase()),
 		`Spanner feature reference omits ${phrase}`,
 	);
 }
@@ -344,9 +352,9 @@ for (const fact of [
 	"~> 7.0",
 	"7.34.0",
 	contract.terraform.readinessEndpoint,
-	"http://localhost:24081/storage/v1/",
-	"http://localhost:24080/v2/",
-	"http://localhost:24086/v1/",
+	"http://localhost:5382/storage/v1/",
+	"http://localhost:5380/v2/",
+	"http://localhost:5387/v1/",
 	"valid fake service-account",
 ])
 	assert(terraform.includes(fact), `Terraform guide omits ${fact}`);

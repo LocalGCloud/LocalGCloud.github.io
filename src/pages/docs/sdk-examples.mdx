@@ -93,7 +93,7 @@ for received in response.received_messages:
 
 ## BigQuery: deterministic query
 
-BigQuery behavior is release-unverified until the dependency source and assembled LocalCloud image are identified and qualified together. Start with a deterministic query rather than undeclared public data:
+LocalCloud BigQuery natively executes GoogleSQL via DuckDB 1.5.5 OLAP. Test queries directly with official client libraries:
 
 ```python
 from google.auth.credentials import AnonymousCredentials
@@ -107,14 +107,14 @@ rows = list(client.query("SELECT 1 AS ok").result())
 assert rows[0].ok == 1
 ```
 
-Feature-specific compatibility remains partial; see the [BigQuery guide](/docs/bigquery-emulator-features/) before relying on scripting, external tables, Storage API behavior, or type semantics.
+See the [BigQuery guide](/docs/bigquery-emulator-features/) and [coverage & known boundaries](/docs/bigquery-coverage-gaps/) for details on BQML, vector search, RLS, and the Storage Read API.
 
 ## Selecting another project
 
 Generated environment output uses the configured project. Manual-Docker users can select an explicit project in the request:
 
 ```bash
-eval "$(curl -fsS 'http://localhost:24080/env?format=shell&project=my-local-project')"
+eval "$(curl -fsS 'http://localhost:5380/env?format=shell&project=my-local-project')"
 ```
 
 Keep client project IDs consistent with the generated `GOOGLE_CLOUD_PROJECT` value.

@@ -61,9 +61,9 @@ contract.provenance.cliRevision = revision(cliRoot);
 const sourceFiles = [
 	{ path: "../localcloud/localcloud.defaults.yaml", url: new URL("localcloud.defaults.yaml", runtimeRoot), repository: runtimeRoot, repositoryPath: "localcloud.defaults.yaml" },
 	{ path: "../localcloud/documentation.yaml", url: new URL("documentation.yaml", runtimeRoot), repository: runtimeRoot, repositoryPath: "documentation.yaml" },
-	{ path: "../localcloud/docs/SERVICE_STATUS.md", url: new URL("docs/SERVICE_STATUS.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/SERVICE_STATUS.md" },
-	{ path: "../localcloud/docs/TLS_AND_TRANSPARENT_NETWORKING.md", url: new URL("docs/TLS_AND_TRANSPARENT_NETWORKING.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/TLS_AND_TRANSPARENT_NETWORKING.md" },
-	{ path: "../localcloud/docs/MCP_INTEGRATION.md", url: new URL("docs/MCP_INTEGRATION.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/MCP_INTEGRATION.md" },
+	{ path: "../localcloud/docs/status/service-status.md", url: new URL("docs/status/service-status.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/status/service-status.md" },
+	{ path: "../localcloud/docs/architecture/networking-and-tls.md", url: new URL("docs/architecture/networking-and-tls.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/architecture/networking-and-tls.md" },
+	{ path: "../localcloud/docs/guides/mcp-integration.md", url: new URL("docs/guides/mcp-integration.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/guides/mcp-integration.md" },
 	{ path: "../localcloud/specs/api/catalog.json", url: new URL("specs/api/catalog.json", runtimeRoot), repository: runtimeRoot, repositoryPath: "specs/api/catalog.json" },
 	{ path: "../localcloud-cli/README.md", url: new URL("README.md", cliRoot), repository: cliRoot, repositoryPath: "README.md" },
 	{ path: "../localcloud-cli/src/localcloud_cli/config.py", url: new URL("src/localcloud_cli/config.py", cliRoot), repository: cliRoot, repositoryPath: "src/localcloud_cli/config.py" },
@@ -83,11 +83,12 @@ contract.product.serviceCount = Object.keys(runtimeCatalog).length;
 contract.product.defaultProject = defaults.context.project;
 contract.operator.gatewayPort = defaults.server.gateway.port;
 contract.operator.publishedPorts = {
-	services: "24080-24092",
-	transparentDns: "53/udp -> 24093/udp",
+	services: "5380-5405",
+	transparentDns: "53/udp -> 5410/udp",
 	transparentHttp: `80 -> ${defaults.server.gateway.port}`,
 	transparentHttps: `443 -> tls.port (default ${defaults.tls.port})`,
 };
+contract.operator.manualDockerCommand = `docker volume create localcloud-data\n\ndocker run -d --name localcloud \\\n  -p 127.0.0.1:5380-5405:5380-5405 \\\n  -m 4g \\\n  -v localcloud-data:/var/lib/localcloud \\\n  jaysen2apache/localcloud:latest`;
 contract.cli.releaseBoundary = contract.provenance.worktreeSources.some((path) => path.startsWith("../localcloud-cli/"))
 	? `CLI ${cliVersion} behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release.`
 	: `CLI behavior is documented for version ${cliVersion} from revision ${contract.provenance.cliRevision}. Use localcloud --version to confirm the installed release.`;
@@ -126,8 +127,10 @@ const statusMap = {
 	prod_only: "unsupported",
 };
 
+const servicePort = (service) => service.plaintextPort ?? service.port;
 const envValue = (service) => {
-	const port = service.port === "gateway" ? defaults.server.gateway.port : service.port;
+	const raw = servicePort(service);
+	const port = raw === "gateway" ? defaults.server.gateway.port : raw;
 	return `${service.envValuePrefix ?? ""}localhost:${port}`;
 };
 
@@ -159,13 +162,17 @@ contract.services = contract.services.map((service) => {
 		};
 	});
 
+	const rawPort = servicePort(runtime);
+	const additionalPorts = { ...(runtime.additionalPorts ?? {}) };
+	if (runtime.gcloudPort && !additionalPorts.rest) additionalPorts.rest = runtime.gcloudPort;
+	if (runtime.grpcPort && !additionalPorts.grpc) additionalPorts.grpc = runtime.grpcPort;
+
 	return {
 		...service,
 		availability: runtime.availability,
 		name: runtime.displayName,
-		port:
-			runtime.port === "gateway" ? defaults.server.gateway.port : runtime.port,
-		additionalPorts: runtime.additionalPorts ?? {},
+		port: rawPort === "gateway" ? defaults.server.gateway.port : rawPort,
+		additionalPorts,
 		protocol: runtime.protocol,
 		type: runtime.type,
 		minTier: runtime.minTier,

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="LocalCloud Icon">
+  <defs>
+    <linearGradient id="lc-icon-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2a75f3" />
+      <stop offset="100%" stop-color="#1257cb" />
+    </linearGradient>
+  </defs>
+  <!-- Rounded Squircle Base -->
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#lc-icon-bg)" />
+  <rect x="3.5" y="3.5" width="57" height="57" rx="14.5" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.25" />
+  
+  <!-- Cloud Silhouette -->
+  <path d="M22 41c-5 0-9-3.8-9-8.5 0-4.3 3.3-7.8 7.6-8.4C21.5 17.8 26.8 13 33.3 13c5.8 0 10.7 3.9 12.3 9.3 4.6.9 8.1 4.7 8.1 9.5 0 5.2-4.4 9.2-9.9 9.2H22Z" fill="#ffffff" />
+  
+  <!-- Local Container Runtime Inset -->
+  <rect x="20" y="34" width="24" height="18" rx="5" fill="#f0f4fd" stroke="#1a73e8" stroke-width="1.8" />
+  
+  <!-- Terminal Prompt & Port Indicator inside the local box -->
+  <path d="M24 40.5l3.5 2.5-3.5 2.5" fill="none" stroke="#1a73e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+  <line x1="30" y1="43" x2="35" y2="43" stroke="#1a73e8" stroke-width="1.8" stroke-linecap="round" />
+  <circle cx="39.5" cy="43" r="2" fill="#34a853" />
+
+  <!-- Four Google Color Accent Constellation Points -->
+  <circle cx="16" cy="18" r="2.8" fill="#4285f4" stroke="#ffffff" stroke-width="1.2" />
+  <circle cx="48" cy="17" r="2.8" fill="#ea4335" stroke="#ffffff" stroke-width="1.2" />
+  <circle cx="13" cy="46" r="2.5" fill="#fbbc04" stroke="#ffffff" stroke-width="1.2" />
+  <circle cx="51" cy="45" r="2.8" fill="#34a853" stroke="#ffffff" stroke-width="1.2" />
+</svg>

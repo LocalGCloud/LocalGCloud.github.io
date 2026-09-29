@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" role="img" aria-label="Service Running">
+  <!-- Outer Pulse Wave -->
+  <circle cx="12" cy="12" r="9" stroke="#188038" stroke-width="1.5" stroke-opacity="0.25"/>
+  <!-- Core Healthy Dot -->
+  <circle cx="12" cy="12" r="5" fill="#188038"/>
+  <circle cx="12" cy="12" r="2" fill="#ffffff" fill-opacity="0.8"/>
+</svg>

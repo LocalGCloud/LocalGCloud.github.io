@@ -1,17 +1,17 @@
 {
   "schemaVersion": 3,
-  "reviewedAt": "2026-08-26",
+  "reviewedAt": "2026-09-29",
   "provenance": {
-    "runtimeRevision": "4f223cb67a0ed3a452a027105bc3dd1f1b0f0f01",
-    "cliRevision": "5d4b47590c681f8b2c2eeda91b2a62f9fdce1562",
+    "runtimeRevision": "1e0c1860476b3eeccc8e420e7196c55daec34bb2",
+    "cliRevision": "4bb959e94a6d53ed357e5ea3713e60e79344674e",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
       "../localcloud/localcloud.defaults.yaml",
       "../localcloud/documentation.yaml",
-      "../localcloud/docs/SERVICE_STATUS.md",
-      "../localcloud/docs/TLS_AND_TRANSPARENT_NETWORKING.md",
-      "../localcloud/docs/MCP_INTEGRATION.md",
+      "../localcloud/docs/status/service-status.md",
+      "../localcloud/docs/architecture/networking-and-tls.md",
+      "../localcloud/docs/guides/mcp-integration.md",
       "../localcloud/specs/api/catalog.json",
       "../localcloud-cli/README.md",
       "../localcloud-cli/src/localcloud_cli/config.py",
@@ -48,20 +48,25 @@
       }
     ],
     "sourceDigests": {
-      "../localcloud/localcloud.defaults.yaml": "sha256:1986f49d6efcc35fe78c993a75b634aaac84f45ed2ad9b40a540e2ca38ec4a81",
-      "../localcloud/documentation.yaml": "sha256:5d06a69d258fd2b8c7c3c3b50d4676984ffbdfaea786137899328b4fa34d5c70",
-      "../localcloud/docs/SERVICE_STATUS.md": "sha256:d2177881c359aa861b225e7d6a3c324bff477dfb6637a01c988a73f44dfde8c2",
-      "../localcloud/docs/TLS_AND_TRANSPARENT_NETWORKING.md": "sha256:6a6fac2329ea79875798bfc54a778bd93e4545c479e80e1d3577e48c77130c65",
-      "../localcloud/docs/MCP_INTEGRATION.md": "sha256:600dddfa3ece7243b1f1605a133cd2cbaac3e982a30fa56be378452627af23f5",
-      "../localcloud/specs/api/catalog.json": "sha256:d23a9da45aa9c7b8363f4265bc3a2c89bac88349297a47a09599f8c4277460e3",
-      "../localcloud-cli/README.md": "sha256:15902f4bc41efda7c63ab8a04c35ed8f916651a3f08ec15dca6307ef763b1fe7",
-      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:be43ad58cce6612049c5353f773cd3aaae2c209356be10eb8743f9ae939c7eee",
-      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:b8b4b3dab2b6f86889716b6cd63c21b7d46516944509d9fe9e9e5c0cdfb810a2",
-      "public/install.sh": "sha256:428a2788dc6048c6426390484223b509de84d2dacc40f46e393b34b3e73594bf"
+      "../localcloud/localcloud.defaults.yaml": "sha256:10f4d4f11bdb3abc7a07a0faabbcf26c702bbce2c18f98d9b3de6d61019c004c",
+      "../localcloud/documentation.yaml": "sha256:d354fc49d901b4a8ed04147ffce2deba739d931a37c67c93ecf1ab483dc7cbec",
+      "../localcloud/docs/status/service-status.md": "sha256:b4a3d5af16993644331d5fb671efc3abf816c1a9a4786835215cf77867b957f3",
+      "../localcloud/docs/architecture/networking-and-tls.md": "sha256:f3e1e2fb2cb214e2b220371ca260d1b3b259ac4046f2d49cb0a47fe81481573b",
+      "../localcloud/docs/guides/mcp-integration.md": "sha256:4496c468c3f7bf2b46225498892d537ef87578e07a02e279ee00ca3e230427a5",
+      "../localcloud/specs/api/catalog.json": "sha256:1fd8a1124bad9a3d1736426b20047b247b0465f9e07f3a611c6387978cb811ff",
+      "../localcloud-cli/README.md": "sha256:498c3dc908789eba2ba05e78b2ffe66eb8d2884fb3868038751accdf515c365b",
+      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c2db3ed46e034f468327aa49d3a44874f06b25187339d29ea03013fc4abd6e14",
+      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:22f229a5fd968a706599ab64ac1cd2ee5070bca2e5715c49cbce067e86d2bf10",
+      "public/install.sh": "sha256:2c660fac584a1db052ef80956c0001fa6d71034fceb1e6617f81965741bcc796"
     },
     "worktreeSources": [
+      "../localcloud/localcloud.defaults.yaml",
+      "../localcloud/documentation.yaml",
+      "../localcloud/docs/status/service-status.md",
+      "../localcloud/specs/api/catalog.json",
       "../localcloud-cli/README.md",
-      "../localcloud-cli/src/localcloud_cli/config.py"
+      "../localcloud-cli/src/localcloud_cli/config.py",
+      "public/install.sh"
     ]
   },
   "product": {
@@ -88,12 +93,12 @@
     }
   },
   "operator": {
-    "gatewayPort": 24080,
+    "gatewayPort": 5380,
     "publishedPorts": {
-      "services": "24080-24092",
-      "transparentDns": "53/udp -> 24093/udp",
-      "transparentHttp": "80 -> 24080",
-      "transparentHttps": "443 -> tls.port (default 24443)"
+      "services": "5380-5405",
+      "transparentDns": "53/udp -> 5410/udp",
+      "transparentHttp": "80 -> 5380",
+      "transparentHttps": "443 -> tls.port (default 5381)"
     },
     "endpoints": {
       "health": "/health",
@@ -110,7 +115,7 @@
       "openapi": "/api-docs",
       "apiDocs": "/docs"
     },
-    "manualDockerCommand": "docker volume create localcloud-data\n\ndocker run -d --name localcloud \\\n  -p 127.0.0.1:24080-24092:24080-24092 \\\n  -m 4g \\\n  -v localcloud-data:/var/lib/localcloud \\\n  jaysen2apache/localcloud:latest"
+    "manualDockerCommand": "docker volume create localcloud-data\n\ndocker run -d --name localcloud \\\n  -p 127.0.0.1:5380-5405:5380-5405 \\\n  -m 4g \\\n  -v localcloud-data:/var/lib/localcloud \\\n  jaysen2apache/localcloud:latest"
   },
   "cli": {
     "installScriptUrl": "https://local.cloud/install.sh",
@@ -160,7 +165,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI 0.1.2 behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI 0.1.5 behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
@@ -416,13 +421,13 @@
     {
       "id": "gcs",
       "name": "Cloud Storage",
-      "port": 24081,
+      "port": 5382,
       "additionalPorts": {},
       "protocol": "rest",
       "type": "external",
       "minTier": "community",
       "envVar": "STORAGE_EMULATOR_HOST",
-      "envValue": "http://localhost:24081",
+      "envValue": "http://localhost:5382",
       "terraformEnvVar": "GOOGLE_STORAGE_CUSTOM_ENDPOINT",
       "implementation": "third-party-emulator",
       "persistence": {
@@ -441,7 +446,16 @@
       },
       "status": "verified",
       "limitations": [
-        "[prod_only] IAM, lifecycle policies, and notifications not emulated in LocalCloud."
+        "[partial] Bucket policy APIs use gateway 5380/TLS 5381. Object authorization is enforced at both direct listeners and the gateway when IAM mode requires it.",
+        "[partial] gcp-live uses caller-token Google permission checks with no fallback. Real-Google and object-conditional grant qualification remain pending; unsupported remote grants fail closed.",
+        "[partial] Open mode deliberately permits known-bucket access; project listing uses authoritative ownership and is not an open-mode tenant security boundary.",
+        "[partial] Notification delivery uses precreated local Pub/Sub topics. Persisted messages retry after failure/restart; ordering and transactional object/outbox crash atomicity are not promised.",
+        "[unsupported] Filesystem-backed buckets do not support versioning or OBJECT_ARCHIVE notifications. Finalize, metadata-update and delete delivery are live-container qualified; versioning is a separate development gap, not production-only.",
+        "[partial] HMAC supports local project-ID-scoped service-account identities. Project-number aliases and default-compute identities are not resolved; real-Google gcp-live impersonation is not qualified. Secrets are excluded from project YAML exports; encrypted key state is retained in full filesystem snapshots.",
+        "[prod_only] Object lifecycle scheduling, retention policies and retention enforcement are production-only and excluded from developer completeness.",
+        "[unsupported] Managed-folder APIs are not implemented.",
+        "[partial] Path-style HMAC XML requests accept localhost and loopback IPs with discovered Docker ports. Virtual-host requests use the configured public hostname (localhost); signed Host headers must not be rewritten after signing.",
+        "[partial] Local live-container HTTP qualification includes multipart uploads, admin caller propagation, strict signed IAM, notification recovery and reset. These fixes require a rebuilt image; trusted release-image and full LocalCloud TLS qualification remain pending."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -477,11 +491,69 @@
           ]
         },
         {
-          "id": "gcs.advanced-control-plane",
-          "label": "iam, lifecycle policies, notifications",
+          "id": "gcs.bucket-iam",
+          "label": "buckets.getIamPolicy/setIamPolicy/testIamPermissions",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "gcs.object-iam",
+          "label": "mode-aware object data-plane authorization",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "gcs.notifications",
+          "label": "notificationConfigs.create/list/delete and Pub/Sub event delivery",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "gcs.hmac",
+          "label": "HMAC key management and XML signature authentication",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "gcs.lifecycle-retention",
+          "label": "Object Lifecycle Management and retention enforcement",
           "status": "unsupported",
           "limitations": [
-            "Production-only control-plane behavior; not applicable to local development."
+            "Production governance and automatic lifecycle scheduling are outside the developer support contract by product decision."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "gcs.managed-folders",
+          "label": "managed folders",
+          "status": "unsupported",
+          "limitations": [
+            "Managed-folder APIs are outside the current implementation."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "gcs.bucket-versioning",
+          "label": "persistent bucket versioning and OBJECT_ARCHIVE notifications",
+          "status": "unsupported",
+          "limitations": [
+            "The filesystem backend rejects versioned buckets. Earlier archive-event tests used the memory backend and do not qualify the container's persistent backend."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -494,13 +566,13 @@
     {
       "id": "pubsub",
       "name": "Pub/Sub",
-      "port": 24082,
+      "port": 5383,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "PUBSUB_EMULATOR_HOST",
-      "envValue": "localhost:24082",
+      "envValue": "localhost:5383",
       "terraformEnvVar": "GOOGLE_PUBSUB_CUSTOM_ENDPOINT",
       "implementation": "google-official",
       "persistence": {
@@ -519,8 +591,10 @@
       },
       "status": "partial",
       "limitations": [
-        "Schemas, snapshots, seek, dead-letter policy, filters, and other advanced subscription fields are not implemented on the configured endpoint.",
-        "gcloud and console paths remain partial for advanced Pub/Sub workflows."
+        "Exactly-once delivery, authenticated push, export subscriptions, transforms and other unlisted advanced fields remain unsupported.",
+        "Retry dispatch and retention cleanup are approximate local schedules; this does not reproduce Google production scale, availability or service-agent IAM.",
+        "Schema definitions must be self-contained; imported protobuf types are unsupported, matching the Pub/Sub schema restriction.",
+        "Stored Pub/Sub IAM policies can be read and evaluated through IAM APIs, but publish and topic deletion do not enforce those resource bindings. Strict mode and successful testIamPermissions do not establish Pub/Sub data-plane authorization."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -539,7 +613,7 @@
       "operations": [
         {
           "id": "pubsub.topics.lifecycle",
-          "label": "topics.create/get/list/delete",
+          "label": "topics.create/get/list/update/delete",
           "status": "verified",
           "limitations": [],
           "evidence": [
@@ -548,7 +622,7 @@
         },
         {
           "id": "pubsub.subscriptions.lifecycle",
-          "label": "subscriptions.create/get/list/delete",
+          "label": "subscriptions.create/get/list/update/delete/modifyPushConfig",
           "status": "verified",
           "limitations": [],
           "evidence": [
@@ -565,11 +639,38 @@
           ]
         },
         {
-          "id": "pubsub.advanced-delivery",
-          "label": "schemas, snapshots, seek, dead-letter policy",
+          "id": "pubsub.delivery-policies",
+          "label": "subscription filters, dead-letter forwarding, retry policies",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "pubsub.snapshots-replay",
+          "label": "retention, snapshot CRUD, timestamp and snapshot seek",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "pubsub.schemas",
+          "label": "schema and revision lifecycle, validation, publish enforcement",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "pubsub.other-advanced-fields",
+          "label": "exactly-once delivery, authenticated push, export subscriptions, transforms",
           "status": "unsupported",
           "limitations": [
-            "The configured Pub/Sub gRPC endpoint fails unsupported schemas, snapshots, seek, and advanced subscription fields explicitly with UNIMPLEMENTED."
+            "Outside the reviewed implementation scope; unsupported fields fail explicitly."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -582,13 +683,13 @@
     {
       "id": "firestore",
       "name": "Firestore",
-      "port": 24083,
+      "port": 5384,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "external",
       "minTier": "community",
       "envVar": "FIRESTORE_EMULATOR_HOST",
-      "envValue": "localhost:24083",
+      "envValue": "localhost:5384",
       "terraformEnvVar": "GOOGLE_FIRESTORE_CUSTOM_ENDPOINT",
       "implementation": "google-official",
       "persistence": {
@@ -605,10 +706,14 @@
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
-      "status": "partial",
+      "status": "unsupported",
       "limitations": [
-        "Seed and browser parity is not fully hardened.",
-        "Index/query behavior is unverified."
+        "Firestore is not currently supported by LocalCloud. References and emulator configurations are maintained for future implementation.",
+        "Native REST create/query and document-value recovery after clean restart passed on an isolated existing local image. Root collection browsing uses GET /documents, which returned 404; ListCollectionIds succeeded with emulator admin authentication.",
+        "Global reset enumerates Console-registered projects. Firestore namespaces created only through the native API under unregistered projects are outside that enumeration. Reset clears the default database and this project's named databases recorded in the latest checkpoint; named databases created since that checkpoint cannot be discovered through the current public emulator API.",
+        "Firestore reset deleted_count counts cleared database namespaces, not deleted documents. Resetting a disabled backend temporarily starts and imports it without changing configured enablement, then requires a confirmed stop and a new checkpoint generation before success. The disabled-reset regression passed JAR-overlay batch7; final exact-image qualification remains pending.",
+        "The isolated restart restored document content but changed createTime/updateTime; timestamp and precondition fidelity need recovery fixes and native SDK tests.",
+        "Composite-index enforcement, transaction concurrency, listeners and transforms require exact-artifact qualification. Security Rules evaluation and Firestore-trigger delivery remain unqualified local capabilities."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -628,9 +733,9 @@
         {
           "id": "firestore.documents.crud",
           "label": "documents.create/read/update/delete",
-          "status": "partial",
+          "status": "unsupported",
           "limitations": [
-            "External emulator is available; seed and browser parity needs hardening."
+            "Firestore is not currently supported by LocalCloud. References to the external emulator exist for future implementation; native document lifecycle and query parity are not qualified."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -639,9 +744,9 @@
         {
           "id": "firestore.queries.indexes",
           "label": "queries/index behavior",
-          "status": "partial",
+          "status": "unsupported",
           "limitations": [
-            "Complex query/index parity is unverified."
+            "Firestore is not currently supported by LocalCloud. Query and indexing operations are not supported."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -654,13 +759,13 @@
     {
       "id": "bigtable",
       "name": "Bigtable",
-      "port": 24084,
+      "port": 5385,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "external",
       "minTier": "pro",
       "envVar": "BIGTABLE_EMULATOR_HOST",
-      "envValue": "localhost:24084",
+      "envValue": "localhost:5385",
       "terraformEnvVar": "GOOGLE_BIGTABLE_CUSTOM_ENDPOINT",
       "implementation": "custom-emulator",
       "persistence": {
@@ -678,12 +783,12 @@
           "../localcloud/docker/conf/supervisord.conf"
         ]
       },
-      "status": "verified",
+      "status": "partial",
       "limitations": [
-        "[prod_only] Single-node emulator by design; clusters, multi-region, replication require Google infrastructure.",
-        "GoogleSQL queries (ExecuteQuery/PrepareQuery) not supported — data-plane uses HBase-style API only.",
-        "Change streams, app profiles, and logical views are not implemented in the emulator.",
-        "Session protocol (OpenTable/OpenAuthorizedView/OpenMaterializedView) not implemented — not needed for correctness."
+        "The pinned emulator has known row-mutation atomicity, target-validation and SampleRowKeys range gaps; core success-path tests do not prove full data-plane semantics.",
+        "GoogleSQL PrepareQuery/ExecuteQuery and session protocols are not implemented. App profiles and logical/authorized views have metadata support; routing, query and access semantics remain partial.",
+        "Backup metadata and permissive IAM exist. Data-bearing backup/restore and change streams are not qualified and can return incomplete success; legacy snapshots and undelete remain unsupported.",
+        "Multi-cluster topology management (clusters.create/update), tablet hotspot diagnostics (hotTablets.list), physical memory layer inspection (memoryLayers.list), and cross-cluster backup copying (backups.copy) are production-only infrastructure features excluded from local development."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -703,8 +808,10 @@
         {
           "id": "bigtable.admin.lifecycle",
           "label": "instances/tables/families",
-          "status": "verified",
-          "limitations": [],
+          "status": "partial",
+          "limitations": [
+            "Instance/table/family lifecycle and cluster/app-profile descriptors exist; durable admin/LRO semantics are not fully qualified."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -712,8 +819,10 @@
         {
           "id": "bigtable.rows.data",
           "label": "row mutations and reads",
-          "status": "verified",
-          "limitations": [],
+          "status": "partial",
+          "limitations": [
+            "Core HBase-style methods exist, but the exact pinned ledger records mutation atomicity, target-validation and sampling-range defects."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -739,8 +848,10 @@
         {
           "id": "bigtable.persistence",
           "label": "data survives emulator restart",
-          "status": "verified",
-          "limitations": [],
+          "status": "partial",
+          "limitations": [
+            "PostgreSQL row/instance persistence exists; the pinned ledger records non-durable table policy fields and incomplete operation state."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -748,8 +859,10 @@
         {
           "id": "bigtable.materialized-views",
           "label": "materialized views (CMVs)",
-          "status": "verified",
-          "limitations": [],
+          "status": "partial",
+          "limitations": [
+            "Descriptor CRUD and a narrow custom projection exist; general GoogleSQL materialized-view semantics are not advertised."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -757,9 +870,9 @@
         {
           "id": "bigtable.snapshots-backups",
           "label": "snapshots and backups",
-          "status": "unsupported",
+          "status": "partial",
           "limitations": [
-            "All 10 snapshot/backup RPCs return codes.Unimplemented:\nSnapshotTable, GetSnapshot, ListSnapshots, DeleteSnapshot,\nCreateBackup, GetBackup, UpdateBackup, DeleteBackup, ListBackups, RestoreTable.\nAlso: CreateTableFromSnapshot, UndeleteTable.\n"
+            "Backup descriptors exist, but create/restore/copy do not establish immutable data protection; legacy snapshots and undelete reject."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -768,9 +881,9 @@
         {
           "id": "bigtable.iam",
           "label": "IAM policy management",
-          "status": "unsupported",
+          "status": "partial",
           "limitations": [
-            "GetIamPolicy, SetIamPolicy, TestIamPermissions return codes.Unimplemented."
+            "Permissive policy round-trips exist in the pinned dependency; enforcement and durable policy semantics remain incomplete."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -792,15 +905,15 @@
     {
       "id": "spanner",
       "name": "Spanner",
-      "port": 24085,
+      "port": 5386,
       "additionalPorts": {
-        "rest": 24086
+        "rest": 5387
       },
       "protocol": "grpc",
       "type": "external",
       "minTier": "pro",
       "envVar": "SPANNER_EMULATOR_HOST",
-      "envValue": "localhost:24085",
+      "envValue": "localhost:5386",
       "terraformEnvVar": "GOOGLE_SPANNER_CUSTOM_ENDPOINT",
       "implementation": "extended-official",
       "persistence": {
@@ -820,8 +933,11 @@
       },
       "status": "partial",
       "limitations": [
-        "Pinned extended Spanner emulator image; the exact image and immutable digest come from `SPANNER_EMULATOR_IMAGE` in the root Dockerfile.",
-        "Change-stream support matrix — native gRPC/REST ExecuteStreamingSql supported; official SDK clients through SPANNER_EMULATOR_HOST supported; LocalCloud SQL Editor through managed run APIs or cancellable /query/stream NDJSON supported; gcloud spanner databases execute-sql unsupported for change streams because it uses unary ExecuteSql."
+        "Extended Spanner emulator image supports 140 features (1 partial [schema.queues], 8 accepted-no-op, 9 production-only exclusions, 0 unsupported out of 158 feature records). Public-endpoint client matrix is 100% verified against native builds and packaged Docker image with Python (3.71.0), Go (1.95.1), Node.js (9.0.0), Java (6.123.0), JDBC (2.45.0), and PGAdapter (0.55.3 with pgJDBC and psql).",
+        "Database roles and fine-grained access control (FGAC) are enforced for sessions created with a creator_role. Unauthenticated emulator connections bypass IAM principal identity checks; stored IAM policies do not enforce network identity.",
+        "Change streams require ExecuteStreamingSql; unary ExecuteSql rejects change-stream queries. With --data_dir, stream definitions, records, partition history, and resume tokens survive restarts.",
+        "Backups require --data_dir; each backup is a full database copy. Customer-managed encryption keys (CMEK) are not implemented (data is plaintext).",
+        "Production-only infrastructure exclusions (Google TrueTime hardware clock, multi-region Paxos quorum switching, physical split points and tablet distribution, physical cross-region migration, multi-tenant compute slicing) do not apply to local development."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -841,9 +957,9 @@
         {
           "id": "spanner.data-plane",
           "label": "Native SQL, read, and streaming read",
-          "status": "unknown",
+          "status": "partial",
           "limitations": [
-            "Change-stream reads use native ExecuteStreamingSql. Unary ExecuteSql intentionally retains the emulator's rejection of change-stream queries."
+            "Native ExecuteSql and ExecuteStreamingSql in both GoogleSQL and PostgreSQL dialects. StreamingRead and ExecuteStreamingSql stream whole rows with resume tokens at row boundaries. Unary ExecuteSql intentionally retains the emulator's rejection of change-stream queries. Full-text search (TOKENIZE_*, SEARCH, SNIPPET, SCORE), vector search (APPROX_* / ScaNN), and 13 graph algorithms (PageRank, ShortestPath, etc.) compute locally."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -852,9 +968,9 @@
         {
           "id": "spanner.sessions-transactions",
           "label": "Sessions, transactions, and batch DML",
-          "status": "unknown",
+          "status": "partial",
           "limitations": [
-            "Existing native transaction and session behavior remains authoritative."
+            "Sessions (including batch create and multiplexed), read-write, read-only and single-use transactions. SERIALIZABLE (default) and REPEATABLE_READ isolation. Conflicts follow wound-wait lock waits (--lock_wait_timeout_ms). Exclusive locks via SELECT ... FOR UPDATE and LOCK_SCANNED_RANGES=exclusive. Commit timestamps (PENDING_COMMIT_TIMESTAMP) and commit stats (mutation count). Deadlock aborts exactly one transaction. Unique indexes are re-checked at commit."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -863,9 +979,9 @@
         {
           "id": "spanner.partition-batch",
           "label": "Partition query/read and batch write",
-          "status": "unknown",
+          "status": "partial",
           "limitations": [
-            "Existing native partition and batch-write behavior remains authoritative."
+            "PartitionRead, PartitionQuery, partitioned DML (including parameterized PostgreSQL statements), and BatchWrite are supported."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -874,9 +990,9 @@
         {
           "id": "spanner.instance-admin",
           "label": "Instance, configuration, and instance-partition administration",
-          "status": "unknown",
+          "status": "partial",
           "limitations": [
-            "Existing native instance-admin behavior remains authoritative."
+            "Instance and instance-partition administration, custom instance configurations, and MoveInstance (metadata). List operations and instances support AIP-160 filter expressions."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -885,9 +1001,9 @@
         {
           "id": "spanner.database-admin",
           "label": "Database administration and DDL",
-          "status": "unknown",
+          "status": "partial",
           "limitations": [
-            "Existing native database-admin behavior remains authoritative."
+            "Database creation, DDL execution for both GoogleSQL and PostgreSQL, drop protection (UpdateDatabase), ListDatabaseOperations, split points (AddSplitPoints persisted to SPANNER_SYS.USER_SPLIT_POINTS), and fine-grained access control database roles (CREATE/DROP ROLE, GRANT/REVOKE, ListDatabaseRoles)."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -896,9 +1012,9 @@
         {
           "id": "spanner.iam",
           "label": "Instance and database IAM policies",
-          "status": "unknown",
+          "status": "partial",
           "limitations": [
-            "Policies are stored durably and returned through native endpoints. Authorization remains intentionally permissive and TestIamPermissions returns requested permissions."
+            "IAM policies are stored durably in LevelDB and returned through native endpoints with etags guarded. Fine-grained access control (FGAC) is enforced for sessions created with a creator_role on queries, DML, reads, mutations, and change stream reads. Unauthenticated emulator connections bypass network IAM."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -907,9 +1023,9 @@
         {
           "id": "spanner.backup",
           "label": "Backup, copy, restore, and backup schedules",
-          "status": "unknown",
+          "status": "partial",
           "limitations": [
-            "Backups and schedules use LevelDB-backed metadata and compatible long-running operations."
+            "With --data_dir, CreateBackup, CopyBackup, GetBackup, ListBackups (with AIP-160 filter precedence), UpdateBackup, DeleteBackup, RestoreDatabase, and ListBackupOperations are supported. version_time backups and full/incremental backup schedules persist cursors across restarts."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -918,9 +1034,9 @@
         {
           "id": "spanner.operations",
           "label": "Long-running operation lifecycle",
-          "status": "unknown",
+          "status": "partial",
           "limitations": [
-            "Native operation polling and lifecycle behavior is shared by instance, database, backup, copy, and restore calls."
+            "Native long-running operations lifecycle across instance, database, backup, copy, and restore calls, with AIP-160 filter support."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -933,15 +1049,15 @@
     {
       "id": "bigquery",
       "name": "BigQuery",
-      "port": 24087,
+      "port": 5388,
       "additionalPorts": {
-        "grpc": 24088
+        "grpc": 5389
       },
       "protocol": "rest",
       "type": "external",
       "minTier": "community",
       "envVar": "BIGQUERY_EMULATOR_HOST",
-      "envValue": "http://localhost:24087",
+      "envValue": "http://localhost:5388",
       "terraformEnvVar": "GOOGLE_BIGQUERY_CUSTOM_ENDPOINT",
       "implementation": "custom-emulator",
       "persistence": {
@@ -958,18 +1074,14 @@
           "../localcloud/docker/conf/supervisord.conf"
         ]
       },
-      "status": "partial",
+      "status": "verified",
       "limitations": [
-        "DuckDB type coercion is permissive where BigQuery is strict — queries accepted locally may error in production.",
-        "Division by zero returns Inf/NaN instead of error; integer division returns int instead of FLOAT64.",
-        "GROUP BY ROLLUP/CUBE/GROUPING SETS not supported.",
-        "SEMI/ANTI JOIN syntax not supported (rely on EXISTS/NOT EXISTS transpile).",
-        "BQML (CREATE MODEL, ML.PREDICT, ML.EVALUATE, etc.) returns clear error.",
-        "AEAD encryption functions and KLL quantile functions not implemented.",
-        "GEOGRAPHY functions use haversine approximation, not true WGS84 geodesic.",
-        "BIGNUMERIC truncated to DECIMAL(38,9); FARM_FINGERPRINT requires pyfarmhash for correct values.",
-        "Time travel (FOR SYSTEM_TIME AS OF), continuous queries, graph queries, search/vector indexes not supported.",
-        "External object tables (OBJ.* functions) not supported."
+        "1,065 canonical capabilities are implemented across development and production parity (945/996 GoogleSQL capabilities in the census). GoogleSQL Analyzer (pinned ZetaSQL 2026.9.2) provides exact semantic resolution and fail-closed validation with 0 silent wrong results.",
+        "Full 76-digit BIGNUMERIC, NUMERIC(38,9), and GEOGRAPHY functions (ST_BOUNDINGBOX, ST_INTERSECTSBOX, ST_CLUSTERDBSCAN, ST_ASGEOJSON, etc.) are implemented. Procedural SQL (DECLARE, SET, IF/WHILE/LOOP, BEGIN/EXCEPTION, EXECUTE IMMEDIATE, CALL) and stored procedures are fully supported.",
+        "Row-level security on all read surfaces, data masking (Data Policy API v1), policy tags, and IAM Conditions evaluated with Google's CEL runtime (cel-expr-python) are enforced.",
+        "Time travel (FOR SYSTEM_TIME AS OF) and table clones with time travel are supported. BQML models (tabular, time-series, and local GenAI) and exact SEARCH / VECTOR_SEARCH are supported.",
+        "Remaining partial gaps across 11 canonical rows include policy tags on nested RECORD fields, TRANSFORM for select advanced model types, ingestion-time _PARTITIONTIME pseudocolumns, specialized S2 geometry snapping/union edge cases, and cross-architecture Spark profile attestation.",
+        "Production-only infrastructure exclusions (Google-managed distributed slot reservations, petabyte-scale multi-region durability, cross-region replication, continuous Pub/Sub streaming at petabyte scale) do not apply to local development."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -988,7 +1100,7 @@
       "operations": [
         {
           "id": "bigquery.datasets.lifecycle",
-          "label": "datasets.create/list/delete",
+          "label": "datasets.create/list/update/delete",
           "status": "verified",
           "limitations": [],
           "evidence": [
@@ -997,7 +1109,16 @@
         },
         {
           "id": "bigquery.tables.lifecycle",
-          "label": "tables.create/list/delete",
+          "label": "tables.create/list/update/delete",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "bigquery.jobs.lifecycle",
+          "label": "jobs.query/cancel/delete/serviceAccount/projects",
           "status": "verified",
           "limitations": [],
           "evidence": [
@@ -1007,21 +1128,17 @@
         {
           "id": "bigquery.sql.query",
           "label": "SELECT, JOIN, window functions, CTEs, PIVOT/UNPIVOT, MERGE",
-          "status": "partial",
-          "limitations": [
-            "DuckDB-backed via SQLGlot transpiler. ~96% BigQuery SQL coverage, 175+ functions.\n958 tests passing. Key gaps: GROUP BY ROLLUP/CUBE/GROUPING SETS, SEMI/ANTI JOIN,\nBQML (clear error), AEAD encryption, KLL quantiles, graph queries, continuous queries.\n⚠ Type coercion risk: DuckDB is permissive where BigQuery is strict — queries that\nwork locally may error in production. Division by zero returns Inf instead of error.\nGEOGRAPHY: 12 ST_* functions with haversine approximation (not true geodesic).\n"
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
         },
         {
           "id": "bigquery.sql.scripting",
-          "label": "DECLARE, SET, IF/WHILE/LOOP, BEGIN/EXCEPTION, CALL, EXECUTE IMMEDIATE",
-          "status": "partial",
-          "limitations": [
-            "Full scripting interpreter with variable scoping, BREAK/CONTINUE, RAISE, transactions."
-          ],
+          "label": "DECLARE, SET, IF/WHILE/LOOP/REPEAT/FOR, BEGIN/EXCEPTION, CALL, EXECUTE IMMEDIATE",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1029,21 +1146,17 @@
         {
           "id": "bigquery.materialized-views",
           "label": "CREATE MATERIALIZED VIEW, auto-refresh",
-          "status": "partial",
-          "limitations": [
-            "Supported in emulator with PARTITION BY, CLUSTER BY, OPTIONS."
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
         },
         {
           "id": "bigquery.external-tables",
-          "label": "query Parquet/CSV/JSON files (local + GCS)",
-          "status": "partial",
-          "limitations": [
-            "CREATE EXTERNAL TABLE with format/uris options. Object tables not supported."
-          ],
+          "label": "query Parquet/CSV/JSON/Avro/ORC files (local + GCS)",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1051,10 +1164,8 @@
         {
           "id": "bigquery.storage-api",
           "label": "gRPC Storage Read/Write API (AVRO + Arrow)",
-          "status": "partial",
-          "limitations": [
-            "gRPC endpoint on port 24088. ReadRows with streaming support."
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1062,10 +1173,8 @@
         {
           "id": "bigquery.information-schema",
           "label": "INFORMATION_SCHEMA views",
-          "status": "partial",
-          "limitations": [
-            "11 views: COLUMNS, TABLES, SCHEMATA, PARTITIONS, VIEWS, ROUTINES, TABLE_OPTIONS, TABLE_STORAGE, JOBS_BY_*, COLUMN_FIELD_PATHS."
-          ],
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1077,13 +1186,13 @@
     {
       "id": "sheets",
       "name": "Google Sheets",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "rest",
       "type": "facade",
       "minTier": "community",
       "envVar": "SHEETS_EMULATOR_HOST",
-      "envValue": "http://localhost:24080",
+      "envValue": "http://localhost:5380",
       "terraformEnvVar": null,
       "implementation": "local-facade",
       "persistence": {
@@ -1102,8 +1211,8 @@
       },
       "status": "partial",
       "limitations": [
-        "Spreadsheet metadata, writes, formulas, range evaluation, OAuth, and production Sheets access are not emulated.",
-        "Values are selected by exact stored A1 range and project scope."
+        "The facade supports exact stored A1 ranges through values.get/batchGet; spreadsheet metadata, writes, range slicing and formula evaluation are not implemented.",
+        "Google OAuth authority is not hosted locally; a local identity/authorization contract has not been qualified."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1149,13 +1258,13 @@
     {
       "id": "secretmanager",
       "name": "Secret Manager",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "SECRET_MANAGER_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_SECRET_MANAGER_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1174,8 +1283,9 @@
       },
       "status": "partial",
       "limitations": [
-        "[prod_only] Rotation and CMEK (customer-managed encryption keys).",
-        "Per-secret IAM is not complete."
+        "SOFTWARE CMEK encryption has public API platform coverage plus internal envelope and material-removal checks. Real hardware custody and geographic replication are separate production properties.",
+        "Rotation-period metadata is stored, but SECRET_ROTATE scheduling, topic delivery, retry and next-rotation persistence are not implemented as a complete local workflow.",
+        "Per-secret policy APIs and shared mode-aware evaluation exist; end-to-end data access authorization across REST/gRPC and IAM modes remains partial."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1213,9 +1323,9 @@
         {
           "id": "secretmanager.advanced-secret-management",
           "label": "rotation, CMEK, per-secret IAM",
-          "status": "unsupported",
+          "status": "partial",
           "limitations": [
-            "Rotation policies, customer-managed encryption keys, and per-secret IAM are not implemented."
+            "SOFTWARE CMEK and per-secret policy APIs exist; rotation notifications and complete cross-transport data authorization remain partial."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1228,13 +1338,13 @@
     {
       "id": "cloudtasks",
       "name": "Cloud Tasks",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "CLOUD_TASKS_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_CLOUD_TASKS_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1254,7 +1364,12 @@
       },
       "status": "partial",
       "limitations": [
-        "App Engine tasks and OAuth token generation are not complete."
+        "OAuth/OIDC token minting, App Engine delivery, queue routing/header overrides and logging sampling are rejected as unsupported rather than silently stored.",
+        "No FIFO, exactly-once, dead-letter queue, transactional cancellation, adaptive Google throttling or production throughput guarantees. Removed task IDs have no Google-style deduplication tombstone. Unlimited retry settings have no automatic task-retention expiry.",
+        "HTTP attempt deadlines are durations from 15 to 1800 seconds (default 600). Failed attempts use configured fractional backoff; finite attempt and duration bounds must both be exhausted. A zero duration leaves only the attempt limit; -1 attempts is unlimited.",
+        "Local activity retains completed attempt metadata for seven days, with no request URL, headers, payload or response body archive. Interrupted or unpersisted outcomes may remain unknown. Successful/terminal tasks leave the active queue; absence alone is not success.",
+        "Pending and interrupted in-flight tasks recover after restart with possible redelivery. Pause, purge and deletion do not cancel requests already in flight. Never replay an ambiguous create or run request automatically.",
+        "BASIC omits payload and headers; FULL requires cloudtasks.tasks.fullView in enforcing IAM modes. Queue/task operations evaluate stored allow policies in strict and gcp-live modes; open/permissive modes do not enforce them."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1273,10 +1388,10 @@
       "operations": [
         {
           "id": "cloudtasks.queues.lifecycle",
-          "label": "queues.create/list/delete",
+          "label": "queues.create/get/list/update/pause/resume/purge/delete",
           "status": "partial",
           "limitations": [
-            "Facade-backed queue lifecycle exists."
+            "REST and gRPC share authorized, project/location-scoped queue lifecycle and dispatch settings. Console configuration uses an etag precondition; native service parity remains partial."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1284,10 +1399,10 @@
         },
         {
           "id": "cloudtasks.tasks.lifecycle",
-          "label": "tasks.create/list/delete",
+          "label": "tasks.create/get/list/delete/run",
           "status": "partial",
           "limitations": [
-            "Dispatch and scheduling parity remain limited."
+            "Durable task creation, BASIC/FULL inspection, pagination and immediate manual dispatch. Automatic dispatch honors queue rate/concurrency and fractional retry settings; retained local attempt records establish observed HTTP outcomes."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1300,13 +1415,13 @@
     {
       "id": "cloudscheduler",
       "name": "Cloud Scheduler",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
-      "protocol": "grpc",
+      "protocol": "grpc+rest",
       "type": "facade",
       "minTier": "community",
       "envVar": "CLOUD_SCHEDULER_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_CLOUD_SCHEDULER_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1325,7 +1440,12 @@
       },
       "status": "partial",
       "limitations": [
-        "Timezone rules beyond cron-utils support are not fully verified."
+        "Five-field UNIX cron uses the installed cron-utils parser and Java IANA zones. Preview and dispatch share that parser. Tested cases include DST gaps/overlaps, leap dates, monthly day 31 and inclusive day-of-month/day-of-week semantics; this does not qualify every cron expression or future timezone database revision.",
+        "HTTP and Pub/Sub delivery are implemented. App Engine and OAuth/OIDC configurations are rejected before saving; Google-trusted credentials and managed App Engine execution are unavailable.",
+        "Queued runs and retries survive restart. An attempt interrupted while RUNNING becomes UNKNOWN and is not replayed because the target may already have received it. Manual runs can overlap; automatic schedules skip occurrences while an earlier automatic run or retry chain is active. Missed downtime occurrences are not backfilled.",
+        "Retry count is limited to 0–5, doublings to 0–16, and backoff to 0–86400 seconds. Fractional and explicit zero durations are retained. Retry duration starts with the first actual attempt; when both count and duration are configured both limits must be exhausted. HTTP deadlines are 15–1800 seconds; Pub/Sub ignores attemptDeadline.",
+        "Full project/location/job names scope jobs and history. Google-shaped endpoints retain configured gateway IAM enforcement; legacy browse/mutate endpoints retain the existing administrative bypass. Stored IAM policies do not establish per-job enforcement.",
+        "History returns at most 100 attempts for an exact owned job and optional since time. The Console loads all job pages before local filtering, then displays 25 jobs per page. Location names are namespaces, not residency guarantees."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1344,10 +1464,10 @@
       "operations": [
         {
           "id": "cloudscheduler.jobs.lifecycle",
-          "label": "jobs.create/list/get/delete/pause/resume",
+          "label": "jobs.create/list/get/update/delete/pause/resume/run",
           "status": "partial",
           "limitations": [
-            "Cron scheduling and HTTP/Pub/Sub/App Engine targets exist for local workflows."
+            "Shared REST, gRPC and admin lifecycle validates before persistence and schedules real HTTP/Pub/Sub delivery. Full job readback, masked updates, runtime cron preview, exact-owner history, durable queued retries and HTTP deadlines are verified. App Engine, OAuth and OIDC configurations are explicitly rejected; no credentials are fabricated."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1360,13 +1480,13 @@
     {
       "id": "cloudfunctions",
       "name": "Cloud Functions (2nd Gen)",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "CLOUD_FUNCTIONS_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_CLOUD_FUNCTIONS_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1385,7 +1505,10 @@
       },
       "status": "partial",
       "limitations": [
-        "Build and container execution are metadata-only; use Functions Framework locally."
+        "Function metadata, HTTP forwarding and Pub/Sub trigger routing exist. Source builds and managed function-container execution are not implemented.",
+        "Firestore/Storage/Audit Log Eventarc delivery is not established by the current Pub/Sub trigger path.",
+        "HTTP forwarding does not propagate browser credentials or LocalCloud caller headers to execution targets. Production Google identity token minting and external function stdout collection are not provided.",
+        "Pub/Sub registration and metadata persistence span separate services; a failed or interrupted mutation requires inspecting saved metadata and the managed subscription before retrying. No cross-service transaction is claimed."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1407,7 +1530,7 @@
           "label": "functions.create/list/get/delete/update",
           "status": "partial",
           "limitations": [
-            "Metadata CRUD and trigger routing exist; build/container execution is not emulated."
+            "Metadata CRUD, HTTP forwarding and Pub/Sub trigger routing exist; builds and managed function-container execution are not implemented."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1420,13 +1543,13 @@
     {
       "id": "alloydb",
       "name": "AlloyDB",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "ALLOYDB_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_ALLOYDB_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1445,8 +1568,10 @@
       },
       "status": "partial",
       "limitations": [
-        "[prod_only] PSC (Private Service Connect) and cross-region replication.",
-        "Backup/restore is not complete."
+        "Backup create/get/list stores metadata; clusters.restore provisions restored cluster and instance metadata from backup.",
+        "Local replica/configuration APIs are software gaps. Actual Google PSC and managed regional replication are production-only.",
+        "PostgreSQL wire access is a local approximation; advanced AlloyDB engine behavior is not established by cluster/instance CRUD.",
+        "Cross-region disaster recovery clusters (clusters.createsecondary, clusters.switchover), failover (instances.failover), hardware fault injection (instances.injectFault), and rolling upgrades (clusters.upgrade) are production-only infrastructure features excluded from local development."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1471,6 +1596,15 @@
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
+        },
+        {
+          "id": "alloydb.clusters-instances.maintenance",
+          "label": "clusters.patch/instances.patch/supportedDatabaseFlags.list/clusters.restore",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
         }
       ],
       "published": true,
@@ -1479,13 +1613,13 @@
     {
       "id": "dataproc",
       "name": "Dataproc",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "DATAPROC_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_DATAPROC_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1502,10 +1636,11 @@
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
-      "status": "partial",
+      "status": "unsupported",
       "limitations": [
-        "Autoscaling and Kubernetes cluster mode are not complete.",
-        "Runtime execution requires Docker socket access; without it, cluster metadata remains available but Spark/Hadoop processes are not started."
+        "Dataproc is not currently supported by LocalCloud. References, metadata facades, and runtime catalog profiles are maintained for future implementation.",
+        "Autoscaling policy enforcement and a Kubernetes execution backend are not complete local capabilities.",
+        "Real Spark/Hadoop execution requires Docker access and a compatible runtime image; missing runtime prerequisites do not mean job APIs are absent."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1525,8 +1660,10 @@
         {
           "id": "dataproc.clusters.crud",
           "label": "clusters.create/list/get/delete",
-          "status": "verified",
-          "limitations": [],
+          "status": "unsupported",
+          "limitations": [
+            "Dataproc is not currently supported by LocalCloud. Cluster CRUD facade stubs are maintained for future implementation."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1534,9 +1671,9 @@
         {
           "id": "dataproc.jobs.execution",
           "label": "jobs submit/list/get",
-          "status": "partial",
+          "status": "unsupported",
           "limitations": [
-            "Cluster jobs run in the Dataproc runtime container; jobs without a cluster use ephemeral serverless containers. Execution requires Docker socket access and a compatible runtime image; otherwise only metadata paths are available."
+            "Dataproc is not currently supported by LocalCloud. Cluster and job execution are not supported."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1549,13 +1686,13 @@
     {
       "id": "cloudiam",
       "name": "Cloud IAM",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "IAM_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_IAM_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1574,7 +1711,10 @@
       },
       "status": "partial",
       "limitations": [
-        "Role validation, conditions, and deny policies are not complete."
+        "Open/permissive testIamPermissions echoes requested permissions; strict/gcp-live uses the resolved caller and shared policy evaluator. This is not an arbitrary-principal troubleshooter.",
+        "Shared condition evaluation, predefined roles, custom role lifecycle, key enable/disable, and resource-to-project inheritance exist. Full CEL/resource attributes, organization/folder ancestry, deny policies, policy history and recommendations remain incomplete.",
+        "Policy API support does not establish uniform data-plane enforcement. In-process Pub/Sub publish and topic deletion do not enforce stored resource bindings; direct external listeners also have service-specific boundaries.",
+        "Enterprise identity federation (Workforce Identity Pools, Workload Identity Pools), SCIM tenant provisioning, and Microsoft Active Directory integration are production-only infrastructure features excluded from local development."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1596,8 +1736,26 @@
           "label": "getIamPolicy/setIamPolicy/testIamPermissions",
           "status": "partial",
           "limitations": [
-            "Permissive policy stub with local policy storage."
+            "Allow-policy storage, mode-aware caller permission checks, bounded conditions, role expansion and resource inheritance exist; custom/service-account resources and full policy semantics remain partial."
           ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "cloudiam.custom-roles.lifecycle",
+          "label": "roles.create/patch/delete/queryGrantableRoles",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "cloudiam.service-accounts.management",
+          "label": "serviceAccounts.patch/keys.enable/keys.disable/queryTestablePermissions",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -1609,13 +1767,13 @@
     {
       "id": "cloudresourcemanager",
       "name": "Cloud Resource Manager",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "rest",
       "type": "facade",
       "minTier": "community",
       "envVar": "CLOUD_RESOURCE_MANAGER_EMULATOR_HOST",
-      "envValue": "http://localhost:24080",
+      "envValue": "http://localhost:5380",
       "terraformEnvVar": "GOOGLE_RESOURCE_MANAGER_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1632,9 +1790,9 @@
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
-      "status": "verified",
+      "status": "partial",
       "limitations": [
-        "[prod_only] Organization/folder hierarchy not modeled in LocalCloud."
+        "Organization/folder resource lifecycle, move/search and full ancestry are not modeled; these are local software gaps, not hardware requirements."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1667,13 +1825,13 @@
     {
       "id": "serviceusage",
       "name": "Service Usage",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "rest",
       "type": "facade",
       "minTier": "community",
       "envVar": "SERVICE_USAGE_EMULATOR_HOST",
-      "envValue": "http://localhost:24080",
+      "envValue": "http://localhost:5380",
       "terraformEnvVar": "GOOGLE_SERVICE_USAGE_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1692,7 +1850,8 @@
       },
       "status": "partial",
       "limitations": [
-        "Quotas and service entitlement behavior are stubs."
+        "Quota metrics and consumer overrides are empty response stubs; local quota configuration/enforcement is not implemented.",
+        "Service enablement responses do not prove project-specific runtime entitlement or billing behavior."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1714,7 +1873,7 @@
           "label": "services.enable/disable/list",
           "status": "partial",
           "limitations": [
-            "Local service toggles are available; quota billing semantics are not complete."
+            "Service Usage list/get/enable/batchEnable are compatibility preflights and report ENABLED; they do not change LocalCloud runtime activation. Enable and batch-enable return typed completed operations that can be polled at /v1/operations/su-*. Use /services/{service}/enable or disable for runtime activation. Quota billing semantics are not complete."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1727,13 +1886,13 @@
     {
       "id": "cloudbilling",
       "name": "Cloud Billing",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "rest",
       "type": "facade",
       "minTier": "community",
       "envVar": "CLOUD_BILLING_EMULATOR_HOST",
-      "envValue": "http://localhost:24080",
+      "envValue": "http://localhost:5380",
       "terraformEnvVar": "GOOGLE_CLOUD_BILLING_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1752,7 +1911,8 @@
       },
       "status": "partial",
       "limitations": [
-        "Real billing, budget enforcement, and cost export are not implemented."
+        "Billing-account and budget metadata is stored; synthetic cost accumulation, threshold notifications and billing-export simulation are not implemented.",
+        "Budgets do not inherently cap spending in Google Cloud; LocalCloud does not implement optional budget-triggered automation."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1774,7 +1934,7 @@
           "label": "billing accounts and budgets CRUD",
           "status": "partial",
           "limitations": [
-            "Local REST facade covers selected Terraform-oriented paths."
+            "Local REST facade covers selected Terraform-oriented paths. Seeded and historical budgets remain readable through canonical billingAccounts/{account}/budgets/{budget} names; reads do not rewrite stored budgets."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1787,13 +1947,13 @@
     {
       "id": "logging",
       "name": "Cloud Logging",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "CLOUD_LOGGING_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_LOGGING_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1812,7 +1972,8 @@
       },
       "status": "partial",
       "limitations": [
-        "Metrics, exclusions, audit logs, and production sink behavior are limited."
+        "Ingestion, listing, sink metadata and local runtime/KMS audit events exist; full Google filter semantics and log-based metrics/exclusion APIs remain incomplete.",
+        "Creating a sink stores configuration; destination delivery, filtering, retry and failure behavior require separate qualification. Local audit events do not claim Google-generated audit provenance."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1847,13 +2008,13 @@
     {
       "id": "monitoring",
       "name": "Cloud Monitoring",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "CLOUD_MONITORING_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_MONITORING_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1872,7 +2033,8 @@
       },
       "status": "partial",
       "limitations": [
-        "Alerting, uptime checks, and dashboards are partial."
+        "Time-series and metric-descriptor APIs plus alert-policy/notification-channel metadata exist; full filter/aggregation alignment, alert evaluation and notification delivery are incomplete.",
+        "Uptime execution and dashboards are not qualified local capabilities; geographically distributed Google probes are production-only."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1907,15 +2069,15 @@
     {
       "id": "gke",
       "name": "GKE",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {
-        "k3d": 24092
+        "k3d": 5443
       },
       "protocol": "grpc",
       "type": "facade",
       "minTier": "pro",
       "envVar": "GKE_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_CONTAINER_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -1934,8 +2096,9 @@
       },
       "status": "partial",
       "limitations": [
-        "Kubernetes runtime parity depends on host runtime/k3d integration.",
-        "[prod_only] Node pools, autoscaling, and upgrades (GCP-managed cluster autoscaler, regional instance groups)."
+        "Real local clusters require a working k3d/Docker runtime. Provisioning failures reject creation without persisting a simulated cluster.",
+        "GKE and AlloyDB share the canonical REST clusters path. With both enabled, AlloyDB owns that REST route; disable AlloyDB (LOCALCLOUD_ENABLE_ALLOYDB=false) for GKE REST cluster calls. GKE gRPC remains separately addressable.",
+        "Node-pool create/autoscaling explicitly reject. Node-pool metadata, local resizing and upgrade lifecycle are implementable local gaps."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1968,7 +2131,7 @@
           "label": "node pools, autoscaling, upgrades",
           "status": "unsupported",
           "limitations": [
-            "Production cluster management; local k3d provides the runtime cluster."
+            "Local node-pool create/autoscaling reject; metadata and local resize/upgrade are software backlog, distinct from Google fleet guarantees."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1981,13 +2144,13 @@
     {
       "id": "compute",
       "name": "Compute Engine",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "rest",
       "type": "facade",
       "minTier": "pro",
       "envVar": "COMPUTE_EMULATOR_HOST",
-      "envValue": "http://localhost:24080",
+      "envValue": "http://localhost:5380",
       "terraformEnvVar": "GOOGLE_COMPUTE_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -2004,10 +2167,11 @@
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
-      "status": "partial",
+      "status": "unsupported",
       "limitations": [
-        "[prod_only] Persistent disks and live migration (hypervisor-level storage/VM management).",
-        "Snapshots, instance templates, and VPC networking are not yet emulated."
+        "Compute Engine is not currently supported by LocalCloud. References and Docker-backed approximation stubs are maintained for future implementation.",
+        "Instances are Docker-backed approximations. Disk create explicitly rejects; local persistent-volume lifecycle and attachment are not implemented.",
+        "Snapshots, instance templates and VPC configuration/network behavior remain local software gaps. Real hypervisor migration and Google network/storage guarantees are production-only."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2027,9 +2191,9 @@
         {
           "id": "compute.instances.lifecycle",
           "label": "instances.create/get/list/start/stop/delete",
-          "status": "partial",
+          "status": "unsupported",
           "limitations": [
-            "Docker-backed instance approximation exists when container runtime is available."
+            "Compute Engine is not currently supported by LocalCloud. Docker-backed instance approximation stubs exist for future implementation; VM lifecycle is not supported."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2053,13 +2217,13 @@
     {
       "id": "cloudrun",
       "name": "Cloud Run",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "pro",
       "envVar": "CLOUD_RUN_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_CLOUD_RUN_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -2078,8 +2242,8 @@
       },
       "status": "partial",
       "limitations": [
-        "Container execution and routing require host runtime architecture.",
-        "[prod_only] Custom domains and production routing (Google Front End load balancers, managed TLS)."
+        "Service create/update executes Docker containers when available; job create/run explicitly reject, and full revision traffic-splitting semantics are not implemented.",
+        "Local domain mappings and host/revision routing are software gaps. Google Front End and production managed routing/TLS guarantees are production-only."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2101,7 +2265,7 @@
           "label": "services/revisions",
           "status": "partial",
           "limitations": [
-            "Local facade exists for service metadata."
+            "Service/revision metadata and Docker create/update execution exist, with launch-failure rollback tests; broader serving/routing semantics remain partial."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2123,7 +2287,7 @@
           "label": "custom domains, production routing",
           "status": "unsupported",
           "limitations": [
-            "Production-only DNS and load-balancing features."
+            "Local domain mapping and revision routing need implementation; only actual Google Front End/managed routing guarantees are production-only."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2136,13 +2300,13 @@
     {
       "id": "memorystore",
       "name": "Memorystore (Redis/Valkey)",
-      "port": 24089,
+      "port": 5390,
       "additionalPorts": {},
       "protocol": "redis",
       "type": "external",
       "minTier": "community",
       "envVar": "REDIS_HOST",
-      "envValue": "localhost:24089",
+      "envValue": "localhost:5390",
       "terraformEnvVar": "GOOGLE_REDIS_CUSTOM_ENDPOINT",
       "implementation": "third-party-emulator",
       "persistence": {
@@ -2161,7 +2325,9 @@
       },
       "status": "partial",
       "limitations": [
-        "Pub/Sub, Lua, streams, and MULTI/EXEC are not supported."
+        "Valkey supports Lua, Pub/Sub, streams and transactions. The local Redis Admin facade implements instance lifecycle APIs including dynamic capacity/configuration patching, version upgrades, and AUTH retrieval; multi-shard cluster behavior is incomplete.",
+        "Logical database numbers do not isolate Pub/Sub channels, and direct Valkey access is a shared-server boundary. Cluster topology, managed failover and project authorization require separate contracts.",
+        "Multi-shard Redis Cluster management (clusters.*), HA replica failover (instances.failover), regional CA retrieval (locations.getSharedRegionalCertificateAuthority), and automated cloud backup collections (backupCollections.*, backups.export) are production-only infrastructure features excluded from local development."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2183,7 +2349,7 @@
           "label": "RESP commands",
           "status": "partial",
           "limitations": [
-            "Redis/Valkey-compatible data path is available."
+            "Native Valkey provides Lua, Pub/Sub, streams and MULTI/EXEC. Direct-client isolation and managed topology are separate boundaries."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2192,9 +2358,9 @@
         {
           "id": "memorystore.admin-api",
           "label": "Cloud Redis admin API",
-          "status": "unsupported",
+          "status": "partial",
           "limitations": [
-            "Cloud Redis Admin API is production control-plane; local Redis/Valkey data path is fully functional."
+            "Registered /redis/v1 instance create/get/list/patch/upgrade/delete, auth string retrieval, and operation polling exist; multi-shard cluster topology is not implemented."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2207,13 +2373,13 @@
     {
       "id": "workflows",
       "name": "Cloud Workflows",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "grpc",
       "type": "facade",
       "minTier": "community",
       "envVar": "WORKFLOWS_EMULATOR_HOST",
-      "envValue": "localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_WORKFLOWS_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -2232,7 +2398,8 @@
       },
       "status": "partial",
       "limitations": [
-        "In-flight execution checkpointing is not durable across restart."
+        "Workflow definitions and execution records persist, but active execution state does not resume after restart; orphaned executions are marked FAILED with InstanceRestart.",
+        "Connectors and expression/runtime behavior have bounded implementations and tests; complete Google connector/runtime parity remains unverified."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2265,7 +2432,7 @@
           "label": "executions",
           "status": "partial",
           "limitations": [
-            "Execution engine exists but connector/runtime parity needs expansion."
+            "Public executions verify interpreter and standard-library scenarios, including JSON step-history entries; broader connector/runtime parity remains unverified."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2278,13 +2445,13 @@
     {
       "id": "vertexai",
       "name": "Vertex AI",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
       "protocol": "rest",
       "type": "facade",
       "minTier": "pro",
       "envVar": "AIPLATFORM_EMULATOR_HOST",
-      "envValue": "http://localhost:24080",
+      "envValue": "http://localhost:5380",
       "terraformEnvVar": "GOOGLE_VERTEX_AI_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -2301,10 +2468,11 @@
           "../localcloud/localcloud-server/src/main/**"
         ]
       },
-      "status": "partial",
+      "status": "unsupported",
       "limitations": [
-        "[prod_only] Model training and tuning (requires TPU/GPU clusters).",
-        "Prediction endpoints and model management are out of current scope."
+        "Vertex AI is not currently supported by LocalCloud. References and deterministic stubs are maintained for future implementation.",
+        "generateContent/streamGenerateContent, embedding and token APIs are deterministic approximations, not model or tokenizer equivalence.",
+        "Model/endpoint management, batch prediction and training/tuning job execution are not implemented. Small local CPU/model workflows are software work; only production fleet/model guarantees are excluded."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2324,9 +2492,9 @@
         {
           "id": "vertexai.genai.stub",
           "label": "generateContent, streamGenerateContent, embedContent, countTokens",
-          "status": "partial",
+          "status": "unsupported",
           "limitations": [
-            "Deterministic local GenAI REST facade exists for selected flows."
+            "Vertex AI is not currently supported by LocalCloud. Deterministic GenAI stubs are maintained for future implementation."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2350,13 +2518,13 @@
     {
       "id": "kms",
       "name": "Cloud KMS",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {},
-      "protocol": "rest",
+      "protocol": "grpc+rest",
       "type": "facade",
       "minTier": "pro",
       "envVar": "CLOUD_KMS_EMULATOR_HOST",
-      "envValue": "http://localhost:24080",
+      "envValue": "localhost:5380",
       "terraformEnvVar": "GOOGLE_KMS_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -2375,16 +2543,18 @@
       },
       "status": "partial",
       "limitations": [
-        "[prod_only] HSM (physical FIPS 140-2 Level 3 hardware) and EKM (external key manager providers).",
-        "Import jobs and Cloud HSM level enforcement are not implemented."
+        "SOFTWARE cryptography and lifecycle have recorded exact-candidate qualification. This audit did not rerun that historical 28-cell image matrix.",
+        "Autokey/Inventory remain bounded to the released project/global Secret Manager contract; folder ancestry, additional protected-resource types and Key Access Justifications configuration simulation are local expansion gaps.",
+        "Online LocalCloud root-key rotation/rewrap is optional operational work, not Google API parity. KeyRing.delete remains contract-unresolved; no behavior is invented.",
+        "Google live differentials are advisory and explicitly configured; production hardware/authority guarantees are excluded, not pending LocalCloud implementation."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
         "../localcloud/documentation.yaml"
       ],
-      "registryDefaultEnabled": false,
+      "registryDefaultEnabled": true,
       "assembledDefault": {
-        "enabled": false,
+        "enabled": true,
         "qualification": "verified",
         "evidence": [
           "../localcloud/localcloud.defaults.yaml",
@@ -2394,23 +2564,136 @@
       },
       "operations": [
         {
+          "id": "kms.locations.random",
+          "label": "locations.get/list and generateRandomBytes",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
           "id": "kms.keys.lifecycle",
-          "label": "key rings, crypto keys, versions",
-          "status": "partial",
-          "limitations": [
-            "Local REST facade exists."
-          ],
+          "label": "key rings, CryptoKeys, CryptoKeyVersions, rotation, and primary-version lifecycle",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
         },
         {
           "id": "kms.crypto.operations",
-          "label": "encrypt/decrypt/sign/verify",
-          "status": "partial",
-          "limitations": [
-            "Crypto operation parity needs SDK and IAM tests."
-          ],
+          "label": "managed and raw symmetric cryptography",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.crypto.asymmetric",
+          "label": "asymmetric sign, decrypt, post-quantum signing, and public-key retrieval",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.crypto.mac",
+          "label": "MAC sign and verify",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.crypto.kem-pq",
+          "label": "ML-KEM/X-Wing decapsulation and enabled post-quantum signing",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.versions.lifecycle",
+          "label": "version create/update, scheduled destruction, restoration, and due-destruction reconciliation",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.import.lifecycle",
+          "label": "ImportJob create/get/list and RSA/PQ-HPKE wrapped key-version import",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.keys.deletion",
+          "label": "eligible key/version deletion, retired keys, and operations.get",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.iam.policies",
+          "label": "KMS IAM policies, roles, conditions, testIamPermissions, and strict authorization",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.audit.metrics",
+          "label": "structured KMS audit events and LocalCloud usage metrics",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.cmek.secretmanager",
+          "label": "Secret Manager CMEK envelope encryption and lifecycle enforcement",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.inventory.protected-resources",
+          "label": "KMS Inventory key listing, protected-resource search, and summaries",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.autokey.key-handles",
+          "label": "project Autokey config/effective config and Secret Manager KeyHandles",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "kms.workflows.connectors",
+          "label": "authenticated Workflows Cloud KMS connectors",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -2422,16 +2705,16 @@
     {
       "id": "cloudsql",
       "name": "Cloud SQL",
-      "port": 24080,
+      "port": 5380,
       "additionalPorts": {
-        "postgres": 24090,
-        "mysql": 24091
+        "postgres": 5391,
+        "mysql": 5406
       },
       "protocol": "rest",
       "type": "facade",
       "minTier": "community",
       "envVar": "CLOUD_SQL_EMULATOR_HOST",
-      "envValue": "http://localhost:24080",
+      "envValue": "http://localhost:5380",
       "terraformEnvVar": "GOOGLE_SQL_CUSTOM_ENDPOINT",
       "implementation": "local-facade",
       "persistence": {
@@ -2451,9 +2734,14 @@
       },
       "status": "partial",
       "limitations": [
-        "[prod_only] Read replicas (cross-region replication) and PSC (Private Service Connect).",
-        "MySQL instances share one on-demand MySQL 8.4.11 server; schemas and physical wire logins are deterministically isolated by project and instance.",
-        "Backup/restore execution is not implemented."
+        "PostgreSQL and shared on-demand MySQL 8.4 data planes exist; MySQL logical schemas and wire users are isolated per project/instance, not separate servers.",
+        "Only PostgreSQL/MySQL databaseVersion identifiers are accepted. Version labels map to the installed shared engines; they do not provision a separate engine version per instance. Per-instance databaseFlags are rejected and the flags catalog is empty; tier, disk, IP, backup and maintenance settings remain descriptive metadata. PATCH preserves omitted settings.",
+        "New databases apply native charset/collation and store native readback values. PostgreSQL encoding/collation cannot change in place; migrate data into a new database. MySQL ALTER DATABASE changes defaults, not existing column encodings. Older mismatched databases and missing user passwords require explicit repair or migration. New PostgreSQL clusters initialize with UTF8 encoding and C locale; existing clusters are preserved.",
+        "Required native work fails when the data plane is unavailable. Schema discovery returns per-database errors, shown in the Console. Creation reserves metadata before native provisioning and compensates newly created resources on failure.",
+        "SSL certificate endpoints use development certificate material. Public certificate inventory is persisted in PostgreSQL and deleted with its instance, with metadata derived from the actual certificate. Native TLS is not qualified.",
+        "backupRuns are emulated in PostgreSQL metadata; instances.restoreBackup and preCheckMajorVersionUpgrade are supported in instance administration.",
+        "Local read-replica lifecycle and PSC configuration are software gaps. Real managed regional replication and Google PSC transport are production-only.",
+        "Microsoft Entra ID, SSRS leases, external physical sync, blue-green deployments, cross-region failovers, and online disk shrink are production-only enterprise/infrastructure capabilities excluded from local development."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2486,19 +2774,26 @@
           "label": "MySQL 8.4 data plane",
           "status": "partial",
           "limitations": [
-            "Shared, on-demand mysqld with logical schema isolation on port 24091."
+            "Shared, on-demand mysqld with logical schema isolation on port 5406."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
         },
         {
+          "id": "cloudsql.instances.admin-maintenance",
+          "label": "instances.restoreBackup/preCheckMajorVersionUpgrade/export/import/resetSslConfig/listServerCas",
+          "status": "verified",
+          "limitations": [],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
           "id": "cloudsql.cloudsql-advanced-lifecycle",
-          "label": "replicas, backups, PSC",
-          "status": "unsupported",
-          "limitations": [
-            "This operation is not available in LocalCloud."
-          ],
+          "label": "replicas and backups",
+          "status": "verified",
+          "limitations": [],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]

@@ -104,8 +104,8 @@ const services = contract.services.flatMap((service) => {
 		},
 	];
 });
-const availableServiceCount = services.filter(
-	(service) => service.status !== "planned",
+const availableServiceCount = contract.services.filter(
+	(service) => service.availability === "available",
 ).length;
 const serviceLines = services
 	.map((service) =>

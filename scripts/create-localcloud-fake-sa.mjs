@@ -23,10 +23,10 @@ const credential = {
   private_key: privateKey,
   client_email: 'developer@localcloud.iam.gserviceaccount.com',
   client_id: '123456',
-  auth_uri: 'http://localhost:24080/oauth2/auth',
-  token_uri: 'http://localhost:24080/oauth2/token',
-  auth_provider_x509_cert_url: 'http://localhost:24080/oauth2/v1/certs',
-  client_x509_cert_url: 'http://localhost:24080/robot/v1/metadata/x509/developer%40localcloud.iam.gserviceaccount.com',
+  auth_uri: 'http://localhost:5380/oauth2/auth',
+  token_uri: 'http://localhost:5380/oauth2/token',
+  auth_provider_x509_cert_url: 'http://localhost:5380/oauth2/v1/certs',
+  client_x509_cert_url: 'http://localhost:5380/robot/v1/metadata/x509/developer%40localcloud.iam.gserviceaccount.com',
 };
 
 await writeFile(resolve(outputPath), `${JSON.stringify(credential, null, 2)}\n`, { mode: 0o600 });

@@ -1,9 +1,10 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Configuration
-description: Configure LocalCloud projects, services, storage, TLS, and runtime behavior.
+description: Configure LocalCloud projects, services, storage, TLS, and service-owned runtime behavior.
 ---
 
+import Callout from '../../components/Callout.astro';
 import { docsContract } from '../../data/docs-contract';
 
 # Configuration
@@ -17,7 +18,7 @@ eval "$(localcloud env)"
 
 ## Create `localcloud.yaml`
 
-The current configuration format is versioned and grouped by purpose:
+The configuration format is versioned (`version: 1`) and logically structured by lifecycle scope:
 
 ```yaml
 version: 1
@@ -34,12 +35,20 @@ host:
   transparent_network: false
   environment: {}
 
+tls:
+  enabled: false
+  port: 5381
+
 services:
   enabled: default
 
 server:
+  gateway:
+    port: 5380
   logging:
     verbosity: info
+  persistence: true
+  auto_seed: true
 ```
 
 Run `localcloud start` from the directory containing the file, or pass another file explicitly:
@@ -48,33 +57,50 @@ Run `localcloud start` from the directory containing the file, or pass another f
 localcloud start ./config/personal-localcloud.yaml
 ```
 
-LocalCloud chooses a file in this order: the path passed on the command line, `LOCALCLOUD_CONFIG`, `./localcloud.yaml`, the selected runtime's remembered file, then built-in defaults. Command-line options such as `--memory`, `--services`, `--data-volume`, `--project-id`, and `--user` take precedence over file values.
+LocalCloud resolves configuration in a strict precedence order:
+1. Command-line flags (`--memory`, `--services`, `--data-volume`, `--project-id`, `--user`)
+2. Environment variable `LOCALCLOUD_CONFIG`
+3. Current working directory `./localcloud.yaml`
+4. The active runtime profile's persisted configuration
+5. Built-in defaults packaged with the Docker image
 
-Older flat keys such as `project:`, `data_volume:`, and a scalar `services:` are no longer accepted. Use `context.project`, `host.data_volume`, and `services.enabled` as shown above.
+<Callout type="note" title="Schema Migration">
+Legacy flat top-level keys such as <code>project:</code>, <code>data_volume:</code>, and <code>server.iam:</code> are rejected. Use hierarchical keys: <code>context.project</code>, <code>host.data_volume</code>, and service-owned configurations under <code>services.catalog.&lt;service&gt;.config</code>.
+</Callout>
+
+---
 
 ## Select services
 
-Use the built-in set:
+Use the default service bundle (starts 22 core services):
 
 ```yaml
 services:
   enabled: default
 ```
 
-Or start only the services you need:
+Or declare an explicit list of services to run:
 
 ```yaml
 services:
   enabled:
     - gcs
-    - firestore
+    - bigquery
+    - spanner
     - pubsub
 ```
 
-All 27 listed services are available, but only 21 start by default. Firestore is available and disabled by default because seed loading is not complete. Pro services also depend on the license tier available to the running image.
+All 27 services are available in the runtime catalog, and **22 start by default**. Five services are disabled by default (`firestore`, `gke`, `compute`, `cloudrun`, `vertexai`) because they require dedicated child container orchestration, localized image pulling, or specialized seed data contracts.
 
 <table>
-  <thead><tr><th>Service ID</th><th>Service</th><th>Starts by default</th><th>Minimum tier</th></tr></thead>
+  <thead>
+    <tr>
+      <th>Service ID</th>
+      <th>Service Name</th>
+      <th>Starts by Default</th>
+      <th>Minimum License Tier</th>
+    </tr>
+  </thead>
   <tbody>
     {docsContract.services.map((service) => (
       <tr>
@@ -87,99 +113,116 @@ All 27 listed services are available, but only 21 start by default. Firestore is
   </tbody>
 </table>
 
-## Projects and local identity
+---
 
-`context.project` sets the runtime's default project. `context.user` sets the local caller used by the CLI. You can override either for a command:
+## Service-owned runtime configuration
 
-```bash
-localcloud start --project-id personal-demo --user alice
-eval "$(localcloud env --project-id personal-demo --user alice)"
-```
-
-The Docker volume is the durable runtime identity. Use a different volume when you want isolated local data:
-
-```yaml
-host:
-  data_volume: localcloud-experiment
-```
-
-The CLI does not remove or relabel Docker resources it does not own.
-
-## Runtime settings
-
-Settings under `server` are merged with the runtime defaults. For example:
+LocalCloud delegates service tuning to service-owned runtime config blocks under `services.catalog.<id>.config`. You can customize resource budgets, logging levels, and engine behavior without rebuilding container images:
 
 ```yaml
 version: 1
-server:
-  persistence: true
-  auto_seed: true
-  iam:
-    mode: permissive
-  logging:
-    verbosity: debug
+
+services:
+  catalog:
+    bigquery:
+      config:
+        memory_limit: 1GB
+        threads: 4
+        log_level: info
+    memorystore:
+      config:
+        max_memory: 1gb
+        max_memory_policy: volatile-lru
+    cloudsql:
+      config:
+        mysql_max_connections: 100
+        mysql_innodb_buffer_pool_size: 128M
+    cloudiam:
+      config:
+        mode: open
+        log_warnings: true
+    spanner:
+      config:
+        backup_enabled: true
+        backup_interval_seconds: 60
 ```
 
-Common environment overrides remain available:
+### Supported service settings
+
+| Service | Setting Key | Default | Description |
+| :--- | :--- | :--- | :--- |
+| **BigQuery** | `memory_limit` | `512MB` | Maximum DuckDB columnar OLAP memory budget. |
+| | `threads` | `2` | Worker threads allocated for analytical query execution. |
+| | `log_level` | `info` | Logging verbosity for the GoogleSQL engine. |
+| **Cloud IAM** | `mode` | `open` | IAM evaluation mode (`open`, `permissive`, or `strict`). |
+| | `log_warnings` | `true` | Log evaluation warnings for missing or partial roles. |
+| **Cloud SQL** | `mysql_max_connections` | `50` | Connection pool limit for MySQL 8.4 companion. |
+| | `mysql_innodb_buffer_pool_size` | `64M` | Memory pool allocated for MySQL InnoDB caching. |
+| **Memorystore** | `max_memory` | `512mb` | Redis memory capacity limit. |
+| | `max_memory_policy` | `noeviction` | Eviction strategy when memory limit is reached. |
+| **Spanner** | `backup_enabled` | `false` | Enable automated background backup schedule worker. |
+| | `backup_interval_seconds`| `60` | Sweep interval for backup schedules. |
+
+---
+
+## Environment variable overrides
+
+Environment variables take precedence over `localcloud.yaml` settings. Follow the canonical `LOCALCLOUD_<SERVICE>_<KEY>` naming convention:
 
 | Variable | Default | Purpose |
-| --- | --- | --- |
-| `LOCALCLOUD_PROJECT` | `local-gcp-project` | Default project for requests that do not select one. |
-| `LOCALCLOUD_DATA_DIR` | `/var/lib/localcloud` | Runtime data directory inside the container. |
-| `LOCALCLOUD_PERSISTENCE` | `true` | Retain supported service data on the mounted volume. |
-| `LOCALCLOUD_SERVICES` | default set | Complete comma-separated enabled-service list. |
-| `LOCALCLOUD_SEED_FILE` | `/etc/localcloud/seed.yaml` | Seed file used at startup and by reseed operations. |
-| `LOCALCLOUD_IAM_MODE` | `permissive` | `permissive`, `strict`, or `gcp-live`. |
-| `LOCALCLOUD_TELEMETRY` | `true` | Runtime telemetry preference; see [Privacy](/docs/privacy/). |
+| :--- | :--- | :--- |
+| `LOCALCLOUD_PROJECT` | `local-gcp-project` | Default Google Cloud project ID. |
+| `LOCALCLOUD_DATA_DIR` | `/var/lib/localcloud` | Base path for persistent emulator data inside the container. |
+| `LOCALCLOUD_PERSISTENCE` | `true` | Retain state across container restarts on mounted volumes. |
+| `LOCALCLOUD_SERVICES` | `default` | Comma-separated list of enabled service IDs. |
+| `LOCALCLOUD_IAM_MODE` | `open` | Default Cloud IAM evaluation mode (`open`, `permissive`, `strict`). |
+| `LOCALCLOUD_BIGQUERY_MEMORY_LIMIT` | `512MB` | Override BigQuery DuckDB memory budget. |
+| `LOCALCLOUD_TELEMETRY` | `true` | Anonymous runtime diagnostic metrics preference. |
 
-Place CLI-managed environment overrides under `host.environment`:
+You can also specify environment variables inside `localcloud.yaml` under `host.environment`:
 
 ```yaml
 host:
   environment:
     LOCALCLOUD_TELEMETRY: "false"
+    LOCALCLOUD_BIGQUERY_MEMORY_LIMIT: "2GB"
 ```
+
+---
 
 ## TLS and transparent networking
 
-The CLI enables gateway TLS unless you pass `--no-tls`. Transparent networking is separate and remains off by default.
+LocalCloud provides native TLS termination on port **5381** (or custom configured port):
 
 ```yaml
 version: 1
-host:
-  transparent_network: true
+
 tls:
   enabled: true
-  port: 24443
+  port: 5381
+
+host:
+  transparent_network: false
 ```
 
-Transparent mode uses host port `53/udp` for scoped DNS, host port `80` for gateway HTTP, and host port `443` for gateway HTTPS. It requires privileged host changes and certificate trust. Follow the [Terraform guide](/docs/terraform/) when a client cannot use generated custom endpoints.
+- **Loopback Ports (Default)**: Services listen on published canonical ports **5380–5405**. Client SDKs connect via environment variables (e.g. `STORAGE_EMULATOR_HOST=localhost:5382`).
+- **Transparent Networking**: Uses local DNS on UDP port `5410` (mapped to host `53/udp`), routing standard Google Cloud domains (`storage.googleapis.com`, `bigquery.googleapis.com`) directly to LocalCloud.
 
-## Connect applications
+---
 
-Always use values generated by the running CLI because occupied host ports may be remapped:
+## Manual Docker execution
 
-```bash
-eval "$(localcloud env)"
-localcloud env --format json
-localcloud env --format terraform
-localcloud env --format docker-compose
-```
-
-Stop if an application tries to contact real Google Cloud instead of adding production credentials to a local workflow.
-
-## Manual Docker Compose
-
-On a host where the CLI is unavailable, this loopback-only setup uses the runtime's canonical service ports:
+If running without the LocalCloud CLI, launch the container using the canonical **5380–5405** port range:
 
 ```yaml
 services:
   localcloud:
     image: jaysen2apache/localcloud:latest
     ports:
-      - "127.0.0.1:24080-24092:24080-24092"
+      - "127.0.0.1:5380-5405:5380-5405"
     environment:
       LOCALCLOUD_PROJECT: local-gcp-project
+      LOCALCLOUD_PERSISTENCE: "true"
     volumes:
       - localcloud-data:/var/lib/localcloud
     deploy:
@@ -190,5 +233,3 @@ services:
 volumes:
   localcloud-data:
 ```
-
-The Docker socket and transparent host routing are not part of the beginner setup. Keep the runtime bound to loopback and review the [governing license](/docs/licensing/) before use.

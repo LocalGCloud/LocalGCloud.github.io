@@ -302,14 +302,14 @@ const structuredData = [
           <span class="site-kicker">Google's individual emulators</span>
           <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code class="text-[0.8rem] leading-[1.7]"># Pub/Sub
 gcloud components install pubsub-emulator
-gcloud beta emulators pubsub start --host-port=localhost:24082
+gcloud beta emulators pubsub start --host-port=localhost:5383
 
 # Firestore
-gcloud beta emulators firestore start --host-port=localhost:24083
+gcloud beta emulators firestore start --host-port=localhost:5384
 
 # Spanner
 gcloud components install spanner-emulator
-gcloud emulators spanner start --host-port=localhost:24085
+gcloud emulators spanner start --host-port=localhost:5386
 
 # These are separate emulator processes.
 # This comparison does not claim an exhaustive vendor count.</code></pre>

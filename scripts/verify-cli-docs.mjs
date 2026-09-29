@@ -101,7 +101,7 @@ assert(
 	"tutorial must identify the documented CLI release and show how to check it",
 );
 assert(
-	tutorial.includes("127.0.0.1:24080-24092:24080-24092"),
+	tutorial.includes("127.0.0.1:5380-5405:5380-5405"),
 	"manual Docker fallback is not loopback-bound",
 );
 assert(
@@ -204,7 +204,7 @@ assert(
 for (const path of ["src/pages/docs/architecture.mdx", "src/pages/docs/terraform.mdx"]) {
 	const source = sources.get(path);
 	assert(!source.includes("24094") && !source.includes("24095"), `${path} retains retired transparent-network ports`);
-	assert(source.includes("24443"), `${path} omits native TLS default port`);
+	assert(source.includes("5381"), `${path} omits native TLS default port`);
 }
 
 const catalogSurfaces = [

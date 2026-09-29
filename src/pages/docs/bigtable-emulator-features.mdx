@@ -21,8 +21,8 @@ LocalCloud builds from a mutable `v0.0.1` input with checksum verification disab
 
 | Surface | Value | Boundary |
 | --- | --- | --- |
-| Primary API | gRPC on `localhost:24084` | Standard unauthenticated emulator endpoint. |
-| SDK variable | `BIGTABLE_EMULATOR_HOST=localhost:24084` | Client compatibility must still be tested per SDK/version. |
+| Primary API | gRPC on `localhost:5385` | Standard unauthenticated emulator endpoint. |
+| SDK variable | `BIGTABLE_EMULATOR_HOST=localhost:5385` | Client compatibility must still be tested per SDK/version. |
 | LocalCloud backing store | PostgreSQL under the mounted `/var/lib/localcloud` volume | The standalone cached artifact can also use SQLite; LocalCloud Docker is configured for PostgreSQL. |
 | Aggregate state | `release-unverified` | No identified assembled image qualification exists. |
 

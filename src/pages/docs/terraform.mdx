@@ -32,12 +32,12 @@ host:
 localcloud start
 eval "$(localcloud env --format terraform)"
 export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.localcloud/fake-service-account.json"
-curl -fsS http://localhost:24080/terraform/readiness?mode=endpoint
+curl -fsS http://localhost:5380/terraform/readiness?mode=endpoint
 terraform init
 terraform plan
 ```
 
-When the CLI remaps the gateway port, use the readiness URL it returns rather than hard-coding `24080`.
+When the CLI remaps the gateway port, use the readiness URL it returns rather than hard-coding `5380`.
 
 ### Transparent network
 
@@ -52,21 +52,21 @@ host:
     LOCALCLOUD_TERRAFORM_MODE: "true"
 tls:
   enabled: true
-  port: 24443
+  port: 5381
 ```
 
 It requires:
 
 - transparent networking enabled at start;
 - host DNS routing for the required `*.googleapis.com` names;
-- host `53/udp` routed to container `24093/udp`, host `80` routed to gateway `24080`, and host `443` routed to `tls.port` (default `24443`);
+- host `53/udp` routed to container `5410/udp`, host `80` routed to gateway `5380`, and host `443` routed to `tls.port` (default `5381`);
 - the LocalCloud CA trusted by the Terraform process; and
 - `LOCALCLOUD_TERRAFORM_MODE=true` in the runtime.
 
 Verify the dedicated gate:
 
 ```bash
-curl -fsS http://localhost:24080/terraform/readiness?mode=transparent
+curl -fsS http://localhost:5380/terraform/readiness?mode=transparent
 ```
 
 These host/network changes can affect other processes. Use an isolated personal environment and remove the DNS/trust configuration afterward.
@@ -112,19 +112,19 @@ Use a non-production backend and project. Keep LocalCloud endpoint variables sco
 Generate the complete values from the running LocalCloud runtime:
 
 ```bash
-eval "$(curl -fsS 'http://localhost:24080/env?format=terraform')"
+eval "$(curl -fsS 'http://localhost:5380/env?format=terraform')"
 ```
 
 Important generated shapes include:
 
 | Variable | Canonical value/shape | Note |
 | --- | --- | --- |
-| `GOOGLE_STORAGE_CUSTOM_ENDPOINT` | `http://localhost:24081/storage/v1/` | Includes the Storage API path and trailing slash. |
-| `GOOGLE_PUBSUB_CUSTOM_ENDPOINT` | `http://localhost:24080/` | Uses the gateway, not direct emulator port `24082`. |
-| `GOOGLE_BIGTABLE_CUSTOM_ENDPOINT` | `http://localhost:24080/` | Terraform REST path uses the gateway; `BIGTABLE_EMULATOR_HOST` remains separately exported. |
-| `GOOGLE_SPANNER_CUSTOM_ENDPOINT` | `http://localhost:24086/v1/` | Port `24086` is REST/grpc-gateway, not PostgreSQL wire. |
-| `GOOGLE_CLOUD_TASKS_CUSTOM_ENDPOINT` | `http://localhost:24080/v2/` | Facade-specific version prefix. |
-| `GOOGLE_BIGQUERY_CUSTOM_ENDPOINT` | `http://localhost:24087/` | The maintained provider path ignores this override; use transparent routing. |
+| `GOOGLE_STORAGE_CUSTOM_ENDPOINT` | `http://localhost:5382/storage/v1/` | Includes the Storage API path and trailing slash. |
+| `GOOGLE_PUBSUB_CUSTOM_ENDPOINT` | `http://localhost:5380/` | Uses the gateway, not direct emulator port `5383`. |
+| `GOOGLE_BIGTABLE_CUSTOM_ENDPOINT` | `http://localhost:5380/` | Terraform REST path uses the gateway; `BIGTABLE_EMULATOR_HOST` remains separately exported. |
+| `GOOGLE_SPANNER_CUSTOM_ENDPOINT` | `http://localhost:5387/v1/` | Port `5387` is REST/grpc-gateway, not PostgreSQL wire. |
+| `GOOGLE_CLOUD_TASKS_CUSTOM_ENDPOINT` | `http://localhost:5380/v2/` | Facade-specific version prefix. |
+| `GOOGLE_BIGQUERY_CUSTOM_ENDPOINT` | `http://localhost:5388/` | The maintained provider path ignores this override; use transparent routing. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | `/dev/null` in generated output | Override it with the valid fake JSON file for provider v7. |
 
 Do not hand-maintain a complete endpoint table; `/env?format=terraform` is derived from the enabled runtime registry and may include additional facade-specific paths.

@@ -1,0 +1,30 @@
+---
+interface Props {
+  status: 'running' | 'starting' | 'stopped' | 'degraded' | 'error';
+  size?: number;
+  class?: string;
+  decorative?: boolean;
+}
+
+const {
+  status,
+  size = 18,
+  class: className = '',
+  decorative = true,
+} = Astro.props;
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+const src = `${base}icons/status/status-${status}.svg`;
+---
+
+<img
+  src={src}
+  alt={decorative ? `${status} status indicator` : `${status} status indicator`}
+  width={size}
+  height={size}
+  class={className}
+  style="object-fit: contain;"
+  loading="lazy"
+  aria-hidden={decorative ? 'true' : undefined}
+/>
