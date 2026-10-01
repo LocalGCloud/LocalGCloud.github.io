@@ -1,8 +1,8 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-09-29",
+  "reviewedAt": "2026-09-30",
   "provenance": {
-    "runtimeRevision": "58aa43a3fca4e7b6a0d392fb05c7d7cf5d52d928",
+    "runtimeRevision": "f348c3009c9c997efcdc30cf09f22ec90c8d379d",
     "cliRevision": "1c5f561635859af90d4273b7232574840f5a68d5",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
@@ -59,19 +59,19 @@
     ],
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
-      "../localcloud/localcloud.defaults.yaml": "sha256:10f4d4f11bdb3abc7a07a0faabbcf26c702bbce2c18f98d9b3de6d61019c004c",
-      "../localcloud/documentation.yaml": "sha256:d56b346bbe983598cb4312b9fb03b7817973020ce71c991957c3fd525999f286",
+      "../localcloud/localcloud.defaults.yaml": "sha256:6c24a1405263e61e9251c9838244df3d9e8c8c839ffa665abf74c94dc8d39032",
+      "../localcloud/documentation.yaml": "sha256:7da3363822cfc7ff1e35ee065d1564c8d2ee246db5c0a4d0526487c1abc5e280",
       "../localcloud/docs/status/service-status.md": "sha256:0ed7b7211549175ad0e2842d137968ec47b7bfddf94098fdd764733e950a7ac1",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:f3e1e2fb2cb214e2b220371ca260d1b3b259ac4046f2d49cb0a47fe81481573b",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:4496c468c3f7bf2b46225498892d537ef87578e07a02e279ee00ca3e230427a5",
-      "../localcloud/specs/api/catalog.json": "sha256:1fd8a1124bad9a3d1736426b20047b247b0465f9e07f3a611c6387978cb811ff",
-      "../localcloud/Dockerfile": "sha256:ff8e7841b2cad8cab575482944319203180a85b91d3297f84520666f7ea890c1",
+      "../localcloud/specs/api/catalog.json": "sha256:3aaacef6fea951a3d4161fa5b90e3257a3f8b52123e7283766a944b2406c4df2",
+      "../localcloud/Dockerfile": "sha256:e34f9e36efc58fc41265296a6d4b55ed3ded0a29128f4d13cdfcf40cf8ad8f70",
       "../localcloud/LICENSE": "sha256:26e7152b644b9594f95335784453e7d79b89711a7af4d94811fbe14de1ea7a10",
-      "../localcloud/docker/bigquery-start.sh": "sha256:85148574da79c325cbc656df6e90f8f4ec531cdd0f5ceb32c39afd10d07fd6ed",
+      "../localcloud/docker/bigquery-start.sh": "sha256:987e13b3a9cc853f8590259cd32b0131df141b900c4c0fec0cfa9e3562973f9e",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:d598410c054998229e5763a35e5eac7b18595b4ede8558890ad9adaa731fd6ae",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:fcfbe0a7977d5cca533cc0271a04145bec10418201b1a6480119a1c0c1109190",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:206af36e3caf9c0f4dc012d9ed3564d5839c17149532ac913460579b2e25bd21",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:83878b710a1198c6ec89c5eedc8a3c31a774f9844a7f4e715615deacab4b222e",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:09a420ea6b9b9b3e39b898f62df9f08570b9b920a20673f0c173d1878065e50d",
       "../localcloud-cli/README.md": "sha256:498c3dc908789eba2ba05e78b2ffe66eb8d2884fb3868038751accdf515c365b",
       "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c2db3ed46e034f468327aa49d3a44874f06b25187339d29ea03013fc4abd6e14",
       "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:d206674dd5d481e1fa752d662bb641ac6463a9a1ec8a38cf3f2aa5d53fbfa507",
@@ -79,7 +79,13 @@
       "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:d505d66829fb6aaaaea36543d2c8a19140e0cee0f8f7667155a8f0e86208130e",
       "public/install.sh": "sha256:2c660fac584a1db052ef80956c0001fa6d71034fceb1e6617f81965741bcc796"
     },
-    "worktreeSources": []
+    "worktreeSources": [
+      "../localcloud/localcloud.defaults.yaml",
+      "../localcloud/documentation.yaml",
+      "../localcloud/specs/api/catalog.json",
+      "../localcloud/Dockerfile",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java"
+    ]
   },
   "product": {
     "name": "LocalCloud",
@@ -668,7 +674,9 @@
           "id": "pubsub.message.workflow",
           "label": "publish/pull/ack/modifyAckDeadline",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "StreamingPull protocol version one receives empty keepalive responses independently of message flow-control capacity. Protocol version is negotiated only on the initial request."
+          ],
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
@@ -868,7 +876,7 @@
           "label": "cbt CLI compatibility",
           "status": "verified",
           "limitations": [
-            "The `cbt` CLI works with BIGTABLE_EMULATOR_HOST env var.\nInstance CRUD (create/list/get/delete instance) now supported via gRPC.\nTable and row operations work as expected.\n"
+            "The `cbt` CLI works with BIGTABLE_EMULATOR_HOST env var.\nArbitrary project and instance IDs are accepted on-demand without pre-registration, matching Google Cloud SDK CBT emulator behavior.\nThe gRPC data plane accepts requests without an authorization header or credential provider.\nInstance CRUD (create/list/get/delete instance) is supported via gRPC.\nTable and row operations work as expected.\n"
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1892,7 +1900,7 @@
           "label": "projects.create/list/get/update/delete",
           "status": "verified",
           "limitations": [
-            "The v1 facade accepts name and the v3 facade accepts displayName for the project display name. Create and delete return completed crm-prefixed operations that can be polled without intercepting Service Usage operations."
+            "The v1 facade accepts name and the v3 facade accepts displayName for the project display name. Create and delete return completed crm-prefixed operations that can be polled without intercepting Service Usage operations. When server.auto_provision_projects is enabled (default true) and strict mode is inactive, incoming requests to any LocalCloud service (BigQuery, Bigtable, Pub/Sub, Storage, Firestore, etc.) automatically provision unrecorded projects on first touch. When strict mode is activated (e.g. cloudiam.mode is strict or gcp-live), auto-provisioning is deactivated to enforce policy."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -3005,6 +3013,6 @@
         "notes": "Native source-overlay 2026-09-27: pinned aggregate signature 2061, point union with duplicate removal, empty/no rows, fail-closed nonpoint/all-NULL and modifier cases, REST GEOGRAPHY publication. The previous array-scan refusal does not describe this bounded native path. Grouped point inputs pass; GEOGRAPHY-valued UNNEST array scans remain refused by the relation spine. 2026-09-28 validation: partial. Supported subset: point-only and polygon-only groups union with S2. Remaining boundary: Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused."
       }
     ],
-    "revision": "f91f3f5b80074de36560266ca3d7228cb3df30e4"
+    "revision": "22d9cecfc4c44097dbf41f434f0da148aa65c917"
   }
 }

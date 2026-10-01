@@ -55,22 +55,22 @@ const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
     </div>
   )}
   {labels.length > 1 && (
-    <div id={`${id}-panel-1`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="1" aria-labelledby={`${id}-tab-1`}>
+    <div id={`${id}-panel-1`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="1" aria-labelledby={`${id}-tab-1`} hidden>
       <slot name="tab-1" />
     </div>
   )}
   {labels.length > 2 && (
-    <div id={`${id}-panel-2`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="2" aria-labelledby={`${id}-tab-2`}>
+    <div id={`${id}-panel-2`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="2" aria-labelledby={`${id}-tab-2`} hidden>
       <slot name="tab-2" />
     </div>
   )}
   {labels.length > 3 && (
-    <div id={`${id}-panel-3`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="3" aria-labelledby={`${id}-tab-3`}>
+    <div id={`${id}-panel-3`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="3" aria-labelledby={`${id}-tab-3`} hidden>
       <slot name="tab-3" />
     </div>
   )}
   {labels.length > 4 && (
-    <div id={`${id}-panel-4`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="4" aria-labelledby={`${id}-tab-4`}>
+    <div id={`${id}-panel-4`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="4" aria-labelledby={`${id}-tab-4`} hidden>
       <slot name="tab-4" />
     </div>
   )}
@@ -94,7 +94,13 @@ const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
           t.setAttribute('tabindex', isActive ? '0' : '-1');
         });
         panels.forEach((p) => {
-          p.classList.toggle('is-hidden', p.getAttribute('data-panel-index') !== idx);
+          const isHidden = p.getAttribute('data-panel-index') !== idx;
+          p.classList.toggle('is-hidden', isHidden);
+          if (isHidden) {
+            p.setAttribute('hidden', '');
+          } else {
+            p.removeAttribute('hidden');
+          }
         });
         tab.focus();
       }
