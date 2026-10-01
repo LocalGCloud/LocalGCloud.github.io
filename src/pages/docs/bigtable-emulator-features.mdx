@@ -14,7 +14,7 @@ export const bigtable = getDocumentationService('bigtable');
 LocalCloud runs a separately maintained Bigtable emulator for row and administration APIs. The current Docker build pins a source commit. Historical cached-artifact observations do not establish support in the current assembled image.
 
 <Callout type="warning" title="Operation and image qualification">
-The runtime contract records partial behavior with concrete boundaries. The mutable LocalCloud image tag remains release-unverified. Confirm the packaged dependency identity and test the exact row, administration, and recovery paths you need.
+The runtime contract records each operation's concrete boundaries. The mutable LocalCloud image tag remains release-unverified. Confirm the packaged dependency identity and test the exact row, administration, and recovery paths you need.
 </Callout>
 
 ## Connection and persistence
@@ -27,14 +27,16 @@ The runtime contract records partial behavior with concrete boundaries. The muta
 
 ## Current operation contract
 
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Bigtable operation contract">
 <table>
   <thead><tr><th>Operation area</th><th>Status</th><th>Boundary</th></tr></thead>
   <tbody>
     {bigtable.operations.map((operation) => (
-      <tr><td>{operation.label}</td><td><code>{operation.status}</code></td><td>{operation.limitations.join(' ')}</td></tr>
+      <tr><td>{operation.label}</td><td>{['verified', 'partial', 'release-unverified'].includes(operation.status) ? 'Supported' : 'Unsupported'}</td><td>{operation.limitations.join(' ')}</td></tr>
     ))}
   </tbody>
 </table>
+</div>
 
 ## Runtime and recovery limits
 

@@ -19,7 +19,7 @@ A service guide separates the facts that affect normal use:
 5. **Connection** — the canonical container port and protocol. Use `localcloud env` for the actual host endpoint.
 6. **Known limits** — operations or Google Cloud behavior that LocalCloud does not provide.
 
-<div className="overflow-x-auto">
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Service status, defaults, and connections">
   <table className="w-full min-w-[72rem] text-left text-sm">
     <thead>
       <tr>
@@ -34,14 +34,14 @@ A service guide separates the facts that affect normal use:
     <tbody>
       {services.map((service) => (
         <tr>
-          <td><a href={`/services/${service.slug}/`}>{service.name}</a>{service.category === 'auxiliary' && <span className="ml-1 text-xs text-[var(--text-3)]"> (Auxiliary API)</span>}</td>
+          <td><a href={`/services/${service.slug}/`}>{service.name}</a>{service.category === 'auxiliary' && <span className="ml-1 text-xs text-[var(--text-2)]"> (Auxiliary API)</span>}</td>
           {service.catalogState === 'coming-soon' ? (
-            <td colSpan={5}><strong>Coming soon.</strong> Connection details and documented workflows will be published when available.</td>
+            <td colSpan={5}><strong>Unsupported.</strong> LocalCloud does not run this service locally; use real Google Cloud.</td>
           ) : (
             <>
               <td>{service.registryDefaultEnabled ? 'yes' : 'no'}</td>
               <td>{service.minTier}</td>
-              <td>{service.status === 'unsupported' || service.status === 'unknown' ? 'Unsupported' : !service.registryDefaultEnabled ? 'Disabled by default' : 'Supported'}</td>
+              <td>{service.status === 'unsupported' || service.status === 'unknown' ? 'Unsupported' : 'Supported'}</td>
               <td>{service.persistence.scope} ({service.persistence.qualification})</td>
               <td>{service.endpointLabel}</td>
             </>

@@ -6,8 +6,6 @@ import InstallationMethods from './InstallationMethods.astro';
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
-const categoryTones = ['sky', 'sage', 'ember'] as const;
-
 const heroSignals = [
   { value: String(availableServiceCount), label: 'documented integrations', note: 'operation-specific compatibility boundaries' },
   { value: '1', label: 'data-volume runtime', note: 'CLI-selected loopback ports and persistent data' },
@@ -28,14 +26,20 @@ const atlasCategorySlots = [
 ] as const;
 
 const atlasSlots = atlasCategorySlots
-  .map((categories, slotIndex) =>
+  .map((categories) =>
     categories
-      .map((category, categoryIndex) => ({
+      .map((category) => ({
         category,
         title: serviceCategoryMeta[category].label,
         note: serviceCategoryMeta[category].description,
-        tone: categoryTones[(slotIndex + categoryIndex) % categoryTones.length],
-        items: services.filter((service) => service.category === category),
+        // The marketing inventory lists supported services only; the catalog and
+        // compatibility pages carry the Unsupported entries.
+        items: services.filter(
+          (service) =>
+            service.category === category &&
+            service.catalogState === 'available' &&
+            service.marketingStatus === 'supported',
+        ),
       }))
       .filter((column) => column.items.length > 0),
   )
@@ -67,7 +71,7 @@ const atlasSlots = atlasCategorySlots
           ))}
         </ul>
 
-        <div class="field-actions justify-center" >
+        <div class="field-actions">
           <a href="#manual-quickstart" class="site-button site-button--primary">Open the Quick Start</a>
           <a href={`${base}docs/`} class="site-button site-button--secondary">Read the Docs</a>
         </div>
@@ -115,7 +119,7 @@ const atlasSlots = atlasCategorySlots
         {atlasSlots.map((slot) => (
           <div class:list={['field-atlas__slot', slot.length > 1 && 'field-atlas__slot--split']}>
             {slot.map((column) => (
-              <article class:list={['field-column', 'reveal', `field-column--${column.tone}`]}>
+              <article class="field-column reveal">
                 <div class="field-column__head">
                   <span class="field-kicker">{column.title}</span>
                   <p>{column.note}</p>
@@ -135,13 +139,7 @@ const atlasSlots = atlasCategorySlots
                       </div>
 
                       <div class="field-service__tags">
-                        {service.marketingStatus === 'unsupported' ? (
-                          <span>Unsupported</span>
-                        ) : service.catalogState === 'coming-soon' ? (
-                          <span>Coming soon</span>
-                        ) : (
-                          <span>{service.endpointLabel}</span>
-                        )}
+                        <span>{service.endpointLabel}</span>
                       </div>
                     </a>
                   ))}
@@ -217,7 +215,6 @@ const atlasSlots = atlasCategorySlots
 
 <style>
   .field-home {
-    --field-moss: #147d72;
     padding: 1.5rem 0 3rem;
     color: var(--text);
   }
@@ -277,7 +274,7 @@ const atlasSlots = atlasCategorySlots
     gap: 0.35rem;
     width: fit-content;
     color: var(--accent-strong);
-    font-size: 0.75rem;
+    font-size: var(--fs-label);
     font-weight: 600;
   }
 
@@ -288,7 +285,7 @@ const atlasSlots = atlasCategorySlots
     justify-content: center;
     width: 0.7rem;
     height: 0.7rem;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: var(--accent);
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") center/contain no-repeat;
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") center/contain no-repeat;
@@ -299,7 +296,7 @@ const atlasSlots = atlasCategorySlots
   .field-signal__label,
   .field-overline {
     color: var(--text-2);
-    font-size: 0.75rem;
+    font-size: var(--fs-label);
   }
 
   .field-overline {
@@ -309,7 +306,7 @@ const atlasSlots = atlasCategorySlots
   .field-hero h1,
   .field-section-heading h2,
   .field-cta h2 {
-    font-family: "Roboto", system-ui, sans-serif;
+    font-family: var(--font-display);
     letter-spacing: -0.045em;
     line-height: 0.95;
     color: var(--text);
@@ -318,7 +315,9 @@ const atlasSlots = atlasCategorySlots
   .field-hero h1 {
     margin-top: 0.8rem;
     max-width: none;
-    font-size: clamp(3rem, 6.7vw, 5.65rem);
+    font-size: var(--fs-display);
+    font-weight: 650;
+    letter-spacing: -0.055em;
   }
 
   .field-hero__headline {
@@ -334,24 +333,23 @@ const atlasSlots = atlasCategorySlots
 
   .field-hero__headline-main {
     white-space: nowrap;
-    font-size: clamp(2.6rem, 5.75vw, 4.85rem);
     line-height: 0.95;
   }
 
+  /* Sized relative to the display token so the stagger keeps its proportion. */
   .field-hero__headline-tag {
     justify-self: end;
     padding-right: 0.04em;
-    font-size: clamp(2.35rem, 4.7vw, 4.45rem);
+    font-size: 0.92em;
     line-height: 0.9;
-    letter-spacing: -0.04em;
   }
 
   .field-intro-secondary {
     margin-top: 0.85rem;
     max-width: 46rem;
-    font-size: 0.98rem;
-    line-height: 1.72;
-    color: var(--text-3);
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: var(--text-2);
   }
 
   .field-intro,
@@ -362,7 +360,7 @@ const atlasSlots = atlasCategorySlots
 
   .field-cta p {
     color: var(--text-2);
-    font-size: 0.98rem;
+    font-size: var(--fs-body);
     line-height: 1.65;
   }
 
@@ -399,14 +397,14 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-signal__label {
-    font-size: clamp(0.65rem, 2.8vw, 0.75rem);
+    font-size: var(--fs-label);
     letter-spacing: 0.04em;
-    white-space: nowrap;
   }
 
   .field-signal__value {
-    font-size: 1.8rem;
-    font-weight: 700;
+    /* Headline floor: a figure, not a heading. */
+    font-size: 2rem;
+    font-weight: 650;
     line-height: 1;
     color: var(--text);
   }
@@ -414,7 +412,22 @@ const atlasSlots = atlasCategorySlots
   .field-signal__note {
     margin-top: 0.15rem;
     color: var(--text-2);
-    font-size: 0.9rem;
+    font-size: var(--fs-small);
+  }
+
+  /* Two side-by-side stats only fit their labels on one line from 40rem up.
+     Below that, stack each figure above its label so nothing collides. */
+  @media (max-width: 39.99rem) {
+    .field-signal {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+  }
+
+  @media (min-width: 40rem) {
+    .field-signal__label {
+      white-space: nowrap;
+    }
   }
 
   .field-board__figure {
@@ -422,21 +435,11 @@ const atlasSlots = atlasCategorySlots
     margin: 0;
     width: min(100%, 38rem);
     justify-self: center;
-    border-radius: 1.25rem;
-    outline: 1px solid oklch(0 0 0 / 0.1);
-    outline-offset: -1px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-feature);
     overflow: hidden;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 249, 250, 0.96));
-    box-shadow: var(--shadow-lg), 0 24px 50px -34px rgba(0, 0, 0, 0.28);
-  }
-
-  .field-board__figure::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(120% 80% at 20% 0%, rgba(26, 115, 232, 0.07), transparent 60%);
-    pointer-events: none;
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
   }
 
   .field-board__image {
@@ -447,7 +450,6 @@ const atlasSlots = atlasCategorySlots
 
   .field-cta {
     border: 1px solid var(--line);
-    border-radius: 1rem;
     box-shadow: var(--shadow-md);
   }
 
@@ -477,7 +479,7 @@ const atlasSlots = atlasCategorySlots
     display: block;
     margin-top: 0.45rem;
     color: var(--text);
-    font-size: 1.05rem;
+    font-size: var(--fs-lead);
     line-height: 1.5;
   }
 
@@ -488,10 +490,6 @@ const atlasSlots = atlasCategorySlots
     margin: 3rem 0 1.5rem;
   }
 
-  .field-section-heading h2 {
-    font-size: clamp(1.6rem, 2.8vw, 2.35rem);
-  }
-
   .field-atlas__grid,
   .field-atlas__slot {
     display: grid;
@@ -499,25 +497,13 @@ const atlasSlots = atlasCategorySlots
     gap: 1rem;
   }
 
+  /* Service-category container: feature radius, ambient shadow (DESIGN.md catalog exception). */
   .field-column {
-    /* Concentric: 0.9rem service-card radius + 1.1rem padding = 2rem. */
     padding: 1.1rem;
     border: 1px solid var(--line);
-    border-radius: 2rem;
-    background: rgba(255, 255, 255, 0.86);
+    border-radius: var(--radius-feature);
+    background: var(--surface);
     box-shadow: var(--shadow-md);
-  }
-
-  .field-column--sky {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(241, 243, 244, 0.94));
-  }
-
-  .field-column--sage {
-    background: linear-gradient(180deg, rgba(244, 251, 249, 0.98), rgba(232, 246, 243, 0.94));
-  }
-
-  .field-column--ember {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(241, 243, 244, 0.94));
   }
 
   .field-column__head {
@@ -526,7 +512,7 @@ const atlasSlots = atlasCategorySlots
 
   .field-column__head .field-kicker {
     color: var(--text);
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .field-column__list {
@@ -545,16 +531,15 @@ const atlasSlots = atlasCategorySlots
     position: relative;
     padding: 0.85rem;
     border: 1px solid var(--line);
-    border-radius: 0.9rem;
-    background: oklch(from var(--surface) l c h / 0.6);
-    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    transition: border-color 180ms var(--ease), box-shadow 180ms var(--ease), transform 180ms var(--ease);
   }
 
   .field-service:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     border-color: var(--border-hover);
-    background: var(--surface);
-    box-shadow: 0 12px 24px -16px rgba(26, 115, 232, 0.4);
+    box-shadow: var(--shadow-md);
   }
 
   .field-service:active {
@@ -571,7 +556,7 @@ const atlasSlots = atlasCategorySlots
     background: var(--accent);
     opacity: 0;
     transform: translateX(-0.25rem);
-    transition: opacity 180ms ease, transform 180ms ease;
+    transition: opacity 180ms var(--ease), transform 180ms var(--ease);
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3Cpolyline points='12 5 19 12 12 19'/%3E%3C/svg%3E") center/contain no-repeat;
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3Cpolyline points='12 5 19 12 12 19'/%3E%3C/svg%3E") center/contain no-repeat;
   }
@@ -595,21 +580,22 @@ const atlasSlots = atlasCategorySlots
     width: 3rem;
     height: 3rem;
     border: 1px solid var(--line);
-    border-radius: 0.5rem;
-    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--radius-control);
+    background: var(--surface);
   }
 
   .field-service strong {
     display: block;
     padding-right: 1.4rem;
     color: var(--text);
-    font-size: 1rem;
+    font-size: var(--fs-body);
+    font-weight: 600;
   }
 
   .field-service p {
     margin-top: 0.25rem;
     color: var(--text-2);
-    font-size: 0.9rem;
+    font-size: var(--fs-small);
     line-height: 1.6;
   }
 
@@ -626,11 +612,11 @@ const atlasSlots = atlasCategorySlots
     justify-content: center;
     padding: 0.25rem 0.5rem;
     border: 1px solid var(--line);
-    border-radius: 999px;
-    background: oklch(from var(--surface) l c h / 0.8);
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
     color: var(--text-2);
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: var(--fs-label);
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
@@ -641,7 +627,7 @@ const atlasSlots = atlasCategorySlots
 
   .field-story__card h3 {
     font-family: var(--font-body);
-    font-size: 1.2rem;
+    font-size: var(--fs-title);
     line-height: 1.3;
     letter-spacing: -0.02em;
   }
@@ -660,7 +646,7 @@ const atlasSlots = atlasCategorySlots
 
   .field-story__card {
     position: relative;
-    transition: background 180ms ease;
+    transition: background 180ms var(--ease);
   }
 
   .field-story__card:hover {
@@ -698,9 +684,15 @@ const atlasSlots = atlasCategorySlots
     margin: 2.5rem 1rem 0;
     padding: clamp(1.5rem, 3.5vw, 2.5rem);
     overflow: hidden;
-    border-color: rgba(255, 255, 255, 0.08);
-    border-radius: 1.5rem;
-    background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));
+    /* Terminal-surface palette, scoped to this panel. */
+    --field-cta-bg: #20262f;
+    --field-cta-rule: rgba(255, 255, 255, 0.08);
+    --field-cta-grid: rgba(255, 255, 255, 0.03);
+    --field-cta-ink: var(--surface-3);
+    --field-cta-ink-2: rgba(232, 234, 237, 0.74);
+    border-color: var(--field-cta-rule);
+    border-radius: var(--radius-feature);
+    background: var(--field-cta-bg);
   }
 
   .field-cta::before {
@@ -708,10 +700,9 @@ const atlasSlots = atlasCategorySlots
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(70% 120% at 100% 0%, rgba(138, 180, 248, 0.22), transparent 60%),
-      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: auto, 2rem 2rem, 2rem 2rem;
+      linear-gradient(var(--field-cta-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--field-cta-grid) 1px, transparent 1px);
+    background-size: 2rem 2rem;
     pointer-events: none;
   }
 
@@ -723,11 +714,11 @@ const atlasSlots = atlasCategorySlots
   .field-cta h2,
   .field-cta p,
   .field-cta .field-kicker {
-    color: #e8eaed;
+    color: var(--field-cta-ink);
   }
 
   .field-cta p {
-    color: rgba(246, 239, 228, 0.74);
+    color: var(--field-cta-ink-2);
   }
 
   .field-cta__actions {
@@ -737,12 +728,11 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-cta .field-kicker {
-    color: rgba(232, 234, 237, 0.72);
+    color: var(--field-cta-ink-2);
   }
 
   .field-cta h2 {
     margin-top: 0.5rem;
-    font-size: clamp(1.7rem, 3vw, 2.4rem);
   }
 
   .field-cta p {
@@ -835,7 +825,6 @@ const atlasSlots = atlasCategorySlots
     .field-home__shell {
       width: min(100% - 1rem, 79rem);
       padding: 0.85rem;
-      border-radius: 1.45rem;
     }
 
     .field-actions {

@@ -1623,6 +1623,82 @@ export const blogDemoPages: AgenticContentPage[] = [
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
+	{
+		kind: "blog",
+		slug: "run-dataproc-locally-docker",
+		path: "/blog/run-dataproc-locally-docker/",
+		parentLabel: "Blog",
+		parentPath: "/blog/",
+		eyebrow: "User guide & demo",
+		title: "How to Run Dataproc 3.0 Locally with Docker",
+		description:
+			"Run Google Dataproc 3.0, Apache Spark 4.1, Hadoop 3.5, and Hive 4.2 locally in Docker. Standalone single-container and 3-node cluster modes for developers and AI agents.",
+		h1: "Run Dataproc 3.0 locally in Docker",
+		deck:
+			"Develop and test Spark, PySpark, and Hive pipelines without spinning up GCP clusters or managing cloud credentials. Run ad-hoc jobs in a single container or launch a full 3-node YARN cluster with Docker Compose.",
+		promptIds: ["quickstart", "project-integration"],
+		quickFacts: [
+			"Apache Spark 4.1.2, Hadoop 3.5.0, and Hive 4.2.0 in one multi-platform image.",
+			"100% standalone — zero cloud credentials, billing, or external daemons required.",
+			"Supports single-container CLI jobs and a full 3-node YARN cluster via Docker Compose.",
+		],
+		sections: [
+			{
+				kicker: "Developer inner loop",
+				title: "Instant local feedback without cloud spin-up",
+				body:
+					"Avoid waiting for cloud cluster provisioning and iterate on PySpark transformations with local feedback and zero cloud cost risk.",
+			},
+			{
+				kicker: "Agent safe sandbox",
+				title: "Safe execution boundary for AI coding agents",
+				body:
+					"Give Claude Code, Cursor, or Gemini CLI a deterministic local Spark environment without granting access to production cloud credentials.",
+			},
+		],
+		snippets: [
+			{
+				label: "Single container Spark job",
+				language: "bash",
+				code: "docker run --rm -v $(pwd)/workloads:/workload:ro agentcloud/dataproc:3.0.0-debian13 spark /workload/job.py",
+			},
+			{
+				label: "Interactive PySpark shell",
+				language: "bash",
+				code: "docker run -it --rm agentcloud/dataproc:3.0.0-debian13 pyspark",
+			},
+			{
+				label: "Run image self-test",
+				language: "bash",
+				code: "docker run --rm agentcloud/dataproc:3.0.0-debian13 self-test",
+			},
+		],
+		limitations: [
+			"Dataproc local containers provide component-level compatibility (Spark, Hadoop, Hive), not GCP Dataproc control plane APIs.",
+			...standardLimitations,
+		],
+		internalLinks: [
+			{
+				label: "Dataproc service testing",
+				href: "/services/dataproc/ai-agent-local-testing/",
+				note: "Local testing guide for Dataproc jobs.",
+			},
+			{
+				label: "Dataproc service overview",
+				href: "/services/dataproc/",
+				note: "Supported Dataproc operations and limitations.",
+			},
+			...serviceLinks,
+		],
+		sources: [
+			{
+				label: "Dataproc images on Docker Hub",
+				href: "https://hub.docker.com/repository/docker/agentcloud/dataproc",
+				note: "Public multi-arch OCI images for Dataproc 3.0, 2.3, 2.2, 2.1, and 2.0.",
+			},
+		],
+		reviewedAt: agenticFacts.evidence.reviewedAt,
+	},
 ];
 
 export const allAgenticContentPages = [

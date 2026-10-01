@@ -19,7 +19,7 @@ const categoryGroups = serviceCategoryOrder
 
 ---
 
-<BaseLayout title={`LocalCloud Services — ${publishedServiceCount} Service Guides`} description={`Browse ${publishedServiceCount} runtime API guides, including ${availableServiceCount} documented local integrations and entries with unsupported or unknown behavior.`}>
+<BaseLayout title={`LocalCloud Services — ${publishedServiceCount} Service Guides`} description={`Browse ${publishedServiceCount} runtime API guides, including ${availableServiceCount} documented local integrations and ${publishedServiceCount - availableServiceCount} unsupported entries.`}>
   <Header />
   <main id="main-content" class="site-page">
     <section class="site-section site-section--hero" style="padding-bottom: 0;">
@@ -28,7 +28,7 @@ const categoryGroups = serviceCategoryOrder
           <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>{availableServiceCount} documented local integrations</span>
           <h1 class="mt-4">LocalCloud service catalog</h1>
           <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
-            Find operation boundaries and connection details for supported local workflows. Unsupported and unknown entries remain visible in the catalog; a registry entry does not establish application support.
+            Find operation boundaries and connection details for supported local workflows. Unsupported entries remain visible and are labeled; a registry entry does not establish application support.
           </p>
         </div>
       </div>
@@ -58,23 +58,23 @@ const categoryGroups = serviceCategoryOrder
               <a href={`${base}services/${service.slug}/`}
                 data-service-name={service.name.toLowerCase()}
                 data-service-desc={service.description.toLowerCase()}
-                class="site-panel reveal p-5 transition-transform hover:-translate-y-0.5">
-                <div class="flex items-start justify-between gap-3">
+                class="site-panel reveal min-w-0 p-5 transition-transform hover:-translate-y-0.5">
+                <div class="flex flex-wrap items-start justify-between gap-3">
                   <div class="flex min-w-0 items-start gap-3">
                     <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--surface-2)]">
                       <ServiceIcon iconId={service.iconId} name={service.name} size={30} />
                     </span>
                     <div class="min-w-0">
                       <h3 class="text-xl">{service.name}</h3>
-                      <div class="mt-2 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[var(--text-3)]">
-                        {service.catalogState === 'coming-soon' ? 'Planned addition' : service.endpointLabel}
+                      <div class="mt-2 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-2)]">
+                        {service.catalogState === 'coming-soon' ? 'No local endpoint' : service.endpointLabel}
                       </div>
                     </div>
                   </div>
-                  <span class="site-chip site-chip--accent">{getServiceSignalLabel(service)}</span>
+                  <span class:list={['site-chip', getServiceSignalLabel(service) === 'Unsupported' ? 'site-chip--warn' : 'site-chip--accent']}>{getServiceSignalLabel(service)}</span>
                 </div>
                 <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">{service.description}</p>
-                <div class="mt-5 text-sm font-medium text-[var(--text)]">{service.category === 'auxiliary' ? 'View integration guide' : 'View service guide'}</div>
+                <div class="mt-5 text-sm font-semibold text-[var(--text)]">{service.category === 'auxiliary' ? 'View integration guide' : 'View service guide'}</div>
               </a>
             ))}
           </div>

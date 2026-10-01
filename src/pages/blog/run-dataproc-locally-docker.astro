@@ -1,0 +1,665 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import CopyButton from '../../components/CopyButton.astro';
+import {
+  createBreadcrumbSchema,
+  createSoftwareApplicationSchema,
+  productFacts,
+} from '../../data/productFacts';
+
+const pageUrl = new URL('blog/run-dataproc-locally-docker/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['run-dataproc-locally-docker'];
+const publishDate = metadata.publishedAt;
+const contents = [
+  { id: 'agent-prompt', label: 'Agent prompt' },
+  { id: 'why-local', label: 'Why run locally' },
+  { id: 'component-stack', label: 'Component stack' },
+  { id: 'single-container', label: 'Single-container jobs' },
+  { id: 'cluster', label: 'Docker Compose cluster' },
+  { id: 'storage', label: 'Storage integration' },
+  { id: 'ci', label: 'CI automation' },
+  { id: 'resources', label: 'Resource guidelines' },
+  { id: 'versions', label: 'Available versions' },
+  { id: 'validation', label: 'Validation boundaries' },
+];
+
+const agentPrompt = `Run a local Apache Spark smoke test using the agentcloud/dataproc:3.0.0-debian13 container.
+Do not request or use GCP cloud credentials.
+1. Run the baked-in self-test suite: docker run --rm agentcloud/dataproc:3.0.0-debian13 self-test
+2. Execute a PySpark aggregation against local test data.
+3. Report component versions and verification results.`;
+
+const versionsCommand = `# Check Spark 4.1.2
+docker run --rm agentcloud/dataproc:3.0.0-debian13 spark --version
+
+# Check Hadoop 3.5.0
+docker run --rm agentcloud/dataproc:3.0.0-debian13 hadoop version
+
+# Check Hive 4.2.0
+docker run --rm agentcloud/dataproc:3.0.0-debian13 hive --version`;
+
+const sparkSubmitCommand = String.raw`docker run --rm \
+  -v $(pwd)/workloads:/workload:ro \
+  agentcloud/dataproc:3.0.0-debian13 \
+  spark /workload/demo.py`;
+
+const shellsCommand = `# Interactive PySpark REPL
+docker run -it --rm agentcloud/dataproc:3.0.0-debian13 pyspark
+
+# Interactive Spark SQL CLI
+docker run -it --rm agentcloud/dataproc:3.0.0-debian13 spark-sql`;
+
+const hiveCommand = `# Run an ad-hoc Hive query
+docker run -it --rm agentcloud/dataproc:3.0.0-debian13 hive -e "SHOW DATABASES;"
+
+# Drop into a raw bash prompt with all paths and Java environment configured
+docker run -it --rm --entrypoint /bin/bash agentcloud/dataproc:3.0.0-debian13`;
+
+const clusterCommands = `# 1. Start cluster in background
+docker-compose up -d
+
+# 2. Check NameNode and YARN nodes
+docker exec dataproc-master hdfs dfsadmin -report
+docker exec dataproc-master yarn node -list
+
+# 3. Submit distributed job on YARN
+docker exec dataproc-master spark-submit --master yarn /opt/localcloud/self-test/spark_smoke.py
+
+# 4. Connect via Hive Beeline over JDBC
+beeline -u "jdbc:hive2://localhost:20000" -e "SHOW DATABASES;"
+
+# 5. Stop and tear down cluster (removes containers & volumes)
+docker-compose down --volumes`;
+
+const pysparkSample = `from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, avg, count
+
+spark = SparkSession.builder.appName("LocalDataprocDemo").getOrCreate()
+
+data = [
+    ("engineering", "Alice", 130000),
+    ("engineering", "Bob", 115000),
+    ("marketing", "Charlie", 95000),
+    ("marketing", "Dana", 105000),
+    ("data", "Eve", 140000),
+]
+
+df = spark.createDataFrame(data, ["dept", "employee", "salary"])
+
+print("\\n--- Local Dataproc PySpark Aggregation ---")
+df.groupBy("dept").agg(count("employee").alias("headcount"), avg("salary").alias("avg_salary")).show()
+
+spark.stop()`;
+
+const ciSnippet = `name: Spark Pipeline CI
+on: [push, pull_request]
+
+jobs:
+  test-spark-pipelines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run PySpark Test in Dataproc 3.0 Container
+        run: |
+          docker run --rm \\
+            -v \${{ github.workspace }}:/workspace:ro \\
+            agentcloud/dataproc:3.0.0-debian13 \\
+            spark /workspace/tests/pipeline_smoke.py`;
+
+const composeSnippet = `services:
+  master:
+    image: agentcloud/dataproc:3.0.0-debian13
+    hostname: master
+    container_name: dataproc-master
+    environment:
+      - CLUSTER_MODE=true
+      - CLUSTER_ROLE=master
+      - NAMENODE_HOSTNAME=master
+      - RESOURCEMANAGER_HOSTNAME=master
+      - METASTORE_HOSTNAME=master
+      - WORKER_COUNT=2
+      - HADOOP_CONF_DIR=/etc/hadoop/conf
+    ports:
+      - "19870:9870"    # NameNode Web UI
+      - "18088:8088"    # YARN ResourceManager Web UI
+      - "28080:18080"   # Spark History Server
+      - "29888:19888"   # MapReduce Job History Server
+      - "19083:9083"    # Hive Metastore Thrift
+      - "20000:10000"   # HiveServer2 JDBC
+    volumes:
+      - master-hdfs:/var/hadoop/hdfs
+      - master-metastore:/var/hive/metastore
+      - master-warehouse:/var/hive/warehouse
+
+  worker-1:
+    image: agentcloud/dataproc:3.0.0-debian13
+    hostname: worker-1
+    environment:
+      - CLUSTER_MODE=true
+      - CLUSTER_ROLE=worker
+      - NAMENODE_HOSTNAME=master
+      - RESOURCEMANAGER_HOSTNAME=master
+      - WORKER_COUNT=2
+      - HADOOP_CONF_DIR=/etc/hadoop/conf
+    volumes:
+      - worker1-hdfs:/var/hadoop/hdfs
+    depends_on:
+      - master
+
+  worker-2:
+    image: agentcloud/dataproc:3.0.0-debian13
+    hostname: worker-2
+    environment:
+      - CLUSTER_MODE=true
+      - CLUSTER_ROLE=worker
+      - NAMENODE_HOSTNAME=master
+      - RESOURCEMANAGER_HOSTNAME=master
+      - WORKER_COUNT=2
+      - HADOOP_CONF_DIR=/etc/hadoop/conf
+    volumes:
+      - worker2-hdfs:/var/hadoop/hdfs
+    depends_on:
+      - master
+
+volumes:
+  master-hdfs:
+  master-metastore:
+  master-warehouse:
+  worker1-hdfs:
+  worker2-hdfs:`;
+
+const structuredData = [
+  createSoftwareApplicationSchema(
+    pageUrl,
+    'Run Google Dataproc 3.0, Apache Spark 4.1, Hadoop 3.5, and Hive 4.2 locally in Docker with zero cloud credentials or billing.',
+  ),
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: 'Run Dataproc 3.0 Locally with Docker', url: pageUrl },
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: 'How to Run Dataproc 3.0 Locally with Docker',
+    datePublished: publishDate,
+    dateModified: publishDate,
+    author: { '@type': 'Organization', name: 'LocalCloud' },
+    publisher: { '@type': 'Organization', name: 'LocalCloud' },
+    mainEntityOfPage: pageUrl,
+    description: 'Learn how to run Google Dataproc 3.0, Apache Spark 4.1, Hadoop 3.5, and Hive 4.2 standalone in Docker without cloud credentials, spin-up delays, or cloud billing.',
+  },
+];
+---
+
+<BlogLayout
+  title="How to Run Dataproc 3.0 Locally with Docker — LocalCloud Blog"
+  description="Run Google Dataproc 3.0, Apache Spark 4.1, Hadoop 3.5, and Hive 4.2 standalone in Docker. A complete guide for developers and AI agents with single-container and 3-node cluster modes."
+  structuredData={structuredData}
+  {contents}
+>
+  <Fragment slot="hero">
+  <!-- Hero Section -->
+  <article class="site-section site-section--hero">
+    <div class="container container--narrow reveal">
+      <nav class="mb-5 flex items-center gap-2 text-sm text-[var(--text-2)]" aria-label="Breadcrumb">
+        <a href="/blog/" class="hover:text-[var(--text)]">Blog</a>
+        <span>/</span>
+        <span class="text-[var(--text)]">Run Dataproc 3.0 Locally with Docker</span>
+      </nav>
+      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>User Guide & Demo</span>
+      <h1 class="mt-4">How to Run Dataproc 3.0 Locally with Docker</h1>
+      <p class="blog-meta"><span>Published <time datetime={publishDate}>{formatBlogDate(publishDate)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+      <p class="blog-deck">
+        Spinning up a cloud Dataproc cluster just to test a PySpark transformation or validate an SQL query wastes minutes in provisioning and quickly racks up GCP charges. With LocalCloud Dataproc images, developers and AI coding agents can run the exact Dataproc 3.0 component stack entirely on their local machines — with zero cloud credentials, zero billing risk, and zero external dependencies.
+      </p>
+      <div class="blog-actions">
+        <a class="site-button site-button--primary" href="https://hub.docker.com/repository/docker/agentcloud/dataproc" target="_blank" rel="noopener noreferrer">View on Docker Hub</a>
+        <a href="/services/dataproc/ai-agent-local-testing/">Agent Testing Guide</a>
+        <a href="/services/dataproc/">Dataproc Service</a>
+      </div>
+    </div>
+  </article>
+  </Fragment>
+
+  <!-- Agent Prompt Box -->
+  <section class="site-section site-section--tight">
+    <div class="container container--narrow">
+      <div class="site-panel p-6 reveal">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <span class="site-kicker">For AI coding agents</span>
+            <h2 class="mt-2 text-xl font-semibold" id="agent-prompt">Copy-paste prompt for Claude Code, Cursor, or Gemini CLI</h2>
+          </div>
+          <CopyButton text={agentPrompt} analyticsLabel="agentic-copy-dataproc-blog-prompt" />
+        </div>
+        <p class="mt-3 text-sm text-[var(--text-2)]">
+          Give this prompt to your AI coding agent to execute a safe local verification loop without touching real Google Cloud credentials:
+        </p>
+        <pre class="blog-prompt mt-4 overflow-x-auto whitespace-pre-wrap rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-4 text-xs font-mono leading-6 text-[var(--text-2)]"><code>{agentPrompt}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Sections -->
+  <section class="site-section">
+    <div class="container container--narrow space-y-12">
+      <!-- Why Run Locally -->
+      <section class="reveal">
+        <span class="site-kicker">Why it matters</span>
+        <h2 class="mt-3" id="why-local">The local feedback loop for developers and agents</h2>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <div class="site-panel p-5">
+            <h3 class="text-base font-semibold text-[var(--text)]">For Developers</h3>
+            <ul class="site-list mt-3 text-sm leading-7 text-[var(--text-2)]">
+              <li><strong>Zero spin-up lag:</strong> Skip the 90–180 second cloud cluster provisioning delay on every code change.</li>
+              <li><strong>Zero cloud costs:</strong> Iterate, fail, debug, and profile Spark jobs locally without unexpected bills.</li>
+              <li><strong>Offline portability:</strong> Develop pipelines on an airplane or local network without an active internet connection.</li>
+            </ul>
+          </div>
+          <div class="site-panel p-5">
+            <h3 class="text-base font-semibold text-[var(--text)]">For AI Coding Agents</h3>
+            <ul class="site-list mt-3 text-sm leading-7 text-[var(--text-2)]">
+              <li><strong>Safe sandbox boundary:</strong> Agents can generate, run, and benchmark PySpark code without needing IAM permissions.</li>
+              <li><strong>Fast self-healing:</strong> If an agent writes invalid Spark SQL or bad PySpark code, it gets instant tracebacks to self-correct.</li>
+              <li><strong>Deterministic builds:</strong> Digest-pinned public images prevent silent upstream drift across developer machines.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dataproc 3.0 Stack -->
+      <section class="reveal">
+        <span class="site-kicker">Component stack</span>
+        <h2 class="mt-3" id="component-stack">What's inside Dataproc 3.0 (Debian 13)</h2>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          The <code>agentcloud/dataproc:3.0.0-debian13</code> container packages the complete software stack corresponding to Google Cloud Dataproc 3.0, built from verified public digests:
+        </p>
+        <div class="site-panel mt-6 overflow-x-auto" tabindex="0" role="region" aria-label="Dataproc 3.0 component versions">
+          <table class="w-full text-left text-sm">
+            <thead class="border-b border-[var(--border)] text-[var(--text-2)]">
+              <tr>
+                <th class="p-4 font-semibold text-[var(--text)]">Component</th>
+                <th class="p-4 font-semibold text-[var(--text)]">Version</th>
+                <th class="p-4 font-semibold text-[var(--text)]">Installation Path</th>
+                <th class="p-4 font-semibold text-[var(--text)]">Role</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--line)]">
+              <tr class="bg-[var(--surface-2)]">
+                <td class="p-4 font-semibold text-[var(--text)]">Apache Spark</td>
+                <td class="p-4 text-[var(--text-2)]">4.1.2</td>
+                <td class="p-4 font-mono text-xs text-[var(--text-2)]">/opt/localcloud/spark</td>
+                <td class="p-4 text-[var(--text-2)]">PySpark &amp; Spark SQL execution</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-semibold text-[var(--text)]">Apache Hadoop</td>
+                <td class="p-4 text-[var(--text-2)]">3.5.0</td>
+                <td class="p-4 font-mono text-xs text-[var(--text-2)]">/opt/localcloud/hadoop</td>
+                <td class="p-4 text-[var(--text-2)]">HDFS distributed storage &amp; YARN scheduler</td>
+              </tr>
+              <tr class="bg-[var(--surface-2)]">
+                <td class="p-4 font-semibold text-[var(--text)]">Apache Hive</td>
+                <td class="p-4 text-[var(--text-2)]">4.2.0</td>
+                <td class="p-4 font-mono text-xs text-[var(--text-2)]">/opt/localcloud/hive</td>
+                <td class="p-4 text-[var(--text-2)]">Metastore &amp; HiveServer2 (pre-initialized Derby)</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-semibold text-[var(--text)]">Java (OpenJDK)</td>
+                <td class="p-4 text-[var(--text-2)]">21 (Temurin)</td>
+                <td class="p-4 font-mono text-xs text-[var(--text-2)]">/opt/localcloud/java</td>
+                <td class="p-4 text-[var(--text-2)]">JVM runtime with security entropy options</td>
+              </tr>
+              <tr class="bg-[var(--surface-2)]">
+                <td class="p-4 font-semibold text-[var(--text)]">Python</td>
+                <td class="p-4 text-[var(--text-2)]">3.12 (CPython)</td>
+                <td class="p-4 font-mono text-xs text-[var(--text-2)]">/opt/localcloud/python</td>
+                <td class="p-4 text-[var(--text-2)]">PySpark driver and executor environment</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-semibold text-[var(--text)]">GCP Connectors</td>
+                <td class="p-4 text-[var(--text-2)]">GCS &amp; BigQuery</td>
+                <td class="p-4 font-mono text-xs text-[var(--text-2)]">/opt/localcloud/spark/jars</td>
+                <td class="p-4 text-[var(--text-2)]">Native connectors for Cloud Storage &amp; BigQuery</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-4 text-sm text-[var(--text-2)]">
+          All images are published as multi-architecture OCI manifests supporting both <code>linux/amd64</code> and Apple Silicon <code>linux/arm64</code> natively.
+        </p>
+      </section>
+
+      <!-- Step 1: Single Container -->
+      <section class="reveal">
+        <span class="site-kicker">Step-by-step guide</span>
+        <h2 class="mt-3" id="single-container">Mode 1: Single-container ad-hoc execution</h2>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          You don't need to spin up a cluster or run any background services. The container's entrypoint acts as an intelligent capability dispatcher. You pass the tool name as the first argument, and it executes immediately:
+        </p>
+
+        <div class="mt-6 space-y-6">
+          <!-- Self Test -->
+          <div class="site-panel p-5">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-[var(--text)]">1. Run the built-in self-test suite</span>
+              <CopyButton text="docker run --rm agentcloud/dataproc:3.0.0-debian13 self-test" analyticsLabel="copy-dataproc-selftest" />
+            </div>
+            <p class="mt-2 text-sm text-[var(--text-2)]">
+              Validates Spark DataFrame aggregations, Hive embedded metastore, Hadoop version, Java 21, and Python 3.12:
+            </p>
+            <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>docker run --rm agentcloud/dataproc:3.0.0-debian13 self-test</code></pre>
+          </div>
+
+          <!-- Check Versions -->
+          <div class="site-panel p-5">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-[var(--text)]">2. Inspect component versions</span>
+              <CopyButton text={versionsCommand} analyticsLabel="copy-dataproc-versions" />
+            </div>
+            <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{versionsCommand}</code></pre>
+          </div>
+
+          <!-- Submit PySpark Job -->
+          <div class="site-panel p-5">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-[var(--text)]">3. Submit a PySpark workload</span>
+            </div>
+            <p class="mt-2 text-sm text-[var(--text-2)]">
+              Mount your local script directory and run <code>spark-submit</code> directly inside the container. Here is a runnable example:
+            </p>
+            <div class="mt-3">
+              <div class="flex items-center justify-between rounded-t-xl bg-[var(--surface-3)] px-3 py-2 text-xs font-mono text-[var(--text-2)]">
+                <span>workloads/demo.py</span>
+                <CopyButton text={pysparkSample} analyticsLabel="copy-dataproc-pyspark-sample" />
+              </div>
+              <pre class="overflow-x-auto whitespace-pre-wrap rounded-b-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{pysparkSample}</code></pre>
+            </div>
+            <div class="mt-3 flex items-center justify-between gap-3">
+              <p class="text-sm text-[var(--text-2)]">Execute it in one command:</p>
+              <CopyButton text={sparkSubmitCommand} analyticsLabel="copy-dataproc-spark-submit" />
+            </div>
+            <pre class="mt-2 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{sparkSubmitCommand}</code></pre>
+          </div>
+
+          <!-- Interactive Shells -->
+          <div class="site-panel p-5">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-[var(--text)]">4. Launch interactive PySpark or Spark SQL shells</span>
+              <CopyButton text={shellsCommand} analyticsLabel="copy-dataproc-shells" />
+            </div>
+            <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{shellsCommand}</code></pre>
+          </div>
+
+          <!-- Standalone Hive & Raw Shell -->
+          <div class="site-panel p-5">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-[var(--text)]">5. Standalone Hive queries &amp; Bash access</span>
+              <CopyButton text={hiveCommand} analyticsLabel="copy-dataproc-hive-bash" />
+            </div>
+            <p class="mt-2 text-sm text-[var(--text-2)]">
+              The image ships with a schema-initialized embedded Derby metastore. You can execute HQL scripts instantly without spinning up an external database:
+            </p>
+            <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{hiveCommand}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: Multi-Node Cluster -->
+      <section class="reveal">
+        <span class="site-kicker">Cluster mode</span>
+        <h2 class="mt-3" id="cluster">Mode 2: 3-Node Dataproc cluster with Docker Compose</h2>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          When you need distributed execution — such as testing Spark-on-YARN job scheduling, verifying multi-node HDFS replication, or connecting to HiveServer2 over JDBC — the image includes an automated cluster supervisor.
+        </p>
+
+        <div class="site-panel mt-6 p-5">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-[var(--text)]">docker-compose.yml</span>
+            <CopyButton text={composeSnippet} analyticsLabel="copy-dataproc-docker-compose" />
+          </div>
+          <pre class="mt-3 max-h-96 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{composeSnippet}</code></pre>
+        </div>
+
+        <div class="mt-6 space-y-4">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Cluster Service Endpoints</h3>
+          <p class="text-sm text-[var(--text-2)]">
+            All services are forwarded to host ports designed to avoid common conflicts:
+          </p>
+          <div class="site-panel overflow-x-auto" tabindex="0" role="region" aria-label="Cluster service endpoints">
+            <table class="w-full text-left text-sm">
+              <thead class="border-b border-[var(--border)] text-[var(--text-2)]">
+                <tr>
+                  <th class="p-3 font-semibold text-[var(--text)]">Service</th>
+                  <th class="p-3 font-semibold text-[var(--text)]">Host URL / Port</th>
+                  <th class="p-3 font-semibold text-[var(--text)]">Protocol</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[var(--line)]">
+                <tr>
+                  <td class="p-3 text-[var(--text)]">HDFS NameNode UI</td>
+                  <td class="p-3 font-mono text-xs text-[var(--text)]">http://localhost:19870</td>
+                  <td class="p-3 text-[var(--text-2)]">HTTP Web UI</td>
+                </tr>
+                <tr class="bg-[var(--surface-2)]">
+                  <td class="p-3 text-[var(--text)]">YARN ResourceManager UI</td>
+                  <td class="p-3 font-mono text-xs text-[var(--text)]">http://localhost:18088</td>
+                  <td class="p-3 text-[var(--text-2)]">HTTP Web UI</td>
+                </tr>
+                <tr>
+                  <td class="p-3 text-[var(--text)]">Spark History Server</td>
+                  <td class="p-3 font-mono text-xs text-[var(--text)]">http://localhost:28080</td>
+                  <td class="p-3 text-[var(--text-2)]">HTTP Web UI</td>
+                </tr>
+                <tr class="bg-[var(--surface-2)]">
+                  <td class="p-3 text-[var(--text)]">Job History Server</td>
+                  <td class="p-3 font-mono text-xs text-[var(--text)]">http://localhost:29888</td>
+                  <td class="p-3 text-[var(--text-2)]">HTTP Web UI</td>
+                </tr>
+                <tr>
+                  <td class="p-3 text-[var(--text)]">HiveServer2</td>
+                  <td class="p-3 font-mono text-xs text-[var(--text)]">jdbc:hive2://localhost:20000</td>
+                  <td class="p-3 text-[var(--text-2)]">Thrift / JDBC</td>
+                </tr>
+                <tr class="bg-[var(--surface-2)]">
+                  <td class="p-3 text-[var(--text)]">Hive Metastore</td>
+                  <td class="p-3 font-mono text-xs text-[var(--text)]">thrift://localhost:19083</td>
+                  <td class="p-3 text-[var(--text-2)]">Thrift Protocol</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="site-panel p-5">
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-[var(--text)]">Cluster Commands</span>
+              <CopyButton text={clusterCommands} analyticsLabel="copy-dataproc-cluster-cmds" />
+            </div>
+            <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{clusterCommands}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Connecting to Storage -->
+      <section class="reveal">
+        <span class="site-kicker">Storage integration</span>
+        <h2 class="mt-3" id="storage">Connecting to Cloud Storage &amp; BigQuery</h2>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          The container comes with Google Cloud Storage and BigQuery connectors pre-installed in the Spark classpath. You can connect in three ways:
+        </p>
+
+        <div class="mt-6 space-y-4">
+          <div class="site-panel p-5">
+            <h3 class="font-semibold text-[var(--text)]">Option A: Pure local storage (Offline)</h3>
+            <p class="mt-2 text-sm text-[var(--text-2)]">
+              Use standard POSIX local directories with <code>-v $(pwd)/data:/data</code>. Spark reads directly from <code>file:///data/...</code> without any cloud services.
+            </p>
+          </div>
+
+          <div class="site-panel p-5">
+            <h3 class="font-semibold text-[var(--text)]">Option B: Wire to LocalCloud emulators (Zero cloud cost)</h3>
+            <p class="mt-2 text-sm text-[var(--text-2)]">
+              If running alongside LocalCloud, provide emulator endpoint environment variables. The entrypoint automatically configures the GCS and BigQuery connectors:
+            </p>
+            <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>docker run --rm \
+  -e LOCALCLOUD_GCS_ENDPOINT=http://host.docker.internal:4443 \
+  -e LOCALCLOUD_BIGQUERY_ENDPOINT=http://host.docker.internal:5388 \
+  agentcloud/dataproc:3.0.0-debian13 \
+  spark /workload/read_gcs_to_bq.py</code></pre>
+          </div>
+
+          <div class="site-panel p-5">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold text-[var(--text)]">Option C: Connect to real GCP with Application Default Credentials</h3>
+              <CopyButton text={`docker run --rm \\\n  -v $HOME/.config/gcloud/application_default_credentials.json:/tmp/adc.json:ro \\\n  -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/adc.json \\\n  -v $(pwd)/workloads:/workload:ro \\\n  agentcloud/dataproc:3.0.0-debian13 \\\n  spark /workload/real_gcs_pipeline.py`} analyticsLabel="copy-dataproc-adc" />
+            </div>
+            <p class="mt-2 text-sm text-[var(--text-2)]">
+              When ready for staging validation against real GCS or BigQuery, mount your local ADC file:
+            </p>
+            <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>docker run --rm \
+  -v $HOME/.config/gcloud/application_default_credentials.json:/tmp/adc.json:ro \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/adc.json \
+  -v $(pwd)/workloads:/workload:ro \
+  agentcloud/dataproc:3.0.0-debian13 \
+  spark /workload/real_gcs_pipeline.py</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- CI/CD Automation -->
+      <section class="reveal">
+        <span class="site-kicker">Automation</span>
+        <h2 class="mt-3" id="ci">CI/CD automation: Running Spark tests in GitHub Actions</h2>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          Because these images are 100% self-contained and run on public Docker runners, you can execute complete PySpark unit and integration tests directly in GitHub Actions without granting cloud permissions or creating GCP service accounts:
+        </p>
+
+        <div class="site-panel mt-6 p-5">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-[var(--text)]">.github/workflows/spark-ci.yml</span>
+            <CopyButton text={ciSnippet} analyticsLabel="copy-dataproc-ci-snippet" />
+          </div>
+          <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{ciSnippet}</code></pre>
+        </div>
+      </section>
+
+      <!-- Hardware & Performance Tips -->
+      <section class="reveal">
+        <span class="site-kicker">Best practices</span>
+        <h2 class="mt-3" id="resources">Performance and resource guidelines</h2>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <div class="site-panel p-5">
+            <h3 class="font-semibold text-[var(--text)]">Apple Silicon Native</h3>
+            <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">
+              Multi-arch <code>linux/arm64</code> images run on M1/M2/M3/M4 Macs with zero emulation overhead, achieving near bare-metal execution speed.
+            </p>
+          </div>
+          <div class="site-panel p-5">
+            <h3 class="font-semibold text-[var(--text)]">Memory Allocation</h3>
+            <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">
+              Single-container jobs run comfortably with 2–4 GB memory. For the 3-node YARN cluster, configure Docker or Colima with at least 12 GB RAM.
+            </p>
+          </div>
+          <div class="site-panel p-5">
+            <h3 class="font-semibold text-[var(--text)]">Volume Persistence</h3>
+            <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">
+              Use <code>docker-compose stop</code> to pause the cluster and keep HDFS data intact, or pass <code>--volumes</code> on teardown for clean ephemeral resets.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Supported Versions Matrix -->
+      <section class="reveal">
+        <span class="site-kicker">Docker Hub repository</span>
+        <h2 class="mt-3" id="versions">Available Dataproc image versions</h2>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          All images are hosted on Docker Hub at <a href="https://hub.docker.com/repository/docker/agentcloud/dataproc" target="_blank" rel="noopener noreferrer" class="font-semibold text-[var(--accent)] hover:underline">hub.docker.com/repository/docker/agentcloud/dataproc</a>. You can pin the exact Dataproc release your production workloads target:
+        </p>
+
+        <div class="site-panel mt-6 overflow-x-auto" tabindex="0" role="region" aria-label="Available Dataproc image versions">
+          <table class="w-full text-left text-sm">
+            <thead class="border-b border-[var(--border)] text-[var(--text-2)]">
+              <tr>
+                <th class="p-4 font-semibold text-[var(--text)]">Dataproc Version</th>
+                <th class="p-4 font-semibold text-[var(--text)]">Docker Tag</th>
+                <th class="p-4 font-semibold text-[var(--text)]">Spark</th>
+                <th class="p-4 font-semibold text-[var(--text)]">Hadoop</th>
+                <th class="p-4 font-semibold text-[var(--text)]">Hive</th>
+                <th class="p-4 font-semibold text-[var(--text)]">Java</th>
+                <th class="p-4 font-semibold text-[var(--text)]">Python</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--line)]">
+              <tr class="bg-[var(--surface-2)] font-semibold">
+                <td class="p-4 text-[var(--text)]">Dataproc 3.0</td>
+                <td class="p-4 font-mono text-xs text-[var(--text)]">agentcloud/dataproc:3.0.0-debian13</td>
+                <td class="p-4 text-[var(--text-2)]">4.1.2</td>
+                <td class="p-4 text-[var(--text-2)]">3.5.0</td>
+                <td class="p-4 text-[var(--text-2)]">4.2.0</td>
+                <td class="p-4 text-[var(--text-2)]">Java 21</td>
+                <td class="p-4 text-[var(--text-2)]">Python 3.12</td>
+              </tr>
+              <tr>
+                <td class="p-4 text-[var(--text)]">Dataproc 2.3</td>
+                <td class="p-4 font-mono text-xs text-[var(--text)]">agentcloud/dataproc:2.3.34-debian12</td>
+                <td class="p-4 text-[var(--text-2)]">3.5.3</td>
+                <td class="p-4 text-[var(--text-2)]">3.3.6</td>
+                <td class="p-4 text-[var(--text-2)]">3.1.3</td>
+                <td class="p-4 text-[var(--text-2)]">Java 11</td>
+                <td class="p-4 text-[var(--text-2)]">Python 3.11</td>
+              </tr>
+              <tr class="bg-[var(--surface-2)]">
+                <td class="p-4 text-[var(--text)]">Dataproc 2.2</td>
+                <td class="p-4 font-mono text-xs text-[var(--text)]">agentcloud/dataproc:2.2.85-debian12</td>
+                <td class="p-4 text-[var(--text-2)]">3.3.2</td>
+                <td class="p-4 text-[var(--text-2)]">3.3.6</td>
+                <td class="p-4 text-[var(--text-2)]">3.1.3</td>
+                <td class="p-4 text-[var(--text-2)]">Java 11</td>
+                <td class="p-4 text-[var(--text-2)]">Python 3.10</td>
+              </tr>
+              <tr>
+                <td class="p-4 text-[var(--text)]">Dataproc 2.1</td>
+                <td class="p-4 font-mono text-xs text-[var(--text)]">agentcloud/dataproc:2.1.117-debian11</td>
+                <td class="p-4 text-[var(--text-2)]">3.3.2</td>
+                <td class="p-4 text-[var(--text-2)]">3.3.6</td>
+                <td class="p-4 text-[var(--text-2)]">3.1.3</td>
+                <td class="p-4 text-[var(--text-2)]">Java 11</td>
+                <td class="p-4 text-[var(--text-2)]">Python 3.10</td>
+              </tr>
+              <tr class="bg-[var(--surface-2)]">
+                <td class="p-4 text-[var(--text)]">Dataproc 2.0</td>
+                <td class="p-4 font-mono text-xs text-[var(--text)]">agentcloud/dataproc:2.0.161-debian10</td>
+                <td class="p-4 text-[var(--text-2)]">3.1.3</td>
+                <td class="p-4 text-[var(--text-2)]">3.2.4</td>
+                <td class="p-4 text-[var(--text-2)]">3.1.3</td>
+                <td class="p-4 text-[var(--text-2)]">Java 8</td>
+                <td class="p-4 text-[var(--text-2)]">Python 3.8</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Boundaries & Next Steps -->
+      <section class="reveal">
+        <span class="site-kicker">Operational boundaries</span>
+        <h2 class="mt-3" id="validation">Production validation boundaries</h2>
+        <div class="site-panel site-panel--soft p-6">
+          <ul class="site-list text-sm leading-7 text-[var(--text-2)]">
+            <li><strong>Component compatibility:</strong> These containers reproduce Apache Spark, Hadoop, and Hive runtime semantics. They do not simulate the Google Cloud Dataproc REST control plane (such as cluster provisioning RPCs, auto-scaling policies, or Compute Engine VM lifecycle).</li>
+            <li><strong>Permitted use:</strong> The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production internal development, testing, CI, evaluation, and internal pilots.</li>
+            <li><strong>Production verification:</strong> Always validate production jobs and infrastructure definitions against real Google Cloud Dataproc before deploying to production.</li>
+          </ul>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a class="site-button site-button--primary" href="/services/dataproc/ai-agent-local-testing/">Dataproc Local Testing Guide</a>
+          <a class="site-button site-button--secondary" href="/ai/">AI Agent Setup</a>
+          <a class="site-button site-button--secondary" href="/compatibility/">Compatibility Matrix</a>
+          <a class="site-button site-button--secondary" href="/docs/">Documentation</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

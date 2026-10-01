@@ -189,17 +189,17 @@ const faqItems = [
       <div class="mt-8 space-y-6 reveal">
         <div class="site-panel p-6">
           <span class="site-kicker">GitHub Actions</span>
-          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code class="text-[0.82rem] leading-[1.75]">{githubActionsYaml}</code></pre>
+          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code>{githubActionsYaml}</code></pre>
         </div>
 
         <div class="site-panel p-6">
           <span class="site-kicker">GitLab CI</span>
-          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code class="text-[0.82rem] leading-[1.75]">{gitlabCiYaml}</code></pre>
+          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code>{gitlabCiYaml}</code></pre>
         </div>
 
         <div class="site-panel p-6">
           <span class="site-kicker">Jenkins (Docker Pipeline)</span>
-          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code class="text-[0.82rem] leading-[1.75]">{jenkinsfile}</code></pre>
+          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code>{jenkinsfile}</code></pre>
         </div>
       </div>
     </div>
@@ -241,7 +241,7 @@ const faqItems = [
       <div class="mt-6 grid gap-3 reveal">
         {faqItems.map(item => (
           <details class="site-panel p-5 cursor-pointer">
-            <summary class="font-semibold text-[var(--text)] text-[1.05rem]">{item.q}</summary>
+            <summary class="font-semibold text-[var(--text)] text-lg">{item.q}</summary>
             <p class="mt-3 text-[var(--text-2)] leading-7">{item.a}</p>
           </details>
         ))}
@@ -252,18 +252,16 @@ const faqItems = [
   <!-- BOTTOM CTA -->
   <section class="site-section">
     <div class="container">
-      <div class="site-panel p-8 reveal" style="background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));">
-        <div class="grid gap-6 xl:grid-cols-[1fr,auto] items-center">
-          <div>
-            <h2 style="color: #e8eaed;">Review the license before automating LocalCloud</h2>
-            <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              The Public Preview License permits organization and team CI for non-production development and testing. Keep LocalCloud isolated and validate production behavior separately.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
-            <a href={`${base}compatibility/`} class="site-button site-button--primary">Review compatibility</a>
-          </div>
+      <div class="site-panel grid items-center gap-6 p-8 xl:grid-cols-[1fr_auto] reveal">
+        <div>
+          <h2>Review the license before automating LocalCloud</h2>
+          <p class="mt-3 max-w-[42rem] text-lg leading-8 text-[var(--text-2)]">
+            The Public Preview License permits organization and team CI for non-production development and testing. Keep LocalCloud isolated and validate production behavior separately.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href={`${base}compatibility/`} class="site-button site-button--primary">Review compatibility</a>
+          <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
         </div>
       </div>
     </div>

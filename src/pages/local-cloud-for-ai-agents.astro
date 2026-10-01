@@ -143,17 +143,17 @@ const agentPages = [
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">{availableServiceCount}</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Local service guides</div>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Local service guides</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Google Cloud APIs an agent can call without leaving the machine.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">0</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Credentials by default</div>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Credentials by default</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">No service-account key or billing project is required for documented local workflows.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">1</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Command to start</div>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Command to start</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">One CLI lifecycle, one health endpoint, one generated environment export.</p>
         </article>
       </div>
@@ -177,7 +177,7 @@ const agentPages = [
             <span class="site-kicker">{boundary.label}</span>
             <h3 class="mt-3 text-xl">{boundary.title}</h3>
             <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{boundary.body}</p>
-            <p class="mt-4 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[var(--text-3)]">
+            <p class="mt-4 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-2)]">
               Typically owned by: {boundary.owners}
             </p>
           </article>
@@ -203,19 +203,19 @@ const agentPages = [
         </p>
       </div>
 
-      <div class="mt-8 overflow-x-auto reveal">
+      <div class="mt-8 overflow-x-auto reveal" tabindex="0" role="region" aria-label="Code sandbox and LocalCloud comparison">
         <table class="w-full min-w-[46rem] border-collapse text-left text-sm">
           <thead>
             <tr>
-              <th class="border-b border-[var(--line)] px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-3)]">What you need</th>
-              <th class="border-b border-[var(--line)] px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-3)]">Code sandbox</th>
-              <th class="border-b border-[var(--line)] px-4 py-3 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--text-3)]">LocalCloud</th>
+              <th scope="col" class="border-b border-[var(--line)] px-4 py-3 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-2)]">What you need</th>
+              <th scope="col" class="border-b border-[var(--line)] px-4 py-3 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-2)]">Code sandbox</th>
+              <th scope="col" class="border-b border-[var(--line)] px-4 py-3 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-2)]">LocalCloud</th>
             </tr>
           </thead>
           <tbody>
             {comparisonRows.map((row) => (
               <tr>
-                <td class="border-b border-[var(--line)] px-4 py-4 align-top font-medium text-[var(--text)]">{row.need}</td>
+                <th scope="row" class="border-b border-[var(--line)] px-4 py-4 text-left align-top font-semibold text-[var(--text)]">{row.need}</th>
                 <td class="border-b border-[var(--line)] px-4 py-4 align-top leading-7 text-[var(--text-2)]">{row.sandbox}</td>
                 <td class="border-b border-[var(--line)] px-4 py-4 align-top leading-7 text-[var(--text-2)]">{row.localcloud}</td>
               </tr>
@@ -295,7 +295,7 @@ const agentPages = [
           {agenticFacts.releaseGuardrail}
         </li>
       </ul>
-      <p class="mt-6 max-w-[46rem] text-sm leading-7 text-[var(--text-3)]">
+      <p class="mt-6 max-w-[46rem] text-sm leading-7 text-[var(--text-2)]">
         LocalCloud does not isolate arbitrary code execution. If an agent runs untrusted shell commands, pair it with a code sandbox. Review the
         <a href={`${base}compatibility/`}> compatibility matrix</a> for per-operation status and the
         <a href={`${base}docs/licensing/`}> licensing reference</a> for permitted use.

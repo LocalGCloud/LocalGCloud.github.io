@@ -1,5 +1,7 @@
 ---
-import LandingLayout from '../../layouts/LandingLayout.astro';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
 import {
   createBreadcrumbSchema,
   createSoftwareApplicationSchema,
@@ -8,7 +10,15 @@ import {
 import { agenticFacts, agentPromptLibrary, agentSafeValidationChecklist } from '../../data/agenticFacts';
 
 const pageUrl = new URL('blog/localcloud-for-ai-agents/', productFacts.siteUrl).toString();
-const publishDate = '2026-07-02';
+const metadata = authoredBlogMetadata['localcloud-for-ai-agents'];
+const publishDate = metadata.publishedAt;
+const contents = [
+  { id: 'agent-prompt', label: 'Agent prompt' },
+  { id: 'sandbox', label: 'A safe local sandbox' },
+  { id: 'agent-entry', label: 'The agent entry point' },
+  { id: 'local-loop', label: 'The local loop' },
+  { id: 'safety', label: 'Validation boundaries' },
+];
 const quickstartPrompt = agentPromptLibrary.find((prompt) => prompt.id === 'quickstart')?.prompt ?? '';
 
 const structuredData = [
@@ -35,33 +45,39 @@ const structuredData = [
 ];
 ---
 
-<LandingLayout
+<BlogLayout
   title="LocalCloud for AI Agents — LocalCloud Blog"
   description="How LocalCloud gives coding agents a safe local Google Cloud sandbox: one Docker container, localhost SDK endpoints, raw Markdown instructions, Agent Skills, MCP tooling, and real-GCP validation boundaries."
   structuredData={structuredData}
+  {contents}
 >
+  <Fragment slot="hero">
   <article class="site-section site-section--hero">
     <div class="container container--narrow reveal">
+      <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
       <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>LocalCloud Blog</span>
       <h1 class="mt-5">LocalCloud for AI Agents</h1>
-      <p class="mt-5 text-sm text-[var(--text-3)]">Published {publishDate} · 4 min read · AI agents, GCP emulator, MCP, Agent Skills</p>
-      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
+      <p class="blog-meta"><span>Published <time datetime={publishDate}>{formatBlogDate(publishDate)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+      <p class="blog-deck">
         Coding agents are good at writing integration code. Cloud credentials are the dangerous part. LocalCloud gives those agents a local Google Cloud target they can use by default: one Docker container, standard SDKs pointed at localhost, and explicit instructions to stop instead of falling back to real Google Cloud.
       </p>
-      <div class="mt-8 flex flex-wrap gap-3">
+      <div class="blog-actions">
         <a class="site-button site-button--primary" href="/ai/agents.md">Open /ai/agents.md</a>
-        <a class="site-button site-button--secondary" href="/ai/">AI agent guide</a>
-        <a class="site-button site-button--secondary" href="/compatibility/">Compatibility</a>
+        <a href="/ai/">AI agent guide</a>
+        <a href="/compatibility/">Compatibility</a>
       </div>
     </div>
   </article>
+  </Fragment>
 
   <section class="site-section site-section--tight">
     <div class="container container--narrow">
       <div class="site-panel p-6 reveal">
-        <span class="site-kicker">The prompt</span>
-        <h2 class="mt-3">Give this to an agent</h2>
-        <pre class="mt-5 whitespace-pre-wrap text-sm"><code>{quickstartPrompt}</code></pre>
+        <div class="flex items-start justify-between gap-4">
+          <div><span class="site-kicker">The prompt</span><h2 class="mt-3" id="agent-prompt">Give this to an agent</h2></div>
+          <CopyButton text={quickstartPrompt} analyticsLabel="copy-blog-ai-agent-prompt" />
+        </div>
+        <pre class="blog-prompt"><code>{quickstartPrompt}</code></pre>
       </div>
     </div>
   </section>
@@ -70,7 +86,7 @@ const structuredData = [
     <div class="container container--narrow space-y-10">
       <section class="reveal">
         <span class="site-kicker">Problem</span>
-        <h2 class="mt-3">Agents need a sandbox, not your cloud account</h2>
+        <h2 class="mt-3" id="sandbox">Agents need a sandbox, not your cloud account</h2>
         <p class="mt-4 leading-8 text-[var(--text-2)]">
           A repo that uses BigQuery, Pub/Sub, Firestore, Cloud Storage, Spanner, Bigtable, or Terraform often expects a real GCP project. If an agent follows that path blindly, a local test can become a credential request, a billing event, or a mutation against shared infrastructure.
         </p>
@@ -81,7 +97,7 @@ const structuredData = [
 
       <section class="reveal">
         <span class="site-kicker">What changed</span>
-        <h2 class="mt-3">A canonical agent entry point</h2>
+        <h2 class="mt-3" id="agent-entry">A canonical agent entry point</h2>
         <p class="mt-4 leading-8 text-[var(--text-2)]">
           The agent-facing entry point is <a href="/ai/agents.md">/ai/agents.md</a>. It is raw Markdown so coding agents can fetch it without parsing a rendered page. The human companion page is <a href="/ai/">/ai/</a>, which explains the workflow, copy prompts, service matrix, safety boundaries, AGENTS.md template, Agent Skills package, and raw Markdown resource index.
         </p>
@@ -96,11 +112,11 @@ const structuredData = [
 
       <section class="reveal">
         <span class="site-kicker">How it works</span>
-        <h2 class="mt-3">One local loop agents can execute</h2>
+        <h2 class="mt-3" id="local-loop">One local loop agents can execute</h2>
         <div class="mt-5 grid gap-4 md:grid-cols-2">
           <article class="site-panel min-w-0 p-5">
             <h3>1. Start LocalCloud</h3>
-            <pre class="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap text-xs"><code>{agenticFacts.dockerPullCommand}\n{agenticFacts.dockerRunCommand}</code></pre>
+            <pre class="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap text-xs"><code>{[agenticFacts.dockerPullCommand, agenticFacts.dockerRunCommand].join('\n')}</code></pre>
           </article>
           <article class="site-panel min-w-0 p-5">
             <h3>2. Export localhost SDK endpoints</h3>
@@ -119,7 +135,7 @@ const structuredData = [
 
       <section class="reveal">
         <span class="site-kicker">Safety model</span>
-        <h2 class="mt-3">The boundaries are part of the product</h2>
+        <h2 class="mt-3" id="safety">The boundaries are part of the product</h2>
         <ul class="site-list mt-5">
           {agentSafeValidationChecklist.map((item) => <li>{item}</li>)}
         </ul>
@@ -129,4 +145,4 @@ const structuredData = [
       </section>
     </div>
   </section>
-</LandingLayout>
+</BlogLayout>

@@ -4,7 +4,7 @@ import { blogDemoPages } from '../../data/agenticContent';
 import type { AgenticContentPage as Page } from '../../data/agenticContent';
 
 export function getStaticPaths() {
-  return blogDemoPages.filter((page) => page.slug !== 'localcloud-for-ai-agents').map((page) => ({ params: { slug: page.slug }, props: { page } }));
+  return blogDemoPages.filter((page) => page.slug !== 'localcloud-for-ai-agents' && page.slug !== 'run-dataproc-locally-docker').map((page) => ({ params: { slug: page.slug }, props: { page } }));
 }
 
 interface Props { page: Page; }

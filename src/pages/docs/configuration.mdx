@@ -99,6 +99,7 @@ The registry contains {docsContract.services.length} API surfaces, including the
 
 The default-disabled entries are {docsContract.services.filter((service) => !service.registryDefaultEnabled).map((service) => service.name).join(', ')}. Review the operation matrix before enabling them.
 
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Service registry defaults and license tiers">
 <table>
   <thead>
     <tr>
@@ -119,6 +120,7 @@ The default-disabled entries are {docsContract.services.filter((service) => !ser
     ))}
   </tbody>
 </table>
+</div>
 
 ---
 

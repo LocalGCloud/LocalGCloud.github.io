@@ -83,43 +83,43 @@ const statusIcons = [
   title="LocalCloud Brand & Project Icons | LocalCloud"
   description="Explore the official icon suite for LocalCloud: app icons, CLI badges, feature symbols, and runtime status indicators."
 >
-  <div class="site-container py-12">
+  <div class="container py-12">
     <!-- Header -->
     <div class="max-w-3xl mb-12">
       <div class="flex items-center gap-2 mb-3">
         <span class="site-chip site-chip--accent font-mono text-xs uppercase">Brand Assets</span>
-        <span class="text-xs text-[var(--muted)] font-mono">v1.0 • Monoline 1.8px • Vector SVG</span>
+        <span class="text-xs text-[var(--text-2)] font-mono">v1.0 • Monoline 1.8px • Vector SVG</span>
       </div>
-      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-[var(--text)] mb-4">
+      <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-[var(--text)] mb-4">
         LocalCloud Brand & Project Icons
       </h1>
-      <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed">
+      <p class="text-base sm:text-lg text-[var(--text-2)] leading-relaxed">
         The official visual iconography for LocalCloud: designed for developer tooling clarity,
         scalable from 16px favicons to 512px app store launchers, matching the Google Cloud developer workbench aesthetic.
       </p>
     </div>
 
     <!-- Background Switcher Control -->
-    <div class="flex items-center gap-3 mb-8 p-3 rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] text-xs font-mono">
+    <div class="flex flex-wrap items-center gap-3 mb-8 p-3 rounded-xl border border-[var(--line)] bg-[var(--surface-2)] text-xs font-mono">
       <span class="text-[var(--text)] font-semibold">Preview Canvas:</span>
-      <button class="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-slate-800 hover:border-blue-500 transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#ffffff')">Light (#FFF)</button>
-      <button class="bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-lg text-slate-800 hover:border-blue-500 transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#f4f7fb')">Studio (#F4F7FB)</button>
-      <button class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-white hover:border-blue-400 transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#12233d')">Navy (#12233D)</button>
-      <button class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg text-white hover:border-blue-400 transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#0f172a')">Terminal (#0F172A)</button>
+      <button class="bg-white border border-slate-200 px-3 py-1.5 rounded-xl text-slate-800 hover:border-[var(--accent)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#ffffff')">Light (#FFF)</button>
+      <button class="bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-xl text-slate-800 hover:border-[var(--accent)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#f4f7fb')">Studio (#F4F7FB)</button>
+      <button class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl text-white hover:border-[var(--brand-sky)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#12233d')">Navy (#12233D)</button>
+      <button class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl text-white hover:border-[var(--brand-sky)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#0f172a')">Terminal (#0F172A)</button>
     </div>
 
     <!-- SECTION 1: Brand & App Icons -->
     <section class="mb-16">
       <div class="border-b border-[var(--line)] pb-4 mb-8">
-        <h2 class="text-xl sm:text-2xl font-bold text-[var(--text)]">1. Company & Brand Identity Icons</h2>
-        <p class="text-sm text-[var(--muted)] mt-1">Application launchers, menu bar monitors, CLI tooling badges, and favicons.</p>
+        <h2 class="text-xl sm:text-2xl font-semibold text-[var(--text)]">1. Company & Brand Identity Icons</h2>
+        <p class="text-sm text-[var(--text-2)] mt-1">Application launchers, menu bar monitors, CLI tooling badges, and favicons.</p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {brandIcons.map((icon) => (
-          <div class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 flex flex-col justify-between shadow-sm hover:border-blue-400 transition">
+          <div class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 flex flex-col justify-between hover:border-[var(--border-hover)] transition">
             <div>
-              <div class="icon-preview-box h-32 rounded-xl flex items-center justify-center border border-slate-200/60 bg-white transition-colors duration-200 mb-4 p-3">
+              <div class="icon-preview-box h-32 rounded-xl flex items-center justify-center border border-[var(--line)] bg-white transition-colors duration-200 mb-4 p-3">
                 <img
                   src={`${base}${icon.file}`}
                   alt={icon.name}
@@ -127,15 +127,15 @@ const statusIcons = [
                   style={`width: ${icon.size}px; height: ${icon.size}px;`}
                 />
               </div>
-              <h3 class="font-bold text-[var(--text)] text-sm mb-1">{icon.name}</h3>
-              <p class="text-xs text-[var(--muted)] leading-relaxed mb-3">{icon.desc}</p>
+              <h3 class="font-semibold text-[var(--text)] text-sm mb-1">{icon.name}</h3>
+              <p class="text-xs text-[var(--text-2)] leading-relaxed mb-3">{icon.desc}</p>
             </div>
-            <div class="pt-3 border-t border-[var(--line)] flex items-center justify-between text-xs font-mono text-[var(--muted)]">
-              <span class="truncate max-w-[150px]">{icon.file}</span>
+            <div class="pt-3 border-t border-[var(--line)] flex items-center justify-between gap-3 text-xs font-mono text-[var(--text-2)]">
+              <span class="min-w-0 truncate">{icon.file}</span>
               <a
                 href={`${base}${icon.file}`}
                 download
-                class="text-blue-600 hover:text-blue-800 font-semibold text-[11px]"
+                class="shrink-0 font-semibold text-xs text-[var(--accent-strong)] hover:underline"
               >
                 SVG ↗
               </a>
@@ -148,23 +148,23 @@ const statusIcons = [
     <!-- SECTION 2: Product & Feature Icons -->
     <section class="mb-16">
       <div class="border-b border-[var(--line)] pb-4 mb-8">
-        <h2 class="text-xl sm:text-2xl font-bold text-[var(--text)]">2. Product Feature & Capability Icons</h2>
-        <p class="text-sm text-[var(--muted)] mt-1">Precision 24×24 monoline vector icons matching the Developer Workbench visual style.</p>
+        <h2 class="text-xl sm:text-2xl font-semibold text-[var(--text)]">2. Product Feature & Capability Icons</h2>
+        <p class="text-sm text-[var(--text-2)] mt-1">Precision 24×24 monoline vector icons matching the Developer Workbench visual style.</p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {featureIcons.map((item) => (
-          <div class="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 flex flex-col justify-between hover:border-blue-400 transition">
+          <div class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-4 flex flex-col justify-between hover:border-[var(--border-hover)] transition">
             <div>
-              <div class="icon-preview-box h-20 rounded-lg flex items-center justify-center border border-slate-200/60 bg-white text-slate-800 mb-3 transition-colors">
+              <div class="icon-preview-box h-20 rounded-xl flex items-center justify-center border border-[var(--line)] bg-white text-slate-800 mb-3 transition-colors">
                 <FeatureIcon name={item.id} size={36} />
               </div>
               <h3 class="font-semibold text-xs text-[var(--text)] mb-1">{item.title}</h3>
-              <p class="text-[11px] text-[var(--muted)] leading-snug">{item.desc}</p>
+              <p class="text-xs text-[var(--text-2)] leading-snug">{item.desc}</p>
             </div>
-            <div class="mt-3 pt-2 border-t border-[var(--line)] flex items-center justify-between text-[10px] font-mono text-[var(--muted)]">
+            <div class="mt-3 pt-2 border-t border-[var(--line)] flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs font-mono text-[var(--text-2)]">
               <span>{item.id}.svg</span>
-              <a href={`${base}icons/features/${item.id}.svg`} download class="text-blue-600 hover:underline">Get SVG</a>
+              <a href={`${base}icons/features/${item.id}.svg`} download class="font-semibold text-[var(--accent-strong)] hover:underline">Get SVG</a>
             </div>
           </div>
         ))}
@@ -174,26 +174,26 @@ const statusIcons = [
     <!-- SECTION 3: Status & Health Icons -->
     <section class="mb-16">
       <div class="border-b border-[var(--line)] pb-4 mb-8">
-        <h2 class="text-xl sm:text-2xl font-bold text-[var(--text)]">3. Runtime Status & Health Indicators</h2>
-        <p class="text-sm text-[var(--muted)] mt-1">Status lights and healthcheck indicators for dashboard rows, logs, and CLI output.</p>
+        <h2 class="text-xl sm:text-2xl font-semibold text-[var(--text)]">3. Runtime Status & Health Indicators</h2>
+        <p class="text-sm text-[var(--text-2)] mt-1">Status lights and healthcheck indicators for dashboard rows, logs, and CLI output.</p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {statusIcons.map((s) => (
-          <div class="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 flex flex-col justify-between hover:border-blue-400 transition">
+          <div class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-4 flex flex-col justify-between hover:border-[var(--border-hover)] transition">
             <div>
-              <div class="icon-preview-box h-20 rounded-lg flex items-center justify-center border border-slate-200/60 bg-white mb-3 transition-colors">
+              <div class="icon-preview-box h-20 rounded-xl flex items-center justify-center border border-[var(--line)] bg-white mb-3 transition-colors">
                 <StatusIcon status={s.id} size={32} />
               </div>
               <div class="flex items-center gap-1.5 mb-1">
                 <span class="w-2 h-2 rounded-full" style={`background-color: ${s.color};`}></span>
                 <h3 class="font-semibold text-xs text-[var(--text)]">{s.title}</h3>
               </div>
-              <p class="text-[11px] text-[var(--muted)] leading-snug">{s.desc}</p>
+              <p class="text-xs text-[var(--text-2)] leading-snug">{s.desc}</p>
             </div>
-            <div class="mt-3 pt-2 border-t border-[var(--line)] flex items-center justify-between text-[10px] font-mono text-[var(--muted)]">
+            <div class="mt-3 pt-2 border-t border-[var(--line)] flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs font-mono text-[var(--text-2)]">
               <span>status-{s.id}.svg</span>
-              <a href={`${base}icons/status/status-${s.id}.svg`} download class="text-blue-600 hover:underline">Get SVG</a>
+              <a href={`${base}icons/status/status-${s.id}.svg`} download class="font-semibold text-[var(--accent-strong)] hover:underline">Get SVG</a>
             </div>
           </div>
         ))}
@@ -201,31 +201,54 @@ const statusIcons = [
     </section>
 
     <!-- SECTION 4: Component Usage Guide -->
-    <section class="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-6 sm:p-8">
-      <h3 class="text-lg font-bold text-[var(--text)] mb-2">Usage in Code</h3>
-      <p class="text-sm text-[var(--muted)] mb-6">
+    <section class="rounded-2xl border border-[var(--line)] bg-[var(--surface-2)] p-6 sm:p-8">
+      <h3 class="text-lg font-semibold text-[var(--text)] mb-2">Usage in Code</h3>
+      <p class="text-sm text-[var(--text-2)] mb-6">
         Easily include these icons in any Astro layout, MDX documentation page, or frontend component.
       </p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono text-xs">
-        <div class="bg-slate-900 text-slate-100 p-4 rounded-xl overflow-x-auto">
-          <div class="text-slate-400 mb-2 font-sans font-semibold text-[11px] uppercase tracking-wider">// Feature Icon Component</div>
-          <code>{`import FeatureIcon from '../components/FeatureIcon.astro';
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="brand-terminal min-w-0 rounded-xl p-4">
+          <div class="brand-terminal__label mb-2 font-mono font-semibold text-xs uppercase tracking-wider">// Feature Icon Component</div>
+          <pre><code>{`import FeatureIcon from '../components/FeatureIcon.astro';
 
 <FeatureIcon name="local-runtime" size={24} />
 <FeatureIcon name="zero-cloud-bill" size={24} />
-<FeatureIcon name="instant-iteration" size={24} />`}</code>
+<FeatureIcon name="instant-iteration" size={24} />`}</code></pre>
         </div>
 
-        <div class="bg-slate-900 text-slate-100 p-4 rounded-xl overflow-x-auto">
-          <div class="text-slate-400 mb-2 font-sans font-semibold text-[11px] uppercase tracking-wider">// Status Indicator Component</div>
-          <code>{`import StatusIcon from '../components/StatusIcon.astro';
+        <div class="brand-terminal min-w-0 rounded-xl p-4">
+          <div class="brand-terminal__label mb-2 font-mono font-semibold text-xs uppercase tracking-wider">// Status Indicator Component</div>
+          <pre><code>{`import StatusIcon from '../components/StatusIcon.astro';
 
 <StatusIcon status="running" size={18} />
 <StatusIcon status="starting" size={18} />
-<StatusIcon status="error" size={18} />`}</code>
+<StatusIcon status="error" size={18} />`}</code></pre>
         </div>
       </div>
     </section>
   </div>
 </LandingLayout>
+
+<style>
+  .brand-terminal {
+    --terminal-bg: #191f29;
+    --terminal-ink: #e8eaed;
+    --terminal-muted: rgba(232, 234, 237, 0.72);
+    background: var(--terminal-bg);
+  }
+
+  .brand-terminal__label {
+    color: var(--terminal-muted);
+  }
+
+  .brand-terminal pre {
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .brand-terminal pre code {
+    padding: 0;
+    color: var(--terminal-ink);
+  }
+</style>

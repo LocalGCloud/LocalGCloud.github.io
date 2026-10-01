@@ -43,9 +43,9 @@ const workflowCards = [
   },
 ];
 
-const supportedCount = agenticServiceMetadata.filter((service) => service.status === 'supported').length;
-const unsupportedCount = agenticServiceMetadata.filter((service) => service.status === 'unsupported').length;
-const plannedCount = agenticServiceMetadata.filter((service) => service.status === 'planned').length;
+const isSupported = (service: (typeof agenticServiceMetadata)[number]) => service.status === 'supported';
+const supportedCount = agenticServiceMetadata.filter(isSupported).length;
+const unsupportedCount = agenticServiceMetadata.length - supportedCount;
 
 const structuredData = [
   createSoftwareApplicationSchema(
@@ -68,7 +68,7 @@ const structuredData = [
 
   <main id="main-content" class="site-page ai-page">
     <section class="site-section site-section--hero">
-      <div class="container grid gap-8 xl:grid-cols-[1fr,0.78fr] xl:items-start">
+      <div class="container grid gap-8 xl:grid-cols-[1fr_0.78fr] xl:items-start">
         <div class="reveal">
           <span class="site-eyebrow">
             <span class="site-eyebrow__pulse"></span>
@@ -81,8 +81,10 @@ const structuredData = [
           <div class="mt-8 flex flex-wrap gap-3">
             <a class="site-button site-button--primary" href={`${base}ai/agents.md`}>Open raw agent guide</a>
             <a class="site-button site-button--secondary" href={`${base}ai/agent-template.md`}>Download AGENTS.md template</a>
-            <a class="site-button site-button--secondary" href={agentSkillsUrl}>Browse Agent Skills</a>
-            <a class="site-button site-button--secondary" href={`${base}compatibility/`}>Review compatibility</a>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-x-6 text-sm font-semibold">
+            <a class="inline-flex min-h-11 items-center text-[var(--accent-strong)] underline-offset-4 hover:underline" href={agentSkillsUrl}>Browse Agent Skills</a>
+            <a class="inline-flex min-h-11 items-center text-[var(--accent-strong)] underline-offset-4 hover:underline" href={`${base}compatibility/`}>Review compatibility</a>
           </div>
         </div>
 
@@ -90,19 +92,19 @@ const structuredData = [
           <span class="site-kicker">Canonical facts</span>
           <dl class="mt-4 grid gap-3 text-sm">
             <div class="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
-              <dt class="text-[var(--text-3)]">Docker image</dt>
-              <dd class="font-mono text-[var(--text)]">{agenticFacts.dockerImage}</dd>
+              <dt class="shrink-0 text-[var(--text-2)]">Docker image</dt>
+              <dd class="min-w-0 text-right font-mono text-[var(--text)] [overflow-wrap:anywhere]">{agenticFacts.dockerImage}</dd>
             </div>
             <div class="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
-              <dt class="text-[var(--text-3)]">Documented integrations</dt>
-              <dd class="font-mono text-[var(--text)]">{productFacts.serviceCountLabel}</dd>
+              <dt class="shrink-0 text-[var(--text-2)]">Documented integrations</dt>
+              <dd class="min-w-0 text-right font-mono text-[var(--text)] [overflow-wrap:anywhere]">{productFacts.serviceCountLabel}</dd>
             </div>
             <div class="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
-              <dt class="text-[var(--text-3)]">Credentials</dt>
+              <dt class="shrink-0 text-[var(--text-2)]">Credentials</dt>
               <dd class="text-right text-[var(--text)]">No GCP account, credentials, or billing by default</dd>
             </div>
             <div class="flex items-start justify-between gap-4">
-              <dt class="text-[var(--text-3)]">Production boundary</dt>
+              <dt class="shrink-0 text-[var(--text-2)]">Production boundary</dt>
               <dd class="text-right text-[var(--text)]">Validate against real GCP before production</dd>
             </div>
           </dl>
@@ -164,11 +166,11 @@ const structuredData = [
                       <span class="h-2.5 w-2.5 rounded-full bg-[var(--text-3)] opacity-30"></span>
                       <span class="h-2.5 w-2.5 rounded-full bg-[var(--text-3)] opacity-30"></span>
                     </div>
-                    <span class="font-mono text-xs uppercase tracking-wider text-[var(--text-3)]">Prompt</span>
+                    <span class="font-mono text-xs uppercase tracking-wider text-[var(--text-2)]">Prompt</span>
                   </div>
                   <button 
                     type="button" 
-                    class="inline-flex items-center gap-1.5 rounded-md border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1.5 font-mono text-xs text-[var(--text-2)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)]" 
+                    class="inline-flex items-center gap-1.5 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1.5 font-mono text-xs text-[var(--text-2)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)]" 
                     data-copy-text={item.prompt}
                   >
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,14 +220,12 @@ const structuredData = [
         <div class="mb-5 flex flex-wrap gap-3 reveal">
           <span class="site-chip site-chip--success">{supportedCount} supported locally</span>
           {unsupportedCount > 0 && <span class="site-chip site-chip--warn">{unsupportedCount} unsupported</span>}
-          {plannedCount > 0 && <span class="site-chip site-chip--accent">{plannedCount} planned</span>}
         </div>
-        <div class="ai-service-matrix site-panel reveal">
+        <div class="ai-service-matrix site-panel reveal" tabindex="0" role="region" aria-label="LocalCloud service matrix for agents">
           <table class="border-collapse text-left text-sm">
             <thead>
-              <tr class="border-b border-[var(--line)] text-[var(--text-3)]">
+              <tr class="border-b border-[var(--line)] text-[var(--text-2)]">
                 <th class="p-4 font-mono text-xs uppercase tracking-[0.12em]">Service</th>
-                <th class="p-4 font-mono text-xs uppercase tracking-[0.12em]">Status</th>
                 <th class="p-4 font-mono text-xs uppercase tracking-[0.12em]">Endpoint</th>
                 <th class="p-4 font-mono text-xs uppercase tracking-[0.12em]">Boundary</th>
               </tr>
@@ -235,14 +235,10 @@ const structuredData = [
                 <tr class="border-b border-[var(--line)] last:border-0">
                   <td class="p-4 align-top">
                     <a class="font-semibold text-[var(--text)]" href={`${base}services/${service.slug}/`}>{service.name}</a>
-                    <div class="mt-1 font-mono text-xs text-[var(--text-3)]">{service.implementation}</div>
+                    {!isSupported(service) && <span class="site-chip site-chip--warn ml-2">Unsupported</span>}
+                    <div class="mt-1 font-mono text-xs text-[var(--text-2)]">{service.implementation}</div>
                   </td>
-                  <td class="p-4 align-top">
-                    <span class:list={['site-chip', service.status === 'supported' ? 'site-chip--success' : service.status === 'planned' ? 'site-chip--accent' : 'site-chip--warn']}>
-                      {service.status === 'planned' ? 'coming soon' : service.status}
-                    </span>
-                  </td>
-                  <td class="p-4 align-top font-mono text-xs text-[var(--text-2)]">{service.status === 'planned' ? 'Published when available' : ['unsupported', 'unknown'].includes(service.status) ? 'No supported integration' : service.envVar}</td>
+                  <td class="p-4 align-top font-mono text-xs text-[var(--text-2)]">{isSupported(service) ? service.envVar : 'No local endpoint'}</td>
                   <td class="p-4 align-top text-[var(--text-2)]">{service.caveat}</td>
                 </tr>
               ))}
@@ -253,7 +249,7 @@ const structuredData = [
     </section>
 
     <section class="site-section site-section--tight">
-      <div class="container grid gap-5 lg:grid-cols-[0.82fr,1fr]">
+      <div class="container grid gap-5 lg:grid-cols-[0.82fr_1fr]">
         <div class="site-section-heading reveal">
           <span class="site-kicker">Safety boundaries</span>
           <h2>What agents must not do</h2>

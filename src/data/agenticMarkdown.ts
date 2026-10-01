@@ -13,9 +13,7 @@ const serviceStatusLabel = (
 	if (status === "supported" || status === "partial" || status === "release-unverified") {
 		return "Supported locally";
 	}
-	if (status === "unsupported") return "Unsupported";
-	if (status === "unknown") return "Evidence unknown";
-	return "Coming soon";
+	return "Unsupported";
 };
 
 const endpointLines = agenticEndpoints
@@ -172,7 +170,7 @@ export const agentServicesMarkdown = `# LocalCloud service matrix for agents
 
 Use this matrix to decide which localhost endpoint an agent should configure before running SDK, CLI, Terraform, or integration checks. Service-specific HTML pages are canonical for human-facing capability detail.
 
-Default LocalCloud agent workflows require no GCP account, no Google credentials, no service-account keys, and no billing project. If a service is partial or planned, stop and document the gap instead of using real Google Cloud as a fallback.
+Default LocalCloud agent workflows require no GCP account, no Google credentials, no service-account keys, and no billing project. If a service or operation is unsupported, stop and document the gap instead of using real Google Cloud as a fallback.
 
 ${serviceLines}
 

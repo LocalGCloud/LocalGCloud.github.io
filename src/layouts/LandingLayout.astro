@@ -20,6 +20,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 <BaseLayout {title} {description} {ogImage} {noindex} {structuredData}>
   <Header />
   <main id="main-content" class="site-page">
+    <slot name="hero" />
     <slot />
   </main>
   <Footer />

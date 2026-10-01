@@ -125,12 +125,12 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 			name: service.name,
 			slug: service.slug,
 			status,
-			port: service.catalogState === "coming-soon" ? "coming soon" : service.port,
+			port: service.catalogState === "coming-soon" ? "not available" : service.port,
 			protocol:
-				service.catalogState === "coming-soon" ? "planned" : service.protocol,
+				service.catalogState === "coming-soon" ? "not available" : service.protocol,
 			endpointLabel:
 				service.catalogState === "coming-soon"
-					? "Coming soon"
+					? "No local endpoint"
 					: service.endpointLabel,
 			envVar: service.catalogState === "coming-soon" ? "" : service.envVar,
 			docsUrl: `${productFacts.siteUrl}services/${service.slug}/`,
@@ -149,7 +149,7 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 							),
 			gaps:
 				service.catalogState === "coming-soon"
-					? ["Service support is coming soon."]
+					? ["LocalCloud does not run this service locally."]
 					: [
 							...service.notSupported,
 							...service.operations
@@ -166,9 +166,9 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 			persistence: service.persistence,
 			caveat:
 				service.catalogState === "coming-soon"
-					? "Service support is coming soon; do not configure a local endpoint yet."
+					? "Unsupported: LocalCloud does not run this service locally; do not configure a local endpoint."
 					: service.status === "unsupported" || service.status === "unknown"
-						? `${service.status === "unsupported" ? "Unsupported" : "Evidence unknown"}: no supported application integration is established. Review the service guide before configuring clients.`
+						? "Unsupported: no supported application integration is established. Review the service guide before configuring clients."
 					: !service.registryDefaultEnabled
 						? `Supported locally; disabled by default to save resources. Enable via localcloud start --services ${service.slug}.`
 					: service.notSupported.length

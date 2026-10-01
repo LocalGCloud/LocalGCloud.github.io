@@ -16,7 +16,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
     <header class="installation-methods__header">
       <span class="installation-methods__kicker">Quick Start</span>
       <h2 id="manual-quickstart-title" class="installation-methods__title">Install, Start & Use.</h2>
-      <p class="installation-methods__lede">Requires docker .</p>
+      <p class="installation-methods__lede">Requires Docker.</p>
     </header>
 
     <ol class="installation-methods__workflow">
@@ -92,9 +92,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
     padding: clamp(1.15rem, 2.4vw, 1.75rem);
     border: 1px solid var(--line);
     border-radius: 1.25rem;
-    background:
-      radial-gradient(120% 100% at 50% 0%, rgba(232, 240, 254, 0.85), transparent 62%),
-      var(--surface);
+    background: var(--surface);
     box-shadow: var(--shadow-md);
   }
 
@@ -115,7 +113,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
   }
 
   .installation-methods__kicker {
-    font-size: 0.72rem;
+    font-size: var(--fs-label);
   }
 
   .installation-methods__title {
@@ -128,7 +126,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
   .installation-methods__lede {
     max-width: 62ch;
     color: var(--text-2);
-    font-size: 0.9rem;
+    font-size: var(--fs-small);
     line-height: 1.6;
   }
 
@@ -148,7 +146,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
     padding: 1rem;
     border: 1px solid var(--line);
     border-radius: 1rem;
-    background: rgba(255, 255, 255, 0.72);
+    background: var(--surface);
   }
 
   .installation-methods__step-copy {
@@ -168,13 +166,13 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
     border-radius: 999px;
     background: var(--accent-soft);
     color: var(--accent-strong);
-    font-size: 0.8rem;
+    font-size: var(--fs-label);
     letter-spacing: 0;
   }
 
   .installation-methods__step-copy h3 {
     color: var(--text);
-    font-size: 1.02rem;
+    font-size: var(--fs-body);
     line-height: 1.25;
     letter-spacing: -0.02em;
     text-wrap: balance;
@@ -183,7 +181,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
   .installation-methods__step-copy p {
     grid-column: 2;
     color: var(--text-2);
-    font-size: 0.86rem;
+    font-size: var(--fs-small);
     line-height: 1.55;
   }
 
@@ -212,9 +210,9 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
   .installation-methods :global(.code-tabs__tab) {
     flex: 0 0 auto;
     justify-content: center;
-    min-height: 2.25rem;
+    min-height: 2.75rem;
     padding: 0 0.7rem;
-    font-size: 0.8rem;
+    font-size: var(--fs-small);
   }
 
   .installation-methods :global(.code-tabs__panel) {
@@ -228,9 +226,9 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
     margin-top: auto;
     max-width: 100%;
     min-width: 0;
-    border: 1px solid rgba(26, 115, 232, 0.16);
+    border: 1px solid var(--line);
     border-radius: 0.75rem;
-    background: color-mix(in srgb, var(--accent-soft) 58%, var(--surface));
+    background: var(--surface-2);
   }
 
   .installation-methods__command pre {
@@ -252,14 +250,14 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
     width: 100%;
     padding: 0.7rem 0.85rem;
     color: var(--text);
-    font-size: 0.84rem;
+    font-size: var(--fs-small);
     line-height: 1.6;
     white-space: pre-wrap;
     overflow-wrap: break-word;
   }
 
   .installation-methods__command ::selection {
-    background: rgba(26, 115, 232, 0.2);
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
     color: var(--text);
   }
 
@@ -268,7 +266,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
     align-self: center;
     margin: 0.25rem;
     transform: none;
-    border-color: rgba(26, 115, 232, 0.18);
+    border-color: var(--line);
     border-radius: 0.75rem;
     background: var(--surface);
     color: var(--accent-strong);
@@ -282,7 +280,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
   .installation-methods__meta {
     margin-top: 1rem;
     color: var(--text-2);
-    font-size: 0.76rem;
+    font-size: var(--fs-label);
     line-height: 1.65;
     text-align: center;
     text-wrap: balance;
@@ -290,7 +288,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
 
   .installation-methods__meta a {
     text-decoration: underline;
-    text-decoration-color: rgba(21, 87, 176, 0.3);
+    text-decoration-color: color-mix(in srgb, var(--accent-strong) 30%, transparent);
     text-underline-offset: 0.18em;
   }
 

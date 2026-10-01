@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: BigQuery Emulator Coverage and Known Boundaries
-description: Source-linked BigQuery coverage matrix counts, partial records, and evidence limits.
+description: Source-linked BigQuery coverage matrix counts, capabilities implemented with documented limits, and evidence boundaries.
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -24,21 +24,24 @@ These are the dependency's recorded classifications, not independent proof of se
 
 <p>Dependency revision: <code>{coverage.revision}</code>. <a href={matrixUrl}>Read the complete matrix and evidence references</a>.</p>
 
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="BigQuery coverage matrix summary">
 <table>
-  <thead><tr><th>Dimension</th><th>Implemented</th><th>Partial</th><th>Unsupported</th><th>Unknown</th><th>Total records</th></tr></thead>
+  <thead><tr><th>Dimension</th><th>Implemented</th><th>Implemented with limits</th><th>Unsupported</th><th>Unknown</th><th>Total records</th></tr></thead>
   <tbody>
     {Object.entries({ Development: coverage.development, 'Production parity': coverage.production }).map(([dimension, counts]) => (
       <tr><td>{dimension}</td><td>{counts.implemented}</td><td>{counts.partial}</td><td>{counts.unsupported}</td><td>{counts.unknown}</td><td>{coverage.total}</td></tr>
     ))}
   </tbody>
 </table>
+</div>
 
-“Implemented” is a matrix classification tied to its listed implementation and test references. Review those references for the exact feature, input shape, client, and validation tier. “Partial” records contain concrete remaining boundaries; derived rows can overlap their child features.
+“Implemented” is a matrix classification tied to its listed implementation and test references. Review those references for the exact feature, input shape, client, and validation tier. “Implemented with limits” rows (the matrix classification <code>partial</code>) work locally within the concrete boundaries recorded below; derived rows can overlap their child features.
 
-## Partial records
+## Capabilities implemented with documented limits
 
-<p>The matrix currently records {coverage.partialCapabilities.length} partial development records. This table retains their source notes, including local input gaps and connector qualification limits.</p>
+<p>The matrix records {coverage.partialCapabilities.length} development capabilities that work locally within documented limits. This table retains their source notes, including local input gaps and connector qualification limits.</p>
 
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="BigQuery capabilities implemented with documented limits">
 <table>
   <thead><tr><th>Capability</th><th>Recorded boundary</th><th>Evidence notes</th></tr></thead>
   <tbody>
@@ -47,6 +50,7 @@ These are the dependency's recorded classifications, not independent proof of se
     ))}
   </tbody>
 </table>
+</div>
 
 ## Unsupported and unknown records
 

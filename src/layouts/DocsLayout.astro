@@ -113,7 +113,6 @@ const nextItem = currentIndex >= 0 && currentIndex < allLinks.length - 1 ? allLi
 
           <div class="docs-toolbar__actions">
             <a href={`${base}services/`}>Service Catalog</a>
-            <a href="https://github.com/LocalGCloud/LocalGCloud.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
         </div>
 
@@ -191,9 +190,9 @@ const nextItem = currentIndex >= 0 && currentIndex < allLinks.length - 1 ? allLi
               </div>
 
               <footer class="docs-article__meta">
-                <p class="text-sm text-[var(--text-3)]">Maintained by {author}</p>
-                {updated && <p class="text-sm text-[var(--text-3)]">Last materially updated: {updated}</p>}
-                {reviewed && <p class="text-sm text-[var(--text-3)]">Evidence reviewed: {reviewed}</p>}
+                <p class="text-sm text-[var(--text-2)]">Maintained by {author}</p>
+                {updated && <p class="text-sm text-[var(--text-2)]">Last materially updated: {updated}</p>}
+                {reviewed && <p class="text-sm text-[var(--text-2)]">Evidence reviewed: {reviewed}</p>}
               </footer>
 
               <DocFeedback />

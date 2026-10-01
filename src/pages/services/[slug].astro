@@ -36,17 +36,15 @@ const documentedOperations = isComingSoon
   : service.operations.filter((operation) => operation.status !== 'unsupported' && operation.status !== 'unknown');
 const unavailableOperations = service.operations.filter((operation) => operation.status === 'unsupported' || operation.status === 'unknown');
 const operationBoundaries = documentedOperations.filter((operation) => operation.limitations.length > 0);
-const pageTitle = isUnsupported
-  ? `${service.name} — ${service.status} in LocalCloud`
-  : isComingSoon
-  ? `${service.name} Support Coming Soon — LocalCloud`
+const pageTitle = isUnsupported || isComingSoon
+  ? `${service.name} — Unsupported in LocalCloud`
   : isAuxiliary
   ? `${service.name} Integration API — LocalCloud`
   : `${service.name} Local Emulator — LocalCloud`;
 const pageDescription = isUnsupported
-  ? `Review why ${service.name} is currently ${service.status} in LocalCloud and consult the operation boundaries.`
+  ? `Review why ${service.name} is unsupported in LocalCloud and consult the operation boundaries.`
   : isComingSoon
-  ? `${service.name} support is coming soon to LocalCloud.`
+  ? `LocalCloud does not run ${service.name} locally. Use real Google Cloud for this service.`
   : isAuxiliary
   ? `Connect to the ${service.name} auxiliary integration API and review ${documentedOperations.length} documented lookup workflows and runtime details.`
   : `Connect to ${service.name} locally and review ${documentedOperations.length} documented workflows, runtime details, and service boundaries.`;
@@ -67,12 +65,12 @@ const pageDescription = isUnsupported
     <section class="site-section site-section--hero">
       <div class="container service-hero-grid">
         <div class="service-hero-intro reveal">
-          <nav class="mb-5 flex items-center gap-2 text-sm text-[var(--text-3)]"><a href={`${base}services/`}>Services</a><span>/</span><span>{service.name}</span></nav>
+          <nav class="mb-5 flex items-center gap-2 text-sm text-[var(--text-2)]"><a href={`${base}services/`}>Services</a><span>/</span><span>{service.name}</span></nav>
           <div class="flex flex-wrap items-center gap-4">
-            <span class="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.5rem] border border-[var(--line)] bg-white shadow-[var(--shadow-md)]"><ServiceIcon iconId={service.iconId} name={service.name} size={52} /></span>
+            <span class="flex h-20 w-20 shrink-0 items-center justify-center rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-md)]"><ServiceIcon iconId={service.iconId} name={service.name} size={52} /></span>
             <div class="flex flex-wrap items-center gap-3">
               <span class="site-chip site-chip--accent">{categoryLabel}</span>
-              <span class="site-chip site-chip--accent">{getServiceSignalLabel(service)}</span>
+              <span class:list={['site-chip', isUnsupported || isComingSoon ? 'site-chip--warn' : 'site-chip--accent']}>{getServiceSignalLabel(service)}</span>
             </div>
           </div>
           <h1 class="mt-6 max-w-[16ch]">{service.name}</h1>
@@ -87,14 +85,14 @@ const pageDescription = isUnsupported
 
         {isComingSoon ? (
           <aside class="site-panel service-hero-connection p-6 reveal">
-            <span class="site-kicker">Roadmap</span>
-            <h2 class="mt-4 text-2xl font-semibold tracking-tight">{service.name} support is coming soon</h2>
-            <p class="mt-4 leading-7 text-[var(--text-2)]">Connection details and documented local workflows will be published here as the integration becomes available.</p>
+            <span class="site-kicker">Unsupported</span>
+            <h2 class="mt-4 text-2xl font-semibold tracking-tight">{service.name} is unsupported in LocalCloud</h2>
+            <p class="mt-4 leading-7 text-[var(--text-2)]">LocalCloud does not run this service locally, so there is no local endpoint to configure. Use real Google Cloud for this service.</p>
           </aside>
         ) : (
           <aside class="site-panel service-hero-connection p-5 reveal sm:p-6">
             <div class="flex flex-wrap items-center justify-between gap-3"><span class="site-kicker">{isUnsupported ? 'Registry reference — unsupported integration' : isAuxiliary ? 'Auxiliary API connection' : 'Connection'}</span>{!isUnsupported && <CopyButton text={service.envVar} />}</div>
-            <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4"><p class="site-micro">Environment variable</p><code class="mt-3 block break-all border-0 bg-transparent p-0 text-[0.92rem] leading-7 text-[var(--accent-strong)]">{service.envVar}</code></div>
+            <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4"><p class="site-micro">Environment variable</p><code class="mt-3 block break-all border-0 bg-transparent p-0 text-sm leading-7 text-[var(--accent-strong)]">{service.envVar}</code></div>
             <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4">
               <p class="site-micro">Runtime details</p>
               <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm leading-6">

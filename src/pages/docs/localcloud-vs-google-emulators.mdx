@@ -28,18 +28,20 @@ Consider LocalCloud when:
 - an allowed personal or organizational development workflow needs several GCP-shaped local service surfaces in one runtime;
 - you need one service catalog with explicit operation-level evidence;
 - the host CLI's generated endpoints and common operator routes simplify the local workflow; and
-- you accept that every service is partial, release-unverified, or otherwise bounded rather than production-equivalent.
+- you validate production behavior in Google Cloud, because each local service works within documented operation boundaries rather than being production-equivalent.
 
 ## LocalCloud contract summary
 
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="LocalCloud contract summary">
 <table>
   <thead><tr><th>Service</th><th>Status</th><th>Implementation</th><th>Overview</th></tr></thead>
   <tbody>
     {services.map((service) => (
-      <tr><td>{service.name}</td><td><code>{service.marketingStatus === 'unsupported' ? 'unsupported' : !service.registryDefaultEnabled ? 'disabled by default' : 'supported'}</code></td><td>{service.implementation}</td><td>{service.description}</td></tr>
+      <tr><td>{service.name}</td><td>{service.marketingStatus === 'unsupported' ? 'Unsupported' : 'Supported'}</td><td>{service.implementation}</td><td>{service.description}</td></tr>
     ))}
   </tbody>
 </table>
+</div>
 
 A service listing does not imply default startup, full parity, or legal permission. Review the [service detail](/services/), [compatibility matrix](/compatibility/), and [licensing reference](/docs/licensing/).
 

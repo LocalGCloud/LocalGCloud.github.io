@@ -105,9 +105,9 @@ const faqItems = [
           This page focuses on LocalCloud. Consult each vendor's current documentation when comparing other local cloud tools.
         </p>
       </div>
-      <div class="mt-8 overflow-x-auto reveal">
+      <div class="mt-8 overflow-x-auto reveal" tabindex="0" role="region" aria-label="Local cloud platform comparison">
         <table class="w-full text-left text-sm">
-          <thead class="border-b border-[var(--border-1)]">
+          <thead class="border-b border-[var(--line)]">
             <tr>
               <th class="py-3 font-semibold text-[var(--text)]">Platform</th>
               <th class="py-3 font-semibold text-[var(--text)]">Tool</th>
@@ -115,7 +115,7 @@ const faqItems = [
               <th class="py-3 font-semibold text-[var(--text)]">Popular Services</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-[var(--border-1)]">
+          <tbody class="divide-y divide-[var(--line)]">
             {platforms.map(p => (
               <tr>
                 <td class="py-3 text-[var(--text)]">{p.name}</td>
@@ -150,7 +150,7 @@ localcloud console</code></pre>
       </div>
 
       <div class="mt-8 grid gap-6 sm:grid-cols-2 reveal">
-        <article class="site-panel p-6">
+        <article class="site-panel min-w-0 p-6">
           <h3 class="text-lg font-semibold text-[var(--text)]">Supported GCP services</h3>
           <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
             <div><strong class="text-[var(--text)]">Data & Analytics:</strong> BigQuery, Cloud Storage, Spanner, Bigtable</div>
@@ -164,7 +164,7 @@ localcloud console</code></pre>
           </div>
         </article>
 
-        <article class="site-panel p-6">
+        <article class="site-panel min-w-0 p-6">
           <h3 class="text-lg font-semibold text-[var(--text)]">Key features</h3>
           <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
             <div>• Service-specific gRPC/REST compatibility with documented limits</div>
@@ -172,7 +172,7 @@ localcloud console</code></pre>
             <div>• Client support varies by service and tested profile</div>
             <div>• Persistence varies by service and backing store</div>
             <div>• Containerized workflows remain subject to the governing license</div>
-            <div>• Terraform support is partial and resource-specific</div>
+            <div>• Terraform (hashicorp/google v7) applies the documented resource list locally</div>
             <div>• Native ARM64 support (Apple Silicon)</div>
           </div>
         </article>
@@ -192,12 +192,12 @@ localcloud console</code></pre>
         <h2>Best practices for local cloud development</h2>
       </div>
       <div class="mt-8 grid gap-6 reveal">
-        <article class="site-panel p-6">
+        <article class="site-panel min-w-0 p-6">
           <h3 class="text-lg font-semibold text-[var(--text)]">1. Environment variable separation</h3>
           <p class="mt-3 text-[var(--text-2)] leading-7">
             Use different environment variables for local vs production. Never accidentally hit production APIs during local development.
           </p>
-          <pre class="mt-4 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code># .env.local
+          <pre class="mt-4 overflow-x-auto rounded-xl bg-[var(--surface-2)] p-3 text-xs"><code># .env.local
 BIGQUERY_EMULATOR_HOST=http://localhost:5388
 STORAGE_EMULATOR_HOST=http://localhost:5382
 
@@ -205,7 +205,7 @@ STORAGE_EMULATOR_HOST=http://localhost:5382
 # (no emulator variables — uses real GCP)</code></pre>
         </article>
 
-        <article class="site-panel p-6">
+        <article class="site-panel min-w-0 p-6">
           <h3 class="text-lg font-semibold text-[var(--text)]">2. Seed data for testing</h3>
           <p class="mt-3 text-[var(--text-2)] leading-7">
             Pre-populate local services with test data. Can make supported fixtures repeatable. Seed support is service-specific.
@@ -218,7 +218,7 @@ STORAGE_EMULATOR_HOST=http://localhost:5382
           </div>
         </article>
 
-        <article class="site-panel p-6">
+        <article class="site-panel min-w-0 p-6">
           <h3 class="text-lg font-semibold text-[var(--text)]">3. Internal automation</h3>
           <p class="mt-3 text-[var(--text-2)] leading-7">
             The Public Preview License permits containerized development and testing for individuals and organizations, including ongoing internal team CI.
@@ -231,7 +231,7 @@ STORAGE_EMULATOR_HOST=http://localhost:5382
           </div>
         </article>
 
-        <article class="site-panel p-6">
+        <article class="site-panel min-w-0 p-6">
           <h3 class="text-lg font-semibold text-[var(--text)]">4. Feature parity awareness</h3>
           <p class="mt-3 text-[var(--text-2)] leading-7">
             Know what's supported and what's not. Emulators have documented gaps — always validate against real cloud services before production.
@@ -244,7 +244,7 @@ STORAGE_EMULATOR_HOST=http://localhost:5382
           </div>
         </article>
 
-        <article class="site-panel p-6">
+        <article class="site-panel min-w-0 p-6">
           <h3 class="text-lg font-semibold text-[var(--text)]">5. Performance testing considerations</h3>
           <p class="mt-3 text-[var(--text-2)] leading-7">
             Local emulators have different performance characteristics than production cloud services. Don't rely on local benchmarks for production capacity planning.
@@ -257,7 +257,7 @@ STORAGE_EMULATOR_HOST=http://localhost:5382
           </div>
         </article>
 
-        <article class="site-panel p-6">
+        <article class="site-panel min-w-0 p-6">
           <h3 class="text-lg font-semibold text-[var(--text)]">6. Team consistency</h3>
           <p class="mt-3 text-[var(--text-2)] leading-7">
             Pin the reviewed image and configuration for repeatable personal workflows. Shared organization use must comply with the governing license.
@@ -282,7 +282,7 @@ STORAGE_EMULATOR_HOST=http://localhost:5382
       <div class="mt-6 grid gap-3 reveal">
         {faqItems.map(item => (
           <details class="site-panel p-5 cursor-pointer">
-            <summary class="font-semibold text-[var(--text)] text-[1.05rem]">{item.q}</summary>
+            <summary class="font-semibold text-[var(--text)] text-base">{item.q}</summary>
             <p class="mt-3 text-[var(--text-2)] leading-7">{item.a}</p>
           </details>
         ))}
@@ -293,11 +293,11 @@ STORAGE_EMULATOR_HOST=http://localhost:5382
   <!-- BOTTOM CTA -->
   <section class="site-section">
     <div class="container">
-      <div class="site-panel p-8 reveal" style="background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));">
-        <div class="grid gap-6 xl:grid-cols-[1fr,auto] items-center">
+      <div class="site-panel bg-[var(--surface-2)] p-8 reveal">
+        <div class="grid gap-6 xl:grid-cols-[1fr_auto] items-center">
           <div>
-            <h2 style="color: #e8eaed;">Start with Google Cloud local development</h2>
-            <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
+            <h2>Start with Google Cloud local development</h2>
+            <p class="mt-3 text-lg leading-8 text-[var(--text-2)]">
               Use the CLI for bounded local workflows, then review compatibility and the governing proprietary license.
             </p>
           </div>

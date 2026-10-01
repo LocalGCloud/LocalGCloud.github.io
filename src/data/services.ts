@@ -102,6 +102,10 @@ const protocolLabel = (protocol: string) => {
 
 export const serviceRegistryCount = docsContract.services.length;
 
+// Upstream limitation strings carry evidence tags such as "[partial]"; they are
+// classification metadata, not support states, so published copy omits them.
+const stripEvidenceTag = (text: string) => text.replace(/^\[[a-z_]+\]\s*/i, "");
+
 export const services: Service[] = docsContract.services.flatMap(
 	(contractService) => {
 		const editorial = getServiceEditorial(contractService);
@@ -147,14 +151,14 @@ export const services: Service[] = docsContract.services.flatMap(
 			catalogState,
 			envVar: `${contractService.envVar}=${contractService.envValue}`,
 			description: isUnsupported
-				? contractService.limitations[0] ?? `${contractService.name} is currently unsupported in LocalCloud.`
+				? (contractService.limitations[0] ? stripEvidenceTag(contractService.limitations[0]) : `${contractService.name} is unsupported in LocalCloud.`)
 				: editorial.description,
 			operations: contractService.operations,
 			supported:
 				catalogState === "coming-soon"
 					? []
 					: positiveOperations.map((operation) => operation.label),
-			notSupported: [...contractService.limitations],
+			notSupported: contractService.limitations.map(stripEvidenceTag),
 			iconId: editorial.iconId,
 			persistence: contractService.persistence,
 			evidence: [...contractService.evidence],
@@ -188,19 +192,15 @@ export function isServiceDisabledByDefault(service: Service): boolean {
 }
 
 export function getServiceSignalLabel(service: Service): string {
-	if (service.catalogState === "coming-soon") return "Coming soon";
-	if (service.marketingStatus === "unsupported") return "Unsupported";
+	if (service.catalogState === "coming-soon" || service.marketingStatus === "unsupported") return "Unsupported";
 	if (isServiceDisabledByDefault(service)) return "Disabled by default";
 	const count = service.supported.length;
 	return `${count} documented ${count === 1 ? "workflow" : "workflows"}`;
 }
 
 export function getServiceStatusLabel(service: Service): string {
-	if (service.marketingStatus === "unsupported") {
+	if (service.catalogState === "coming-soon" || service.marketingStatus === "unsupported") {
 		return "Unsupported";
-	}
-	if (isServiceDisabledByDefault(service)) {
-		return "Disabled by default";
 	}
 	return "Supported";
 }

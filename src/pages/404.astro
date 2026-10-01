@@ -18,11 +18,13 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
             <span class="site-eyebrow__pulse"></span>
             Not Found
           </span>
-          <div class="mt-8 text-8xl font-semibold tracking-[-0.08em] text-[rgba(44,114,246,0.28)] sm:text-[9rem]">404</div>
+          <div class="mt-8 text-8xl font-semibold tracking-[-0.08em] text-[var(--brand-sky)]/60 sm:text-[9rem]" aria-hidden="true">404</div>
           <h1 class="mt-4">Page not found.</h1>
-          <p class="mx-auto mt-5 max-w-[34rem] text-lg leading-8 text-[var(--text-2)]">
-            The page you tried to open is missing or has moved. The rest of the LocalCloud site is still here.
-          </p>
+          <div class="mx-auto mt-5 max-w-[34rem]">
+            <p class="text-lg leading-8 text-[var(--text-2)] [text-wrap:balance]">
+              The page you tried to open is missing or has moved. The rest of the LocalCloud site is still here.
+            </p>
+          </div>
 
           <div class="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <a href={base} class="site-button site-button--primary">Back to Home</a>

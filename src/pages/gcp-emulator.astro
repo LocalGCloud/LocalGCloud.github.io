@@ -12,7 +12,9 @@ import {
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
-
+const unsupportedServiceCount = publishedServiceCount - availableServiceCount;
+const isUnsupportedService = (service: (typeof services)[number]) =>
+  service.marketingStatus === 'unsupported' || service.catalogState === 'coming-soon';
 
 const categoryGroups = serviceCategoryOrder
   .map(cat => ({
@@ -88,28 +90,26 @@ const structuredData = [
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
           LocalCloud provides {availableServiceCount} documented local integrations. Use the host CLI to start a loopback-bound runtime and export its actual SDK endpoint settings.
         </p>
-        <div class="mt-8 flex flex-wrap gap-3">
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start with the CLI</a>
-          <a href={`${base}services/`} class="site-button site-button--secondary">View all {publishedServiceCount} service guides</a>
-          <a href={`${base}docs/localcloud-vs-google-emulators/`} class="site-button site-button--secondary">Compare with Google emulators</a>
-          <a href={`${base}localstack-for-google-cloud/`} class="site-button site-button--secondary">LocalStack for Google Cloud?</a>
+          <a href={`${base}services/`} class="inline-flex min-h-11 items-center text-base font-semibold text-[var(--accent-strong)] hover:underline">Browse the service catalog →</a>
         </div>
       </div>
 
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">{availableServiceCount}</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Available services</div>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Available services</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Databases, messaging, storage, analytics, security, and compute in one container.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">1</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Data-volume runtime</div>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Data-volume runtime</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">One CLI lifecycle with persistent data and dynamically resolved loopback ports.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">License</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Review before use</div>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Review before use</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The proprietary license governs use; technical tiers do not grant legal permission.</p>
         </article>
       </div>
@@ -129,12 +129,12 @@ const structuredData = [
       <div class="mt-8 grid gap-4 sm:grid-cols-2 reveal">
         <article class="site-panel site-panel--soft p-5">
           <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">Per-service</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Compatibility</div>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Compatibility</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Every published workflow includes a support level and explicit local-emulation limits.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">One CLI</div>
-          <div class="mt-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-[var(--accent-strong)]">Managed lifecycle</div>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Managed lifecycle</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The CLI selects durable storage and loopback ports, starts or reuses a compatible runtime, and exports its actual endpoint map.</p>
         </article>
       </div>
@@ -154,7 +154,7 @@ const structuredData = [
           LocalCloud wraps official, custom, and third-party emulators behind a managed local runtime. The host CLI selects its Docker data volume, exports actual environment values, and opens the built-in console.
         </p>
         <p class="mt-4 text-base leading-7 text-[var(--text-2)]">
-          Before relying on a local workflow, review the <a href={`${base}compatibility/`} class="font-medium text-[var(--accent-strong)]">documented compatibility and limitations</a> for the services your application uses.
+          Before relying on a local workflow, review the <a href={`${base}compatibility/`} class="font-semibold text-[var(--accent-strong)]">documented compatibility and limitations</a> for the services your application uses.
         </p>
       </div>
 
@@ -163,7 +163,7 @@ const structuredData = [
           <span class="site-kicker">01</span>
           <h3 class="mt-3 text-xl">Registry-backed service catalog</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">
-            Browse {publishedServiceCount} service guides with connection details, default enablement, supported workflows, and known limitations.
+            Browse {publishedServiceCount} service guides: {availableServiceCount} cover services that run locally, and {unsupportedServiceCount} explain why a service is unsupported. Each guide lists connection details, default enablement, workflows, and known limitations.
           </p>
         </article>
         <article class="site-panel p-6">
@@ -190,28 +190,31 @@ const structuredData = [
       <div class="reveal">
         <h2>What you can run locally</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Each available service lists its documented local workflows. Planned additions are labeled separately.
+          Each supported service lists its documented local workflows. Services LocalCloud does not run are marked Unsupported.
         </p>
       </div>
 
-      <div class="mt-6 overflow-x-auto reveal">
-        <table class="w-full border-collapse rounded-[1rem] border border-[var(--line)] overflow-hidden">
+      <div class="mt-6 overflow-x-auto rounded-2xl border border-[var(--line)] reveal" tabindex="0" role="region" aria-label="Google Cloud services and their documented local workflows">
+        <table class="w-full border-collapse">
           <thead>
             <tr>
-              <th class="text-left p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-3)] bg-[var(--surface-2)]">Service</th>
-              <th class="text-center p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-3)] bg-[var(--surface-2)]">Availability</th>
-              <th class="text-center p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-3)] bg-[var(--surface-2)]">LocalCloud</th>
+              <th scope="col" class="text-left p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-2)] bg-[var(--surface-2)]">Service</th>
+              <th scope="col" class="text-left p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-2)] bg-[var(--surface-2)]">Local workflows</th>
             </tr>
           </thead>
           <tbody>
             {services.map((service) => (
-              <tr>
-                <td class="p-3 font-medium">
+              <tr class="border-t border-[var(--line)]">
+                <td class="p-3 font-semibold">
                   {service.name}
-                  {service.category === 'auxiliary' && <span class="ml-2 text-xs font-normal text-[var(--text-3)]">(Auxiliary integration API)</span>}
+                  {service.category === 'auxiliary' && <span class="ml-2 text-xs font-normal text-[var(--text-2)]">(Auxiliary integration API)</span>}
+                  {isUnsupportedService(service) && <span class="site-chip site-chip--warn ml-2">Unsupported</span>}
                 </td>
-                <td class="p-3 text-center">{service.catalogState === 'coming-soon' ? 'Coming soon' : 'Available'}</td>
-                <td class="p-3 text-center">{service.catalogState === 'coming-soon' ? 'Roadmap addition' : `${service.supported.length} documented workflows`}</td>
+                <td class="p-3 text-[var(--text-2)]">
+                  {isUnsupportedService(service)
+                    ? 'No local workflow'
+                    : `${service.supported.length} documented ${service.supported.length === 1 ? 'workflow' : 'workflows'}`}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -225,7 +228,7 @@ const structuredData = [
     <div class="container">
       <div class="grid gap-6 lg:grid-cols-2">
         {categoryGroups.map(group => (
-          <div class="site-panel p-6 reveal">
+          <div class="site-panel min-w-0 p-6 reveal">
             <span class="site-kicker">{group.title}</span>
             <h3 class="mt-2 text-xl">{group.id === 'auxiliary' ? 'Auxiliary integration APIs' : `${group.title} services`}</h3>
             <p class="mt-2 text-sm text-[var(--text-2)]">{group.description}</p>
@@ -235,7 +238,8 @@ const structuredData = [
                   <a href={`${base}services/${svc.slug}/`} class="text-[var(--text)] hover:text-[var(--accent-strong)]">
                     <strong>{svc.name}</strong>
                   </a>
-                  <span class="ml-2 text-xs text-[var(--text-3)]">— {svc.description}</span>
+                  {isUnsupportedService(svc) && <span class="site-chip site-chip--warn ml-2">Unsupported</span>}
+                  <span class="ml-2 text-sm text-[var(--text-2)]">— {svc.description}</span>
                 </li>
               ))}
             </ul>
@@ -301,9 +305,9 @@ const structuredData = [
       </div>
 
       <div class="mt-6 grid gap-6 xl:grid-cols-2 reveal">
-        <div class="site-panel p-6">
+        <div class="site-panel min-w-0 p-6">
           <span class="site-kicker">Google's individual emulators</span>
-          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code class="text-[0.8rem] leading-[1.7]"># Pub/Sub
+          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code># Pub/Sub
 gcloud components install pubsub-emulator
 gcloud beta emulators pubsub start --host-port=localhost:5383
 
@@ -318,9 +322,9 @@ gcloud emulators spanner start --host-port=localhost:5386
 # This comparison does not claim an exhaustive vendor count.</code></pre>
         </div>
 
-        <div class="site-panel p-6" style="background: linear-gradient(135deg, rgba(25, 31, 41, 0.98), rgba(18, 23, 32, 0.98));">
-          <span style="color: rgba(255,255,255,0.7);" class="site-kicker">LocalCloud</span>
-          <pre class="mt-4 border-0 bg-transparent"><code class="text-[0.8rem] leading-[1.7]" style="color: #e8eaed;">{docsContract.cli.installCommand}
+        <div class="site-panel terminal-panel min-w-0 p-6">
+          <span class="site-kicker">LocalCloud</span>
+          <pre class="mt-4 border-0 bg-transparent"><code>{docsContract.cli.installCommand}
 localcloud doctor
 localcloud start --local-only
 eval "$(localcloud env)"
@@ -328,6 +332,12 @@ localcloud console
 
 # Use the URLs and endpoint values returned by the CLI.</code></pre>
         </div>
+      </div>
+
+      <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-base text-[var(--text-2)] reveal">
+        <span>Compare in depth:</span>
+        <a href={`${base}docs/localcloud-vs-google-emulators/`} class="inline-flex min-h-11 items-center font-semibold text-[var(--accent-strong)] hover:underline">LocalCloud vs Google emulators</a>
+        <a href={`${base}localstack-for-google-cloud/`} class="inline-flex min-h-11 items-center font-semibold text-[var(--accent-strong)] hover:underline">LocalStack for Google Cloud?</a>
       </div>
     </div>
   </section>
@@ -341,7 +351,7 @@ localcloud console
       <div class="mt-6 grid gap-3 reveal">
         {faqItems.map(item => (
           <details class="site-panel p-5 cursor-pointer">
-            <summary class="font-semibold text-[var(--text)] text-[1.05rem]">{item.q}</summary>
+            <summary class="font-semibold text-[var(--text)] text-lg">{item.q}</summary>
             <p class="mt-3 text-[var(--text-2)] leading-7">{item.a}</p>
           </details>
         ))}
@@ -352,20 +362,41 @@ localcloud console
   <!-- BOTTOM CTA -->
   <section class="site-section">
     <div class="container">
-      <div class="site-panel p-8 reveal" style="background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));">
-        <div class="grid gap-6 xl:grid-cols-[1fr,auto] items-center">
-          <div>
-            <h2 style="color: #e8eaed;">Start developing against GCP locally</h2>
-            <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              Use the CLI to start bounded local workflows, then review service evidence and the governing proprietary license.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
-            <a href={`${base}services/`} class="site-button site-button--primary">Explore services</a>
-          </div>
+      <div class="site-panel grid items-center gap-6 p-8 xl:grid-cols-[1fr_auto] reveal">
+        <div>
+          <h2>Start developing against GCP locally</h2>
+          <p class="mt-3 max-w-[42rem] text-lg leading-8 text-[var(--text-2)]">
+            Use the CLI to start bounded local workflows, then review service evidence and the governing proprietary license.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href={`${base}services/`} class="site-button site-button--primary">Explore services</a>
+          <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
         </div>
       </div>
     </div>
   </section>
 </LandingLayout>
+
+<style>
+  .terminal-panel {
+    --terminal-bg: #191f29;
+    --terminal-ink: #e8eaed;
+    --terminal-muted: rgba(232, 234, 237, 0.72);
+    background: var(--terminal-bg);
+    border-color: var(--terminal-bg);
+  }
+
+  .terminal-panel .site-kicker {
+    color: var(--terminal-muted);
+  }
+
+  .terminal-panel pre {
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .terminal-panel pre code {
+    color: var(--terminal-ink);
+  }
+</style>

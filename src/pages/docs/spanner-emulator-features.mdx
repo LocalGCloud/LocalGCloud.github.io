@@ -14,7 +14,7 @@ export const spanner = getDocumentationService('spanner');
 LocalCloud integrates an extended Cloud Spanner emulator. GoogleSQL and PostgreSQL dialects run through the Spanner API; dialect support does not imply complete SQL, transaction, graph, search, authorization, backup, or change-stream parity.
 
 <Callout type="warning" title="Use the operation boundaries">
-The table below retains the runtime's recorded partial states and limitations. Standalone dependency features and tests do not qualify the assembled LocalCloud image. Validate the exact client, operation, dialect, and image used by the application.
+The table below retains the runtime's recorded operation boundaries and limitations. Standalone dependency features and tests do not qualify the assembled LocalCloud image. Validate the exact client, operation, dialect, and image used by the application.
 </Callout>
 
 ## Connections and persistence
@@ -30,14 +30,16 @@ Use `localcloud env` for the actual mapped endpoints. Provision the instance, da
 
 ## Current operation contract
 
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Spanner operation contract">
 <table>
   <thead><tr><th>Operation area</th><th>Status</th><th>Boundary</th></tr></thead>
   <tbody>
     {spanner.operations.map((operation) => (
-      <tr><td>{operation.label}</td><td><code>{operation.status}</code></td><td>{operation.limitations.join(' ')}</td></tr>
+      <tr><td>{operation.label}</td><td>{['verified', 'partial', 'release-unverified'].includes(operation.status) ? 'Supported' : 'Unsupported'}</td><td>{operation.limitations.join(' ')}</td></tr>
     ))}
   </tbody>
 </table>
+</div>
 
 ## Features that need scoped checks
 

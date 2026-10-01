@@ -7,6 +7,13 @@ const assert = (condition, message) => {
 		throw new Error(`Distributed documentation verification: ${message}`);
 };
 
+const llmsText = await read("public/llms.txt");
+assert(/^#\s+\S/m.test(llmsText), "llms.txt must contain an H1 heading");
+assert(
+	/^[-*]\s+\[[^\]\n]+\]\(https?:\/\/[^\s)]+\)/m.test(llmsText),
+	"llms.txt must contain a Markdown list link",
+);
+
 const roots = ["src", "public", "agent-skills"];
 const { execFileSync } = await import("node:child_process");
 const files = execFileSync("find", [...roots, "-type", "f"], {

@@ -35,7 +35,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <link rel="alternate icon" href={`${base}brand/localcloud-mark.svg`} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={`${base}brand/localcloud-app-icon.svg`} />
-    <meta name="theme-color" content="#eaf2ff" />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="author" content="LocalCloud Inc." />
 
     <!-- Open Graph -->
@@ -51,18 +51,18 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
 
-    <!-- Fonts: IBM Plex Sans (display/body) + IBM Plex Mono (code) + Roboto (v2) -->
+    <!-- Fonts: Roboto speaks, Roboto Mono labels (DESIGN.md). Weights match the type scale: 400 body, 600 title/label, 650→700 headline. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&family=Roboto+Mono:wght@400;600&display=swap"
       rel="stylesheet"
       media="print"
       onload="this.media='all'"
     />
     <noscript>
       <link
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&family=Roboto+Mono:wght@400;600&display=swap"
         rel="stylesheet"
       />
     </noscript>
@@ -115,21 +115,25 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <SearchModal />
 
     <script>
-      // Enable reveal animations only when JS is available
-      document.documentElement.classList.add('reveal-ready');
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('visible');
-              // Stop observing once visible to prevent re-triggering
-              observer.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
-      );
-      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+      // Enable reveal animations only when JS and IntersectionObserver are available;
+      // without them .reveal content renders visible by default.
+      if ('IntersectionObserver' in window) {
+        document.documentElement.classList.add('reveal-ready');
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                // Stop observing once visible to prevent re-triggering
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          // threshold 0 so elements taller than the viewport (long articles) still reveal
+          { threshold: 0, rootMargin: '0px 0px -50px 0px' }
+        );
+        document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+      }
     </script>
 
     <!-- PostHog custom event tracking -->

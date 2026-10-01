@@ -42,7 +42,7 @@ The CLI can remap occupied host ports, so do not replace returned values with ca
 | Local facade | Gateway implementation of bounded REST/gRPC workflows backed by local stores or processes. |
 | Operator surface | Root routes such as `/health`, `/services`, `/env`, `/seed`, and `/terraform/readiness`; these are not Google Cloud APIs. |
 
-Spanner REST port `5387` is not PostgreSQL wire and LocalCloud does not package PGAdapter. BigQuery is DuckDB-backed with feature-specific partial behavior. Bigtable extended features remain release-unverified until immutable dependency and assembled-image provenance are resolved.
+Spanner REST port `5387` is not PostgreSQL wire and LocalCloud does not package PGAdapter. BigQuery is DuckDB-backed, with coverage documented per feature. Bigtable extended features remain release-unverified until immutable dependency and assembled-image provenance are resolved.
 
 ## What to validate in production
 

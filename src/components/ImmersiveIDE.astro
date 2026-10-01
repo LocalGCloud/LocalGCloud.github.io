@@ -169,6 +169,32 @@ const sidebarServices = services.filter(s =>
 
 <style>
   .immersive-hero {
+    /* Console mockup palette, declared once. Site tokens are used where they match exactly. */
+    --ide-canvas: #f8fbff;
+    --ide-toolbar: #fcfdfe;
+    --ide-header-row: #f8f9fa;
+    --ide-frame-line: rgba(0, 0, 0, 0.1);
+    --ide-rule: rgba(0, 0, 0, 0.06);
+    --ide-rule-faint: rgba(0, 0, 0, 0.04);
+    --ide-ink-strong: #3c4043;
+    --ide-ink-muted: #80868b;
+    --ide-ink-faint: #bdc1c6;
+    --ide-run-active: #174ea6;
+    --ide-avatar-end: #4285f4;
+    --ide-live: #34a853;
+    --ide-success-bg: #e6f4ea;
+    --ide-success-ink: #137333;
+    --ide-success-line: rgba(19, 115, 51, 0.15);
+    --ide-blue-glow: rgba(26, 115, 232, 0.2);
+    --ide-blue-wash: rgba(26, 115, 232, 0.1);
+    --ide-glow-blue: rgba(26, 115, 232, 0.3);
+    --ide-glow-violet: rgba(167, 139, 250, 0.3);
+    --ide-glow-pink: rgba(236, 72, 153, 0.3);
+    --ide-shadow-window: 0 30px 80px rgba(0, 0, 0, 0.2);
+    --ide-shadow-card: 0 20px 40px rgba(0, 0, 0, 0.12);
+    --ide-shadow-badge: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --ide-shadow-mascot: 0 15px 30px rgba(0, 0, 0, 0.3);
+
     position: relative;
     width: 100%;
     max-width: 1080px;
@@ -185,17 +211,17 @@ const sidebarServices = services.filter(s =>
     height: 110%;
     background: linear-gradient(
       90deg, 
-      rgba(26, 115, 232, 0.3) 0%, 
-      rgba(167, 139, 250, 0.3) 25%, 
-      rgba(236, 72, 153, 0.3) 50%, 
-      rgba(167, 139, 250, 0.3) 75%, 
-      rgba(26, 115, 232, 0.3) 100%
+      var(--ide-glow-blue) 0%,
+      var(--ide-glow-violet) 25%,
+      var(--ide-glow-pink) 50%,
+      var(--ide-glow-violet) 75%,
+      var(--ide-glow-blue) 100%
     );
     filter: blur(100px);
     z-index: -1;
     opacity: 0.6;
     animation: rainbow-drift 20s linear infinite;
-    border-radius: 30%;
+    border-radius: var(--radius-feature);
   }
 
   @keyframes rainbow-drift {
@@ -205,13 +231,13 @@ const sidebarServices = services.filter(s =>
 
   /* --- Console Frame --- */
   .window-frame {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--ide-frame-line);
+    border-radius: var(--radius-control);
     overflow: hidden;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--ide-shadow-window);
     transform: perspective(2000px) rotateX(2deg);
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.6s var(--ease);
   }
 
   .window-frame:hover {
@@ -221,14 +247,14 @@ const sidebarServices = services.filter(s =>
   .console-layout {
     display: flex;
     height: 640px;
-    background: #f8fbff;
+    background: var(--ide-canvas);
   }
 
   /* --- Sidebar --- */
   .console-sidebar {
     width: 64px;
-    background: #ffffff;
-    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    background: var(--surface);
+    border-right: 1px solid var(--ide-rule);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -237,7 +263,7 @@ const sidebarServices = services.filter(s =>
 
   .sidebar-logo {
     margin-bottom: 30px;
-    filter: drop-shadow(0 4px 8px rgba(26, 115, 232, 0.2));
+    filter: drop-shadow(0 4px 8px var(--ide-blue-glow));
   }
 
   .sidebar-nav {
@@ -253,16 +279,16 @@ const sidebarServices = services.filter(s =>
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    color: #5f6368;
+    border-radius: var(--radius-control);
+    color: var(--text-2);
     cursor: default;
     transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
   }
 
   .nav-item.active {
-    background: #e8f0fe;
-    color: #1a73e8;
-    box-shadow: inset 0 0 0 1px rgba(26, 115, 232, 0.1);
+    background: var(--accent-soft);
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--ide-blue-wash);
   }
 
   .sidebar-footer {
@@ -279,8 +305,8 @@ const sidebarServices = services.filter(s =>
 
   .console-header {
     height: 56px;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    background: var(--surface);
+    border-bottom: 1px solid var(--ide-rule);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -291,13 +317,13 @@ const sidebarServices = services.filter(s =>
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
+    font-size: var(--fs-small);
   }
 
-  .folder { color: #5f6368; }
-  .separator { color: #dadce0; }
-  .page { color: #1a73e8; font-weight: 500; }
-  .subpage { color: #202124; font-weight: 500; }
+  .folder { color: var(--text-2); }
+  .separator { color: var(--line); }
+  .page { color: var(--accent); font-weight: 600; }
+  .subpage { color: var(--text); font-weight: 600; }
 
   .header-actions {
     display: flex;
@@ -306,11 +332,11 @@ const sidebarServices = services.filter(s =>
   }
 
   .project-pill {
-    background: #f1f3f4;
+    background: var(--surface-2);
     padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    color: #3c4043;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-label);
+    color: var(--ide-ink-strong);
     font-family: var(--font-mono);
   }
 
@@ -318,7 +344,7 @@ const sidebarServices = services.filter(s =>
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1a73e8, #4285f4);
+    background: linear-gradient(135deg, var(--accent), var(--ide-avatar-end));
   }
 
   .console-body {
@@ -330,8 +356,8 @@ const sidebarServices = services.filter(s =>
 
   /* --- Editor Section --- */
   .editor-section {
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    background: var(--surface);
+    border-bottom: 1px solid var(--ide-rule);
     display: flex;
     flex-direction: column;
   }
@@ -341,40 +367,40 @@ const sidebarServices = services.filter(s =>
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #f8fbff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    background: var(--ide-canvas);
+    border-bottom: 1px solid var(--ide-rule-faint);
   }
 
   .run-button {
-    background: #1a73e8;
-    color: #fff;
+    background: var(--accent);
+    color: var(--surface);
     border: none;
     padding: 7px 18px;
-    border-radius: 4px;
-    font-size: 12px;
+    border-radius: var(--radius-control);
+    font-size: var(--fs-label);
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
+    box-shadow: 0 2px 4px var(--ide-blue-glow);
   }
-  .run-button.is-active { background: #174ea6; transform: translateY(1px); }
+  .run-button.is-active { background: var(--ide-run-active); transform: translateY(1px); }
 
   .secondary-button {
     background: transparent;
-    color: #1a73e8;
-    border: 1px solid #dadce0;
+    color: var(--accent);
+    border: 1px solid var(--line);
     padding: 6px 16px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
+    border-radius: var(--radius-control);
+    font-size: var(--fs-label);
+    font-weight: 600;
   }
 
   .editor-meta {
     margin-left: auto;
-    font-size: 11px;
-    color: #5f6368;
+    font-size: var(--fs-label);
+    color: var(--text-2);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -383,25 +409,25 @@ const sidebarServices = services.filter(s =>
   .status-dot {
     width: 6px;
     height: 6px;
-    background: #34a853;
+    background: var(--ide-live);
     border-radius: 50%;
-    box-shadow: 0 0 8px #34a853;
+    box-shadow: 0 0 8px var(--ide-live);
   }
 
-  .accent { color: #1a73e8; }
+  .accent { color: var(--accent); }
 
   .code-editor {
     flex: 1;
     display: flex;
     padding: 20px 24px;
     font-family: var(--font-mono);
-    font-size: 15px;
+    font-size: var(--fs-body);
     line-height: 1.6;
-    background: #ffffff;
+    background: var(--surface);
   }
 
   .line-numbers {
-    color: #bdc1c6;
+    color: var(--ide-ink-faint);
     display: flex;
     flex-direction: column;
     text-align: right;
@@ -409,12 +435,12 @@ const sidebarServices = services.filter(s =>
     user-select: none;
   }
 
-  .typing-area { color: #202124; }
+  .typing-area { color: var(--text); }
   .cursor {
     display: inline-block;
     width: 2px;
     height: 1.2em;
-    background: #1a73e8;
+    background: var(--accent);
     margin-left: 2px;
     vertical-align: middle;
   }
@@ -423,7 +449,7 @@ const sidebarServices = services.filter(s =>
 
   /* --- Results Section --- */
   .results-section {
-    background: #ffffff;
+    background: var(--surface);
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -432,24 +458,24 @@ const sidebarServices = services.filter(s =>
   .results-tabs {
     padding: 0 24px;
     display: flex;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    background: #f8fbff;
+    border-bottom: 1px solid var(--ide-rule);
+    background: var(--ide-canvas);
   }
 
   .res-tab {
     padding: 14px 16px;
-    font-size: 12px;
-    color: #5f6368;
+    font-size: var(--fs-label);
+    color: var(--text-2);
     border-bottom: 2px solid transparent;
     cursor: default;
   }
-  .res-tab.active { color: #1a73e8; border-bottom-color: #1a73e8; font-weight: 500; }
+  .res-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 
   .results-container {
     flex: 1;
     position: relative;
     overflow: hidden;
-    background: #ffffff;
+    background: var(--surface);
   }
 
   .results-view {
@@ -458,42 +484,42 @@ const sidebarServices = services.filter(s =>
     flex-direction: column;
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.6s cubic-bezier(0.2, 0, 0, 1), transform 0.6s cubic-bezier(0.2, 0, 0, 1);
+    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
   }
   .results-view.visible { opacity: 1; transform: translateY(0); }
 
   .results-toolbar {
     padding: 10px 24px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    background: #fcfdfe;
+    border-bottom: 1px solid var(--ide-rule-faint);
+    background: var(--ide-toolbar);
   }
 
   .results-meta {
-    font-size: 11px;
-    color: #80868b;
-    font-weight: 500;
+    font-size: var(--fs-label);
+    color: var(--ide-ink-muted);
+    font-weight: 600;
   }
 
   .table-scroll {
     flex: 1;
     overflow: auto;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid var(--ide-rule-faint);
   }
 
   .data-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
-    color: #3c4043;
+    font-size: var(--fs-label);
+    color: var(--ide-ink-strong);
     text-align: left;
   }
 
   .data-table th {
-    background: #f8f9fa;
+    background: var(--ide-header-row);
     padding: 10px 16px;
-    font-weight: 500;
-    color: #5f6368;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    font-weight: 600;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--ide-rule);
     position: sticky;
     top: 0;
     white-space: nowrap;
@@ -501,17 +527,17 @@ const sidebarServices = services.filter(s =>
 
   .data-table td {
     padding: 8px 16px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    border-bottom: 1px solid var(--ide-rule-faint);
     white-space: nowrap;
   }
 
   .data-table tr:hover td {
-    background: #f1f3f4;
+    background: var(--surface-2);
   }
 
   .data-table td:first-child, .data-table th:first-child {
-    color: #bdc1c6;
-    background: #f8f9fa;
+    color: var(--ide-ink-faint);
+    background: var(--ide-header-row);
     width: 40px;
     text-align: center;
   }
@@ -520,14 +546,14 @@ const sidebarServices = services.filter(s =>
     position: absolute;
     bottom: 24px;
     right: 24px;
-    background: #e6f4ea;
-    color: #137333;
+    background: var(--ide-success-bg);
+    color: var(--ide-success-ink);
     padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-    border: 1px solid rgba(19, 115, 51, 0.15);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-control);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    border: 1px solid var(--ide-success-line);
+    box-shadow: var(--ide-shadow-badge);
   }
 
   .loading-overlay {
@@ -538,18 +564,18 @@ const sidebarServices = services.filter(s =>
     align-items: center;
     justify-content: center;
     gap: 15px;
-    background: #ffffff;
+    background: var(--surface);
     z-index: 5;
     display: none;
-    color: #5f6368;
-    font-size: 13px;
+    color: var(--text-2);
+    font-size: var(--fs-small);
   }
 
   .spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid #e8f0fe;
-    border-top-color: #1a73e8;
+    border: 3px solid var(--accent-soft);
+    border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -561,11 +587,11 @@ const sidebarServices = services.filter(s =>
     bottom: 30px;
     left: 90px;
     width: 300px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--ide-frame-line);
+    border-radius: var(--radius-panel);
     padding: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--ide-shadow-card);
     z-index: 10;
   }
 
@@ -574,12 +600,12 @@ const sidebarServices = services.filter(s =>
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
-    font-size: 13px;
-    color: #1a73e8;
+    font-size: var(--fs-small);
+    color: var(--accent);
   }
 
   .spark-icon {
-    font-size: 16px;
+    font-size: var(--fs-body);
     animation: spark-wiggle 2s infinite;
   }
   @keyframes spark-wiggle {
@@ -588,8 +614,8 @@ const sidebarServices = services.filter(s =>
   }
 
   .card-text {
-    font-size: 13px;
-    color: #5f6368;
+    font-size: var(--fs-small);
+    color: var(--text-2);
     line-height: 1.6;
   }
 
@@ -604,7 +630,7 @@ const sidebarServices = services.filter(s =>
   .mascot-aura {
     position: absolute;
     inset: -15px;
-    background: radial-gradient(circle, rgba(26, 115, 232, 0.2), transparent 70%);
+    background: radial-gradient(circle, var(--ide-blue-glow), transparent 70%);
     filter: blur(15px);
     animation: aura-pulse 3s ease-in-out infinite;
   }
@@ -612,10 +638,12 @@ const sidebarServices = services.filter(s =>
 
   .floating-mascot img {
     animation: float-3d 6s ease-in-out infinite;
-    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
+    filter: drop-shadow(var(--ide-shadow-mascot));
   }
 
   @media (max-width: 900px) {
+    /* Keep the blurred backdrop and wide console chrome inside the viewport. */
+    .immersive-hero { padding: 1rem; overflow-x: clip; }
     .console-sidebar { display: none; }
     .intelligence-card { left: 20px; right: 20px; width: auto; }
     .window-frame { transform: none !important; }

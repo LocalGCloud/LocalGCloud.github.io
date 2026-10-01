@@ -174,10 +174,6 @@ const faqItems = [
       <div class="mt-8 site-panel p-6 reveal">
         <pre class="overflow-x-auto text-sm"><code>{quickStartCmd}</code></pre>
       </div>
-      <div class="mt-6 reveal">
-        <p class="text-[var(--text-2)] leading-7">
-        </p>
-      </div>
     </div>
   </section>
 
@@ -190,22 +186,22 @@ const faqItems = [
           LocalCloud exposes {availableServiceCount} documented local integrations in one managed container. Review each service guide for exact workflows, default enablement, and limitations.
         </p>
       </div>
-      <div class="mt-8 overflow-x-auto reveal">
-        <table class="w-full text-left text-sm">
-          <thead class="border-b border-[var(--border-1)]">
+      <div class="mt-8 overflow-x-auto reveal" tabindex="0" role="region" aria-label="Local ports and environment variables by service">
+        <table class="w-full min-w-[40rem] text-left text-sm">
+          <thead class="border-b border-[var(--line)]">
             <tr>
-              <th class="py-3 font-semibold text-[var(--text)]">Service</th>
-              <th class="py-3 font-semibold text-[var(--text)]">Port</th>
-              <th class="py-3 font-semibold text-[var(--text)]">Local support</th>
-              <th class="py-3 font-semibold text-[var(--text)]">Environment Variable</th>
+              <th scope="col" class="py-3 pr-4 font-semibold text-[var(--text)]">Service</th>
+              <th scope="col" class="py-3 pr-4 font-semibold text-[var(--text)]">Port</th>
+              <th scope="col" class="py-3 pr-4 font-semibold text-[var(--text)]">Local support</th>
+              <th scope="col" class="py-3 font-semibold text-[var(--text)]">Environment variable</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-[var(--border-1)]">
+          <tbody class="divide-y divide-[var(--line)]">
             {services.map(svc => (
               <tr>
-                <td class="py-3 text-[var(--text)]">{svc.name}</td>
-                <td class="py-3 text-[var(--text-2)] font-mono text-xs">{svc.port}</td>
-                <td class="py-3 text-[var(--accent-strong)]">{svc.availability}</td>
+                <td class="py-3 pr-4 text-[var(--text)]">{svc.name}</td>
+                <td class="py-3 pr-4 text-[var(--text-2)] font-mono text-xs">{svc.port}</td>
+                <td class="py-3 pr-4 text-[var(--text)]">{svc.availability}</td>
                 <td class="py-3 text-[var(--text-2)] font-mono text-xs">{svc.env}</td>
               </tr>
             ))}
@@ -230,7 +226,7 @@ const faqItems = [
         <article class="site-panel p-6">
           <div class="flex items-start gap-4">
             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">1</div>
-            <div class="flex-1">
+            <div class="min-w-0 flex-1">
               <h3 class="text-lg font-semibold text-[var(--text)]">Install Docker</h3>
               <p class="mt-2 text-[var(--text-2)] leading-7">Install Docker Desktop (Mac/Windows) or Docker Engine (Linux). LocalCloud requires Docker to run the emulator container.</p>
               <div class="mt-3">
@@ -243,10 +239,10 @@ const faqItems = [
         <article class="site-panel p-6">
           <div class="flex items-start gap-4">
             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">2</div>
-            <div class="flex-1">
+            <div class="min-w-0 flex-1">
               <h3 class="text-lg font-semibold text-[var(--text)]">Install the CLI</h3>
               <p class="mt-2 text-[var(--text-2)] leading-7">Use the checksum-verifying installer on a supported macOS or Linux host:</p>
-              <pre class="mt-3 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>{docsContract.cli.installCommand}</code></pre>
+              <pre class="mt-3 overflow-x-auto rounded-xl border-0 bg-[var(--surface-2)] p-3 text-xs"><code>{docsContract.cli.installCommand}</code></pre>
             </div>
           </div>
         </article>
@@ -254,10 +250,10 @@ const faqItems = [
         <article class="site-panel p-6">
           <div class="flex items-start gap-4">
             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">3</div>
-            <div class="flex-1">
+            <div class="min-w-0 flex-1">
               <h3 class="text-lg font-semibold text-[var(--text)]">Diagnose and start</h3>
               <p class="mt-2 text-[var(--text-2)] leading-7">The CLI keeps Docker under your control and starts a loopback-bound persistent runtime:</p>
-              <pre class="mt-3 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>localcloud doctor
+              <pre class="mt-3 overflow-x-auto rounded-xl border-0 bg-[var(--surface-2)] p-3 text-xs"><code>localcloud doctor
 localcloud start</code></pre>
               <p class="mt-3 text-sm text-[var(--text-2)] leading-7">Use the URL and endpoint map in the output. If canonical ports are occupied, the CLI assigns dynamic host ports.</p>
             </div>
@@ -267,10 +263,10 @@ localcloud start</code></pre>
         <article class="site-panel p-6">
           <div class="flex items-start gap-4">
             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">4</div>
-            <div class="flex-1">
+            <div class="min-w-0 flex-1">
               <h3 class="text-lg font-semibold text-[var(--text)]">Configure and inspect</h3>
               <p class="mt-2 text-[var(--text-2)] leading-7">Export the actual local endpoints into the shell that starts your application, then open the selected console URL:</p>
-              <pre class="mt-3 overflow-x-auto rounded bg-[var(--panel-1)] p-3 text-xs"><code>eval "$(localcloud env)"
+              <pre class="mt-3 overflow-x-auto rounded-xl border-0 bg-[var(--surface-2)] p-3 text-xs"><code>eval "$(localcloud env)"
 localcloud console
 localcloud status</code></pre>
             </div>
@@ -304,7 +300,7 @@ localcloud status</code></pre>
         </a>
         <a href={`${base}pubsub-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Pub/Sub</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Use partial topic, subscription, publish, pull, and acknowledgement workflows; state is stored in PostgreSQL under the mounted data volume.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Use documented topic, subscription, publish, pull, and acknowledgement workflows; state is stored in PostgreSQL under the mounted data volume.</p>
         </a>
         <a href={`${base}spanner-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Spanner</div>
@@ -348,7 +344,7 @@ localcloud status</code></pre>
       <div class="mt-6 grid gap-3 reveal">
         {faqItems.map(item => (
           <details class="site-panel p-5 cursor-pointer">
-            <summary class="font-semibold text-[var(--text)] text-[1.05rem]">{item.q}</summary>
+            <summary class="font-semibold text-[var(--text)] text-lg">{item.q}</summary>
             <p class="mt-3 text-[var(--text-2)] leading-7">{item.a}</p>
           </details>
         ))}
@@ -359,18 +355,16 @@ localcloud status</code></pre>
   <!-- BOTTOM CTA -->
   <section class="site-section">
     <div class="container">
-      <div class="site-panel p-8 reveal" style="background: linear-gradient(135deg, rgba(31, 39, 50, 0.96), rgba(34, 42, 53, 0.98));">
-        <div class="grid gap-6 xl:grid-cols-[1fr,auto] items-center">
-          <div>
-            <h2 style="color: #e8eaed;">Start running GCP services locally</h2>
-            <p class="mt-3 text-lg leading-8" style="color: rgba(246, 239, 228, 0.74);">
-              One data-volume runtime, {availableServiceCount} documented local integrations, and explicit service boundaries.
-            </p>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
-            <a href={`${base}services/`} class="site-button site-button--primary">Review service evidence</a>
-          </div>
+      <div class="site-panel grid items-center gap-6 p-8 xl:grid-cols-[1fr_auto] reveal">
+        <div>
+          <h2>Start running GCP services locally</h2>
+          <p class="mt-3 max-w-[42rem] text-lg leading-8 text-[var(--text-2)]">
+            One data-volume runtime, {availableServiceCount} documented local integrations, and explicit service boundaries.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href={`${base}services/`} class="site-button site-button--primary">Review service evidence</a>
+          <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
         </div>
       </div>
     </div>

@@ -59,7 +59,7 @@ const workflows = [
           <p>No payment method or license key required.</p>
 
           <div class="preview-workbench__actions">
-            <a class="preview-workbench__button" href={docsHref}>
+            <a class="site-button site-button--primary preview-workbench__button" href={docsHref}>
               Get started <span aria-hidden="true">→</span>
             </a>
             <a class="preview-workbench__text-link" href={licenseHref}>View license</a>
@@ -91,16 +91,16 @@ const workflows = [
     padding: clamp(3.5rem, 8vw, 7.5rem) 0 6rem;
   }
 
+  /* Same outer width as .container so edges line up with the header. */
   .preview-workbench__shell {
-    width: min(100% - 2rem, 76rem);
+    width: min(100% - 2rem, 78rem);
     margin: 0 auto;
   }
 
+  /* One column: promise, then the supporting line directly beneath it. */
   .preview-workbench__hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.55fr);
-    align-items: end;
-    gap: 3rem;
+    gap: 1.25rem;
     padding-bottom: 2.5rem;
   }
 
@@ -114,38 +114,34 @@ const workflows = [
   .preview-workbench__kicker,
   .preview-workbench__label {
     color: var(--accent-strong);
-    font-size: 0.75rem;
-    font-weight: 500;
+    font-size: var(--fs-label);
+    font-weight: 600;
     letter-spacing: 0.12em;
   }
 
   .preview-workbench__hero h1 {
     max-width: 58rem;
     margin-top: 0.85rem;
-    font-size: clamp(3.2rem, 7vw, 6.6rem);
-    line-height: 0.9;
-    letter-spacing: -0.065em;
-  }
-
-  .preview-workbench__hero h1 span {
-    color: var(--accent-strong);
+    font-size: var(--fs-headline);
+    font-weight: 650;
+    line-height: 1.05;
+    letter-spacing: -0.045em;
   }
 
   .preview-workbench__hero > p {
-    max-width: 29rem;
-    padding-bottom: 0.35rem;
+    max-width: 40rem;
     color: var(--text-2);
-    font-size: 1.03rem;
-    line-height: 1.72;
+    font-size: var(--fs-lead);
+    line-height: 1.65;
     text-wrap: pretty;
   }
 
   .preview-workbench__board {
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 1.1rem;
+    border-radius: var(--radius-panel);
     background: var(--surface);
-    box-shadow: 0 24px 60px -42px rgba(32, 33, 36, 0.28);
+    box-shadow: var(--shadow-md);
   }
 
   .preview-workbench__status {
@@ -157,8 +153,8 @@ const workflows = [
     padding: 0.75rem 1.15rem;
     border-bottom: 1px solid var(--line);
     background: var(--surface-2);
-    color: var(--text-3);
-    font-size: 0.69rem;
+    color: var(--text-2);
+    font-size: var(--fs-label);
     letter-spacing: 0.09em;
   }
 
@@ -177,7 +173,7 @@ const workflows = [
   }
 
   .preview-workbench__status-value {
-    color: var(--success);
+    color: var(--success-ink);
     font-weight: 600;
   }
 
@@ -188,7 +184,6 @@ const workflows = [
 
   .preview-workbench__summary {
     display: flex;
-    min-height: 30rem;
     flex-direction: column;
     padding: clamp(2rem, 5vw, 4rem);
     border-right: 1px solid var(--line);
@@ -196,16 +191,17 @@ const workflows = [
 
   .preview-workbench__summary h2 {
     margin-top: 0.55rem;
-    font-size: clamp(4rem, 9vw, 7rem);
-    line-height: 0.9;
-    letter-spacing: -0.075em;
+    font-size: var(--fs-headline);
+    font-weight: 650;
+    line-height: 1.05;
+    letter-spacing: -0.045em;
   }
 
   .preview-workbench__summary > p {
     max-width: 21rem;
     margin-top: 1.6rem;
     color: var(--text-2);
-    font-size: 1.06rem;
+    font-size: var(--fs-body);
     line-height: 1.65;
     text-wrap: balance;
   }
@@ -218,38 +214,21 @@ const workflows = [
     padding-top: 2.5rem;
   }
 
+  /* Shared primary button; only the arrow spacing is local. */
   .preview-workbench__button {
-    display: inline-flex;
-    min-height: 3rem;
-    align-items: center;
-    justify-content: space-between;
     gap: 1.5rem;
-    padding: 0 1.15rem;
-    border-radius: 0.7rem;
-    background: var(--accent-strong);
-    color: var(--surface);
-    font-size: 0.92rem;
-    font-weight: 600;
-    transition: transform 150ms ease-out, background-color 150ms ease-out;
-  }
-
-  .preview-workbench__button:hover {
-    transform: translateY(-1px);
   }
 
   .preview-workbench__text-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
     color: var(--text-2);
-    font-size: 0.9rem;
+    font-size: var(--fs-small);
     font-weight: 600;
     text-decoration: underline;
     text-decoration-color: var(--line-strong);
     text-underline-offset: 0.25rem;
-  }
-
-  .preview-workbench__button:focus-visible,
-  .preview-workbench__text-link:focus-visible {
-    outline: 2px solid var(--accent-strong);
-    outline-offset: 3px;
   }
 
   .preview-workbench__workflows {
@@ -278,32 +257,23 @@ const workflows = [
   .preview-workbench__workflow-grid article > span {
     color: var(--accent-strong);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: var(--fs-label);
   }
 
   .preview-workbench__workflow-grid h3 {
-    font-size: 1rem;
+    font-size: var(--fs-body);
     letter-spacing: -0.02em;
   }
 
   .preview-workbench__workflow-grid p {
     margin-top: 0.55rem;
     color: var(--text-2);
-    font-size: 0.86rem;
+    font-size: var(--fs-small);
     line-height: 1.58;
     text-wrap: pretty;
   }
 
   @media (max-width: 840px) {
-    .preview-workbench__hero {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    .preview-workbench__hero > p {
-      max-width: 40rem;
-    }
-
     .preview-workbench__offer {
       grid-template-columns: 1fr;
     }
@@ -322,10 +292,6 @@ const workflows = [
   @media (max-width: 560px) {
     .preview-workbench {
       padding-top: 2.5rem;
-    }
-
-    .preview-workbench__hero h1 {
-      font-size: clamp(2.85rem, 15vw, 4.4rem);
     }
 
     .preview-workbench__status {
@@ -347,9 +313,4 @@ const workflows = [
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .preview-workbench__button {
-      transition: none;
-    }
-  }
 </style>

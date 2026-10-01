@@ -10,11 +10,6 @@ const structuredData = [
   createSoftwareApplicationSchema(pageUrl, `Operation-level LocalCloud support and limitations for ${publishedServiceCount} service guides.`),
   createBreadcrumbSchema([{ name: 'Home', url: productFacts.siteUrl }, { name: 'Compatibility', url: pageUrl }]),
 ];
-const statusClass = (service: (typeof services)[number]) => {
-  if (service.marketingStatus === 'unsupported') return 'site-chip--warn';
-  if (!service.registryDefaultEnabled) return 'site-chip--accent';
-  return 'site-chip--success';
-};
 ---
 
 <LandingLayout title={`LocalCloud Compatibility — ${publishedServiceCount} Services`} description={`Compare supported operations, startup defaults, tier, persistence, and cloud boundaries for ${publishedServiceCount} LocalCloud services.`} {structuredData}>
@@ -30,7 +25,7 @@ const statusClass = (service: (typeof services)[number]) => {
   <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning" role="note"><div class="callout__body"><p class="callout__title">Local development and cloud production boundaries</p><div class="callout__content"><p>{productFacts.productionBoundary} LocalCloud provides high-fidelity local emulation for development and CI testing. Multi-region infrastructure, physical HSMs, and production SLAs require real Google Cloud.</p></div></div></aside></div></section>
 
   <section class="site-section"><div class="container">
-    <div class="overflow-x-auto reveal">
+    <div class="overflow-x-auto reveal" tabindex="0" role="region" aria-label="LocalCloud service compatibility table">
       <table class="w-full min-w-[78rem] text-left text-sm">
         <thead><tr class="border-b border-[var(--line)]">
           <th class="py-3 pr-4">Service</th><th class="py-3 pr-4">Status</th><th class="py-3 pr-4">Starts by default</th><th class="py-3 pr-4">Tier</th><th class="py-3 pr-4">Persistence</th><th class="py-3 pr-4">Documented operations</th><th class="py-3">Cloud boundaries</th>
@@ -41,17 +36,19 @@ const statusClass = (service: (typeof services)[number]) => {
               <td class="py-4 pr-4">
                 <a class="font-semibold text-[var(--accent-strong)]" href={`${base}services/${service.slug}/`}>{service.name}</a>
                 {service.catalogState === 'coming-soon'
-                  ? <div class="mt-1 font-mono text-xs text-[var(--text-3)]">Roadmap addition</div>
-                  : <div class="mt-1 font-mono text-xs text-[var(--text-3)]">{service.endpointLabel}</div>}
+                  ? <div class="mt-1 font-mono text-xs text-[var(--text-2)]">No local endpoint</div>
+                  : <div class="mt-1 font-mono text-xs text-[var(--text-2)]">{service.endpointLabel}</div>}
               </td>
               {service.catalogState === 'coming-soon' ? (
                 <td colspan="6" class="py-4 text-[var(--text-2)]">
-                  <span class="site-chip site-chip--accent">Coming soon</span>
-                  <p class="mt-3">Connection details and documented local workflows will be published when the service becomes available.</p>
+                  <span class="site-chip site-chip--warn">Unsupported</span>
+                  <p class="mt-3">LocalCloud does not run {service.name} locally. Use real Google Cloud for this service.</p>
                 </td>
               ) : (
                 <>
-                  <td class="py-4 pr-4"><span class:list={['site-chip', statusClass(service)]}>{getServiceStatusLabel(service)}</span></td>
+                  <td class="py-4 pr-4">{service.marketingStatus === 'unsupported'
+                    ? <span class="site-chip site-chip--warn">{getServiceStatusLabel(service)}</span>
+                    : <span class="text-[var(--text-2)]">{getServiceStatusLabel(service)}</span>}</td>
                   <td class="py-4 pr-4 text-[var(--text-2)]">{service.registryDefaultEnabled ? 'Yes' : 'No (opt-in)'}</td>
                   <td class="py-4 pr-4 text-[var(--text-2)]">{service.minTier}</td>
                   <td class="py-4 pr-4 text-[var(--text-2)]">{service.persistence.scope}<br />{service.persistence.qualification}</td>
@@ -67,7 +64,7 @@ const statusClass = (service: (typeof services)[number]) => {
   </div></section>
 
   <section class="site-section"><div class="container grid gap-4 md:grid-cols-3">
-    <article class="site-panel p-6"><span class="site-kicker">Supported</span><p class="mt-3 leading-7 text-[var(--text-2)]">Ready for local development, testing, and CI. Connect standard Google Cloud SDKs directly to localhost.</p></article>
+    <article class="site-panel p-6"><span class="site-kicker">Starts by default</span><p class="mt-3 leading-7 text-[var(--text-2)]">Ready for local development, testing, and CI. Connect standard Google Cloud SDKs directly to localhost.</p></article>
     <article class="site-panel p-6"><span class="site-kicker">Disabled by default</span><p class="mt-3 leading-7 text-[var(--text-2)]">Supported services that are opt-in at startup to conserve memory and CPU. Enable with <code>localcloud start --services &lt;name&gt;</code>.</p></article>
     <article class="site-panel p-6"><span class="site-kicker">Cloud-only exclusions</span><p class="mt-3 leading-7 text-[var(--text-2)]">Production-scale capabilities (multi-region replication, physical HSMs, hardware TrueTime) require real Google Cloud.</p></article>
   </div></section>

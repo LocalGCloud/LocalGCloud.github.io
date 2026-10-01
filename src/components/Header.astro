@@ -50,6 +50,11 @@ const navLinks = [
       currentPath.startsWith(`${base}gcp-integration-testing`) ||
       currentPath.startsWith(`${base}glossary`),
   },
+  {
+    label: 'Blog',
+    href: `${base}blog/`,
+    isActive: currentPath.startsWith(`${base}blog`),
+  },
 ];
 ---
 
@@ -79,9 +84,6 @@ const navLinks = [
           {link.label}
         </a>
       ))}
-      <a href="https://github.com/LocalGCloud/LocalGCloud.github.io" target="_blank" rel="noopener noreferrer" class="site-nav__link site-nav__link--minor">
-        GitHub
-      </a>
       <button type="button" class="site-nav__search-btn" data-search-trigger aria-label="Search documentation">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <circle cx="11" cy="11" r="8"></circle>
@@ -101,7 +103,6 @@ const navLinks = [
           {link.label}
         </a>
       ))}
-      <a href="https://github.com/LocalGCloud/LocalGCloud.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a href={`${base}docs/`}>Docs</a>
     </div>
   </div>

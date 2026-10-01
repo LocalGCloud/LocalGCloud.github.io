@@ -19,9 +19,7 @@ const { title, stepNumber } = Astro.props;
 ---
 
 <div class="step">
-  <div class="step__number">
-    {stepNumber != null ? stepNumber : null}
-  </div>
+  <div class="step__number">{stepNumber != null ? stepNumber : null}</div>
   <div class="step__body">
     <h3 class="step__title">{title}</h3>
     <div class="step__content">

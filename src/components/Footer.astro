@@ -1,5 +1,6 @@
 ---
 import BrandMark from './BrandMark.astro';
+import { availableServiceCount } from '../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
@@ -9,14 +10,14 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
   <div class="container site-footer__intro">
     <div class="site-footer__intro-copy">
       <span class="site-kicker">Google Cloud In-a-Box</span>
-      <p>One container runs most Google cloud services.</p>
+      <p>One container runs {availableServiceCount} documented Google Cloud integrations locally.</p>
     </div>
 
     <div class="site-footer__chips">
-      <span class="site-chip site-chip--accent">single container</span>
-      <span class="site-chip site-chip--success">generated SDK endpoints</span>
-      <span class="site-chip site-chip--accent">local console</span>
-      <span class="site-chip site-chip--warn">evidence-scoped services</span>
+      <span class="site-chip site-chip--neutral">single container</span>
+      <span class="site-chip site-chip--neutral">generated SDK endpoints</span>
+      <span class="site-chip site-chip--neutral">local console</span>
+      <span class="site-chip site-chip--neutral">evidence-scoped services</span>
     </div>
   </div>
 
@@ -58,6 +59,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
         <li><a href={`${base}glossary/`}>Glossary</a></li>
         <li><a href={`${base}blog/`}>Blog and Demos</a></li>
         <li><a href={`${base}blog/localcloud-for-ai-agents/`}>LocalCloud for AI Agents</a></li>
+        <li><a href={`${base}blog/run-dataproc-locally-docker/`}>Run Dataproc in Docker</a></li>
       </ul>
     </div>
 
