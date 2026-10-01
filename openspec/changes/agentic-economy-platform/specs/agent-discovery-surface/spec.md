@@ -23,7 +23,7 @@ LocalCloud SHALL serve `/ai/agents.md` as the authoritative execution guide writ
 - **WHEN** an agent reads `/ai/agents.md`
 - **THEN** the first section SHALL state that LocalCloud is a local Google Cloud emulator for development/testing/CI/demos, not real GCP
 - **AND** it SHALL instruct the agent not to request or use real GCP credentials for the default local workflow
-- **AND** it SHALL include exact Docker setup commands using `jaysen2apache/localcloud`
+- **AND** it SHALL include exact Docker setup commands using `agentcloud/localcloud`
 - **AND** it SHALL include the environment export command `eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"`.
 
 #### Scenario: Docker is missing or unavailable

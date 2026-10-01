@@ -9,7 +9,7 @@ context: |
   Type check: pnpm typecheck
   Domain: Marketing/dashboard site for LocalCloud — a local-first Google Cloud emulator platform
   Deployment: GitHub Pages via LocalStack-Google/localstack-google.github.io repo
-  Docker image: jaysen2apache/localcloud
+  Docker image: agentcloud/localcloud
   No Pro/Community tier badges on services — all services run trial then license-gated
   New services show as "Planned — coming soon"
   Docs use DocsLayout.astro with sidebar defined inline

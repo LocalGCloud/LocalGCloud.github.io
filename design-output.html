@@ -781,16 +781,16 @@
               <div class="terminal__dots"><span></span><span></span><span></span></div>
               <span class="terminal__label">Terminal</span>
             </div>
-            <button class="terminal__copy" onclick="navigator.clipboard.writeText('docker pull jaysen2apache/localcloud && docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 -p 9010:9010 -p 9050:9050 -p 6379:6379 -m 4g --name localcloud jaysen2apache/localcloud')">Copy</button>
+            <button class="terminal__copy" onclick="navigator.clipboard.writeText('docker pull agentcloud/localcloud && docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 -p 9010:9010 -p 9050:9050 -p 6379:6379 -m 4g --name localcloud agentcloud/localcloud')">Copy</button>
           </div>
           <div class="terminal__body">
             <div class="t-comment"># Pull and start LocalCloud</div>
-            <div style="margin-top:0.5rem"><span class="t-prompt">$</span> <span class="t-cmd">docker pull</span> <span class="t-arg">jaysen2apache/localcloud</span></div>
+            <div style="margin-top:0.5rem"><span class="t-prompt">$</span> <span class="t-cmd">docker pull</span> <span class="t-arg">agentcloud/localcloud</span></div>
             <div style="margin-top:0.35rem"><span class="t-prompt">$</span> <span class="t-cmd">docker run</span> <span class="t-arg">-d \</span></div>
             <div style="padding-left:2rem"><span class="t-arg">-p 8080:8080 -p 4443:4443 \</span></div>
             <div style="padding-left:2rem"><span class="t-arg">-p 8085-8087:8085-8087 \</span></div>
             <div style="padding-left:2rem"><span class="t-arg">-p 9010:9010 -p 9050:9050 -p 6379:6379 \</span></div>
-            <div style="padding-left:2rem"><span class="t-cmd">-m 4g --name localcloud jaysen2apache/localcloud</span></div>
+            <div style="padding-left:2rem"><span class="t-cmd">-m 4g --name localcloud agentcloud/localcloud</span></div>
             <div style="margin-top:1.25rem" class="t-comment"># Configure your SDKs</div>
             <div style="margin-top:0.35rem"><span class="t-prompt">$</span> <span class="t-cmd">eval</span> <span class="t-arg">"$(curl -s localhost:8080/_localcloud/env?format=shell)"</span></div>
             <div style="margin-top:1.25rem"><span class="t-ok">&#10003; Ready. Your GCP code works locally now.</span></div>

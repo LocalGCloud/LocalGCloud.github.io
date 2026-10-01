@@ -71,7 +71,7 @@ Separate three bot categories:
 Every public agentic launch page should make these claims easy to verify:
 
 - LocalCloud is a local Google Cloud emulator.
-- Docker image: `jaysen2apache/localcloud`.
+- Docker image: `agentcloud/localcloud`.
 - Service breadth: 27 available service guides, with details in `/services/`.
 - Default local workflows require no GCP account, Google credentials, or billing project.
 - Standard GCP SDKs can target localhost through emulator variables.

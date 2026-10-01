@@ -1,6 +1,6 @@
 ## Context
 
-LocalCloud is an Astro/Tailwind static marketing and documentation site for a Docker-based local Google Cloud emulator. The approved public product facts are: LocalCloud runs 20+ GCP services in one Docker container, uses standard GCP SDKs pointed at localhost, requires no GCP account or credentials for local development, and is for development/testing/CI/demos rather than production replacement. The canonical Docker image in this repo is `jaysen2apache/localcloud`; current machine-readable discovery exists at `public/llms.txt`, but there is no `/ai/`, `/ai/agents.md`, `/llms-full.txt`, agent-skill repository, or site link to the runtime-owned MCP integration.
+LocalCloud is an Astro/Tailwind static marketing and documentation site for a Docker-based local Google Cloud emulator. The approved public product facts are: LocalCloud runs 20+ GCP services in one Docker container, uses standard GCP SDKs pointed at localhost, requires no GCP account or credentials for local development, and is for development/testing/CI/demos rather than production replacement. The canonical Docker image in this repo is `agentcloud/localcloud`; current machine-readable discovery exists at `public/llms.txt`, but there is no `/ai/`, `/ai/agents.md`, `/llms-full.txt`, agent-skill repository, or site link to the runtime-owned MCP integration.
 
 The agent ecosystem now has three relevant standards/patterns:
 

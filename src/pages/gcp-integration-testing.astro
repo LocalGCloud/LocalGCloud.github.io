@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       localcloud:
-        image: jaysen2apache/localcloud:latest
+        image: agentcloud/localcloud:latest
         ports:
           - 5380:5380
           - 5383:5383
@@ -39,7 +39,7 @@ jobs:
 const gitlabCiYaml = `integration-tests:
   image: python:3.12
   services:
-    - name: jaysen2apache/localcloud:latest
+    - name: agentcloud/localcloud:latest
       alias: localcloud
   variables:
     BIGQUERY_EMULATOR_HOST: http://localcloud:5388
@@ -60,7 +60,7 @@ const jenkinsfile = `pipeline {
   stages {
     stage('Integration Tests') {
       steps {
-        docker.image('jaysen2apache/localcloud:latest')
+        docker.image('agentcloud/localcloud:latest')
           .withRun('--memory 4g -p 5388:5388 -p 5383:5383') { c ->
             docker.image('appropriate/curl')
               .inside("--link \${c.id}:localcloud") {

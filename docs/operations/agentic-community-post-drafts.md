@@ -7,7 +7,7 @@ Do not mass-post the same copy. Stagger posts, adapt the framing, and skip a com
 ## Universal guardrails
 
 - Say: LocalCloud is a local Google Cloud emulator for personal uses permitted by its proprietary license.
-- Say: one Docker image, `jaysen2apache/localcloud`, and 27 available service guides.
+- Say: one Docker image, `agentcloud/localcloud`, and 27 available service guides.
 - Say: default local workflows require no GCP account, credentials, or billing project.
 - Say: standard GCP SDKs connect via localhost emulator endpoints.
 - Say: validate against real Google Cloud before production.
@@ -30,12 +30,12 @@ The agent workflow is the part I’m most interested in feedback on: give a codi
 
 Runnable demo:
 
-  docker pull jaysen2apache/localcloud
+  docker pull agentcloud/localcloud
   docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
     -p 9010:9010 -p 9020:9020 -p 9050:9050 -p 9060:9060 -p 6379:6379 \
     -m 4g --name localcloud \
     -v ~/.localcloud/data:/var/lib/localcloud \
-    jaysen2apache/localcloud
+    agentcloud/localcloud
   curl -f http://localhost:8080/_localcloud/health
   eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
 
@@ -124,7 +124,7 @@ Title: Looking for feedback: local GCP emulator workflow for SDK tests and agent
 I’m working on LocalCloud, a Docker-based local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its license. It publishes 27 available service guides and lets standard GCP SDKs target localhost through emulator env vars.
 
 The workflow I’m testing:
-1. Start `jaysen2apache/localcloud`
+1. Start `agentcloud/localcloud`
 2. Wait for `http://localhost:8080/_localcloud/health`
 3. Export env vars from `http://localhost:8080/_localcloud/env?format=shell`
 4. Run one local SDK smoke check without a GCP account, credentials, or billing project
@@ -144,7 +144,7 @@ Question: which GCP service behavior would you consider mandatory before trustin
 ```text
 Title: Local GCP emulator for personal projects — what would you need before using it?
 
-I’m working on LocalCloud, a local Google Cloud emulator packaged as one Docker container (`jaysen2apache/localcloud`). The goal is to let permitted personal workflows run GCP-style integration checks locally, with standard SDKs routed to localhost and no default need for GCP credentials or a billing project.
+I’m working on LocalCloud, a local Google Cloud emulator packaged as one Docker container (`agentcloud/localcloud`). The goal is to let permitted personal workflows run GCP-style integration checks locally, with standard SDKs routed to localhost and no default need for GCP credentials or a billing project.
 
 Useful docs:
 - Terraform: https://local.cloud/docs/terraform/
@@ -168,7 +168,7 @@ Prompt:
 
 Fetch https://local.cloud/ai/agents.md and follow it to start LocalCloud, export emulator environment variables, and run one local GCP SDK/API smoke check. Do not use real GCP credentials.
 
-LocalCloud runs as Docker image `jaysen2apache/localcloud` and publishes 27 available GCP service guides for permitted personal workflows. Known limitations are documented at https://local.cloud/compatibility/ and service coverage is at https://local.cloud/services/.
+LocalCloud runs as Docker image `agentcloud/localcloud` and publishes 27 available GCP service guides for permitted personal workflows. Known limitations are documented at https://local.cloud/compatibility/ and service coverage is at https://local.cloud/services/.
 
 I’d like feedback on the instruction design: what would make this safer for autonomous agents? What refusal/stop conditions should be explicit?
 ```
@@ -203,12 +203,12 @@ Coding agents are good at writing integration tests, but cloud APIs create a saf
 LocalCloud is a local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its license. It runs as one Docker container and lets standard GCP SDKs connect to localhost through emulator environment variables.
 
 ```bash
-docker pull jaysen2apache/localcloud
+docker pull agentcloud/localcloud
 docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
   -p 9010:9010 -p 9020:9020 -p 9050:9050 -p 9060:9060 -p 6379:6379 \
   -m 4g --name localcloud \
   -v ~/.localcloud/data:/var/lib/localcloud \
-  jaysen2apache/localcloud
+  agentcloud/localcloud
 curl -f http://localhost:8080/_localcloud/health
 eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
 ```
@@ -238,7 +238,7 @@ I’m looking for feedback on the agent instructions and the service coverage yo
 ```text
 Coding agents should not need your production cloud credentials to write and run integration tests.
 
-We’re preparing LocalCloud: a local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its license. It runs in Docker (`jaysen2apache/localcloud`), publishes 27 available GCP service guides, and lets standard GCP SDKs target localhost through emulator environment variables.
+We’re preparing LocalCloud: a local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its license. It runs in Docker (`agentcloud/localcloud`), publishes 27 available GCP service guides, and lets standard GCP SDKs target localhost through emulator environment variables.
 
 The agent workflow:
 1. Read `/ai/agents.md`

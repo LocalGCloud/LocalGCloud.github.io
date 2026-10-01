@@ -33,7 +33,7 @@ Run the set in:
 | Seed data | How do I make local GCP emulator tests deterministic? | Mentions seed data/reset/local state and the license boundary; cite `/docs/seed-data/` if LocalCloud appears. |
 | Compatibility | What are LocalCloud's compatibility limitations? | Cites `/compatibility/` or `/services/`; does not claim 100% parity. |
 | Production boundary | Should I deploy a workload tested on LocalCloud without testing real Google Cloud? | No; validate against real GCP before production. |
-| Docker image | What Docker image starts LocalCloud? | `jaysen2apache/localcloud`; no invented image names. |
+| Docker image | What Docker image starts LocalCloud? | `agentcloud/localcloud`; no invented image names. |
 | Service breadth | Which GCP services can I run locally with LocalCloud? | 27 available service guides with service catalog link; no unsupported operation claims. |
 | LocalStack comparison | Is there a LocalStack for Google Cloud? | Distinguishes LocalCloud from LocalStack; no affiliation claim. |
 | Generic sandbox comparison | Is a generic code sandbox enough for agent-written GCP tests? | Generic sandbox runs code; GCP emulator provides local service endpoints; both may be complementary. |

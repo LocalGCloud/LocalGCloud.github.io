@@ -39,7 +39,7 @@ Launch asset production uses `agentic-launch-asset-templates.md`; demo recording
 Before launch day:
 
 1. Create a new ledger from `agentic-economy-ledger-template.csv`.
-2. Record baseline Docker pull count for `jaysen2apache/localcloud`.
+2. Record baseline Docker pull count for `agentcloud/localcloud`.
 3. Record baseline docs traffic for `/ai/`, `/ai/agents.md`, `/docs/`, `/docs/sdk-examples/`, `/docs/terraform/`, `/docs/seed-data/`, `/services/`, and `/compatibility/`.
 4. Confirm analytics labels for copy-prompt, docs quickstart, SDK examples, Terraform, seed data, and compatibility clicks.
 5. Assign comment owners for each platform.

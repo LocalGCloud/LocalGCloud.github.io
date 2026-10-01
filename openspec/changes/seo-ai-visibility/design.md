@@ -117,7 +117,7 @@ flowchart LR
 
 ## Open Questions
 
-- Which Docker image/repository is canonical: `jaysen2apache/localcloud`, `localcloud/localcloud`, or another official namespace?
+- Which Docker image/repository is canonical: `agentcloud/localcloud`, `localcloud/localcloud`, or another official namespace?
 - What is the approved public licensing boundary beyond “Free for developers”? The answer must not expose enterprise terms or pricing.
 - Does `LocalStack-Google/localcloud-site` own the active GitHub Pages custom-domain deployment for `local.cloud`, and should `public/CNAME` be committed?
 - Who owns access to Google Search Console, Bing Webmaster Tools, and PostHog for the baseline and monthly review?

@@ -17,7 +17,7 @@ Use these templates to produce launch assets without inventing claims or driftin
 
 | Screenshot | File name | Must show | Must not show | Caption |
 |---|---|---|---|---|
-| Docker start | `01-docker-start.png` | `jaysen2apache/localcloud` command or image reference | Tokens, private paths with usernames if not desired | “Start one LocalCloud container.” |
+| Docker start | `01-docker-start.png` | `agentcloud/localcloud` command or image reference | Tokens, private paths with usernames if not desired | “Start one LocalCloud container.” |
 | Health check | `02-health.png` | `http://localhost:8080/_localcloud/health` | Private network hostnames | “Wait for local readiness.” |
 | Env export | `03-env-export.png` | Emulator host variables | Real credential paths, service-account keys | “Route standard SDKs to localhost.” |
 | Agent prompt | `04-agent-prompt.png` | No-credential prompt language | Private repository names unless approved | “Tell the agent not to use real GCP.” |
@@ -74,7 +74,7 @@ Resolution summary:
 
 Before publishing any asset, confirm:
 
-- [ ] Docker image is `jaysen2apache/localcloud`.
+- [ ] Docker image is `agentcloud/localcloud`.
 - [ ] Service count says 27 available service guides, with `/services/` linked.
 - [ ] No production replacement or 100% compatibility claim appears.
 - [ ] No unapproved pricing/licensing, benchmark, customer, or roadmap claim appears.

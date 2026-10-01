@@ -79,5 +79,5 @@
 - [x] 10.1 Reframe homepage messaging around major Google Cloud services, the support line, and sub-1-minute boot messaging instead of exact service-count marketing
 - [x] 10.2 Rework the homepage Service Atlas and `/services` catalog around Google Cloud-style product categories
 - [x] 10.3 Keep implementation provenance off the main marketing/catalog surfaces and move it to per-service detail pages
-- [x] 10.4 Align docs copy with upstream LocalCloud positioning while keeping `jaysen2apache/localcloud` as the referenced image path
+- [x] 10.4 Align docs copy with upstream LocalCloud positioning while keeping `agentcloud/localcloud` as the referenced image path
 - [x] 10.5 Run a consistency sweep for outdated wording, boot-time claims, and leftover implementation-bucket language

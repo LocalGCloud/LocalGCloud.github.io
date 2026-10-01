@@ -56,7 +56,7 @@ docker run -d --name localcloud \
   -p 24089:24089 \
   -m 4g \
   -v localcloud-data:/var/lib/localcloud \
-  jaysen2apache/localcloud
+  agentcloud/localcloud
 ```
 
 ## Volume Management

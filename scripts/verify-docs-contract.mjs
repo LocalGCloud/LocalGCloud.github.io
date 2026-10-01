@@ -70,7 +70,7 @@ for (const key of ['name', 'siteUrl', 'defaultProject', 'defaultUser', 'defaultD
 number(contract.product.serviceCount, 'product.serviceCount');
 state(contract.product.imageQualification, 'product.imageQualification');
 exactKeys(contract.product.runtimeImage, ['repository', 'tag', 'digest', 'qualification', 'evidence', 'limitation'], 'product.runtimeImage');
-assert(contract.product.runtimeImage.repository === 'jaysen2apache/localcloud', 'reviewed image repository drifted');
+assert(contract.product.runtimeImage.repository === 'agentcloud/localcloud', 'reviewed image repository drifted');
 assert(contract.product.runtimeImage.tag === 'latest', 'reviewed image tag drifted');
 assert(contract.product.runtimeImage.digest === null, 'snapshot must not invent an image digest');
 assert(contract.product.runtimeImage.qualification === 'release-unverified', 'mutable latest image must remain release-unverified');
@@ -92,7 +92,7 @@ assert(contract.operator.endpoints.seed === '/seed', 'seed endpoint must be /see
 assert(contract.operator.endpoints.reset === '/reset', 'reset endpoint must be /reset');
 assert(contract.operator.endpoints.terraformReadiness === '/terraform/readiness', 'Terraform readiness endpoint drifted');
 assert(contract.operator.manualDockerCommand.includes('127.0.0.1:5380-5405:5380-5405'), 'manual Docker must be loopback-bound');
-assert(contract.operator.manualDockerCommand.includes('jaysen2apache/localcloud:latest'), 'manual Docker image drifted');
+assert(contract.operator.manualDockerCommand.includes('agentcloud/localcloud:latest'), 'manual Docker image drifted');
 assert(!contract.operator.manualDockerCommand.includes('/var/run/docker.sock'), 'manual beginner Docker must not mount Docker socket');
 
 exactKeys(contract.cli, ['installScriptUrl', 'installCommand', 'homebrewCommand', 'supportedHosts', 'requiresDocker', 'frozenBinaryRequiresPython', 'commands', 'quickStart', 'doctorSuccessStatus', 'startSuccessStatuses', 'dataDefault', 'dockerSocketDefault', 'transparentNetworkDefault', 'bindAddress', 'dynamicPortMapping', 'environmentFormats', 'integrity', 'releaseBoundary'], 'cli');

@@ -14,7 +14,7 @@ Use this playbook for launch comments, support replies, GitHub issues, and socia
 ## Fast facts to use
 
 - LocalCloud is a local Google Cloud emulator for personal learning, evaluation, and non-commercial projects permitted by its proprietary license.
-- Docker image: `jaysen2apache/localcloud`.
+- Docker image: `agentcloud/localcloud`.
 - Service breadth: 27 available service guides; link `/services/`.
 - Default local workflows require no GCP account, credentials, service-account keys, or billing project.
 - Standard Google Cloud SDKs route to localhost through emulator environment variables; link `/docs/sdk-examples/`.

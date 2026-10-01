@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       localcloud:
-        image: jaysen2apache/localcloud@sha256:REPLACE_WITH_QUALIFIED_DIGEST
+        image: agentcloud/localcloud@sha256:REPLACE_WITH_QUALIFIED_DIGEST
         ports:
           - 5380:5380
           # Add only canonical service ports required by this test.

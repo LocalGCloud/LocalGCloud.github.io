@@ -26,7 +26,7 @@ docker run -d --name localcloud \
   -m 4g \
   -v "$PWD/seed.yaml:/opt/localcloud/seed.yaml:ro" \
   -v localcloud-data:/var/lib/localcloud \
-  jaysen2apache/localcloud:latest
+  agentcloud/localcloud:latest
 ```
 
 The mutable image is release-unverified; pin a qualified digest when one is available.

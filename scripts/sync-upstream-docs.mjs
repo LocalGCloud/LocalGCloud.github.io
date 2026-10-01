@@ -120,7 +120,7 @@ contract.operator.publishedPorts = {
 	transparentHttp: `80 -> ${defaults.server.gateway.port}`,
 	transparentHttps: `443 -> tls.port (default ${defaults.tls.port})`,
 };
-contract.operator.manualDockerCommand = `docker volume create localcloud-data\n\ndocker run -d --name localcloud \\\n  -p 127.0.0.1:5380-5405:5380-5405 \\\n  -m 4g \\\n  -v localcloud-data:/var/lib/localcloud \\\n  jaysen2apache/localcloud:latest`;
+contract.operator.manualDockerCommand = `docker volume create localcloud-data\n\ndocker run -d --name localcloud \\\n  -p 127.0.0.1:5380-5405:5380-5405 \\\n  -m 4g \\\n  -v localcloud-data:/var/lib/localcloud \\\n  agentcloud/localcloud:latest`;
 contract.cli.releaseBoundary = contract.provenance.worktreeSources.some((path) => path.startsWith("../localcloud-cli/"))
 	? `CLI ${cliVersion} behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release.`
 	: `CLI behavior is documented for version ${cliVersion} from revision ${contract.provenance.cliRevision}. Use localcloud --version to confirm the installed release.`;

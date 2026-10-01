@@ -73,7 +73,7 @@ docker run -d --name localcloud \
   -p 24089:24089 \
   -m 4g \
   -v ~/.localcloud/data:/var/lib/localcloud \
-  jaysen2apache/localcloud
+  agentcloud/localcloud
 ```
 
 Previously used incorrect format like `-p 8080:24080` (old:new) which is now corrected to `-p 24080:24080` (new:new).

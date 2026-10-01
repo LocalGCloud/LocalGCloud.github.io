@@ -195,7 +195,7 @@ Affected sources include:
 
 **Severity:** Critical
 
-The site commonly uses `jaysen2apache/localcloud` and legacy host remappings, then tells users to connect to ports `24080-24089`. Some commands map `8080:24080`, `4443:24081`, or `6379:6379`, making the later localhost instructions fail.
+The site commonly uses `agentcloud/localcloud` and legacy host remappings, then tells users to connect to ports `24080-24089`. Some commands map `8080:24080`, `4443:24081`, or `6379:6379`, making the later localhost instructions fail.
 
 The runtime launcher uses `localcloud/localcloud:latest` and publishes the canonical fixed port range. Runtime services use `24080-24092`; optional transparent networking uses `24093-24095`.
 

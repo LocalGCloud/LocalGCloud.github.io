@@ -12,7 +12,7 @@ Use semantic versions for the skills package. Patch releases fix instructions, l
 4. Confirm positive and negative trigger prompts exist for every skill.
 5. Confirm no skill or wrapper grants broad allowed tools or broad shell pre-approval.
 6. Confirm no examples require real GCP credentials, service-account keys, billing projects, or production data.
-7. Regenerate/check LocalCloud facts: 27 contract services, reviewed mutable image `jaysen2apache/localcloud:latest`, CLI-generated endpoints, default project `local-gcp-project`, root operator routes, proprietary-license boundary, and real-GCP validation.
+7. Regenerate/check LocalCloud facts: 27 contract services, reviewed mutable image `agentcloud/localcloud:latest`, CLI-generated endpoints, default project `local-gcp-project`, root operator routes, proprietary-license boundary, and real-GCP validation.
 8. Confirm Claude, Codex, Copilot, Cursor, and OpenCode guidance references canonical `skills/` content.
 
 ## Release notes template

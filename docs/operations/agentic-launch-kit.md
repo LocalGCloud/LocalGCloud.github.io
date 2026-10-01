@@ -15,20 +15,20 @@ Use this kit for community launches of LocalCloud as a local Google Cloud sandbo
 | Service catalog | `/services/` |
 | Compatibility and limitations | `/compatibility/` |
 | GitHub | `https://github.com/LocalGCloud/LocalGCloud.github.io` |
-| Docker image | `jaysen2apache/localcloud` |
+| Docker image | `agentcloud/localcloud` |
 | Demo script | `agentic-demo-script.md` |
 | Asset templates | `agentic-launch-asset-templates.md` |
 
 ## Runnable demo
 
 ```bash
-docker pull jaysen2apache/localcloud
+docker pull agentcloud/localcloud
 
 docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
   -p 9010:9010 -p 9020:9020 -p 9050:9050 -p 9060:9060 -p 6379:6379 \
   -m 4g --name localcloud \
   -v ~/.localcloud/data:/var/lib/localcloud \
-  jaysen2apache/localcloud
+  agentcloud/localcloud
 
 curl -f http://localhost:8080/_localcloud/health
 eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
@@ -45,7 +45,7 @@ Fetch https://local.cloud/ai/agents.md and follow it exactly. Start or reuse the
 ## Demo story arc
 
 1. **Problem:** Agent-written integration tests often need GCP APIs, but defaulting to real projects introduces credentials, billing, IAM setup, network dependency, and shared-state risk.
-2. **LocalCloud setup:** Pull `jaysen2apache/localcloud`, start one container, wait for health, and export localhost SDK variables.
+2. **LocalCloud setup:** Pull `agentcloud/localcloud`, start one container, wait for health, and export localhost SDK variables.
 3. **Agent workflow:** Give the agent `/ai/agents.md`; it reads the guardrails, checks Docker, starts or reuses LocalCloud, and runs a local SDK smoke test.
 4. **Inspect:** Open `http://localhost:8080` to inspect service state and logs.
 5. **Boundary:** Link `/docs/licensing/` and say plainly: LocalCloud is limited to permitted personal use; employer, organization, commercial, shared-team, and team-CI use is excluded. Validate against real GCP before production.
@@ -55,11 +55,11 @@ Fetch https://local.cloud/ai/agents.md and follow it exactly. Start or reuse the
 This is a script template for rehearsals and recordings, not proof that a run happened.
 
 ```text
-$ docker pull jaysen2apache/localcloud
+$ docker pull agentcloud/localcloud
 Using default tag: latest
 ...
 
-$ docker run -d ... jaysen2apache/localcloud
+$ docker run -d ... agentcloud/localcloud
 <container-id>
 
 $ curl -f http://localhost:8080/_localcloud/health
@@ -82,7 +82,7 @@ $ <run one SDK smoke check from /docs/sdk-examples/>
 
 | Shot | Capture | Caption |
 |---|---|---|
-| 1 | Terminal pulling and starting the Docker image | “One container: `jaysen2apache/localcloud`.” |
+| 1 | Terminal pulling and starting the Docker image | “One container: `agentcloud/localcloud`.” |
 | 2 | Health endpoint returning ready | “Agents wait for local readiness before SDK calls.” |
 | 3 | Env export output | “Standard SDKs are routed to localhost.” |
 | 4 | Agent prompt pasted into a coding agent | “The agent is told not to use real GCP credentials.” |
@@ -112,7 +112,7 @@ Use this language in every launch surface:
 
 ## Launch asset checklist
 
-- [ ] Runnable demo commands use `jaysen2apache/localcloud`.
+- [ ] Runnable demo commands use `agentcloud/localcloud`.
 - [ ] Prompt tells agents not to use real GCP credentials.
 - [ ] Demo records localhost endpoints and health readiness.
 - [ ] Post links `/compatibility/`, `/services/`, `/docs/`, `/docs/sdk-examples/`, `/docs/terraform/`, and `/docs/seed-data/` where relevant.

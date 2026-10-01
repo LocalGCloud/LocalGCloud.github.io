@@ -2,7 +2,7 @@
 
 - [x] 1.1 Create an agentic-workflow fact inventory covering Docker image, service count, admin endpoints, env export formats, service statuses, ports, SDK env vars, Terraform env vars, known gaps, and production-validation boundary.
 - [x] 1.2 Add or extend a shared service/endpoint metadata source used by `/ai/`, `/ai/agents.md`, `/llms.txt`, skill references, and agentic content pages.
-- [x] 1.3 Reconcile public Docker image naming across product context, docs, `llms.txt`, and any new agent pages; prefer `jaysen2apache/localcloud` unless product owner updates the canonical image.
+- [x] 1.3 Reconcile public Docker image naming across product context, docs, `llms.txt`, and any new agent pages; prefer `agentcloud/localcloud` unless product owner updates the canonical image.
 - [x] 1.4 Define a claim-review rule for agentic pages: no service capability, cost, credential, or compatibility claim can ship without source, owner, and review date.
 - [x] 1.5 Create a validation checklist for “agent-safe” messaging: no default GCP credentials, no cloud account, no production replacement, and real-GCP validation before production.
 

@@ -126,7 +126,7 @@ docker run -d --name localcloud \
   -m 4g \
   -v "$PWD/seed.yaml:/opt/localcloud/seed.yaml:ro" \
   -v localcloud-data:/var/lib/localcloud \
-  jaysen2apache/localcloud:latest
+  agentcloud/localcloud:latest
 ```
 
 The mutable image tag remains release-unverified. Prefer `localcloud start` and pin a qualified digest for release workflows.

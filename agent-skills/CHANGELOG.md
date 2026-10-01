@@ -14,5 +14,5 @@
 
 - No broad tool permission or shell auto-approval configuration.
 - No real GCP credentials required.
-- LocalCloud mutable image identity is `jaysen2apache/localcloud:latest`; prefer CLI-generated values and a qualified digest for release work.
+- LocalCloud mutable image identity is `agentcloud/localcloud:latest`; prefer CLI-generated values and a qualified digest for release work.
 - Proprietary-license and production boundaries preserved: confirm permitted use, then validate authorized release behavior against real Google Cloud after clearing emulator variables.

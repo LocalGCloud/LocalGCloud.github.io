@@ -213,7 +213,7 @@ Established  ————————————●—  Innovative
 | Server/runtime | localcloud-server |
 | Web console | LocalCloud Console |
 | CLI (future) | localcloud CLI |
-| Docker image | `jaysen2apache/localcloud` |
+| Docker image | `agentcloud/localcloud` |
 
 All sub-components carry the LocalCloud name. No sub-brands needed at this stage. If a paid/hosted tier emerges later, consider "LocalCloud Pro" (endorsed model) rather than a separate brand.
 

@@ -14,7 +14,7 @@ Use this checklist before promoting any LocalCloud agentic launch wave, runtime 
 ## 1. Claim and fact review
 
 - [ ] Public facts are sourced from approved product facts and current docs.
-- [ ] Docker image is `jaysen2apache/localcloud` everywhere.
+- [ ] Docker image is `agentcloud/localcloud` everywhere.
 - [ ] Service breadth says 27 available service guides and links `/services/`.
 - [ ] No page claims 100% compatibility, production parity, official Google affiliation, LocalStack affiliation, or unsupported pricing/licensing.
 - [ ] Every launch asset states the proprietary-license boundary and does not imply employer, organization, commercial, shared-team, or team-CI permission.
@@ -75,7 +75,7 @@ Complete this section only for launches that include skills.
 ## 7. Measurement ledger
 
 - [ ] A launch ledger has been created from `agentic-economy-ledger-template.csv`.
-- [ ] Baseline Docker pull count for `jaysen2apache/localcloud` is recorded.
+- [ ] Baseline Docker pull count for `agentcloud/localcloud` is recorded.
 - [ ] Baseline docs visits are recorded for `/ai/`, `/ai/agents.md`, `/docs/`, `/docs/sdk-examples/`, `/docs/terraform/`, `/docs/seed-data/`, `/services/`, and `/compatibility/`.
 - [ ] Quickstart proxy events are identified or marked unavailable.
 - [ ] UTM/source labels are assigned for each platform where allowed.

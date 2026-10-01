@@ -9,7 +9,7 @@ Do not use this document as a substitute for an actual rehearsal log. Paste the 
 - Use a fresh shell with no exported `GOOGLE_APPLICATION_CREDENTIALS`.
 - Do not log into `gcloud` during the rehearsal.
 - Do not create or reference a real GCP project.
-- Use `jaysen2apache/localcloud` as the Docker image.
+- Use `agentcloud/localcloud` as the Docker image.
 - If Docker, ports, or LocalCloud health fail, stop and record the local failure. Do not route to real Google Cloud.
 - Validate production workloads later against real GCP only after unsetting emulator variables.
 
@@ -19,7 +19,7 @@ Do not use this document as a substitute for an actual rehearsal log. Paste the 
 |---|---|
 | Confirm Docker is installed and running. | Docker version or UI screenshot. |
 | Confirm no GCP credentials are active in the shell. | Empty or intentionally unset `GOOGLE_APPLICATION_CREDENTIALS`; no service-account key path. |
-| Pull and start LocalCloud. | `docker pull jaysen2apache/localcloud`; container ID from `docker run`. |
+| Pull and start LocalCloud. | `docker pull agentcloud/localcloud`; container ID from `docker run`. |
 | Wait for readiness. | `curl -f http://localhost:8080/_localcloud/health` output. |
 | Export env vars. | `eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"`. |
 | Run one local SDK/API check. | A small Pub/Sub, Firestore, Cloud Storage, or BigQuery operation against localhost. |
@@ -29,7 +29,7 @@ Do not use this document as a substitute for an actual rehearsal log. Paste the 
 ## Agent prompt for rehearsal
 
 ```text
-You are rehearsing a public LocalCloud launch demo. Read https://local.cloud/ai/agents.md. Start or reuse the localcloud Docker container from jaysen2apache/localcloud, wait for http://localhost:8080/_localcloud/health, export the shell env vars from http://localhost:8080/_localcloud/env?format=shell, and run exactly one local GCP SDK smoke check. Do not use a GCP account, gcloud login, GOOGLE_APPLICATION_CREDENTIALS, service-account keys, a billing project, or production Google Cloud endpoints. If a step would require real GCP, stop and explain the local routing issue.
+You are rehearsing a public LocalCloud launch demo. Read https://local.cloud/ai/agents.md. Start or reuse the localcloud Docker container from agentcloud/localcloud, wait for http://localhost:8080/_localcloud/health, export the shell env vars from http://localhost:8080/_localcloud/env?format=shell, and run exactly one local GCP SDK smoke check. Do not use a GCP account, gcloud login, GOOGLE_APPLICATION_CREDENTIALS, service-account keys, a billing project, or production Google Cloud endpoints. If a step would require real GCP, stop and explain the local routing issue.
 ```
 
 ## Transcript template
@@ -44,14 +44,14 @@ Agent/client:
 $ env | grep -E 'GOOGLE_APPLICATION_CREDENTIALS|CLOUDSDK|GCLOUD|GOOGLE_CLOUD_PROJECT'
 <expected: no real credential path; local project only after env export>
 
-$ docker pull jaysen2apache/localcloud
+$ docker pull agentcloud/localcloud
 <output>
 
 $ docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
   -p 9010:9010 -p 9020:9020 -p 9050:9050 -p 9060:9060 -p 6379:6379 \
   -m 4g --name localcloud \
   -v ~/.localcloud/data:/var/lib/localcloud \
-  jaysen2apache/localcloud
+  agentcloud/localcloud
 <container id or already-running note>
 
 $ curl -f http://localhost:8080/_localcloud/health

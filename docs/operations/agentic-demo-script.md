@@ -18,7 +18,7 @@ Show that a coding agent can use LocalCloud as a local Google Cloud sandbox for 
 | Time | Visual | Narration |
 |---|---|---|
 | 0:00-0:10 | Title slide: “Local GCP sandbox for coding agents” | “This is LocalCloud: a local Google Cloud emulator for permitted personal learning, evaluation, and non-commercial projects.” |
-| 0:10-0:25 | Terminal with Docker pull/run command | “It starts from one Docker image: `jaysen2apache/localcloud`.” |
+| 0:10-0:25 | Terminal with Docker pull/run command | “It starts from one Docker image: `agentcloud/localcloud`.” |
 | 0:25-0:35 | Health endpoint | “Before an agent runs SDK code, it waits for the local health endpoint.” |
 | 0:35-0:50 | Env export command | “The app keeps using standard Google Cloud SDKs; emulator variables point those SDKs at localhost.” |
 | 0:50-1:10 | Agent prompt in coding agent | “The prompt explicitly tells the agent not to use real GCP credentials and to stop if localhost is unavailable.” |
@@ -29,13 +29,13 @@ Show that a coding agent can use LocalCloud as a local Google Cloud sandbox for 
 ## Command track
 
 ```bash
-docker pull jaysen2apache/localcloud
+docker pull agentcloud/localcloud
 
 docker run -d -p 8080:8080 -p 4443:4443 -p 8085-8087:8085-8087 \
   -p 9010:9010 -p 9020:9020 -p 9050:9050 -p 9060:9060 -p 6379:6379 \
   -m 4g --name localcloud \
   -v ~/.localcloud/data:/var/lib/localcloud \
-  jaysen2apache/localcloud
+  agentcloud/localcloud
 
 curl -f http://localhost:8080/_localcloud/health
 eval "$(curl -s http://localhost:8080/_localcloud/env?format=shell)"
@@ -53,11 +53,11 @@ This is a format template, not observed run evidence.
 
 ```text
 Narrator: We start by pulling the canonical LocalCloud image.
-Terminal: docker pull jaysen2apache/localcloud
+Terminal: docker pull agentcloud/localcloud
 Terminal: <pull output>
 
 Narrator: LocalCloud runs as one Docker container with service ports exposed locally.
-Terminal: docker run -d ... jaysen2apache/localcloud
+Terminal: docker run -d ... agentcloud/localcloud
 Terminal: <container-id>
 
 Narrator: The agent waits for the local health endpoint before running SDK code.

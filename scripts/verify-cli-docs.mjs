@@ -105,7 +105,7 @@ assert(
 	"manual Docker fallback is not loopback-bound",
 );
 assert(
-	tutorial.includes("jaysen2apache/localcloud:latest"),
+	tutorial.includes("agentcloud/localcloud:latest"),
 	"manual Docker fallback image does not match reviewed launcher/CLI evidence",
 );
 

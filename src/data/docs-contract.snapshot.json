@@ -72,10 +72,10 @@
       "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:fcfbe0a7977d5cca533cc0271a04145bec10418201b1a6480119a1c0c1109190",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:206af36e3caf9c0f4dc012d9ed3564d5839c17149532ac913460579b2e25bd21",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:09a420ea6b9b9b3e39b898f62df9f08570b9b920a20673f0c173d1878065e50d",
-      "../localcloud-cli/README.md": "sha256:498c3dc908789eba2ba05e78b2ffe66eb8d2884fb3868038751accdf515c365b",
+      "../localcloud-cli/README.md": "sha256:2fd5cd1dcdccd3dbf4e91d71ee70b97c794685a5a70d8c85410b04b782330ad1",
       "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c2db3ed46e034f468327aa49d3a44874f06b25187339d29ea03013fc4abd6e14",
       "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:d206674dd5d481e1fa752d662bb641ac6463a9a1ec8a38cf3f2aa5d53fbfa507",
-      "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:cec194d0570da7ac1240af1ffc2737c36468015b8b1871597d66334c9850f40d",
+      "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:875e1beed8476f64e92aa0e9def5be89bdf7d8e27ad4b0c7d7c6d7dd040d8c9c",
       "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:d505d66829fb6aaaaea36543d2c8a19140e0cee0f8f7667155a8f0e86208130e",
       "public/install.sh": "sha256:2c660fac584a1db052ef80956c0001fa6d71034fceb1e6617f81965741bcc796"
     },
@@ -84,7 +84,9 @@
       "../localcloud/documentation.yaml",
       "../localcloud/specs/api/catalog.json",
       "../localcloud/Dockerfile",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java"
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java",
+      "../localcloud-cli/README.md",
+      "../localcloud-cli/src/localcloud_cli/constants.py"
     ]
   },
   "product": {
@@ -98,7 +100,7 @@
     "serviceCount": 27,
     "productionBoundary": "LocalCloud emulates bounded local development workflows. Validate application behavior against real Google Cloud before production deployment.",
     "runtimeImage": {
-      "repository": "jaysen2apache/localcloud",
+      "repository": "agentcloud/localcloud",
       "tag": "latest",
       "digest": null,
       "qualification": "release-unverified",
@@ -133,7 +135,7 @@
       "openapi": "/api-docs",
       "apiDocs": "/docs"
     },
-    "manualDockerCommand": "docker volume create localcloud-data\n\ndocker run -d --name localcloud \\\n  -p 127.0.0.1:5380-5405:5380-5405 \\\n  -m 4g \\\n  -v localcloud-data:/var/lib/localcloud \\\n  jaysen2apache/localcloud:latest"
+    "manualDockerCommand": "docker volume create localcloud-data\n\ndocker run -d --name localcloud \\\n  -p 127.0.0.1:5380-5405:5380-5405 \\\n  -m 4g \\\n  -v localcloud-data:/var/lib/localcloud \\\n  agentcloud/localcloud:latest"
   },
   "cli": {
     "installScriptUrl": "https://local.cloud/install.sh",
@@ -183,7 +185,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.6 from revision 1c5f561635859af90d4273b7232574840f5a68d5. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI 0.1.6 behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",

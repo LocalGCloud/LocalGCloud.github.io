@@ -14,7 +14,7 @@
 
 **Business model:** Free for developers. Commercial and enterprise licensing details are intentionally not public.
 
-**Website:** `https://local.cloud` | **Docker Hub:** `jaysen2apache/localcloud` | **GitHub:** `https://github.com/LocalGCloud/LocalGCloud.github.io`
+**Website:** `https://local.cloud` | **Docker Hub:** `agentcloud/localcloud` | **GitHub:** `https://github.com/LocalGCloud/LocalGCloud.github.io`
 
 ---
 
@@ -150,7 +150,7 @@ LocalCloud wraps external emulators (Google's official ones, third-party, custom
 - "Every PR pipeline needs GCP credentials. When a key leaks, we have an incident."
 
 **Pull (what attracts them to LocalCloud):**
-- One command: `docker run -d --name localcloud ... localcloud/localcloud:latest`
+- One command: `docker run -d --name localcloud ... agentcloud/localcloud:latest`
 - One env export: `eval "$(curl -s localhost:8080/env?format=shell)"`
 - All 20 services ready, with a web console to inspect them
 - Free tier to try, zero commitment
