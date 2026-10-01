@@ -1,6 +1,6 @@
 <svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="service-routing-title service-routing-desc">
   <title id="service-routing-title">LocalCloud service registry and routing</title>
-  <desc id="service-routing-desc">A diagram showing services.yaml as the single source of truth feeding environment export, service enable flags, and gateway routing to facades and external emulators.</desc>
+  <desc id="service-routing-desc">A diagram showing localcloud.defaults.yaml as the single source of truth feeding environment export, service enable flags, and gateway routing to facades and external emulators.</desc>
   <defs>
     <linearGradient id="sr-bg" x1="0" y1="0" x2="1200" y2="760" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#FBFDFF"/>
@@ -25,7 +25,7 @@
 
   <rect x="122" y="102" width="282" height="556" rx="28" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
   <text x="150" y="140" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="15" letter-spacing="1.8">SINGLE SOURCE OF TRUTH</text>
-  <text x="150" y="180" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="34" font-weight="600">services.yaml</text>
+  <text x="150" y="180" fill="#12233D" font-family="IBM Plex Sans, sans-serif" font-size="24" font-weight="600">localcloud.defaults.yaml</text>
   <text x="150" y="214" fill="#58708F" font-family="IBM Plex Sans, sans-serif" font-size="19">Every service is described once, then reused by the gateway, env export, and docs.</text>
 
   <rect x="150" y="248" width="226" height="56" rx="18" fill="#F8FBFF" stroke="#D7E5F6" stroke-width="2"/>
@@ -43,7 +43,7 @@
   <rect x="150" y="536" width="226" height="84" rx="18" fill="#0F1C30"/>
   <text x="170" y="568" fill="#8BA6D3" font-family="IBM Plex Mono, monospace" font-size="13" letter-spacing="1.5">EXAMPLES</text>
   <text x="170" y="598" fill="#F5F9FF" font-family="IBM Plex Sans, sans-serif" font-size="19">gcs :5382 rest external</text>
-  <text x="170" y="622" fill="#F5F9FF" font-family="IBM Plex Sans, sans-serif" font-size="19">secretmanager :5395 grpc facade</text>
+  <text x="170" y="622" fill="#F5F9FF" font-family="IBM Plex Sans, sans-serif" font-size="19">secretmanager :5380 grpc facade</text>
 
   <rect x="472" y="116" width="248" height="114" rx="24" fill="#FFFFFF" stroke="#D4E2F4" stroke-width="2"/>
   <text x="498" y="150" fill="#6B7F9D" font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="1.6">ENTRYPOINT PARSING</text>

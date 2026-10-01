@@ -35,7 +35,7 @@ Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env
 | **BigQuery** | Native GoogleSQL analysis + DuckDB execution | Supervised native in-container process; columnar DuckDB storage beneath `/var/lib/localcloud/bigquery-data`. Ports `5388` (REST) and `5389` (Storage Read gRPC with TLS). |
 | **Spanner** | Extended Cloud Spanner emulator | LevelDB row data plus JSON metadata beneath `/var/lib/localcloud/spanner-data`. Ports `5386` (gRPC) and `5387` (REST). |
 | **Memorystore** | Valkey-compatible process | Ports `5390` (plaintext) and `5394` (TLS). Check the documented RESP command and recovery subset. |
-| **Cloud SQL** | PostgreSQL 16 (`5391`) + companion MySQL 8.4 (`5406`) | Native PostgreSQL 16 inside container; MySQL 8.4 hosted via companion container. |
+| **AlloyDB & Cloud SQL** | PostgreSQL 16 (`5391`) + companion MySQL 8.4 (`5406`) | Native PostgreSQL 16 data plane shared by Cloud SQL and AlloyDB; MySQL 8.4 hosted via companion container. |
 
 A retained volume improves restart/container-replacement behavior only for stores that actually persist. It does not provide production replication, backups, disaster recovery, transaction parity, or durability guarantees.
 
@@ -43,44 +43,60 @@ A retained volume improves restart/container-replacement behavior only for store
 
 The host CLI may dynamically remap these ports if conflicts arise; generated endpoint output from `localcloud env` is authoritative for a running runtime.
 
+LocalCloud organizes its network ports into clean, continuous tiers:
+
+- **5380–5405**: In-container published range (`5380–5394` active services and TLS, `5395–5405` reserved buffer for future service additions).
+- **5406 & 5443–5465**: External companion & child host processes (`5406` Cloud SQL MySQL companion container, `5443–5465` GKE k3d child clusters with `5443` as primary).
+- **5410–5414**: Specialized & in-container loopback (`5410/udp` DNSmasq scoped DNS, `5411` Firestore private, `5412` BigQuery REST private, `5413` BigQuery Storage gRPC private, `5414` Supervisor XML-RPC private).
+
 ### Published TCP Block (5380–5405)
 
-| Port | Protocol | Purpose / Service |
-| :---: | :---: | :--- |
-| `5380` | HTTP | Gateway, web console, operator APIs, and REST facades |
-| `5381` | HTTPS | Native gateway TLS endpoint (configurable via `tls.port`) |
-| `5382` | HTTP | Cloud Storage REST API |
-| `5383` | gRPC | Cloud Pub/Sub |
-| `5384` | gRPC | Cloud Firestore |
-| `5385` | gRPC | Cloud Bigtable |
-| `5386` | gRPC | Cloud Spanner (primary gRPC API) |
-| `5387` | HTTP | Cloud Spanner REST / grpc-gateway (**not PostgreSQL wire**) |
-| `5388` | HTTP | BigQuery REST / SQL API |
-| `5389` | gRPC | BigQuery Storage Read API (Arrow IPC with TLS) |
-| `5390` | TCP | Memorystore (Redis / Valkey plaintext) |
-| `5391` | TCP | Cloud SQL PostgreSQL 16 data plane |
-| `5392` | HTTPS | Cloud Storage TLS |
-| `5393` | gRPC/TLS | Cloud Pub/Sub TLS |
-| `5394` | TCP/TLS | Memorystore TLS |
-| `5395` | gRPC | Cloud Secret Manager |
-| `5396` | gRPC | Cloud Tasks |
-| `5397` | gRPC | Cloud Logging |
-| `5398` | gRPC | Cloud Monitoring |
-| `5399` | gRPC | Cloud KMS |
-| `5400` | gRPC | Cloud Dataproc |
-| `5401` | gRPC | Cloud Functions |
-| `5402` | gRPC | Cloud Run |
-| `5403` | gRPC | Vertex AI |
-| `5404` | gRPC | Eventarc |
-| `5405` | gRPC | Cloud Workflows |
+| Port | Protocol / Transport | Purpose / Service | Active When |
+| :---: | :--- | :--- | :--- |
+| `5380` | HTTP/1.1 & HTTP/2 (REST/h2c) | Shared gateway, web console, operator APIs, MCP, and all in-process service facades | Server is ready |
+| `5381` | HTTPS & HTTP/2 gRPC | Secure shared gateway (`tls.port`, default `5381`) | Global TLS enabled |
+| `5382` | HTTP REST | Cloud Storage REST API (`fake-gcs-server`) | `gcs` enabled |
+| `5383` | h2c gRPC | Cloud Pub/Sub direct SDK endpoint | `pubsub` enabled |
+| `5384` | h2c gRPC / HTTP | Cloud Firestore wrapper | `firestore` enabled |
+| `5385` | h2c gRPC | Cloud Bigtable (`little_bigtable`) | `bigtable` enabled |
+| `5386` | h2c gRPC | Cloud Spanner data and admin APIs | `spanner` enabled |
+| `5387` | HTTP REST / JSON | Cloud Spanner REST endpoint (**not PostgreSQL wire**) | `spanner` enabled |
+| `5388` | HTTP REST / JSON | BigQuery query and metadata API | `bigquery` enabled |
+| `5389` | HTTP/2 gRPC | BigQuery Storage Read/Write API (**TLS is always required**) | `bigquery` enabled |
+| `5390` | RESP | Memorystore (Redis / Valkey plaintext) | `memorystore` enabled |
+| `5391` | PostgreSQL wire protocol | Shared PostgreSQL data plane for Cloud SQL and AlloyDB (and LocalCloud metadata) | PostgreSQL is ready |
+| `5392` | HTTPS REST | Cloud Storage TLS endpoint | Global TLS and `gcs` enabled |
+| `5393` | HTTP/2 gRPC | Cloud Pub/Sub TLS endpoint | Global TLS and `pubsub` enabled |
+| `5394` | RESP over TLS | Memorystore (Redis / Valkey TLS) | Global TLS and `memorystore` enabled |
+| `5395–5405` | TCP | Reserved buffer for future in-container service additions | Reserved |
+
+### Shared Gateway Facades (Port 5380 / 5381)
+
+All service control planes and in-process facades connect through the shared gateway on `5380` (HTTP/h2c) or `5381` (HTTPS/TLS) rather than individual dedicated ports. These include:
+
+- **Security & Identity**: Cloud Secret Manager, Cloud KMS, Cloud IAM
+- **Messaging & Integration**: Cloud Tasks, Cloud Scheduler, Cloud Workflows
+- **Operations**: Cloud Logging, Cloud Monitoring, Cloud Resource Manager, Service Usage, Cloud Billing
+- **Compute & Serverless**: Cloud Functions (2nd Gen), Cloud Run, Dataproc (control plane), GKE (control plane), Compute Engine
+- **Databases**: Cloud SQL (control plane), AlloyDB (control plane)
+- **Auxiliary Integration APIs**: Google Sheets
 
 ### Companions and Subordinate Workloads
 
-| Port | Purpose / Service |
-| :---: | :--- |
-| `5406` | Cloud SQL MySQL 8.4 companion container |
-| `5410/udp` | Transparent DNS / UDP listener (mapped to host `53/udp`) |
-| `5443–5465` | GKE / k3d cluster control planes (primary API server on `5443`) |
+| Port | Protocol | Purpose / Service |
+| :---: | :--- | :--- |
+| `5406` | MySQL wire protocol | Cloud SQL MySQL 8.4 companion container (`localcloud-mysql`) |
+| `5410/udp` | DNS | Scoped `dnsmasq` resolver (mapped to host `53/udp` in transparent mode) |
+| `5443–5465` | HTTPS (Kubernetes API) | GKE k3d child control-plane allocations (primary API server on `5443`) |
+
+### Internal Loopback Listeners (Never Published to Host)
+
+| Listener | Purpose |
+| :--- | :--- |
+| `127.0.0.1:5411` | Private Firestore backend behind the public `5384` wrapper |
+| `127.0.0.1:5412` | Private native BigQuery REST backend behind public `5388` proxy |
+| `127.0.0.1:5413` | Private native BigQuery Storage backend behind public TLS `5389` proxy |
+| `127.0.0.1:5414` | Supervisor XML-RPC control plane |
 
 ## Transparent networking and Docker socket
 

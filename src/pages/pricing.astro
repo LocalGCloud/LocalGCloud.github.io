@@ -14,6 +14,10 @@ const productSchema = {
   name: productFacts.name,
   description:
     'LocalCloud runs documented Google Cloud service workflows in one local Docker container. Free during public preview for local development, testing, CI, evaluation, and internal pilots.',
+  image: [
+    new URL('/brand/localcloud-app-icon-3d.jpg', productFacts.siteUrl).toString(),
+    new URL('/brand/localcloud-social-card.svg', productFacts.siteUrl).toString(),
+  ],
   url: pricingUrl,
   brand: {
     '@type': 'Brand',
