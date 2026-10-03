@@ -32,6 +32,11 @@ for (const route of expectedSearchRoutes) {
   try {
     const response = await fetchWithRetries(url);
     const html = await response.text();
+    if (route.path !== '/' && !route.path.endsWith('/')) {
+      if (!html.trim()) errors.push(`${route.path}: raw document is empty`);
+      if (/^\s*(?:<!doctype\s+html\b|<html\b)/i.test(html)) errors.push(`${route.path}: raw document returned HTML`);
+      continue;
+    }
     const canonical = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i)?.[1];
     const expectedCanonical = new URL(route.path, siteOrigin).toString();
     if (canonical !== expectedCanonical) errors.push(`${route.path}: canonical ${canonical ?? 'missing'} does not equal ${expectedCanonical}`);

@@ -15,6 +15,8 @@
     "build": "node scripts/generate-distributed-docs.mjs && node scripts/verify-docs-contract.mjs && node scripts/verify-upstream-docs.mjs && node scripts/verify-cli-docs.mjs && node scripts/verify-doc-examples.mjs && node scripts/verify-policy-docs.mjs && node scripts/verify-distributed-docs.mjs && astro build && node scripts/verify-rendered-docs.mjs && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node --experimental-strip-types scripts/verify-content-facts.mjs && pagefind --site dist",
     "test:installer": "node scripts/verify-installer.mjs",
     "test:blog": "node scripts/verify-blog-presentation.mjs",
+    "test:live-seo": "node --test scripts/verify-live-seo.test.mjs",
+    "deploy:cloudflare": "pnpm run build && pnpm run test:installer && pnpm run test:live-seo && wrangler deploy",
     "preview": "astro preview"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "pagefind": "^1.5.2",
+    "wrangler": "4.147.0",
     "yaml": "^2.9.0"
   },
   "overrides": {

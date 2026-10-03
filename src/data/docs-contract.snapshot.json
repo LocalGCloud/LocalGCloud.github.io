@@ -1,8 +1,8 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-09-30",
+  "reviewedAt": "2026-10-03",
   "provenance": {
-    "runtimeRevision": "f348c3009c9c997efcdc30cf09f22ec90c8d379d",
+    "runtimeRevision": "d40e06224df3284873c4e926f3599080dca6c11e",
     "cliRevision": "793ec6311632c2cf0cb1940f4a5f1f1d6aba0825",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
@@ -59,16 +59,16 @@
     ],
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
-      "../localcloud/localcloud.defaults.yaml": "sha256:2e5b3a04c656950d70ad8c1a79a336b36c1b386e43bbb141ea84f5a325bc779e",
-      "../localcloud/documentation.yaml": "sha256:39a5fa9faf84e1caea13b63bc867d64e551918fcbeeeecedecf41c943be395a0",
+      "../localcloud/localcloud.defaults.yaml": "sha256:935002d203034543e35c72f8c69f7ed9a63ad5e3d7eb2a5b16fc65be46a59519",
+      "../localcloud/documentation.yaml": "sha256:fee395f5c0fe3aaecb154ba018118b23ee22e45188478a02f199d31b2f8452a3",
       "../localcloud/docs/status/service-status.md": "sha256:0ed7b7211549175ad0e2842d137968ec47b7bfddf94098fdd764733e950a7ac1",
-      "../localcloud/docs/architecture/networking-and-tls.md": "sha256:007bd5bbf8102c6433aed2f3d22a228a6ddda2ef08454e2df65ac9f013981f67",
+      "../localcloud/docs/architecture/networking-and-tls.md": "sha256:71d43c01c3bd8019587f19914e3c668acf2f20a090c798f7ab06ac5935cc6cce",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:1a674b42c9b5d54ad0dc1b74e821d4a525d1db25cb72ffdebad5c7ad4c3c320a",
       "../localcloud/specs/api/catalog.json": "sha256:3aaacef6fea951a3d4161fa5b90e3257a3f8b52123e7283766a944b2406c4df2",
-      "../localcloud/Dockerfile": "sha256:cecbd280cf4e3b27cc3eb0f46c6c43c6432b3ab0bcc50f850588a4238112dcfd",
+      "../localcloud/Dockerfile": "sha256:378a9080048aaa63fce8753932b17c49bbbdcee518b30cfa71643d57d28a8022",
       "../localcloud/LICENSE": "sha256:26e7152b644b9594f95335784453e7d79b89711a7af4d94811fbe14de1ea7a10",
       "../localcloud/docker/bigquery-start.sh": "sha256:987e13b3a9cc853f8590259cd32b0131df141b900c4c0fec0cfa9e3562973f9e",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:d598410c054998229e5763a35e5eac7b18595b4ede8558890ad9adaa731fd6ae",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:4b8f682eb03dd7baeecebce7ba801a7519442fe88c92ee295a7123d7d6777d86",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:fcfbe0a7977d5cca533cc0271a04145bec10418201b1a6480119a1c0c1109190",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:206af36e3caf9c0f4dc012d9ed3564d5839c17149532ac913460579b2e25bd21",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:09a420ea6b9b9b3e39b898f62df9f08570b9b920a20673f0c173d1878065e50d",
@@ -83,10 +83,7 @@
       "../localcloud/localcloud.defaults.yaml",
       "../localcloud/documentation.yaml",
       "../localcloud/docs/architecture/networking-and-tls.md",
-      "../localcloud/docs/guides/mcp-integration.md",
-      "../localcloud/specs/api/catalog.json",
-      "../localcloud/Dockerfile",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java"
+      "../localcloud/Dockerfile"
     ]
   },
   "product": {
@@ -758,7 +755,7 @@
       "status": "verified",
       "limitations": [
         "Firestore is supported locally but disabled by default to save system resources. Enable via localcloud start --services firestore or services.enabled in configuration.",
-        "Google-operated multi-region replication and production scale are cloud-only. fidelity need recovery fixes and native SDK tests.",
+        "Google-operated multi-region replication and production scale are cloud-only.",
         "Composite-index enforcement, transaction concurrency, listeners and transforms require exact-artifact qualification. Security Rules evaluation and Firestore-trigger delivery remain unqualified local capabilities."
       ],
       "evidence": [
@@ -1902,7 +1899,7 @@
           "label": "projects.create/list/get/update/delete",
           "status": "verified",
           "limitations": [
-            "The v1 facade accepts name and the v3 facade accepts displayName for the project display name. Create and delete return completed crm-prefixed operations that can be polled without intercepting Service Usage operations. When server.auto_provision_projects is enabled (default true) and strict mode is inactive, incoming requests to any LocalCloud service (BigQuery, Bigtable, Pub/Sub, Storage, Firestore, etc.) automatically provision unrecorded projects on first touch. When strict mode is activated (e.g. cloudiam.mode is strict or gcp-live), auto-provisioning is deactivated to enforce policy."
+            "The v1 facade accepts name and the v3 facade accepts displayName for the project display name. Create and delete return completed crm-prefixed operations that can be polled without intercepting Service Usage operations. When server.auto_provision_projects is enabled (default true) and strict mode is inactive, requests through the gateway (including its Storage and Bigtable proxies), the Pub/Sub listener, or the BigQuery 5388 listener register unrecorded projects on first touch; direct emulator listeners do not. When strict mode is activated (e.g. cloudiam.mode is strict or gcp-live), auto-provisioning is deactivated to enforce policy."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -3015,6 +3012,6 @@
         "notes": "Native source-overlay 2026-09-27: pinned aggregate signature 2061, point union with duplicate removal, empty/no rows, fail-closed nonpoint/all-NULL and modifier cases, REST GEOGRAPHY publication. The previous array-scan refusal does not describe this bounded native path. Grouped point inputs pass; GEOGRAPHY-valued UNNEST array scans remain refused by the relation spine. 2026-09-28 validation: partial. Supported subset: point-only and polygon-only groups union with S2. Remaining boundary: Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused."
       }
     ],
-    "revision": "a306857c57be8f19dcef196bf9deb04789df80b5"
+    "revision": "b87539d641d29d523d1c6e202d41b0d7b81fe395"
   }
 }

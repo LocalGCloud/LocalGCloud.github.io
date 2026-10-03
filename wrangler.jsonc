@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "localcloud-site",
+  "compatibility_date": "2026-10-03",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "local.cloud", "custom_domain": true },
+    { "pattern": "www.local.cloud", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

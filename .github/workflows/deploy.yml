@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy to Cloudflare Workers
 
 on:
   push:
@@ -7,18 +7,18 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
+  group: cloudflare-production
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+    outputs:
+      deployment-url: ${{ steps.deployment.outputs.deployment-url }}
     steps:
-      - name: Checkout your repository using git
+      - name: Checkout repository
         uses: actions/checkout@v5
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -30,29 +30,27 @@ jobs:
           node-version: 22
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build site
-        run: pnpm build
+      - name: Build and verify site
+        run: pnpm run build
       - name: Test installer
-        run: pnpm test:installer
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: dist
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
+        run: pnpm run test:installer
+      - name: Test live SEO verification
+        run: pnpm run test:live-seo
+      - name: Deploy static assets to Cloudflare
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.147.0'
+          packageManager: pnpm
+          command: deploy
+      - name: Verify deployed SEO routes
+        run: node scripts/verify-live-seo.mjs
+        env:
+          SEO_VERIFY_BASE_URL: ${{ steps.deployment.outputs.deployment-url }}
 
   verify-live-seo:
     if: ${{ vars.SEO_VERIFY_BASE_URL != '' }}
@@ -65,7 +63,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Verify live SEO routes
+      - name: Verify custom domain SEO routes
         run: node scripts/verify-live-seo.mjs
         env:
           SEO_VERIFY_BASE_URL: ${{ vars.SEO_VERIFY_BASE_URL }}
