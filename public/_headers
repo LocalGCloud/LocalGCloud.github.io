@@ -1,4 +1,5 @@
-# Preserve revalidation and prevent duplicate edge injection of the manually loaded beacon.
+# Revalidate mutable files and prevent edge injection into CSP-protected HTML.
+# The Worker compresses HTML before the proxy; no-transform preserves those encoded bytes.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

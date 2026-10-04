@@ -112,12 +112,30 @@ test('CSP permits the exact emitted script bytes and preserves the style policy'
     assert.equal(path, '/_astro/app.js');
     return external;
   });
-  assert.ok(secured.includes(`'${hash(inline)}'`));
+  const emittedInline = secured.match(/<script>([\s\S]*?)<\/script>/)[1];
+  assert.ok(emittedInline.length < inline.length);
+  assert.ok(secured.includes(`'${hash(emittedInline)}'`));
+  assert.ok(!secured.includes(`'${hash(inline)}'`));
+  const context = { window: {} };
+  runInNewContext(emittedInline, context);
+  assert.equal(context.window.ready, true);
   assert.ok(secured.includes(`'${hash(external)}'`));
   assert.ok(secured.includes(`integrity="${hash(external)}"`));
   assert.ok(secured.includes("style-src 'self' 'sha256-existing'"));
   assert.equal(await finalizeCsp(secured, async () => external), secured);
   await assert.rejects(finalizeCsp(html.replace('/_astro/app.js', 'https://unexpected.example/app.js'), async () => external), /Unexpected script origin/);
+});
+
+test('inline minification preserves cross-script globals and structured data', async () => {
+  const schema = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Organization', name: 'LocalCloud' });
+  const html = `<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'strict-dynamic' 'sha256-obsolete';"><script>var shared = { value: 7 }; function capture(value) { window.result = value; }</script><script>capture(shared.value);</script><script type="application/ld+json">${schema}</script>`;
+  const secured = await finalizeCsp(html, () => assert.fail('no external scripts'));
+  const context = { window: {} };
+  for (const script of secured.matchAll(/<script>([\s\S]*?)<\/script>/g)) runInNewContext(script[1], context);
+  assert.equal(context.window.result, 7);
+  assert.ok(secured.includes(`<script type="application/ld+json">${schema}</script>`));
+  assert.ok(!secured.includes('sha256-obsolete'));
+  assert.equal(await finalizeCsp(secured, () => assert.fail('no external scripts')), secured);
 });
 
 test('search queues one integrity-protected client load and initializes its explicit base path', async () => {

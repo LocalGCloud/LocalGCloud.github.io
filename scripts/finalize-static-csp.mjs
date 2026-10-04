@@ -2,11 +2,12 @@ import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { transform } from 'esbuild';
 
 const scriptHash = (content) => `sha256-${createHash('sha256').update(content).digest('base64')}`;
 
-// Astro's processed scripts are hashed during bundling. Inline scripts need
-// hashes of their final rendered bytes, including whitespace, after the build.
+// Minify rendered inline JavaScript before hashing its exact final bytes.
+// Astro's processed scripts are already minified during bundling.
 export async function finalizeCsp(html, readAsset) {
   const meta = html.match(/<meta\b[^>]*http-equiv=["']content-security-policy["'][^>]*>/i)?.[0];
   if (!meta) throw new Error('Missing Astro CSP metadata');
@@ -14,7 +15,8 @@ export async function finalizeCsp(html, readAsset) {
   const directives = content.split(';').map((item) => item.trim()).filter(Boolean);
   const scriptIndex = directives.findIndex((item) => item.startsWith('script-src '));
   if (scriptIndex < 0) throw new Error('Missing script-src policy');
-  const sources = new Set(directives[scriptIndex].slice('script-src '.length).split(/\s+/));
+  const sources = new Set(directives[scriptIndex].slice('script-src '.length).split(/\s+/)
+    .filter((source) => !/^'sha256-/.test(source)));
   for (const match of [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].reverse()) {
     const src = match[1].match(/\bsrc=["']([^"']+)["']/i)?.[1];
     if (src) {
@@ -26,7 +28,14 @@ export async function finalizeCsp(html, readAsset) {
       const replacement = `<script${attrs} integrity="${hash}">${match[2]}</script>`;
       html = html.slice(0, match.index) + replacement + html.slice(match.index + match[0].length);
     } else if (match[2].trim()) {
-      sources.add(`'${scriptHash(match[2])}'`);
+      const type = match[1].match(/\btype=["']([^"']+)["']/i)?.[1].toLowerCase() || '';
+      const javascript = ['', 'module', 'text/javascript', 'application/javascript'].includes(type);
+      const code = javascript ? (await transform(match[2], {
+        loader: 'js', target: 'es2022', minify: true, legalComments: 'none', treeShaking: false,
+      })).code.trimEnd() : match[2];
+      sources.add(`'${scriptHash(code)}'`);
+      const replacement = `<script${match[1]}>${code}</script>`;
+      html = html.slice(0, match.index) + replacement + html.slice(match.index + match[0].length);
     }
   }
   directives[scriptIndex] = `script-src ${[...sources].join(' ')}`;

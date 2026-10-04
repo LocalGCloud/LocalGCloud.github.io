@@ -15,7 +15,7 @@
     "build:cloudflare": "SITE_DEPLOYMENT_TARGET=cloudflare pnpm run build",
     "build:static": "SITE_DEPLOYMENT_TARGET=static pnpm run build",
     "build": "node scripts/generate-distributed-docs.mjs && node scripts/verify-docs-contract.mjs && node scripts/verify-upstream-docs.mjs && node scripts/verify-cli-docs.mjs && node scripts/verify-doc-examples.mjs && node scripts/verify-policy-docs.mjs && node scripts/verify-distributed-docs.mjs && astro build && node scripts/verify-rendered-docs.mjs && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node --experimental-strip-types scripts/verify-content-facts.mjs && pagefind --site dist && node scripts/bundle-pagefind.mjs && node scripts/finalize-static-csp.mjs",
-    "test:performance": "node --test scripts/verify-page-performance.test.mjs",
+    "test:performance": "node --test scripts/verify-page-performance.test.mjs scripts/verify-static-response.test.mjs",
     "test:analytics": "node --test scripts/verify-posthog-proxy.test.mjs",
     "test:installer": "node scripts/verify-installer.mjs",
     "test:blog": "node scripts/verify-blog-presentation.mjs",

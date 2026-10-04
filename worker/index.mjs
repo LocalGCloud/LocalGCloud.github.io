@@ -1,3 +1,5 @@
+import { compressHtml } from './static-response.mjs';
+
 const PREFIX = '/ingest';
 const API_HOST = 'us.i.posthog.com';
 const ASSET_HOST = 'us-assets.i.posthog.com';
@@ -14,7 +16,7 @@ function unavailable() {
 export async function handleRequest(request, env, sendUpstream = fetch) {
   const url = new URL(request.url);
   if (url.pathname !== PREFIX && !url.pathname.startsWith(`${PREFIX}/`)) {
-    return env.ASSETS.fetch(request);
+    return compressHtml(request, await env.ASSETS.fetch(request));
   }
   if (!METHODS.includes(request.method)) {
     return new Response('Method not allowed', {

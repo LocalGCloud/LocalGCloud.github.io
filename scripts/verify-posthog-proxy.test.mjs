@@ -220,10 +220,10 @@ test('upstream redirects stay first-party, while other redirect targets are refu
   }
 });
 
-test('Wrangler routes the proxy before assets and binds static fallback to the tested entry point', () => {
+test('Wrangler routes analytics and HTML through the Worker while retaining static fallback', () => {
   const config = JSON.parse(readFileSync(new URL('../wrangler.jsonc', import.meta.url), 'utf8'));
   assert.equal(config.main, 'worker/index.mjs');
   assert.equal(config.assets.binding, 'ASSETS');
-  assert.deepEqual(config.assets.run_worker_first, ['/ingest', '/ingest/*']);
+  assert.deepEqual(config.assets.run_worker_first, ['/ingest', '/ingest/*', '/', '/*/']);
   assert.equal(config.assets.not_found_handling, '404-page');
 });
