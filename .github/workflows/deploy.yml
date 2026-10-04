@@ -63,6 +63,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22
+          package-manager-cache: false
       - name: Verify custom domain SEO routes
         run: node scripts/verify-live-seo.mjs
         env:
