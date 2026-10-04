@@ -47,6 +47,7 @@ export default defineConfig({
     define: {
       'import.meta.env.PUBLIC_POSTHOG_HOST': JSON.stringify(posthog.apiHost),
       'import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN': JSON.stringify(cloudflareAnalytics.token),
+      'import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_ENDPOINT': JSON.stringify(cloudflareAnalytics.endpoint),
     },
     plugins: [tailwindcss()],
   },

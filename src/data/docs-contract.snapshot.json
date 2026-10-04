@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "reviewedAt": "2026-10-04",
   "provenance": {
-    "runtimeRevision": "7ec00449d70accb0023f81246648452c5dd8becf",
+    "runtimeRevision": "b78033ac8b9359eb4fbb851601e507fc12b8ff2e",
     "cliRevision": "793ec6311632c2cf0cb1940f4a5f1f1d6aba0825",
     "assembledImageDigest": null,
     "qualification": "release-unverified",

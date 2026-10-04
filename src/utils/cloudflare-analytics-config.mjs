@@ -11,9 +11,13 @@ export function resolveCloudflareAnalyticsConfig(env = {}) {
   if (token && !/^[a-f0-9]{32}$/i.test(token)) {
     throw new Error('PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN must be a 32-character hexadecimal site token or empty');
   }
+  // Cloudflare zone tokens collect on the proxied hostname. A separately
+  // registered token supports the external endpoint on static hosting.
+  const endpoint = target === 'cloudflare' ? '/cdn-cgi/rum' : 'https://cloudflareinsights.com/cdn-cgi/rum';
   return {
     token,
+    endpoint,
     scriptOrigins: token ? ['https://static.cloudflareinsights.com'] : [],
-    connectOrigins: token ? ['https://cloudflareinsights.com'] : [],
+    connectOrigins: token && target === 'static' ? ['https://cloudflareinsights.com'] : [],
   };
 }

@@ -15,6 +15,7 @@ interface Props {
 const rawBase = import.meta.env.BASE_URL;
 const posthogApiHost = import.meta.env.PUBLIC_POSTHOG_HOST;
 const cloudflareAnalyticsToken = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN;
+const cloudflareAnalyticsEndpoint = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_ENDPOINT;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const {
   title,
@@ -70,12 +71,15 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 
     <!-- The hashed loader authorizes this beacon under strict-dynamic. -->
     {cloudflareAnalyticsToken && (
-      <script is:inline define:vars={{ cloudflareAnalyticsToken }}>
+      <script is:inline define:vars={{ cloudflareAnalyticsToken, cloudflareAnalyticsEndpoint }}>
         (function () {
           var beacon = document.createElement('script');
           beacon.async = true;
           beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-          beacon.setAttribute('data-cf-beacon', JSON.stringify({ token: cloudflareAnalyticsToken }));
+          beacon.setAttribute('data-cf-beacon', JSON.stringify({
+            token: cloudflareAnalyticsToken,
+            send: { to: cloudflareAnalyticsEndpoint },
+          }));
           document.head.appendChild(beacon);
         })();
       </script>
