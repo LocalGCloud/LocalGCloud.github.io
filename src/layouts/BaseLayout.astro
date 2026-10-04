@@ -1,4 +1,5 @@
 ---
+import robotoFont from '@fontsource-variable/roboto/files/roboto-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import SearchModal from '../components/SearchModal.astro';
 import { organizationSchema, type JsonLd } from '../data/productFacts';
@@ -12,16 +13,19 @@ interface Props {
 }
 
 const rawBase = import.meta.env.BASE_URL;
+const posthogApiHost = import.meta.env.PUBLIC_POSTHOG_HOST;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const {
   title,
   description = 'Run evidence-bounded Google Cloud service workflows locally in one Docker container. Review compatibility, privacy, and the governing proprietary license before use.',
-  ogImage = `${base}brand/localcloud-social-card.svg`,
+  ogImage,
   noindex = false,
   structuredData = [],
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImageURL = new URL(ogImage, Astro.site);
+const ogImageURL = ogImage ? new URL(ogImage, Astro.site) : undefined;
+// Preserve inline presentation styles using the per-page CSP API.
+Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 ---
 
 <!doctype html>
@@ -43,29 +47,16 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImageURL} />
+    {ogImageURL && <meta property="og:image" content={ogImageURL} />}
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content={ogImageURL ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImageURL} />
+    {ogImageURL && <meta name="twitter:image" content={ogImageURL} />}
 
-    <!-- Fonts: Roboto speaks, Roboto Mono labels (DESIGN.md). Weights match the type scale: 400 body, 600 title/label, 650→700 headline. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&family=Roboto+Mono:wght@400;600&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&family=Roboto+Mono:wght@400;600&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
+    <!-- One local variable body font covers all headline/body weights. -->
+    <link rel="preload" href={robotoFont} as="font" type="font/woff2" crossorigin />
 
     <title>{title}</title>
 
@@ -76,12 +67,13 @@ const ogImageURL = new URL(ogImage, Astro.site);
     ))}
     <slot name="head" />
 
-    <!-- PostHog Analytics -->
-    <script is:inline>
-      !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags resetGroups onFeatureFlags addFeatureFlagsHandler onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    <!-- Queue analytics immediately; download the SDK after load, during idle time. -->
+    <script is:inline define:vars={{ posthogApiHost }}>
+      !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js";var loadSdk=function(){(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r)};var scheduleSdk=function(){setTimeout(function(){if("requestIdleCallback" in window){window.requestIdleCallback(loadSdk,{timeout:2000})}else{loadSdk()}},1500)};if(t.readyState==="complete"){scheduleSdk()}else{window.addEventListener("load",scheduleSdk,{once:true})}var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags resetGroups onFeatureFlags addFeatureFlagsHandler onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 
       posthog.init('phc_o9nQDAQjEgsPcamE8pCnhv7ekA8CmA2VQXechLju9LA9', {
-        api_host: 'https://us.i.posthog.com',
+        api_host: posthogApiHost,
+        ui_host: 'https://us.posthog.com',
         defaults: '2026-01-30', // Pin SDK defaults to prevent upstream behavior changes
 
         // Page tracking — gives us geo (IP), pages visited, exit pages
@@ -103,6 +95,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
 
         // Disabled — enable via feature flag when needed
         disable_session_recording: true,
+        disable_surveys: true, // Marketing site has no surveys; avoid their extra bundle.
         capture_heatmaps: false,
         capture_dead_clicks: false,
         capture_performance: false,

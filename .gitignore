@@ -1,18 +1,53 @@
-node_modules
-dist
+# Dependencies, build output, and local tool caches
+/node_modules/
+/dist/
+/.astro/
+/.pnpm-store/
+/.wrangler/
+/graft/
+/.gortex/
+/.tgrep/
 
-#AI agents
-.astro
-.design-extract/
-.pi
-.agents
-.codex
-.gemini
-.impeccable
-.ignore
-graft
-.claude
-.omp
-.opencode
-.rules
-.tgrep
+# Local design output, screenshots, and research exports
+/output/
+/screenshots/
+/design-output.html
+/prospects-python-gcs.json
+/prompts/hero-cloud-in-a-box/
+
+# Historical update summaries retained locally
+/COMPLETE_UPDATE_SUMMARY.md
+/CONTENT_IMPROVEMENT_SUMMARY.md
+/DOCKER_VOLUME_UPDATE.md
+/PORT_UPDATE_SUMMARY.md
+/SEO_PILLAR_PAGES_SUMMARY.md
+
+# OS metadata, editor state, and temporary files
+.DS_Store
+Thumbs.db
+Desktop.ini
+._*
+/.idea/
+*.swp
+*.swo
+*~
+*.log
+
+# Local environment files; retain shareable examples
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Existing local AI-agent state
+/.design-extract/
+/.pi/
+/.agents/
+/.codex/
+/.gemini/
+/.impeccable/
+/.ignore
+/.claude/
+/.omp/
+/.opencode/
+/.rules

@@ -2,6 +2,7 @@
 import ServiceIcon from './ServiceIcon.astro';
 import { availableServiceCount, serviceCategoryMeta, services } from '../data/services';
 import InstallationMethods from './InstallationMethods.astro';
+import { publicPreviewPriceLabel } from '../data/productFacts';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
@@ -72,9 +73,13 @@ const atlasSlots = atlasCategorySlots
         </ul>
 
         <div class="field-actions">
-          <a href="#manual-quickstart" class="site-button site-button--primary">Open the Quick Start</a>
+          <a href="#manual-quickstart" class="site-button site-button--primary">Get Started with LocalCloud</a>
           <a href={`${base}docs/`} class="site-button site-button--secondary">Read the Docs</a>
         </div>
+        <p class="field-intro-secondary">
+          Free during public preview: <strong>{publicPreviewPriceLabel}</strong>.
+          <a href={`${base}pricing/`}>View pricing and terms</a>.
+        </p>
       </div>
 
       <figure class="field-board__figure">
@@ -84,6 +89,7 @@ const atlasSlots = atlasCategorySlots
             class="field-board__image"
             width="1200"
             height="760"
+            loading="eager"
             fetchpriority="high"
             decoding="async"
         />
@@ -352,6 +358,11 @@ const atlasSlots = atlasCategorySlots
     color: var(--text-2);
   }
 
+  .field-intro-secondary a {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
   .field-intro,
   .field-board__title p,
   .field-section-heading p,
@@ -443,6 +454,7 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-board__image {
+    aspect-ratio: 1200 / 760;
     display: block;
     width: 100%;
     height: auto;

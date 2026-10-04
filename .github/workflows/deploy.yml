@@ -33,12 +33,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build and verify site
-        run: pnpm run build
+        run: pnpm run build:cloudflare
       - name: Test installer
         run: pnpm run test:installer
+      - name: Test analytics proxy and page loading
+        run: pnpm run test:analytics && pnpm run test:performance
       - name: Test live SEO verification
         run: pnpm run test:live-seo
-      - name: Deploy static assets to Cloudflare
+      - name: Deploy site and analytics proxy to Cloudflare
         id: deployment
         uses: cloudflare/wrangler-action@v4
         with:

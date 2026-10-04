@@ -23,8 +23,8 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-# Training-only crawler — block
+# Training crawler — allowed
 User-agent: CCBot
-Disallow: /
+Allow: /
 
 Sitemap: https://local.cloud/sitemap-index.xml

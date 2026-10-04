@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 128" role="img" aria-labelledby="localcloud-lockup-title localcloud-lockup-desc">
-  <title id="localcloud-lockup-title">LocalCloud logo lockup</title>
-  <desc id="localcloud-lockup-desc">LocalCloud logo lockup with the cloud-in-a-box mark and wordmark.</desc>
-  <image href="./localcloud-mark.svg" x="0" y="16" width="96" height="96"/>
-  <text x="120" y="65" fill="#13233D" font-family="IBM Plex Sans, Avenir Next, sans-serif" font-size="44" font-weight="700" letter-spacing="-1.8">Local</text>
-  <text x="230" y="65" fill="#1A73E8" font-family="IBM Plex Sans, Avenir Next, sans-serif" font-size="44" font-weight="700" letter-spacing="-1.8">Cloud</text>
-  <text x="122" y="94" fill="#6B7F9D" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15" font-weight="500" letter-spacing="2.4">GOOGLE CLOUD IN-A-BOX</text>
-</svg>

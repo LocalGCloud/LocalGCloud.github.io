@@ -7,7 +7,7 @@ const distDirectory = new URL('../dist/', import.meta.url);
 const distPath = (file) => join(distDirectory.pathname, file);
 const errors = [];
 const requiredSchemaTypes = new Map([
-  ['/', ['Organization']],
+  ['/', ['Organization', 'Product', 'SoftwareApplication']],
   ['/gcp-emulator/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
   ['/localstack-for-google-cloud/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
   ['/compatibility/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
@@ -41,7 +41,9 @@ const jsonLdTypes = (html, route) => {
   for (const match of html.matchAll(/<script\s+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
     try {
       const value = JSON.parse(match[1]);
-      if (typeof value === 'object' && value && '@type' in value) types.push(value['@type']);
+      if (typeof value === 'object' && value && '@type' in value) {
+        types.push(...(Array.isArray(value['@type']) ? value['@type'] : [value['@type']]));
+      }
     } catch {
       errors.push(`${route}: contains invalid JSON-LD`);
     }

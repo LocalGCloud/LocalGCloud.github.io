@@ -1,4 +1,48 @@
+# OS metadata and editor temporary files
 .DS_Store
 **/.DS_Store
+Thumbs.db
+Desktop.ini
+._*
+*.swp
+*.swo
+*~
+*.log
+.env
+.env.*
+
+# Development state and generated local output, if copied into public/
+.git/
+.idea/
+.astro/
+.pnpm-store/
+.wrangler/
+node_modules/
+graft/
+.gortex/
+.tgrep/
+.agents/
+.claude/
+.codex/
+.gemini/
+.impeccable/
+.omp/
+.opencode/
+.pi/
+.planning/
+/output/
+/screenshots/
+/prompts/hero-cloud-in-a-box/
+
+# Local research and historical artifacts
+design-output.html
+prospects-python-gcs.json
+COMPLETE_UPDATE_SUMMARY.md
+CONTENT_IMPROVEMENT_SUMMARY.md
+DOCKER_VOLUME_UPDATE.md
+PORT_UPDATE_SUMMARY.md
+SEO_PILLAR_PAGES_SUMMARY.md
+
+# Retired GitHub Pages metadata
 CNAME
 .nojekyll

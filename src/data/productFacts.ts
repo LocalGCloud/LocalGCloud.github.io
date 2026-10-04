@@ -83,6 +83,56 @@ export const createSoftwareApplicationSchema = (
 	license: new URL(productFacts.licensingPath, productFacts.siteUrl).toString(),
 });
 
+export const publicPreviewPricing = {
+	price: "0",
+	priceCurrency: "USD",
+} as const;
+
+export const publicPreviewPriceLabel = `${new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: publicPreviewPricing.priceCurrency,
+	minimumFractionDigits: 0,
+	maximumFractionDigits: 2,
+}).format(Number(publicPreviewPricing.price))} ${publicPreviewPricing.priceCurrency}`;
+
+// Share the same product and public-preview offer on the homepage and pricing page.
+export const localCloudProductSchema: JsonLd = {
+	...createSoftwareApplicationSchema(
+		productFacts.siteUrl,
+		`LocalCloud is a local Google Cloud emulator that runs ${productFacts.serviceCountLabel} supported integrations in one Docker container for development, testing, CI, evaluation, and internal pilots.`,
+	),
+	"@type": ["Product", "SoftwareApplication"],
+	"@id": new URL("#localcloud", productFacts.siteUrl).toString(),
+	brand: {
+		"@type": "Brand",
+		name: productFacts.companyName,
+	},
+	category: productFacts.category,
+	softwareRequirements: "Docker",
+	featureList: [
+		`${productFacts.serviceCountLabel} supported Google Cloud integrations in one Docker container`,
+		"Generated local SDK endpoints for Google Cloud clients",
+		"Built-in web console for inspecting local cloud resources",
+		"Persistent local data using Docker volumes",
+		"Local development, integration tests, CI, evaluation, and internal pilots",
+	],
+	audience: {
+		"@type": "Audience",
+		audienceType: "Individuals and organizations, including for-profit companies",
+	},
+	offers: {
+		"@type": "Offer",
+		"@id": new URL("/pricing/#public-preview", productFacts.siteUrl).toString(),
+		name: "Public Preview",
+		url: new URL(productFacts.pricingPath, productFacts.siteUrl).toString(),
+		price: publicPreviewPricing.price,
+		priceCurrency: publicPreviewPricing.priceCurrency,
+		availability: "https://schema.org/InStock",
+		description:
+			"Free to use during public preview for local development, testing, CI, evaluation, and internal pilots. No payment method or license key required. Customer-facing production use, resale, hosting as a service, redistribution, and sublicensing are excluded.",
+	},
+};
+
 export const createBreadcrumbSchema = (
 	items: ReadonlyArray<{ name: string; url?: string }>,
 ): JsonLd => ({

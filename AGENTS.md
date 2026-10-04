@@ -3,25 +3,26 @@
 
 | Area | Description | Explore |
 |------|-------------|---------|
-| Data 2 Dirs | 29 symbols | `analyze(operation:"communities", id:"community-22")` |
-| Components 5 Dirs | 28 symbols | `analyze(operation:"communities", id:"community-28")` |
-| Pages 8 Dirs | 24 symbols | `analyze(operation:"communities", id:"community-30")` |
-| Public | 19 symbols | `analyze(operation:"communities", id:"community-2")` |
-| 1 Dirs Assert | 16 symbols | `analyze(operation:"communities", id:"community-7")` |
-| Components 6 Dirs | 14 symbols | `analyze(operation:"communities", id:"community-17")` |
-| Scripts 2 Dirs | 12 symbols | `analyze(operation:"communities", id:"community-3")` |
-| Data Glossary | 12 symbols | `analyze(operation:"communities", id:"community-18")` |
-| 1 Dirs Servicepage | 10 symbols | `analyze(operation:"communities", id:"community-20")` |
-| 1 Dirs Createarchive | 10 symbols | `analyze(operation:"communities", id:"community-10")` |
-| Layouts 2 Dirs | 9 symbols | `analyze(operation:"communities", id:"community-27")` |
-| Scripts 1 Dirs Jsonldtypes | 7 symbols | `analyze(operation:"communities", id:"community-12")` |
-| Data Getserviceeditorial | 5 symbols | `analyze(operation:"communities", id:"community-24")` |
-| Data 1 Dirs | 5 symbols | `analyze(operation:"communities", id:"community-29")` |
-| Scripts 1 Dirs Trim | 5 symbols | `analyze(operation:"communities", id:"community-4")` |
-| 1 Dirs Ishtmlroute | 4 symbols | `analyze(operation:"communities", id:"community-13")` |
-| Capture | 3 symbols | `analyze(operation:"communities", id:"community-0")` |
-| Components Typequery | 3 symbols | `analyze(operation:"communities", id:"community-16")` |
-| Components Updateurls | 3 symbols | `analyze(operation:"communities", id:"community-15")` |
+| 2 Dirs | 48 symbols | `analyze(operation:"communities", id:"community-10")` |
+| Data 2 Dirs | 33 symbols | `analyze(operation:"communities", id:"community-31")` |
+| Components 5 Dirs | 32 symbols | `analyze(operation:"communities", id:"community-34")` |
+| Brand Proposals 2026 10 02 1 Dirs Card | 28 symbols | `analyze(operation:"communities", id:"community-7")` |
+| Scripts 1 Dirs Finalizecsp | 28 symbols | `analyze(operation:"communities", id:"community-12")` |
+| Pages 8 Dirs | 27 symbols | `analyze(operation:"communities", id:"community-40")` |
+| Components 8 Dirs | 22 symbols | `analyze(operation:"communities", id:"community-39")` |
+| Public | 19 symbols | `analyze(operation:"communities", id:"community-11")` |
+| 1 Dirs Assert | 16 symbols | `analyze(operation:"communities", id:"community-17")` |
+| Tmp Bundle Tiicvz Fetch | 12 symbols | `analyze(operation:"communities", id:"community-1")` |
+| Scripts 1 Dirs Push | 12 symbols | `analyze(operation:"communities", id:"community-22")` |
+| Data Glossary | 12 symbols | `analyze(operation:"communities", id:"community-26")` |
+| Scripts 2 Dirs | 10 symbols | `analyze(operation:"communities", id:"community-14")` |
+| Data 1 Dirs | 10 symbols | `analyze(operation:"communities", id:"community-30")` |
+| 1 Dirs Servicepage | 10 symbols | `analyze(operation:"communities", id:"community-28")` |
+| 1 Dirs Main | 10 symbols | `analyze(operation:"communities", id:"community-8")` |
+| Scripts 1 Dirs Createarchive | 7 symbols | `analyze(operation:"communities", id:"community-21")` |
+| 1 Dirs Visit | 7 symbols | `analyze(operation:"communities", id:"community-13")` |
+| Layouts 1 Dirs | 7 symbols | `analyze(operation:"communities", id:"community-37")` |
+| Brand Proposals 2026 10 02 1 Dirs Do Get | 6 symbols | `analyze(operation:"communities", id:"community-9")` |
 
 <!-- gortex:communities:end -->
 

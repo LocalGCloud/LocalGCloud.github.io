@@ -66,12 +66,12 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 | **5** | `node scripts/verify-doc-examples.mjs` | Validates that all code snippets and examples across docs are syntactically valid and refer to valid local endpoints. |
 | **6** | `node scripts/verify-policy-docs.mjs` | Verifies privacy policies, license terms, free preview pricing statements, and navigation order. |
 | **7** | `node scripts/verify-distributed-docs.mjs` | Verifies `public/llms.txt` and `public/llms-full.txt` for required public facts, pricing URLs, absence of retired MCP packages, and accurate service counts. |
-| **8** | `astro build` | Compiles 128+ static HTML pages, markdown routes, and sitemaps into `dist/`. |
+| **8** | `astro build` | Compiles static pages, markdown routes, and sitemaps into `dist/`. |
 | **9** | `node scripts/verify-rendered-docs.mjs` | Inspects compiled HTML output (e.g. comparison tables and accessible scroll wrappers) to ensure proper rendering. |
 | **10** | `node scripts/write-sitemap-alias.mjs` | Copies `sitemap-index.xml` to `sitemap.xml` for legacy crawler compatibility. |
 | **11** | `node scripts/verify-static-seo.mjs` | Verifies canonical URLs, meta descriptions, single H1 tags, robots.txt directives, JSON-LD structured data, and sitemap inclusion across 34 priority routes. |
 | **12** | `node --experimental-strip-types scripts/verify-content-facts.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all 128 published pages. |
-| **13** | `pagefind --site dist` | Indexes all published HTML pages for client-side full-text search. |
+| **13** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes. |
 
 ---
 
