@@ -5,8 +5,11 @@ import tailwindcss from '@tailwindcss/vite';
 import rehypeTableRegions from './src/utils/rehype-table-regions.mjs';
 import { loadEnv } from 'vite';
 import { resolvePosthogConfig } from './src/utils/posthog-config.mjs';
+import { resolveCloudflareAnalyticsConfig } from './src/utils/cloudflare-analytics-config.mjs';
 
-const posthog = resolvePosthogConfig(loadEnv(process.env.NODE_ENV || 'production', process.cwd(), ''));
+const env = loadEnv(process.env.NODE_ENV || 'production', process.cwd(), '');
+const posthog = resolvePosthogConfig(env);
+const cloudflareAnalytics = resolveCloudflareAnalyticsConfig(env);
 
 const rawAgentPages = [
   'https://local.cloud/ai/agents.md',
@@ -26,14 +29,14 @@ export default defineConfig({
   security: {
     csp: {
       scriptDirective: {
-        resources: ["'self'", "'strict-dynamic'", "'wasm-unsafe-eval'", ...posthog.origins],
+        resources: ["'self'", "'strict-dynamic'", "'wasm-unsafe-eval'", ...posthog.origins, ...cloudflareAnalytics.scriptOrigins],
       },
       directives: [
         "default-src 'self'",
         "base-uri 'self'",
         "object-src 'none'",
         "worker-src 'self'",
-        ["connect-src 'self'", ...posthog.origins].join(' '),
+        ["connect-src 'self'", ...posthog.origins, ...cloudflareAnalytics.connectOrigins].join(' '),
         "img-src 'self' data:",
         "font-src 'self'",
       ],
@@ -41,7 +44,10 @@ export default defineConfig({
   },
   integrations: [mdx({ gfm: true, rehypePlugins: [rehypeTableRegions] }), sitemap({ customPages: rawAgentPages })],
   vite: {
-    define: { 'import.meta.env.PUBLIC_POSTHOG_HOST': JSON.stringify(posthog.apiHost) },
+    define: {
+      'import.meta.env.PUBLIC_POSTHOG_HOST': JSON.stringify(posthog.apiHost),
+      'import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN': JSON.stringify(cloudflareAnalytics.token),
+    },
     plugins: [tailwindcss()],
   },
   markdown: {

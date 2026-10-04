@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { finalizeCsp } from './finalize-static-csp.mjs';
 import { loadEnv } from 'vite';
 import { resolvePosthogConfig } from '../src/utils/posthog-config.mjs';
+import { resolveCloudflareAnalyticsConfig } from '../src/utils/cloudflare-analytics-config.mjs';
 
 const layout = readFileSync(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8');
 const bootstrap = [...layout.matchAll(/<script is:inline[^>]*>([\s\S]*?)<\/script>/g)]
@@ -64,6 +65,37 @@ test('analytics still loads when load has already fired and idle callbacks are u
   assert.equal(h.inserted.length, 0);
   h.timers[0].callback();
   assert.equal(h.inserted.length, 1);
+});
+
+test('Cloudflare analytics follows deployment configuration and supports explicit disablement', () => {
+  const enabled = resolveCloudflareAnalyticsConfig();
+  assert.match(enabled.token, /^[a-f0-9]{32}$/);
+  assert.deepEqual(enabled.connectOrigins, ['https://cloudflareinsights.com']);
+  assert.equal(resolveCloudflareAnalyticsConfig({ SITE_DEPLOYMENT_TARGET: 'static' }).token, '');
+  assert.deepEqual(resolveCloudflareAnalyticsConfig({ PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN: '' }).scriptOrigins, []);
+  assert.deepEqual(resolveCloudflareAnalyticsConfig({ PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN: '' }).connectOrigins, []);
+  const override = '1234567890abcdef1234567890abcdef';
+  assert.equal(resolveCloudflareAnalyticsConfig({ SITE_DEPLOYMENT_TARGET: 'static', PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN: override }).token, override);
+  assert.throws(() => resolveCloudflareAnalyticsConfig({ PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN: 'not-a-token' }), /site token/);
+  assert.throws(() => resolveCloudflareAnalyticsConfig({ SITE_DEPLOYMENT_TARGET: 'unknown' }), /cloudflare or static/);
+});
+
+test('Cloudflare beacon loads from the trusted bootstrap with its public site token', () => {
+  const source = [...layout.matchAll(/<script is:inline[^>]*>([\s\S]*?)<\/script>/g)]
+    .map((match) => match[1]).find((script) => script.includes('cloudflareAnalyticsToken'));
+  const inserted = [];
+  const token = resolveCloudflareAnalyticsConfig().token;
+  runInNewContext(source, {
+    cloudflareAnalyticsToken: token,
+    document: {
+      createElement: () => ({ setAttribute(name, value) { this[name] = value; } }),
+      head: { appendChild: (script) => inserted.push(script) },
+    },
+  });
+  assert.equal(inserted.length, 1);
+  assert.equal(inserted[0].src, 'https://static.cloudflareinsights.com/beacon.min.js');
+  assert.equal(inserted[0].async, true);
+  assert.deepEqual(JSON.parse(inserted[0]['data-cf-beacon']), { token });
 });
 
 test('CSP permits the exact emitted script bytes and preserves the style policy', async () => {
