@@ -226,6 +226,12 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
             var tag = document.activeElement?.tagName?.toLowerCase();
             var isEditing = tag === 'input' || tag === 'textarea' || tag === 'select' || document.activeElement?.isContentEditable;
 
+            // Escape closes help, including when another control has focus.
+            if (e.key === 'Escape') {
+              closeHelp();
+              return;
+            }
+
             // / to focus search (not in inputs)
             if (e.key === '/' && !isEditing) {
               e.preventDefault();
