@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "reviewedAt": "2026-10-04",
   "provenance": {
-    "runtimeRevision": "dc1d1bb0862b15113149ba60274adb4b45105f87",
+    "runtimeRevision": "7b1913bfc3fa372b22ef1f9b51dd28bc86c5c304",
     "cliRevision": "793ec6311632c2cf0cb1940f4a5f1f1d6aba0825",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
@@ -61,11 +61,11 @@
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
       "../localcloud/localcloud.defaults.yaml": "sha256:3ec4fe270e68cbb1b9a3283723d390fd469d808852ba0844da0c7b538e545ac5",
-      "../localcloud/documentation.yaml": "sha256:d924ed267c65c75bb8af233e0fb114814e93246caa5994bdcdb586d44de0c14d",
+      "../localcloud/documentation.yaml": "sha256:1f14a499711d6aa4ed2086df375b1321c2ea348b5dd2041951d1f6997035b67e",
       "../localcloud/docs/status/service-status.md": "sha256:ddad5257b8ba3b5fb4f12bfee0364fa7710e24a3afec22cae2255db33923538f",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:71d43c01c3bd8019587f19914e3c668acf2f20a090c798f7ab06ac5935cc6cce",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:1a674b42c9b5d54ad0dc1b74e821d4a525d1db25cb72ffdebad5c7ad4c3c320a",
-      "../localcloud/specs/api/catalog.json": "sha256:c2dd9cb4f2e0e585b0e35ac5d5a285d0f0ab4e285f64c8a9326fb38ea0bbd9af",
+      "../localcloud/specs/api/catalog.json": "sha256:654b876fce36783f3474c56e0540b34f35de89ab25d7407e44f75cfdc7830137",
       "../localcloud/Dockerfile": "sha256:3c518c3fe4ead9c13ad4b40ac6904036a2bf90755ddb0b5c61e1aee18f1af23a",
       "../localcloud/LICENSE": "sha256:26e7152b644b9594f95335784453e7d79b89711a7af4d94811fbe14de1ea7a10",
       "../localcloud/docker/bigquery-start.sh": "sha256:987e13b3a9cc853f8590259cd32b0131df141b900c4c0fec0cfa9e3562973f9e",
@@ -827,7 +827,7 @@
       },
       "status": "partial",
       "limitations": [
-        "The pinned little_bigtable dd5f9e7 (v0.5.0) passes its dependency test suite, and its executable ledger covers all 89 registered RPCs. That evidence is for the dependency source, not LocalCloud. It ran on SQLite rather than LocalCloud's PostgreSQL backend and skipped the pinned cbt test. A LocalCloud image with this revision has not been built or platform-tested.",
+        "The pinned little_bigtable dd5f9e7 (v0.5.0) passes its dependency test suite, and its executable ledger covers all 89 registered RPCs. That evidence is for the dependency source, not LocalCloud. It ran on SQLite rather than LocalCloud's PostgreSQL backend and skipped the pinned cbt test. The 2026-10-05 UTC arm64 candidate (sha256:2bd0813e574ddf6af1bfd9be6f3b318e6290117b4c5fc1142d651de5d274b754) embeds this revision and completed platform testing with two failing Bigtable cases (project deletion and backup listing). Full LocalCloud Bigtable qualification remains open.",
         "IAM policies persist but are not enforced. TestIamPermissions grants every requested permission because the emulator is unauthenticated; the direct gRPC listener also bypasses gateway IAM.",
         "Change streams use one partition with no split or merge. last_scanned_row_key is not emitted, logical views do not support view parameters, query statistics are not recorded, and google.cloud.location.Locations is not served.",
         "HLL++ aggregate sketch bytes and multi-column materialized-view row keys use emulator-specific encodings that are not byte-compatible with production.",
@@ -2653,7 +2653,7 @@
       },
       "status": "partial",
       "limitations": [
-        "SOFTWARE cryptography and lifecycle have recorded exact-candidate qualification. This audit did not rerun that historical 28-cell image matrix.",
+        "SOFTWARE cryptography and lifecycle have recorded exact-candidate qualification. The 2026-10-05 UTC arm64 candidate (sha256:2bd0813e574ddf6af1bfd9be6f3b318e6290117b4c5fc1142d651de5d274b754) passed 28 SDK cases, the Console KMS workflow, 63 persistence checks, and the secret-material scan. This is bounded candidate evidence; it does not qualify a published release or additional architectures.",
         "Autokey/Inventory remain bounded to the released project/global Secret Manager contract; folder ancestry, additional protected-resource types and Key Access Justifications configuration simulation are local expansion gaps.",
         "Online LocalCloud root-key rotation/rewrap is optional operational work, not Google API parity. KeyRing.delete remains contract-unresolved; no behavior is invented.",
         "Google live differentials are advisory and explicitly configured; production hardware/authority guarantees are excluded, not pending LocalCloud implementation."

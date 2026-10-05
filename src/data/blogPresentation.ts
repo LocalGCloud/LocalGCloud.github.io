@@ -1,8 +1,9 @@
 import type { AgenticContentPage } from './agenticContent';
 import { agentPromptLibrary } from './agenticFacts';
 
-// Dates and read times for the two individually authored articles.
+// Dates and read times for individually authored articles.
 export const authoredBlogMetadata = {
+  'localcloud-for-open-source': { publishedAt: '2026-10-04', minutes: 7, topic: 'Open source' },
   'localcloud-for-ai-agents': { publishedAt: '2026-07-02', minutes: 4, topic: 'AI agents' },
   'run-dataproc-locally-docker': { publishedAt: '2026-10-01', minutes: 6, topic: 'Data engineering' },
 } as const;

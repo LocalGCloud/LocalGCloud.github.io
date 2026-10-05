@@ -18,6 +18,13 @@ posts.push({
   description: 'Give coding agents a safe local Google Cloud target with standard SDKs, copy-ready prompts, Agent Skills, and MCP tooling.',
   topic: agents.topic, minutes: agents.minutes, date: agents.publishedAt, dateLabel: 'Published',
 });
+const openSource = authoredBlogMetadata['localcloud-for-open-source'];
+posts.push({
+  slug: 'localcloud-for-open-source', path: '/blog/localcloud-for-open-source/',
+  title: 'Bring no cost cloud service integration Testing Into Your Repository: Low Setup and Easy Contributions',
+  description: 'Run Google Cloud tests locally with zero cloud-resource costs and an easier contribution workflow. Free for open-source development and CI under the Free for open-source projects policy.',
+  topic: openSource.topic, minutes: openSource.minutes, date: openSource.publishedAt, dateLabel: 'Published',
+});
 const featured = posts.find((post) => post.slug === 'run-dataproc-locally-docker') ?? posts[0];
 const remaining = posts.filter((post) => post.slug !== featured.slug);
 const structuredData = [createBreadcrumbSchema([

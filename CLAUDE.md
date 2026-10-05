@@ -8,22 +8,22 @@
 - **Graph size:** 4128 nodes, 7438 edges
 - **Breakdown:** 61 builtins, 47 contracts, 1003 docs, 373 files, 177 functions, 100 images, 169 imports, 47 interfaces, 8 locals, 15 modules, 35 params, 2 resources, 1 strings, 262 types, 1885 variables
 
-## MANDATORY: Use Gortex MCP tools instead of Read/Grep/Glob
+## Preferred: Gortex MCP tools, when available
 
-Gortex is running as an MCP server. You **MUST** prefer graph queries over file reads on every task in this repo — `search_symbols`, `find_usages`, `get_symbol_source`, `get_editing_context`, `smart_context`, `edit_symbol` / `edit_file` / `rename_symbol` / `batch_edit`. Hook posture is configurable; follow every Gortex hook instruction even when `Read` / `Grep` / `Glob` remain callable. The full per-tool catalog loads via `tools/list` — not restated here.
+When Gortex is available and indexes this repo, prefer graph queries over file reads on every task in this repo — `search_symbols`, `find_usages`, `get_symbol_source`, `get_editing_context`, `smart_context`, `edit_symbol` / `edit_file` / `rename_symbol` / `batch_edit`. If Gortex is unreachable, the repo is not indexed, or its tools are missing or failing, report that once as a warning and continue with graft, tgrep, or native tools (read, rg, shell); Gortex is optional. The full per-tool catalog loads via `tools/list` — not restated here.
 
 ### Calibration: the graph narrows scope, source confirms behavior
 
-The mandate above stands — but graph queries *narrow scope*, they do not *replace reading the implementation*. The graph tells you **where** the logic lives and **what** connects to it; the source tells you **how** it behaves. For the symbol you are about to change or depend on, read its full body with `get_symbol_source` — do not act on a one-line summary alone.
+Graph queries *narrow scope*, they do not *replace reading the implementation*. The graph tells you **where** the logic lives and **what** connects to it; the source tells you **how** it behaves. For the symbol you are about to change or depend on, read its full body with `get_symbol_source` — do not act on a one-line summary alone.
 
 Be especially deliberate with **behavior-critical code** — database migrations, retry / fallback / error-recovery paths, compatibility shims, concurrency-sensitive sections, and the tests that pin them. For these, call `get_symbol_source` and read the real implementation; never pass `compress_bodies:true`, which elides exactly the branches that carry the risk. Reserve compressed bodies and graph summaries for breadth (surveying many symbols); use full source for the few you are about to commit to.
 
-## Required workflow (every task on this repo)
+## Workflow when Gortex covers this repo
 
-These are not suggestions — run each step at the trigger.
+Skip a step when its Gortex tool is unavailable; the fallback above applies.
 
 1. Confirm the daemon is up with `index_health` (cheap liveness + scope). Call `graph_stats` only when you actually need node/edge counts or `per_repo` orientation — it returns a large payload and can block during warmup.
-2. If `total_nodes` is 0, **call** `index_repository` with `"."` before anything else.
+2. If `total_nodes` is 0 or this repo is not indexed, tell the user once (`gortex track <repo path>` adds it) and continue with the fallback.
 3. In multi-repo mode, **call** `get_active_project` to check scope; use `set_active_project` to switch.
 4. Open a non-trivial task with `smart_context` for orientation. For a single known symbol or file, go straight to `search_symbols` / `get_symbol_source` — don't front-load `smart_context` before every read.
 5. Before editing a file, **call** `get_editing_context` on it first.

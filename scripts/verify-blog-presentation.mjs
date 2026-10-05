@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const read = (route) => readFileSync(new URL(`../dist/${route}/index.html`, import.meta.url), 'utf8');
-const slugs = ['localcloud-for-ai-agents', 'run-dataproc-locally-docker', 'claude-code-local-gcp-sandbox', 'google-emulators-vs-localcloud-for-agents', 'bigquery-locally-agent-written-pipelines'];
+const slugs = ['localcloud-for-open-source', 'localcloud-for-ai-agents', 'run-dataproc-locally-docker', 'claude-code-local-gcp-sandbox', 'google-emulators-vs-localcloud-for-agents', 'bigquery-locally-agent-written-pipelines'];
 const decode = (text) => text.replace(/&#(x[\da-f]+|\d+);|&(amp|lt|gt|quot|apos);/gi, (_, number, name) => number ? String.fromCodePoint(Number.parseInt(number.replace(/^x/i, ''), /^x/i.test(number) ? 16 : 10)) : ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[name.toLowerCase()]);
 const normalize = (text) => decode(text).replace(/\r\n/g, '\n').trim();
 

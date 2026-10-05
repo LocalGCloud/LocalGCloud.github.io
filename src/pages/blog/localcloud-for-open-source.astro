@@ -1,0 +1,141 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const title = 'Bring no cost cloud service integration Testing Into Your Repository: Low Setup and Easy Contributions';
+const description = 'Run Google Cloud integration tests locally with zero cloud-resource costs and an easier contribution workflow. LocalCloud is free for open-source development and CI under the Free for open-source projects policy.';
+const pageUrl = new URL('blog/localcloud-for-open-source/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['localcloud-for-open-source'];
+const contents = [
+  { id: 'first-contribution', label: 'Make cloud testing accessible to every contributor' },
+  { id: 'maintainers', label: 'Simplify testing and reviews for maintainers' },
+  { id: 'real-workflows', label: 'Run meaningful cloud integration tests locally' },
+  { id: 'integration', label: 'A small integration that pays off' },
+  { id: 'integration-brief', label: 'Copy the integration brief' },
+  { id: 'free-for-open-source', label: 'Zero cloud cost, free for open source' },
+  { id: 'start-small', label: 'Start with one test' },
+];
+const integrationBrief = `Add an opt-in LocalCloud integration for this repository's Google Cloud tests.
+
+Start with one existing test that contributors currently need a Google Cloud account to run. Check LocalCloud's service and SDK documentation at https://local.cloud/docs/ and compatibility guidance at https://local.cloud/compatibility/.
+
+Create one launcher for laptops and CI. Pin a LocalCloud image version or digest, enable only the required services, wait for readiness, provision a local project, configure the documented localhost SDK endpoints and test credentials, and run the selected test with disposable data. Clean up on success and failure. Do not use real Google Cloud credentials or fall back to live endpoints.
+
+Document the command and prerequisites in CONTRIBUTING.md. Keep the existing cloud validation job. Add an opt-in CI job once the local workflow passes, and report exactly which application behavior was tested.`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    datePublished: metadata.publishedAt,
+    dateModified: metadata.publishedAt,
+    author: { '@type': 'Organization', name: 'LocalCloud' },
+    publisher: { '@type': 'Organization', name: 'LocalCloud' },
+    mainEntityOfPage: pageUrl,
+    description,
+  },
+];
+---
+
+<BlogLayout title={`${title} — LocalCloud Blog`} {description} {structuredData} {contents}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">LocalCloud Blog</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Bring supported Google Cloud workflows to your contributors’ laptops. With a LocalCloud launcher in your repository, contributors can run its local tests without setting up a Google Cloud project, sharing cloud credentials, or paying for cloud resources. LocalCloud is free for open-source development and CI under the Free for open-source projects policy.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="#integration-brief">Copy the integration brief</a>
+          <a href="/docs/">Get started</a>
+          <a href="/docs/licensing/">Free-use terms</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="first-contribution">Make cloud testing accessible to every contributor</h2>
+        <p class="mt-4">Someone spots a bug in your project. They understand the code, have an idea for a fix, and clone the repository. Then the test instructions ask them to create a Google Cloud project, enable billing, configure credentials, and get access to test resources.</p>
+        <p class="mt-4">Every extra setup step competes with the time and enthusiasm they brought to the issue. A contributor should be able to reproduce a cloud integration bug while the problem is still fresh.</p>
+        <p class="mt-4">LocalCloud packages supported Google Cloud services in a Docker container. Your application uses its SDK clients against local endpoints, so contributors can exercise those service interactions without a Google Cloud account. Put that setup in the repository, and the next person gets a repeatable path from clone to passing tests.</p>
+        <p class="mt-4">That opens the door to first-time contributors, students, and developers who want to investigate an issue before committing to a cloud setup. It also gives returning contributors a fast way to get back to work.</p>
+      </section>
+
+      <section>
+        <h2 id="maintainers">Simplify testing and reviews for maintainers</h2>
+        <p class="mt-4">A repository-owned test environment reduces the work around each contribution. Maintainers can point people to a command in <code>CONTRIBUTING.md</code>, with the image version, service configuration, and test data checked into the project.</p>
+        <ul class="site-list mt-5">
+          <li><strong>Less access administration.</strong> Contributors run local tests without joining a maintainer’s cloud project or receiving shared credentials.</li>
+          <li><strong>Easier bug reports.</strong> A pinned runtime and disposable fixtures give contributors a common environment for reproducing failures.</li>
+          <li><strong>$0 cloud-resource cost.</strong> LocalCloud runs the selected services locally. Repeated reads, writes, and queries need no Google Cloud resources and incur no Google Cloud service charges.</li>
+          <li><strong>A clearer review path.</strong> Reviewers can run the same selected tests as the contributor before merging a change.</li>
+        </ul>
+        <p class="mt-4">Reuse the launcher in CI, and a failing local integration job comes with a practical next step: run the same workflow on a laptop and inspect the result.</p>
+      </section>
+
+      <section>
+        <h2 id="real-workflows">Run meaningful cloud integration tests locally</h2>
+        <p class="mt-4">Keep focused unit tests and mocks. Add LocalCloud where you want to exercise the path through application code, SDK requests, service responses, and stored state.</p>
+        <p class="mt-4">For a feature-store project, useful starting points could include:</p>
+        <ul class="site-list mt-5">
+          <li><strong>Cloud Storage:</strong> write a feature registry, read it back, and verify serialization.</li>
+          <li><strong>Bigtable:</strong> write online feature values and retrieve them through the application’s client.</li>
+          <li><strong>BigQuery:</strong> create a test dataset, load a small fixture, run a query, and check the returned schema and values.</li>
+        </ul>
+        <p class="mt-4">Choose an interaction that matters to your own users: a message round trip, a document write and read, or a query your connector runs on every request. A small test that catches a real integration bug is already valuable.</p>
+        <p class="mt-4">LocalCloud’s <a href="/services/">service catalog</a> and <a href="/docs/sdk-examples/">SDK integration guide</a> help you select and configure that first workflow.</p>
+      </section>
+
+      <section>
+        <h2 id="integration">Make the integration small enough to review</h2>
+        <p class="mt-4">You can begin with one selected test and an opt-in launcher. A useful first integration has a few concrete responsibilities:</p>
+        <ol class="site-list mt-5">
+          <li><strong>Pin the runtime.</strong> Use a LocalCloud image version or digest that the project has tested.</li>
+          <li><strong>Start only what you need.</strong> Enable the services used by the selected tests and wait for readiness.</li>
+          <li><strong>Prepare the local environment.</strong> Provision a local project, configure the documented SDK endpoints and test credentials, and load small fixtures.</li>
+          <li><strong>Own the test state.</strong> Give each run its own container and disposable data or volume. Clean up when tests pass or fail.</li>
+          <li><strong>Share one entry point.</strong> Document the launcher in <code>CONTRIBUTING.md</code> and reuse it in CI. Keep local tests pointed at localhost.</li>
+        </ol>
+        <p class="mt-4">Run it manually first. Once it works for the project, add an opt-in CI job. Make it a pull-request check when maintainers are happy with its coverage and runtime. That gives the community an immediate benefit while keeping the first change easy to assess.</p>
+      </section>
+
+      <section>
+        <h2 id="integration-brief">A ready-to-copy brief for your next contribution</h2>
+        <p class="mt-4">Open an issue with this brief, use it as a pull-request checklist, or give it to a coding agent working in your repository. It keeps the first integration focused on a useful result.</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Integration brief</span>
+            <CopyButton text={integrationBrief} analyticsLabel="copy-blog-open-source-integration" />
+          </div>
+          <pre class="blog-prompt"><code>{integrationBrief}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="free-for-open-source">Zero cloud-resource cost, free for open source</h2>
+        <p class="mt-4"><strong>Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy.</strong> No payment method or license key is required. That includes contributors working locally and maintainers running the project’s own tests.</p>
+        <p class="mt-4"><strong>Google Cloud resource cost for these local test runs: $0.</strong> The services and test data run in LocalCloud’s Docker environment on your machine or the project’s CI runner. There is no Google Cloud project to provision, no cloud billing account to connect, and no Google Cloud resource usage to pay for.</p>
+        <p class="mt-4">The <a href="/docs/licensing/#free-for-open-source-projects">Free for open-source projects policy</a> is ongoing and independent of the limited-time public preview. Free use for open-source projects continues after the public preview ends. Your repository can reference the LocalCloud image and installation instructions so each contributor obtains the runtime directly.</p>
+      </section>
+
+      <section>
+        <h2 id="start-small">Start with the test contributors struggle to run</h2>
+        <p class="mt-4">Look for one issue that is hard to reproduce without cloud access, one connector test people skip locally, or one fixture maintainers currently provision by hand. Make that workflow runnable with LocalCloud and document the command.</p>
+        <p class="mt-4">Keep Google Cloud validation for cloud-specific behavior and production release checks. The <a href="/compatibility/">compatibility guide</a> helps you decide what to test locally and what to verify in the cloud.</p>
+        <p class="mt-4">Your next contributor brings the fix. Your repository provides the environment to prove it.</p>
+        <p class="mt-4"><a href="/docs/">Get started with LocalCloud</a>, choose one workflow, and make it part of your contribution guide.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

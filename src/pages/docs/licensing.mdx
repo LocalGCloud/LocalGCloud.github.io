@@ -1,10 +1,10 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Licensing
-description: LocalCloud Public Preview license terms and compliance resources.
+description: LocalCloud's ongoing free-use policy for open-source projects, limited-time public preview terms, and compliance resources.
 author: LocalCloud Inc.
-updated: 2026-09-29
-reviewed: 2026-09-29
+updated: 2026-10-04
+reviewed: 2026-10-04
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -16,13 +16,27 @@ export const governingLicenseUrl = `${productFacts.runtimeRepositoryUrl}/blob/ma
 
 # Licensing
 
-LocalCloud is free to use during public preview under the **LocalCloud Public Preview License Agreement**.
+## Limited-time public preview
+
+LocalCloud is free to use during the limited-time public preview under the **LocalCloud Public Preview License Agreement**.
 
 <Callout type="info" title="Free public preview">
 Individuals and organizations, including for-profit companies, may use LocalCloud free of charge for development, testing, ongoing internal CI, and evaluation. No payment method or license key is required.
 </Callout>
 
 LocalCloud is designed as a local development and testing environment. Release behavior should be validated against real Google Cloud before deploying an application to production. The preview grant does not cover customer-facing production use, reselling LocalCloud, offering it as a hosted or managed service, redistribution, or sublicensing.
+
+## Free for open-source projects
+
+Under the **Free for open-source projects policy**, open-source contributors and maintainers can use LocalCloud free of charge for development, testing, and their project's ongoing internal CI.
+
+This policy is ongoing and independent of the limited-time public preview. Free use for open-source projects continues after the public preview ends.
+
+Tests against local endpoints do not need a maintainer's Google Cloud project, provision Google Cloud resources, or incur Google Cloud service charges. Your repository can include LocalCloud configuration, test launchers, and setup instructions that direct contributors to obtain the runtime themselves.
+
+This policy establishes free use for open-source projects. The license supplied with each runtime release governs use and distribution of that release.
+
+For a practical starting point, see [Bring no cost cloud service integration Testing Into Your Repository: Low Setup and Easy Contributions](/blog/localcloud-for-open-source/).
 
 ## Resources
 
