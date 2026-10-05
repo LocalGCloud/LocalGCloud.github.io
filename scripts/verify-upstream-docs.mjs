@@ -59,7 +59,7 @@ const upstreamSources = new Map([
 	["../localcloud/docs/architecture/networking-and-tls.md", new URL("docs/architecture/networking-and-tls.md", runtimeRoot)],
 	["../localcloud/docs/guides/mcp-integration.md", new URL("docs/guides/mcp-integration.md", runtimeRoot)],
 	["../localcloud/specs/api/catalog.json", new URL("specs/api/catalog.json", runtimeRoot)],
-	...["Dockerfile", "LICENSE", "docker/bigquery-start.sh", "localcloud-server/src/main/java/com/localcloud/admin/SeedService.java", "localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java", "localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java", "localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java"].map((path) => [`../localcloud/${path}`, new URL(path, runtimeRoot)]),
+	...["Dockerfile", "LICENSE", "docker/bigquery-start.sh", "docker/docker-entrypoint.sh", "localcloud-server/src/main/java/com/localcloud/admin/SeedService.java", "localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java", "localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java", "localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java"].map((path) => [`../localcloud/${path}`, new URL(path, runtimeRoot)]),
 	["../localcloud-cli/README.md", new URL("README.md", cliRoot)],
 	["../localcloud-cli/src/localcloud_cli/config.py", new URL("src/localcloud_cli/config.py", cliRoot)],
 	["../localcloud-cli/src/localcloud_cli/__init__.py", new URL("src/localcloud_cli/__init__.py", cliRoot)],

@@ -69,7 +69,7 @@ const sourceFiles = [
 	{ path: "../localcloud/docs/guides/mcp-integration.md", url: new URL("docs/guides/mcp-integration.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/guides/mcp-integration.md" },
 	{ path: "../localcloud/specs/api/catalog.json", url: new URL("specs/api/catalog.json", runtimeRoot), repository: runtimeRoot, repositoryPath: "specs/api/catalog.json" },
 	...[
-		"Dockerfile", "LICENSE", "docker/bigquery-start.sh",
+		"Dockerfile", "LICENSE", "docker/bigquery-start.sh", "docker/docker-entrypoint.sh",
 		"localcloud-server/src/main/java/com/localcloud/admin/SeedService.java",
 		"localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java",
 		"localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java",
@@ -175,10 +175,22 @@ contract.seed.limitations = [
 ];
 contract.operator.endpoints.readiness = "/readiness";
 contract.privacy.runtimeTelemetry.limitations = [
-	"Disabling telemetry emits a telemetry_disabled event when an event API key is configured before suppressing normal telemetry.",
+	"LOCALCLOUD_TELEMETRY=false disables regular runtime and Console reporting; a configured event API key still permits one telemetry_disabled startup event.",
 	"External lifecycle failures enqueue service_error events; registry snapshots have no exit code. The client uses normal TLS certificate verification.",
+	"Console summaries contain aggregate view, action, and error counts and are batched up to once per minute. Failed reports are queued locally for retry.",
 ];
-if (!contract.privacy.runtimeTelemetry.events.includes("service_error")) contract.privacy.runtimeTelemetry.events.push("service_error");
+for (const event of ["service_error", "console_summary"]) {
+	if (!contract.privacy.runtimeTelemetry.events.includes(event)) contract.privacy.runtimeTelemetry.events.push(event);
+}
+// Certificate setup now imports explicitly mounted CAs; the remote probe was removed.
+contract.privacy.outboundBehaviors = contract.privacy.outboundBehaviors.filter((item) => item.id !== "ca-probe");
+contract.privacy.websiteAnalytics.processor = "PostHog and Cloudflare Web Analytics";
+for (const event of ["page-load and performance measurements", "IP-based location information"]) {
+	if (!contract.privacy.websiteAnalytics.events.includes(event)) contract.privacy.websiteAnalytics.events.push(event);
+}
+for (const path of ["src/utils/cloudflare-analytics-config.mjs", "worker/index.mjs"]) {
+	if (!contract.privacy.websiteAnalytics.evidence.includes(path)) contract.privacy.websiteAnalytics.evidence.push(path);
+}
 
 const servicePort = (service) => service.plaintextPort ?? service.port;
 const envValue = (service) => {

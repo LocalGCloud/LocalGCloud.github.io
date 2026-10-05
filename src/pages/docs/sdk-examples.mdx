@@ -20,10 +20,16 @@ Do not hard-code canonical ports when using the host CLI: occupied ports may be 
 This example is repeatable against a persistent local volume:
 
 ```python
+import os
 from google.api_core.exceptions import NotFound
+from google.auth.credentials import AnonymousCredentials
 from google.cloud import storage
 
-client = storage.Client(project="local-gcp-project")
+assert os.environ['STORAGE_EMULATOR_HOST']
+client = storage.Client(
+    project=os.environ['GOOGLE_CLOUD_PROJECT'],
+    credentials=AnonymousCredentials(),
+)
 bucket = client.bucket("localcloud-sdk-example")
 
 try:
@@ -41,7 +47,10 @@ print(blob.download_as_text())
 ```javascript
 const { Storage } = require('@google-cloud/storage');
 
-const storage = new Storage({ projectId: 'local-gcp-project' });
+if (!process.env.STORAGE_EMULATOR_HOST || !process.env.GOOGLE_CLOUD_PROJECT) {
+  throw new Error('Export the LocalCloud environment before running this example.');
+}
+const storage = new Storage({ projectId: process.env.GOOGLE_CLOUD_PROJECT });
 const bucket = storage.bucket('localcloud-sdk-example');
 
 async function main() {
@@ -60,35 +69,37 @@ main().catch((error) => {
 
 ## Pub/Sub: Python
 
-Pub/Sub topics, subscriptions, and queued messages are stored in PostgreSQL under the mounted data volume. Use stable names and tolerate resources that already exist during one run.
+Create unique test resources so repeated runs receive their own message, then delete the topic and subscription.
 
 ```python
-from google.api_core.exceptions import AlreadyExists
+import os
+from uuid import uuid4
 from google.cloud import pubsub_v1
 
-project = "local-gcp-project"
+assert os.environ['PUBSUB_EMULATOR_HOST']
+project = os.environ['GOOGLE_CLOUD_PROJECT']
 publisher = pubsub_v1.PublisherClient()
 subscriber = pubsub_v1.SubscriberClient()
-topic = publisher.topic_path(project, "localcloud-sdk-topic")
-subscription = subscriber.subscription_path(project, "localcloud-sdk-sub")
+name = 'hello-' + uuid4().hex[:12]
+topic = publisher.topic_path(project, name)
+subscription = subscriber.subscription_path(project, name)
 
+publisher.create_topic(request={'name': topic}, timeout=30)
 try:
-    publisher.create_topic(request={"name": topic})
-except AlreadyExists:
-    pass
-
-try:
-    subscriber.create_subscription(request={"name": subscription, "topic": topic})
-except AlreadyExists:
-    pass
-
-publisher.publish(topic, b"Hello, Pub/Sub!").result()
-response = subscriber.pull(request={"subscription": subscription, "max_messages": 1})
-for received in response.received_messages:
-    print(received.message.data.decode())
-    subscriber.acknowledge(
-        request={"subscription": subscription, "ack_ids": [received.ack_id]}
-    )
+    subscriber.create_subscription(request={'name': subscription, 'topic': topic}, timeout=30)
+    try:
+        publisher.publish(topic, b'Hello, Pub/Sub!').result(timeout=30)
+        response = subscriber.pull(request={'subscription': subscription, 'max_messages': 1}, timeout=30)
+        assert response.received_messages
+        for received in response.received_messages:
+            print(received.message.data.decode())
+            subscriber.acknowledge(request={'subscription': subscription, 'ack_ids': [received.ack_id]}, timeout=30)
+    finally:
+        subscriber.delete_subscription(request={'subscription': subscription}, timeout=30)
+finally:
+    publisher.delete_topic(request={'topic': topic}, timeout=30)
+    subscriber.close()
+    publisher.transport.close()
 ```
 
 ## BigQuery: deterministic query
@@ -101,15 +112,104 @@ from google.auth.credentials import AnonymousCredentials
 from google.cloud import bigquery
 
 client = bigquery.Client(
-    project="local-gcp-project",
+    project=os.environ['GOOGLE_CLOUD_PROJECT'],
     credentials=AnonymousCredentials(),
     client_options={"api_endpoint": os.environ["BIGQUERY_EMULATOR_HOST"]},
 )
-rows = list(client.query("SELECT 1 AS ok").result())
-assert rows[0].ok == 1
+rows = list(client.query("SELECT 'Hello from LocalCloud!' AS message").result(timeout=30))
+assert rows[0].message == 'Hello from LocalCloud!'
+print(rows[0].message)
+client.close()
 ```
 
 See the [BigQuery guide](/docs/bigquery-emulator-features/) and [coverage & known boundaries](/docs/bigquery-coverage-gaps/) for details on BQML, vector search, RLS, and the Storage Read API.
+
+## Bigtable: Python
+
+Create a test-owned instance and table, write a cell, and read the exact bytes back. This example follows the upstream Bigtable integration guide. Review [Bigtable workflows and boundaries](/services/bigtable/#workflows) for the current emulator revision and image qualification before running it.
+
+```python
+import os
+from uuid import uuid4
+from google.cloud import bigtable
+
+assert os.environ['BIGTABLE_EMULATOR_HOST']
+client = bigtable.Client(project=os.environ['GOOGLE_CLOUD_PROJECT'], admin=True)
+instance = client.instance('guide-' + uuid4().hex[:12])
+instance.create(clusters=[instance.cluster('local', location_id='us-central1-a', serve_nodes=1)]).result(timeout=60)
+try:
+    table = instance.table('messages')
+    table.create(column_families={'cf': None})
+    row = table.direct_row(b'row-1')
+    row.set_cell('cf', b'message', b'hello')
+    row.commit()
+    message = table.read_row(b'row-1').cells['cf'][b'message'][0].value
+    assert message == b'hello'
+    print(message.decode())
+    table.delete()
+finally:
+    instance.delete()
+    client.close()
+```
+
+## Spanner: Python
+
+Create a test-owned instance and database, apply DDL, write a row, and query it through the native SDK. Review [Spanner workflows and boundaries](/services/spanner/#workflows) for the operations and recovery behavior your application needs.
+
+```python
+import os
+from uuid import uuid4
+from google.cloud import spanner
+
+assert os.environ['SPANNER_EMULATOR_HOST']
+client = spanner.Client(project=os.environ['GOOGLE_CLOUD_PROJECT'])
+instance = client.instance('guide-' + uuid4().hex[:12], configuration_name='projects/' + client.project + '/instanceConfigs/emulator-config', display_name='Guide', node_count=1)
+instance.create().result(timeout=60)
+try:
+    database = instance.database('messages', ddl_statements=['CREATE TABLE Messages (Id INT64 NOT NULL, Message STRING(100)) PRIMARY KEY (Id)'])
+    database.create().result(timeout=60)
+    with database.batch() as batch:
+        batch.insert('Messages', columns=('Id', 'Message'), values=[(1, 'hello')])
+    with database.snapshot() as snapshot:
+        rows = list(snapshot.execute_sql('SELECT Message FROM Messages WHERE Id = 1'))
+        assert rows == [['hello']]
+        print(rows[0][0])
+    database.drop()
+finally:
+    instance.delete()
+    client.close()
+```
+
+## Firestore: Python
+
+Enable Firestore before loading environment variables; it is disabled by default. Wait for readiness in the [setup guide](/docs/), then run the example in the same shell:
+
+```bash
+localcloud start --local-only --services firestore
+eval "$(localcloud env)"
+```
+
+This example creates, reads, updates, and deletes one unique document in the default database. Review [Firestore workflows and boundaries](/services/firestore/#workflows) before expanding it to transactions or listeners.
+
+```python
+import os
+from uuid import uuid4
+from google.cloud import firestore
+
+assert os.environ['FIRESTORE_EMULATOR_HOST']
+client = firestore.Client(project=os.environ['GOOGLE_CLOUD_PROJECT'])
+document = client.collection('guide').document(uuid4().hex)
+try:
+    document.set({'message': 'hello'}, timeout=30)
+    message = document.get(timeout=30).get('message')
+    assert message == 'hello'
+    print(message)
+    document.update({'message': 'updated'}, timeout=30)
+    assert document.get(timeout=30).get('message') == 'updated'
+finally:
+    document.delete(timeout=30)
+    client.close()
+```
 
 ## Selecting another project
 

@@ -1,103 +1,40 @@
 ---
 layout: ../../layouts/DocsLayout.astro
-title: Privacy and Outbound Data Reference
-description: Runtime telemetry, website analytics, outbound connections, controls, and current limitations for LocalCloud.
+title: Privacy
+description: How LocalCloud uses basic usage information and web analytics, how to disable telemetry, and how to contact us.
 author: LocalCloud
 updated: 2026-10-04
 reviewed: 2026-10-04
 ---
 
-import Callout from '../../components/Callout.astro';
-import { docsContract } from '../../data/docs-contract';
+# Privacy
 
-export const privacy = docsContract.privacy;
+Your local service data is stored in your LocalCloud runtime and configured storage. Connected tools and jobs you configure can send data elsewhere.
 
-# Privacy and outbound data reference
+## Runtime reporting
 
-This page describes behavior found in the reviewed LocalCloud runtime and this website. It is an implementation reference, not a promise that every future image or site release behaves identically.
+We collect basic technical, usage, and diagnostic details to maintain LocalCloud and improve reliability. These include environment information, aggregate service and Console activity, service health, and errors. Reports use a pseudonymous identifier and are sent at startup and periodically while telemetry is enabled.
 
-<Callout type="warning" title="LocalCloud is not categorically offline">
-Runtime telemetry, update checks, certificate probes, online license validation, live-IAM validation, and user-configured HTTP jobs can make outbound requests. Review and control each path separately. `LOCALCLOUD_TELEMETRY=false` is not a categorical zero-egress switch.
-</Callout>
+## Disable telemetry
 
-## Runtime telemetry
+Set this in the **LocalCloud container's environment** before starting or recreating it:
 
-Runtime telemetry requires both of these conditions:
+```text
+LOCALCLOUD_TELEMETRY=false
+```
 
-1. `LOCALCLOUD_TELEMETRY` is not set to `false`; and
-2. `LOCALCLOUD_EVENT_API_KEY` is non-empty in the image or environment.
+With Docker, add `-e LOCALCLOUD_TELEMETRY=false` to your `docker run` command. With Docker Compose, set it under the LocalCloud service's `environment` section.
 
-When active, the runtime sends events to `https://us.i.posthog.com/i/v0/e/` (the reviewed contract value in `privacy.runtimeTelemetry.destination`). The reviewed implementation uses a stable SHA-256-derived identifier built from machine/container characteristics. Treat it as a **pseudonymous identifier**, not an anonymous guarantee.
+**This stops regular runtime and Console reporting.** When a reporting key is configured, one startup event still records that telemetry is disabled.
 
-| Event | Cadence or trigger | Fields observed in the reviewed implementation |
-| --- | --- | --- |
-| `server_started` | Startup | Version, OS/architecture, Java version, maximum memory, enabled service IDs/count, total service count, credential source, distinct identifier. |
-| `heartbeat` | Hourly after the first hour | Uptime, memory, enabled/disabled services, healthy-service count, per-service request deltas and cumulative counts, estimated-cost field, project count, credential source, errors-last-hour, queue depth, telemetry collection errors, distinct identifier. |
-| `service_error` | External service transitions into `FAILED` | Service ID, bounded failure code, release version/commit, and architecture. Registry callbacks omit exit code because lifecycle snapshots do not contain one; intentional stops and dependency errors are excluded. |
-| `telemetry_delivery_error` / `telemetry_internal_error` | Delivery or telemetry-internal failures | Operation, failed event, status/error type, and bounded error message. |
-| `telemetry_disabled` | Startup when `LOCALCLOUD_TELEMETRY=false` and an event key exists | Version, architecture, and distinct identifier. |
-
-Failed events are stored in PostgreSQL and retried on the next cycle. The reviewed queue is capped at seven days of hourly events. The telemetry HTTP client uses normal TLS certificate verification and a five-second connection timeout.
-
-### Telemetry control caveat
-
-Set `LOCALCLOUD_TELEMETRY=false` before starting the container to suppress normal startup and heartbeat telemetry. In the reviewed implementation, an event key still causes one `telemetry_disabled` event. A categorical zero-event opt-out therefore requires an implementation change or an image/environment with no event API key.
-
-## Other runtime outbound behavior
-
-<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Other runtime outbound behavior">
-<table>
-  <thead><tr><th>Behavior</th><th>Default/trigger</th><th>Destination</th><th>Control boundary</th></tr></thead>
-  <tbody>
-    {privacy.outboundBehaviors.map((item) => (
-      <tr><td>{item.id}</td><td>{item.default}</td><td>{item.destination}</td><td>{item.control}</td></tr>
-    ))}
-  </tbody>
-</table>
-</div>
-
-These paths are separate from runtime telemetry:
-
-- startup may probe `storage.googleapis.com` while preparing certificates;
-- image or CLI update checks may contact Docker Hub;
-- enforced builds may send a license key and device identifier to an online validation service;
-- `gcp-live` IAM mode can validate bearer tokens through Google OAuth token-info;
-- Cloud Scheduler jobs can call the HTTP destination supplied by the user.
-
-Core local workflows can continue after required images are present when outbound features are disabled or unused, but no broad no-egress guarantee applies.
+Update checks, license validation where enforced, live-cloud authentication, and jobs or feedback you choose to send can still make network requests.
 
 ## Website analytics
 
-The website queues analytics events immediately and loads the PostHog SDK after the page load, with a 1.5-second delay followed by an idle callback (a two-second timeout bounds that callback where supported). The default Cloudflare build loads the SDK through `/ingest/static/array.js` and sends analytics through the same-origin `/ingest` proxy. That proxy forwards SDK assets and configuration to `https://us-assets.i.posthog.com` and events and other API requests to `https://us.i.posthog.com`; PostHog remains the data recipient. It forwards the client IP for geolocation, removes cookies and authorization headers before forwarding, and does not cache event responses. Other deployment builds can configure a separate proxy or direct PostHog delivery. First-party routing reduces blocking of third-party analytics requests without guaranteeing delivery. Very short visits that end before SDK initialization may not be recorded. The reviewed configuration enables:
+We use basic web analytics to understand visits, usage, and performance. Analytics providers collect the browser, device, network, and interaction details needed to provide these services. Search text and feedback you submit may also be recorded to improve the documentation.
 
-- page-view and page-leave capture;
-- autocapture of interactions, links, and form submissions;
-- browser exception capture;
-- UTM and referrer storage;
-- code-copy and GitHub-link events;
-- time-on-page events at 30 and 120 seconds;
-- documentation search-open and search-query events, including query text and result count;
-- helpful/not-helpful feedback and optional free-text documentation comments;
-- feedback-menu, feature-request, and content-issue interactions; and
-- landing page and landing referrer registration.
+Please do not include secrets, credentials, personal data, or customer data in search or feedback fields. The runtime telemetry setting does not control website analytics; the website currently has no built-in analytics opt-out.
 
-Surveys, session recording, heatmaps, dead-click capture, and performance capture are disabled in the reviewed configuration. PostHog and browser storage behavior, IP processing, retention, deletion, and data-subject requests are governed by the deployed PostHog configuration and applicable policy; this repository does not currently expose a complete retention schedule or site consent/opt-out control.
+## Contact
 
-The default Cloudflare build also loads Cloudflare Web Analytics from `https://static.cloudflareinsights.com/beacon.min.js` and sends page-load and Web Vitals measurements to the same-origin `/cdn-cgi/rum` endpoint handled by Cloudflare. Cloudflare is the recipient of those measurements. The beacon uses the site's public token and does not use cookies or browser storage to identify visitors. Set `PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` to an empty value at build time to disable it; static builds disable it by default. When explicitly enabled on static hosting with a separately registered site token, measurements go to `https://cloudflareinsights.com/cdn-cgi/rum`. See [Cloudflare's Web Analytics data collection reference](https://developers.cloudflare.com/web-analytics/data-metrics/data-origin-and-collection/).
-
-Do not submit credentials, personal data, customer data, or confidential information in search or feedback fields. Search text and optional documentation comments are transmitted to PostHog. Issue content submitted through the feedback flow is sent to GitHub.
-
-## Local application data
-
-LocalCloud service data remains in the local runtime and its configured storage unless a documented outbound feature, live-cloud mode, user-configured target, or connected tool sends it elsewhere. Do not infer production privacy, encryption, access-control, or compliance guarantees from local storage.
-
-## Questions and requests
-
-For implementation questions or privacy requests, use the site repository's issue tracker without posting secrets or sensitive personal information. Include the affected surface (website analytics, runtime telemetry, update checks, licensing, live IAM, or scheduler egress) so the request can be routed correctly.
-
-Formal notices, data-subject requests, or written legal inquiries may also be addressed to:
-
-**LocalCloud Inc.**  
-5365 California Street  
-Palo Alto, CA  
-Website: https://local.cloud
+For privacy questions or deletion requests, email [agents@local.cloud](mailto:agents@local.cloud).

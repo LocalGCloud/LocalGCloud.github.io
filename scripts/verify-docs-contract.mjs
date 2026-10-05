@@ -227,7 +227,7 @@ assert(firestore.registryDefaultEnabled === false, 'Firestore must remain disabl
 const sheets = contract.services.find((service) => service.id === 'sheets');
 assert(sheets.availability === 'available' && sheets.published, 'Google Sheets must be an available published service');
 
-const editorialIds = [...editorialSource.matchAll(/^ {2}([a-z0-9]+): \{/gm)].map((match) => match[1]);
+const editorialIds = [...editorialSource.matchAll(/^ {2}([a-z0-9]+): \{ slug:/gm)].map((match) => match[1]);
 assert(editorialIds.length === 27, `expected 27 editorial overlays, found ${editorialIds.length}`);
 assert(new Set(editorialIds).size === 27, 'editorial overlay IDs are not unique');
 for (const id of editorialIds) assert(uniqueIds.has(id), `editorial overlay ${id} is not in the runtime contract`);
@@ -276,9 +276,10 @@ assert(!catalogSource.includes('getServiceStatusLabel'), 'catalog still renders 
 assert(catalogSource.includes('getServiceSignalLabel'), 'catalog lacks positive workflow signals');
 const detailSource = routeSources.get('src/pages/services/[slug].astro');
 assert(!detailSource.includes('getServiceStatusLabel'), 'detail route still renders aggregate evidence labels');
-assert(detailSource.includes('documentedOperations.map'), 'detail route does not render documented workflows');
-assert(detailSource.includes('unavailableOperations.map'), 'detail route does not render unavailable operation boundaries');
-assert(detailSource.includes("operation.limitations.join(' ')"), 'detail route omits operation-specific limitations');
+assert(detailSource.includes('serviceCompatibilityEditorial') && detailSource.includes('compatibility.capabilities.map'), 'detail route must share documented workflow summaries with compatibility');
+assert(detailSource.includes('compatibility.boundaries.map'), 'detail route must share service boundaries with compatibility');
+assert(detailSource.includes('serviceGuides') && detailSource.includes('getServiceCodeExamples') && detailSource.includes('data-example-code'), 'detail route must render introductions and maintained SDK examples');
+assert(!detailSource.includes('id="performance"') && !detailSource.includes('guide.metrics.map'), 'detail route must not render the removed performance section');
 assert(!detailSource.includes('<strong>{operation.label}</strong>: Coming soon.'), 'detail route turns unsupported operations into roadmap promises');
 for (const fact of ['registryDefaultEnabled', 'assembledDefaultEnabled', 'defaultQualification', 'minTier', 'persistence']) {
   assert(routeSources.get('src/data/agenticFacts.ts').includes(fact), `agentic metadata omits ${fact}`);
@@ -287,8 +288,8 @@ const agenticContentSource = routeSources.get('src/data/agenticContent.ts');
 assert(agenticContentSource.includes('["supported", "partial", "release-unverified"].includes(service.status)'), 'agent-testing pages must exclude unsupported, unknown, and planned services');
 
 const compatibilitySource = routeSources.get('src/pages/compatibility.astro');
-assert(compatibilitySource.includes("service.catalogState === 'coming-soon'") && compatibilitySource.includes('colspan="6"'), 'compatibility page does not collapse coming-soon services to a roadmap row');
-assert(compatibilitySource.includes('service.operations.map'), 'compatibility page does not render operation-level evidence');
+assert(compatibilitySource.includes("service.catalogState === 'coming-soon'") && compatibilitySource.includes('colspan="2"'), 'compatibility page does not collapse unsupported services across its two detail columns');
+assert(compatibilitySource.includes('serviceCompatibilityEditorial') && compatibilitySource.includes('compatibility.capabilities.map') && compatibilitySource.includes('compatibility.boundaries.map'), 'compatibility page must render the operation-linked editorial summaries and boundaries');
 const overviewSource = routeSources.get('src/components/ServiceOverviewLanding.astro');
 assert(overviewSource.includes('operationBoundaries.map') && overviewSource.includes('service.notSupported.map'), 'shared emulator landing pages omit service and operation boundaries');
 const servicesOverviewSource = routeSources.get('src/pages/docs/services-overview.mdx');

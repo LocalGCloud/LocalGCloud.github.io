@@ -44,37 +44,31 @@ const combined = [...docs.values()].join("\n");
 
 const privacy = docs.get("src/pages/docs/privacy.mdx");
 for (const phrase of [
-	contract.privacy.runtimeTelemetry.destination,
-	contract.privacy.runtimeTelemetry.disableVariable,
-	"LOCALCLOUD_EVENT_API_KEY",
-	"server_started",
-	"heartbeat",
-	"telemetry_disabled",
+	`${contract.privacy.runtimeTelemetry.disableVariable}=false`,
+	"technical, usage, and diagnostic details",
+	"aggregate service and Console activity",
 	"pseudonymous identifier",
-	"stored in PostgreSQL",
-	"normal TLS certificate verification",
-	"External service transitions into",
-	"search-query events",
-	"optional free-text documentation comments",
-	"site consent/opt-out control",
+	"stops regular runtime and Console reporting",
+	"one startup event",
+	"telemetry is disabled",
+	"Update checks",
+	"license validation",
+	"live-cloud authentication",
+	"jobs or feedback",
+	"basic web analytics",
+	"Analytics providers",
+	"Search text and feedback",
+	"no built-in analytics opt-out",
+	"mailto:agents@local.cloud",
 ])
 	assert(privacy.includes(phrase), `privacy reference omits ${phrase}`);
-assert(
-	privacy.includes("privacy.outboundBehaviors.map"),
-	"privacy reference does not render contract outbound behaviors",
-);
-for (const destination of [
-	"storage.googleapis.com",
-	"Docker Hub",
-	"online validation service",
-	"Google OAuth",
-	"HTTP destination",
-]) {
-	assert(
-		privacy.includes(destination),
-		`privacy reference omits outbound destination ${destination}`,
-	);
-}
+for (const obsoleteClaim of [
+	"trust-all TLS",
+	"No main-source caller",
+	"ca-probe",
+	"seven days of hourly events",
+])
+	assert(!privacy.includes(obsoleteClaim), `privacy reference retains obsolete claim ${obsoleteClaim}`);
 
 const licensing = docs.get("src/pages/docs/licensing.mdx");
 for (const phrase of [
