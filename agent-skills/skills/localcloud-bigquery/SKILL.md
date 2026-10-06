@@ -57,5 +57,5 @@ Return the files changed, emulator variables used, datasets/tables created, quer
 - LocalCloud compatibility: <https://local.cloud/compatibility/>
 - LocalCloud services: <https://local.cloud/services/>
 - SDK examples: <https://local.cloud/docs/sdk-examples/>
-- BigQuery feature comparison: <https://local.cloud/docs/bigquery-feature-comparison/>
-- BigQuery coverage gaps: <https://local.cloud/docs/bigquery-coverage-gaps/>
+- BigQuery emulator alternatives: <https://local.cloud/compare/bigquery-emulator-alternatives/>
+- BigQuery coverage matrix: <https://local.cloud/docs/bigquery-emulator-features/#coverage-matrix>

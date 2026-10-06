@@ -848,22 +848,31 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 				body:
 					"Use real BigQuery for billing, IAM, slots, reservations, full GoogleSQL edge cases, performance, geographic behavior, and final release validation.",
 			},
+			{
+				kicker: "How to compare",
+				title: "Test the queries you run, not a feature count",
+				body:
+					"A storage engine, an advertised feature count or a small benchmark can't establish BigQuery compatibility. A fair comparison needs the exact engine revisions, images, query corpus, reference outputs and a replay command; this site has no current comparison that tests the engines and the LocalCloud image together, so it ranks no option on speed or fidelity. Run representative queries through the API your application uses and assert the rows, errors and state changes.",
+			},
 		],
 		table: {
-			columns: ["Option", "Best for", "Caveat"],
+			columns: ["Option", "Runs as", "Best for", "Caveat"],
 			rows: [
 				[
 					"LocalCloud BigQuery",
+					"Native GoogleSQL analysis with DuckDB execution, supervised inside the LocalCloud Docker container; the default process needs no Docker-socket access.",
 					"Multi-service local Google Cloud workflows, free of charge for individuals and companies during the public preview.",
 					"Coverage is documented feature by feature; validate release behavior in real BigQuery.",
 				],
 				[
 					"Single-service community emulators",
+					"An independent open-source server, usually a standalone binary or container; storage, REST and gRPC coverage vary by project.",
 					"A focused BigQuery-compatible local server.",
-					"A separate runtime from the rest of the GCP workflow; coverage varies by project.",
+					"A separate runtime from the rest of the GCP workflow; check the project's current feature matrix for the methods you need.",
 				],
 				[
 					"Real BigQuery",
+					"The managed Google Cloud service, in a Google Cloud project.",
 					"Production fidelity and managed features.",
 					"Requires credentials, project setup, quotas, and billable usage.",
 				],
@@ -878,8 +887,12 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 			relatedLink("/bigquery-emulator/"),
 		],
 		sources: [
-			relatedLink("/docs/bigquery-emulator-features/", "LocalCloud tested coverage."),
-			relatedLink("/docs/bigquery-feature-comparison/"),
+			relatedLink("/docs/bigquery-emulator-features/", "LocalCloud's operation contract and coverage matrix."),
+			{
+				label: "Google BigQuery documentation",
+				href: "https://docs.cloud.google.com/bigquery/docs",
+				note: "The managed service's reference.",
+			},
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},

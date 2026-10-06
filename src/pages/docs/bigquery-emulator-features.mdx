@@ -1,13 +1,14 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: "Local BigQuery: GoogleSQL, DuckDB and APIs"
-description: "Run BigQuery locally with native GoogleSQL and DuckDB: the architecture, documented operations, endpoints, and limits of LocalCloud's BigQuery service."
+description: "Run BigQuery locally with native GoogleSQL and DuckDB: endpoints, documented operations, the coverage matrix and limits of LocalCloud's BigQuery service."
 ---
 
 import Callout from '../../components/Callout.astro';
-import { getDocumentationService } from '../../data/docs-contract';
+import { docsContract, getDocumentationService } from '../../data/docs-contract';
 
 export const bigquery = getDocumentationService('bigquery');
+export const coverage = docsContract.bigqueryCoverage;
 
 # BigQuery emulator feature reference
 
@@ -52,7 +53,55 @@ The CLI may remap host ports. The [Python SDK example](/docs/sdk-examples/#bigqu
 - **External tables and federation:** validate the exact source format and connector. An emulator fixture or stored connection does not prove a live federated query.
 - **Storage API and Spark:** test transport, TLS, schema, read/write method, connector version, and architecture separately.
 
-The [BigQuery coverage and known boundaries](/docs/bigquery-coverage-gaps/) page publishes the dependency's recorded matrix counts and the capabilities implemented with documented limits. The [comparison guide](/docs/bigquery-feature-comparison/) explains how to compare local engines without treating benchmark samples as global correctness guarantees.
+To weigh LocalCloud against standalone emulators and real BigQuery, see [BigQuery emulator alternatives](/compare/bigquery-emulator-alternatives/).
+
+## Coverage matrix
+
+The BigQuery emulator keeps a versioned coverage matrix. It includes canonical and derived records, so its total is a count of records, not a count of distinct canonical GoogleSQL capabilities or executed tests.
+
+<Callout type="warning" title="Recorded source coverage">
+These counts are the dependency's recorded classifications. Test the features your application depends on with the LocalCloud image you run. Unknown records are unassessed. Unsupported records include local feature gaps as well as managed-cloud behavior.
+</Callout>
+
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="BigQuery coverage matrix summary">
+<table>
+  <thead><tr><th>Dimension</th><th>Implemented</th><th>Implemented with limits</th><th>Unsupported</th><th>Unknown</th><th>Total records</th></tr></thead>
+  <tbody>
+    {Object.entries({ Development: coverage.development, 'Production parity': coverage.production }).map(([dimension, counts]) => (
+      <tr><td>{dimension}</td><td>{counts.implemented}</td><td>{counts.partial}</td><td>{counts.unsupported}</td><td>{counts.unknown}</td><td>{coverage.total}</td></tr>
+    ))}
+  </tbody>
+</table>
+</div>
+
+“Implemented” is a matrix classification tied to the emulator's implementation and test references; test the exact feature, input shape, and client your application uses. “Implemented with limits” rows work locally within the concrete boundaries listed below; derived rows can overlap their child features.
+
+### Capabilities implemented with documented limits
+
+<p>The matrix records {coverage.partialCapabilities.length} development capabilities that work locally within documented limits. Each row names the capability and the boundary recorded for it.</p>
+
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="BigQuery capabilities implemented with documented limits">
+<table>
+  <thead><tr><th>Capability</th><th>Recorded boundary</th></tr></thead>
+  <tbody>
+    {coverage.partialCapabilities.map((capability) => (
+      <tr><td><strong>{capability.name}</strong><br /><code>{capability.id}</code></td><td>{capability.boundary}</td></tr>
+    ))}
+  </tbody>
+</table>
+</div>
+
+### Unsupported and unknown records
+
+Before relying on a capability that this page does not list, test it with your application's queries. Unsupported and unknown states must not be reduced to cloud scale alone: syntax, model variants, external sources, collation, and individual API methods can have developer-visible gaps. A successful dry run, stored configuration, or metadata operation does not prove execution support.
+
+### How to check a capability
+
+1. Check the required capability ID and its exact operation and input boundary.
+2. Confirm the dependency identity used by the LocalCloud image; dependency HEAD can differ from a packaged payload.
+3. Run the application's query or API workflow, assert the result and errors, and test restart when persistent state matters.
+4. Record client versions, platform, dependency revision, assembled-image digest, failures, and skips.
+5. Validate required production behavior against Google Cloud using a separate environment.
 
 ## Runtime and production boundaries
 

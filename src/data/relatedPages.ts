@@ -29,17 +29,9 @@ const pages: Record<string, RelatedPage> = {
 		anchor: "BigQuery emulator feature reference",
 		note: "Endpoints, documented operations and runtime limits.",
 	},
-	"/docs/bigquery-coverage-gaps/": {
-		anchor: "BigQuery coverage and known boundaries",
-		note: "The recorded coverage matrix and what to validate in real BigQuery.",
-	},
 	"/compare/bigquery-emulator-alternatives/": {
 		anchor: "BigQuery emulator alternatives",
 		note: "When a standalone emulator, LocalCloud or real BigQuery fits an agent workflow.",
-	},
-	"/docs/bigquery-feature-comparison/": {
-		anchor: "BigQuery feature comparison",
-		note: "LocalCloud BigQuery compared with community emulators and Google Cloud.",
 	},
 	"/localstack-for-google-cloud/": {
 		anchor: "LocalStack for Google Cloud",
@@ -162,8 +154,6 @@ for (const service of localServices) {
 
 // Pairs list the default survivor first. A page's counterparts appear in this order.
 export const relatedPagePairs: RelatedPair[] = [
-	{ pages: ["/docs/bigquery-emulator-features/", "/docs/bigquery-coverage-gaps/"], finding: "S19" },
-	{ pages: ["/compare/bigquery-emulator-alternatives/", "/docs/bigquery-feature-comparison/"], finding: "S19" },
 	{ pages: ["/localstack-for-google-cloud/", "/compare/localstack/"], finding: "S17" },
 	{ pages: ["/compare/google-emulators/", "/docs/localcloud-vs-google-emulators/"], finding: "S18" },
 	{ pages: ["/compare/google-emulators/", "/blog/google-emulators-vs-localcloud-for-agents/"], finding: "S18" },

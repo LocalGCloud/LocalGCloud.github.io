@@ -1,3 +1,11 @@
+# R7 content merges
+/docs/bigquery-coverage-gaps /docs/bigquery-emulator-features/ 301
+/docs/bigquery-coverage-gaps/ /docs/bigquery-emulator-features/ 301
+/docs/bigquery-coverage-gaps.md /docs/bigquery-emulator-features.md 301
+/docs/bigquery-feature-comparison /compare/bigquery-emulator-alternatives/ 301
+/docs/bigquery-feature-comparison/ /compare/bigquery-emulator-alternatives/ 301
+/docs/bigquery-feature-comparison.md /compare/bigquery-emulator-alternatives.md 301
+
 /favicon.ico /favicon.png 301
 /docs/localcloud-vs-individual-emulators /docs/localcloud-vs-google-emulators/ 301
 /docs/localcloud-vs-individual-emulators/ /docs/localcloud-vs-google-emulators/ 301

@@ -152,8 +152,6 @@ const surfacePaths = [
 	"src/pages/docs/services-overview.mdx",
 	"src/pages/docs/what-is-gcp-emulator.mdx",
 	"src/pages/docs/bigquery-emulator-features.mdx",
-	"src/pages/docs/bigquery-feature-comparison.mdx",
-	"src/pages/docs/bigquery-coverage-gaps.mdx",
 	"src/pages/docs/bigtable-emulator-features.mdx",
 	"src/pages/docs/spanner-emulator-features.mdx",
 	"src/pages/bigquery-emulator.astro",
@@ -212,10 +210,10 @@ assert(
 	"Phase 3-4 surface contains a fail-open health loop",
 );
 
+// The BigQuery comparison lives in agenticContent.ts (/compare/bigquery-emulator-alternatives/).
 const dependencyPaths = [
 	"src/pages/docs/bigquery-emulator-features.mdx",
-	"src/pages/docs/bigquery-feature-comparison.mdx",
-	"src/pages/docs/bigquery-coverage-gaps.mdx",
+	"src/data/agenticContent.ts",
 	"src/pages/docs/bigtable-emulator-features.mdx",
 	"src/pages/docs/spanner-emulator-features.mdx",
 	"src/pages/bigquery-emulator.astro",
@@ -273,9 +271,8 @@ for (const phrase of [
 		`BigQuery feature reference omits ${phrase}`,
 	);
 }
-const bigqueryHistory =
-	docs.get("src/pages/docs/bigquery-feature-comparison.mdx") +
-	docs.get("src/pages/docs/bigquery-coverage-gaps.mdx");
+// The coverage matrix is a section of the feature reference.
+const bigqueryHistory = bigqueryFeatures;
 for (const phrase of [
 	"GoogleSQL",
 	"DuckDB",
