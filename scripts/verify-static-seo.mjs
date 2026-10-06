@@ -183,11 +183,19 @@ const propertyContent = (html, property) => metaContent(html, 'property', proper
 const indexableRoutes = [];
 const seenTitles = new Map();
 const seenDescriptions = new Map();
+// Site search (Pagefind) indexes only bodies marked data-pagefind-body: every indexable page, never a noindex one.
+const hasPagefindBody = (html) => /<body\b[^>]*\bdata-pagefind-body\b/i.test(html);
+if (hasPagefindBody(await readRequired('404.html'))) errors.push('404.html: the 404 page must not be indexed by site search');
 for (const file of pageFiles) {
   const route = { path: routeForFile(file) };
   const html = await readRequired(file);
-  if (!html || isNoindex(html)) continue;
+  if (!html) continue;
+  if (isNoindex(html)) {
+    if (hasPagefindBody(html)) errors.push(`${route.path}: noindex page must not carry data-pagefind-body`);
+    continue;
+  }
   indexableRoutes.push(route.path);
+  if (!hasPagefindBody(html)) errors.push(`${route.path}: indexable page must mark <body> with data-pagefind-body`);
 
   if (route.path === '/') {
     for (const [rel, file, size] of [['icon', 'favicon.png', 96], ['apple-touch-icon', 'apple-touch-icon.png', 180]]) {

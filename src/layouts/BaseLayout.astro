@@ -50,6 +50,9 @@ const ogImageAltText = ogImageAlt ?? (ogImage ? title : defaultSocialCard.alt);
 const markdownTwin = markdownTwinPath(Astro.url.pathname);
 // JSON-LD is raw script text: escape "<" so a "</script>" or "<!--" in copy cannot end the block.
 const serializeJsonLd = (schema: JsonLd) => JSON.stringify(schema).replace(/</g, '\\u003c');
+// Pagefind indexes only pages marked with data-pagefind-body, so the 404 page and
+// noindex pages stay out of site search.
+const pagefindBody = noindex ? undefined : '';
 // Preserve inline presentation styles using the per-page CSP API.
 Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 ---
@@ -153,7 +156,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       });
     </script>
   </head>
-  <body>
+  <body data-pagefind-body={pagefindBody}>
     <a href="#main-content" class="skip-link">Skip to content</a>
     <slot />
     <SearchModal />
