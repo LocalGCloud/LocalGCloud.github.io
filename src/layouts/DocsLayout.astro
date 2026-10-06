@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import DocFeedback from '../components/DocFeedback.astro';
 import FeedbackFab from '../components/FeedbackFab.astro';
+import RelatedPages from '../components/RelatedPages.astro';
 import { createWebPageSchema } from '../data/productFacts';
 import { lastModifiedForRoute } from '../utils/page-dates.mjs';
 
@@ -186,6 +187,8 @@ const nextItem = currentIndex >= 0 && currentIndex < allLinks.length - 1 ? allLi
 
               <div class="prose-site">
                 <slot />
+                {/* The sidebar already links every docs page; this links the pages outside the docs that overlap with this one. */}
+                <RelatedPages path={normalizedCurrentPath} variant="prose" exclude={(href) => href.startsWith('/docs/')} />
               </div>
 
               <footer class="docs-article__meta">

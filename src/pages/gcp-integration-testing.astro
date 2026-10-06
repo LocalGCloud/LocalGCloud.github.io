@@ -1,5 +1,6 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
+import RelatedPages from '../components/RelatedPages.astro';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
@@ -202,6 +203,8 @@ const faqItems = [
           <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code>{jenkinsfile}</code></pre>
         </div>
       </div>
+
+      <div class="mt-8 reveal"><RelatedPages path="/gcp-integration-testing/" heading="Related workflows" /></div>
     </div>
   </section>
 

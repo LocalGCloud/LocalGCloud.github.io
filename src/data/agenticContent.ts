@@ -1,6 +1,7 @@
 import { agenticFacts, agenticServiceMetadata, joinClauses } from "./agenticFacts";
 import { alternativesReviewedLabel } from "./alternatives";
 import { productFacts } from "./productFacts";
+import { agentTestingPath, relatedLink, relatedLinksFor } from "./relatedPages";
 import { availableServiceCount, serviceTierLabel } from "./services";
 
 export type AgenticContentKind =
@@ -81,13 +82,22 @@ const localTestingLinks: ContentLink[] = [
 
 const sentence = (text: string) => (/[.!?]$/.test(text) ? text : `${text}.`);
 
+// Pages that overlap with another page (src/data/relatedPages.ts) list it in Next steps,
+// unless their own links or sources already include it.
+const withRelatedLinks = (pages: AgenticContentPage[]): AgenticContentPage[] =>
+	pages.map((page) => {
+		const linked = new Set([...page.internalLinks, ...(page.sources ?? [])].map((link) => link.href));
+		const related = relatedLinksFor(page.path).filter((link) => !linked.has(link.href));
+		return related.length ? { ...page, internalLinks: [...page.internalLinks, ...related] } : page;
+	});
+
 // Install the CLI first; the Docker-only path exports its environment over HTTP.
 const quickStartSnippets: ContentSnippet[] = [
 	{ label: "LocalCloud commands", language: "bash", code: agenticFacts.cliQuickStart.script },
 	{ label: "Docker-only fallback", language: "bash", code: agenticFacts.dockerQuickStart.script },
 ];
 
-export const agentSandboxPages: AgenticContentPage[] = [
+export const agentSandboxPages: AgenticContentPage[] = withRelatedLinks([
 	{
 		kind: "agent",
 		slug: "claude-code-gcp-sandbox",
@@ -286,7 +296,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 		internalLinks: localTestingLinks,
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
-];
+]);
 
 // Search snippets stay within 160 characters; long service and variable names drop the last clause.
 const serviceTestingDescription = (name: string, envName: string) => {
@@ -305,7 +315,7 @@ const servicePage = (
 	return {
 		kind: "service",
 		slug,
-		path: `/services/${slug}/ai-agent-local-testing/`,
+		path: agentTestingPath(slug),
 		parentLabel: service.name,
 		parentPath: `/services/${slug}/`,
 		eyebrow: `${service.name} agent testing`,
@@ -372,11 +382,7 @@ const servicePage = (
 		},
 		limitations: [...(extra.limitations ?? [])],
 		internalLinks: [
-			{
-				label: `${service.name} service page`,
-				href: `/services/${slug}/`,
-				note: "Local workflows, boundaries, and SDK examples for this service.",
-			},
+			relatedLink(`/services/${slug}/`),
 			...localTestingLinks,
 		],
 		sources: [
@@ -398,9 +404,9 @@ const promptForService = (slug: string) => {
 	return "project-integration";
 };
 
-export const serviceTestingPages: AgenticContentPage[] = agenticServiceMetadata
+export const serviceTestingPages: AgenticContentPage[] = withRelatedLinks(agenticServiceMetadata
 	.filter((service) => ["supported", "partial", "release-unverified"].includes(service.status))
-	.map((service) => servicePage(service.slug, promptForService(service.slug)));
+	.map((service) => servicePage(service.slug, promptForService(service.slug))));
 
 const githubActionsSnippet = [
 	"name: localcloud-integration-tests",
@@ -424,7 +430,7 @@ const githubActionsSnippet = [
 	"          ./scripts/integration-test.sh",
 ].join("\n");
 
-export const workflowPages: AgenticContentPage[] = [
+export const workflowPages: AgenticContentPage[] = withRelatedLinks([
 	{
 		kind: "workflow",
 		slug: "github-actions-gcp-emulator",
@@ -472,11 +478,7 @@ export const workflowPages: AgenticContentPage[] = [
 				href: "/docs/terraform/",
 				note: "Endpoint override patterns for IaC.",
 			},
-			{
-				label: "Integration testing",
-				href: "/workflows/integration-tests/",
-				note: "How to structure localhost verification.",
-			},
+			relatedLink("/workflows/integration-tests/", "How to structure localhost verification."),
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -647,17 +649,13 @@ export const workflowPages: AgenticContentPage[] = [
 		],
 		limitations: [],
 		internalLinks: [
-			{
-				label: "GitHub Actions workflow",
-				href: "/workflows/github-actions-gcp-emulator/",
-				note: "Concrete YAML starting point.",
-			},
+			relatedLink("/workflows/github-actions-gcp-emulator/", "Concrete YAML starting point."),
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
-];
+]);
 
-export const comparisonPages: AgenticContentPage[] = [
+export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 	{
 		kind: "comparison",
 		slug: "google-emulators",
@@ -713,11 +711,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		},
 		limitations: [],
 		internalLinks: [
-			{
-				label: "Google emulator overview",
-				href: "/gcp-emulator/",
-				note: "LocalCloud positioning against fragmented GCP local development.",
-			},
+			relatedLink("/gcp-emulator/", "LocalCloud positioning against fragmented GCP local development."),
 			{
 				label: "Compatibility",
 				href: "/compatibility/",
@@ -730,11 +724,7 @@ export const comparisonPages: AgenticContentPage[] = [
 				href: "https://docs.cloud.google.com/sdk/gcloud/reference/beta/emulators",
 				note: "Google emulator command groups.",
 			},
-			{
-				label: "LocalCloud vs Google emulators docs",
-				href: "/docs/localcloud-vs-google-emulators/",
-				note: "Existing LocalCloud comparison.",
-			},
+			relatedLink("/docs/localcloud-vs-google-emulators/"),
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -880,28 +870,12 @@ export const comparisonPages: AgenticContentPage[] = [
 			"Unsupported areas include BQML, AEAD encryption functions, security policy enforcement, and full GEOGRAPHY parity.",
 		],
 		internalLinks: [
-			{
-				label: "BigQuery local testing",
-				href: "/services/bigquery/ai-agent-local-testing/",
-				note: "Agent quickstart and caveats.",
-			},
-			{
-				label: "BigQuery emulator page",
-				href: "/bigquery-emulator/",
-				note: "Product detail page.",
-			},
+			relatedLink(agentTestingPath("bigquery"), "Agent quickstart and caveats."),
+			relatedLink("/bigquery-emulator/"),
 		],
 		sources: [
-			{
-				label: "LocalCloud BigQuery features",
-				href: "/docs/bigquery-emulator-features/",
-				note: "LocalCloud tested coverage.",
-			},
-			{
-				label: "BigQuery feature comparison",
-				href: "/docs/bigquery-feature-comparison/",
-				note: "LocalCloud BigQuery compared with community emulators and Google Cloud.",
-			},
+			relatedLink("/docs/bigquery-emulator-features/", "LocalCloud tested coverage."),
+			relatedLink("/docs/bigquery-feature-comparison/"),
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -981,16 +955,8 @@ export const comparisonPages: AgenticContentPage[] = [
 		},
 		limitations: [],
 		internalLinks: [
-			{
-				label: "LocalStack for Google Cloud",
-				href: "/localstack-for-google-cloud/",
-				note: "What a LocalStack-style workflow looks like on Google Cloud.",
-			},
-			{
-				label: "Local cloud for AI agents",
-				href: "/local-cloud-for-ai-agents/",
-				note: "Why an agent needs a cloud API target, not only a code sandbox.",
-			},
+			relatedLink("/localstack-for-google-cloud/"),
+			relatedLink("/local-cloud-for-ai-agents/"),
 			{
 				label: "Compatibility",
 				href: "/compatibility/",
@@ -1026,7 +992,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
-];
+]);
 
 // Emulator head terms belong to the service and /gcp-emulator/ pages; their glossary
 // entries answer the definition question instead.
@@ -1084,7 +1050,7 @@ const glossary = (
 	reviewedAt: agenticFacts.evidence.reviewedAt,
 });
 
-export const glossaryPages: AgenticContentPage[] = [
+export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 	glossary(
 		"gcp-emulator",
 		"GCP emulator",
@@ -1112,11 +1078,7 @@ export const glossaryPages: AgenticContentPage[] = [
 			"Use the localcloud mcp stdio bridge when an MCP client cannot connect with Streamable HTTP.",
 		],
 		[
-			{
-				label: "AI agent guide",
-				href: "/ai/",
-				note: "Runtime endpoints, agent rules, and the AGENTS.md template.",
-			},
+			relatedLink("/ai/", "Runtime endpoints, agent rules, and the AGENTS.md template."),
 		],
 	),
 	glossary(
@@ -1174,11 +1136,7 @@ export const glossaryPages: AgenticContentPage[] = [
 			"LocalCloud provides a Google Cloud dependency boundary so agent-written cloud calls resolve to localhost.",
 		],
 		[
-			{
-				label: "Local cloud for AI agents",
-				href: "/local-cloud-for-ai-agents/",
-				note: "How the two boundaries fit together.",
-			},
+			relatedLink("/local-cloud-for-ai-agents/", "How the two boundaries fit together."),
 		],
 	),
 	glossary(
@@ -1252,16 +1210,12 @@ export const glossaryPages: AgenticContentPage[] = [
 			"Every emulator has documented gaps; production behavior is validated against the real provider.",
 		],
 		[
-			{
-				label: "What is a GCP emulator?",
-				href: "/docs/what-is-gcp-emulator/",
-				note: "Longer explanation with endpoint routing.",
-			},
+			relatedLink("/docs/what-is-gcp-emulator/", "Longer explanation with endpoint routing."),
 		],
 	),
-];
+]);
 
-export const blogDemoPages: AgenticContentPage[] = [
+export const blogDemoPages: AgenticContentPage[] = withRelatedLinks([
 	{
 		kind: "blog",
 		slug: "claude-code-local-gcp-sandbox",
@@ -1305,11 +1259,7 @@ export const blogDemoPages: AgenticContentPage[] = [
 		],
 		limitations: [],
 		internalLinks: [
-			{
-				label: "Claude Code sandbox page",
-				href: "/agents/claude-code-gcp-sandbox/",
-				note: "Claude-specific setup and caveats.",
-			},
+			relatedLink("/agents/claude-code-gcp-sandbox/"),
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -1356,11 +1306,7 @@ export const blogDemoPages: AgenticContentPage[] = [
 		],
 		limitations: [],
 		internalLinks: [
-			{
-				label: "LocalCloud vs Google emulators",
-				href: "/compare/google-emulators/",
-				note: "Detailed comparison and sources.",
-			},
+			relatedLink("/compare/google-emulators/", "Detailed comparison and sources."),
 		],
 		sources: [
 			{
@@ -1416,23 +1362,11 @@ export const blogDemoPages: AgenticContentPage[] = [
 			"LocalCloud BigQuery does not cover BQML, AEAD encryption functions, security policy enforcement, or full GEOGRAPHY parity.",
 		],
 		internalLinks: [
-			{
-				label: "BigQuery agent testing",
-				href: "/services/bigquery/ai-agent-local-testing/",
-				note: "SDK/env quickstart and compatibility table.",
-			},
-			{
-				label: "BigQuery alternatives",
-				href: "/compare/bigquery-emulator-alternatives/",
-				note: "Standalone and real BigQuery tradeoffs.",
-			},
+			relatedLink(agentTestingPath("bigquery"), "SDK/env quickstart and compatibility table."),
+			relatedLink("/compare/bigquery-emulator-alternatives/", "Standalone and real BigQuery tradeoffs."),
 		],
 		sources: [
-			{
-				label: "BigQuery emulator features",
-				href: "/docs/bigquery-emulator-features/",
-				note: "LocalCloud tested coverage.",
-			},
+			relatedLink("/docs/bigquery-emulator-features/", "LocalCloud tested coverage."),
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -1490,16 +1424,8 @@ export const blogDemoPages: AgenticContentPage[] = [
 			"Dataproc local containers provide component-level compatibility (Spark, Hadoop, Hive), not GCP Dataproc control plane APIs.",
 		],
 		internalLinks: [
-			{
-				label: "Dataproc service testing",
-				href: "/services/dataproc/ai-agent-local-testing/",
-				note: "Local testing guide for Dataproc jobs.",
-			},
-			{
-				label: "Dataproc service overview",
-				href: "/services/dataproc/",
-				note: "Supported Dataproc operations and limitations.",
-			},
+			relatedLink(agentTestingPath("dataproc"), "Local testing guide for Dataproc jobs."),
+			relatedLink("/services/dataproc/", "Supported Dataproc operations and limitations."),
 		],
 		sources: [
 			{
@@ -1510,7 +1436,7 @@ export const blogDemoPages: AgenticContentPage[] = [
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
-];
+]);
 
 export const allAgenticContentPages = [
 	...agentSandboxPages,

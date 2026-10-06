@@ -1,6 +1,7 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import CopyButton from '../components/CopyButton.astro';
+import RelatedPages from '../components/RelatedPages.astro';
 import { docsContract } from '../data/docs-contract';
 import { productFacts } from '../data/productFacts';
 
@@ -107,6 +108,7 @@ const yourInputs = [
       <li><span><strong>Cloud test spend avoided a month:</strong> runs that move to localhost × the billed cost of one run’s test resources.</span></li>
       <li><span><strong>CI time avoided a month:</strong> CI runs × (resource setup and teardown time − LocalCloud start time), when the difference is positive.</span></li>
     </ul>
+    <div class="mt-8"><RelatedPages path="/reduce-gcp-dev-costs/" /></div>
   </div></section>
 
   <section class="site-section"><div class="container">

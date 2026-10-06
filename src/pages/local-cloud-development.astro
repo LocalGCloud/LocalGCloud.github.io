@@ -3,6 +3,7 @@ import LandingLayout from '../layouts/LandingLayout.astro';
 import { docsContract } from '../data/docs-contract';
 import { cliQuickStart } from '../utils/quickstart.mjs';
 import { availableServiceCount, publishedServiceCount, serviceCatalogGroups } from '../data/services';
+import { relatedAnchor } from '../data/relatedPages';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
@@ -185,7 +186,7 @@ const faqItems = [
       </div>
 
       <div class="mt-6 reveal">
-        <a href={`${base}how-to-run-google-cloud-locally/`} class="site-button site-button--primary">Complete GCP setup guide</a>
+        <a href={`${base}how-to-run-google-cloud-locally/`} class="site-button site-button--primary">{relatedAnchor('/how-to-run-google-cloud-locally/')}</a>
         <a href={`${base}docs/`} class="ml-3 site-button site-button--secondary">Documentation</a>
       </div>
     </div>
@@ -308,7 +309,7 @@ STORAGE_EMULATOR_HOST=http://localhost:5382
             </p>
           </div>
           <div class="flex flex-wrap gap-3">
-            <a href={`${base}how-to-run-google-cloud-locally/`} class="site-button site-button--secondary">Setup guide</a>
+            <a href={`${base}how-to-run-google-cloud-locally/`} class="site-button site-button--secondary">{relatedAnchor('/how-to-run-google-cloud-locally/')}</a>
             <a href={`${base}docs/`} class="site-button site-button--primary">Documentation</a>
           </div>
         </div>

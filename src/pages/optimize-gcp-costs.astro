@@ -1,5 +1,6 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
+import { relatedAnchor } from '../data/relatedPages';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
@@ -13,7 +14,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Cost methodology</span>
     <h1 class="mt-4">Optimize GCP costs with measured evidence</h1>
     <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">There is no universal percentage or per-developer savings figure. Start from your own billing exports, architecture, service usage, reliability requirements, and license constraints.</p>
-    <div class="mt-8 flex flex-wrap gap-3"><a href="#production" class="site-button site-button--primary">Production checklist</a><a href={`${base}reduce-gcp-dev-costs/`} class="site-button site-button--secondary">Local evaluation method</a></div>
+    <div class="mt-8 flex flex-wrap gap-3"><a href="#production" class="site-button site-button--primary">Production checklist</a><a href={`${base}reduce-gcp-dev-costs/`} class="site-button site-button--secondary">{relatedAnchor('/reduce-gcp-dev-costs/')}</a></div>
   </div></div></section>
 
   <section id="production" class="site-section"><div class="container">

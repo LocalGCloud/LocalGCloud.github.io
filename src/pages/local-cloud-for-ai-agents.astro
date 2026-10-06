@@ -4,6 +4,7 @@ import Callout from '../components/Callout.astro';
 import CopyButton from '../components/CopyButton.astro';
 import { agenticFacts } from '../data/agenticFacts';
 import { availableServiceCount } from '../data/services';
+import { relatedAnchor } from '../data/relatedPages';
 import {
   createBreadcrumbSchema,
   createWebPageSchema,
@@ -134,7 +135,7 @@ const agentPages = [
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start in the docs</a>
-          <a href={`${base}ai/`} class="site-button site-button--secondary">AGENTS.md template</a>
+          <a href={`${base}ai/`} class="site-button site-button--secondary">{relatedAnchor('/ai/')}</a>
           <a href={`${base}compare/e2b-vercel-sandboxes/`} class="site-button site-button--secondary">Compare with hosted sandboxes</a>
         </div>
       </div>

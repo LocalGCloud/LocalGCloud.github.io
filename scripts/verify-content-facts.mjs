@@ -10,6 +10,7 @@ import { headingsWithinClass } from './html-structure.mjs';
 import { availableServiceCount, services, servicesInCatalogOrder, isServiceDisabledByDefault, proTierLabel } from '../src/data/services.ts';
 import { pricingFaq, proTierServiceNames } from '../src/data/pricingFaq.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
+import { relatedAnchor, relatedPagePairs } from '../src/data/relatedPages.ts';
 import { getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
 const sdkExamplesSource = await readFile(new URL('../src/pages/docs/sdk-examples.mdx', import.meta.url), 'utf8');
 
@@ -622,6 +623,41 @@ for (const file of htmlPages.keys()) {
   const slug = file.match(/^docs\/(?:([^/]+)\/)?index\.html$/);
   const route = slug && `/docs/${slug[1] ? `${slug[1]}/` : ''}`;
   if (route && !docsSidebar.includes(`href="${route}"`)) errors.push(`the docs sidebar omits ${route}; add it to sidebarSections in DocsLayout.astro`);
+}
+
+// Overlapping pages wait for search data before any merge (plan R7). Meanwhile each pair in
+// src/data/relatedPages.ts keeps its own title and H1 and links the other page inside <main>,
+// and at least one of those links uses the target's canonical anchor text (case aside). A card
+// link is named by its heading; aria-hidden arrows don't count.
+const anchorText = (inner) => {
+  const named = inner.replace(/<(\w+)\b[^>]*aria-hidden="true"[^>]*>[\s\S]*?<\/\1>/g, '');
+  const heading = named.match(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/)?.[1];
+  return visibleText(heading ?? named).replace(/\s+/g, ' ').trim();
+};
+const pairPage = (route) => {
+  const html = htmlPages.get(`${route.replace(/^\//, '')}index.html`);
+  if (!html) return undefined;
+  const main = html.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? '';
+  const text = (pattern) => visibleText(html.match(pattern)?.[1] ?? '').replace(/\s+/g, ' ').trim();
+  const links = [...main.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].flatMap(([, attributes, inner]) => {
+    const href = attributes.match(/\bhref="([^"]+)"/)?.[1];
+    return href ? [{ path: new URL(decodeEntities(href), new URL(route, productFacts.siteUrl)).pathname, text: anchorText(inner) }] : [];
+  });
+  return { title: text(/<title>([\s\S]*?)<\/title>/), h1: text(/<h1\b[^>]*>([\s\S]*?)<\/h1>/), links };
+};
+for (const { pages: [first, second], finding } of relatedPagePairs) {
+  const built = [first, second].map(pairPage);
+  if (built.some((page) => !page)) {
+    errors.push(`related pages ${first} and ${second} (${finding}) must both be built`);
+    continue;
+  }
+  if (built[0].title === built[1].title || built[0].h1 === built[1].h1) errors.push(`related pages ${first} and ${second} (${finding}) need their own title and H1`);
+  for (const [from, page, to] of [[first, built[0], second], [second, built[1], first]]) {
+    const anchor = relatedAnchor(to);
+    const links = page.links.filter((link) => link.path === to);
+    if (!links.length) errors.push(`${from} must link ${to} inside <main> (related pair ${finding}) with the anchor "${anchor}" from src/data/relatedPages.ts`);
+    else if (!links.some((link) => link.text.toLowerCase() === anchor.toLowerCase())) errors.push(`${from} links ${to} as ${links.map((link) => `"${link.text}"`).join(', ')}; use the anchor "${anchor}" from src/data/relatedPages.ts`);
+  }
 }
 
 if (errors.length) {

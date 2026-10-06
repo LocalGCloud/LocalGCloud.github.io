@@ -1,6 +1,7 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
+import RelatedPages from '../components/RelatedPages.astro';
 import { docsContract } from '../data/docs-contract';
 import { cliQuickStart } from '../utils/quickstart.mjs';
 import { availableServiceCount, publishedServiceCount, serviceCatalogGroups, services } from '../data/services';
@@ -141,6 +142,7 @@ const faqItems = [
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">The CLI selects a Docker data volume, manages a runtime that listens only on localhost, and exports its endpoints. Organization use must comply with the proprietary license.</p>
         </article>
       </div>
+      <div class="mt-8 reveal"><RelatedPages path="/how-to-run-google-cloud-locally/" /></div>
     </div>
   </section>
 

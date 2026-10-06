@@ -4,6 +4,7 @@ import CopyButton from '../../components/CopyButton.astro';
 import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
 import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
 import { agenticFacts, agentPromptLibrary } from '../../data/agenticFacts';
+import { relatedAnchor } from '../../data/relatedPages';
 
 const pageUrl = new URL('blog/localcloud-for-ai-agents/', productFacts.siteUrl).toString();
 const metadata = authoredBlogMetadata['localcloud-for-ai-agents'];
@@ -48,7 +49,7 @@ const structuredData = [
       </p>
       <div class="blog-actions">
         <a class="site-button site-button--primary" href="/ai/agents.md">Open /ai/agents.md</a>
-        <a href="/ai/">AI agent guide</a>
+        <a href="/ai/">{relatedAnchor('/ai/')}</a>
         <a href="/compatibility/">Compatibility</a>
       </div>
     </div>

@@ -2,6 +2,8 @@
 import LandingLayout from '../layouts/LandingLayout.astro';
 import Callout from '../components/Callout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
+import RelatedPages from '../components/RelatedPages.astro';
+import { relatedAnchor } from '../data/relatedPages';
 import { docsContract } from '../data/docs-contract';
 import { cliQuickStart } from '../utils/quickstart.mjs';
 import { auxiliaryServiceCount, availableServiceCount, primaryServiceCount, publishedServiceCount, services, serviceCatalogGroups } from '../data/services';
@@ -293,7 +295,7 @@ gcloud emulators spanner start --host-port=localhost:5386
 
       <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-base text-[var(--text-2)] reveal">
         <span>Compare in depth:</span>
-        <a href={`${base}docs/localcloud-vs-google-emulators/`} class="inline-flex min-h-11 items-center font-semibold text-[var(--accent-strong)] hover:underline">LocalCloud vs Google emulators</a>
+        <a href={`${base}docs/localcloud-vs-google-emulators/`} class="inline-flex min-h-11 items-center font-semibold text-[var(--accent-strong)] hover:underline">{relatedAnchor('/docs/localcloud-vs-google-emulators/')}</a>
         <a href={`${base}localstack-for-google-cloud/`} class="inline-flex min-h-11 items-center font-semibold text-[var(--accent-strong)] hover:underline">LocalStack for Google Cloud?</a>
       </div>
     </div>
@@ -313,6 +315,7 @@ gcloud emulators spanner start --host-port=localhost:5386
           </details>
         ))}
       </div>
+      <div class="mt-8 reveal"><RelatedPages path="/gcp-emulator/" heading="Read more" /></div>
     </div>
   </section>
 

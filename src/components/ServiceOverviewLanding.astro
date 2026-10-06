@@ -4,6 +4,7 @@ import ServiceIcon from './ServiceIcon.astro';
 import { getServiceSignalLabel, isServiceDisabledByDefault, optInStartCommand, services } from '../data/services';
 import ServiceTier from './ServiceTier.astro';
 import { serviceCompatibilityEditorial } from '../data/serviceEditorial';
+import { agentTestingPath, relatedAnchor } from '../data/relatedPages';
 import {
   createBreadcrumbSchema,
   createWebPageSchema,
@@ -108,7 +109,7 @@ const structuredData = [
         <ul class="site-list mt-5">
           {compatibility.boundaries.map((item) => <li><span>{item}</span></li>)}
         </ul>
-        <p class="mt-5 text-sm leading-7 text-[var(--text-2)]">The <a href={`${base}services/${service.slug}/`}>service guide</a> lists every documented workflow{featureReference ? <>, and the <a href={featureReference}>feature reference</a> covers each operation and recovery behavior in detail</> : ''}.</p>
+        <p class="mt-5 text-sm leading-7 text-[var(--text-2)]">The <a href={`${base}services/${service.slug}/`}>{relatedAnchor(`/services/${service.slug}/`)}</a> lists every documented workflow{featureReference ? <>, and the <a href={featureReference}>feature reference</a> covers each operation and recovery behavior in detail</> : ''}.</p>
       </article>
     </div></section>
   )}
@@ -135,8 +136,8 @@ const structuredData = [
     </div>
     <div class="mt-6 grid gap-4 md:grid-cols-3">
       {!isComingSoon && !isUnsupported && (
-        <a href={`${base}services/${service.slug}/ai-agent-local-testing/`} class="site-panel p-5 reveal transition-transform hover:-translate-y-0.5">
-          <h3 class="text-lg">{service.name} for AI agents</h3>
+        <a href={`${base}${agentTestingPath(service.slug).slice(1)}`} class="site-panel p-5 reveal transition-transform hover:-translate-y-0.5">
+          <h3 class="text-lg">{relatedAnchor(agentTestingPath(service.slug))}</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Point an AI coding agent at the local {service.name} endpoint.</p>
         </a>
       )}

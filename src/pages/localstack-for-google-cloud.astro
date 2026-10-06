@@ -8,6 +8,7 @@ import {
 } from '../data/productFacts';
 import { alternativesReviewedAt, alternativesReviewedLabel } from '../data/alternatives';
 import { availableServiceCount } from '../data/services';
+import { relatedAnchor } from '../data/relatedPages';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
@@ -180,7 +181,7 @@ const structuredData = [
           Teams building on both clouds commonly run both. The two runtimes bind different local ports and set different SDK environment variables, so they coexist in one development environment.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href={`${base}compare/localstack/`} class="site-button site-button--secondary">Full LocalCloud vs LocalStack comparison</a>
+          <a href={`${base}compare/localstack/`} class="site-button site-button--secondary">{relatedAnchor('/compare/localstack/')}</a>
           <a href={`${base}local-cloud-for-ai-agents/`} class="site-button site-button--secondary">Local cloud for AI agents</a>
           <a href={`${base}compare/`} class="site-button site-button--secondary">All comparisons</a>
         </div>

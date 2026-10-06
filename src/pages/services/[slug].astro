@@ -8,6 +8,7 @@ import { getServiceCategoryLabel, getServiceImplementationLabel, isServiceDisabl
 import ServiceTier from '../../components/ServiceTier.astro';
 import { serviceTestingPages } from '../../data/agenticContent';
 import { serviceCompatibilityEditorial } from '../../data/serviceEditorial';
+import { emulatorLandingPaths, relatedAnchor } from '../../data/relatedPages';
 import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../data/productFacts';
 import { lastModifiedForRoute } from '../../utils/page-dates.mjs';
 import { getServiceCodeExamples, officialSampleLinks, serviceGuides, terraformExampleServiceIds } from '../../data/serviceGuides';
@@ -32,18 +33,10 @@ if (!compatibility || !guide) throw new Error(`Missing service guide for ${servi
 const codeExamples = isPlanned ? [] : getServiceCodeExamples(service.id, sdkExamplesSource);
 const environmentSetup = `localcloud start --local-only${isServiceDisabledByDefault(service) ? ` --services ${service.id}` : ''}\n# Export GOOGLE_CLOUD_PROJECT and ${service.envVar.split('=')[0]}\neval "$(localcloud env)"`;
 const agentTestingPage = isPlanned ? undefined : serviceTestingPages.find((page) => page.slug === service.slug);
-const emulatorLandingSlugs: Record<string, string> = {
-  bigquery: 'bigquery-emulator',
-  bigtable: 'bigtable-emulator',
-  spanner: 'spanner-emulator',
-  pubsub: 'pubsub-emulator',
-  firestore: 'firestore-emulator',
-  'cloud-storage': 'cloud-storage-emulator',
-};
-const emulatorLanding = isPlanned ? undefined : emulatorLandingSlugs[service.slug];
+const emulatorLanding = isPlanned ? undefined : emulatorLandingPaths[service.slug];
 const exampleLinks: ServiceExampleLink[] = isPlanned ? [] : [...(guide.examples ?? [])];
 if (agentTestingPage) exampleLinks.push({
-  title: `${service.name} with an AI agent`, href: agentTestingPage.path, label: 'Agent guide',
+  title: relatedAnchor(agentTestingPage.path), href: agentTestingPage.path, label: 'Agent guide',
   description: 'Endpoint routing, a representative local check, and copyable agent prompts.',
 });
 if (terraformExampleServiceIds.includes(service.id) && !isPlanned) exampleLinks.push({
@@ -222,7 +215,7 @@ const structuredData = [
 
     <section class="site-section site-section--tight">
       <div class="container"><div class="site-panel p-6 reveal"><h2 class="mb-4 text-2xl font-semibold tracking-tight">Related guides</h2><ul class="site-list">
-        {emulatorLanding && <li><span><a href={`${base}${emulatorLanding}/`}>{service.name} emulator overview</a>: setup and FAQ.</span></li>}
+        {emulatorLanding && <li><span><a href={`${base}${emulatorLanding.slice(1)}`}>{relatedAnchor(emulatorLanding)}</a>: setup and FAQ.</span></li>}
         <li><span><a href={`${base}compatibility/`}>Compatibility</a>: compare all {publishedServiceCount} service guides.</span></li>
         {!isPlanned && <li><span><a href={`${base}docs/configuration/`}>Configuration</a>: service selection and runtime settings.</span></li>}
         {['bigquery', 'spanner', 'bigtable'].includes(service.slug) && <li><span><a href={`${base}docs/${service.slug}-emulator-features/`}>{service.name} feature reference</a>: detailed operation and recovery notes.</span></li>}
