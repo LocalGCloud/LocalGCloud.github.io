@@ -28,7 +28,7 @@ function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, sto
   const context = {
     posthogApiHost: '/ingest',
     cloudflareAnalyticsToken: token,
-    cloudflareAnalyticsEndpoint: 'https://cloudflareinsights.com/cdn-cgi/rum',
+    cloudflareAnalyticsEndpoint: '/cdn-cgi/rum',
     navigator,
     localStorage: {
       getItem: (key) => { if (storageThrows) throw new Error('SecurityError'); return storage.get(key) ?? null; },
@@ -72,7 +72,7 @@ test('analytics queues interactions, then loads PostHog and the Cloudflare beaco
   h.idle[0].callback();
   assert.deepEqual(h.srcs(), [sdkSrc, beaconSrc]);
   assert.ok(h.inserted.every((script) => script.async === true));
-  assert.deepEqual(JSON.parse(h.inserted[1]['data-cf-beacon']), { token: cloudflareToken, send: { to: 'https://cloudflareinsights.com/cdn-cgi/rum' } });
+  assert.deepEqual(JSON.parse(h.inserted[1]['data-cf-beacon']), { token: cloudflareToken, send: { to: '/cdn-cgi/rum' } });
   const config = h.context.posthog._i[0][1];
   assert.equal(config.api_host, '/ingest');
   assert.equal(config.ui_host, 'https://us.posthog.com');
@@ -188,8 +188,9 @@ test('code_copied names the closest analytics label and fires only on a successf
 test('Cloudflare analytics follows deployment configuration and supports explicit disablement', () => {
   const enabled = resolveCloudflareAnalyticsConfig();
   assert.match(enabled.token, /^[a-f0-9]{32}$/);
-  assert.equal(enabled.endpoint, 'https://cloudflareinsights.com/cdn-cgi/rum');
-  assert.deepEqual(enabled.connectOrigins, ['https://cloudflareinsights.com']);
+  // The zone token is accepted only on the proxied hostname, which connect-src 'self' covers.
+  assert.equal(enabled.endpoint, '/cdn-cgi/rum');
+  assert.deepEqual(enabled.connectOrigins, []);
   assert.equal(resolveCloudflareAnalyticsConfig({ SITE_DEPLOYMENT_TARGET: 'static' }).token, '');
   assert.deepEqual(resolveCloudflareAnalyticsConfig({ PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN: '' }).scriptOrigins, []);
   assert.deepEqual(resolveCloudflareAnalyticsConfig({ PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN: '' }).connectOrigins, []);
@@ -544,7 +545,12 @@ test('built homepage has local font preload, immediate styles, sized hero and no
     .find(([name]) => name === 'connect-src').slice(1);
   const cloudflare = resolveCloudflareAnalyticsConfig(loadEnv('production', process.cwd(), ''));
   for (const origin of cloudflare.connectOrigins) assert.ok(connectSources.includes(origin), `connect-src must allow ${origin}`);
-  if (cloudflare.token) assert.ok(connectSources.includes(new URL(cloudflare.endpoint).origin), 'connect-src must allow the beacon endpoint');
+  if (cloudflare.token) {
+    const site = 'https://local.cloud';
+    const endpointOrigin = new URL(cloudflare.endpoint, site).origin;
+    const allowed = endpointOrigin === site ? "'self'" : endpointOrigin;
+    assert.ok(connectSources.includes(allowed), `connect-src must allow the beacon endpoint (${allowed})`);
+  }
   const modal = html.match(/<div\b[^>]*id="search-modal"[^>]*>/)[0];
   const clientPath = modal.match(/data-client-src="([^"]+)"/)[1];
   const integrity = modal.match(/data-client-integrity="([^"]+)"/)[1];
