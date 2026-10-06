@@ -52,10 +52,16 @@ jobs:
         run: pnpm run test:live-seo
       - name: Test the sitemap guard
         run: pnpm run test:sitemap-guard
+      - name: Test the previous-bundle carry-over
+        run: pnpm run test:asset-manifest
       # Blocking: every URL in the live sitemap must still be built or be a _redirects
       # source. An unreachable live sitemap is a warning only.
       - name: Check that no live sitemap URL disappears
         run: node scripts/sitemap-guard.mjs check --live-url https://local.cloud/sitemap-0.xml --save "$RUNNER_TEMP/live-sitemap-0.xml"
+      # After every check: pages opened or prefetched before this deploy keep their CSS and JS
+      # for one more deploy. An unreachable live manifest is a warning only.
+      - name: Keep the previous deploy's bundles
+        run: node scripts/asset-manifest.mjs carry --live-url https://local.cloud/asset-manifest.json
       - name: Deploy site and analytics proxy to Cloudflare
         id: deployment
         uses: cloudflare/wrangler-action@v4.1.3

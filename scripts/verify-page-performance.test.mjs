@@ -169,6 +169,48 @@ test('search queues one integrity-protected client load and initializes its expl
   assert.equal(inserted.length, 1);
 });
 
+test('a search client removed by a deploy reloads the page once per session, never offline', async () => {
+  const source = readFileSync(new URL('../src/components/SearchModal.astro', import.meta.url), 'utf8');
+  const loader = source.slice(source.indexOf('  async function loadPagefind()'), source.indexOf('  function openSearch()'));
+  const run = ({ storage, onLine = true }) => {
+    const inserted = [];
+    let reloads = 0;
+    const context = {
+      pagefind: null,
+      pagefindLoading: null,
+      modal: { dataset: { base: '/', clientSrc: '/_astro/pagefind-client.old.js', clientIntegrity: 'sha256-old' } },
+      document: { createElement: () => ({}), head: { appendChild: (script) => inserted.push(script) } },
+      navigator: { onLine },
+      sessionStorage: storage,
+      console: { warn() {} },
+    };
+    context.window = context;
+    context.window.location = { reload: () => reloads++ };
+    runInNewContext(loader, context);
+    return { context, inserted, reloads: () => reloads };
+  };
+  const values = new Map();
+  const storage = { getItem: (key) => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: (key) => values.delete(key) };
+  const first = run({ storage });
+  const failed = first.context.loadPagefind();
+  first.inserted[0].onerror();
+  assert.equal(await failed, null);
+  assert.equal(first.reloads(), 1);
+  const second = run({ storage });
+  const failedAgain = second.context.loadPagefind();
+  second.inserted[0].onerror();
+  assert.equal(await failedAgain, null);
+  assert.equal(second.reloads(), 0, 'the reloaded page must not reload again');
+  const offline = run({ storage: { getItem: () => null, setItem() {} }, onLine: false });
+  offline.context.loadPagefind();
+  offline.inserted[0].onerror();
+  assert.equal(offline.reloads(), 0);
+  const blocked = run({ storage: { getItem() { throw new Error('SecurityError'); } } });
+  blocked.context.loadPagefind();
+  blocked.inserted[0].onerror();
+  assert.equal(blocked.reloads(), 0, 'without session storage the guard cannot hold, so never reload');
+});
+
 test('search renders Pagefind highlights while escaping other excerpt markup', async () => {
   const source = readFileSync(new URL('../src/components/SearchModal.astro', import.meta.url), 'utf8');
   const escaping = source.slice(source.indexOf('  function escapeHtml('), source.indexOf('  async function loadPagefind('));
