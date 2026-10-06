@@ -1,4 +1,4 @@
-import { readFile, access } from 'node:fs/promises';
+import { readFile, readdir, access } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { join } from 'node:path';
 import { expectedSearchRoutes, siteOrigin } from './search-routes.mjs';
@@ -6,6 +6,21 @@ import { expectedSearchRoutes, siteOrigin } from './search-routes.mjs';
 const distDirectory = new URL('../dist/', import.meta.url);
 const distPath = (file) => join(distDirectory.pathname, file);
 const errors = [];
+const warnings = [];
+
+// Search snippet limits for every indexable page: Google shows about 155-160
+// characters of a description and about 60 characters of a title.
+const descriptionLength = { min: 70, max: 160 };
+const titleLength = { warn: 60, max: 65 };
+// Internal QA and audit wording that reads as jargon in a search result (A9).
+const bannedMetaJargon = [
+  [/loopback/i, 'loopback'],
+  [/evidence-(?:bounded|backed|scoped|first)/i, 'evidence-* qualifiers'],
+  [/license-gated/i, 'license-gated'],
+  [/\bboundar(?:y|ies)\b/i, 'boundaries'],
+  [/\bcaveats?\b/i, 'caveats'],
+  [/unlicensed/i, 'unlicensed'],
+];
 const requiredSchemaTypes = new Map([
   ['/', ['Organization', 'Product', 'SoftwareApplication', 'FAQPage']],
   ['/gcp-emulator/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
@@ -44,10 +59,24 @@ const readRequired = async (file) => {
   }
 };
 
-const contentAttribute = (html, name) => {
-  const tag = html.match(new RegExp(`<meta\\s+[^>]*name=["']${name}["'][^>]*>`, 'i'))?.[0];
-  return tag?.match(/content=["']([^"']+)["']/i)?.[1]?.trim() ?? '';
+const decodeEntities = (text) => text
+  .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+  .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+  .replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&');
+// Astro writes attributes in double quotes and escapes quotes inside them.
+const metaContent = (html, attribute, name) => {
+  const tag = html.match(new RegExp(`<meta\\s+[^>]*${attribute}="${name}"[^>]*>`, 'i'))?.[0];
+  const value = tag?.match(/\bcontent="([^"]*)"/i)?.[1];
+  return value === undefined ? '' : decodeEntities(value).trim();
 };
+const contentAttribute = (html, name) => metaContent(html, 'name', name);
+const isNoindex = (html) => /\bnoindex\b/i.test(contentAttribute(html, 'robots'));
+
+// Every built page: dist/index.html and dist/**/index.html (404.html is not a route).
+const pageFiles = (await readdir(distDirectory, { recursive: true }))
+  .filter((file) => (file === 'index.html' || file.endsWith('/index.html')) && !file.startsWith('pagefind/'))
+  .sort();
+const routeForFile = (file) => (file === 'index.html' ? '/' : `/${file.slice(0, -'index.html'.length)}`);
 
 const jsonLdTypes = (html, route) => {
   const types = [];
@@ -80,10 +109,20 @@ const jsonLdTypes = (html, route) => {
   return types;
 };
 
+// Priority routes must be built, and their HTML pages must stay indexable.
 for (const route of expectedSearchRoutes) {
   const html = await readRequired(routeToGeneratedFile(route));
-  if (!html) continue;
-  if (!isHtmlRoute(route)) continue;
+  if (html && isHtmlRoute(route) && isNoindex(html)) errors.push(`${route.path}: unexpectedly contains noindex`);
+}
+
+const indexableRoutes = [];
+const seenTitles = new Map();
+const seenDescriptions = new Map();
+for (const file of pageFiles) {
+  const route = { path: routeForFile(file) };
+  const html = await readRequired(file);
+  if (!html || isNoindex(html)) continue;
+  indexableRoutes.push(route.path);
 
   if (route.path === '/') {
     for (const [rel, file, size] of [['icon', 'favicon.png', 96], ['apple-touch-icon', 'apple-touch-icon.png', 180]]) {
@@ -102,7 +141,7 @@ for (const route of expectedSearchRoutes) {
     }
   }
 
-  const title = html.match(/<title>([^<]+)<\/title>/i)?.[1]?.trim();
+  const title = decodeEntities(html.match(/<title>([^<]+)<\/title>/i)?.[1] ?? '').trim();
   const description = contentAttribute(html, 'description');
   const canonical = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i)?.[1];
   const h1Count = [...html.matchAll(/<h1\b/gi)].length;
@@ -114,11 +153,25 @@ for (const route of expectedSearchRoutes) {
     errors.push(`${route.path}: canonical ${canonical ?? 'missing'} does not equal ${expectedCanonical}`);
   }
   if (h1Count !== 1) errors.push(`${route.path}: expected one H1, found ${h1Count}`);
-  if (/name=["']robots["'][^>]*noindex|content=["'][^"']*noindex/i.test(html)) {
-    errors.push(`${route.path}: unexpectedly contains noindex`);
+
+  if (title.length > titleLength.max) errors.push(`${route.path}: title is ${title.length} characters (max ${titleLength.max}): ${title}`);
+  else if (title.length > titleLength.warn) warnings.push(`${route.path}: title is ${title.length} characters (aim for ${titleLength.warn} or fewer): ${title}`);
+  if ((title.match(/LocalCloud/g) ?? []).length > 1) errors.push(`${route.path}: title repeats the brand: ${title}`);
+  if (description && (description.length < descriptionLength.min || description.length > descriptionLength.max)) {
+    errors.push(`${route.path}: description is ${description.length} characters (${descriptionLength.min}-${descriptionLength.max}): ${description}`);
+  }
+  for (const [pattern, label] of bannedMetaJargon) {
+    if (pattern.test(title)) errors.push(`${route.path}: title uses audit jargon (${label}): ${title}`);
+    if (pattern.test(description)) errors.push(`${route.path}: description uses audit jargon (${label}): ${description}`);
+  }
+  for (const [value, seen, kind] of [[title, seenTitles, 'title'], [description, seenDescriptions, 'description']]) {
+    if (!value) continue;
+    if (seen.has(value)) errors.push(`${route.path}: duplicate ${kind} with ${seen.get(value)}`);
+    else seen.set(value, route.path);
   }
 
   const schemaTypes = jsonLdTypes(html, route.path);
+  if (!schemaTypes.includes('Organization')) errors.push(`${route.path}: missing Organization JSON-LD`);
   for (const type of requiredSchemaTypes.get(route.path) ?? []) {
     if (!schemaTypes.includes(type)) errors.push(`${route.path}: missing ${type} JSON-LD`);
   }
@@ -155,7 +208,7 @@ for (const url of sitemapUrls) {
   const route = { path: new URL(url).pathname };
   if (!isHtmlRoute(route)) continue;
   const html = await readRequired(routeToGeneratedFile(route));
-  if (/\bnoindex\b/i.test(contentAttribute(html, 'robots'))) {
+  if (isNoindex(html)) {
     errors.push(`${route.path}: noindex page must not appear in the sitemap`);
   }
 }
@@ -166,10 +219,14 @@ for (const route of expectedSearchRoutes) {
   if (matches !== 1) errors.push(`${route.path}: expected exactly one sitemap entry, found ${matches}`);
 }
 
+if (warnings.length) {
+  console.warn('Static SEO warnings:');
+  warnings.forEach((warning) => console.warn(`- ${warning}`));
+}
 if (errors.length) {
   console.error('Static SEO verification failed:');
   errors.forEach((error) => console.error(`- ${error}`));
   process.exitCode = 1;
 } else {
-  console.log(`Static SEO verification passed for ${expectedSearchRoutes.length} priority routes.`);
+  console.log(`Static SEO verification passed for ${indexableRoutes.length} indexable pages and ${expectedSearchRoutes.length} priority routes.`);
 }

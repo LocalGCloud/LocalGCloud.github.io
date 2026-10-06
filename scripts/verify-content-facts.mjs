@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { licenseWords } from '../src/utils/license-document.mjs';
 import { alternatives, alternativesReviewedAt, comparisonSummary } from '../src/data/alternatives.ts';
 import { docsContract } from '../src/data/docs-contract.ts';
@@ -16,7 +16,10 @@ const publicDirectory = new URL('../public/', import.meta.url);
 const publicPath = (file) => join(publicDirectory.pathname, file);
 const errors = [];
 const distDirectory = new URL('../dist/', import.meta.url);
-const files = new Set(await readdir(distDirectory, { recursive: true }));
+// Files only: a directory such as dist/docs must not satisfy a link to /docs.
+const files = new Set((await readdir(distDirectory, { recursive: true, withFileTypes: true }))
+  .filter((entry) => entry.isFile())
+  .map((entry) => relative(distDirectory.pathname, join(entry.parentPath, entry.name))));
 const htmlPages = new Map(await Promise.all([...files].filter((file) => file.endsWith('.html')).map(async (file) => [file, await readFile(new URL(file, distDirectory), 'utf8')])));
 
 // Resolve a local URL to a built file the way the asset server does, then check any #fragment.
@@ -36,6 +39,8 @@ const checkLocalLink = (file, target) => {
     ? destination
     : [...files].find((f) => f.toLowerCase() === destination.toLowerCase());
   if (!resolvedDestination) errors.push(`${file} links to missing ${target.pathname}`);
+  // A page link without its trailing slash costs a redirect hop on every visit and crawl.
+  else if (!resolvedPath && path && !path.endsWith('/')) errors.push(`${file} links to ${target.pathname} without a trailing slash; link ${target.pathname}/ instead`);
   else if (target.hash && htmlPages.has(resolvedDestination)) {
     const id = decodeURIComponent(target.hash.slice(1));
     if (!htmlPages.get(resolvedDestination).includes(`id="${id}"`)) errors.push(`${file} links to missing ${target.pathname}#${id}`);

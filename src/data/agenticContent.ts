@@ -97,7 +97,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 		eyebrow: "Claude Code sandbox",
 		title: "Claude Code GCP Sandbox with LocalCloud",
 		description:
-			"Give Claude Code a credentialless local Google Cloud sandbox with LocalCloud, Docker, localhost SDK endpoints, copyable prompts, and real-GCP validation caveats.",
+			"Give Claude Code a credentialless Google Cloud sandbox: LocalCloud in Docker, localhost SDK endpoints, copyable prompts, and a real-GCP validation step.",
 		h1: "Claude Code local GCP sandbox",
 		deck:
 			"Claude Code is strongest when it can inspect a repository, run shell commands, and verify the narrowest failing path. LocalCloud gives that terminal workflow a local GCP surface: one Docker container, standard SDKs pointed at localhost, and no default GCP account or billing project.",
@@ -151,7 +151,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 		eyebrow: "Codex-style CLI sandbox",
 		title: "Codex CLI GCP Sandbox with LocalCloud",
 		description:
-			"Use LocalCloud as a local GCP target for Codex-style terminal agents, with platform caveats, safe prompts, and localhost SDK validation.",
+			"Use LocalCloud as a local Google Cloud target for Codex-style terminal agents, with safe prompts, localhost SDK endpoints, and no cloud credentials.",
 		h1: "Codex CLI local GCP sandbox",
 		deck:
 			"For Codex-style coding CLIs, treat LocalCloud as the deterministic local cloud runtime and the CLI as the code-editing operator. The important contract is explicit: local Docker is allowed, real Google Cloud credentials are not required for default verification.",
@@ -199,7 +199,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 		eyebrow: "Cursor sandbox",
 		title: "Cursor GCP Sandbox with LocalCloud",
 		description:
-			"Point Cursor agent workflows at LocalCloud for local GCP testing with Docker, repo-aware prompts, terminal caveats, and production validation boundaries.",
+			"Point Cursor agent workflows at LocalCloud to test Google Cloud code locally with Docker, repo-aware prompts, and a clear production validation step.",
 		h1: "Cursor local GCP sandbox",
 		deck:
 			"Cursor is useful when the agent can reason over an IDE workspace and edit files quickly. LocalCloud gives those edits a concrete local GCP target so agent-written code can be exercised through Google Cloud SDKs before a human pushes to a real project.",
@@ -247,7 +247,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 		eyebrow: "Gemini CLI sandbox",
 		title: "Gemini CLI GCP Sandbox with LocalCloud",
 		description:
-			"Use LocalCloud with Gemini CLI-style terminal workflows for local Google Cloud SDK tests, with setup caveats and no-credential guardrails.",
+			"Run Gemini CLI-style terminal workflows against LocalCloud to test Google Cloud SDK code locally, with setup steps and no-credential guardrails.",
 		h1: "Gemini CLI local GCP sandbox",
 		deck:
 			"Gemini CLI-style workflows can use LocalCloud as a concrete localhost target for GCP code. The key is to separate model authentication from cloud-resource authentication: a CLI may need its own model access, but LocalCloud tests should not need Google Cloud credentials.",
@@ -288,6 +288,14 @@ export const agentSandboxPages: AgenticContentPage[] = [
 	},
 ];
 
+// Search snippets stay within 160 characters; long service and variable names drop the last clause.
+const serviceTestingDescription = (name: string, envName: string) => {
+	const full = `Let AI agents test ${name} code locally with LocalCloud: set ${envName}, use standard SDKs, and know what to validate in Google Cloud.`;
+	return full.length <= 160
+		? full
+		: `Let AI agents test ${name} code locally with LocalCloud: set ${envName} and use standard SDKs.`;
+};
+
 const servicePage = (
 	slug: string,
 	promptId: string,
@@ -301,8 +309,9 @@ const servicePage = (
 		parentLabel: service.name,
 		parentPath: `/services/${slug}/`,
 		eyebrow: `${service.name} agent testing`,
-		title: `${service.name} Agent Local Testing with LocalCloud`,
-		description: `Test ${service.name} code locally with AI agents using LocalCloud, ${service.envVar}, standard SDKs, compatibility caveats, and real-GCP validation boundaries.`,
+		// Matches the H1; parenthetical variants such as "(Redis/Valkey)" stay out of the search title.
+		title: `${service.name.replace(/\s*\(.*\)$/, "")} Local Testing for AI Agents`,
+		description: serviceTestingDescription(service.name, service.envVar.split("=")[0]),
 		h1: `${service.name} local testing for AI agents`,
 		deck: `Use LocalCloud when an agent needs to create, exercise, and reset ${service.name} resources without touching a real Google Cloud project. The same SDK code points at localhost through ${service.envVar}.`,
 		// Most services use the project-integration prompt, so drop the repeat.
@@ -538,7 +547,7 @@ export const workflowPages: AgenticContentPage[] = [
 		eyebrow: "Integration tests",
 		title: "GCP Integration Tests with LocalCloud",
 		description:
-			"Run agent-written GCP integration tests locally with LocalCloud, SDK env vars, deterministic seed data, and real-GCP release caveats.",
+			"Run agent-written GCP integration tests locally with LocalCloud, SDK environment variables, deterministic seed data, and a real-GCP release check.",
 		h1: "Local GCP integration tests for agents",
 		deck:
 			"Agent-written integration tests are safer when they run against disposable localhost services first. LocalCloud gives those tests BigQuery, Pub/Sub, Cloud Storage, Spanner, Bigtable, and more in one container.",
@@ -658,7 +667,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		eyebrow: "Comparison",
 		title: "LocalCloud vs Google Cloud Emulators for Agents",
 		description:
-			"Balanced comparison of LocalCloud and Google official emulators for agentic local GCP workflows, with sources, caveats, and where Google emulators are better.",
+			"Compare LocalCloud with Google's official emulators for agent workflows on local Google Cloud, with sources and the cases where Google's emulators fit better.",
 		h1: "LocalCloud vs Google emulators for agents",
 		deck:
 			"Google official emulators are the best source when your target service has one and you want the closest Google-maintained local surface. LocalCloud is the broader agent runtime when one workflow needs many GCP-like services, shared health, seed data, and one container.",
@@ -736,9 +745,9 @@ export const comparisonPages: AgenticContentPage[] = [
 		parentLabel: "Compare",
 		parentPath: "/compare/",
 		eyebrow: "Comparison",
-		title: "LocalCloud vs E2B and Vercel Sandboxes for GCP Agents",
+		title: "LocalCloud vs E2B and Hosted Sandboxes for GCP Agents",
 		description:
-			"Compare LocalCloud with hosted code sandboxes such as E2B and Vercel Sandbox for agent workflows, including where each alternative is better.",
+			"Compare LocalCloud with hosted code sandboxes such as E2B for agent workflows: where each one fits, and why many agent setups use both.",
 		h1: "LocalCloud vs hosted agent sandboxes",
 		deck:
 			"E2B and Vercel Sandbox isolate arbitrary code execution for agents. LocalCloud replaces Google Cloud API calls with localhost emulators for the non-production work its license permits. The products address different boundaries.",
@@ -816,7 +825,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		eyebrow: "Comparison",
 		title: "BigQuery Emulator Alternatives for Agents",
 		description:
-			"Compare LocalCloud BigQuery with standalone BigQuery emulator options and real BigQuery for agent-written pipelines, including caveats and better-fit scenarios.",
+			"Compare LocalCloud BigQuery with standalone BigQuery emulators and real BigQuery for agent-written pipelines, including when each option fits better.",
 		h1: "BigQuery emulator alternatives for agents",
 		deck:
 			"Agents writing BigQuery code need fast SQL feedback without surprise query costs. LocalCloud includes a BigQuery surface inside a broader GCP emulator runtime; standalone emulators and real BigQuery can be better depending on fidelity, scope, and deployment risk.",
@@ -905,7 +914,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		eyebrow: "Comparison",
 		title: "LocalCloud vs LocalStack for Local Cloud Development",
 		description:
-			"Compare LocalCloud and LocalStack for local cloud development and AI agent sandboxes. LocalStack emulates AWS; LocalCloud emulates Google Cloud. Includes where LocalStack is the better choice.",
+			"LocalStack emulates AWS; LocalCloud emulates Google Cloud. Compare them for local development and AI agent sandboxes, including when LocalStack fits better.",
 		h1: "LocalCloud vs LocalStack",
 		deck:
 			"LocalStack is a mature local cloud development platform for AWS. LocalCloud is a local Google Cloud runtime. They solve the same shape of problem for different clouds, so the choice usually follows the cloud your application already targets rather than a feature score.",
@@ -1019,6 +1028,28 @@ export const comparisonPages: AgenticContentPage[] = [
 	},
 ];
 
+// Emulator head terms belong to the service and /gcp-emulator/ pages; their glossary
+// entries answer the definition question instead.
+const glossaryTitles: Record<string, string> = {
+	"gcp-emulator": "What Is a GCP Emulator?",
+	"bigquery-emulator": "What Is a BigQuery Emulator?",
+	"service-emulator": "What Is a Service Emulator?",
+	"cloud-emulator": "What Is a Cloud Emulator?",
+};
+// Search snippets for definitions that run past 160 characters or open with a
+// sentence too short to stand alone.
+const glossarySummaries: Record<string, string> = {
+	"mcp-server":
+		"A Model Context Protocol (MCP) server exposes tools, resources, and prompts to AI agent clients through a structured protocol, as LocalCloud does at /mcp.",
+	"credentialless-cloud-development":
+		"A development pattern where cloud SDK calls run against localhost services, with no access to cloud accounts, service-account keys, or billing projects.",
+	"credentialless-agent-testing":
+		"Running an AI agent's generated code against local endpoints with no cloud credentials or billing project, so a mistake can't create cloud resources or charges.",
+	"agent-sandbox-vs-cloud-emulator":
+		"An agent sandbox isolates where generated code runs; a cloud emulator replaces what that code talks to. Most agent setups that handle cloud code want both.",
+};
+const firstSentence = (text: string) => text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text;
+
 const glossary = (
 	slug: string,
 	term: string,
@@ -1032,8 +1063,8 @@ const glossary = (
 	parentLabel: "Glossary",
 	parentPath: "/glossary/",
 	eyebrow: "Glossary",
-	title: `${term} — LocalCloud Glossary`,
-	description: `${term} definition for local Google Cloud, AI agent, and LocalCloud workflows, with examples, caveats, and related resources.`,
+	title: `${glossaryTitles[slug] ?? term} — LocalCloud Glossary`,
+	description: glossarySummaries[slug] ?? (definition.length <= 160 ? definition : firstSentence(definition)),
 	h1: term,
 	// Reference layout: the definition is the lede, then how the term applies in
 	// LocalCloud, then related pages. No repeated fact cards.

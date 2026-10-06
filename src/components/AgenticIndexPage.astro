@@ -21,7 +21,7 @@ const localHref = (href: string) => href.startsWith('http') ? href : `${base}${h
 const structuredData = [createBreadcrumbSchema([{ name: 'Home', url: productFacts.siteUrl }, { name: h1 }])];
 ---
 
-<LandingLayout title={`${title} — LocalCloud`} {description} {structuredData}>
+<LandingLayout title={title.includes('LocalCloud') ? title : `${title} — LocalCloud`} {description} {structuredData}>
   <section class="site-section site-section--hero">
     <div class="container">
       <div class="max-w-[54rem] reveal">

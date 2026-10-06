@@ -63,7 +63,9 @@ const pageTitle = isPlanned
   : `${service.name} Local Emulator — LocalCloud`;
 const pageDescription = isPlanned
   ? `${service.name} doesn't run in LocalCloud yet; local support is planned. Use Google Cloud for ${service.name} and read the official documentation.`
-  : `Learn what ${service.name} does, connect it to LocalCloud, and explore documented workflows, boundaries, code examples, and integrations.`;
+  : isAuxiliary
+  ? `Use the ${service.name} integration API locally with LocalCloud: connection settings, supported workflows, known limits, and code examples.`
+  : `Run ${service.name} locally with LocalCloud: connection settings, supported workflows, known limits, and code examples.`;
 const exampleHref = (href: string) => href.startsWith('/') ? `${base}${href.slice(1)}` : href;
 ---
 

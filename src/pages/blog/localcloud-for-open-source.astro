@@ -4,8 +4,10 @@ import CopyButton from '../../components/CopyButton.astro';
 import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
 import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
 
-const title = 'Bring no cost cloud service integration Testing Into Your Repository: Low Setup and Easy Contributions';
-const description = 'Run Google Cloud integration tests locally with zero cloud-resource costs and an easier contribution workflow. LocalCloud is free for open-source development and CI under the Free for open-source projects policy.';
+const title = 'Bring No-Cost Cloud Integration Testing Into Your Repository: Low Setup, Easy Contributions';
+// The search title drops the subtitle so it fits the results page.
+const searchTitle = 'Bring No-Cost Cloud Integration Testing Into Your Repository';
+const description = 'Run Google Cloud integration tests locally at zero cloud-resource cost and make contributing easier. LocalCloud is free for open-source development and CI.';
 const pageUrl = new URL('blog/localcloud-for-open-source/', productFacts.siteUrl).toString();
 const metadata = authoredBlogMetadata['localcloud-for-open-source'];
 const contents = [
@@ -44,7 +46,7 @@ const structuredData = [
 ];
 ---
 
-<BlogLayout title={`${title} — LocalCloud Blog`} {description} {structuredData} {contents}>
+<BlogLayout title={searchTitle} {description} {structuredData} {contents}>
   <Fragment slot="hero">
     <article class="site-section site-section--hero">
       <div class="container container--narrow">
