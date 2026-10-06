@@ -8,10 +8,6 @@ import { relatedAnchor } from '../data/relatedPages';
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
-const platforms = [
-  { name: 'Google Cloud (LocalCloud)', services: String(availableServiceCount), popular: 'Available local services with documented workflows' },
-];
-
 // A summary of the catalog, not a second copy of it: how many services run locally in
 // each category, in the shared catalog order. /services/ lists them.
 const serviceGroups = serviceCatalogGroups
@@ -30,7 +26,7 @@ const faqItems = [
   },
   {
     q: 'Do I need different tools for each cloud?',
-    a: 'Usually, yes: each cloud has its own local tools. LocalStack covers AWS and LocalCloud covers Google Cloud. This guide covers LocalCloud.',
+    a: "Yes. Each cloud's SDKs call that provider's APIs, so each cloud needs its own local emulator: LocalStack for AWS and LocalCloud for Google Cloud. The two bind different local ports and set different SDK environment variables, so a team that builds on both clouds can run them side by side.",
   },
   {
     q: 'Can I use LocalCloud in CI/CD?',
@@ -41,45 +37,25 @@ const faqItems = [
     a: 'Yes. Local emulation covers documented local workflows and does not reproduce every production behavior. Run final validation against real Google Cloud.',
   },
 ];
+
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+];
 ---
 
 <LandingLayout
   title="Local Google Cloud Development Guide — LocalCloud"
   description="Local Google Cloud development with LocalCloud: run services on your machine, keep data between restarts, and validate in Google Cloud before release."
+  {structuredData}
 >
-  <script type="application/ld+json" is:inline>
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is local cloud development?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Local cloud development means running cloud service emulators on your local machine instead of connecting to remote cloud APIs. Developers use local versions of S3, DynamoDB, BigQuery, Cloud Storage, and other services during development and testing."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Which cloud platforms support local development?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "This guide validates LocalCloud behavior only."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Do I need different tools for each cloud?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Usually, yes: each cloud has its own local tools. LocalStack covers AWS and LocalCloud covers Google Cloud. This guide covers LocalCloud."
-      }
-    }
-  ]
-}
-  </script>
-
   {/* HERO */}
   <section class="site-section site-section--hero">
     <div class="container">
@@ -91,7 +67,7 @@ const faqItems = [
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href="#gcp" class="site-button site-button--primary">Google Cloud setup</a>
-          <a href="#comparison" class="site-button site-button--secondary">Compare platforms</a>
+          <a href="#best-practices" class="site-button site-button--secondary">Best practices</a>
         </div>
       </div>
     </div>
@@ -105,40 +81,6 @@ const faqItems = [
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
           Local emulation provides a controlled inner loop, but does not reproduce production latency, IAM, quotas, or every API behavior. Runtime telemetry and configured features can make outbound requests.
         </p>
-      </div>
-    </div>
-  </section>
-
-  {/* PLATFORM COMPARISON */}
-  <section class="site-section" id="comparison">
-    <div class="container">
-      <div class="reveal">
-        <h2>Local cloud emulators by platform</h2>
-        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          This page focuses on LocalCloud. Consult each vendor's current documentation when comparing other local cloud tools.
-        </p>
-      </div>
-      <div class="mt-8 overflow-x-auto reveal" tabindex="0" role="region" aria-label="Local cloud platform comparison">
-        <table class="w-full text-left text-sm">
-          <thead class="border-b border-[var(--line)]">
-            <tr>
-              <th class="py-3 font-semibold text-[var(--text)]">Platform</th>
-              <th class="py-3 font-semibold text-[var(--text)]">Tool</th>
-              <th class="py-3 font-semibold text-[var(--text)]">Services</th>
-              <th class="py-3 font-semibold text-[var(--text)]">Popular Services</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-[var(--line)]">
-            {platforms.map(p => (
-              <tr>
-                <td class="py-3 text-[var(--text)]">{p.name}</td>
-                <td class="py-3 text-[var(--text-2)] font-mono text-xs">{p.name.includes('AWS') ? 'LocalStack' : p.name.includes('Google') ? 'LocalCloud' : 'Azurite'}</td>
-                <td class="py-3 text-[var(--accent-strong)]">{p.services}</td>
-                <td class="py-3 text-[var(--text-2)] text-xs">{p.popular}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   </section>
@@ -193,7 +135,7 @@ const faqItems = [
   </section>
 
   {/* BEST PRACTICES */}
-  <section class="site-section">
+  <section class="site-section" id="best-practices">
     <div class="container">
       <div class="reveal">
         <h2>Best practices for local cloud development</h2>
