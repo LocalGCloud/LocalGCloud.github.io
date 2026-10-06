@@ -33,6 +33,8 @@ Update checks, license validation where enforced, live-cloud authentication, and
 
 We use basic web analytics to understand visits, usage, and performance. Analytics providers collect the browser, device, network, and interaction details needed to provide these services. Search text and feedback you submit may also be recorded to improve the documentation.
 
+When someone downloads the install script from `local.cloud/install.sh`, the site's Cloudflare Worker sends PostHog one `install_script_fetched` event with a random one-time identifier, the downloading tool (curl, wget, or other), the country Cloudflare derives from the request, and, when the download was linked from a local.cloud page, that page's path. It does not send the IP address or create a person profile.
+
 Please do not include secrets, credentials, personal data, or customer data in search or feedback fields. The runtime telemetry setting does not control website analytics; the website currently has no built-in analytics opt-out.
 
 ## Contact
