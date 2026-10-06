@@ -1,12 +1,14 @@
 import type { AgenticContentPage } from './agenticContent';
 import { agentPromptLibrary } from './agenticFacts';
 
-// Dates and read times for individually authored articles.
-export const authoredBlogMetadata = {
-  'localcloud-for-open-source': { publishedAt: '2026-10-04', minutes: 7, topic: 'Open source' },
-  'localcloud-for-ai-agents': { publishedAt: '2026-07-02', minutes: 4, topic: 'AI agents' },
-  'run-dataproc-locally-docker': { publishedAt: '2026-10-01', minutes: 6, topic: 'Data engineering' },
-} as const;
+import authoredBlogPosts from './blogMetadata.json';
+
+// Dates and read times for individually authored articles. The JSON is shared with the
+// sitemap lastmod helper (src/utils/page-dates.mjs); add updatedAt when a post materially changes.
+export const authoredBlogMetadata: Record<
+  keyof typeof authoredBlogPosts,
+  { publishedAt: string; updatedAt?: string; minutes: number; topic: string }
+> = authoredBlogPosts;
 
 const blogTopics: Record<string, string> = {
   'claude-code-local-gcp-sandbox': 'AI agents',

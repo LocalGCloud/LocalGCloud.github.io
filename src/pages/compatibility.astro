@@ -1,20 +1,22 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import { docsContract } from '../data/docs-contract';
-import { createBreadcrumbSchema, createSoftwareApplicationSchema, productFacts } from '../data/productFacts';
+import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../data/productFacts';
 import { serviceCompatibilityEditorial } from '../data/serviceEditorial';
 import { publishedServiceCount, services } from '../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const pageUrl = new URL('compatibility/', productFacts.siteUrl).toString();
+const title = `LocalCloud Compatibility — ${publishedServiceCount} Services`;
+const description = `See what runs locally for each of ${publishedServiceCount} LocalCloud services, including Spanner, BigQuery, and Bigtable: capabilities, API ports, and known limits.`;
 const structuredData = [
-  createSoftwareApplicationSchema(pageUrl, `Local capabilities and boundaries for ${publishedServiceCount} LocalCloud service guides.`),
+  createWebPageSchema({ url: pageUrl, name: title, description }),
   createBreadcrumbSchema([{ name: 'Home', url: productFacts.siteUrl }, { name: 'Compatibility', url: pageUrl }]),
 ];
 ---
 
-<LandingLayout title={`LocalCloud Compatibility — ${publishedServiceCount} Services`} description={`See what runs locally for each of ${publishedServiceCount} LocalCloud services, including Spanner, BigQuery, and Bigtable: capabilities, API ports, and known limits.`} {structuredData}>
+<LandingLayout {title} {description} {structuredData}>
   <section class="site-section site-section--hero">
     <div class="container"><div class="max-w-[54rem] reveal">
       <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Supported services</span>

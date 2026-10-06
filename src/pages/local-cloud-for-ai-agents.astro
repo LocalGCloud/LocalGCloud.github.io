@@ -6,7 +6,7 @@ import { agenticFacts } from '../data/agenticFacts';
 import { availableServiceCount } from '../data/services';
 import {
   createBreadcrumbSchema,
-  createSoftwareApplicationSchema,
+  createWebPageSchema,
   productFacts,
 } from '../data/productFacts';
 
@@ -88,11 +88,10 @@ const faqItems = [
   },
 ];
 
+const title = 'Local Cloud for AI Agents — Credentialless GCP Sandbox';
+const description = 'Code sandboxes isolate where an AI agent runs. LocalCloud gives that code local Google Cloud APIs on localhost, with no credentials or billing by default.';
 const structuredData = [
-  createSoftwareApplicationSchema(
-    pageUrl,
-    'LocalCloud gives AI coding agents a local Google Cloud API target so agent-written cloud code runs without credentials, a billing project, or real cloud side effects.',
-  ),
+  createWebPageSchema({ url: pageUrl, name: title, description }),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'Local Cloud for AI Agents', url: pageUrl },
@@ -117,8 +116,8 @@ const agentPages = [
 ---
 
 <LandingLayout
-  title="Local Cloud for AI Agents — Credentialless GCP Sandbox"
-  description="Code sandboxes isolate where an AI agent runs. LocalCloud gives that code local Google Cloud APIs on localhost, with no credentials or billing by default."
+  {title}
+  {description}
   {structuredData}
 >
   <!-- HERO -->

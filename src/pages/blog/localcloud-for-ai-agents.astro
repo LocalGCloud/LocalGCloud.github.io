@@ -2,11 +2,7 @@
 import BlogLayout from '../../layouts/BlogLayout.astro';
 import CopyButton from '../../components/CopyButton.astro';
 import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
-import {
-  createBreadcrumbSchema,
-  createSoftwareApplicationSchema,
-  productFacts,
-} from '../../data/productFacts';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
 import { agenticFacts, agentPromptLibrary } from '../../data/agenticFacts';
 
 const pageUrl = new URL('blog/localcloud-for-ai-agents/', productFacts.siteUrl).toString();
@@ -23,27 +19,13 @@ const quickstartPrompt = agentPromptLibrary.find((prompt) => prompt.id === 'quic
 const quickStart = agenticFacts.cliQuickStart;
 const startCommands = quickStart.lines.slice(0, quickStart.lines.indexOf(quickStart.readiness));
 
+// BlogLayout adds the BlogPosting node from the article dates.
 const structuredData = [
-  createSoftwareApplicationSchema(
-    pageUrl,
-    'LocalCloud gives AI coding agents a safe local Google Cloud target: Docker runtime, localhost SDK endpoints, raw Markdown instructions, Agent Skills, and MCP tooling boundaries.',
-  ),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
     { name: 'LocalCloud for AI Agents', url: pageUrl },
   ]),
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: 'LocalCloud for AI Agents',
-    datePublished: publishDate,
-    dateModified: publishDate,
-    author: { '@type': 'Organization', name: 'LocalCloud' },
-    publisher: { '@type': 'Organization', name: 'LocalCloud' },
-    mainEntityOfPage: pageUrl,
-    description: 'How LocalCloud turns local Google Cloud development into an agent-safe workflow with no default GCP credentials and explicit production validation boundaries.',
-  },
 ];
 ---
 
@@ -52,7 +34,7 @@ const structuredData = [
   description="July 2026 announcement: LocalCloud gives coding agents a local Google Cloud sandbox with localhost SDK endpoints, Markdown instructions, and Agent Skills."
   structuredData={structuredData}
   {contents}
-  article={{ publishedAt: publishDate }}
+  article={{ publishedAt: publishDate, headline: 'LocalCloud for AI Agents' }}
 >
   <Fragment slot="hero">
   <article class="site-section site-section--hero">

@@ -26,27 +26,17 @@ Start with one existing test that contributors currently need a Google Cloud acc
 Create one launcher for laptops and CI. Pin a LocalCloud image version or digest, enable only the required services, wait for readiness, provision a local project, configure the documented localhost SDK endpoints and test credentials, and run the selected test with disposable data. Clean up on success and failure. Do not use real Google Cloud credentials or fall back to live endpoints.
 
 Document the command and prerequisites in CONTRIBUTING.md. Keep the existing cloud validation job. Add an opt-in CI job once the local workflow passes, and report exactly which application behavior was tested.`;
+// BlogLayout adds the BlogPosting node from the article dates.
 const structuredData = [
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
     { name: title, url: pageUrl },
   ]),
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: title,
-    datePublished: metadata.publishedAt,
-    dateModified: metadata.publishedAt,
-    author: { '@type': 'Organization', name: 'LocalCloud' },
-    publisher: { '@type': 'Organization', name: 'LocalCloud' },
-    mainEntityOfPage: pageUrl,
-    description,
-  },
 ];
 ---
 
-<BlogLayout title={searchTitle} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt }}>
+<BlogLayout title={searchTitle} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
   <Fragment slot="hero">
     <article class="site-section site-section--hero">
       <div class="container container--narrow">

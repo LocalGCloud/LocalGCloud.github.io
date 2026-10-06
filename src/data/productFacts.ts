@@ -1,5 +1,5 @@
 import { docsContract } from "./docs-contract.ts";
-import { availableServiceCount } from "./services.ts";
+import { availableServiceCount, isServiceSupported, services } from "./services.ts";
 
 export type CompatibilityStatus =
 	| "supported"
@@ -62,10 +62,19 @@ export const productFacts = {
 
 export type JsonLd = Record<string, unknown>;
 
+// Stable node ids: the company is described on every page and the product on / and
+// /pricing/; every other page refers to both instead of repeating them.
+export const organizationId = new URL("#org", productFacts.siteUrl).toString();
+export const productId = new URL("#localcloud", productFacts.siteUrl).toString();
+const organizationReference = { "@id": organizationId };
+const productReference = { "@id": productId };
+// The raster share card (public/brand/localcloud-social-card.png) doubles as the article image.
+export const socialCardUrl = new URL("/brand/localcloud-social-card.png", productFacts.siteUrl).toString();
+
 export const organizationSchema: JsonLd = {
 	"@context": "https://schema.org",
 	"@type": "Organization",
-	"@id": new URL("#org", productFacts.siteUrl).toString(),
+	"@id": organizationId,
 	name: productFacts.companyName,
 	legalName: productFacts.companyName,
 	url: productFacts.siteUrl,
@@ -99,20 +108,62 @@ export const organizationSchema: JsonLd = {
 	sameAs: [productFacts.githubOrganizationUrl, productFacts.cliRepositoryUrl, productFacts.dockerHubUrl],
 };
 
-export const createSoftwareApplicationSchema = (
-	url: string,
-	description: string,
-): JsonLd => ({
-	"@context": "https://schema.org",
-	"@type": "SoftwareApplication",
-	name: productFacts.name,
-	applicationCategory: "DeveloperApplication",
-	applicationSubCategory: productFacts.category,
-	operatingSystem: "Docker",
+// A page about LocalCloud, published by LocalCloud Inc. Use type "TechArticle" for guides
+// and references; "WebPage" for landing, comparison and definition pages.
+export const createWebPageSchema = ({
 	url,
+	name,
 	description,
-	downloadUrl: `https://hub.docker.com/r/${productFacts.dockerImageRepository}`,
-	license: new URL(productFacts.licensePath, productFacts.siteUrl).toString(),
+	type = "WebPage",
+	dateModified,
+}: {
+	url: string;
+	name: string;
+	description: string;
+	type?: "WebPage" | "TechArticle";
+	dateModified?: string;
+}): JsonLd => ({
+	"@context": "https://schema.org",
+	"@type": type,
+	"@id": `${url}#webpage`,
+	url,
+	...(type === "TechArticle"
+		? { headline: name, mainEntityOfPage: url, author: organizationReference, image: socialCardUrl }
+		: { name }),
+	description,
+	inLanguage: "en",
+	about: productReference,
+	publisher: organizationReference,
+	...(dateModified ? { dateModified } : {}),
+});
+
+export const createBlogPostingSchema = ({
+	url,
+	headline,
+	description,
+	datePublished,
+	dateModified,
+}: {
+	url: string;
+	headline: string;
+	description: string;
+	datePublished: string;
+	dateModified: string;
+}): JsonLd => ({
+	"@context": "https://schema.org",
+	"@type": "BlogPosting",
+	"@id": `${url}#article`,
+	headline,
+	description,
+	url,
+	mainEntityOfPage: url,
+	image: socialCardUrl,
+	datePublished,
+	dateModified,
+	inLanguage: "en",
+	author: organizationReference,
+	publisher: organizationReference,
+	about: productReference,
 });
 
 export const publicPreviewPricing = {
@@ -127,22 +178,29 @@ export const publicPreviewPriceLabel = `${new Intl.NumberFormat("en-US", {
 	maximumFractionDigits: 2,
 }).format(Number(publicPreviewPricing.price))} ${publicPreviewPricing.priceCurrency}`;
 
-// Share the same product and public-preview offer on the homepage and pricing page.
+// Services above the community tier. Public-preview release images disable tier
+// enforcement and the preview grant covers all of LocalCloud, so they are free as well.
+const proTierServiceNames = services
+	.filter((service) => service.minTier === "pro" && isServiceSupported(service))
+	.map((service) => service.name);
+const proTierServiceList = new Intl.ListFormat("en-US", { style: "long", type: "conjunction" }).format(proTierServiceNames);
+
+// The one full product entity, published on the homepage and pricing page only.
 export const localCloudProductSchema: JsonLd = {
-	...createSoftwareApplicationSchema(
-		productFacts.siteUrl,
-		`LocalCloud is a local Google Cloud emulator for developers, CI pipelines and AI coding agents: one Docker container that serves ${productFacts.serviceCountLabel} Google Cloud services on localhost for development, testing, CI, evaluation, and internal pilots.`,
-	),
+	"@context": "https://schema.org",
 	"@type": ["Product", "SoftwareApplication"],
-	"@id": new URL("#localcloud", productFacts.siteUrl).toString(),
-	image: new URL(
-		"/illustrations/hero-laptop-service-grid.svg",
-		productFacts.siteUrl,
-	).toString(),
-	brand: {
-		"@type": "Brand",
-		name: productFacts.companyName,
-	},
+	"@id": productId,
+	name: productFacts.name,
+	url: productFacts.siteUrl,
+	description: `LocalCloud is a local Google Cloud emulator for developers, CI pipelines and AI coding agents: one Docker container that serves ${productFacts.serviceCountLabel} Google Cloud services on localhost for development, testing, CI, evaluation, and internal pilots.`,
+	applicationCategory: "DeveloperApplication",
+	applicationSubCategory: productFacts.category,
+	operatingSystem: "Docker",
+	downloadUrl: `https://hub.docker.com/r/${productFacts.dockerImageRepository}`,
+	license: new URL(productFacts.licensePath, productFacts.siteUrl).toString(),
+	image: socialCardUrl,
+	brand: organizationReference,
+	publisher: organizationReference,
 	category: productFacts.category,
 	softwareRequirements: "Docker",
 	featureList: [
@@ -160,8 +218,7 @@ export const localCloudProductSchema: JsonLd = {
 		price: publicPreviewPricing.price,
 		priceCurrency: publicPreviewPricing.priceCurrency,
 		availability: "https://schema.org/InStock",
-		description:
-			"Free to use during public preview for local development, testing, CI, evaluation, and internal pilots. No payment method or license key required. Customer-facing production use, resale, hosting as a service, redistribution, and sublicensing are excluded.",
+		description: `Free to use during public preview for local development, testing, CI, evaluation, and internal pilots, including the Pro-tier services (${proTierServiceList}). No payment method or license key required. Customer-facing production use, resale, hosting as a service, redistribution, and sublicensing are excluded.`,
 	},
 };
 

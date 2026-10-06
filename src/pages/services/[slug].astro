@@ -8,6 +8,8 @@ import { getServiceCategoryLabel, getServiceImplementationLabel, isServiceDisabl
 import ServiceTier from '../../components/ServiceTier.astro';
 import { serviceTestingPages } from '../../data/agenticContent';
 import { serviceCompatibilityEditorial } from '../../data/serviceEditorial';
+import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../data/productFacts';
+import { lastModifiedForRoute } from '../../utils/page-dates.mjs';
 import { getServiceCodeExamples, officialSampleLinks, serviceGuides, terraformExampleServiceIds } from '../../data/serviceGuides';
 import sdkExamplesSource from '../docs/sdk-examples.mdx?raw';
 import type { ServiceExampleLink } from '../../data/serviceGuides';
@@ -67,18 +69,18 @@ const pageDescription = isPlanned
   ? `Use the ${service.name} integration API locally with LocalCloud: connection settings, supported workflows, known limits, and code examples.`
   : `Run ${service.name} locally with LocalCloud: connection settings, supported workflows, known limits, and code examples.`;
 const exampleHref = (href: string) => href.startsWith('/') ? `${base}${href.slice(1)}` : href;
+const pageUrl = new URL(`services/${service.slug}/`, productFacts.siteUrl).toString();
+const structuredData = [
+  createWebPageSchema({ type: 'TechArticle', url: pageUrl, name: pageTitle, description: pageDescription, dateModified: lastModifiedForRoute(`/services/${service.slug}/`) }),
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Services', url: new URL('services/', productFacts.siteUrl).toString() },
+    { name: service.name, url: pageUrl },
+  ]),
+];
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
-  <script type="application/ld+json" set:html={JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: `LocalCloud ${service.name} service guide`,
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Linux (Docker)',
-    description: pageDescription,
-    url: `https://local.cloud/services/${service.slug}/`,
-  })} />
+<BaseLayout title={pageTitle} description={pageDescription} {structuredData}>
   <Header />
   <main id="main-content" class="site-page">
     <section class="site-section site-section--hero">

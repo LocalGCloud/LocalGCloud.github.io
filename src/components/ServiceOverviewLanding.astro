@@ -6,7 +6,7 @@ import ServiceTier from './ServiceTier.astro';
 import { serviceCompatibilityEditorial } from '../data/serviceEditorial';
 import {
   createBreadcrumbSchema,
-  createSoftwareApplicationSchema,
+  createWebPageSchema,
   productFacts,
 } from '../data/productFacts';
 
@@ -62,8 +62,10 @@ const faqItems = isUnsupported || isComingSoon
       },
     ];
 
+const pageTitle = isUnsupported || isComingSoon ? `${service.name} — Unsupported in LocalCloud` : title;
+const pageDescription = isUnsupported ? service.description : description;
 const structuredData = [
-  createSoftwareApplicationSchema(pageUrl, isUnsupported ? service.description : description),
+  createWebPageSchema({ url: pageUrl, name: pageTitle, description: pageDescription }),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'Services', url: new URL('services/', productFacts.siteUrl).toString() },
@@ -81,7 +83,7 @@ const structuredData = [
 ];
 ---
 
-<LandingLayout title={isUnsupported || isComingSoon ? `${service.name} — Unsupported in LocalCloud` : title} description={isUnsupported ? service.description : description} {structuredData}>
+<LandingLayout title={pageTitle} description={pageDescription} {structuredData}>
   <section class="site-section site-section--hero"><div class="container"><div class="max-w-[52rem] reveal">
     <div class="flex items-center gap-4"><span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--surface)]"><ServiceIcon iconId={service.iconId} name={service.name} size={44} /></span><span class:list={['site-chip', isUnsupported || isComingSoon ? 'site-chip--warn' : 'site-chip--accent']}>{getServiceSignalLabel(service)}</span></div>
     <h1 class="mt-6">{isUnsupported || isComingSoon ? `${service.name} is unsupported in LocalCloud` : `Run ${service.name} workflows locally`}</h1>

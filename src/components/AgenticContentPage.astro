@@ -4,7 +4,8 @@ import BlogLayout from '../layouts/BlogLayout.astro';
 import { getBlogMetadata, formatBlogDate } from '../data/blogPresentation';
 import CopyButton from './CopyButton.astro';
 import { agentPromptLibrary } from '../data/agenticFacts';
-import { createBreadcrumbSchema, createSoftwareApplicationSchema, productFacts } from '../data/productFacts';
+import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../data/productFacts';
+import { lastModifiedForRoute } from '../utils/page-dates.mjs';
 import type { AgenticContentPage } from '../data/agenticContent';
 
 interface Props {
@@ -35,8 +36,19 @@ const localHref = (href: string) => href.startsWith('http') ? href : `${base}${h
 const pageUrl = new URL(page.path, productFacts.siteUrl).toString();
 // Add the brand once: titles that already name LocalCloud (and glossary titles) keep it as is.
 const documentTitle = page.title.includes('LocalCloud') ? page.title : `${page.title} — LocalCloud`;
+// Setup guides are technical articles; comparisons and definitions are web pages. Blog posts
+// get their BlogPosting node from BlogLayout.
+const isGuide = page.kind === 'agent' || page.kind === 'service' || page.kind === 'workflow';
 const structuredData = [
-  createSoftwareApplicationSchema(pageUrl, page.description),
+  ...(isBlog
+    ? []
+    : [createWebPageSchema({
+        type: isGuide ? 'TechArticle' : 'WebPage',
+        url: pageUrl,
+        name: page.title,
+        description: page.description,
+        dateModified: isGuide ? lastModifiedForRoute(page.path) : undefined,
+      })]),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: page.parentLabel, url: new URL(page.parentPath, productFacts.siteUrl).toString() },
@@ -45,7 +57,7 @@ const structuredData = [
 ];
 ---
 
-<Layout title={documentTitle} description={page.description} {structuredData} {contents} {...(blogMetadata?.date ? { article: { publishedAt: blogMetadata.date } } : {})}>
+<Layout title={documentTitle} description={page.description} {structuredData} {contents} {...(blogMetadata?.date ? { article: { publishedAt: blogMetadata.date, headline: page.title } } : {})}>
   <Fragment slot="hero">
   <section class="site-section site-section--hero">
     <div class="container">

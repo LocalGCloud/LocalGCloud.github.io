@@ -3,7 +3,7 @@ import LandingLayout from '../layouts/LandingLayout.astro';
 import Callout from '../components/Callout.astro';
 import {
   createBreadcrumbSchema,
-  createSoftwareApplicationSchema,
+  createWebPageSchema,
   productFacts,
 } from '../data/productFacts';
 import { alternativesReviewedAt, alternativesReviewedLabel } from '../data/alternatives';
@@ -63,11 +63,10 @@ const faqSchema = {
   })),
 };
 
+const title = 'LocalStack for Google Cloud? Meet LocalCloud';
+const description = 'Looking for a LocalStack-style local runtime for Google Cloud? LocalCloud runs Google Cloud services in Docker. Compare services, SDK setup, and license terms.';
 const structuredData = [
-  createSoftwareApplicationSchema(
-    pageUrl,
-    'LocalCloud is a local Google Cloud runtime for non-production uses permitted by its proprietary Public Preview License.',
-  ),
+  createWebPageSchema({ url: pageUrl, name: title, description }),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'LocalStack for Google Cloud', url: pageUrl },
@@ -77,8 +76,8 @@ const structuredData = [
 ---
 
 <LandingLayout
-  title="LocalStack for Google Cloud? Meet LocalCloud"
-  description="Looking for a LocalStack-style local runtime for Google Cloud? LocalCloud runs Google Cloud services in Docker. Compare services, SDK setup, and license terms."
+  {title}
+  {description}
   {structuredData}
 >
   <section class="site-section site-section--hero">

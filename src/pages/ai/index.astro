@@ -10,7 +10,7 @@ import {
   agentPromptLibrary,
 } from '../../data/agenticFacts';
 import { agentsMdTemplate } from '../../data/agenticMarkdown';
-import { createBreadcrumbSchema, createSoftwareApplicationSchema, productFacts } from '../../data/productFacts';
+import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../data/productFacts';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
@@ -49,21 +49,20 @@ const isSupported = (service: (typeof agenticServiceMetadata)[number]) => servic
 const supportedCount = agenticServiceMetadata.filter(isSupported).length;
 const unsupportedCount = agenticServiceMetadata.length - supportedCount;
 
+const title = 'LocalCloud Agent Resources: AGENTS.md Template and Prompts';
+const description = 'Everything an AI coding agent needs to use LocalCloud: an AGENTS.md template, copyable prompts, raw Markdown docs, and localhost SDK setup.';
 const structuredData = [
-  createSoftwareApplicationSchema(
-    `${productFacts.siteUrl}ai/`,
-    'Agent-facing LocalCloud guide for running Google Cloud SDKs against localhost safely.',
-  ),
+  createWebPageSchema({ url: `${productFacts.siteUrl}ai/`, name: title, description }),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
-    { name: 'AI agent guide', url: `${productFacts.siteUrl}ai/` },
+    { name: 'Agent resources', url: `${productFacts.siteUrl}ai/` },
   ]),
 ];
 ---
 
 <BaseLayout
-  title="LocalCloud Agent Resources: AGENTS.md Template and Prompts"
-  description="Everything an AI coding agent needs to use LocalCloud: an AGENTS.md template, copyable prompts, raw Markdown docs, and localhost SDK setup."
+  {title}
+  {description}
   structuredData={structuredData}
 >
   <Header />

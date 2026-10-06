@@ -7,7 +7,7 @@ import { cliQuickStart } from '../utils/quickstart.mjs';
 import { auxiliaryServiceCount, availableServiceCount, primaryServiceCount, publishedServiceCount, services, serviceCategoryOrder, serviceCategoryMeta } from '../data/services';
 import {
   createBreadcrumbSchema,
-  createSoftwareApplicationSchema,
+  createWebPageSchema,
   productFacts,
 } from '../data/productFacts';
 
@@ -52,11 +52,10 @@ const faqItems = [
 ];
 
 const pageUrl = new URL('gcp-emulator/', productFacts.siteUrl).toString();
+const title = 'GCP Emulator — Run Google Cloud Services Locally in Docker';
+const description = `Run ${availableServiceCount} services locally in one Docker container with LocalCloud. Install the CLI, export localhost SDK endpoints, and check each service's workflows.`;
 const structuredData = [
-  createSoftwareApplicationSchema(
-    pageUrl,
-    'LocalCloud runs bounded Google Cloud service workflows locally in Docker for non-production development, testing, CI, evaluation, and internal pilots.',
-  ),
+  createWebPageSchema({ url: pageUrl, name: title, description }),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'GCP Emulator', url: pageUrl },
@@ -77,8 +76,8 @@ const structuredData = [
 ---
 
 <LandingLayout
-  title="GCP Emulator — Run Google Cloud Services Locally in Docker"
-  description={`Run ${availableServiceCount} services locally in one Docker container with LocalCloud. Install the CLI, export localhost SDK endpoints, and check each service's workflows.`}
+  {title}
+  {description}
   {structuredData}
 >
   <!-- HERO -->

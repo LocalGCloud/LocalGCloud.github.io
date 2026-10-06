@@ -12,6 +12,7 @@ const structuredData = [
     url: pageUrl,
     name: 'About LocalCloud Inc.',
     about: { '@id': new URL('#org', productFacts.siteUrl).toString() },
+    publisher: { '@id': new URL('#org', productFacts.siteUrl).toString() },
   },
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },

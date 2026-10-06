@@ -21,20 +21,37 @@ const bannedMetaJargon = [
   [/\bcaveats?\b/i, 'caveats'],
   [/unlicensed/i, 'unlicensed'],
 ];
+// The full product entity (Product + SoftwareApplication with offers) lives on / and
+// /pricing/ only; every other page is a WebPage, TechArticle or BlogPosting about it.
 const requiredSchemaTypes = new Map([
   ['/', ['Organization', 'Product', 'SoftwareApplication', 'FAQPage']],
-  ['/gcp-emulator/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
-  ['/localstack-for-google-cloud/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
-  ['/compatibility/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
-  ['/pricing/', ['Organization', 'BreadcrumbList', 'Product']],
-  ['/local-cloud-for-ai-agents/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
-  ['/compare/localstack/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
+  ['/gcp-emulator/', ['Organization', 'WebPage', 'FAQPage', 'BreadcrumbList']],
+  ['/localstack-for-google-cloud/', ['Organization', 'WebPage', 'FAQPage', 'BreadcrumbList']],
+  ['/compatibility/', ['Organization', 'WebPage', 'BreadcrumbList']],
+  ['/pricing/', ['Organization', 'BreadcrumbList', 'Product', 'SoftwareApplication']],
+  ['/ai/', ['Organization', 'WebPage', 'BreadcrumbList']],
+  ['/local-cloud-for-ai-agents/', ['Organization', 'WebPage', 'FAQPage', 'BreadcrumbList']],
+  ['/compare/localstack/', ['Organization', 'WebPage', 'BreadcrumbList']],
   ['/license/', ['Organization', 'WebPage', 'BreadcrumbList']],
   ['/contact/', ['Organization', 'ContactPage', 'BreadcrumbList']],
   ['/security/', ['Organization', 'WebPage', 'BreadcrumbList']],
   ['/about/', ['Organization', 'AboutPage', 'BreadcrumbList']],
   ['/changelog/', ['Organization', 'WebPage', 'BreadcrumbList']],
 ]);
+
+// Required types by page family, on top of the route list above.
+const schemaFamilies = [
+  [/^\/blog\/[^/]+\/$/, ['BlogPosting', 'BreadcrumbList']],
+  [/^\/services\/[^/]+\/(?:ai-agent-local-testing\/)?$/, ['TechArticle', 'BreadcrumbList']],
+  [/^\/(?:agents|workflows)\/[^/]+\/$/, ['TechArticle', 'BreadcrumbList']],
+  [/^\/(?:compare|glossary)\/[^/]+\/$/, ['WebPage', 'BreadcrumbList']],
+  [/^\/(?:bigquery|bigtable|cloud-storage|firestore|pubsub|spanner)-emulator\/$/, ['WebPage', 'BreadcrumbList']],
+  [/^\/docs\//, ['TechArticle']],
+];
+const productPages = new Set(['/', '/pricing/']);
+const productId = `${siteOrigin}/#localcloud`;
+const pageNodeTypes = ['WebPage', 'TechArticle', 'BlogPosting', 'AboutPage', 'ContactPage'];
+const isoDate = /^\d{4}-\d{2}-\d{2}/;
 
 // The shared Organization node: a stable @id, the people-facing address and the
 // agent-facing address as contact points, and public profiles only.
@@ -81,8 +98,16 @@ const routeForFile = (file) => (file === 'index.html' ? '/' : `/${file.slice(0, 
 const jsonLdTypes = (html, route) => {
   const types = [];
   for (const match of html.matchAll(/<script\s+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    // Serializers escape "<" as \u003c, so copy cannot close the script element early.
+    if (match[1].includes('<')) errors.push(`${route}: JSON-LD contains an unescaped "<"`);
+    let value;
     try {
-      const value = JSON.parse(match[1]);
+      value = JSON.parse(match[1]);
+    } catch {
+      errors.push(`${route}: contains invalid JSON-LD`);
+      continue;
+    }
+    {
       if (typeof value === 'object' && value && '@type' in value) {
         const schemaTypes = Array.isArray(value['@type']) ? value['@type'] : [value['@type']];
         types.push(...schemaTypes);
@@ -100,10 +125,24 @@ const jsonLdTypes = (html, route) => {
           if (value.audience != null && value.audience['@type'] !== 'PeopleAudience') {
             errors.push(`${route}: Product JSON-LD audience must use Google's supported PeopleAudience type`);
           }
+          if (value['@id'] !== productId) errors.push(`${route}: Product JSON-LD must use @id ${productId}`);
+          if (!value.offers) errors.push(`${route}: Product JSON-LD must include the public-preview offer`);
         }
+        // One product entity: other pages refer to it instead of repeating it (A13).
+        if ((schemaTypes.includes('Product') || schemaTypes.includes('SoftwareApplication')) && !productPages.has(route)) {
+          errors.push(`${route}: Product and SoftwareApplication JSON-LD belong on / and /pricing/ only; use createWebPageSchema`);
+        }
+        if (schemaTypes.some((type) => pageNodeTypes.includes(type))) {
+          if (value.publisher?.['@id'] !== organizationContract['@id']) errors.push(`${route}: ${schemaTypes.join('/')} JSON-LD must name the publisher by @id ${organizationContract['@id']}`);
+          if (!value.url && !value.mainEntityOfPage) errors.push(`${route}: ${schemaTypes.join('/')} JSON-LD must include the page URL`);
+        }
+        if (schemaTypes.includes('TechArticle') || schemaTypes.includes('BlogPosting')) {
+          if (value.about?.['@id'] !== productId) errors.push(`${route}: ${schemaTypes.join('/')} JSON-LD must be about @id ${productId}`);
+          if (!value.headline) errors.push(`${route}: ${schemaTypes.join('/')} JSON-LD must include a headline`);
+          if (!isoDate.test(value.dateModified ?? '')) errors.push(`${route}: ${schemaTypes.join('/')} JSON-LD must include dateModified`);
+        }
+        if (schemaTypes.includes('BlogPosting') && !isoDate.test(value.datePublished ?? '')) errors.push(`${route}: BlogPosting JSON-LD must include datePublished`);
       }
-    } catch {
-      errors.push(`${route}: contains invalid JSON-LD`);
     }
   }
   return types;
@@ -226,7 +265,11 @@ for (const file of pageFiles) {
 
   const schemaTypes = jsonLdTypes(html, route.path);
   if (!schemaTypes.includes('Organization')) errors.push(`${route.path}: missing Organization JSON-LD`);
-  for (const type of requiredSchemaTypes.get(route.path) ?? []) {
+  const requiredTypes = [
+    ...(requiredSchemaTypes.get(route.path) ?? []),
+    ...schemaFamilies.filter(([pattern]) => pattern.test(route.path)).flatMap(([, types]) => types),
+  ];
+  for (const type of new Set(requiredTypes)) {
     if (!schemaTypes.includes(type)) errors.push(`${route.path}: missing ${type} JSON-LD`);
   }
 }

@@ -4,6 +4,8 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import DocFeedback from '../components/DocFeedback.astro';
 import FeedbackFab from '../components/FeedbackFab.astro';
+import { createWebPageSchema } from '../data/productFacts';
+import { lastModifiedForRoute } from '../utils/page-dates.mjs';
 
 interface Props {
   title?: string;
@@ -12,8 +14,8 @@ interface Props {
     title?: string;
     description?: string;
     author?: string;
-    updated?: string;
-    reviewed?: string;
+    updated?: string | Date;
+    reviewed?: string | Date;
   };
 }
 
@@ -21,12 +23,24 @@ const frontmatter = Astro.props.frontmatter ?? {};
 const title = Astro.props.title ?? frontmatter.title ?? 'Documentation';
 const description = Astro.props.description ?? frontmatter.description;
 const author = frontmatter.author ?? 'LocalCloud';
-const updated = frontmatter.updated;
-const reviewed = frontmatter.reviewed;
+// YAML reads an unquoted 2026-08-13 as a date, which reaches the layout as a Date or an
+// ISO timestamp; show and publish it as YYYY-MM-DD.
+const isoDate = (value?: string | Date) =>
+  value instanceof Date ? value.toISOString().slice(0, 10) : value?.match(/^\d{4}-\d{2}-\d{2}/)?.[0] ?? value;
+const updated = isoDate(frontmatter.updated);
+const reviewed = isoDate(frontmatter.reviewed);
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const currentPath = Astro.url.pathname;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// Built as an object and serialized by BaseLayout, so frontmatter text cannot break the JSON.
+const articleSchema = createWebPageSchema({
+  type: 'TechArticle',
+  url: canonicalURL.toString(),
+  name: title,
+  description: description ?? '',
+  dateModified: updated ?? lastModifiedForRoute(currentPath),
+});
 
 const sidebarSections = [
   { title: 'Getting Started', items: [
@@ -74,27 +88,7 @@ const nextItem = currentIndex >= 0 && currentIndex < allLinks.length - 1 ? allLi
 
 ---
 
-<BaseLayout title={`${title} — LocalCloud Docs`} description={description}>
-  <script type="application/ld+json" slot="head" set:html={`{
-    "@context": "https://schema.org",
-    "@type": "TechArticle",
-    "headline": "${title}",
-    "description": "${description || ''}",
-    "url": "${canonicalURL}",
-    "author": {
-      "@type": "Organization",
-      "name": "${author}"
-    },
-    ${updated ? `"dateModified": "${updated}",` : ''}
-    "publisher": {
-      "@type": "Organization",
-      "name": "LocalCloud",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://local.cloud/brand/localcloud-mark.svg"
-      }
-    }
-  }`} />
+<BaseLayout title={`${title} — LocalCloud Docs`} description={description} structuredData={[articleSchema]}>
   <Header />
 
   <main id="main-content" class="site-page docs-page">

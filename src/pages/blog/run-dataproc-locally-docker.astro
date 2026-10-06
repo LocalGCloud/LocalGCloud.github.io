@@ -2,11 +2,7 @@
 import BlogLayout from '../../layouts/BlogLayout.astro';
 import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
 import CopyButton from '../../components/CopyButton.astro';
-import {
-  createBreadcrumbSchema,
-  createSoftwareApplicationSchema,
-  productFacts,
-} from '../../data/productFacts';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
 
 const pageUrl = new URL('blog/run-dataproc-locally-docker/', productFacts.siteUrl).toString();
 const metadata = authoredBlogMetadata['run-dataproc-locally-docker'];
@@ -169,27 +165,13 @@ volumes:
   worker1-hdfs:
   worker2-hdfs:`;
 
+// BlogLayout adds the BlogPosting node from the article dates.
 const structuredData = [
-  createSoftwareApplicationSchema(
-    pageUrl,
-    'Run Google Dataproc 3.0, Apache Spark 4.1, Hadoop 3.5, and Hive 4.2 locally in Docker with zero cloud credentials or billing.',
-  ),
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
     { name: 'Run Dataproc 3.0 Locally with Docker', url: pageUrl },
   ]),
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: 'How to Run Dataproc 3.0 Locally with Docker',
-    datePublished: publishDate,
-    dateModified: publishDate,
-    author: { '@type': 'Organization', name: 'LocalCloud' },
-    publisher: { '@type': 'Organization', name: 'LocalCloud' },
-    mainEntityOfPage: pageUrl,
-    description: 'Learn how to run Google Dataproc 3.0, Apache Spark 4.1, Hadoop 3.5, and Hive 4.2 standalone in Docker without cloud credentials, spin-up delays, or cloud billing.',
-  },
 ];
 ---
 
@@ -198,7 +180,7 @@ const structuredData = [
   description="Run Dataproc 3.0 with Spark 4.1, Hadoop 3.5, and Hive 4.2 locally in Docker, as one container or a 3-node cluster, for developers and AI agents."
   structuredData={structuredData}
   {contents}
-  article={{ publishedAt: publishDate }}
+  article={{ publishedAt: publishDate, headline: 'How to Run Dataproc 3.0 Locally with Docker' }}
 >
   <Fragment slot="hero">
   <!-- Hero Section -->

@@ -48,6 +48,8 @@ const ogImageURL = new URL(ogImage ?? defaultSocialCard.path, Astro.site);
 const ogImageAltText = ogImageAlt ?? (ogImage ? title : defaultSocialCard.alt);
 // Docs and service pages also publish a Markdown twin (scripts/generate-markdown-twins.mjs).
 const markdownTwin = markdownTwinPath(Astro.url.pathname);
+// JSON-LD is raw script text: escape "<" so a "</script>" or "<!--" in copy cannot end the block.
+const serializeJsonLd = (schema: JsonLd) => JSON.stringify(schema).replace(/</g, '\\u003c');
 // Preserve inline presentation styles using the per-page CSP API.
 Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 ---
@@ -94,9 +96,9 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <title>{title}</title>
 
     <!-- Shared organization identity plus page-specific structured data. -->
-    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={serializeJsonLd(organizationSchema)} />
     {structuredData.map((schema) => (
-      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+      <script type="application/ld+json" set:html={serializeJsonLd(schema)} />
     ))}
     <slot name="head" />
 
