@@ -114,6 +114,31 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
     <span class="site-footer__legal-links">
       <a href={`${base}license/`}>License</a>
       <a href={`${base}docs/privacy/`}>Privacy</a>
+      {/* Shown by the script below; without JavaScript the site runs no analytics. */}
+      <button type="button" class="site-footer__analytics" data-analytics-toggle hidden>Analytics: On</button>
     </span>
   </div>
 </footer>
+
+<script>
+  // Turns website analytics on or off in this browser through the BaseLayout bootstrap.
+  // Global Privacy Control and Do Not Track keep it off, and the control says so.
+  type AnalyticsChoice = { privacySignal: string; isOn(): boolean; setOn(on: boolean): boolean };
+  const analytics = (window as Window & { lcAnalytics?: AnalyticsChoice }).lcAnalytics;
+  const toggle = document.querySelector<HTMLButtonElement>('[data-analytics-toggle]');
+  if (analytics && toggle) {
+    const render = () => {
+      toggle.textContent = analytics.privacySignal
+        ? `Analytics: Off (${analytics.privacySignal})`
+        : `Analytics: ${analytics.isOn() ? 'On' : 'Off'}`;
+      if (analytics.privacySignal) toggle.setAttribute('aria-disabled', 'true');
+    };
+    toggle.addEventListener('click', () => {
+      if (analytics.privacySignal) return;
+      analytics.setOn(!analytics.isOn());
+      render();
+    });
+    render();
+    toggle.hidden = false;
+  }
+</script>

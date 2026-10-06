@@ -332,6 +332,8 @@ const structuredData = [
         const text = button.getAttribute('data-copy-text') || '';
         try {
           await navigator.clipboard.writeText(text);
+          // BaseLayout records code_copied only after a successful copy.
+          button.dispatchEvent(new CustomEvent('lc:copied', { bubbles: true }));
           const original = button.textContent;
           button.textContent = 'Copied';
           window.setTimeout(() => {

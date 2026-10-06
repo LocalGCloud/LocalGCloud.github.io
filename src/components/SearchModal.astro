@@ -24,7 +24,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
         <kbd class="search-modal__kbd">Esc</kbd>
       </div>
     </div>
-    <p id="search-privacy-note" class="search-modal__hint px-4 pt-2">Search text with 3+ characters is sent to PostHog. Do not enter secrets or personal data. <a href={`${base}docs/privacy/`}>Privacy details</a>.</p>
+    <p id="search-privacy-note" class="search-modal__hint px-4 pt-2">While analytics is on, search text with 3+ characters is sent to PostHog. Do not enter secrets or personal data. <a href={`${base}docs/privacy/`}>Privacy details</a>.</p>
     <div id="search-results" class="search-modal__results">
       <div class="search-modal__empty">
         <p>Type to search across all documentation pages</p>
@@ -116,6 +116,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
   function closeSearch() {
     if (!modal) return;
+    reportSearch();
     modal.hidden = true;
     document.body.style.overflow = '';
     if (input) input.value = '';
@@ -152,12 +153,42 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     }
   });
 
+  // Search analytics: one docs_search event per settled query of 3+ characters, sent when
+  // the visitor opens a result, presses Enter, closes search or stops typing for 1.5 s,
+  // never for the intermediate queries typed on the way.
+  var settledSearch = null;
+  var reportedQuery = null;
+  var settleTimer = null;
+
+  function searchShown(query, resultsCount) {
+    clearTimeout(settleTimer);
+    settledSearch = query.length >= 3 ? { query: query, results_count: resultsCount } : null;
+    if (settledSearch) settleTimer = setTimeout(reportSearch, 1500);
+  }
+
+  function reportSearch() {
+    clearTimeout(settleTimer);
+    var search = settledSearch;
+    settledSearch = null;
+    if (!search || search.query === reportedQuery) return;
+    reportedQuery = search.query;
+    if (typeof posthog !== 'undefined') {
+      posthog.capture('docs_search', {
+        query: search.query,
+        results_count: search.results_count,
+        page_path: window.location.pathname,
+      });
+    }
+  }
+
   // Search input handler
   input?.addEventListener('input', function() {
     clearTimeout(debounceTimer);
+    clearTimeout(settleTimer);
     var query = input.value.trim();
 
     if (!query) {
+      settledSearch = null;
       results.innerHTML = '<div class="search-modal__empty"><p>Type to search across all documentation pages</p><p class="search-modal__hint">Try: "bigquery", "configuration", "seed data"</p></div>';
       return;
     }
@@ -172,6 +203,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
       var search = await pf.search(query);
       if (!search.results.length) {
         results.innerHTML = '<div class="search-modal__empty"><p>No results for "<strong>' + escapeHtml(query) + '</strong>"</p></div>';
+        if (query === input.value.trim()) searchShown(query, 0);
         return;
       }
 
@@ -186,16 +218,12 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
       }
       html += '</ul>';
       results.innerHTML = html;
-
-      // Track search — only for meaningful queries (3+ chars)
-      if (query.length >= 3 && typeof posthog !== 'undefined') {
-        posthog.capture('docs_search', {
-          query: query,
-          results_count: search.results.length,
-          page_path: window.location.pathname,
-        });
-      }
+      if (query === input.value.trim()) searchShown(query, search.results.length);
     }, 200);
+  });
+
+  input?.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') reportSearch();
   });
 
   // Close on result click

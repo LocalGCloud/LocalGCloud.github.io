@@ -39,7 +39,7 @@ Run the complete `pnpm run build`, `pnpm run test:installer`, local browser chec
 Implemented and locally verified on October 3, 2026. The canonical new brand and service icons remain in use.
 
 - Inlined page CSS, self-hosted optional Latin variable fonts, preloaded the body font and homepage hero, and reserved the hero's aspect ratio. No external stylesheet or Google Fonts requests remain on the homepage.
-- Analytics queues interactions immediately, then loads the SDK after page load, a 1.5-second delay, and an idle callback. Surveys are disabled; autocapture and exception capture remain enabled. Very short visits can leave before the SDK loads, as documented in the privacy page.
+- Analytics queues interactions immediately, then loads the SDK after page load, a 1.5-second delay, and an idle callback. Surveys are disabled; exception capture remains enabled. (Since plan R5, autocapture is off in favor of explicit events, and the Cloudflare beacon follows the same load-and-idle schedule.) Very short visits can leave before the SDK loads, as documented in the privacy page.
 - Corrected footer headings, decorative image alternatives, and the pricing link's underline.
 - Added static asset cache and security headers. Retained hash-based CSP with `strict-dynamic`, signed emitted local scripts with integrity metadata, and allowed Pagefind's same-origin worker. A 31,441-byte bundled Pagefind client loads only on search, avoiding the browser's rejection of dynamic module imports under this policy.
 

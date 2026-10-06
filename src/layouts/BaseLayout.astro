@@ -105,25 +105,18 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     ))}
     <slot name="head" />
 
-    {/* The hashed loader authorizes this beacon under strict-dynamic. */}
-    {cloudflareAnalyticsToken && (
-      <script is:inline define:vars={{ cloudflareAnalyticsToken, cloudflareAnalyticsEndpoint }}>
-        (function () {
-          var beacon = document.createElement('script');
-          beacon.async = true;
-          beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
-          beacon.setAttribute('data-cf-beacon', JSON.stringify({
-            token: cloudflareAnalyticsToken,
-            send: { to: cloudflareAnalyticsEndpoint },
-          }));
-          document.head.appendChild(beacon);
-        })();
-      </script>
-    )}
+    {/* Analytics queues events at once, then loads PostHog and the Cloudflare beacon after the
+        load event, a 1.5-second delay and an idle callback. Neither loads when the visitor turned
+        analytics off with the footer control or the browser sends Global Privacy Control or Do
+        Not Track. The hashed bootstrap authorizes both scripts under strict-dynamic. */}
+    <script is:inline define:vars={{ posthogApiHost, cloudflareAnalyticsToken, cloudflareAnalyticsEndpoint }}>
+      var privacySignal = navigator.globalPrivacyControl === true ? 'Global Privacy Control'
+        : /^(?:1|yes)$/.test(String(navigator.doNotTrack || window.doNotTrack || '')) ? 'Do Not Track' : '';
+      var choiceKey = 'lc-analytics';
+      var analyticsOn = !privacySignal;
+      try { if (localStorage.getItem(choiceKey) === 'off') analyticsOn = false; } catch (e) {}
 
-    {/* Queue analytics immediately; download the SDK after load, during idle time. */}
-    <script is:inline define:vars={{ posthogApiHost }}>
-      !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js";var loadSdk=function(){(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r)};var scheduleSdk=function(){setTimeout(function(){if("requestIdleCallback" in window){window.requestIdleCallback(loadSdk,{timeout:2000})}else{loadSdk()}},1500)};if(t.readyState==="complete"){scheduleSdk()}else{window.addEventListener("load",scheduleSdk,{once:true})}var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags resetGroups onFeatureFlags addFeatureFlagsHandler onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+      !function(t,e){var o,n;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags resetGroups onFeatureFlags addFeatureFlagsHandler onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 
       posthog.init('phc_o9nQDAQjEgsPcamE8pCnhv7ekA8CmA2VQXechLju9LA9', {
         api_host: posthogApiHost,
@@ -134,8 +127,9 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         capture_pageview: true,
         capture_pageleave: 'if_capture_pageview',
 
-        // Autocapture — covers CTA clicks, link clicks, form submits
-        autocapture: true,
+        // Only the explicit events below and in SearchModal and the feedback components;
+        // no automatic click, form or text capture.
+        autocapture: false,
 
         // Error tracking
         capture_exceptions: true,
@@ -154,6 +148,72 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         capture_dead_clicks: false,
         capture_performance: false,
       });
+
+      var posthogRequested = false;
+      var beaconRequested = false;
+      function startAnalytics() {
+        if (!analyticsOn) return;
+        if (!posthogRequested) {
+          posthogRequested = true;
+          var sdk = document.createElement('script');
+          sdk.async = true;
+          sdk.src = posthogApiHost.replace('.i.posthog.com', '-assets.i.posthog.com') + '/static/array.js';
+          document.head.appendChild(sdk);
+        }
+        if (!beaconRequested && cloudflareAnalyticsToken) {
+          beaconRequested = true;
+          var beacon = document.createElement('script');
+          beacon.async = true;
+          beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+          beacon.setAttribute('data-cf-beacon', JSON.stringify({
+            token: cloudflareAnalyticsToken,
+            send: { to: cloudflareAnalyticsEndpoint },
+          }));
+          document.head.appendChild(beacon);
+        }
+      }
+
+      if (analyticsOn) {
+        var scheduleAnalytics = function () {
+          setTimeout(function () {
+            if ('requestIdleCallback' in window) window.requestIdleCallback(startAnalytics, { timeout: 2000 });
+            else startAnalytics();
+          }, 1500);
+        };
+        if (document.readyState === 'complete') scheduleAnalytics();
+        else window.addEventListener('load', scheduleAnalytics, { once: true });
+      } else {
+        posthog.opt_out_capturing();
+      }
+
+      // The footer analytics control reads and changes the choice here. PostHog also persists
+      // its own opt-out once the SDK has loaded.
+      window.lcAnalytics = {
+        privacySignal: privacySignal,
+        isOn: function () { return analyticsOn; },
+        setOn: function (on) {
+          if (on && privacySignal) return false;
+          analyticsOn = on;
+          try {
+            if (on) localStorage.removeItem(choiceKey);
+            else localStorage.setItem(choiceKey, 'off');
+          } catch (e) {}
+          // Events queued before the SDK loads are never sent across a change of choice.
+          var queue = window.posthog;
+          if (Array.isArray(queue)) {
+            for (var i = queue.length - 1; i >= 0; i--) {
+              if (String(queue[i][0]).indexOf('capture') !== -1) queue.splice(i, 1);
+            }
+          }
+          if (on) {
+            posthog.opt_in_capturing();
+            startAnalytics();
+          } else {
+            posthog.opt_out_capturing();
+          }
+          return true;
+        },
+      };
     </script>
   </head>
   <body data-pagefind-body={pagefindBody}>
@@ -197,12 +257,24 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       (function() {
         if (typeof window.posthog === 'undefined') return;
 
-        // ─── Click tracking: code copy + GitHub clickthrough ───
+        // ─── Code copy: copy buttons dispatch lc:copied only after the clipboard write succeeds ───
+        document.addEventListener('lc:copied', function(e) {
+          var labelled = e.target.closest && e.target.closest('[data-analytics-label]');
+          posthog.capture('code_copied', {
+            page_path: window.location.pathname,
+            page_title: document.title,
+            copy_target: labelled ? labelled.getAttribute('data-analytics-label') : null,
+          });
+        });
+
+        // ─── Click tracking: labelled calls to action + GitHub clickthrough ───
         document.addEventListener('click', function(e) {
-          if (e.target.closest('.docs-code-copy, .copy-btn')) {
-            posthog.capture('code_copied', {
+          var cta = e.target.closest('a[data-analytics-label]');
+          if (cta) {
+            posthog.capture('cta_clicked', {
               page_path: window.location.pathname,
-              page_title: document.title,
+              cta_label: cta.getAttribute('data-analytics-label'),
+              href: cta.getAttribute('href'),
             });
           }
 

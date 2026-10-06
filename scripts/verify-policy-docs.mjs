@@ -59,7 +59,11 @@ for (const phrase of [
 	"basic web analytics",
 	"Analytics providers",
 	"Search text and feedback",
-	"no built-in analytics opt-out",
+	"install_script_fetched",
+	"**Analytics: On**",
+	"**Analytics: Off**",
+	"Global Privacy Control",
+	"Do Not Track",
 	"mailto:info@local.cloud",
 ])
 	assert(privacy.includes(phrase), `privacy reference omits ${phrase}`);
@@ -69,6 +73,7 @@ for (const obsoleteClaim of [
 	"ca-probe",
 	"seven days of hourly events",
 	"agents@local.cloud",
+	"no built-in analytics opt-out",
 ])
 	assert(!privacy.includes(obsoleteClaim), `privacy reference retains obsolete claim ${obsoleteClaim}`);
 
@@ -132,6 +137,23 @@ for (const phrase of [
 		!combined.toLowerCase().includes(phrase),
 		`public policy surfaces retain prohibited claim ${phrase}`,
 	);
+
+// The privacy page promises a footer control and Global Privacy Control / Do Not Track
+// handling; the code that keeps those promises must stay in place.
+const layout = docs.get("src/layouts/BaseLayout.astro");
+for (const [phrase, promise] of [
+	["navigator.globalPrivacyControl === true", "Global Privacy Control"],
+	["navigator.doNotTrack", "Do Not Track"],
+	["posthog.opt_out_capturing()", "the PostHog opt-out"],
+	["autocapture: false", "explicit events only"],
+	["window.lcAnalytics", "the footer analytics control"],
+])
+	assert(layout.includes(phrase), `BaseLayout no longer implements ${promise} (${phrase})`);
+const footer = docs.get("src/components/Footer.astro");
+assert(
+	footer.includes("data-analytics-toggle") && footer.includes("Analytics: ${analytics.isOn() ? 'On' : 'Off'}"),
+	"the footer must offer the Analytics: On/Off control the privacy page describes",
+);
 
 for (const path of [
 	"src/components/SearchModal.astro",

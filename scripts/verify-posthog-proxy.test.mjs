@@ -35,14 +35,19 @@ test('unsafe or ambiguous host configuration fails at build time', () => {
   assert.throws(() => resolvePosthogConfig({ SITE_DEPLOYMENT_TARGET: 'unknown' }), /SITE_DEPLOYMENT_TARGET/);
 });
 
+// The bootstrap appends the PostHog SDK first, then the Cloudflare beacon when a token is set.
 function executeBootstrap(bootstrap, apiHost) {
   const inserted = [];
   const context = {
     posthogApiHost: apiHost,
+    cloudflareAnalyticsToken: '',
+    cloudflareAnalyticsEndpoint: '',
+    navigator: {},
+    localStorage: { getItem: () => null },
     document: {
       readyState: 'complete',
-      createElement: () => ({}),
-      getElementsByTagName: () => [{ parentNode: { insertBefore: (script) => inserted.push(script) } }],
+      createElement: () => ({ setAttribute() {} }),
+      head: { appendChild: (script) => inserted.push(script) },
     },
     setTimeout: (callback) => callback(),
     requestIdleCallback: (callback) => callback(),

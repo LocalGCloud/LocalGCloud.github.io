@@ -249,6 +249,8 @@ const nextItem = currentIndex >= 0 && currentIndex < allLinks.length - 1 ? allLi
           } catch {
             copied = false;
           }
+          // BaseLayout records code_copied only after a successful copy.
+          if (copied) button.dispatchEvent(new CustomEvent('lc:copied', { bubbles: true }));
 
           button.classList.toggle('is-copied', copied);
           button.classList.toggle('is-copy-error', !copied);

@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Privacy
-description: How LocalCloud uses basic usage information and web analytics, how to disable telemetry, and how to contact us.
+description: How LocalCloud uses basic usage information and web analytics, how to turn off runtime telemetry and website analytics, and how to contact us.
 author: LocalCloud
 updated: 2026-10-06
 reviewed: 2026-10-04
@@ -35,7 +35,13 @@ We use basic web analytics to understand visits, usage, and performance. Analyti
 
 When someone downloads the install script from `local.cloud/install.sh`, the site's Cloudflare Worker sends PostHog one `install_script_fetched` event with a random one-time identifier, the downloading tool (curl, wget, or other), the country Cloudflare derives from the request, and, when the download was linked from a local.cloud page, that page's path. It does not send the IP address or create a person profile.
 
-Please do not include secrets, credentials, personal data, or customer data in search or feedback fields. The runtime telemetry setting does not control website analytics; the website currently has no built-in analytics opt-out.
+Please do not include secrets, credentials, personal data, or customer data in search or feedback fields. The runtime telemetry setting does not control website analytics.
+
+### Turn website analytics off
+
+Every page has an **Analytics: On** control at the bottom of the footer. Select it to switch to **Analytics: Off**: the site then stops PostHog capture and no longer loads the PostHog or Cloudflare Web Analytics scripts in that browser, so it records no page views, searches, copies, or clicks from it. The choice is stored in your browser until you switch it back or clear site data.
+
+If your browser sends a Global Privacy Control or Do Not Track signal, the site treats analytics as off without any action from you, and the footer control shows **Analytics: Off** with the signal's name. The install script event above is counted by the server when the script is downloaded, so this browser setting does not apply to it.
 
 ## Contact
 

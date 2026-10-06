@@ -10,7 +10,10 @@ import { gzipSync } from 'node:zlib';
 // proof line, FAQ with the compact comparison table, and the trust strip with its
 // verification commands. rawBytes and gzipBytes are its new size (172,129 and 34,477
 // bytes) plus 5%.
-const htmlBudget = { rawBytes: 180_800, gzipBytes: 36_200, styleBytes: 90_500, scriptBytes: 14_800 };
+// 2026-10-06 (plan R5.4): honoring Global Privacy Control, Do Not Track and the footer
+// analytics control, the settled-query docs_search logic and the lc:copied listener add
+// about 2 KB of inline script. scriptBytes is the largest page (docs/, 16,164 bytes) plus 5%.
+const htmlBudget = { rawBytes: 180_800, gzipBytes: 36_200, styleBytes: 90_500, scriptBytes: 17_000 };
 const rawDocumentBytes = 21_800;
 // The Markdown twins of docs and service pages and the llms-full.txt bundle built from them
 // have their own ceilings: the largest twin and the bundle measured on 2026-10-05, plus 10%.

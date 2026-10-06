@@ -105,6 +105,8 @@ const { text, class: className = '', analyticsLabel, label = 'Copy to clipboard'
       } catch {
         copied = false;
       }
+      // BaseLayout records code_copied (with the closest data-analytics-label) only on success.
+      if (copied) btn.dispatchEvent(new CustomEvent('lc:copied', { bubbles: true }));
 
       btn.classList.toggle('is-copied', copied);
       // Keep the label short: it sits inline in a narrow command box.
