@@ -75,8 +75,8 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 | **10** | `node scripts/verify-rendered-docs.mjs` | Inspects compiled HTML output (e.g. comparison tables and accessible scroll wrappers) to ensure proper rendering. |
 | **11** | `node scripts/write-sitemap-alias.mjs` | Copies `sitemap-index.xml` to `sitemap.xml` for legacy crawler compatibility. |
 | **12** | `node scripts/verify-static-seo.mjs` | On every indexable page: unique titles (≤65 characters) and descriptions (70–160), canonical URL, one H1, a raster `og:image` and share metadata, valid JSON-LD with the required types per page family; plus robots.txt, a sitemap that lists every indexable page with `lastmod` and no raw files, and the priority routes. |
-| **13** | `node scripts/verify-content-facts.mjs` → `node scripts/verify-blog-presentation.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all published pages, and every `https://local.cloud` or root-relative link in `llms*.txt`, `/ai/*.md` and the Markdown twins.<br>• Checks that the CLI quick start appears verbatim in llms.txt and `/ai/*.md` and in order on the homepage, that agent pages install the CLI before using it, and that agent text has no `..` or `.;` join artifacts. |
-| **14** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` → `node scripts/precompress-html.mjs` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes and writes a Brotli sidecar for every page. |
+| **13** | `node scripts/verify-content-facts.mjs` → `node scripts/verify-blog-presentation.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all published pages, and every `https://local.cloud` or root-relative link in `llms*.txt`, `/ai/*.md` and the Markdown twins.<br>• Checks that the CLI quick start appears verbatim in llms.txt and `/ai/*.md` and in order on the homepage, that agent pages install the CLI before using it, and that agent text has no `..` or `.;` join artifacts.<br>• Fails when any built page ships an HTML comment or renders its `<h1>` inside a `.reveal` element (tag tokenizer in `scripts/html-structure.mjs`). |
+| **14** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` → `node scripts/precompress-html.mjs` → `node scripts/asset-manifest.mjs write` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes (including the speculation rules) and moves it to directly after `<meta charset>`, writes a Brotli sidecar for every page, and lists every `/_astro/` file in `dist/asset-manifest.json` so the next deploy can keep this one's bundles. |
 
 ---
 
@@ -103,6 +103,13 @@ Executes `scripts/verify-installer.mjs` which validates:
 pnpm run test:worker
 ```
 Runs `worker/index.mjs` with the built `dist/` in workerd (through Wrangler) after a build. It checks that HTML decodes exactly once for Brotli, gzip and identity, that `_headers` and `_redirects` apply, that agent text and Markdown twins are UTF-8, that docs and service pages answer `Accept: text/markdown` with their twin (with `Vary: Accept`), and that missing pages, `/404` and Brotli sidecars return 404.
+
+### Previous-Deploy Bundles
+```bash
+pnpm run test:asset-manifest
+node scripts/asset-manifest.mjs carry
+```
+A page opened or prefetched before a deploy still names the previous deploy's hashed `/_astro/` CSS and JS. Just before `wrangler deploy`, the carry step reads the live `https://local.cloud/asset-manifest.json` and downloads every listed file this build lacks into `dist/_astro/`; an unreachable or invalid manifest is a warning. The new manifest never lists carried files, so exactly one previous generation stays online. The node:test suite covers path validation, the merge plan and the one-generation rule. If the search client still fails to load, the search modal reloads the page once per session.
 
 ### Upstream Contract Synchronization
 ```bash
