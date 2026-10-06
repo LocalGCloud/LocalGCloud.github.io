@@ -163,8 +163,17 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 
     <script>
       // Enable reveal animations only when JS and IntersectionObserver are available;
-      // without them .reveal content renders visible by default.
+      // without them .reveal content renders visible by default. Content already on screen
+      // is marked visible before reveal-ready applies, so it never flashes out and back in.
       if ('IntersectionObserver' in window) {
+        const offscreen = [...document.querySelectorAll('.reveal')].filter((el) => {
+          const { top, bottom } = el.getBoundingClientRect();
+          if (top < window.innerHeight && bottom > 0) {
+            el.classList.add('visible');
+            return false;
+          }
+          return true;
+        });
         document.documentElement.classList.add('reveal-ready');
         const observer = new IntersectionObserver(
           (entries) => {
@@ -179,7 +188,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           // threshold 0 so elements taller than the viewport (long articles) still reveal
           { threshold: 0, rootMargin: '0px 0px -50px 0px' }
         );
-        document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+        offscreen.forEach((el) => observer.observe(el));
       }
     </script>
 

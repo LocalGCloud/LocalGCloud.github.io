@@ -6,6 +6,7 @@ import { alternatives, alternativesReviewedAt, comparisonSummary } from '../src/
 import { docsContract } from '../src/data/docs-contract.ts';
 import { productFacts } from '../src/data/productFacts.ts';
 import { cliQuickStart } from '../src/utils/quickstart.mjs';
+import { headingsWithinClass } from './html-structure.mjs';
 import { availableServiceCount, services, isServiceDisabledByDefault, proTierLabel } from '../src/data/services.ts';
 import { pricingFaq, proTierServiceNames } from '../src/data/pricingFaq.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
@@ -53,6 +54,14 @@ for (const [file, html] of htmlPages) {
   const markup = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
   for (const [, rawHref] of markup.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
     checkLocalLink(file, new URL(rawHref.replaceAll('&amp;', '&'), pageUrl));
+  }
+}
+
+// A .reveal element starts at opacity 0 and fades in after the reveal script runs, so a
+// headline inside one flashes and delays LCP. Hero containers must not carry the class.
+for (const [file, html] of htmlPages) {
+  for (const { holder } of headingsWithinClass(html, 'reveal')) {
+    errors.push(`${file} renders its <h1> inside ${holder}; remove the reveal class from hero containers`);
   }
 }
 

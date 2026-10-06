@@ -16,7 +16,7 @@
     "build:cloudflare": "SITE_DEPLOYMENT_TARGET=cloudflare pnpm run build",
     "build:static": "SITE_DEPLOYMENT_TARGET=static pnpm run build",
     "build": "node scripts/generate-distributed-docs.mjs && node scripts/verify-docs-contract.mjs && node scripts/verify-upstream-docs.mjs && node scripts/verify-cli-docs.mjs && node scripts/verify-doc-examples.mjs && node scripts/verify-policy-docs.mjs && node scripts/verify-distributed-docs.mjs && astro build && node scripts/generate-markdown-twins.mjs && node scripts/verify-rendered-docs.mjs && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node scripts/verify-content-facts.mjs && node scripts/verify-blog-presentation.mjs && pagefind --site dist && node scripts/bundle-pagefind.mjs && node scripts/finalize-static-csp.mjs && node scripts/precompress-html.mjs && node scripts/asset-manifest.mjs write",
-    "test:performance": "node --test scripts/verify-page-performance.test.mjs scripts/verify-page-budgets.test.mjs scripts/verify-static-response.test.mjs",
+    "test:performance": "node --test scripts/verify-page-performance.test.mjs scripts/verify-page-budgets.test.mjs scripts/html-structure.test.mjs scripts/verify-static-response.test.mjs",
     "test:worker": "node --test --test-timeout=180000 scripts/verify-worker-runtime.test.mjs",
     "test:analytics": "node --test scripts/verify-posthog-proxy.test.mjs scripts/verify-install-tracking.test.mjs",
     "test:dependencies": "pnpm audit --prod --audit-level=high",
