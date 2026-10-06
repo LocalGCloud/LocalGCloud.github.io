@@ -28,7 +28,6 @@ export const expectedSearchRoutes = [
   { path: '/local-cloud-for-ai-agents/', intent: 'Local cloud sandbox for AI coding agents' },
   { path: '/compare/', intent: 'LocalCloud alternatives and comparisons' },
   { path: '/compare/localstack/', intent: 'LocalCloud vs LocalStack' },
-  { path: '/compare/localgcp/', intent: 'LocalCloud vs localgcp' },
   { path: '/compare/e2b-vercel-sandboxes/', intent: 'LocalCloud vs hosted agent sandboxes' },
   { path: '/agents/', intent: 'Agent sandbox setup routes' },
   { path: '/workflows/', intent: 'Agent and automation workflows' },

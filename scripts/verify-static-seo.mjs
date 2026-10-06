@@ -14,7 +14,6 @@ const requiredSchemaTypes = new Map([
   ['/pricing/', ['Organization', 'BreadcrumbList', 'Product']],
   ['/local-cloud-for-ai-agents/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
   ['/compare/localstack/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
-  ['/compare/localgcp/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
   ['/license/', ['Organization', 'WebPage', 'BreadcrumbList']],
   ['/contact/', ['Organization', 'ContactPage', 'BreadcrumbList']],
   ['/security/', ['Organization', 'WebPage', 'BreadcrumbList']],

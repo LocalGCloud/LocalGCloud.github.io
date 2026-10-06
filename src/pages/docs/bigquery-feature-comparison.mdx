@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: BigQuery Feature Comparison
-description: Compare native GoogleSQL and DuckDB in LocalCloud with the goccy emulator and Google Cloud using current sources and explicit evidence boundaries.
+description: Compare native GoogleSQL and DuckDB in LocalCloud with single-service community emulators and Google Cloud using current sources and explicit evidence boundaries.
 ---
 
 # BigQuery feature comparison
@@ -13,10 +13,10 @@ Compare the exact SQL, API, client, and recovery workflows your application need
 | Choice | Execution and storage | Deployment | Evidence to consult |
 | --- | --- | --- | --- |
 | Google Cloud BigQuery | Managed Google Cloud service | Google Cloud project | [Google BigQuery documentation](https://docs.cloud.google.com/bigquery/docs) and tests in an isolated cloud project. |
-| `goccy/bigquery-emulator` | Go implementation with SQLite-backed storage | Standalone binary, embedded Go server, or container | [Project README](https://github.com/goccy/bigquery-emulator) and its [feature matrix](https://github.com/goccy/bigquery-emulator/blob/main/docs/feature-support.md). |
+| Single-service community emulators | Independent open-source implementations; storage and coverage vary by project | Usually a standalone binary or container | Each project's own documentation and feature matrix. |
 | LocalCloud BigQuery | Native GoogleSQL analysis with DuckDB execution | Supervised process inside LocalCloud's Docker runtime; optional custom companion image | [LocalCloud operation contract](/docs/bigquery-emulator-features/) and [dependency coverage records](/docs/bigquery-coverage-gaps/). |
 
-The goccy project documents REST APIs and gRPC Storage Read/Write APIs. Check its current transport instructions and matrix for the requested method. Do not assume that it is REST-only or infer support from older comparisons.
+Community emulators differ in which REST and gRPC APIs they serve. Check a project's current transport instructions and feature matrix for the method you need, rather than inferring support from older comparisons.
 
 LocalCloud's default BigQuery process does not need Docker-socket access, but the LocalCloud container still requires Docker. Check host, dependency-image, and LocalCloud-image architecture support separately.
 
@@ -29,7 +29,7 @@ A finite probe can identify specific successful and failing cases. It does not p
 ## Choosing an environment
 
 - Use a local emulator for its documented development workflows, after checking SQL features, client routing, transport, and state behavior.
-- Consider goccy when its standalone or Go embedding model fits your test process and its current matrix covers the required operations.
+- Consider a single-service community emulator when a standalone BigQuery server fits your test process and its current feature matrix covers the required operations.
 - Consider LocalCloud when the workflow needs BigQuery beside other documented local services, shared environment output, sample data, or console inspection.
 - Use Google Cloud to validate actual cloud integrations and the production behavior your application depends on.
 

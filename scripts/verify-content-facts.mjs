@@ -446,6 +446,29 @@ const reviewAgeDays = (Date.now() - Date.parse(`${alternativesReviewedAt}T00:00:
 if (reviewAgeDays > 120) console.warn(`::warning::The alternatives comparison was reviewed ${Math.floor(reviewAgeDays)} days ago (${alternativesReviewedAt}); re-check src/data/alternatives.ts against its sources.`);
 if (!llms.includes('\n## How LocalCloud compares\n') || !comparisonSummary.every((line) => llms.includes(line))) errors.push('llms.txt must include the "How LocalCloud compares" section from src/data/alternatives.ts');
 
+// LocalStack is the only competitor the site names; Google's own emulators and the Firebase
+// Local Emulator Suite are the platform vendor's tools. Small and upcoming projects are never
+// named or linked: comparisons say "single-service community emulators" instead. A project
+// LocalCloud is built on may be credited where the page documents that component (the
+// attribution files listed); llms-full.txt may repeat those credits through the twins only.
+const deniedProjects = [
+  { pattern: /\blocalgcp\b/gi, name: 'localgcp' },
+  { pattern: /slokam-ai/gi, name: 'localgcp (slokam-ai)' },
+  { pattern: /\bgoccy\b/gi, name: 'goccy/bigquery-emulator' },
+  { pattern: /fake-gcs-server|fsouza\//gi, name: 'fake-gcs-server', attribution: ['docs/architecture/index.html', 'docs/architecture.md'] },
+  { pattern: /little[_-]bigtable/gi, name: 'little_bigtable', attribution: ['docs/architecture/index.html', 'docs/architecture.md', 'docs/bigtable-emulator-features/index.html', 'docs/bigtable-emulator-features.md'] },
+];
+const publishedText = new Map([...htmlPages, ...agentText]);
+for (const { pattern, name, attribution = [] } of deniedProjects) {
+  const count = (text) => (text.match(pattern) ?? []).length;
+  const creditedInTwins = attribution.filter((file) => file.endsWith('.md')).reduce((sum, file) => sum + count(publishedText.get(file) ?? ''), 0);
+  for (const [file, text] of publishedText) {
+    if (attribution.includes(file)) continue;
+    const found = count(text) - (file === 'llms-full.txt' ? creditedInTwins : 0);
+    if (found > 0) errors.push(`${file} names or links ${name}; LocalStack is the only competitor the site names (use "single-service community emulators")`);
+  }
+}
+
 // The runtime repository is private: no page or agent text may link it.
 for (const file of [...files].filter((name) => /\.(?:html|md|txt|xml|json)$/.test(name) && !name.startsWith('pagefind/'))) {
   const text = htmlPages.get(file) ?? agentText.get(file) ?? await readFile(new URL(file, distDirectory), 'utf8');

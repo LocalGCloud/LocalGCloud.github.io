@@ -823,7 +823,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		promptIds: ["bigquery", "project-integration"],
 		quickFacts: [
 			"LocalCloud BigQuery runs beside Pub/Sub, Storage, Spanner, and other available services.",
-			"Standalone bigquery-emulator is a focused open-source BigQuery-compatible server.",
+			"Single-service community emulators focus on BigQuery alone; their coverage and fidelity vary by project.",
 			"Real BigQuery remains the source of truth for production behavior.",
 		],
 		sections: [
@@ -831,7 +831,7 @@ export const comparisonPages: AgenticContentPage[] = [
 				kicker: "Where standalone is better",
 				title: "Choose a focused emulator for narrow BigQuery-only testing",
 				body:
-					"If your workflow only needs a BigQuery-compatible server and you want to track that standalone project directly, a focused emulator can be simpler.",
+					"If your workflow only needs a BigQuery-compatible server, a single-service community emulator can be simpler to run. Check its coverage for the queries you depend on.",
 			},
 			{
 				kicker: "Where LocalCloud is better",
@@ -855,9 +855,9 @@ export const comparisonPages: AgenticContentPage[] = [
 					"Coverage is documented feature by feature; validate release behavior in real BigQuery.",
 				],
 				[
-					"Standalone bigquery-emulator",
-					"Focused BigQuery-compatible local server.",
-					"Separate runtime from the rest of the GCP workflow.",
+					"Single-service community emulators",
+					"A focused BigQuery-compatible local server.",
+					"A separate runtime from the rest of the GCP workflow; coverage varies by project.",
 				],
 				[
 					"Real BigQuery",
@@ -889,9 +889,9 @@ export const comparisonPages: AgenticContentPage[] = [
 				note: "LocalCloud tested coverage.",
 			},
 			{
-				label: "goccy bigquery-emulator",
-				href: "https://github.com/goccy/bigquery-emulator",
-				note: "Standalone open-source emulator README and support matrix.",
+				label: "BigQuery feature comparison",
+				href: "/docs/bigquery-feature-comparison/",
+				note: "LocalCloud BigQuery compared with community emulators and Google Cloud.",
 			},
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
@@ -1013,107 +1013,6 @@ export const comparisonPages: AgenticContentPage[] = [
 				label: "LocalCloud compatibility",
 				href: "/compatibility/",
 				note: "LocalCloud operation-level status.",
-			},
-		],
-		reviewedAt: agenticFacts.evidence.reviewedAt,
-	},
-	{
-		kind: "comparison",
-		slug: "localgcp",
-		path: "/compare/localgcp/",
-		parentLabel: "Compare",
-		parentPath: "/compare/",
-		eyebrow: "Comparison",
-		title: "LocalCloud vs localgcp for Local Google Cloud Development",
-		description:
-			"Compare LocalCloud and localgcp for running Google Cloud services locally, including packaging, service coverage, licensing, and where localgcp is the better choice.",
-		h1: "LocalCloud vs localgcp",
-		deck:
-			"localgcp and LocalCloud both run Google Cloud service emulators on a developer machine. localgcp ships as a single open-source Go binary. LocalCloud ships as a Docker runtime with a console, seed data, Terraform endpoints, and per-operation compatibility documentation.",
-		promptIds: ["quickstart", "project-integration"],
-		quickFacts: [
-			"Both projects target the same problem: Google Cloud APIs without a cloud project.",
-			`LocalCloud runs ${availableServiceCount} local services with per-operation compatibility status.`,
-			"Packaging and licensing differ more than the core idea does; check both against your own constraints.",
-		],
-		sections: [
-			{
-				kicker: "Where localgcp is better",
-				title: "Choose localgcp for a permissive license and a single binary",
-				body:
-					"localgcp is MIT-licensed and distributes as one Go binary, with Docker required for its container-backed services. Evaluate its documented service paths and license when an open-source distribution is required. Native service paths can run without Docker; its container-backed services still require it.",
-			},
-			{
-				kicker: "Where LocalCloud is better",
-				title: "Choose LocalCloud for coverage, inspection, and documented boundaries",
-				body:
-					"LocalCloud publishes a per-operation compatibility contract for each service, ships a web console for inspecting local state, loads deterministic seed data, and exports Terraform-shaped endpoints alongside SDK environment variables. If the workflow needs to inspect what the emulator did, or needs a documented statement of which operations are verified, compare those surfaces with the other project's current documentation before choosing.",
-			},
-			{
-				kicker: "How to decide",
-				title: "Compare on constraints, not on service counts",
-				body:
-					"Service counts move and are measured differently by each project. Decide on the constraints that do not move: the license you can accept, whether Docker is available, whether you need per-operation compatibility evidence, and whether you need a console and seed data. Validate the exact services and operations you depend on before committing either way.",
-			},
-		],
-		table: {
-			columns: ["Decision point", "localgcp", "LocalCloud"],
-			rows: [
-				[
-					"Packaging",
-					"Single Go binary; some services orchestrated through Docker on demand.",
-					"Docker runtime started through a host CLI.",
-				],
-				[
-					"Licensing",
-					"MIT, per the project repository.",
-					"Proprietary Public Preview License; free for the permitted uses listed on the pricing page.",
-				],
-				[
-					"Compatibility evidence",
-					"Consult the project README and source.",
-					"Per-operation status published on each service page and the compatibility matrix.",
-				],
-				[
-					"Inspection",
-					"Inspect through SDK and API calls.",
-					"Built-in web console, health endpoint, and generated environment export.",
-				],
-				[
-					"Pick it when",
-					"You need MIT licensing or redistribution and its documented service paths meet your needs.",
-					"You need documented operation boundaries, a console, seed data, or Terraform endpoints.",
-				],
-			],
-		},
-		limitations: [],
-		internalLinks: [
-			{
-				label: "Compatibility",
-				href: "/compatibility/",
-				note: "Per-operation LocalCloud status.",
-			},
-			{
-				label: "GCP emulator overview",
-				href: "/gcp-emulator/",
-				note: "How LocalCloud packages local Google Cloud services.",
-			},
-			{
-				label: "Pricing and permitted use",
-				href: "/pricing/",
-				note: "What the Public Preview License permits.",
-			},
-		],
-		sources: [
-			{
-				label: "localgcp",
-				href: "https://github.com/slokam-ai/localgcp",
-				note: "Project repository, license, and service list.",
-			},
-			{
-				label: "LocalCloud licensing",
-				href: "/docs/licensing/",
-				note: "LocalCloud permitted use and boundaries.",
 			},
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
