@@ -42,7 +42,7 @@ const structuredData = [
       <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Changelog</span>
       <h1 class="mt-4">LocalCloud changelog</h1>
       <p class="mt-5 text-lg leading-8 text-[var(--text-2)]">
-        CLI releases, newest first. Each release links to its downloads and notes on GitHub. To check a release before you install it, follow the steps on the <a href={productFacts.securityPath}>security page</a>.
+        CLI releases, newest first. Downloads and checksums for every release are on GitHub. To check a release before you install it, follow the steps on the <a href={productFacts.securityPath}>security page</a>.
       </p>
     </div>
   </section>
@@ -60,7 +60,6 @@ const structuredData = [
               {release.platforms.length > 0 && <li>{shippedSentence(release)}</li>}
               {release.summary && <li>{release.summary}</li>}
             </ul>
-            <a class="changelog__link" href={release.url}>{release.tag} release notes and downloads</a>
           </li>
         ))}
       </ol>
@@ -107,12 +106,4 @@ const structuredData = [
     margin-top: 0.6rem;
   }
 
-  .changelog__link {
-    display: inline-block;
-    margin-top: 0.6rem;
-    color: var(--accent-strong);
-    font-size: var(--fs-small);
-    text-decoration: underline;
-    text-underline-offset: 0.18em;
-  }
 </style>

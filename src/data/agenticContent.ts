@@ -1139,7 +1139,7 @@ export const glossaryPages: AgenticContentPage[] = [
 		"The set of runtimes, tools, files, and network endpoints an AI coding agent can reach while it works on a task. It covers both where the agent executes code and what that code is allowed to call.",
 		[
 			"An agent environment has two halves: an execution boundary and a dependency boundary.",
-			"Code sandboxes such as E2B, Modal, or Docker sandboxes provide the execution boundary.",
+			"Code sandboxes such as E2B or Docker sandboxes provide the execution boundary.",
 			"LocalCloud provides a Google Cloud dependency boundary so agent-written cloud calls resolve to localhost.",
 		],
 		[

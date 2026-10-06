@@ -412,12 +412,15 @@ try {
   errors.push(`dist/.well-known/security.txt must be published: ${error.message}`);
 }
 
-// The changelog lists every release in the committed data, linked to GitHub.
+// The changelog lists every release in the committed data and links only the GitHub releases
+// list, never individual release pages (older release notes predate the current image name).
 const releaseData = JSON.parse(await readFile(new URL('../src/data/releases.json', import.meta.url), 'utf8'));
 const changelogHtml = htmlPages.get('changelog/index.html') ?? '';
 for (const release of releaseData.releases) {
-  if (!changelogHtml.includes(`id="${release.tag}"`) || !changelogHtml.includes(`href="${release.url}"`)) errors.push(`changelog omits ${release.tag}`);
+  if (!changelogHtml.includes(`id="${release.tag}"`)) errors.push(`changelog omits ${release.tag}`);
 }
+if (/\/releases\/tag\//.test(changelogHtml)) errors.push('changelog must link the GitHub releases list, not individual release pages');
+if (!changelogHtml.includes(`href="${productFacts.cliReleasesUrl}"`)) errors.push('changelog must link the GitHub releases list');
 
 // /compare/ publishes the alternatives table with its review date, and every fact about
 // another product links the official source it was checked against. Facts about other
@@ -499,6 +502,10 @@ const deniedProjects = [
   { pattern: /\blocalgcp\b/gi, name: 'localgcp' },
   { pattern: /slokam-ai/gi, name: 'localgcp (slokam-ai)' },
   { pattern: /\bgoccy\b/gi, name: 'goccy/bigquery-emulator' },
+  { pattern: /\bdaytona\b/gi, name: 'Daytona' },
+  { pattern: /\bnorthflank\b/gi, name: 'Northflank' },
+  // Case-sensitive so the UI word "modal" (search-modal) stays allowed.
+  { pattern: /\bModal\b|modal\.com/g, name: 'Modal' },
   { pattern: /fake-gcs-server|fsouza\//gi, name: 'fake-gcs-server', attribution: ['docs/architecture/index.html', 'docs/architecture.md'] },
   { pattern: /little[_-]bigtable/gi, name: 'little_bigtable', attribution: ['docs/architecture/index.html', 'docs/architecture.md', 'docs/bigtable-emulator-features/index.html', 'docs/bigtable-emulator-features.md'] },
 ];

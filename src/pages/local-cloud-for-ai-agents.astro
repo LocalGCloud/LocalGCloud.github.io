@@ -22,7 +22,7 @@ const boundaries = [
     title: 'Where the generated code runs',
     body:
       'Owned by a code sandbox. Containers, microVMs, or a hosted runtime keep an agent from touching your workstation, your repository, or your production hosts.',
-    owners: 'E2B, Modal, Daytona, Docker Sandboxes, Northflank',
+    owners: 'E2B, Docker Sandboxes',
   },
   {
     label: 'Dependency boundary',
@@ -75,7 +75,7 @@ const faqItems = [
     a: 'Start LocalCloud, load its generated environment values into the agent process, and let the standard Google Cloud SDKs resolve to localhost. No cloud project, service-account key, or billing account is required by default for the documented local workflows.',
   },
   {
-    q: 'Does LocalCloud replace E2B, Modal, or Docker Sandboxes?',
+    q: 'Does LocalCloud replace E2B or Docker Sandboxes?',
     a: 'No, and it is not trying to. Those products isolate arbitrary code execution, which LocalCloud does not do. They are complementary: run the agent inside a code sandbox and point its Google Cloud calls at LocalCloud.',
   },
   {
