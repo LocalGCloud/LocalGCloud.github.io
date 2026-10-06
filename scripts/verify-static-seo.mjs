@@ -42,7 +42,16 @@ const jsonLdTypes = (html, route) => {
     try {
       const value = JSON.parse(match[1]);
       if (typeof value === 'object' && value && '@type' in value) {
-        types.push(...(Array.isArray(value['@type']) ? value['@type'] : [value['@type']]));
+        const schemaTypes = Array.isArray(value['@type']) ? value['@type'] : [value['@type']];
+        types.push(...schemaTypes);
+        if (schemaTypes.includes('Product')) {
+          if (typeof value.image !== 'string' || !URL.canParse(value.image) || new URL(value.image).protocol !== 'https:') {
+            errors.push(`${route}: Product JSON-LD must include an absolute HTTPS image URL`);
+          }
+          if (value.audience != null && value.audience['@type'] !== 'PeopleAudience') {
+            errors.push(`${route}: Product JSON-LD audience must use Google's supported PeopleAudience type`);
+          }
+        }
       }
     } catch {
       errors.push(`${route}: contains invalid JSON-LD`);

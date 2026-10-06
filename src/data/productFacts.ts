@@ -103,6 +103,10 @@ export const localCloudProductSchema: JsonLd = {
 	),
 	"@type": ["Product", "SoftwareApplication"],
 	"@id": new URL("#localcloud", productFacts.siteUrl).toString(),
+	image: new URL(
+		"/illustrations/hero-laptop-service-grid.svg",
+		productFacts.siteUrl,
+	).toString(),
 	brand: {
 		"@type": "Brand",
 		name: productFacts.companyName,
@@ -116,10 +120,6 @@ export const localCloudProductSchema: JsonLd = {
 		"Persistent local data using Docker volumes",
 		"Local development, integration tests, CI, evaluation, and internal pilots",
 	],
-	audience: {
-		"@type": "Audience",
-		audienceType: "Individuals and organizations, including for-profit companies",
-	},
 	offers: {
 		"@type": "Offer",
 		"@id": new URL("/pricing/#public-preview", productFacts.siteUrl).toString(),
