@@ -39,18 +39,19 @@ const searchPage = isPlanned ? undefined : emulatorSearchPages[service.id];
 const faqItems = searchPage ? [
   {
     question: `How do I run ${service.name} locally?`,
-    answer: `Install the LocalCloud CLI, start the runtime, and use the generated endpoint values in your application, as in the example above.${isServiceDisabledByDefault(service) ? ` ${service.name} is opt-in, so start it with ${optInStartCommand(service)}.` : ''} Configure explicit client endpoint options when the SDK does not read an emulator variable.`,
+    answer: `Install the LocalCloud CLI, start the runtime, and export its environment, as in the example above.${isServiceDisabledByDefault(service) ? ` ${service.name} is opt-in, so start it with ${optInStartCommand(service)}.` : ''}`,
   },
   {
     question: `Which environment variable points the SDK at the local ${service.name}?`,
-    answer: `LocalCloud exports ${service.envVar}. Use the generated value: if a default port is already in use, the CLI picks another one. Some SDKs also require explicit client options; exporting an environment variable alone does not establish local routing.`,
+    answer: `LocalCloud exports ${service.envVar}. Use the generated value, because the CLI picks another port when the default is in use. Some SDKs also need explicit client endpoint options; the variable alone does not route them locally.`,
   },
   {
     question: `Does the local ${service.name} behave exactly like Google Cloud?`,
     answer: `No. LocalCloud runs the documented workflows on this page within the service boundaries listed here. Validate behavior against real ${service.name} before production deployment.`,
   },
 ] : [];
-const exampleLinks: ServiceExampleLink[] = isPlanned ? [] : [...(guide.examples ?? [])];
+// Examples with an SDK install render inline above, with their own guide link; list the rest.
+const exampleLinks: ServiceExampleLink[] = isPlanned ? [] : (guide.examples ?? []).filter((example) => !example.install);
 if (terraformExampleServiceIds.includes(service.id) && !isPlanned) exampleLinks.push({
   title: 'Provision resources with Terraform', href: '/docs/terraform/#supported-terraform-resources', label: 'Terraform · HCL',
   description: 'Documented resources, provider configuration, and local routing setup.',
