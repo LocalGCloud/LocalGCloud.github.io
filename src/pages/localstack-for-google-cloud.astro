@@ -40,11 +40,6 @@ const faqs = [
       'LocalCloud is designed for standard Google Cloud SDK and API workflows. Configure local emulator endpoints for development, then remove those local settings when validating against real Google Cloud.',
   },
   {
-    question: 'When should I use LocalStack instead of LocalCloud?',
-    answer:
-      'Use LocalStack whenever the code under test calls AWS APIs. LocalCloud does not emulate AWS and is not a substitute for it. LocalStack is also the more established project, with a longer public track record and a wider published integration surface.',
-  },
-  {
     question: 'Can I use LocalCloud as a local cloud sandbox for AI agents?',
     answer:
       'Yes. LocalCloud gives agent-written Google Cloud code a localhost target with no credentials or billing project by default, so an AI coding agent cannot create real cloud resources by mistake. It closes the dependency boundary; pair it with a code sandbox if you also need to contain arbitrary code execution.',
