@@ -26,6 +26,11 @@ if (!(await exists(new URL("localcloud.defaults.yaml", runtimeRoot)))) {
 	process.exit(0);
 }
 
+// Freshness warnings; strict mode (re-sync sessions) turns them into failures.
+function report() {
+	for (const warning of warnings) console.warn(process.env.GITHUB_ACTIONS ? `::warning title=Upstream documentation::${warning}` : `Warning: ${warning}`);
+	if (strict && warnings.length) throw new Error("Upstream documentation: UPSTREAM_DOCS_STRICT=1 requires the snapshot to match upstream HEAD and committed sources");
+}
 const assert = (condition, message) => {
 	if (!condition) throw new Error(`Upstream documentation: ${message}`);
 };
@@ -46,13 +51,47 @@ const commitExists = (url, commit) => {
 		return false;
 	}
 };
-const sha256 = async (url) =>
-	`sha256:${createHash("sha256").update(await readFile(url)).digest("hex")}`;
 
-assert(commitExists(runtimeRoot, contract.provenance.runtimeRevision), "runtime revision does not exist");
-assert(commitExists(cliRoot, contract.provenance.cliRevision), "CLI revision does not exist");
-assert(contract.provenance.runtimeRevision === revision(runtimeRoot), "snapshot is not synced to the runtime HEAD");
-assert(contract.provenance.cliRevision === revision(cliRoot), "snapshot is not synced to the CLI HEAD");
+// The snapshot must match the upstream commits it records (integrity). Upstream moving past
+// them (freshness) is reported as a warning, or an error with UPSTREAM_DOCS_STRICT=1 when
+// re-syncing (see BUILD.md).
+const strict = process.env.UPSTREAM_DOCS_STRICT === "1";
+const warnings = [];
+const bigqueryRoot = new URL("../../local_cloud_dependencies/bigquery-emulator-on-duckdb/", import.meta.url);
+const { runtimeRevision, cliRevision } = contract.provenance;
+const worktreeSources = new Set(contract.provenance.worktreeSources);
+assert(commitExists(runtimeRoot, runtimeRevision), "runtime revision does not exist");
+assert(commitExists(cliRoot, cliRevision), "CLI revision does not exist");
+assert(commitExists(bigqueryRoot, contract.bigqueryCoverage.revision), "BigQuery coverage revision does not exist");
+for (const [name, repository, recorded] of [
+	["localcloud", runtimeRoot, runtimeRevision],
+	["localcloud-cli", cliRoot, cliRevision],
+	["bigquery-emulator-on-duckdb", bigqueryRoot, contract.bigqueryCoverage.revision],
+]) {
+	const head = revision(repository);
+	if (head === recorded) continue;
+	const ahead = execFileSync("git", ["rev-list", "--count", `${recorded}..${head}`], { cwd: repository, encoding: "utf8" }).trim();
+	warnings.push(`${name} is ${ahead} commit(s) ahead of the snapshot (${recorded.slice(0, 12)} → ${head.slice(0, 12)}); run scripts/sync-upstream-docs.mjs to publish newer upstream facts`);
+}
+const gitShow = (repository, commit, path) => {
+	try {
+		return execFileSync("git", ["show", `${commit}:${path}`], { cwd: repository, maxBuffer: 64 * 1024 * 1024 });
+	} catch {
+		return null;
+	}
+};
+const readOptional = async (url) => {
+	try {
+		return await readFile(url);
+	} catch {
+		return null;
+	}
+};
+const digestOf = (bytes) => `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
+const upstreamPath = (path) =>
+	path.startsWith("../localcloud-cli/") ? [cliRoot, cliRevision, path.slice("../localcloud-cli/".length)]
+		: path.startsWith("../localcloud/") ? [runtimeRoot, runtimeRevision, path.slice("../localcloud/".length)]
+			: null;
 
 const upstreamSources = new Map([
 	["../localcloud/localcloud.defaults.yaml", new URL("localcloud.defaults.yaml", runtimeRoot)],
@@ -69,29 +108,50 @@ const upstreamSources = new Map([
 	["public/install.sh", new URL("public/install.sh", root)],
 	["../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv", new URL("../../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv", import.meta.url)],
 ]);
+// Each source resolves to the bytes the snapshot was synced from: the recorded commit or, for
+// files synced from uncommitted upstream changes, the working copy while it still matches.
+const sources = new Map();
 for (const [path, url] of upstreamSources) {
-	assert(contract.provenance.sourceDigests[path] === await sha256(url), `${path} digest differs`);
+	const expected = contract.provenance.sourceDigests[path];
+	const location = upstreamPath(path);
+	const candidates = location ? [gitShow(...location)] : [];
+	if (!location || worktreeSources.has(path)) candidates.push(await readOptional(url));
+	const bytes = candidates.find((candidate) => candidate && digestOf(candidate) === expected);
+	if (bytes) sources.set(path, bytes);
+	else if (location && worktreeSources.has(path)) warnings.push(`${path} was synced from uncommitted changes that no longer match upstream; checks that read it are skipped`);
+	else assert(false, `${path} digest differs from the ${location ? "recorded revision" : "snapshot"}`);
 }
+const sourceText = (path) => sources.get(path)?.toString("utf8");
 
-const bigqueryRoot = new URL("../../local_cloud_dependencies/bigquery-emulator-on-duckdb/", import.meta.url);
-const expectedCoverage = JSON.parse(execFileSync("python3", ["-c", `
-import csv, json
+const coveragePath = "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv";
+const coverageProjection = (csvBytes) => JSON.parse(execFileSync("python3", ["-c", `
+import csv, io, json, sys
 from collections import Counter
-with open('docs/coverage-matrix.csv', newline='') as source:
-    rows = list(csv.DictReader(source))
+rows = list(csv.DictReader(io.StringIO(sys.stdin.read())))
 print(json.dumps({
     'total': len(rows),
     'development': dict(Counter(row['development_status'] for row in rows)),
     'production': dict(Counter(row['production_parity'] for row in rows)),
     'partialCapabilities': [{'id': row['capability_id'], 'name': row['feature_name'], 'boundary': row['production_limitations'], 'notes': row['notes']} for row in rows if row['development_status'] == 'partial'],
 }))
-`], { cwd: bigqueryRoot, encoding: "utf8" }));
-expectedCoverage.revision = revision(bigqueryRoot);
-assert(JSON.stringify(contract.bigqueryCoverage) === JSON.stringify(expectedCoverage), "BigQuery coverage projection differs from the matrix");
+`], { input: csvBytes, encoding: "utf8" }));
+const coverageCandidates = [gitShow(bigqueryRoot, contract.bigqueryCoverage.revision, "docs/coverage-matrix.csv")];
+if (worktreeSources.has(coveragePath)) coverageCandidates.push(await readOptional(new URL("docs/coverage-matrix.csv", bigqueryRoot)));
+const coverageMatches = coverageCandidates.some((csvBytes) => csvBytes &&
+	JSON.stringify(contract.bigqueryCoverage) === JSON.stringify({ ...coverageProjection(csvBytes), revision: contract.bigqueryCoverage.revision }));
+if (!coverageMatches && worktreeSources.has(coveragePath)) warnings.push(`${coveragePath} was synced from uncommitted changes that no longer match upstream`);
+else assert(coverageMatches, "BigQuery coverage projection differs from the matrix at the recorded revision");
 
-const defaults = parse(await readFile(new URL("localcloud.defaults.yaml", runtimeRoot), "utf8"));
+const defaultsText = sourceText("../localcloud/localcloud.defaults.yaml");
+const documentationText = sourceText("../localcloud/documentation.yaml");
+if (!defaultsText || !documentationText) {
+	report();
+	console.log("Upstream documentation integrity verified; service-level checks skipped (see warnings).");
+	process.exit(0);
+}
+const defaults = parse(defaultsText);
 const catalog = defaults.services.catalog;
-const documentation = parse(await readFile(new URL("documentation.yaml", runtimeRoot), "utf8"));
+const documentation = parse(documentationText);
 const statusMap = { supported: "verified", partial: "partial", unverified: "unknown", unsupported: "unsupported", prod_only: "unsupported" };
 assert(Object.keys(catalog).length === contract.services.length, "service count differs from localcloud.defaults.yaml");
 
@@ -131,15 +191,15 @@ for (const service of contract.services) {
 }
 
 assert(contract.cli.dockerSocketDefault === defaults.host.docker_socket, "Docker access mode differs");
-const cliConfig = await readFile(new URL("src/localcloud_cli/config.py", cliRoot), "utf8");
-assert(cliConfig.includes("local_only: bool = False") && contract.cli.bindAddress === "0.0.0.0", "CLI host binding default differs");
-const seedSource = await readFile(new URL("localcloud-server/src/main/java/com/localcloud/admin/SeedService.java", runtimeRoot), "utf8");
-for (const [field, constant] of [["supportedServices", "IMPLEMENTED_SEED_SERVICES"], ["volatileServices", "VOLATILE_SEED_SERVICES"]]) {
+const cliConfig = sourceText("../localcloud-cli/src/localcloud_cli/config.py") ?? "";
+if (cliConfig) assert(cliConfig.includes("local_only: bool = False") && contract.cli.bindAddress === "0.0.0.0", "CLI host binding default differs");
+const seedSource = sourceText("../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java") ?? "";
+if (seedSource) for (const [field, constant] of [["supportedServices", "IMPLEMENTED_SEED_SERVICES"], ["volatileServices", "VOLATILE_SEED_SERVICES"]]) {
 	const body = seedSource.match(new RegExp(`${constant} = Set\\.of\\(([\\s\\S]*?)\\);`))?.[1];
 	assert(body !== undefined, `cannot resolve ${constant}`);
 	assert(JSON.stringify(contract.seed[field]) === JSON.stringify([...body.matchAll(/"([a-z]+)"/g)].map((match) => match[1])), `${field} differs`);
 }
-assert(seedSource.includes(`getOrDefault("LOCALCLOUD_SEED_FILE", "${contract.seed.defaultSeedFile}")`), "seed file default differs");
+if (seedSource) assert(seedSource.includes(`getOrDefault("LOCALCLOUD_SEED_FILE", "${contract.seed.defaultSeedFile}")`), "seed file default differs");
 
 assert(contract.operator.gatewayPort === defaults.server.gateway.port, "gateway port differs");
 assert(contract.operator.publishedPorts.services === "5380-5405", "services published range differs");
@@ -147,8 +207,9 @@ assert(contract.operator.publishedPorts.transparentDns === "53/udp -> 5410/udp",
 assert(contract.operator.publishedPorts.transparentHttp === `80 -> ${defaults.server.gateway.port}`, "transparent HTTP mapping differs");
 assert(contract.operator.publishedPorts.transparentHttps === `443 -> tls.port (default ${defaults.tls.port})`, "transparent HTTPS mapping differs");
 
-const cliVersionSource = await readFile(new URL("src/localcloud_cli/__init__.py", cliRoot), "utf8");
-const cliVersion = cliVersionSource.match(/__version__ = "([^"]+)"/)?.[1];
-assert(cliVersion && contract.cli.releaseBoundary.includes(cliVersion), "CLI version boundary differs");
+const cliVersionSource = sourceText("../localcloud-cli/src/localcloud_cli/__init__.py");
+const cliVersion = cliVersionSource?.match(/__version__ = "([^"]+)"/)?.[1];
+if (cliVersionSource) assert(cliVersion && contract.cli.releaseBoundary.includes(cliVersion), "CLI version boundary differs");
 
-console.log(`Upstream documentation verified against ${contract.services.length} runtime services and CLI ${cliVersion}.`);
+report();
+console.log(`Upstream documentation verified against the recorded revisions: ${contract.services.length} runtime services, CLI ${cliVersion ?? "(version source skipped)"}.`);

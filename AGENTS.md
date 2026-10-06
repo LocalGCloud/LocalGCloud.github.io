@@ -97,10 +97,10 @@ See [docs/site-marketing-principles.md](file:///Users/jsenjaliya/src/AI/localclo
 
 When syncing or reading technical documentation from upstream repositories (e.g., `localcloud`, `spanner`, `bigquery`, `dataproc`):
 
-1. **Sync Contract:** Run `node scripts/sync-upstream-docs.mjs` and `node scripts/verify-upstream-docs.mjs` to update and verify `src/data/docs-contract.snapshot.json`.
+1. **Sync Contract:** Run `node scripts/sync-upstream-docs.mjs` and `UPSTREAM_DOCS_STRICT=1 node scripts/verify-upstream-docs.mjs` to update and verify `src/data/docs-contract.snapshot.json`. Sync from committed upstream work; regular builds only warn when upstream is ahead of the snapshot.
 2. **Apply Normalization:** Ensure `marketingStatus` in `src/data/services.ts` maps all active technical states (`verified`, `partial`, `release-unverified`) to `'supported'`.
 3. **Draft Positive Editorial:** Author capability-oriented value copy in `src/data/serviceEditorial.ts` highlighting workflows (unit tests, integration test suites, local Docker execution).
-4. **Regenerate Distributed Docs:** Run `node scripts/generate-distributed-docs.mjs` and `node scripts/verify-distributed-docs.mjs` to update `public/llms.txt` and `public/llms-full.txt`.
+4. **Regenerate Distributed Docs:** Run `node scripts/generate-distributed-docs.mjs` and `node scripts/verify-distributed-docs.mjs` to update `public/llms.txt`; the build generates `llms-full.txt` and the Markdown page twins.
 
 ---
 

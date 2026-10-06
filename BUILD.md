@@ -65,7 +65,7 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 |-------|------------------|----------------------|
 | **1** | `node scripts/generate-distributed-docs.mjs` | Generates `public/llms.txt` from contract snapshots and editorial data, applying the two-category supported model and the shared install-first quick start (`src/utils/quickstart.mjs`). |
 | **2** | `node scripts/verify-docs-contract.mjs` | Validates that the local contract snapshot (`src/data/docs-contract.snapshot.json`) adheres to schema boundaries, service counts (27), and required properties. |
-| **3** | `node scripts/verify-upstream-docs.mjs` | Verifies SHA256 integrity hashes of upstream `documentation.yaml` against the contract snapshot to prevent silent drift. |
+| **3** | `node scripts/verify-upstream-docs.mjs` | When the sibling repositories are present, verifies that the snapshot matches the upstream commits it records (SHA256 source digests, service catalog, BigQuery coverage, CLI version). Upstream commits newer than the snapshot produce warnings, not failures; `UPSTREAM_DOCS_STRICT=1` makes them fail. Skipped when the siblings are absent, as in CI. |
 | **4** | `node scripts/verify-cli-docs.mjs` | Ensures CLI flags, memory defaults, commands, and port bindings in docs match the product specification. |
 | **5** | `node scripts/verify-doc-examples.mjs` | Validates that all code snippets and examples across docs are syntactically valid and refer to valid local endpoints. |
 | **6** | `node scripts/verify-policy-docs.mjs` | Verifies privacy policies, license terms, free preview pricing statements, and navigation order. |
@@ -107,9 +107,9 @@ Runs `worker/index.mjs` with the built `dist/` in workerd (through Wrangler) aft
 ### Upstream Contract Synchronization
 ```bash
 node scripts/sync-upstream-docs.mjs
-node scripts/verify-upstream-docs.mjs
+UPSTREAM_DOCS_STRICT=1 node scripts/verify-upstream-docs.mjs
 ```
-Synchronizes `documentation.yaml` from `../localcloud` into `src/data/docs-contract.snapshot.json` and updates cryptographic hashes.
+Synchronizes `documentation.yaml` from `../localcloud` into `src/data/docs-contract.snapshot.json` and updates cryptographic hashes. Strict mode confirms the new snapshot matches upstream HEAD and that no source came from uncommitted upstream changes; sync from committed upstream work so later builds can re-verify every source.
 
 ### Context Graph Rebuild
 ```bash
