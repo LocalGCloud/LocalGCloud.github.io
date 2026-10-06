@@ -199,7 +199,7 @@ for (const line of quickStart.lines) {
 }
 
 // Every agent path installs the CLI before it runs the CLI.
-const agentPages = [...htmlPages.keys()].filter((file) => /^(?:ai|local-cloud-for-ai-agents|blog\/localcloud-for-ai-agents|agents\/[^/]+)\/index\.html$/.test(file));
+const agentPages = [...htmlPages.keys()].filter((file) => /^(?:ai|local-cloud-for-ai-agents|agents\/[^/]+)\/index\.html$/.test(file));
 const agentEntryText = [...agentText].filter(([file]) => !isMarkdownTwin(file) && file !== 'llms-full.txt');
 for (const [file, text] of [...agentEntryText, ...agentPages.map((file) => [file, visibleText(htmlPages.get(file))])]) {
   const firstCliUse = Math.min(...['localcloud doctor', 'eval "$(localcloud env)"'].map((command) => text.indexOf(command)).filter((index) => index !== -1));

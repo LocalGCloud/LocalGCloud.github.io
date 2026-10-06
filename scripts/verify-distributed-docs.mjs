@@ -140,7 +140,8 @@ assert(!productFactsSource.includes('githubUrl:'), 'productFacts still conflates
 // MCP is documented on the site (the glossary entry); pages that mention it link there and
 // keep the runtime endpoint and the stdio bridge distinct.
 for (const [path, link] of [
-	["src/pages/blog/localcloud-for-ai-agents.astro", "/glossary/mcp-server/"],
+	// Astro pages prefix the base path, so match the route without its leading slash.
+	["src/pages/ai/index.astro", "glossary/mcp-server/"],
 	["src/pages/docs/licensing.mdx", "/glossary/mcp-server/"],
 	["src/data/agenticContent.ts", '"mcp-server"'],
 ]) {

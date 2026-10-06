@@ -486,7 +486,7 @@ test('every built page prefetches same-origin pages through CSP-hashed speculati
 // One page per template: docs, service catalog and detail, blog index and posts.
 const representativePages = [
   'docs/index.html', 'docs/configuration/index.html', 'services/index.html', 'services/bigquery/index.html',
-  'blog/index.html', 'blog/run-dataproc-locally-docker/index.html', 'blog/localcloud-for-ai-agents/index.html',
+  'blog/index.html', 'blog/run-dataproc-locally-docker/index.html', 'blog/localcloud-for-open-source/index.html',
 ];
 
 test('docs, services and blog pages preload the body font and never lazy-load or leave unsized a hero image', () => {

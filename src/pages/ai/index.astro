@@ -127,7 +127,7 @@ const structuredData = [
           <span class="site-kicker">Human explanation</span>
           <h2>Why agents need this page</h2>
           <p>
-            AI agents often discover code paths that expect Google Cloud. This page gives them a safe default: start LocalCloud, route SDKs to localhost, prove behavior locally, and stop rather than silently using real cloud credentials.
+            AI agents often discover code paths that expect Google Cloud. A repository that uses BigQuery, Pub/Sub, Cloud Storage, Spanner, Bigtable, or Terraform usually expects a real project, so an agent that follows that path blindly turns a local test into a credential request, a billing event, or a change to shared infrastructure. This page gives agents a safe default: start LocalCloud, route SDKs to localhost, prove behavior locally, and stop rather than silently using real cloud credentials.
           </p>
           <RelatedPages path="/ai/" />
         </div>
@@ -300,6 +300,11 @@ const structuredData = [
           <span class="site-kicker">Markdown policy</span>
           <h2 class="mt-3">Raw resource index</h2>
           <p class="mt-4 text-[var(--text-2)]">HTML pages stay canonical for humans; raw Markdown pages give agents compact service, compatibility, and docs context.</p>
+          <ul class="site-list mt-4 text-sm">
+            <li><a href={`${base}ai/services.md`}>/ai/services.md</a>: service matrix and endpoint variables</li>
+            <li><a href={`${base}ai/compatibility.md`}>/ai/compatibility.md</a>: what each service runs locally</li>
+            <li><a href={`${base}ai/docs.md`}>/ai/docs.md</a>: SDK, Terraform, seed data, and console docs</li>
+          </ul>
           <a class="site-button site-button--primary mt-5" href={`${base}ai/resources.md`}>Open Markdown index</a>
         </article>
         <article class="site-panel p-6 reveal">
@@ -316,7 +321,7 @@ const structuredData = [
         <div class="site-section-heading reveal">
           <span class="site-kicker">Agent endpoints</span>
           <h2>URLs agents can rely on</h2>
-          <p>Use these localhost endpoints after LocalCloud is running, and use the public docs for service-specific context.</p>
+          <p>Use these localhost endpoints after LocalCloud is running, and use the public docs for service-specific context. MCP clients connect to the runtime's <code>/mcp</code> endpoint, or through the <code>localcloud mcp</code> stdio bridge when they can't use Streamable HTTP; see <a href={`${base}glossary/mcp-server/`}>LocalCloud MCP integration</a>.</p>
         </div>
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4 stagger">
           {agenticEndpoints.map((endpoint) => (

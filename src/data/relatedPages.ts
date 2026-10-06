@@ -45,10 +45,6 @@ const pages: Record<string, RelatedPage> = {
 		anchor: "Agent resources",
 		note: "Prompts, the AGENTS.md template and raw Markdown routes for agents.",
 	},
-	"/blog/localcloud-for-ai-agents/": {
-		anchor: "Introducing LocalCloud for AI coding agents",
-		note: "The July 2026 launch post.",
-	},
 	"/gcp-emulator/": {
 		anchor: "GCP emulator overview",
 		note: "Every local service in one Docker container.",
@@ -96,7 +92,6 @@ for (const service of localServices) {
 export const relatedPagePairs: RelatedPair[] = [
 	{ pages: ["/gcp-integration-testing/", "/workflows/github-actions-gcp-emulator/"], finding: "S23" },
 	{ pages: ["/local-cloud-for-ai-agents/", "/ai/"], finding: "S6" },
-	{ pages: ["/ai/", "/blog/localcloud-for-ai-agents/"], finding: "S6" },
 	{ pages: ["/gcp-emulator/", "/docs/what-is-gcp-emulator/"], finding: "A11" },
 	{ pages: ["/docs/what-is-gcp-emulator/", "/glossary/gcp-emulator/"], finding: "S26" },
 	...localServices.flatMap((service): RelatedPair[] => {

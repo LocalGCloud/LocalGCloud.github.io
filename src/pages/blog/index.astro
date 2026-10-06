@@ -11,13 +11,6 @@ const posts = blogDemoPages.map((page) => ({
   slug: page.slug, path: page.path, title: page.h1, description: page.description,
   ...getBlogMetadata(page),
 }));
-const agents = authoredBlogMetadata['localcloud-for-ai-agents'];
-posts.push({
-  slug: 'localcloud-for-ai-agents', path: '/blog/localcloud-for-ai-agents/',
-  title: 'LocalCloud for AI Agents',
-  description: 'Give coding agents a safe local Google Cloud target with standard SDKs, copy-ready prompts, Agent Skills, and MCP tooling.',
-  topic: agents.topic, minutes: agents.minutes, date: agents.publishedAt, dateLabel: 'Published',
-});
 const openSource = authoredBlogMetadata['localcloud-for-open-source'];
 posts.push({
   slug: 'localcloud-for-open-source', path: '/blog/localcloud-for-open-source/',
@@ -35,7 +28,7 @@ const structuredData = [createBreadcrumbSchema([
 
 <BlogLayout
   title="LocalCloud Blog: Guides and Demos"
-  description="Practical guides for local Google Cloud development: AI coding agents, Dataproc in Docker, open-source CI and other developer workflows."
+  description="Practical guides for local Google Cloud development: Dataproc and Spark in Docker, no-cost integration testing for open-source projects, and more."
   {structuredData}
   index
 >

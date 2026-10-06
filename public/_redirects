@@ -27,6 +27,8 @@
 /blog/claude-code-local-gcp-sandbox/ /agents/claude-code-gcp-sandbox/ 301
 /blog/bigquery-locally-agent-written-pipelines /services/bigquery/ 301
 /blog/bigquery-locally-agent-written-pipelines/ /services/bigquery/ 301
+/blog/localcloud-for-ai-agents /ai/ 301
+/blog/localcloud-for-ai-agents/ /ai/ 301
 
 /favicon.ico /favicon.png 301
 /ai/AGENTS.md /ai/agent-template.md 301
