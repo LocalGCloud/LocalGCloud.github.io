@@ -1,9 +1,13 @@
-import { compressHtml } from './static-response.mjs';
+import { serveSite } from './static-response.mjs';
 
 const PREFIX = '/ingest';
 const API_HOST = 'us.i.posthog.com';
 const ASSET_HOST = 'us-assets.i.posthog.com';
 const METHODS = ['GET', 'HEAD', 'POST', 'OPTIONS'];
+const UPSTREAM_TIMEOUT_MS = 10_000;
+
+// SDK assets live on the asset host; every other path is API traffic.
+const upstreamHost = (path) => path.startsWith('/static/') || path.startsWith('/array/') ? ASSET_HOST : API_HOST;
 
 function unavailable() {
   return new Response('Analytics upstream unavailable', {
@@ -16,7 +20,7 @@ function unavailable() {
 export async function handleRequest(request, env, sendUpstream = fetch) {
   const url = new URL(request.url);
   if (url.pathname !== PREFIX && !url.pathname.startsWith(`${PREFIX}/`)) {
-    return compressHtml(request, await env.ASSETS.fetch(request));
+    return serveSite(request, env);
   }
   if (!METHODS.includes(request.method)) {
     return new Response('Method not allowed', {
@@ -27,7 +31,7 @@ export async function handleRequest(request, env, sendUpstream = fetch) {
 
   const path = url.pathname.slice(PREFIX.length) || '/';
   const isStatic = path.startsWith('/static/');
-  const host = isStatic || path.startsWith('/array/') ? ASSET_HOST : API_HOST;
+  const host = upstreamHost(path);
   const upstream = new URL(`https://${host}`);
   upstream.pathname = path;
   upstream.search = url.search;
@@ -48,18 +52,20 @@ export async function handleRequest(request, env, sendUpstream = fetch) {
       headers,
       redirect: 'manual',
     });
-    const received = await sendUpstream(forwarded, { cache: 'no-store' });
+    const received = await sendUpstream(forwarded, { cache: 'no-store', signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) });
     const response = new Response(received.body, received);
     response.headers.delete('Set-Cookie');
     response.headers.set('X-Content-Type-Options', 'nosniff');
     if (!isStatic) response.headers.set('Cache-Control', 'no-store');
+    // Publicly cached SDK files may be compressed differently per client.
+    else if (!/\baccept-encoding\b|\*/i.test(response.headers.get('Vary') || '')) response.headers.append('Vary', 'Accept-Encoding');
 
     // Keep redirects on our origin and never forward to an arbitrary destination.
     const location = response.headers.get('Location');
     if (location && response.status >= 300 && response.status < 400) {
       const destination = new URL(location, upstream);
       if (destination.protocol !== 'https:' || destination.port ||
-          ![API_HOST, ASSET_HOST].includes(destination.hostname)) return unavailable();
+          destination.hostname !== upstreamHost(destination.pathname)) return unavailable();
       response.headers.set('Location', `${PREFIX}${destination.pathname}${destination.search}`);
     }
     return response;

@@ -43,6 +43,8 @@ jobs:
         run: pnpm run test:installer
       - name: Test analytics proxy and page loading
         run: pnpm run test:analytics && pnpm run test:performance
+      - name: Test the Worker and built assets in workerd
+        run: pnpm run test:worker
       - name: Test live SEO verification
         run: pnpm run test:live-seo
       - name: Deploy site and analytics proxy to Cloudflare

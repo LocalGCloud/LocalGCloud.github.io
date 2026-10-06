@@ -1,3 +1,13 @@
 /favicon.ico /favicon.png 301
 /docs/localcloud-vs-individual-emulators /docs/localcloud-vs-google-emulators/ 301
 /docs/localcloud-vs-individual-emulators/ /docs/localcloud-vs-google-emulators/ 301
+/ai/AGENTS.md /ai/agent-template.md 301
+/ai/AGENTS.md/ /ai/agent-template.md 301
+/docs/bigquery-locally /bigquery-emulator/ 301
+/docs/bigquery-locally/ /bigquery-emulator/ 301
+/review / 301
+/review/ / 301
+/variation-field-manual / 301
+/variation-field-manual/ / 301
+/prototypes/pricing /pricing/ 301
+/prototypes/pricing/ /pricing/ 301

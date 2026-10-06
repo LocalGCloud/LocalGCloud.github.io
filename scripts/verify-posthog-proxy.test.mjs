@@ -212,6 +212,8 @@ test('upstream redirects stay first-party, while other redirect targets are refu
     ['https://us-assets.i.posthog.com/static/array.js', '/ingest/static/array.js'],
     ['https://unexpected.example/', null],
     ['http://us.i.posthog.com/', null],
+    ['https://us-assets.i.posthog.com/flags/', null],
+    ['https://us.i.posthog.com/static/array.js', null],
   ]) {
     const response = await handleRequest(new Request(`${origin}/ingest/flags`), noAssets,
       async () => new Response(null, { status: 307, headers: { Location: location } }));
@@ -224,6 +226,20 @@ test('Wrangler routes analytics and HTML through the Worker while retaining stat
   const config = JSON.parse(readFileSync(new URL('../wrangler.jsonc', import.meta.url), 'utf8'));
   assert.equal(config.main, 'worker/index.mjs');
   assert.equal(config.assets.binding, 'ASSETS');
-  assert.deepEqual(config.assets.run_worker_first, ['/ingest', '/ingest/*', '/', '/*/']);
+  assert.deepEqual(config.assets.run_worker_first, ['/*', '!/_astro/*', '!/pagefind/*', '!/icons/*', '!/illustrations/*']);
   assert.equal(config.assets.not_found_handling, '404-page');
+});
+
+test('upstream requests are bounded by a timeout signal', async () => {
+  let options;
+  await handleRequest(new Request(`${origin}/ingest/flags/`), noAssets, async (_, init) => { options = init; return new Response('ok'); });
+  assert.ok(options.signal instanceof AbortSignal);
+  assert.equal(options.cache, 'no-store');
+});
+
+test('cached SDK files vary on encoding', async () => {
+  const response = await handleRequest(new Request(`${origin}/ingest/static/array.js`), noAssets,
+    async () => new Response('sdk', { headers: { 'Cache-Control': 'public, max-age=3600' } }));
+  assert.equal(response.headers.get('Vary'), 'Accept-Encoding');
+  assert.equal(response.headers.get('Cache-Control'), 'public, max-age=3600');
 });

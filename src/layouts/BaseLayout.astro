@@ -37,7 +37,8 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <link rel="canonical" href={canonicalURL} />
+    {/* A noindex page (such as the 404 page served at every missing URL) must not claim a canonical URL. */}
+    {!noindex && <link rel="canonical" href={canonicalURL} />}
     <link rel="icon" href={`${base}favicon.png`} type="image/png" sizes="96x96" />
     <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} sizes="180x180" />
     <meta name="theme-color" content="#ffffff" />
@@ -45,7 +46,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalURL} />
+    {!noindex && <meta property="og:url" content={canonicalURL} />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {ogImageURL && <meta property="og:image" content={ogImageURL} />}

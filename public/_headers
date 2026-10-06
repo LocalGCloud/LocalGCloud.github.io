@@ -1,5 +1,5 @@
-# Revalidate mutable files and prevent edge injection into CSP-protected HTML.
-# The Worker compresses HTML before the proxy; no-transform preserves those encoded bytes.
+# Revalidate mutable files. The Worker adds no-transform to HTML only, so Cloudflare
+# can compress every other text file while CSP-protected HTML stays byte-exact.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
@@ -7,7 +7,7 @@
   Cross-Origin-Opener-Policy: same-origin
   Strict-Transport-Security: max-age=31536000
   Content-Security-Policy: frame-ancestors 'none'
-  Cache-Control: public, max-age=0, must-revalidate, no-transform
+  Cache-Control: public, max-age=0, must-revalidate
 
 # Only content-addressed assets can safely be immutable across deployments.
 /_astro/*
@@ -15,7 +15,11 @@
   Cache-Control: public, max-age=31536000, immutable
 
 # These paths are mutable; keep their cache lifetime bounded.
-/brand/*
+# /brand/icons/ is an HTML page, so only image files get the longer lifetime.
+/brand/*.svg
+  ! Cache-Control
+  Cache-Control: public, max-age=604800
+/brand/*.png
   ! Cache-Control
   Cache-Control: public, max-age=604800
 /icons/*
@@ -24,3 +28,7 @@
 /illustrations/*
   ! Cache-Control
   Cache-Control: public, max-age=604800
+
+# Static builds drop endpoint headers; the template downloads under its conventional name.
+/ai/agent-template.md
+  Content-Disposition: attachment; filename="AGENTS.md"

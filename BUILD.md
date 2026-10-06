@@ -75,7 +75,7 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 | **10** | `node scripts/write-sitemap-alias.mjs` | Copies `sitemap-index.xml` to `sitemap.xml` for legacy crawler compatibility. |
 | **11** | `node scripts/verify-static-seo.mjs` | Verifies canonical URLs, meta descriptions, single H1 tags, robots.txt directives, JSON-LD structured data, and sitemap inclusion across 34 priority routes. |
 | **12** | `node scripts/verify-content-facts.mjs` → `node scripts/verify-blog-presentation.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all 128 published pages. |
-| **13** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes. |
+| **13** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` → `node scripts/precompress-html.mjs` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes and writes a Brotli sidecar for every page. |
 
 ---
 
@@ -96,6 +96,12 @@ Executes `scripts/verify-installer.mjs` which validates:
 - Repair workflows and clean uninstallation.
 - SHA256 binary pinning and platform rejection (unsupported OS/architecture).
 - Interactive prompts and configuration preservation.
+
+### Worker Runtime Verification
+```bash
+pnpm run test:worker
+```
+Runs `worker/index.mjs` with the built `dist/` in workerd (through Wrangler) after a build. It checks that HTML decodes exactly once for Brotli, gzip and identity, that `_headers` and `_redirects` apply, that agent text is UTF-8, and that missing pages, `/404` and Brotli sidecars return 404.
 
 ### Upstream Contract Synchronization
 ```bash
