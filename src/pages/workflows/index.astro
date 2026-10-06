@@ -1,14 +1,26 @@
 ---
 import AgenticIndexPage from '../../components/AgenticIndexPage.astro';
 import { workflowPages } from '../../data/agenticContent';
+
+// CI integration testing has its own page, which covers every runner; the hub lists it here.
+const integrationTestingPage = {
+  path: '/gcp-integration-testing/',
+  eyebrow: 'Integration tests',
+  h1: 'GCP integration testing in CI',
+  description: 'GitHub Actions, GitLab CI and Jenkins templates, how to design the tests, and a prompt for the first agent-prepared CI change.',
+  quickFacts: [
+    'Use real SDK clients against localhost; avoid mocks for service behavior.',
+    'Fail the job when LocalCloud is not ready or emulator variables are missing.',
+  ],
+};
 ---
 
 <AgenticIndexPage
   title="Agentic Workflows"
-  description="Run Google Cloud workflows locally with LocalCloud: GitHub Actions jobs, Terraform checks, integration tests, and agent-driven CI."
+  description="Run Google Cloud workflows locally with LocalCloud: a GitHub Actions job, Terraform checks and CI integration tests, with health gates and no cloud credentials."
   h1="LocalCloud agentic workflows"
   eyebrow="Automation"
   deck="Start LocalCloud, wait for health, export localhost emulator endpoints, and run reviewable tests before any real Google Cloud validation step."
-  pages={workflowPages}
+  pages={[...workflowPages, integrationTestingPage]}
   listHeading="Workflows"
 />

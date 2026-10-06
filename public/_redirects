@@ -19,6 +19,10 @@
 /local-cloud-development/ /how-to-run-google-cloud-locally/ 301
 /optimize-gcp-costs /reduce-gcp-dev-costs/ 301
 /optimize-gcp-costs/ /reduce-gcp-dev-costs/ 301
+/workflows/agentic-ci /gcp-integration-testing/ 301
+/workflows/agentic-ci/ /gcp-integration-testing/ 301
+/workflows/integration-tests /gcp-integration-testing/ 301
+/workflows/integration-tests/ /gcp-integration-testing/ 301
 
 /favicon.ico /favicon.png 301
 /ai/AGENTS.md /ai/agent-template.md 301

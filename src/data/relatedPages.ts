@@ -41,14 +41,6 @@ const pages: Record<string, RelatedPage> = {
 		anchor: "GitHub Actions workflow",
 		note: "The full workflow: readiness gate, environment export and a credentialless job.",
 	},
-	"/workflows/integration-tests/": {
-		anchor: "Local GCP integration tests for agents",
-		note: "Structure agent-written tests against localhost services.",
-	},
-	"/workflows/agentic-ci/": {
-		anchor: "Team automation with LocalCloud",
-		note: "Have an agent prepare the first CI change: health gate, environment export, existing tests.",
-	},
 	"/agents/claude-code-gcp-sandbox/": {
 		anchor: "Claude Code GCP sandbox setup",
 		note: "Claude-specific setup and caveats.",
@@ -119,8 +111,6 @@ for (const service of localServices) {
 // Pairs list the default survivor first. A page's counterparts appear in this order.
 export const relatedPagePairs: RelatedPair[] = [
 	{ pages: ["/gcp-integration-testing/", "/workflows/github-actions-gcp-emulator/"], finding: "S23" },
-	{ pages: ["/gcp-integration-testing/", "/workflows/integration-tests/"], finding: "S23" },
-	{ pages: ["/gcp-integration-testing/", "/workflows/agentic-ci/"], finding: "S23" },
 	{ pages: ["/agents/claude-code-gcp-sandbox/", "/blog/claude-code-local-gcp-sandbox/"], finding: "S24" },
 	{ pages: [agentTestingPath("bigquery"), "/blog/bigquery-locally-agent-written-pipelines/"], finding: "S24" },
 	{ pages: ["/local-cloud-for-ai-agents/", "/ai/"], finding: "S6" },

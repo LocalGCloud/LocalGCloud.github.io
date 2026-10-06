@@ -1,7 +1,8 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
-import RelatedPages from '../components/RelatedPages.astro';
+import CopyButton from '../components/CopyButton.astro';
 import { githubActionsWorkflow } from '../data/agenticContent';
+import { agenticFacts } from '../data/agenticFacts';
 import { relatedAnchor } from '../data/relatedPages';
 
 const rawBase = import.meta.env.BASE_URL;
@@ -54,6 +55,16 @@ const jenkinsfile = `pipeline {
     }
   }
 }`;
+
+// Run the same suite on a workstation before CI does.
+const localTestWrapper = [
+  'set -euo pipefail',
+  agenticFacts.envExportCommand,
+  `export GOOGLE_CLOUD_PROJECT=${agenticFacts.defaultProject}`,
+  './scripts/integration-test.sh',
+].join('\n');
+
+const agentCiPrompt = `Read the LocalCloud Public Preview License and keep this workflow non-production. Prepare the smallest automation change that starts LocalCloud, waits for ${agenticFacts.readinessEndpoint}, exports emulator env vars, runs existing integration tests, and does not add real GCP secrets.`;
 
 const faqItems = [
   {
@@ -147,8 +158,54 @@ const structuredData = [
           <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code>{jenkinsfile}</code></pre>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="mt-8 reveal"><RelatedPages path="/gcp-integration-testing/" heading="Related workflows" exclude={(href) => href === githubActionsPath} /></div>
+  {/* TEST DESIGN */}
+  <section class="site-section" id="test-design">
+    <div class="container">
+      <div class="reveal">
+        <h2>Write tests that exercise real SDK calls</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Integration tests, including the ones a coding agent writes, are safer when they run against disposable localhost services first.
+        </p>
+      </div>
+      <div class="mt-8 grid gap-4 lg:grid-cols-2 reveal">
+        <article class="site-panel min-w-0 p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Test what can actually break</h3>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Use real SDK clients against LocalCloud for SDK routing, serialization, resource naming, query syntax, event flow, and setup and teardown. Keep pure unit tests for business logic, and don't mock service behavior.</p>
+        </article>
+        <article class="site-panel min-w-0 p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Fail closed on routing mistakes</h3>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">If emulator variables are missing or LocalCloud isn't ready, fail the job rather than fall back to production defaults. Print the active emulator endpoints before the tests run.</p>
+        </article>
+      </div>
+      <div class="mt-6 site-panel min-w-0 p-6 reveal">
+        <div class="flex items-center justify-between gap-3">
+          <span class="site-kicker">Run the suite locally first</span>
+          <CopyButton text={localTestWrapper} label="Copy the local test wrapper" analyticsLabel="ci-local-test-wrapper" />
+        </div>
+        <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code>{localTestWrapper}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  {/* AGENT-PREPARED CI */}
+  <section class="site-section site-section--tight" id="agent-prepared-ci">
+    <div class="container">
+      <div class="reveal">
+        <h2>Let a coding agent prepare the first CI change</h2>
+        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
+          Keep the first change small and reviewable: start LocalCloud, wait for readiness, export the environment, and run the existing integration tests. Leave retries, deployment logic, and credential setup out of it.
+        </p>
+      </div>
+      <div class="mt-6 site-panel min-w-0 p-6 reveal">
+        <div class="flex items-center justify-between gap-3">
+          <span class="site-kicker">Prompt</span>
+          <CopyButton text={agentCiPrompt} label="Copy the CI prompt" analyticsLabel="ci-agent-prompt" />
+        </div>
+        <pre class="mt-4 whitespace-pre-wrap border-0 bg-[var(--surface-2)]"><code>{agentCiPrompt}</code></pre>
+      </div>
     </div>
   </section>
 
@@ -165,7 +222,7 @@ const structuredData = [
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Controlled state</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Use one data volume, project, and fixture namespace per job. Explicitly reset or seed state and do not assume emulator concurrency or isolation matches Google Cloud.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Use one data volume, project, and fixture namespace per job. Create the minimum data each test needs or load <a href={`${base}docs/seed-data/`}>seed fixtures</a>, never depend on a previous run, and do not assume emulator concurrency or isolation matches Google Cloud.</p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Earlier feedback</span>

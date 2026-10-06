@@ -481,7 +481,7 @@ export const workflowPages: AgenticContentPage[] = withRelatedLinks([
 				href: "/docs/terraform/",
 				note: "Endpoint override patterns for IaC.",
 			},
-			relatedLink("/workflows/integration-tests/", "How to structure localhost verification."),
+			relatedLink("/gcp-integration-testing/", "GitLab CI and Jenkins templates, test design, and a prompt for the first CI change."),
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -540,119 +540,6 @@ export const workflowPages: AgenticContentPage[] = withRelatedLinks([
 				href: "/docs/terraform/",
 				note: "LocalCloud Terraform setup details.",
 			},
-		],
-		reviewedAt: agenticFacts.evidence.reviewedAt,
-	},
-	{
-		kind: "workflow",
-		slug: "integration-tests",
-		path: "/workflows/integration-tests/",
-		parentLabel: "Workflows",
-		parentPath: "/workflows/",
-		eyebrow: "Integration tests",
-		title: "GCP Integration Tests with LocalCloud",
-		description:
-			"Run agent-written GCP integration tests locally with LocalCloud, SDK environment variables, deterministic seed data, and a real-GCP release check.",
-		h1: "Local GCP integration tests for agents",
-		deck:
-			"Agent-written integration tests are safer when they run against disposable localhost services first. LocalCloud gives those tests BigQuery, Pub/Sub, Cloud Storage, Spanner, Bigtable, and more in one container.",
-		promptIds: ["project-integration", "quickstart", "troubleshoot"],
-		quickFacts: [
-			"Use real SDK clients; avoid mocks for service behavior.",
-			"Seed fixtures locally for repeatable runs.",
-			"Unset emulator env vars before production validation.",
-		],
-		sections: [
-			{
-				kicker: "Test design",
-				title: "Exercise behavior that can actually break",
-				body:
-					"Use LocalCloud for SDK routing, serialization, resource naming, query syntax, event flow, and setup/teardown behavior. Keep pure unit tests for business logic.",
-			},
-			{
-				kicker: "State control",
-				title: "Reset or seed local state deliberately",
-				body:
-					"Agents should create the minimum data they need or load seed fixtures. Avoid depending on a previous local run.",
-			},
-		],
-		snippets: [
-			{
-				label: "Local test wrapper",
-				language: "bash",
-				code: [
-					"set -euo pipefail",
-					agenticFacts.envExportCommand,
-					"export GOOGLE_CLOUD_PROJECT=local-gcp-project",
-					"./scripts/integration-test.sh",
-				].join("\n"),
-			},
-		],
-		limitations: [],
-		internalLinks: [
-			{
-				label: "SDK examples",
-				href: "/docs/sdk-examples/",
-				note: "Language-specific SDK routing examples.",
-			},
-			{
-				label: "Seed data",
-				href: "/docs/seed-data/",
-				note: "Repeatable fixture loading.",
-			},
-		],
-		reviewedAt: agenticFacts.evidence.reviewedAt,
-	},
-	{
-		kind: "workflow",
-		slug: "agentic-ci",
-		path: "/workflows/agentic-ci/",
-		parentLabel: "Workflows",
-		parentPath: "/workflows/",
-		eyebrow: "Internal automation",
-		title: "Team Automation with LocalCloud",
-		description:
-			"Have coding agents prepare a non-production LocalCloud automation workflow with health gates and local endpoints.",
-		h1: "LocalCloud automation for internal projects",
-		deck:
-			"The Public Preview License permits organization and team CI for non-production development and testing. Keep Docker, localhost endpoints, no Google Cloud credentials, and a visible readiness check.",
-		promptIds: ["ci", "troubleshoot", "project-integration"],
-		quickFacts: [
-			"Agents must keep automation inside the Public Preview License boundary.",
-			"Automation jobs must print active emulator endpoints before tests.",
-			"Real GCP validation is a separate release gate.",
-		],
-		sections: [
-			{
-				kicker: "Reviewable diff",
-				title: "Keep the first automation change small",
-				body:
-					"Start container, wait for health, export env, run existing integration tests. Avoid unrelated retries, deployment logic, or credential setup in the first agentic CI change.",
-			},
-			{
-				kicker: "Failure mode",
-				title: "Fail closed on routing mistakes",
-				body:
-					"If env vars are missing or LocalCloud is unhealthy, fail the job rather than silently using production defaults.",
-			},
-		],
-		snippets: [
-			{
-				label: "Public preview automation instruction",
-				language: "text",
-				code:
-					"Read the LocalCloud Public Preview License and keep this workflow non-production. Prepare the smallest automation change that starts LocalCloud, waits for http://localhost:5380/readiness, exports emulator env vars, runs existing integration tests, and does not add real GCP secrets.",
-			},
-			{
-				label: "Reusable health gate",
-				language: "bash",
-				code:
-					"for i in $(seq 1 60); do\n  if curl -fsS http://localhost:5380/readiness; then exit 0; fi\n  sleep 2\ndone\nexit 1",
-			},
-		],
-		limitations: [],
-		internalLinks: [
-			relatedLink("/workflows/github-actions-gcp-emulator/", "Concrete YAML starting point."),
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
