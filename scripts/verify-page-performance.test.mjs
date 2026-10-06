@@ -499,6 +499,36 @@ test('every built page prefetches same-origin pages through CSP-hashed speculati
   assert.deepEqual(failures, []);
 });
 
+// One page per template: docs, service catalog and detail, blog index and posts.
+const representativePages = [
+  'docs/index.html', 'docs/configuration/index.html', 'services/index.html', 'services/bigquery/index.html',
+  'blog/index.html', 'blog/run-dataproc-locally-docker/index.html', 'blog/localcloud-for-ai-agents/index.html',
+];
+
+test('docs, services and blog pages preload the body font and never lazy-load or leave unsized a hero image', () => {
+  const failures = [];
+  for (const page of representativePages) {
+    const html = readFileSync(join(distRoot, page), 'utf8');
+    const head = html.slice(0, html.indexOf('</head>'));
+    const font = [...head.matchAll(/<link\b[^>]*>/g)].map((match) => match[0])
+      .find((link) => link.includes('rel="preload"') && link.includes('as="font"'));
+    const fontPath = font?.match(/\bhref="([^"]+)"/)?.[1] ?? '';
+    if (!/^\/_astro\/[^/]+\.woff2$/.test(fontPath) || !existsSync(join(distRoot, fontPath))) failures.push(`${page}: no preloaded /_astro/ body font`);
+    else if (!/\bcrossorigin\b/.test(font) || !font.includes('type="font/woff2"')) failures.push(`${page}: the font preload lacks crossorigin or its type, so the browser would fetch the font twice`);
+    if (/fonts\.(googleapis|gstatic)\.com/.test(html)) failures.push(`${page}: loads a third-party font`);
+    // The first section of <main> is the hero; its images are the LCP candidates.
+    const main = html.slice(html.indexOf('<main'));
+    const hero = main.match(/<section\b[\s\S]*?<\/section>/)?.[0] ?? '';
+    for (const img of hero.matchAll(/<img\b[^>]*>/g)) {
+      if (!/\swidth="\d+"/.test(img[0]) || !/\sheight="\d+"/.test(img[0])) failures.push(`${page}: hero image without width and height: ${img[0]}`);
+      if (/\sloading="lazy"/.test(img[0])) failures.push(`${page}: lazy-loaded hero image: ${img[0]}`);
+    }
+  }
+  assert.deepEqual(failures, []);
+  const service = readFileSync(join(distRoot, 'services/bigquery/index.html'), 'utf8');
+  assert.match(service, /<img\b[^>]*src="\/icons\/bigquery\.svg"[^>]*loading="eager"/, 'the service hero icon loads eagerly');
+});
+
 test('built homepage has local font preload, cached hashed stylesheets, sized hero and nonredundant brand marks', () => {
   const html = readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8');
   assert.doesNotMatch(html, /fonts\.(googleapis|gstatic)\.com/);

@@ -85,7 +85,7 @@ const structuredData = [
 
 <LandingLayout title={pageTitle} description={pageDescription} {structuredData}>
   <section class="site-section site-section--hero"><div class="container"><div class="max-w-[52rem]">
-    <div class="flex items-center gap-4"><span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--surface)]"><ServiceIcon iconId={service.iconId} name={service.name} size={44} /></span><span class:list={['site-chip', isUnsupported || isComingSoon ? 'site-chip--warn' : 'site-chip--accent']}>{getServiceSignalLabel(service)}</span></div>
+    <div class="flex items-center gap-4"><span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--surface)]"><ServiceIcon iconId={service.iconId} name={service.name} size={44} loading="eager" /></span><span class:list={['site-chip', isUnsupported || isComingSoon ? 'site-chip--warn' : 'site-chip--accent']}>{getServiceSignalLabel(service)}</span></div>
     <h1 class="mt-6">{isUnsupported || isComingSoon ? `${service.name} is unsupported in LocalCloud` : `Run ${service.name} workflows locally`}</h1>
     <p class="mt-6 text-lg leading-8 text-[var(--text-2)]">{service.description}</p>
     {!isUnsupported && isServiceDisabledByDefault(service) && (

@@ -5,6 +5,8 @@ interface Props {
   size?: number;
   class?: string;
   decorative?: boolean;
+  /** Icons in a page hero load eagerly; the rest wait until they near the viewport. */
+  loading?: 'lazy' | 'eager';
 }
 
 const {
@@ -13,6 +15,7 @@ const {
   size = 24,
   class: className = '',
   decorative = true,
+  loading = 'lazy',
 } = Astro.props;
 
 const rawBase = import.meta.env.BASE_URL;
@@ -27,6 +30,6 @@ const src = `${base}icons/${iconId}.svg`;
   height={size}
   class={className}
   style="object-fit: contain;"
-  loading="lazy"
+  loading={loading}
   aria-hidden={decorative ? 'true' : undefined}
 />
