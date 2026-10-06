@@ -7,7 +7,7 @@ import { docsContract } from '../src/data/docs-contract.ts';
 import { productFacts } from '../src/data/productFacts.ts';
 import { cliQuickStart } from '../src/utils/quickstart.mjs';
 import { headingsWithinClass } from './html-structure.mjs';
-import { availableServiceCount, services, isServiceDisabledByDefault, proTierLabel } from '../src/data/services.ts';
+import { availableServiceCount, services, servicesInCatalogOrder, isServiceDisabledByDefault, proTierLabel } from '../src/data/services.ts';
 import { pricingFaq, proTierServiceNames } from '../src/data/pricingFaq.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
 import { getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
@@ -351,6 +351,24 @@ for (const service of services) {
   if (unsupported && !row.includes('colspan="2"')) errors.push(`Unsupported compatibility row ${service.id} must span its two detail columns`);
 }
 if (/partial support|partially supported|semantic-compatibility:|\[partial\]/i.test(compatibilityTable)) errors.push('Compatibility table exposes internal audit classifications');
+
+// One catalog order (S13): every page that renders the full service list follows
+// servicesInCatalogOrder, the order of the canonical /services/ catalog. The homepage lists
+// only the services that run locally.
+const catalogSlugs = servicesInCatalogOrder.map((service) => service.slug);
+const localSlugs = servicesInCatalogOrder.filter((service) => service.catalogState === 'available' && service.marketingStatus === 'supported').map((service) => service.slug);
+for (const [file, expected] of [
+  ['index.html', localSlugs],
+  ['services/index.html', catalogSlugs],
+  ['gcp-emulator/index.html', catalogSlugs],
+  ['compatibility/index.html', catalogSlugs],
+  ['docs/services-overview/index.html', catalogSlugs],
+  ['ai/index.html', catalogSlugs],
+]) {
+  const main = htmlPages.get(file)?.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? '';
+  const listed = [...new Set([...main.matchAll(/href="\/services\/([a-z0-9-]+)\/"/g)].map((match) => match[1]))].filter((slug) => catalogSlugs.includes(slug));
+  if (JSON.stringify(listed) !== JSON.stringify(expected)) errors.push(`${file} must list ${expected.length} services in the shared catalog order (servicesInCatalogOrder); found ${listed.join(', ') || 'none'}`);
+}
 
 // Keep every service page aligned with the compatibility table, including future updates.
 const plainText = (markup) => markup.replace(/<[^>]+>/g, '').replaceAll('&amp;', '&').replaceAll('&#39;', "'").replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replace(/\s+/g, ' ').trim();

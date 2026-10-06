@@ -2,7 +2,7 @@
 import ServiceIcon from './ServiceIcon.astro';
 import CopyButton from './CopyButton.astro';
 import AlternativesTable from './AlternativesTable.astro';
-import { availableServiceCount, serviceCategoryMeta, services } from '../data/services';
+import { availableServiceCount, serviceCatalogGroups } from '../data/services';
 import InstallationMethods from './InstallationMethods.astro';
 import { docsContract } from '../data/docs-contract';
 import { productFacts } from '../data/productFacts';
@@ -84,34 +84,28 @@ const heroIllustration = {
   alt: 'A laptop showing LocalCloud services running locally with readiness panels and Google Cloud service icons.',
 };
 
-const atlasCategorySlots = [
-  ['databases'],
-  ['integration'],
-  ['analytics', 'storage'],
-  ['security', 'auxiliary'],
-  ['operations'],
-  ['compute'],
-] as const;
+// Categories follow the shared catalog order. The marketing inventory lists supported
+// services only; the catalog and compatibility pages carry the Unsupported entries.
+const atlasColumns = serviceCatalogGroups
+  .map((group) => ({
+    category: group.category,
+    title: group.title,
+    note: group.description,
+    items: group.items.filter(
+      (service) => service.catalogState === 'available' && service.marketingStatus === 'supported',
+    ),
+  }))
+  .filter((column) => column.items.length > 0);
 
-const atlasSlots = atlasCategorySlots
-  .map((categories) =>
-    categories
-      .map((category) => ({
-        category,
-        title: serviceCategoryMeta[category].label,
-        note: serviceCategoryMeta[category].description,
-        // The marketing inventory lists supported services only; the catalog and
-        // compatibility pages carry the Unsupported entries.
-        items: services.filter(
-          (service) =>
-            service.category === category &&
-            service.catalogState === 'available' &&
-            service.marketingStatus === 'supported',
-        ),
-      }))
-      .filter((column) => column.items.length > 0),
-  )
-  .filter((slot) => slot.length > 0);
+// Adjacent categories with one or two services share a grid slot, stacked, so the grid
+// stays balanced without reordering categories.
+const isSmallColumn = (column: (typeof atlasColumns)[number]) => column.items.length <= 2;
+const atlasSlots: (typeof atlasColumns)[] = [];
+for (const column of atlasColumns) {
+  const previous = atlasSlots.at(-1);
+  if (previous && isSmallColumn(column) && previous.every(isSmallColumn)) previous.push(column);
+  else atlasSlots.push([column]);
+}
 ---
 
 <main id="main-content" class="field-home">

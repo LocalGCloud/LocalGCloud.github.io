@@ -3,23 +3,18 @@ import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { docsContract } from '../data/docs-contract';
 import { cliQuickStart } from '../utils/quickstart.mjs';
-import { availableServiceCount, publishedServiceCount, getServiceSignalLabel, services as catalogServices } from '../data/services';
+import { availableServiceCount, publishedServiceCount, serviceCatalogGroups, services } from '../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
 const quickStart = cliQuickStart(docsContract);
 const startCommands = quickStart.steps.slice(0, quickStart.steps.indexOf(quickStart.readiness) + 1).join('\n');
-const spannerWorkflowCount = catalogServices.find((service) => service.id === 'spanner')?.supported.length ?? 0;
-
-const services = catalogServices
-  .filter((service) => ['bigquery', 'gcs', 'firestore', 'pubsub', 'spanner', 'bigtable'].includes(service.id))
-  .map((service) => ({
-    name: service.name,
-    port: service.status === 'unsupported' ? 'Unsupported' : service.port,
-    availability: getServiceSignalLabel(service),
-    env: service.status === 'unsupported' ? 'No supported integration' : service.envVar,
-  }));
+const spannerWorkflowCount = services.find((service) => service.id === 'spanner')?.supported.length ?? 0;
+// A summary of the catalog in the shared order; /services/ is the full list.
+const categorySummary = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(
+  serviceCatalogGroups.map((group) => group.title),
+);
 
 const faqItems = [
   {
@@ -155,34 +150,12 @@ const faqItems = [
       <div class="reveal">
         <h2>What Google Cloud services can run locally?</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud runs {availableServiceCount} local services in one managed container. Each service guide lists its workflows, whether it starts by default, and its limits.
+          LocalCloud runs {availableServiceCount} local services in one managed container, grouped as {categorySummary}. Each service guide lists its workflows, whether it starts by default, and its limits.
         </p>
-      </div>
-      <div class="mt-8 overflow-x-auto reveal" tabindex="0" role="region" aria-label="Local ports and environment variables by service">
-        <table class="w-full min-w-[40rem] text-left text-sm">
-          <thead class="border-b border-[var(--line)]">
-            <tr>
-              <th scope="col" class="py-3 pr-4 font-semibold text-[var(--text)]">Service</th>
-              <th scope="col" class="py-3 pr-4 font-semibold text-[var(--text)]">Port</th>
-              <th scope="col" class="py-3 pr-4 font-semibold text-[var(--text)]">Local support</th>
-              <th scope="col" class="py-3 font-semibold text-[var(--text)]">Environment variable</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-[var(--line)]">
-            {services.map(svc => (
-              <tr>
-                <td class="py-3 pr-4 text-[var(--text)]">{svc.name}</td>
-                <td class="py-3 pr-4 text-[var(--text-2)] font-mono text-xs">{svc.port}</td>
-                <td class="py-3 pr-4 text-[var(--text)]">{svc.availability}</td>
-                <td class="py-3 text-[var(--text-2)] font-mono text-xs">{svc.env}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
       <div class="mt-6 reveal">
         <p class="text-sm text-[var(--text-2)] leading-7">
-          Browse <a href={`${base}services/`} class="underline">all {publishedServiceCount} service guides</a>. Firestore is opt-in; Google Sheets is a read-only values API for exact A1 ranges.
+          Browse <a href={`${base}services/`} class="underline">all {publishedServiceCount} service guides</a>, or check <a href={`${base}compatibility/`} class="underline">compatibility</a> for operation-level detail. Firestore is opt-in; Google Sheets is a read-only values API for exact A1 ranges. Run <code>eval "$(localcloud env)"</code> for the ports and environment variables of your running runtime.
         </p>
       </div>
     </div>

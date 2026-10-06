@@ -11,6 +11,7 @@ import {
 } from '../../data/agenticFacts';
 import { agentsMdTemplate } from '../../data/agenticMarkdown';
 import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../data/productFacts';
+import { inCatalogOrder } from '../../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
@@ -48,6 +49,8 @@ const workflowCards = [
 const isSupported = (service: (typeof agenticServiceMetadata)[number]) => service.status === 'supported';
 const supportedCount = agenticServiceMetadata.filter(isSupported).length;
 const unsupportedCount = agenticServiceMetadata.length - supportedCount;
+// The full matrix stays here for agents, in the shared catalog order.
+const serviceMatrix = inCatalogOrder(agenticServiceMetadata);
 
 const title = 'LocalCloud Agent Resources: AGENTS.md Template and Prompts';
 const description = 'Everything an AI coding agent needs to use LocalCloud: an AGENTS.md template, copyable prompts, raw Markdown docs, and localhost SDK setup.';
@@ -236,7 +239,7 @@ const structuredData = [
               </tr>
             </thead>
             <tbody>
-              {agenticServiceMetadata.map((service) => (
+              {serviceMatrix.map((service) => (
                 <tr class="border-b border-[var(--line)] last:border-0">
                   <td class="p-4 align-top">
                     <a class="font-semibold text-[var(--text)]" href={`${base}services/${service.slug}/`}>{service.name}</a>

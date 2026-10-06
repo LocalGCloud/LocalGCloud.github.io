@@ -4,7 +4,7 @@ import Callout from '../components/Callout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { docsContract } from '../data/docs-contract';
 import { cliQuickStart } from '../utils/quickstart.mjs';
-import { auxiliaryServiceCount, availableServiceCount, primaryServiceCount, publishedServiceCount, services, serviceCategoryOrder, serviceCategoryMeta } from '../data/services';
+import { auxiliaryServiceCount, availableServiceCount, primaryServiceCount, publishedServiceCount, services, serviceCatalogGroups } from '../data/services';
 import {
   createBreadcrumbSchema,
   createWebPageSchema,
@@ -18,15 +18,6 @@ const isUnsupportedService = (service: (typeof services)[number]) =>
   service.marketingStatus === 'unsupported' || service.catalogState === 'coming-soon';
 const unsupportedNames = services.filter(isUnsupportedService).map((service) => service.name);
 const unsupportedServiceNames = unsupportedNames.length > 1 ? `${unsupportedNames.slice(0, -1).join(', ')} and ${unsupportedNames.at(-1)}` : unsupportedNames.join('');
-
-const categoryGroups = serviceCategoryOrder
-  .map(cat => ({
-    id: cat,
-    title: serviceCategoryMeta[cat].label,
-    description: serviceCategoryMeta[cat].description,
-    items: services.filter(s => s.category === cat),
-  }))
-  .filter(g => g.items.length > 0);
 
 const faqItems = [
   {
@@ -186,53 +177,21 @@ const structuredData = [
     </div>
   </section>
 
-  {/* SERVICE COMPARISON */}
+  {/* SERVICE CATEGORIES: one rendition, linked to each guide, in the shared catalog order */}
   <section class="site-section">
     <div class="container">
       <div class="reveal">
         <h2>What you can run locally</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Each supported service lists its documented local workflows. Services LocalCloud does not run are marked Unsupported.
+          Each service links to its guide with setup steps and documented local workflows. Services LocalCloud does not run are marked Unsupported. See <a href={`${base}compatibility/`} class="font-semibold text-[var(--accent-strong)]">compatibility</a> for operation-level detail.
         </p>
       </div>
 
-      <div class="mt-6 overflow-x-auto rounded-2xl border border-[var(--line)] reveal" tabindex="0" role="region" aria-label="Google Cloud services and their documented local workflows">
-        <table class="w-full border-collapse">
-          <thead>
-            <tr>
-              <th scope="col" class="text-left p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-2)] bg-[var(--surface-2)]">Service</th>
-              <th scope="col" class="text-left p-3 text-xs font-mono uppercase tracking-wider text-[var(--text-2)] bg-[var(--surface-2)]">Local workflows</th>
-            </tr>
-          </thead>
-          <tbody>
-            {services.map((service) => (
-              <tr class="border-t border-[var(--line)]">
-                <td class="p-3 font-semibold">
-                  {service.name}
-                  {service.category === 'auxiliary' && <span class="ml-2 text-xs font-normal text-[var(--text-2)]">(Auxiliary integration API)</span>}
-                  {isUnsupportedService(service) && <span class="site-chip site-chip--warn ml-2">Unsupported</span>}
-                </td>
-                <td class="p-3 text-[var(--text-2)]">
-                  {isUnsupportedService(service)
-                    ? 'No local workflow'
-                    : `${service.supported.length} documented ${service.supported.length === 1 ? 'workflow' : 'workflows'}`}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  {/* SERVICE CATEGORIES */}
-  <section class="site-section">
-    <div class="container">
-      <div class="grid gap-6 lg:grid-cols-2">
-        {categoryGroups.map(group => (
+      <div class="mt-8 grid gap-6 lg:grid-cols-2">
+        {serviceCatalogGroups.map(group => (
           <div class="site-panel min-w-0 p-6 reveal">
             <span class="site-kicker">{group.title}</span>
-            <h3 class="mt-2 text-xl">{group.id === 'auxiliary' ? 'Auxiliary integration APIs' : `${group.title} services`}</h3>
+            <h3 class="mt-2 text-xl">{group.category === 'auxiliary' ? 'Auxiliary integration APIs' : `${group.title} services`}</h3>
             <p class="mt-2 text-sm text-[var(--text-2)]">{group.description}</p>
             <ul class="site-list mt-4">
               {group.items.map(svc => (

@@ -6,15 +6,18 @@ description: Decide when to use LocalCloud and when a Google-maintained service 
 
 import Callout from '../../components/Callout.astro';
 import { docsContract } from '../../data/docs-contract';
-import { services } from '../../data/services';
+import { availableServiceCount, serviceCatalogGroups, servicesInCatalogOrder } from '../../data/services';
 import { cliQuickStart } from '../../utils/quickstart.mjs';
+
+export const unsupportedServices = servicesInCatalogOrder.filter((service) => service.marketingStatus === 'unsupported' || service.catalogState === 'coming-soon').map((service) => service.name);
+export const unsupportedList = new Intl.ListFormat('en', { type: 'conjunction' }).format(unsupportedServices);
 
 # LocalCloud and Google-maintained emulators
 
 Use this explanation to choose a local-development runtime.
 
 <Callout type="warning" title="Check the current vendor documentation">
-Google-maintained emulator availability, installation, and behavior can change. Consult current Google documentation for the service you need. The table below describes LocalCloud's current documented support.
+Google-maintained emulator availability, installation, and behavior can change. Consult current Google documentation for the service you need. The LocalCloud summary below links to its current documented support.
 </Callout>
 
 ## Decision model
@@ -34,18 +37,9 @@ Consider LocalCloud when:
 
 ## LocalCloud contract summary
 
-<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="LocalCloud contract summary">
-<table>
-  <thead><tr><th>Service</th><th>Status</th><th>Implementation</th><th>Overview</th></tr></thead>
-  <tbody>
-    {services.map((service) => (
-      <tr><td>{service.name}</td><td>{service.marketingStatus === 'unsupported' ? 'Unsupported' : 'Supported'}</td><td>{service.implementation}</td><td>{service.description}</td></tr>
-    ))}
-  </tbody>
-</table>
-</div>
+LocalCloud runs {availableServiceCount} services locally in one runtime, grouped as {new Intl.ListFormat('en', { type: 'conjunction' }).format(serviceCatalogGroups.map((group) => group.title))}. {unsupportedServices.length > 0 && `${unsupportedList} ${unsupportedServices.length === 1 ? 'is' : 'are'} unsupported; use real Google Cloud for ${unsupportedServices.length === 1 ? 'it' : 'them'}.`} The [service catalog](/services/) lists every service with its guide, and the [compatibility matrix](/compatibility/) shows the operations each one supports.
 
-A service listing does not imply default startup, full parity, or legal permission. Review the [service detail](/services/), [compatibility matrix](/compatibility/), and [licensing reference](/docs/licensing/).
+A service listing does not imply default startup, full parity, or legal permission. Review the [licensing reference](/docs/licensing/) as well.
 
 ## LocalCloud setup
 

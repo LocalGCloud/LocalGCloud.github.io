@@ -4,7 +4,7 @@ title: Services Overview
 description: Compare available LocalCloud services, startup defaults, connections, and known limitations.
 ---
 
-import { availableServiceCount, comingSoonServiceCount, pricingProTierPath, proTierLabel, publishedServiceCount, serviceRegistryCount, services } from '../../data/services';
+import { availableServiceCount, comingSoonServiceCount, pricingProTierPath, proTierLabel, publishedServiceCount, serviceCatalogGroups, serviceRegistryCount, servicesInCatalogOrder } from '../../data/services';
 import ServiceTier from '../../components/ServiceTier.astro';
 
 # Services overview
@@ -33,7 +33,7 @@ A service guide separates the facts that affect normal use:
       </tr>
     </thead>
     <tbody>
-      {services.map((service) => (
+      {servicesInCatalogOrder.map((service) => (
         <tr>
           <td><a href={`/services/${service.slug}/`}>{service.name}</a>{service.category === 'auxiliary' && <span className="ml-1 text-xs text-[var(--text-2)]"> (Auxiliary API)</span>}</td>
           {service.catalogState === 'coming-soon' ? (
@@ -55,7 +55,7 @@ A service guide separates the facts that affect normal use:
 
 ## Categories
 
-The catalog groups services by user goal—storage, databases, analytics, messaging/workflow, security, operations, compute/runtime, and auxiliary integration APIs—but implementation boundaries differ inside every category. Some are external emulator processes, some are local facades, and some require Docker-socket or transparent-network opt-ins.
+The [service catalog](/services/) groups services by user goal, in this order: {new Intl.ListFormat('en', { type: 'conjunction' }).format(serviceCatalogGroups.map((group) => group.title))}. The table above follows the same order. Implementation boundaries differ inside every category. Some are external emulator processes, some are local facades, and some require Docker-socket or transparent-network opt-ins.
 
 ## How to use the catalog
 

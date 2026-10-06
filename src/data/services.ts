@@ -178,6 +178,28 @@ export const services: Service[] = docsContract.services.flatMap(
 	},
 );
 
+// The one catalog order: every page that lists services groups or sorts them by
+// serviceCategoryOrder, then by registry order within a category. /services/ is the canonical
+// catalog and /compatibility/ the operation-level detail.
+export const serviceCatalogGroups = serviceCategoryOrder
+	.map((category) => ({
+		category,
+		title: serviceCategoryMeta[category].label,
+		description: serviceCategoryMeta[category].description,
+		items: services.filter((service) => service.category === category),
+	}))
+	.filter((group) => group.items.length > 0);
+export const servicesInCatalogOrder: Service[] = serviceCatalogGroups.flatMap((group) => group.items);
+if (servicesInCatalogOrder.length !== services.length) {
+	throw new Error("serviceCategoryOrder must list every service category used in serviceEditorial.ts");
+}
+const catalogPosition = new Map(servicesInCatalogOrder.map((service, index) => [service.id, index]));
+// Sorts any per-service records (for example the agent metadata) into catalog order.
+export const inCatalogOrder = <T extends { id: string }>(items: readonly T[]): T[] =>
+	[...items].sort(
+		(a, b) => (catalogPosition.get(a.id) ?? Number.MAX_SAFE_INTEGER) - (catalogPosition.get(b.id) ?? Number.MAX_SAFE_INTEGER),
+	);
+
 export const publishedServiceCount = services.length;
 export const primaryServices = services.filter((service) => service.category !== "auxiliary");
 export const auxiliaryServices = services.filter((service) => service.category === "auxiliary");

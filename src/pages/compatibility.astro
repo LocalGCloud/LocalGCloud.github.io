@@ -3,7 +3,7 @@ import LandingLayout from '../layouts/LandingLayout.astro';
 import { docsContract } from '../data/docs-contract';
 import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../data/productFacts';
 import { serviceCompatibilityEditorial } from '../data/serviceEditorial';
-import { publishedServiceCount, services } from '../data/services';
+import { publishedServiceCount, servicesInCatalogOrder } from '../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
@@ -39,7 +39,7 @@ const structuredData = [
           <th scope="col" class="py-3 pr-6">Service</th><th scope="col" class="py-3 pr-6">Local capabilities</th><th scope="col" class="py-3">Boundaries</th>
         </tr></thead>
         <tbody>
-          {services.map((service) => {
+          {servicesInCatalogOrder.map((service) => {
             const compatibility = serviceCompatibilityEditorial[service.id];
             const unsupported = service.catalogState === 'coming-soon' || service.marketingStatus === 'unsupported';
             return (

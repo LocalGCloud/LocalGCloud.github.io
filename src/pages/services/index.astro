@@ -3,19 +3,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
-import { availableServiceCount, comingSoonServiceCount, getServiceSignalLabel, publishedServiceCount, serviceCategoryMeta, serviceCategoryOrder, services } from '../../data/services';
+import { availableServiceCount, comingSoonServiceCount, getServiceSignalLabel, publishedServiceCount, serviceCatalogGroups } from '../../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
-const categoryGroups = serviceCategoryOrder
-  .map((category) => ({
-    id: category,
-    title: serviceCategoryMeta[category].label,
-    description: serviceCategoryMeta[category].description,
-    items: services.filter((service) => service.category === category),
-  }))
-  .filter((group) => group.items.length > 0);
+// The canonical catalog, in the shared catalog order.
+const categoryGroups = serviceCatalogGroups;
 
 ---
 
@@ -50,7 +44,7 @@ const categoryGroups = serviceCategoryOrder
         <div class="container">
           <div class="site-section-heading reveal">
             <span class="site-kicker">{group.title}</span>
-            <h2>{group.id === 'auxiliary' ? 'Auxiliary integration APIs' : `${group.title} services`}</h2>
+            <h2>{group.category === 'auxiliary' ? 'Auxiliary integration APIs' : `${group.title} services`}</h2>
             <p>{group.description}</p>
           </div>
           <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 stagger">

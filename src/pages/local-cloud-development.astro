@@ -2,7 +2,7 @@
 import LandingLayout from '../layouts/LandingLayout.astro';
 import { docsContract } from '../data/docs-contract';
 import { cliQuickStart } from '../utils/quickstart.mjs';
-import { availableServiceCount, publishedServiceCount, serviceCategoryMeta, serviceCategoryOrder, services } from '../data/services';
+import { availableServiceCount, publishedServiceCount, serviceCatalogGroups } from '../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
@@ -11,22 +11,16 @@ const platforms = [
   { name: 'Google Cloud (LocalCloud)', services: String(availableServiceCount), popular: 'Available local services with documented workflows' },
 ];
 
-// The catalog's own grouping: opt-in services say so, and services that do not run
-// locally are marked Unsupported.
-const serviceGroups = serviceCategoryOrder
-  .map((category) => ({
-    title: serviceCategoryMeta[category].label,
-    items: services
-      .filter((service) => service.category === category)
-      .map((service) =>
-        service.marketingStatus === 'unsupported' || service.catalogState === 'coming-soon'
-          ? `${service.name} (Unsupported)`
-          : service.registryDefaultEnabled
-          ? service.name
-          : `${service.name} (opt-in)`,
-      ),
+// A summary of the catalog, not a second copy of it: how many services run locally in
+// each category, in the shared catalog order. /services/ lists them.
+const serviceGroups = serviceCatalogGroups
+  .map((group) => ({
+    title: group.title,
+    localCount: group.items.filter(
+      (service) => service.marketingStatus === 'supported' && service.catalogState === 'available',
+    ).length,
   }))
-  .filter((group) => group.items.length > 0);
+  .filter((group) => group.localCount > 0);
 
 const faqItems = [
   {
@@ -165,10 +159,10 @@ const faqItems = [
 
       <div class="mt-8 grid gap-6 sm:grid-cols-2 reveal">
         <article class="site-panel min-w-0 p-6">
-          <h3 class="text-lg font-semibold text-[var(--text)]">Google Cloud services by category</h3>
+          <h3 class="text-lg font-semibold text-[var(--text)]">Local services by category</h3>
           <div class="mt-4 space-y-2 text-sm text-[var(--text-2)] leading-7">
             {serviceGroups.map((group) => (
-              <div><strong class="text-[var(--text)]">{group.title}:</strong> {group.items.join(', ')}</div>
+              <div><strong class="text-[var(--text)]">{group.title}:</strong> {group.localCount} {group.localCount === 1 ? 'service' : 'services'}</div>
             ))}
           </div>
           <div class="mt-4">
