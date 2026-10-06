@@ -31,11 +31,25 @@ const faqItems = [
     a: 'The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for non-production development, testing, CI, evaluation, and internal pilots. Pro-tier services are included free during the preview.',
   },
 ];
+
+// FAQPage data comes from the visible FAQ, so the two can't drift apart.
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+];
 ---
 
 <LandingLayout
   title="How to Run Google Cloud Services Locally — Complete Guide"
   description={`Install the LocalCloud CLI, start a localhost-only runtime, and connect your code to ${availableServiceCount} local Google Cloud services.`}
+  {structuredData}
 >
   <script type="application/ld+json" is:inline>
 {
@@ -73,30 +87,6 @@ const faqItems = [
 }
   </script>
 
-  <script type="application/ld+json" is:inline>
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Does Google provide official local emulators?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes, for some services. LocalCloud combines official, third-party, and custom emulators behind one CLI."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Do I need to change my application code?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "It depends on the client. Many workflows use standard Google Cloud clients once localcloud env sets the emulator endpoints; compatibility varies by service and client. If a client tries to reach real Google Cloud, stop and fix the configuration."
-      }
-    }
-  ]
-}
-  </script>
 
   {/* HERO */}
   <section class="site-section site-section--hero">
