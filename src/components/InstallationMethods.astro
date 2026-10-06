@@ -3,8 +3,10 @@ import CodeTabs from './CodeTabs.astro';
 import CopyButton from './CopyButton.astro';
 import { docsContract } from '../data/docs-contract';
 import { productFacts } from '../data/productFacts';
+import { cliQuickStart } from '../utils/quickstart.mjs';
 
-const launchCommand = "localcloud start --local-only\nlocalcloud console";
+// Step 1 shows productFacts.installScriptCommand (the same contract value); step 2 runs the rest.
+const launchCommand = cliQuickStart(docsContract).steps.join('\n');
 ---
 
 <section
@@ -57,7 +59,7 @@ const launchCommand = "localcloud start --local-only\nlocalcloud console";
         <div class="installation-methods__step-copy">
           <span class="installation-methods__step" aria-hidden="true">2</span>
           <h3>Start LocalCloud and open the console</h3>
-          <p>If canonical ports are occupied, the CLI dynamically remaps host ports — use the endpoint values it returns.</p>
+          <p>Check Docker, start on loopback ports, confirm readiness, configure this shell, and open the console. If canonical ports are occupied, the CLI dynamically remaps host ports — use the endpoint values it returns.</p>
         </div>
 
         <div class="installation-methods__step-content">

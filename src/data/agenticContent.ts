@@ -1,4 +1,4 @@
-import { agenticFacts, agenticServiceMetadata } from "./agenticFacts";
+import { agenticFacts, agenticServiceMetadata, joinClauses } from "./agenticFacts";
 import { productFacts } from "./productFacts";
 import { availableServiceCount } from "./services";
 
@@ -169,11 +169,11 @@ const standardLimitations = [
 	agenticFacts.releaseGuardrail,
 ];
 
-const dockerSnippet = [
-	agenticFacts.dockerPullCommand,
-	agenticFacts.dockerRunCommand,
-	agenticFacts.envExportCommand,
-].join("\n");
+// Install the CLI first; the Docker-only path exports its environment over HTTP.
+const quickStartSnippets: ContentSnippet[] = [
+	{ label: "LocalCloud commands", language: "bash", code: agenticFacts.cliQuickStart.script },
+	{ label: "Docker-only fallback", language: "bash", code: agenticFacts.dockerQuickStart.script },
+];
 
 export const agentSandboxPages: AgenticContentPage[] = [
 	{
@@ -221,7 +221,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 				code:
 					"Read https://local.cloud/ai/agents.md, inspect this repository for Google Cloud SDK usage, start or reuse LocalCloud with Docker, export emulator env vars into this shell, and run the smallest local SDK smoke test. Do not ask for GCP credentials.",
 			},
-			{ label: "LocalCloud commands", language: "bash", code: dockerSnippet },
+			...quickStartSnippets,
 		],
 		limitations: [
 			"Claude Code is not a hosted isolation boundary by itself; LocalCloud isolates Google Cloud side effects, not arbitrary shell commands.",
@@ -438,9 +438,9 @@ const servicePage = (
 				],
 				[
 					"Supported features",
-					service.supported.join("; "),
+					joinClauses(service.supported),
 					service.gaps.length
-						? service.gaps.join("; ")
+						? joinClauses(service.gaps)
 						: "Production scale, SLAs, and managed control-plane behavior.",
 				],
 				[
@@ -506,14 +506,14 @@ const githubActionsSnippet = [
 	"      - name: Start LocalCloud",
 	`        run: |`,
 	"          # Public preview permits non-production internal organization and team CI.",
-	"          # Pin a qualified image digest before relying on this workflow.",
-	`          docker run -d --name localcloud -p 127.0.0.1:5380-5405:5380-5405 -m ${agenticFacts.memoryRequirement} ${agenticFacts.dockerImage}`,
-	"          for i in $(seq 1 60); do curl -fsS http://localhost:5380/readiness && exit 0; sleep 2; done",
+	"          # Pin an image digest when the workflow must be repeatable.",
+	...agenticFacts.dockerQuickStart.run.split("\n").map((line) => (line ? `          ${line}` : "")),
+	`          for i in $(seq 1 60); do ${agenticFacts.dockerQuickStart.readiness} && exit 0; sleep 2; done`,
 	"          docker logs localcloud",
 	"          exit 1",
 	"      - name: Export emulator env and test",
 	"        run: |",
-	'          eval "$(curl -fsS http://localhost:5380/env?format=shell)"',
+	`          ${agenticFacts.dockerQuickStart.environment}`,
 	"          ./scripts/integration-test.sh",
 ].join("\n");
 
@@ -534,7 +534,7 @@ export const workflowPages: AgenticContentPage[] = [
 		promptIds: ["ci", "quickstart"],
 		quickFacts: [
 			"No GCP secrets are required for the bounded local job.",
-			"Readiness gate: http://localhost:5380/readiness.",
+			`Readiness gate: ${agenticFacts.readinessEndpoint}.`,
 			"Keep the workflow non-production and review the proprietary Public Preview License.",
 		],
 		sections: [

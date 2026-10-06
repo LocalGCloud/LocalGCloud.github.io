@@ -1,6 +1,8 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { docsContract } from '../src/data/docs-contract.ts';
 import { productFacts } from '../src/data/productFacts.ts';
+import { cliQuickStart } from '../src/utils/quickstart.mjs';
 import { services, isServiceDisabledByDefault } from '../src/data/services.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
 import { getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
@@ -50,6 +52,68 @@ for (const required of [
 ]) {
   if (!llms.includes(required)) errors.push(`llms.txt must contain ${required}`);
 }
+
+// Agent text: the raw files agents and LLM tools read.
+const agentText = new Map(await Promise.all([...files]
+  .filter((file) => /^llms[^/]*\.txt$/.test(file) || /^ai\/[^/]+\.md$/.test(file))
+  .map(async (file) => [file, await readFile(new URL(file, distDirectory), 'utf8')])));
+const decodeEntities = (text) => text.replace(/&#(x[\da-f]+|\d+);|&(amp|lt|gt|quot|apos);/gi, (_, number, name) => number
+  ? String.fromCodePoint(Number.parseInt(number.replace(/^x/i, ''), /^x/i.test(number) ? 16 : 10))
+  : ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[name.toLowerCase()]);
+const visibleText = (markup) => decodeEntities(markup.replace(/<script\b[\s\S]*?<\/script>|<style\b[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ''));
+
+// One quick start: the CLI lines appear verbatim and in order on every agent entry point.
+const quickStart = cliQuickStart(docsContract);
+for (const file of ['llms.txt', 'ai/agents.md', 'ai/agent-template.md', 'ai/docs.md']) {
+  if (!(agentText.get(file) ?? '').includes(`\`\`\`bash\n${quickStart.script}\n\`\`\``)) errors.push(`${file} must contain the shared CLI quick start verbatim`);
+}
+const homepageQuickStart = htmlPages.get('index.html')?.match(/<section\b[^>]*id="manual-quickstart"[\s\S]*?<\/section>/)?.[0] ?? '';
+const renderedLines = [...homepageQuickStart.matchAll(/<code\b[^>]*>([\s\S]*?)<\/code>/g)]
+  .flatMap((match) => visibleText(match[1]).split('\n')).map((line) => line.trim());
+let renderedCursor = 0;
+for (const line of quickStart.lines) {
+  const index = renderedLines.indexOf(line, renderedCursor);
+  if (index === -1) {
+    errors.push(`homepage quick start omits or reorders: ${line}`);
+    break;
+  }
+  renderedCursor = index + 1;
+}
+
+// Every agent path installs the CLI before it runs the CLI.
+const agentPages = [...htmlPages.keys()].filter((file) => /^(?:ai|local-cloud-for-ai-agents|blog\/localcloud-for-ai-agents|agents\/[^/]+)\/index\.html$/.test(file));
+for (const [file, text] of [...agentText, ...agentPages.map((file) => [file, visibleText(htmlPages.get(file))])]) {
+  const firstCliUse = Math.min(...['localcloud doctor', 'eval "$(localcloud env)"'].map((command) => text.indexOf(command)).filter((index) => index !== -1));
+  if (Number.isFinite(firstCliUse) && !text.slice(0, firstCliUse).includes(quickStart.install)) errors.push(`${file} runs the LocalCloud CLI before installing it`);
+}
+
+// Joins strip each item's final period, so ".." and ".;" never appear outside code.
+for (const [file, text] of agentText) {
+  const prose = text.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '');
+  const match = prose.match(/(?<!\.)\.\.(?!\.)|\.;/);
+  if (match) errors.push(`${file} contains "${match[0]}" from a list join: ${prose.slice(Math.max(0, match.index - 40), match.index + 20).replace(/\s+/g, ' ')}`);
+}
+
+// What the old page-acceptance checklists promised, asserted here instead of published.
+for (const file of ['ai/agents.md', 'ai/agent-template.md']) {
+  const text = agentText.get(file) ?? '';
+  for (const [pattern, promise] of [
+    [/Public Preview License/, 'state the license boundary'],
+    [/If a step would need real Google Cloud or real credentials, stop/, 'stop rather than use real credentials'],
+    [/If Docker or LocalCloud is unavailable, stop/, 'stop when Docker or LocalCloud is unavailable'],
+    [/validate the change against real Google Cloud/, 'require production validation against real Google Cloud'],
+    [/https:\/\/local\.cloud\/ai\/services\.md/, 'link the service matrix'],
+    [/https:\/\/local\.cloud\/ai\/compatibility\.md/, 'link per-service boundaries'],
+  ]) {
+    if (!pattern.test(text)) errors.push(`${file} must ${promise}`);
+  }
+}
+// The service matrix lives in services.md only, and the repository template stays short.
+for (const [file, text] of agentText) {
+  if (file !== 'ai/services.md' && text.includes('| Service | Default | Endpoints |')) errors.push(`${file} repeats the service matrix; link https://local.cloud/ai/services.md instead`);
+}
+const templateWords = (agentText.get('ai/agent-template.md') ?? '').split(/\s+/).filter(Boolean).length;
+if (templateWords > 550) errors.push(`ai/agent-template.md has ${templateWords} words; keep the AGENTS.md template near 500`);
 
 for (const prohibited of [/\benterprise\b/i, /sales@/i, /\bcommercial license\b/i, /\$\d/, /\bprice\s*:/i]) {
   if (prohibited.test(JSON.stringify(productFacts))) {

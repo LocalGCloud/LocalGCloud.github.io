@@ -10,6 +10,7 @@ LocalCloud is not a production replacement. Use is governed by the proprietary L
 curl -fsSL https://local.cloud/install.sh | sh
 localcloud doctor
 localcloud start --local-only
+curl -fsS http://localhost:5380/readiness
 eval "$(localcloud env)"
 localcloud console
 ```

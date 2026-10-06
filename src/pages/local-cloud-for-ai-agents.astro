@@ -14,7 +14,7 @@ const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const pageUrl = new URL('local-cloud-for-ai-agents/', productFacts.siteUrl).toString();
 
-const quickStart = agenticFacts.cliQuickStartCommand;
+const quickStart = agenticFacts.cliQuickStart.script;
 
 const boundaries = [
   {
@@ -250,7 +250,7 @@ const agentPages = [
         </div>
         <pre class="mt-4 overflow-x-auto text-sm leading-7"><code>{quickStart}</code></pre>
         <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">
-          Trust the URLs and values the CLI returns. Occupied ports are remapped, so read the generated environment rather than assuming a fixed port. Health is reported at <code>{agenticFacts.healthEndpoint}</code>.
+          Trust the URLs and values the CLI returns. Occupied ports are remapped, so read the generated environment rather than assuming a fixed port. Homebrew users can install with <code>{agenticFacts.cliQuickStart.homebrew}</code>.
         </p>
       </div>
 

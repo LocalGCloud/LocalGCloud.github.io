@@ -21,6 +21,11 @@ const documentedOperations = isComingSoon
   : service.operations.filter((operation) => operation.status !== 'unsupported' && operation.status !== 'unknown');
 const operationBoundaries = documentedOperations.filter((operation) => operation.limitations.length > 0);
 const unavailableOperations = service.operations.filter((operation) => operation.status === 'unsupported' || operation.status === 'unknown');
+// Labels contain commas, so a mid-sentence list joins them with semicolons and lowercases
+// a leading capitalized word ("Native SQL" -> "native SQL"); acronyms and names keep their case.
+const properNouns = new Set(['Google', 'Redis', 'Valkey', 'Docker', 'Terraform', 'Spark']);
+const midSentence = (label: string) =>
+  label.replace(/^([A-Z])([a-z]+)(?=[\s,]|$)/, (word, first, rest) => (properNouns.has(word) ? word : first.toLowerCase() + rest));
 
 // Astro.url.pathname is the emulator landing route (for example /bigquery-emulator/).
 const pageUrl = new URL(Astro.url.pathname, productFacts.siteUrl).toString();
@@ -47,7 +52,7 @@ const faqItems = isUnsupported
       },
       {
         q: `What ${service.name} workflows are documented locally?`,
-        a: `${documentedOperations.length} ${service.name} workflows are documented with operation-level status: ${documentedOperations.slice(0, 6).map((operation) => operation.label).join(', ')}${documentedOperations.length > 6 ? ', and more' : ''}. The compatibility matrix lists the status of every operation.`,
+        a: `${documentedOperations.length} ${service.name} workflows are documented with operation-level status: ${documentedOperations.slice(0, 6).map((operation) => midSentence(operation.label)).join('; ')}${documentedOperations.length > 6 ? '; and more' : ''}. The compatibility matrix lists the status of every operation.`,
       },
       {
         q: `Does the local ${service.name} behave exactly like Google Cloud?`,
@@ -84,7 +89,7 @@ const structuredData = [
     <h1 class="mt-6">{isUnsupported || isComingSoon ? `${service.name} is unsupported in LocalCloud` : `Run ${service.name} workflows locally`}</h1>
     <p class="mt-6 text-lg leading-8 text-[var(--text-2)]">{service.description}</p>
     {!isUnsupported && isServiceDisabledByDefault(service) && (
-      <p class="mt-3 text-sm text-[var(--accent-strong)]">Note: {service.name} is disabled by default to save workstation resources. Start it with <code>localcloud start --services {service.slug}</code>.</p>
+      <p class="mt-3 text-sm text-[var(--accent-strong)]">Note: {service.name} is disabled by default to save workstation resources. Start it with <code>localcloud start --services {service.id}</code>.</p>
     )}
     <div class="mt-8 flex flex-wrap gap-3"><a class="site-button site-button--primary" href={`${base}services/${service.slug}/`}>View service guide</a><a class="site-button site-button--secondary" href={`${base}compatibility/`}>Compatibility matrix</a><a class="site-button site-button--secondary" href={`${base}gcp-emulator/`}>All local GCP services</a></div>
   </div></div></section>

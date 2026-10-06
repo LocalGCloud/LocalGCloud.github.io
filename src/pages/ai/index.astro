@@ -6,8 +6,8 @@ import {
   agenticEndpoints,
   agenticFacts,
   agenticServiceMetadata,
+  agentDirectRules,
   agentPromptLibrary,
-  agentSafeValidationChecklist,
 } from '../../data/agenticFacts';
 import { agentsMdTemplate } from '../../data/agenticMarkdown';
 import { createBreadcrumbSchema, createSoftwareApplicationSchema, productFacts } from '../../data/productFacts';
@@ -16,24 +16,26 @@ const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const agentSkillsUrl = productFacts.agentSkillsUrl;
 
+const quickStart = agenticFacts.cliQuickStart;
+const startCommands = quickStart.lines.slice(0, quickStart.lines.indexOf(quickStart.readiness));
 const workflowCards = [
   {
     step: '01',
-    title: 'Start the sandbox',
-    body: 'Pull the canonical Docker image, start or reuse the localcloud container, and wait for the runtime readiness endpoint.',
-    command: `${agenticFacts.dockerPullCommand}\n${agenticFacts.dockerRunCommand}`,
+    title: 'Install and start',
+    body: `Install the CLI (or run ${quickStart.homebrew}), check Docker, and start LocalCloud on loopback ports.`,
+    command: startCommands.join('\n'),
   },
   {
     step: '02',
-    title: 'Point SDKs at localhost',
-    body: 'Export LocalCloud environment variables before running SDK, CLI, Terraform, or test commands.',
-    command: agenticFacts.envExportCommand,
+    title: 'Confirm readiness',
+    body: 'Wait for the runtime readiness endpoint before any SDK, CLI, Terraform, or test command.',
+    command: quickStart.readiness,
   },
   {
     step: '03',
-    title: 'Run the narrow check',
-    body: 'Check readiness, then use the project’s SDK tests to create and read the smallest resource that proves its service path works.',
-    command: `curl -fsS ${agenticFacts.readinessEndpoint}`,
+    title: 'Point SDKs at localhost',
+    body: 'Export the LocalCloud environment, then run the project’s smallest SDK test to prove its service path works.',
+    command: agenticFacts.envExportCommand,
   },
   {
     step: '04',
@@ -262,7 +264,7 @@ const structuredData = [
           </div>
         </div>
         <div class="grid gap-3 reveal">
-          {agentSafeValidationChecklist.map((item) => (
+          {agentDirectRules.map((item) => (
             <div class="site-panel site-panel--soft p-4 text-sm leading-7 text-[var(--text-2)]">{item}</div>
           ))}
         </div>
@@ -274,7 +276,7 @@ const structuredData = [
         <article class="site-panel p-6 reveal">
           <span class="site-kicker">Raw guide</span>
           <h2 class="mt-3">/ai/agents.md</h2>
-          <p class="mt-4 text-[var(--text-2)]">A hosted Markdown execution guide for agents. It includes startup commands, endpoints, service matrix, copy prompts, and safety rules.</p>
+          <p class="mt-4 text-[var(--text-2)]">A hosted Markdown guide for agents: install-first quick start, rules, workflow, and endpoints.</p>
           <a class="site-button site-button--primary mt-5" href={`${base}ai/agents.md`}>Open Markdown guide</a>
         </article>
         <article class="site-panel p-6 reveal">

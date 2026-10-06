@@ -7,7 +7,7 @@ import {
   createSoftwareApplicationSchema,
   productFacts,
 } from '../../data/productFacts';
-import { agenticFacts, agentPromptLibrary, agentSafeValidationChecklist } from '../../data/agenticFacts';
+import { agenticFacts, agentPromptLibrary } from '../../data/agenticFacts';
 
 const pageUrl = new URL('blog/localcloud-for-ai-agents/', productFacts.siteUrl).toString();
 const metadata = authoredBlogMetadata['localcloud-for-ai-agents'];
@@ -20,6 +20,8 @@ const contents = [
   { id: 'safety', label: 'Validation boundaries' },
 ];
 const quickstartPrompt = agentPromptLibrary.find((prompt) => prompt.id === 'quickstart')?.prompt ?? '';
+const quickStart = agenticFacts.cliQuickStart;
+const startCommands = quickStart.lines.slice(0, quickStart.lines.indexOf(quickStart.readiness));
 
 const structuredData = [
   createSoftwareApplicationSchema(
@@ -103,7 +105,7 @@ const structuredData = [
         </p>
         <ul class="site-list mt-5">
           <li><a href="/ai/services.md">/ai/services.md</a> gives agents the service matrix and endpoint variables.</li>
-          <li><a href="/ai/compatibility.md">/ai/compatibility.md</a> keeps limitations and production boundaries explicit.</li>
+          <li><a href="/ai/compatibility.md">/ai/compatibility.md</a> lists what each service runs locally and where its local behavior stops.</li>
           <li><a href="/ai/docs.md">/ai/docs.md</a> points agents to SDK, Terraform, seed data, and console docs.</li>
           <li><a href={productFacts.agentSkillsUrl}>Agent Skills</a> provide portable workflows for BigQuery, Pub/Sub, Terraform, internal automation, seed data, and SDK tests.</li>
           <li><a href={`${productFacts.runtimeRepositoryUrl}/blob/main/docs/guides/mcp-integration.md`}>LocalCloud MCP integration</a> provides structured tools and prompts through the runtime’s canonical <code>/mcp</code> endpoint and the <code>localcloud mcp</code> stdio bridge.</li>
@@ -115,16 +117,16 @@ const structuredData = [
         <h2 class="mt-3" id="local-loop">One local loop agents can execute</h2>
         <div class="mt-5 grid gap-4 md:grid-cols-2">
           <article class="site-panel min-w-0 p-5">
-            <h3>1. Start LocalCloud</h3>
-            <pre class="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap text-xs"><code>{[agenticFacts.dockerPullCommand, agenticFacts.dockerRunCommand].join('\n')}</code></pre>
+            <h3>1. Install and start LocalCloud</h3>
+            <pre class="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap text-xs"><code>{startCommands.join('\n')}</code></pre>
           </article>
           <article class="site-panel min-w-0 p-5">
-            <h3>2. Export localhost SDK endpoints</h3>
+            <h3>2. Verify readiness</h3>
+            <pre class="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap text-xs"><code>{quickStart.readiness}</code></pre>
+          </article>
+          <article class="site-panel min-w-0 p-5">
+            <h3>3. Export localhost SDK endpoints</h3>
             <pre class="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap text-xs"><code>{agenticFacts.envExportCommand}</code></pre>
-          </article>
-          <article class="site-panel min-w-0 p-5">
-            <h3>3. Verify readiness</h3>
-            <pre class="mt-3 max-w-full overflow-x-auto whitespace-pre-wrap text-xs"><code>curl -fsS {agenticFacts.healthEndpoint}</code></pre>
           </article>
           <article class="site-panel min-w-0 p-5">
             <h3>4. Run the smallest local proof</h3>
@@ -136,9 +138,9 @@ const structuredData = [
       <section class="reveal">
         <span class="site-kicker">Safety model</span>
         <h2 class="mt-3" id="safety">The boundaries are part of the product</h2>
-        <ul class="site-list mt-5">
-          {agentSafeValidationChecklist.map((item) => <li>{item}</li>)}
-        </ul>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          Agents follow one short list of direct rules, published in <a href="/ai/agents.md">/ai/agents.md</a>: use only local endpoint values, stop instead of reaching for real credentials or real Google Cloud, and validate against real Google Cloud before production.
+        </p>
         <p class="mt-5 leading-8 text-[var(--text-2)]">
           The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production development, testing, CI, evaluation, and internal pilots. It is not a production Google Cloud replacement. Use the <a href="/services/">service catalog</a> and <a href="/compatibility/">compatibility page</a> before relying on a local result, then validate release behavior against real Google Cloud.
         </p>

@@ -1,3 +1,4 @@
+import { cliQuickStart, dockerQuickStart } from "../utils/quickstart.mjs";
 import { docsContract } from "./docs-contract";
 import { productFacts } from "./productFacts";
 import { services, type Service } from "./services";
@@ -15,6 +16,7 @@ export interface AgenticEndpoint {
 }
 
 export interface AgenticServiceMetadata {
+	id: string;
 	name: string;
 	slug: string;
 	status: "supported" | "partial" | "release-unverified" | "planned" | "unsupported" | "unknown";
@@ -43,7 +45,7 @@ export interface AgentPrompt {
 
 export const agenticFacts = {
 	positioning:
-		"LocalCloud is a local Google Cloud development sandbox: one Docker container, bounded SDK workflows pointed at loopback endpoints, and explicit compatibility limits. Review the governing proprietary license and validate against real Google Cloud before production.",
+		"LocalCloud is a local Google Cloud emulator: one Docker container that answers Google Cloud SDK calls on localhost, so code and tests run without a GCP account, credentials, or billing. Validate against real Google Cloud before production.",
 	dockerImage: productFacts.dockerImage,
 	containerName: "localcloud",
 	defaultProject: docsContract.product.defaultProject,
@@ -54,15 +56,13 @@ export const agenticFacts = {
 	readinessEndpoint: `http://localhost:${docsContract.operator.gatewayPort}${docsContract.operator.endpoints.readiness}`,
 	shellEnvEndpoint: `http://localhost:${docsContract.operator.gatewayPort}${docsContract.operator.endpoints.environment}?format=shell`,
 	terraformEnvEndpoint: `http://localhost:${docsContract.operator.gatewayPort}${docsContract.operator.endpoints.environment}?format=terraform`,
-	cliInstallCommand: docsContract.cli.installCommand,
-	cliQuickStartCommand: docsContract.cli.quickStart.join("\n"),
-	dockerPullCommand: `docker pull ${productFacts.dockerImage}`,
-	dockerRunCommand: docsContract.operator.manualDockerCommand,
+	cliQuickStart: cliQuickStart(docsContract),
+	dockerQuickStart: dockerQuickStart(docsContract),
 	envExportCommand: 'eval "$(localcloud env)"',
 	terraformEnvCommand: "localcloud env --format terraform",
 	productionBoundary: productFacts.productionBoundary,
 	noCredentialBoundary:
-		"Permitted workflows use local endpoint values and should stop rather than fall back to real Google Cloud or real credentials. The Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production internal development, testing, CI, evaluation, and pilots.",
+		"Use only local endpoint values. If a step would need real Google Cloud or real credentials, stop. The Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production internal development, testing, CI, evaluation, and pilots.",
 	releaseGuardrail:
 		"Before production deployment, unset LocalCloud emulator environment variables and validate behavior against real Google Cloud.",
 	evidence: {
@@ -114,6 +114,13 @@ const agenticStatusByEvidence = {
 	AgenticServiceMetadata["status"]
 >;
 
+// Items often end in a period; strip it so "; " joins never produce ".;" or "..".
+export const joinClauses = (items: readonly string[]) =>
+	items
+		.map((item) => item.replace(/[.;\s]+$/, ""))
+		.filter(Boolean)
+		.join("; ");
+
 export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 	(service) => {
 		const status =
@@ -122,6 +129,7 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 				: agenticStatusByEvidence[service.status];
 
 		return {
+			id: service.id,
 			name: service.name,
 			slug: service.slug,
 			status,
@@ -170,9 +178,9 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 					: service.status === "unsupported" || service.status === "unknown"
 						? "Unsupported: no supported application integration is established. Review the service guide before configuring clients."
 					: !service.registryDefaultEnabled
-						? `Supported locally; disabled by default to save resources. Enable via localcloud start --services ${service.slug}.`
+						? `Supported locally; disabled by default to save resources. Enable it by listing ${service.id} in localcloud start --services, which sets the exact services to run.`
 					: service.notSupported.length
-						? `Documented local workflows with these boundaries: ${service.notSupported.slice(0, 2).join("; ")}.`
+						? `Documented local workflows with these boundaries: ${joinClauses(service.notSupported.slice(0, 2))}.`
 						: "Supported for local workflows; validate production behavior against real Google Cloud.",
 		};
 	},
@@ -184,7 +192,7 @@ export const agentPromptLibrary: AgentPrompt[] = [
 		label: "Start LocalCloud",
 		useCase: "Give an agent one URL and have it start the local GCP sandbox.",
 		prompt:
-			"Fetch https://local.cloud/ai/agents.md and follow the instructions to start LocalCloud on my machine. Verify Docker, start or reuse the localcloud container, export emulator environment variables, and run one local GCP SDK/API smoke check. Do not ask for or use real GCP credentials.",
+			"Fetch https://local.cloud/ai/agents.md and follow the instructions to start LocalCloud on my machine. Install the LocalCloud CLI if it is missing, verify Docker, start or reuse LocalCloud, export emulator environment variables, and run one local GCP SDK/API smoke check. Do not ask for or use real GCP credentials.",
 	},
 	{
 		id: "project-integration",
@@ -237,12 +245,15 @@ export const claimReviewRule = {
 	evidence: agenticFacts.evidence,
 } as const;
 
-export const agentSafeValidationChecklist = [
-	"States that LocalCloud is limited to uses permitted by the governing proprietary license and is not a production GCP replacement.",
-	"Keeps bounded local workflows on loopback endpoints and stops rather than requesting or falling back to real Google Cloud credentials.",
-	`Uses the reviewed image repository ${productFacts.dockerImage}; the mutable tag remains release-unverified, so prefer localcloud start and pin a qualified digest for release workflows.`,
-	"Points SDKs and Terraform to localhost/emulator endpoints before any verification step.",
-	"Warns agents to stop rather than falling back to real GCP when Docker or LocalCloud is unavailable.",
-	"Links service-specific claims to the service catalog, compatibility docs, or reviewed evidence.",
-	"Instructs production validation against real Google Cloud after unsetting emulator environment variables.",
+// Direct rules for agents. /ai/agents.md is the canonical list; the AGENTS.md
+// template repeats it because it is copied into repositories on its own.
+export const agentDirectRules = [
+	"Use only local endpoint values. If a step would need real Google Cloud or real credentials, stop and report it.",
+	"Never ask for or use service-account keys, application default credentials, production project IDs, or billing accounts.",
+	"Export the LocalCloud environment in the same shell or test runner before any SDK, CLI, or Terraform step.",
+	"If Docker or LocalCloud is unavailable, stop and report the blocker instead of falling back to real Google Cloud.",
+	"Prefer the LocalCloud CLI. The `latest` image tag is mutable, so pin an image digest when repeatability matters.",
+	"Back service-specific claims with the service page or https://local.cloud/compatibility/.",
+	"Use LocalCloud only for the non-production work the Public Preview License permits.",
+	"Before production, unset the emulator variables and validate the change against real Google Cloud.",
 ] as const;

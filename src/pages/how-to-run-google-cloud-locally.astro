@@ -2,16 +2,13 @@
 import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { docsContract } from '../data/docs-contract';
+import { cliQuickStart } from '../utils/quickstart.mjs';
 import { availableServiceCount, publishedServiceCount, getServiceSignalLabel, services as catalogServices } from '../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
-const quickStartCmd = `${docsContract.cli.installCommand}
-localcloud doctor
-localcloud start --local-only
-eval "$(localcloud env)"
-localcloud console`;
+const quickStartCmd = cliQuickStart(docsContract).script;
 
 const services = catalogServices
   .filter((service) => ['bigquery', 'gcs', 'firestore', 'pubsub', 'spanner', 'bigtable'].includes(service.id))

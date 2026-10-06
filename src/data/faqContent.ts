@@ -1,3 +1,6 @@
+import { cliQuickStart } from '../utils/quickstart.mjs';
+import { docsContract } from './docs-contract';
+
 export interface FaqEntry {
   question: string;
   answer: string;
@@ -27,7 +30,7 @@ export const faqSections: FaqSection[] = [
       {
         question: 'What is the recommended setup?',
         answer: 'Install the host CLI, verify Docker, start the selected data-volume runtime, load its generated environment values, and open the returned console URL.',
-        code: 'curl -fsSL https://local.cloud/install.sh | sh\nlocalcloud doctor\nlocalcloud start --local-only\neval "$(localcloud env)"\nlocalcloud console',
+        code: cliQuickStart(docsContract).script,
         afterCode:
           'Start with --local-only to bind host ports to loopback. The CLI keeps persistence by default, and can remap occupied ports. Trust the URLs and environment values it returns.',
       },

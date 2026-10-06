@@ -1,6 +1,7 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import { docsContract } from '../data/docs-contract';
+import { cliQuickStart } from '../utils/quickstart.mjs';
 import { availableServiceCount, publishedServiceCount } from '../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
@@ -142,11 +143,7 @@ const faqItems = [
 
       <div class="mt-8 site-panel p-6 reveal">
         <h3 class="text-lg font-semibold text-[var(--text)]">Quick start</h3>
-        <pre class="mt-4 overflow-x-auto text-xs"><code>{docsContract.cli.installCommand}
-localcloud doctor
-localcloud start --local-only
-eval "$(localcloud env)"
-localcloud console</code></pre>
+        <pre class="mt-4 overflow-x-auto text-xs"><code>{cliQuickStart(docsContract).script}</code></pre>
       </div>
 
       <div class="mt-8 grid gap-6 sm:grid-cols-2 reveal">

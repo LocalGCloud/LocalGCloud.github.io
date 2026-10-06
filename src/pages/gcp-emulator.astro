@@ -3,6 +3,7 @@ import LandingLayout from '../layouts/LandingLayout.astro';
 import Callout from '../components/Callout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { docsContract } from '../data/docs-contract';
+import { cliQuickStart } from '../utils/quickstart.mjs';
 import { availableServiceCount, publishedServiceCount, services, serviceCategoryOrder, serviceCategoryMeta } from '../data/services';
 import {
   createBreadcrumbSchema,
@@ -324,11 +325,7 @@ gcloud emulators spanner start --host-port=localhost:5386
 
         <div class="site-panel terminal-panel min-w-0 p-6">
           <span class="site-kicker">LocalCloud</span>
-          <pre class="mt-4 border-0 bg-transparent"><code>{docsContract.cli.installCommand}
-localcloud doctor
-localcloud start --local-only
-eval "$(localcloud env)"
-localcloud console
+          <pre class="mt-4 border-0 bg-transparent"><code>{cliQuickStart(docsContract).script}
 
 # Use the URLs and endpoint values returned by the CLI.</code></pre>
         </div>

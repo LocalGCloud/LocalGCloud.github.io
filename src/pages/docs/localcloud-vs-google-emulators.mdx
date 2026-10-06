@@ -5,7 +5,9 @@ description: A bounded decision guide for choosing LocalCloud or a Google-mainta
 ---
 
 import Callout from '../../components/Callout.astro';
+import { docsContract } from '../../data/docs-contract';
 import { services } from '../../data/services';
+import { cliQuickStart } from '../../utils/quickstart.mjs';
 
 # LocalCloud and Google-maintained emulators
 
@@ -47,13 +49,7 @@ A service listing does not imply default startup, full parity, or legal permissi
 
 ## LocalCloud setup
 
-```bash
-curl -fsSL https://local.cloud/install.sh | sh
-localcloud doctor
-localcloud start --local-only
-eval "$(localcloud env)"
-localcloud console
-```
+<pre><code>{cliQuickStart(docsContract).script}</code></pre>
 
 With `--local-only`, the CLI binds to loopback and can remap occupied canonical ports. Trust the generated environment values.
 
