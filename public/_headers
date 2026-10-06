@@ -29,6 +29,12 @@
   ! Cache-Control
   Cache-Control: public, max-age=604800
 
-# Static builds drop endpoint headers; the template downloads under its conventional name.
+# Static builds drop endpoint headers; declare UTF-8 for text and Markdown assets.
+/*.txt
+  Content-Type: text/plain; charset=utf-8
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+# The template downloads under its conventional name.
 /ai/agent-template.md
   Content-Disposition: attachment; filename="AGENTS.md"

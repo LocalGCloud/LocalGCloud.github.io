@@ -68,9 +68,17 @@ test('_headers apply: no-transform only on HTML, immutable bundles, security hea
   assert.match((await get('/ai/agent-template.md')).headers.get('Content-Disposition'), /filename="AGENTS\.md"/);
 });
 
-test('agent text is served as UTF-8', async () => {
-  for (const path of ['/llms.txt', '/llms-full.txt', '/ai/agents.md', '/ai/services.md']) {
-    assert.match((await get(path)).headers.get('Content-Type'), /charset=utf-8/i, path);
+test('text and Markdown assets declare UTF-8 and preserve GET and HEAD bodies', async () => {
+  const paths = ['/llms.txt', '/llms-full.txt', '/robots.txt', '/ai/agents.md', '/ai/services.md',
+    '/ai/agent-template.md', '/ai/resources.md', '/ai/compatibility.md', '/ai/docs.md'];
+  for (const path of paths) {
+    const type = path.endsWith('.md') ? 'text/markdown' : 'text/plain';
+    for (const method of ['GET', 'HEAD']) {
+      const response = await get(path, {}, { method });
+      assert.equal(response.status, 200, `${method} ${path}`);
+      assert.equal(response.headers.get('Content-Type'), `${type}; charset=utf-8`, `${method} ${path}`);
+      assert.equal(await response.text(), method === 'HEAD' ? '' : distFile(path.slice(1)).toString('utf8'), `${method} ${path}`);
+    }
   }
 });
 
