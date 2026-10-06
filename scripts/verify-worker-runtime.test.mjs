@@ -47,6 +47,7 @@ test('HTML decodes exactly once to the built bytes for Brotli, gzip and identity
   const identity = await raw('/docs/', { 'Accept-Encoding': 'identity' });
   assert.equal(identity.headers['content-encoding'], undefined);
   assert.ok(identity.body.equals(built));
+  for (const response of [br, gzip, identity]) assert.equal(response.headers['content-type'], 'text/html; charset=utf-8');
 });
 
 test('_headers apply: no-transform only on HTML, immutable bundles, security headers', async () => {

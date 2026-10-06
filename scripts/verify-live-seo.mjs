@@ -54,7 +54,6 @@ for (const route of expectedSearchRoutes) {
 
 // Served-behavior checks. Each request is made once: a wrong status here is a defect, not lag.
 // This script stays dependency-free because the custom-domain CI job runs without pnpm install.
-const warnings = [];
 const canonicalHost = new URL(baseUrl).hostname === new URL(siteOrigin).hostname;
 const repoFile = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const fetchOnce = (path, init = {}) => fetch(new URL(path, `${baseUrl}/`), { redirect: 'manual', ...init });
@@ -80,7 +79,7 @@ await check('compression', async () => {
 });
 
 await check('charset', async () => {
-  for (const path of ['/llms.txt', '/llms-full.txt', '/ai/agents.md', '/ai/services.md']) {
+  for (const path of ['/docs/', '/llms.txt', '/llms-full.txt', '/ai/agents.md', '/ai/services.md']) {
     const response = await fetchOnce(path);
     if (!/charset=utf-8/i.test(response.headers.get('content-type') ?? '')) errors.push(`${path}: content-type ${response.headers.get('content-type')} has no charset=utf-8`);
     await response.arrayBuffer();
@@ -144,15 +143,17 @@ if (canonicalHost) {
     if (!response.headers.get('content-encoding')) errors.push('/llms.txt: Cloudflare did not compress the text response');
     await response.arrayBuffer();
   });
-  // Depends on Cloudflare zone bot settings, which live outside the repository (docs/cloudflare-deployment.md).
+  // Agents fetch pages with scripting clients; Browser Integrity Check (error 1010) blocks
+  // Python's urllib. The zone setting lives outside the repository (docs/cloudflare-deployment.md).
   await check('scripted clients', async () => {
-    const response = await fetchOnce('/llms.txt', { headers: { 'User-Agent': 'Python-urllib/3.12' } });
-    if (response.status !== 200) warnings.push(`/llms.txt returned ${response.status} to Python-urllib; review the zone bot settings`);
-    await response.arrayBuffer();
+    for (const path of ['/llms.txt', '/docs/']) {
+      const response = await fetchOnce(path, { headers: { 'User-Agent': 'Python-urllib/3.12' } });
+      if (response.status !== 200) errors.push(`${path} returned ${response.status} to Python-urllib; turn off Browser Integrity Check for the zone`);
+      await response.arrayBuffer();
+    }
   });
 }
 
-for (const warning of warnings) console.warn(process.env.GITHUB_ACTIONS ? `::warning title=Live SEO::${warning}` : `Warning: ${warning}`);
 
 if (errors.length) {
   console.error(`Live SEO verification failed for ${baseUrl}:`);

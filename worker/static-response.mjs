@@ -77,6 +77,9 @@ export async function compressHtml(request, response, env) {
   const headers = new Headers(response.headers);
   appendVary(headers, 'Accept-Encoding');
   preventEdgeRewrites(headers);
+  // Production assets carry no charset; without one, Python requests decodes HTML as Latin-1.
+  const contentType = headers.get('Content-Type');
+  if (!/;\s*charset=/i.test(contentType)) headers.set('Content-Type', `${contentType}; charset=utf-8`);
   const init = { status: response.status, statusText: response.statusText, headers };
   const accepted = acceptedEncodings(request);
 

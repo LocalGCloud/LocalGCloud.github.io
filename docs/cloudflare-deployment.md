@@ -49,7 +49,7 @@ These settings live in the Cloudflare dashboard, not in this repository. Confirm
 
 - Brotli compression is on.
 - Rocket Loader and Email Address Obfuscation are off; both rewrite HTML and break hash-based CSP.
-- `/llms.txt`, `/llms-full.txt`, `/ai/*` and `/install.sh` are reachable by scripted clients. Python's standard-library `urllib` currently receives HTTP 403 on `/` and `/llms.txt`; find whether Browser Integrity Check, Bot Fight Mode or a WAF rule returns it. Bot Fight Mode on the Free plan cannot skip paths, so turn it off; exempt these paths from the others.
+- Browser Integrity Check is off. It returned error 1010 (HTTP 403) to Python's standard-library `urllib` on every page, which blocks AI agents that fetch docs with it. `scripts/verify-live-seo.mjs` fails the deploy check if `/llms.txt` or `/docs/` return anything but 200 to that client.
 - AI Crawl Control and managed robots.txt are off, or match `public/robots.txt`.
 
 ## Analytics proxy

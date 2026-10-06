@@ -310,3 +310,9 @@ test('redirect rules target existing pages, never shadow pages, and never chain'
     assert.ok(!sources.has(target), `${source} redirects to ${target}, which redirects again`);
   }
 });
+
+test('HTML without a declared charset is served as UTF-8', async () => {
+  const response = await compressHtml(request('identity'), asset(html, { headers: { 'Content-Type': 'text/html' } }));
+  assert.equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8');
+  assert.equal(await response.text(), html);
+});
