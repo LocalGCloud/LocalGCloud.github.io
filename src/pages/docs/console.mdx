@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Web Console
-description: Inspect and mutate bounded LocalCloud state from the built-in console.
+description: Inspect and change LocalCloud data from the built-in console.
 ---
 
 # Web console
@@ -20,7 +20,7 @@ The dashboard exposes runtime status, the selected project, request counts, and 
 
 ## Data browser
 
-The Data Browser is **not read-only**. Depending on the selected service and current compatibility it can perform bounded mutations, including:
+The Data Browser is **not read-only**. Depending on the selected service and current compatibility it can change data, including:
 
 - creating buckets and folders;
 - uploading and deleting Cloud Storage objects;
@@ -34,7 +34,7 @@ Read and query views include service-specific datasets, schemas, objects, docume
 
 ## SQL and service explorers
 
-BigQuery and Spanner expose query and schema tooling for documented local workflows. BigQuery and Spanner dependency behavior remains release-sensitive until a source revision and assembled image are qualified together. Validate production SQL semantics separately.
+BigQuery and Spanner expose query and schema tooling for documented local workflows. Validate production SQL semantics separately.
 
 The console also provides request logs and generated environment snippets. Generated values should be copied into the exact shell or process running local clients.
 
@@ -44,4 +44,4 @@ Any displayed cost value is **indicative pricing only — not live Google Cloud 
 
 ## Security boundary
 
-The console and many administrative paths are accessible even when IAM strict or `gcp-live` mode is enabled. Keep the runtime loopback-bound. Docker access uses `auto` by default and can mount the host socket for selected services; set it to `false` to opt out. Transparent networking is a separate opt-in.
+The console and many administrative paths are accessible even when IAM strict or `gcp-live` mode is enabled. Keep the runtime listening only on localhost. Docker access uses `auto` by default and can mount the host socket for selected services; set it to `false` to opt out. Transparent networking is a separate opt-in.

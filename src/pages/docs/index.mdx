@@ -15,7 +15,7 @@ import { docsContract } from '../../data/docs-contract';
 
 # Get started with LocalCloud
 
-This tutorial installs the LocalCloud CLI, starts a persistent local runtime, configures this shell, and verifies a Cloud Storage request. LocalCloud emulates bounded development workflows; always run final validation against real Google Cloud before production deployment.
+This tutorial installs the LocalCloud CLI, starts a persistent local runtime, configures this shell, and verifies a Cloud Storage request. LocalCloud runs local versions of Google Cloud services for development and testing. Before you deploy to production, run final validation against real Google Cloud.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ This tutorial installs the LocalCloud CLI, starts a persistent local runtime, co
 - A supported native CLI host: macOS 13+ or Linux with glibc 2.35+, on ARM64 or AMD64.
 - `curl`, `tar`, `sed`, `sort`, and either `sha256sum` or `shasum`.
 
-The standalone CLI is a frozen executable and does not require Python. Windows users should use the [manual Docker fallback](#manual-docker-path).
+The CLI is a standalone executable and does not require Python. Windows users should use the [manual Docker fallback](#manual-docker-path).
 
 ## Install the CLI
 
@@ -82,8 +82,8 @@ built-in `localcloud-data` fallback. Other built-in defaults are:
 - transparent networking **off**
 - gateway TLS **off**; enable it explicitly when needed
 
-The example selects `--local-only`, which binds published ports to `127.0.0.1`. Without that flag, the current CLI publishes ports on all host interfaces. Use it again on subsequent `start`, `restart`, and `reset` commands to retain loopback binding. If a canonical port is occupied,
-it can dynamically remap host ports. Use `--verbose` to inspect the complete
+The example selects `--local-only`, which binds published ports to `127.0.0.1`. Without that flag, the current CLI publishes ports on all host interfaces. Use it again on subsequent `start`, `restart`, and `reset` commands to retain loopback binding. If a default port is already in use,
+the CLI can remap host ports. Use `--verbose` to inspect the complete
 runtime payload, including immutable container ID, ownership, image identity,
 mount details, and `sdk_env`.
 
@@ -139,7 +139,7 @@ The example safely reuses the same local bucket and overwrites the same object, 
 Hello, LocalCloud!
 ```
 
-If the SDK tries to contact Google Cloud, stop instead of adding real credentials. Re-run `eval "$(localcloud env)"` in the shell or process that launches the application. The example is idempotent: it reuses the bucket and overwrites the same object when run again.
+If the SDK tries to contact Google Cloud, stop instead of adding real credentials. Re-run `eval "$(localcloud env)"` in the shell or process that launches the application.
 
 ## Verify and manage the runtime
 
@@ -193,7 +193,7 @@ The default command does not mount `/var/run/docker.sock` and does not expose po
     Browse all {publishedServiceCount} available service guides and their documented limitations.
   </Card>
   <Card title="Compatibility" icon="book" href="/compatibility/">
-    Check bounded local workflows before relying on an emulator behavior.
+    Check which operations each service supports before you rely on them.
   </Card>
   <Card title="Seed Data" icon="database" href="/docs/seed-data/">
     Pre-populate supported services with deterministic test data.

@@ -53,7 +53,7 @@ for (const phrase of [
 	"already_running",
 	"reconfigured",
 	"restarted",
-	"dynamically remap",
+	"remap host ports",
 ]) {
 	assert(
 		tutorial.includes(phrase),
@@ -93,7 +93,7 @@ assert(
 	"tutorial quick start must document a deterministic result",
 );
 assert(
-	tutorial.includes("The example is idempotent"),
+	tutorial.includes("so it can run repeatedly"),
 	"tutorial must explain repeatability",
 );
 assert(
@@ -187,8 +187,8 @@ assert(
 	"homepage does not derive the install command",
 );
 assert(
-	homepageInstall.includes("dynamic"),
-	"homepage does not warn about dynamic ports",
+	homepageInstall.includes("default port is already in use"),
+	"homepage does not warn that the CLI can pick another port",
 );
 
 const configuration = sources.get("src/pages/docs/configuration.mdx");

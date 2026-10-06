@@ -77,7 +77,7 @@ Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-i
 | Google Sheets | `sheets` | yes | HTTP/REST :5380 | `SHEETS_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/google-sheets/) |
 | Secret Manager | `secretmanager` | yes | gRPC :5380 | `SECRET_MANAGER_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/secret-manager/) |
 | Cloud Tasks | `cloudtasks` | yes | gRPC :5380 | `CLOUD_TASKS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-tasks/) |
-| Cloud Scheduler | `cloudscheduler` | yes | grpc+rest :5380 | `CLOUD_SCHEDULER_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-scheduler/) |
+| Cloud Scheduler | `cloudscheduler` | yes | gRPC + HTTP/REST :5380 | `CLOUD_SCHEDULER_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-scheduler/) |
 | Cloud Functions (2nd Gen) | `cloudfunctions` | yes | gRPC :5380 | `CLOUD_FUNCTIONS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-functions/) |
 | AlloyDB | `alloydb` | yes | gRPC :5380 | `ALLOYDB_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/alloydb/) |
 | Dataproc | `dataproc` | yes | gRPC :5380 | `DATAPROC_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/dataproc/) |
@@ -91,7 +91,7 @@ Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-i
 | Cloud Run | `cloudrun` | opt-in | gRPC :5380 | `CLOUD_RUN_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-run/) |
 | Memorystore (Redis/Valkey) | `memorystore` | yes | RESP :5390 | `REDIS_HOST=localhost:5390` | [guide](https://local.cloud/services/memorystore/) |
 | Cloud Workflows | `workflows` | yes | gRPC :5380 | `WORKFLOWS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-workflows/) |
-| Cloud KMS | `kms` | yes | grpc+rest :5380 | `CLOUD_KMS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-kms/) |
+| Cloud KMS | `kms` | yes | gRPC + HTTP/REST :5380 | `CLOUD_KMS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-kms/) |
 | Cloud SQL | `cloudsql` | yes | HTTP/REST :5380 · PostgreSQL :5391 · MySQL :5406 | `CLOUD_SQL_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/cloud-sql/) |
 
 Unsupported locally; use Google Cloud:

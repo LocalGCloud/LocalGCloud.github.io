@@ -100,7 +100,7 @@ export const agenticEndpoints: AgenticEndpoint[] = [
 		label: "Terraform environment export",
 		url: agenticFacts.terraformEnvEndpoint,
 		purpose:
-			"Set endpoint overrides for local Terraform validation without real GCP credentials.",
+			"Set endpoint overrides for local Terraform validation without real Google Cloud credentials.",
 	},
 ];
 
@@ -198,7 +198,7 @@ export const agentPromptLibrary: AgentPrompt[] = [
 	{
 		id: "troubleshoot",
 		label: "Troubleshoot routing",
-		useCase: "Diagnose why SDKs or Terraform are still reaching real GCP.",
+		useCase: "Diagnose why SDKs or Terraform are still reaching real Google Cloud.",
 		prompt:
 			"Troubleshoot my LocalCloud setup. Read https://local.cloud/ai/agents.md, check whether Docker and the localcloud container are healthy, verify emulator environment variables are set in this shell/test runner, and identify any SDK or Terraform configuration that could still call real Google Cloud.",
 	},

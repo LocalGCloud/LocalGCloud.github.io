@@ -43,6 +43,7 @@ const statusMap = {
 const protocolLabels = {
 	rest: "HTTP/REST",
 	grpc: "gRPC",
+	"grpc+rest": "gRPC + HTTP/REST",
 	redis: "RESP",
 	postgres: "PostgreSQL",
 	mysql: "MySQL",

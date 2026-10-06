@@ -19,16 +19,16 @@ const categoryGroups = serviceCategoryOrder
 
 ---
 
-<BaseLayout title={`LocalCloud Services — ${publishedServiceCount} Service Guides`} description={`Browse ${publishedServiceCount} runtime API guides, including ${availableServiceCount} documented local integrations and ${publishedServiceCount - availableServiceCount} unsupported entries.`}>
+<BaseLayout title={`LocalCloud Services — ${publishedServiceCount} Service Guides`} description={`Browse guides for ${publishedServiceCount} services: ${availableServiceCount} run locally and ${publishedServiceCount - availableServiceCount} are unsupported.`}>
   <Header />
   <main id="main-content" class="site-page">
     <section class="site-section site-section--hero" style="padding-bottom: 0;">
       <div class="container">
         <div class="max-w-[52rem] reveal">
-          <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>{availableServiceCount} documented local integrations</span>
+          <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>{availableServiceCount} local services</span>
           <h1 class="mt-4">LocalCloud service catalog</h1>
           <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
-            Find operation boundaries and connection details for supported local workflows. Unsupported entries remain visible and are labeled; a registry entry does not establish application support.
+            Find connection details, workflows, and limits for every local service. Services that don't run locally are marked Unsupported.
           </p>
         </div>
       </div>

@@ -45,7 +45,7 @@ const faqItems = isUnsupported || isComingSoon
       },
       {
         q: `Which environment variable points the SDK at the local ${service.name}?`,
-        a: `LocalCloud exports ${service.envVar}. Use the generated value because occupied ports may be remapped. Some SDKs also require explicit client options; exporting an environment variable alone does not establish local routing.`,
+        a: `LocalCloud exports ${service.envVar}. Use the generated value: if a default port is already in use, the CLI picks another one. Some SDKs also require explicit client options; exporting an environment variable alone does not establish local routing.`,
       },
       {
         q: `What ${service.name} workflows are documented locally?`,

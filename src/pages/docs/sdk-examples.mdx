@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: SDK Examples
-description: Route standard Google Cloud SDK clients to LocalCloud and run bounded local checks.
+description: Route standard Google Cloud SDK clients to LocalCloud and run local checks.
 ---
 
 # SDK examples
@@ -13,7 +13,7 @@ localcloud start --local-only
 eval "$(localcloud env)"
 ```
 
-Do not hard-code canonical ports when using the host CLI: occupied ports may be remapped. Run examples in the same shell or inject the generated variables into the test process. If a client tries to contact real Google Cloud, stop rather than adding real credentials.
+Do not hard-code default ports when using the host CLI: if a default port is already in use, the CLI picks another one. Run examples in the same shell or inject the generated variables into the test process. If a client tries to contact real Google Cloud, stop rather than adding real credentials.
 
 ## Cloud Storage: Python
 
@@ -126,7 +126,7 @@ See the [BigQuery guide](/docs/bigquery-emulator-features/) and [coverage & know
 
 ## Bigtable: Python
 
-Create a test-owned instance and table, write a cell, and read the exact bytes back. This example follows the upstream Bigtable integration guide. Review [Bigtable workflows and boundaries](/services/bigtable/#workflows) for the current emulator revision and image qualification before running it.
+Create a test-owned instance and table, write a cell, and read the exact bytes back. This example follows the upstream Bigtable integration guide. Review [Bigtable workflows and boundaries](/services/bigtable/#workflows) before running it.
 
 ```python
 import os

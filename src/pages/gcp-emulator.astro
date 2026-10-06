@@ -4,7 +4,7 @@ import Callout from '../components/Callout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
 import { docsContract } from '../data/docs-contract';
 import { cliQuickStart } from '../utils/quickstart.mjs';
-import { availableServiceCount, publishedServiceCount, services, serviceCategoryOrder, serviceCategoryMeta } from '../data/services';
+import { auxiliaryServiceCount, availableServiceCount, primaryServiceCount, publishedServiceCount, services, serviceCategoryOrder, serviceCategoryMeta } from '../data/services';
 import {
   createBreadcrumbSchema,
   createSoftwareApplicationSchema,
@@ -16,6 +16,8 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const unsupportedServiceCount = publishedServiceCount - availableServiceCount;
 const isUnsupportedService = (service: (typeof services)[number]) =>
   service.marketingStatus === 'unsupported' || service.catalogState === 'coming-soon';
+const unsupportedNames = services.filter(isUnsupportedService).map((service) => service.name);
+const unsupportedServiceNames = unsupportedNames.length > 1 ? `${unsupportedNames.slice(0, -1).join(', ')} and ${unsupportedNames.at(-1)}` : unsupportedNames.join('');
 
 const categoryGroups = serviceCategoryOrder
   .map(cat => ({
@@ -29,7 +31,7 @@ const categoryGroups = serviceCategoryOrder
 const faqItems = [
   {
     q: 'What is a GCP emulator?',
-    a: 'A GCP emulator implements bounded local workflows for selected Google Cloud APIs. It is not production Google Cloud, so review each service limitation and validate against real Google Cloud before deployment.',
+    a: "A GCP emulator is a local program that answers calls to selected Google Cloud APIs, so your code can run against them on your machine. It isn't production Google Cloud: check each service's limits and validate against real Google Cloud before you deploy.",
   },
   {
     q: 'Can I use Google Cloud SDKs?',
@@ -37,11 +39,11 @@ const faqItems = [
   },
   {
     q: 'Which services are included?',
-    a: `LocalCloud currently provides ${availableServiceCount} documented local integrations across 26 primary Google Cloud services and 1 auxiliary API. Firestore is disabled by default and has operation-specific qualification boundaries, and Google Sheets provides an auxiliary read-only values facade for BigQuery external tables and fixture seeding.`,
+    a: `LocalCloud runs ${availableServiceCount} services locally. Its catalog lists ${publishedServiceCount}: ${primaryServiceCount} Google Cloud services and ${auxiliaryServiceCount} auxiliary API (Google Sheets). ${unsupportedServiceNames} are unsupported. Firestore is opt-in. Google Sheets is a read-only values API for BigQuery external tables and fixture seeding.`,
   },
   {
     q: 'Is LocalCloud free?',
-    a: 'The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for non-production development, testing, CI, evaluation, and internal pilots.',
+    a: 'Yes. Individuals and organizations, including for-profit companies, can use LocalCloud free of charge for non-production development, testing, CI, evaluation, and internal pilots under the proprietary Public Preview License.',
   },
   {
     q: 'Can I use LocalCloud in CI?',
@@ -85,11 +87,11 @@ const structuredData = [
       <div class="max-w-[48rem] reveal">
         <span class="site-eyebrow">
           <span class="site-eyebrow__pulse"></span>
-          Google Cloud Platform Emulator
+          GCP emulator
         </span>
         <h1 class="mt-4">Run Google Cloud locally in one Docker container</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          LocalCloud provides {availableServiceCount} documented local integrations. Use the host CLI to start a loopback-bound runtime and export its actual SDK endpoint settings.
+          LocalCloud runs {availableServiceCount} services locally. The CLI starts a runtime that listens only on localhost and exports the SDK endpoint settings your code needs.
         </p>
         <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start with the CLI</a>
@@ -100,13 +102,13 @@ const structuredData = [
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">{availableServiceCount}</div>
-          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Available services</div>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Local services</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Databases, messaging, storage, analytics, security, and compute in one container.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">1</div>
-          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Data-volume runtime</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">One CLI lifecycle with persistent data and dynamically resolved loopback ports.</p>
+          <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Persistent runtime</div>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">One CLI lifecycle with persistent data on localhost-only ports.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-3xl font-semibold tracking-[-0.08em] text-[var(--text)]">License</div>
@@ -123,7 +125,7 @@ const structuredData = [
       <div class="reveal">
         <h2>GCP local development is fragmented</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Individual emulator processes have separate startup, port, and environment contracts. LocalCloud provides one managed lifecycle for bounded workflows across its registry, while each service page records evidence and limitations.
+          Individual emulator processes have separate startup, port, and environment contracts. LocalCloud provides one managed lifecycle for every local service, and each service page lists its workflows and limits.
         </p>
       </div>
 
@@ -136,7 +138,7 @@ const structuredData = [
         <article class="site-panel site-panel--soft p-5">
           <div class="text-2xl font-semibold tracking-[-0.05em] text-[var(--text)]">One CLI</div>
           <div class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-[var(--accent-strong)]">Managed lifecycle</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The CLI selects durable storage and loopback ports, starts or reuses a compatible runtime, and exports its actual endpoint map.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">The CLI selects durable storage and localhost ports, starts or reuses a compatible runtime, and exports its endpoint map.</p>
         </article>
       </div>
     </div>
@@ -152,7 +154,7 @@ const structuredData = [
         </span>
         <h2 class="mt-4">One runtime, one console, one handoff</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud wraps official, custom, and third-party emulators behind a managed local runtime. The host CLI selects its Docker data volume, exports actual environment values, and opens the built-in console.
+          LocalCloud wraps official, custom, and third-party emulators behind a managed local runtime. The host CLI selects its Docker data volume, exports the environment values your code needs, and opens the built-in console.
         </p>
         <p class="mt-4 text-base leading-7 text-[var(--text-2)]">
           Before relying on a local workflow, review the <a href={`${base}compatibility/`} class="font-semibold text-[var(--accent-strong)]">documented compatibility and limitations</a> for the services your application uses.
@@ -162,14 +164,14 @@ const structuredData = [
       <div class="mt-8 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel p-6">
           <span class="site-kicker">01</span>
-          <h3 class="mt-3 text-xl">Registry-backed service catalog</h3>
+          <h3 class="mt-3 text-xl">Service catalog</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">
-            Browse {publishedServiceCount} service guides: {availableServiceCount} cover services that run locally, and {unsupportedServiceCount} explain why a service is unsupported. Each guide lists connection details, default enablement, workflows, and known limitations.
+            Browse {publishedServiceCount} service guides: {availableServiceCount} cover services that run locally, and {unsupportedServiceCount} explain why a service is unsupported. Each guide lists connection details, whether the service starts by default, workflows, and known limitations.
           </p>
         </article>
         <article class="site-panel p-6">
           <span class="site-kicker">02</span>
-          <h3 class="mt-3 text-xl">SDK-shaped local workflows</h3>
+          <h3 class="mt-3 text-xl">Standard SDK workflows</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">
             Export local endpoint values with <code>localcloud env</code>. Client and operation support varies by service; validate the production path against real Google Cloud.
           </p>
@@ -178,7 +180,7 @@ const structuredData = [
           <span class="site-kicker">03</span>
           <h3 class="mt-3 text-xl">Built-in web console</h3>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">
-            The console URL is returned by the CLI and may use a dynamically remapped loopback port. Use it to inspect service health and bounded local data workflows.
+            The CLI returns the console URL, including any port it picked because the default was in use. Use the console to inspect service health and local data.
           </p>
         </article>
       </div>
@@ -261,7 +263,7 @@ const structuredData = [
         <article class="site-panel p-5">
           <span class="site-kicker">Local development</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Run bounded workflows on loopback endpoints. Runtime telemetry and other outbound features exist; review privacy controls before relying on offline operation.
+            Run local workflows on localhost endpoints. Runtime telemetry and other outbound features exist; review privacy controls before relying on offline operation.
           </p>
         </article>
         <article class="site-panel p-5">
@@ -285,13 +287,13 @@ const structuredData = [
         <article class="site-panel p-5">
           <span class="site-kicker">Terraform validation</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Use the documented endpoint-only or transparent-network workflow for qualified resources, then validate against real Google Cloud before production.
+            Use the documented endpoint-only or transparent-network workflow for the documented resources, then validate against real Google Cloud before production.
           </p>
         </article>
         <article class="site-panel p-5">
-          <span class="site-kicker">Outbound-aware operation</span>
+          <span class="site-kicker">Offline use</span>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            Core local workflows may continue after the image is present, but telemetry, update checks, licensing, IAM, and configured scheduler targets can make outbound requests.
+            After the image is downloaded, core local workflows can run offline. Telemetry, update checks, licensing, IAM, and configured scheduler targets can still make outbound requests.
           </p>
         </article>
       </div>
@@ -363,7 +365,7 @@ gcloud emulators spanner start --host-port=localhost:5386
         <div>
           <h2>Start developing against GCP locally</h2>
           <p class="mt-3 max-w-[42rem] text-lg leading-8 text-[var(--text-2)]">
-            Use the CLI to start bounded local workflows, then review service evidence and the governing proprietary license.
+            Use the CLI to start local workflows, then check each service's limits and the proprietary license.
           </p>
         </div>
         <div class="flex flex-wrap gap-3">

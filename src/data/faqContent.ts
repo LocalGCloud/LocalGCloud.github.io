@@ -20,7 +20,7 @@ export const faqSections: FaqSection[] = [
       {
         question: 'What is LocalCloud?',
         answer:
-          'LocalCloud is a local Google Cloud development sandbox. It packages a gateway, service facades, external emulator processes, a console, and operator APIs in one Docker container. Each service has explicit operation-level compatibility limits.',
+          'LocalCloud is a local Google Cloud development sandbox. One Docker container runs local versions of Google Cloud services, a web console, and management APIs. Each service documents which operations it supports.',
       },
       {
         question: 'Is LocalCloud free?',
@@ -29,10 +29,10 @@ export const faqSections: FaqSection[] = [
       },
       {
         question: 'What is the recommended setup?',
-        answer: 'Install the host CLI, verify Docker, start the selected data-volume runtime, load its generated environment values, and open the returned console URL.',
+        answer: 'Install the host CLI, verify Docker, start a persistent runtime, load its generated environment values, and open the returned console URL.',
         code: cliQuickStart(docsContract).script,
         afterCode:
-          'Start with --local-only to bind host ports to loopback. The CLI keeps persistence by default, and can remap occupied ports. Trust the URLs and environment values it returns.',
+          'Start with --local-only so the runtime listens only on localhost. The CLI keeps data between restarts by default. If a default port is already in use, the CLI picks another one; use the URLs and environment values it returns.',
       },
     ],
   },
@@ -47,12 +47,12 @@ export const faqSections: FaqSection[] = [
       {
         question: 'Which SDK languages are supported?',
         answer:
-          'There is no qualified blanket language matrix. Compatibility depends on client version, transport, endpoint handling, and emulator behavior. Use reviewed examples as a starting point and validate the exact client and operation.',
+          "LocalCloud doesn't publish a per-language support matrix. Compatibility depends on client version, transport, endpoint handling, and emulator behavior; start from the SDK examples and validate your exact client and operation.",
       },
       {
         question: 'How complete is BigQuery emulation?',
         answer:
-          'BigQuery is a DuckDB-backed local emulator with partial, feature-specific behavior. Exact test totals, function counts, and coverage percentages are not reproducible from a pinned assembled release today. Dependency-sensitive behavior remains release-unverified until source and image provenance are qualified together.',
+          'BigQuery runs on a DuckDB-backed local emulator; support is documented feature by feature.',
       },
       {
         question: 'Can I use LocalCloud in CI/CD?',
@@ -66,12 +66,12 @@ export const faqSections: FaqSection[] = [
     entries: [
       {
         question: 'How much memory does LocalCloud need?',
-        answer: 'The reviewed CLI default is 4g. Actual use depends on enabled services and workload; no lower-memory guarantee was qualified.',
+        answer: "The CLI allocates 4 GB by default. Actual use depends on enabled services and workload; LocalCloud isn't guaranteed to run with less.",
       },
       {
         question: 'How long does startup take?',
         answer:
-          'There is no maintained cross-platform startup benchmark. Gate automation on localcloud start status plus /readiness or the workflow-specific readiness endpoint rather than a fixed duration.',
+          "Gate automation on localcloud start status plus /readiness (or the workflow-specific readiness endpoint), not a fixed duration. Startup time isn't benchmarked across platforms.",
       },
       {
         question: 'Is data persisted between restarts?',
@@ -81,13 +81,13 @@ export const faqSections: FaqSection[] = [
       {
         question: 'How do I isolate or reuse a LocalCloud runtime?',
         answer:
-          'The Docker volume mounted at /var/lib/localcloud is durable runtime identity. Use --data-volume NAME on any runtime command for isolated storage. The CLI can attach to a compatible container already using that volume, but it never removes or relabels Docker resources it does not own.',
+          'The Docker volume mounted at /var/lib/localcloud identifies the runtime and keeps its data. Use --data-volume NAME on any runtime command for isolated storage. The CLI can attach to a compatible container already using that volume, but it never removes or relabels Docker resources it does not own.',
         code: 'localcloud start --local-only --data-volume payments-localcloud-data\nlocalcloud status --data-volume payments-localcloud-data --verbose',
       },
       {
         question: 'Is LocalCloud fully offline?',
         answer:
-          'No categorical offline guarantee applies. Depending on configuration, the runtime can emit telemetry, probe certificate storage, check image updates, validate licenses or live IAM tokens, and dispatch HTTP work. Core local workflows can operate offline after required images are present; review the Privacy and Architecture guides for outbound behavior.',
+          'Not entirely. Core local workflows can run offline after the required images are downloaded. Depending on configuration, the runtime can also emit telemetry, probe certificate storage, check image updates, validate licenses or live IAM tokens, and dispatch HTTP work; see the Privacy and Architecture guides for outbound behavior.',
       },
     ],
   },
@@ -96,20 +96,20 @@ export const faqSections: FaqSection[] = [
     entries: [
       {
         question: 'What if a port is already in use?',
-        answer: 'Use the host CLI so it can remap occupied canonical ports, then reload the generated environment values.',
+        answer: 'Use the host CLI: if a default port is already in use, it picks another one. Then reload the generated environment values.',
         code: 'localcloud start --local-only\neval "$(localcloud env)"',
         afterCode: 'Do not replace returned endpoint values with a hard-coded port.',
       },
       {
         question: 'What if a service is not responding?',
-        answer: 'Inspect the selected data-volume runtime and its logs. For manual Docker on canonical ports, /services exposes service state.',
+        answer: 'Inspect the runtime and its logs. If you run the container manually on the default ports, /services shows service state.',
         code: 'localcloud status\nlocalcloud logs --tail 50\ncurl -fsS http://localhost:5380/services',
         afterCode: 'Confirm the service is enabled, its required tier is available, and its documented support level is suitable for the workflow.',
       },
       {
-        question: 'Why do GKE, Compute Engine, or Cloud Run need Docker access?',
+        question: 'Why do GKE, Cloud Run, and Dataproc need Docker access?',
         answer:
-          'The host CLI uses host.docker_socket: auto and mounts the socket when enabled services require it. Set host.docker_socket: false to opt out. Enable it explicitly only for workflows that require subordinate Docker containers or k3d; a read-write socket mount grants broad control of the host Docker daemon.',
+          'By default (host.docker_socket: auto), the CLI mounts the Docker socket only when an enabled service needs it. Set host.docker_socket: false to opt out. A read-write socket mount grants broad control of the host Docker daemon, so enable services that need it only when your workflow requires Docker containers or k3d.',
       },
     ],
   },

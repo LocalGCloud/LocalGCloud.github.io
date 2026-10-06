@@ -8,7 +8,9 @@ import { availableServiceCount, publishedServiceCount, getServiceSignalLabel, se
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
-const quickStartCmd = cliQuickStart(docsContract).script;
+const quickStart = cliQuickStart(docsContract);
+const startCommands = quickStart.steps.slice(0, quickStart.steps.indexOf(quickStart.readiness) + 1).join('\n');
+const spannerWorkflowCount = catalogServices.find((service) => service.id === 'spanner')?.supported.length ?? 0;
 
 const services = catalogServices
   .filter((service) => ['bigquery', 'gcs', 'firestore', 'pubsub', 'spanner', 'bigtable'].includes(service.id))
@@ -21,12 +23,8 @@ const services = catalogServices
 
 const faqItems = [
   {
-    q: 'Why run Google Cloud services locally?',
-    a: 'Local emulation can provide a controlled inner loop without sending each supported request to Google Cloud. It does not reproduce production latency, quotas, IAM, or every API behavior.',
-  },
-  {
     q: 'Do I need to change my application code?',
-    a: 'Many bounded workflows use standard Google Cloud clients after localcloud env sets emulator endpoints. Compatibility varies by service and client; never fall back to real Google Cloud silently.',
+    a: 'It depends on the client. Many workflows use standard Google Cloud clients once localcloud env sets the emulator endpoints; compatibility varies by service and client. If a client tries to reach real Google Cloud, stop and fix the configuration.',
   },
   {
     q: 'Can I run this in CI/CD pipelines?',
@@ -41,7 +39,7 @@ const faqItems = [
 
 <LandingLayout
   title="How to Run Google Cloud Services Locally — Complete Guide"
-  description={`Install the LocalCloud CLI, start a loopback-bound runtime, and configure local workflows across ${availableServiceCount} documented local integrations.`}
+  description={`Install the LocalCloud CLI, start a runtime that listens only on localhost, and run ${availableServiceCount} services locally.`}
 >
   <script type="application/ld+json" is:inline>
 {
@@ -86,18 +84,10 @@ const faqItems = [
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Why run Google Cloud services locally?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Local emulation provides a controlled inner loop for supported workflows. It does not reproduce production latency, quotas, IAM, or every API behavior."
-      }
-    },
-    {
-      "@type": "Question",
       "name": "Does Google provide official local emulators?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "LocalCloud combines official, third-party, and custom components. External emulator counts are omitted because they were not validated from authorized local evidence."
+        "text": "Yes, for some services. LocalCloud combines official, third-party, and custom emulators behind one CLI."
       }
     },
     {
@@ -105,7 +95,7 @@ const faqItems = [
       "name": "Do I need to change my application code?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Use localcloud env to configure supported client workflows, then validate behavior against real Google Cloud before production."
+        "text": "It depends on the client. Many workflows use standard Google Cloud clients once localcloud env sets the emulator endpoints; compatibility varies by service and client. If a client tries to reach real Google Cloud, stop and fix the configuration."
       }
     }
   ]
@@ -119,7 +109,7 @@ const faqItems = [
         <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Complete Guide</span>
         <h1 class="mt-4">How to run Google Cloud services locally</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          Install the host CLI, start a loopback-bound runtime, and inspect bounded service workflows and limitations.
+          Install the CLI, start a runtime that listens only on localhost, and check what each service supports.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href="#quick-start" class="site-button site-button--primary">Quick start</a>
@@ -141,35 +131,20 @@ const faqItems = [
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 reveal">
         <article class="site-panel site-panel--soft p-5">
           <div class="font-semibold text-[var(--text)]">Local request path</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Supported requests target loopback endpoints. Review the governing license before use and stop rather than falling back to real Google Cloud.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Supported requests target localhost endpoints. Review the governing license before use and stop rather than falling back to real Google Cloud.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="font-semibold text-[var(--text)]">Local feedback loop</div>
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Local behavior depends on host resources and is not a production performance benchmark.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
-          <div class="font-semibold text-[var(--text)]">Outbound-aware operation</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Core workflows can continue after the image is present, but telemetry and other configured features can make outbound requests.</p>
+          <div class="font-semibold text-[var(--text)]">Offline use</div>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">After the image is downloaded, core local workflows can run offline. Telemetry and other configured features can still make outbound requests.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="font-semibold text-[var(--text)]">Managed lifecycle</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">The CLI selects a Docker data volume, manages a loopback-bound runtime, and exports its actual endpoints. Organization use must comply with the proprietary license.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">The CLI selects a Docker data volume, manages a runtime that listens only on localhost, and exports its endpoints. Organization use must comply with the proprietary license.</p>
         </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- QUICK START -->
-  <section class="site-section" id="quick-start">
-    <div class="container">
-      <div class="reveal">
-        <h2>Quick start with the LocalCloud CLI</h2>
-        <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Install the host CLI, diagnose Docker, start a persistent local runtime, and use its dynamically resolved endpoint settings.
-        </p>
-      </div>
-      <div class="mt-8 site-panel p-6 reveal">
-        <pre class="overflow-x-auto text-sm"><code>{quickStartCmd}</code></pre>
       </div>
     </div>
   </section>
@@ -180,7 +155,7 @@ const faqItems = [
       <div class="reveal">
         <h2>What Google Cloud services can run locally?</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          LocalCloud exposes {availableServiceCount} documented local integrations in one managed container. Review each service guide for exact workflows, default enablement, and limitations.
+          LocalCloud runs {availableServiceCount} local services in one managed container. Each service guide lists its workflows, whether it starts by default, and its limits.
         </p>
       </div>
       <div class="mt-8 overflow-x-auto reveal" tabindex="0" role="region" aria-label="Local ports and environment variables by service">
@@ -207,14 +182,14 @@ const faqItems = [
       </div>
       <div class="mt-6 reveal">
         <p class="text-sm text-[var(--text-2)] leading-7">
-          Browse <a href={`${base}services/`} class="underline">all {publishedServiceCount} service guides</a>. Firestore is disabled by default; Google Sheets is an available read-only facade with limited A1-range behavior.
+          Browse <a href={`${base}services/`} class="underline">all {publishedServiceCount} service guides</a>. Firestore is opt-in; Google Sheets is a read-only values API for exact A1 ranges.
         </p>
       </div>
     </div>
   </section>
 
   <!-- STEP-BY-STEP SETUP -->
-  <section class="site-section site-section--tight">
+  <section class="site-section site-section--tight" id="quick-start">
     <div class="container">
       <div class="reveal">
         <h2>Step-by-step setup guide</h2>
@@ -249,10 +224,9 @@ const faqItems = [
             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">3</div>
             <div class="min-w-0 flex-1">
               <h3 class="text-lg font-semibold text-[var(--text)]">Diagnose and start</h3>
-              <p class="mt-2 text-[var(--text-2)] leading-7">The CLI keeps Docker under your control and starts a loopback-bound persistent runtime:</p>
-              <pre class="mt-3 overflow-x-auto rounded-xl border-0 bg-[var(--surface-2)] p-3 text-xs"><code>localcloud doctor
-localcloud start</code></pre>
-              <p class="mt-3 text-sm text-[var(--text-2)] leading-7">Use the URL and endpoint map in the output. If canonical ports are occupied, the CLI assigns dynamic host ports.</p>
+              <p class="mt-2 text-[var(--text-2)] leading-7">The CLI keeps Docker under your control and starts a persistent runtime that listens only on localhost, then the readiness check confirms it is up:</p>
+              <pre class="mt-3 overflow-x-auto rounded-xl border-0 bg-[var(--surface-2)] p-3 text-xs"><code>{startCommands}</code></pre>
+              <p class="mt-3 text-sm text-[var(--text-2)] leading-7">Use the URL and endpoint map in the output. If a default port is already in use, the CLI picks another one; use the endpoint values it returns.</p>
             </div>
           </div>
         </article>
@@ -262,7 +236,7 @@ localcloud start</code></pre>
             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] font-semibold text-[var(--accent-strong)]">4</div>
             <div class="min-w-0 flex-1">
               <h3 class="text-lg font-semibold text-[var(--text)]">Configure and inspect</h3>
-              <p class="mt-2 text-[var(--text-2)] leading-7">Export the actual local endpoints into the shell that starts your application, then open the selected console URL:</p>
+              <p class="mt-2 text-[var(--text-2)] leading-7">Export the local endpoints into the shell that starts your application, then open the console:</p>
               <pre class="mt-3 overflow-x-auto rounded-xl border-0 bg-[var(--surface-2)] p-3 text-xs"><code>eval "$(localcloud env)"
 localcloud console
 localcloud status</code></pre>
@@ -289,11 +263,11 @@ localcloud status</code></pre>
         </a>
         <a href={`${base}cloud-storage-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Cloud Storage</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Use verified bounded bucket and object workflows backed by the LocalCloud volume.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Run bucket and object workflows backed by the LocalCloud volume.</p>
         </a>
         <a href={`${base}firestore-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Firestore</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Firestore supports documented local document and query workflows and is disabled by default. Enable it explicitly and qualify transactions, listeners, security rules, and recovery for the exact image.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Firestore runs documented local document and query workflows and is opt-in. Validate transactions, listeners, security rules, and recovery with the exact image you run.</p>
         </a>
         <a href={`${base}pubsub-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Pub/Sub</div>
@@ -301,7 +275,7 @@ localcloud status</code></pre>
         </a>
         <a href={`${base}spanner-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Spanner</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Use 5 documented Spanner data and administration workflows over gRPC and REST.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Use {spannerWorkflowCount} documented Spanner data and administration workflows over gRPC and REST.</p>
         </a>
         <a href={`${base}bigtable-emulator/`} class="site-panel site-panel--soft p-5 hover:border-[var(--accent-strong)] transition-colors">
           <div class="font-semibold text-[var(--text)]">Bigtable</div>
@@ -356,11 +330,11 @@ localcloud status</code></pre>
         <div>
           <h2>Start running GCP services locally</h2>
           <p class="mt-3 max-w-[42rem] text-lg leading-8 text-[var(--text-2)]">
-            One data-volume runtime, {availableServiceCount} documented local integrations, and explicit service boundaries.
+            One persistent runtime, {availableServiceCount} local services, and documented limits for each.
           </p>
         </div>
         <div class="flex flex-wrap gap-3">
-          <a href={`${base}services/`} class="site-button site-button--primary">Review service evidence</a>
+          <a href={`${base}services/`} class="site-button site-button--primary">Browse services</a>
           <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
         </div>
       </div>

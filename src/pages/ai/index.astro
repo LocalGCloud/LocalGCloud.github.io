@@ -22,7 +22,7 @@ const workflowCards = [
   {
     step: '01',
     title: 'Install and start',
-    body: `Install the CLI (or run ${quickStart.homebrew}), check Docker, and start LocalCloud on loopback ports.`,
+    body: `Install the CLI (or run ${quickStart.homebrew}), check Docker, and start LocalCloud on localhost-only ports.`,
     command: startCommands.join('\n'),
   },
   {
@@ -63,7 +63,7 @@ const structuredData = [
 
 <BaseLayout
   title="LocalCloud for AI Agents — Local GCP Sandbox and AGENTS.md Template"
-  description="Give AI coding agents a safe LocalCloud target: one Docker container, 20+ local GCP services, standard SDKs pointed at localhost, no GCP credentials or billing by default, and production validation boundaries."
+  description={`Give AI coding agents a safe LocalCloud target: one Docker container, ${productFacts.serviceCountLabel} local services, standard SDKs pointed at localhost, no GCP credentials or billing by default, and production validation boundaries.`}
   structuredData={structuredData}
 >
   <Header />
@@ -76,7 +76,7 @@ const structuredData = [
             <span class="site-eyebrow__pulse"></span>
             Agent-safe local GCP
           </span>
-          <h1 class="mt-5">Give coding agents a local Google Cloud target.</h1>
+          <h1 class="mt-5">Give coding agents a local Google Cloud target</h1>
           <p class="mt-5 max-w-[48rem] text-lg leading-8 text-[var(--text-2)] sm:text-xl">
             {agenticFacts.positioning} Agents can run SDKs, Terraform, seed data, and integration checks against localhost instead of reaching for production Google Cloud.
           </p>
@@ -98,7 +98,7 @@ const structuredData = [
               <dd class="min-w-0 text-right font-mono text-[var(--text)] [overflow-wrap:anywhere]">{agenticFacts.dockerImage}</dd>
             </div>
             <div class="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
-              <dt class="shrink-0 text-[var(--text-2)]">Documented integrations</dt>
+              <dt class="shrink-0 text-[var(--text-2)]">Local services</dt>
               <dd class="min-w-0 text-right font-mono text-[var(--text)] [overflow-wrap:anywhere]">{productFacts.serviceCountLabel}</dd>
             </div>
             <div class="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
@@ -132,11 +132,11 @@ const structuredData = [
           <article class="site-panel p-5 reveal">
             <span class="site-chip site-chip--success">No secrets</span>
             <h3 class="mt-4">No GCP account by default</h3>
-            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Permitted personal checks should not ask for service-account keys, billing projects, or production credentials.</p>
+            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Agents shouldn't ask for service-account keys, billing projects, or production credentials for local checks.</p>
           </article>
           <article class="site-panel p-5 reveal">
             <span class="site-chip site-chip--warn">Boundary</span>
-            <h3 class="mt-4">Not production replacement</h3>
+            <h3 class="mt-4">Not a production replacement</h3>
             <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">LocalCloud helps verify local behavior. Release readiness still requires testing against real Google Cloud after emulator variables are removed.</p>
           </article>
         </div>
@@ -148,7 +148,7 @@ const structuredData = [
         <div class="site-section-heading reveal">
           <span class="site-kicker">Copy prompts</span>
           <h2>Prompt an agent with a safe LocalCloud task</h2>
-          <p>These prompts come from the shared LocalCloud agent facts file and preserve the no-credentials, localhost-first boundary.</p>
+          <p>Each prompt keeps the agent on localhost with no credentials.</p>
         </div>
         <div class="grid gap-4 lg:grid-cols-2 stagger">
           {agentPromptLibrary.map((item) => (
@@ -216,8 +216,8 @@ const structuredData = [
       <div class="container">
         <div class="site-section-heading reveal">
           <span class="site-kicker">Service matrix</span>
-          <h2>{productFacts.serviceCountLabel} documented local integrations</h2>
-          <p>Service metadata is generated from the shared catalog. Use service pages and compatibility docs for capability-specific claims.</p>
+          <h2>{productFacts.serviceCountLabel} local services</h2>
+          <p>Use service pages and compatibility docs for capability-specific claims.</p>
         </div>
         <div class="mb-5 flex flex-wrap gap-3 reveal">
           <span class="site-chip site-chip--success">{supportedCount} supported locally</span>
@@ -291,7 +291,7 @@ const structuredData = [
         <article class="site-panel p-6 reveal">
           <span class="site-kicker">Markdown policy</span>
           <h2 class="mt-3">Raw resource index</h2>
-          <p class="mt-4 text-[var(--text-2)]">HTML pages stay canonical for humans; raw Markdown routes give agents compact service, compatibility, and docs context sourced from shared LocalCloud metadata.</p>
+          <p class="mt-4 text-[var(--text-2)]">HTML pages stay canonical for humans; raw Markdown pages give agents compact service, compatibility, and docs context.</p>
           <a class="site-button site-button--primary mt-5" href={`${base}ai/resources.md`}>Open Markdown index</a>
         </article>
         <article class="site-panel p-6 reveal">

@@ -18,32 +18,32 @@ A local emulator can help with:
 - deterministic local fixtures and setup/teardown logic;
 - query and resource-definition feedback for documented operations;
 - destructive tests against synthetic local data; and
-- bounded development without giving the local process real Google Cloud credentials.
+- development without giving the local process real Google Cloud credentials.
 
 It does not automatically provide zero cost, complete offline operation, identical CI results, or a safe production security boundary. LocalCloud can make outbound requests for configured telemetry, licensing, updates, live IAM, certificate probing, or scheduled HTTP work. The governing proprietary license also limits allowed personal, organization, commercial, and CI use.
 
 ## How routing works
 
-Some Google clients honor emulator variables such as `PUBSUB_EMULATOR_HOST`; some accept explicit client endpoints; Terraform exposes provider-specific custom-endpoint variables; and some clients require transparent DNS/HTTPS routing. The recommended LocalCloud flow generates values for the selected data-volume runtime:
+Some Google clients honor emulator variables such as `PUBSUB_EMULATOR_HOST`; some accept explicit client endpoints; Terraform exposes provider-specific custom-endpoint variables; and some clients require transparent DNS/HTTPS routing. The recommended LocalCloud flow generates values for the running runtime:
 
 ```bash
 localcloud start --local-only
 eval "$(localcloud env)"
 ```
 
-The CLI can remap occupied host ports, so do not replace returned values with canonical ports. If a client tries to contact real Google Cloud, stop rather than adding real credentials.
+If a default port is already in use, the CLI picks another one. Use the endpoint values it returns instead of the default ports. If a client tries to contact real Google Cloud, stop rather than adding real credentials.
 
 ## LocalCloud implementation types
 
 | Type | Meaning in LocalCloud |
 | --- | --- |
 | External emulator | A separate process supervised inside the container, such as BigQuery, Bigtable, Spanner, Cloud Storage, or Valkey. |
-| Extended emulator | An upstream-derived artifact with local additions; the source revision and assembled image must be qualified together. |
-| Local facade | Gateway implementation of bounded REST/gRPC workflows backed by local stores or processes. |
+| Extended emulator | An upstream-derived emulator with local additions, such as Spanner. |
+| Local facade | Gateway implementation of documented REST/gRPC workflows backed by local stores or processes. |
 | Operator surface | Root routes such as `/health`, `/services`, `/env`, `/seed`, and `/terraform/readiness`; these are not Google Cloud APIs. |
 
-Spanner REST port `5387` is not PostgreSQL wire and LocalCloud does not package PGAdapter. BigQuery is DuckDB-backed, with coverage documented per feature. Bigtable extended features remain release-unverified until immutable dependency and assembled-image provenance are resolved.
+Spanner REST port `5387` is not PostgreSQL wire and LocalCloud does not package PGAdapter. BigQuery is DuckDB-backed, with coverage documented per feature.
 
 ## What to validate in production
 
-Before release, use a clean process without emulator/custom-endpoint variables and intentionally target an isolated real Google Cloud project. Validate IAM, quotas, networking, regions, concurrency, retries, ordering, durability, backups, performance, and every unsupported or release-unverified operation.
+Before release, use a clean process without emulator/custom-endpoint variables and intentionally target an isolated real Google Cloud project. Validate IAM, quotas, networking, regions, concurrency, retries, ordering, durability, backups, performance, and every operation that is unsupported locally.

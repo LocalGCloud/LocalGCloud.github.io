@@ -18,11 +18,11 @@ Compare the exact SQL, API, client, and recovery workflows your application need
 
 The goccy project documents REST APIs and gRPC Storage Read/Write APIs. Check its current transport instructions and matrix for the requested method. Do not assume that it is REST-only or infer support from older comparisons.
 
-LocalCloud's default BigQuery process does not need Docker-socket access, but the LocalCloud container still requires Docker. Host, dependency-image, and assembled-image architecture qualification are separate checks.
+LocalCloud's default BigQuery process does not need Docker-socket access, but the LocalCloud container still requires Docker. Check host, dependency-image, and LocalCloud-image architecture support separately.
 
 ## Semantic and performance comparisons
 
-Published benchmark results need the exact engine revisions, images, query corpus, reference outputs, exclusions, and replay command. This site has no current comparison that qualifies both engines and the assembled LocalCloud image together. It therefore makes no relative speed claim, highest-fidelity ranking, or universal zero-wrong-result guarantee.
+Published benchmark results need the exact engine revisions, images, query corpus, reference outputs, exclusions, and replay command. This site has no current comparison that tests both engines and the LocalCloud image together. It therefore makes no relative speed claim, highest-fidelity ranking, or universal zero-wrong-result guarantee.
 
 A finite probe can identify specific successful and failing cases. It does not prove that every unsupported expression rejects correctly or that every accepted query returns the correct result. Test representative queries, expected rows, errors, and state transitions through the API the application uses.
 
@@ -31,6 +31,6 @@ A finite probe can identify specific successful and failing cases. It does not p
 - Use a local emulator for its documented development workflows, after checking SQL features, client routing, transport, and state behavior.
 - Consider goccy when its standalone or Go embedding model fits your test process and its current matrix covers the required operations.
 - Consider LocalCloud when the workflow needs BigQuery beside other documented local services, shared environment output, sample data, or console inspection.
-- Use Google Cloud to qualify actual cloud integrations and the production behavior your application depends on.
+- Use Google Cloud to validate actual cloud integrations and the production behavior your application depends on.
 
 Check the [current Google emulator command reference](https://docs.cloud.google.com/sdk/gcloud/reference/emulators) when evaluating Google-maintained local tooling. LocalCloud use remains subject to its [Public Preview License](/docs/licensing/).

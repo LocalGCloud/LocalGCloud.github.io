@@ -10,7 +10,7 @@ LocalCloud packages a Java gateway, the web console, local facades, and external
 
 ## Request flow
 
-1. `localcloud start --local-only` selects a Docker data volume, discovers or creates one compatible loopback-bound runtime, and maps published canonical ports in the **5380–5405** range.
+1. `localcloud start --local-only` selects a Docker data volume, discovers or creates one compatible runtime that listens only on localhost, and maps published canonical ports in the **5380–5405** range.
 2. `localcloud env` resolves that runtime and returns environment variables and endpoint values for the selected project and caller.
 3. SDK, REST, gRPC, and Terraform requests reach a direct emulator port or the gateway on canonical container port `5380` (HTTP) or `5381` (HTTPS / TLS).
 4. The gateway handles operator routes and routes facade/API traffic to local implementations.
@@ -29,8 +29,8 @@ Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env
 | :--- | :--- | :--- |
 | **Gateway & Facades** | Java / Armeria services | Facade records use internal PostgreSQL beneath `/var/lib/localcloud/pgdata`; operation-specific limits apply. |
 | **Cloud Storage** | `fake-gcs-server` process | Object blobs and bucket metadata stored beneath `/var/lib/localcloud/gcs-data`. |
-| **Pub/Sub** | In-process Java facade | Topics, subscriptions, and queued messages use PostgreSQL under `/var/lib/localcloud/pgdata`. Delivery workers and connections restart; qualify exact replay and redelivery behavior. |
-| **Firestore** | External emulator configuration | Documented local document/query workflows; disabled by default. Checkpoint, timestamp, listener, and transaction behavior requires exact-artifact qualification. |
+| **Pub/Sub** | In-process Java facade | Topics, subscriptions, and queued messages use PostgreSQL under `/var/lib/localcloud/pgdata`. Delivery workers and connections restart; test exact replay and redelivery behavior. |
+| **Firestore** | External emulator configuration | Documented local document/query workflows; opt-in. Test checkpoint, timestamp, listener, and transaction behavior with the exact image you run. |
 | **Bigtable** | Custom emulator process | Backed by PostgreSQL under the mounted data root. Port `5385`. |
 | **BigQuery** | Native GoogleSQL analysis + DuckDB execution | Supervised native in-container process; columnar DuckDB storage beneath `/var/lib/localcloud/bigquery-data`. Ports `5388` (REST) and `5389` (Storage Read gRPC with TLS). |
 | **Spanner** | Extended Cloud Spanner emulator | LevelDB row data plus JSON metadata beneath `/var/lib/localcloud/spanner-data`. Ports `5386` (gRPC) and `5387` (REST). |

@@ -8,8 +8,8 @@ const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
 const heroSignals = [
-  { value: String(availableServiceCount), label: 'documented integrations', note: 'operation-specific compatibility boundaries' },
-  { value: '1', label: 'data-volume runtime', note: 'CLI-selected loopback ports and persistent data' },
+  { value: String(availableServiceCount), label: 'local services', note: 'documented limits per service' },
+  { value: '1', label: 'persistent runtime', note: 'localhost-only ports and persistent data' },
 ];
 
 const heroIllustration = {
@@ -73,8 +73,8 @@ const atlasSlots = atlasCategorySlots
         </ul>
 
         <div class="field-actions">
-          <a href="#manual-quickstart" class="site-button site-button--primary">Get Started with LocalCloud</a>
-          <a href={`${base}docs/`} class="site-button site-button--secondary">Read the Docs</a>
+          <a href="#manual-quickstart" class="site-button site-button--primary">Get started with LocalCloud</a>
+          <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
         </div>
         <p class="field-intro-secondary">
           Free during public preview: <strong>{publicPreviewPriceLabel}</strong>.
@@ -100,15 +100,15 @@ const atlasSlots = atlasCategorySlots
     <section class="field-ribbon">
       <div class="field-ribbon__grid stagger">
         <article class="field-ribbon__item reveal">
-          <span class="field-stamp">SDK-shaped workflows</span>
+          <span class="field-stamp">Standard SDK workflows</span>
           <div>Use supported Google Cloud clients with the local endpoints returned by <code>localcloud env</code>.</div>
         </article>
         <article class="field-ribbon__item reveal">
-          <span class="field-stamp">Faster Inner Loop</span>
+          <span class="field-stamp">Faster inner loop</span>
           <div>Stay local while you build and test. Switch to shared cloud environments when ready.</div>
         </article>
         <article class="field-ribbon__item reveal">
-          <span class="field-stamp">Fully Inspectable</span>
+          <span class="field-stamp">Fully inspectable</span>
           <div>Built-in console, health endpoints, env export, and seeded sample data make the runtime transparent.</div>
         </article>
       </div>
@@ -117,8 +117,8 @@ const atlasSlots = atlasCategorySlots
 
     <section class="field-atlas">
       <div class="field-section-heading reveal">
-        <span class="field-kicker">Service Catalog</span>
-        <h2>{availableServiceCount} documented local integrations.</h2>
+        <span class="field-kicker">Service catalog</span>
+        <h2>{availableServiceCount} services, running locally</h2>
       </div>
 
       <div class="field-atlas__grid">
@@ -160,43 +160,43 @@ const atlasSlots = atlasCategorySlots
     <section class="field-blog">
       <div class="field-section-heading reveal">
         <span class="field-kicker">Where to go next</span>
-        <h2>Guides for Google Cloud local development.</h2>
+        <h2>Guides for Google Cloud local development</h2>
       </div>
 
       <div class="field-blog__grid stagger">
         <article class="field-story__card reveal">
-          <span class="field-kicker">AI Agents</span>
-          <h3><a href={`${base}local-cloud-for-ai-agents/`}>A Local Cloud for AI Coding Agents</a></h3>
+          <span class="field-kicker">AI agents</span>
+          <h3><a href={`${base}local-cloud-for-ai-agents/`}>A local cloud for AI coding agents</a></h3>
           <p>A code sandbox isolates where an agent runs. LocalCloud gives that code a cloud to talk to, with no credentials by default.</p>
         </article>
 
         <article class="field-story__card reveal">
           <span class="field-kicker">Emulator</span>
-          <h3><a href={`${base}bigquery-emulator/`}>Run BigQuery Locally</a></h3>
-          <p>Develop bounded BigQuery dataset, query, and API workflows locally, with per-operation status and documented limits.</p>
+          <h3><a href={`${base}bigquery-emulator/`}>Run BigQuery locally</a></h3>
+          <p>Develop BigQuery dataset, query, and API workflows locally, with per-operation status and documented limits.</p>
         </article>
 
         <article class="field-story__card reveal">
           <span class="field-kicker">Comparison</span>
-          <h3><a href={`${base}compare/`}>LocalCloud vs the Alternatives</a></h3>
+          <h3><a href={`${base}compare/`}>LocalCloud vs the alternatives</a></h3>
           <p>Balanced comparisons against LocalStack, localgcp, Google's own emulators, and hosted agent sandboxes.</p>
         </article>
 
         <article class="field-story__card reveal">
           <span class="field-kicker">CI / CD</span>
-          <h3><a href={`${base}gcp-integration-testing/`}>Local GCP Integration Testing</a></h3>
+          <h3><a href={`${base}gcp-integration-testing/`}>Local GCP integration testing</a></h3>
           <p>Run integration checks against local endpoints with health gates, pinned image identity, and explicit production validation.</p>
         </article>
 
         <article class="field-story__card reveal">
           <span class="field-kicker">Guide</span>
-          <h3><a href={`${base}how-to-run-google-cloud-locally/`}>How to Run Google Cloud Locally</a></h3>
-          <p>Install the CLI, start a loopback-bound runtime, and configure workflows across every available service.</p>
+          <h3><a href={`${base}how-to-run-google-cloud-locally/`}>How to run Google Cloud locally</a></h3>
+          <p>Install the CLI, start a runtime that listens only on localhost, and configure workflows across every available service.</p>
         </article>
 
         <article class="field-story__card reveal">
           <span class="field-kicker">Reference</span>
-          <h3><a href={`${base}glossary/`}>Local Cloud and Agent Glossary</a></h3>
+          <h3><a href={`${base}glossary/`}>Local cloud and agent glossary</a></h3>
           <p>Precise definitions for agent environment, cloud emulator, credentialless testing, and the terms around them.</p>
         </article>
       </div>
@@ -204,8 +204,8 @@ const atlasSlots = atlasCategorySlots
 
     <section class="field-cta">
       <div>
-        <span class="field-kicker">Continue Exploring</span>
-        <h2>Run bounded Google Cloud workflows locally.</h2>
+        <span class="field-kicker">Continue exploring</span>
+        <h2>Run Google Cloud workflows locally</h2>
         <p>
           The homepage tells you what LocalCloud is. The docs and service pages explain how to use it, what each service supports, and where the runtime boundaries are.
         </p>

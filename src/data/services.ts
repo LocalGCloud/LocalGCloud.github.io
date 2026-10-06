@@ -93,6 +93,7 @@ export interface Service {
 const protocolLabel = (protocol: string) => {
 	if (protocol === "rest") return "HTTP/REST";
 	if (protocol === "grpc") return "gRPC";
+	if (protocol === "grpc+rest") return "gRPC + HTTP/REST";
 	if (protocol === "redis") return "RESP";
 	if (protocol === "postgres") return "PostgreSQL";
 	if (protocol === "mysql") return "MySQL";

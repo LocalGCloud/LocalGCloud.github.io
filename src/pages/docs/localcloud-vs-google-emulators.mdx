@@ -11,7 +11,7 @@ import { cliQuickStart } from '../../utils/quickstart.mjs';
 
 # LocalCloud and Google-maintained emulators
 
-Use this explanation to choose a local-development runtime. It does not maintain a count or capability matrix for external vendor emulators because those claims were not revalidated during this documentation remediation.
+Use this explanation to choose a local-development runtime.
 
 <Callout type="warning" title="Check the current vendor documentation">
 Google-maintained emulator availability, installation, and behavior can change. Consult current Google documentation for the service you need. The table below describes LocalCloud's current documented support.
@@ -51,7 +51,7 @@ A service listing does not imply default startup, full parity, or legal permissi
 
 <pre><code>{cliQuickStart(docsContract).script}</code></pre>
 
-With `--local-only`, the CLI binds to loopback and can remap occupied canonical ports. Trust the generated environment values.
+With `--local-only`, the CLI listens only on localhost; if a default port is already in use, it picks another one. Trust the generated environment values.
 
 ## Production and legal boundary
 

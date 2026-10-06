@@ -91,11 +91,11 @@ const faqItems = [
   },
   {
     q: 'Does LocalCloud support GitHub Actions, GitLab CI, and Jenkins?',
-    a: 'Yes. The Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Exact runner networking and service-container behavior must still be tested.',
+    a: 'Yes. This page has templates for all three. The Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Test runner networking and service-container behavior on your runner.',
   },
   {
     q: 'Will my tests behave differently in CI vs local development?',
-    a: 'They can differ because of image identity, runner resources, networking, ports, concurrency, and retained state. Pin a qualified image digest, isolate state, and validate production behavior separately.',
+    a: 'They can differ because of image identity, runner resources, networking, ports, concurrency, and retained state. Pin an image digest, isolate state, and validate production behavior separately.',
   },
   {
     q: 'How fast does LocalCloud start in CI?',
@@ -130,7 +130,7 @@ const faqItems = [
       "name": "Does LocalCloud support GitHub Actions, GitLab CI, and Jenkins?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The Public Preview License permits individuals and organizations, including for-profit companies, to run LocalCloud in ongoing internal CI. Runner behavior must still be tested."
+        "text": "Yes. This page has templates for all three. The Public Preview License permits individuals and organizations, including for-profit companies, to run LocalCloud in ongoing internal CI. Test runner behavior on your runner."
       }
     },
     {
@@ -161,15 +161,15 @@ const faqItems = [
       </div>
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-xl font-semibold text-[var(--text)]">Evidence-bounded</div>
+          <div class="text-xl font-semibold text-[var(--text)]">Supported operations only</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Select only operations supported by the current compatibility contract.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-xl font-semibold text-[var(--text)]">Fail-closed readiness</div>
+          <div class="text-xl font-semibold text-[var(--text)]">Wait for health</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Do not run tests unless the health gate succeeds; retain logs when startup fails.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
-          <div class="text-xl font-semibold text-[var(--text)]">Runner-qualified</div>
+          <div class="text-xl font-semibold text-[var(--text)]">Test on your runner</div>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Treat these as templates until exercised with a pinned image on the selected CI runner.</p>
         </article>
       </div>
@@ -209,12 +209,12 @@ const faqItems = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>What bounded local emulation can add</h2>
+        <h2>What local emulation can add</h2>
       </div>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 reveal">
         <article class="site-panel p-5">
           <span class="site-kicker">Local isolation</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Exercise documented operations without routing the local test step to a real Google Cloud project. This is a technical boundary, not a quantified cost claim.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Exercise documented operations without routing the local test step to a real Google Cloud project.</p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Controlled state</span>
@@ -222,7 +222,7 @@ const faqItems = [
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Earlier feedback</span>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Catch endpoint, request-shape, and fixture errors before the guarded real-Google-Cloud release step. No cross-runner latency or duration benchmark is claimed.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Catch endpoint, request-shape, and fixture errors before the guarded real-Google-Cloud release step.</p>
         </article>
         <article class="site-panel p-5">
           <span class="site-kicker">Credential boundary</span>
