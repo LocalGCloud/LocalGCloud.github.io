@@ -188,13 +188,19 @@ while time.monotonic() < deadline:
     if done:
         status = wait_status
         break
+# The child can close the terminal (EOF/EIO) just before it exits; wait for the exit
+# within the same deadline instead of checking once, which killed finished runs.
+while status is None and time.monotonic() < deadline:
+    done, wait_status = os.waitpid(pid, os.WNOHANG)
+    if done:
+        status = wait_status
+    else:
+        time.sleep(0.05)
 if status is None:
-    done, status = os.waitpid(pid, os.WNOHANG)
-    if not done:
-        os.kill(pid, 9)
-        os.waitpid(pid, 0)
-        sys.stdout.buffer.write(output)
-        raise SystemExit("pseudo-TTY child timed out")
+    os.kill(pid, 9)
+    os.waitpid(pid, 0)
+    sys.stdout.buffer.write(output)
+    raise SystemExit("pseudo-TTY child timed out")
 sys.stdout.buffer.write(output)
 sys.exit(os.waitstatus_to_exitcode(status))
 `;
