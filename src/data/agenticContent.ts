@@ -1441,12 +1441,3 @@ export const blogDemoPages: AgenticContentPage[] = withRelatedLinks([
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
 ]);
-
-export const allAgenticContentPages = [
-	...agentSandboxPages,
-	...serviceTestingPages,
-	...workflowPages,
-	...comparisonPages,
-	...glossaryPages,
-	...blogDemoPages,
-];

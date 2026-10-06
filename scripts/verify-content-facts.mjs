@@ -639,6 +639,20 @@ for (const card of glossaryEntries) {
   else if (!/^[^.!?]+[.!?]$/.test(shown) || !lede.startsWith(shown)) errors.push(`the glossary hub entry for /${href} must show the first sentence of its definition ("${lede.match(/^.+?[.!?](?=\s|$)/)?.[0]}"), not "${shown}"`);
 }
 
+// The /agents/ hub covers one family (S28): every agent setup page, plus one link to each other
+// section hub instead of repeating their page lists.
+const agentsHubMain = htmlPages.get('agents/index.html')?.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? '';
+const agentsHubLinks = new Set([...agentsHubMain.matchAll(/<a\b[^>]*href="([^"#?]+)/g)].map(([, href]) => href));
+for (const file of htmlPages.keys()) {
+  const setup = file.match(/^(agents\/[^/]+\/)index\.html$/)?.[1];
+  if (setup && !agentsHubLinks.has(`/${setup}`)) errors.push(`the /agents/ hub must list /${setup}`);
+}
+for (const hub of ['/services/', '/workflows/', '/compare/', '/glossary/', '/blog/']) {
+  if (!agentsHubLinks.has(hub)) errors.push(`the /agents/ hub must link the ${hub} hub`);
+}
+const repeatedHubPages = [...agentsHubLinks].filter((href) => /^\/(?:workflows|compare|glossary|blog)\/[^/]+\/$|^\/services\/[^/]+\/ai-agent-local-testing\/$/.test(href));
+if (repeatedHubPages.length) errors.push(`the /agents/ hub repeats pages its section hubs list: ${repeatedHubPages.join(', ')}`);
+
 // Overlapping pages wait for search data before any merge (plan R7). Meanwhile each pair in
 // src/data/relatedPages.ts keeps its own title and H1 and links the other page inside <main>,
 // and at least one of those links uses the target's canonical anchor text (case aside). A card
