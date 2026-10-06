@@ -3,8 +3,8 @@
 /docs/localcloud-vs-individual-emulators/ /docs/localcloud-vs-google-emulators/ 301
 /ai/AGENTS.md /ai/agent-template.md 301
 /ai/AGENTS.md/ /ai/agent-template.md 301
-/docs/bigquery-locally /bigquery-emulator/ 301
-/docs/bigquery-locally/ /bigquery-emulator/ 301
+/docs/bigquery-locally /services/bigquery/ 301
+/docs/bigquery-locally/ /services/bigquery/ 301
 /review / 301
 /review/ / 301
 /variation-field-manual / 301
@@ -13,3 +13,17 @@
 /prototypes/pricing/ /pricing/ 301
 /compare/localgcp /compare/ 301
 /compare/localgcp/ /compare/ 301
+
+# R7 service merges
+/bigquery-emulator /services/bigquery/ 301
+/bigquery-emulator/ /services/bigquery/ 301
+/pubsub-emulator /services/pubsub/ 301
+/pubsub-emulator/ /services/pubsub/ 301
+/spanner-emulator /services/spanner/ 301
+/spanner-emulator/ /services/spanner/ 301
+/bigtable-emulator /services/bigtable/ 301
+/bigtable-emulator/ /services/bigtable/ 301
+/firestore-emulator /services/firestore/ 301
+/firestore-emulator/ /services/firestore/ 301
+/cloud-storage-emulator /services/cloud-storage/ 301
+/cloud-storage-emulator/ /services/cloud-storage/ 301

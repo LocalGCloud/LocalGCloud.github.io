@@ -220,6 +220,36 @@ export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
   },
 };
 
+// The six services people search for as "<service> emulator". Their /services/<slug>/ page is
+// the one page for that query (plan R7, S11 and A10: the root /<service>-emulator/ pages now
+// redirect to it), so it takes a head-term title and description and answers the setup FAQ.
+export const emulatorSearchPages: Readonly<Record<string, { title: string; description: string }>> = {
+  bigquery: {
+    title: 'BigQuery Emulator — Run BigQuery Locally | LocalCloud',
+    description: 'Run BigQuery locally: GoogleSQL datasets, tables, queries, scripting, external tables, and the Storage API on ports 5388 and 5389.',
+  },
+  pubsub: {
+    title: 'Pub/Sub Emulator — Run Pub/Sub Locally | LocalCloud',
+    description: 'Run Pub/Sub locally: topics, subscriptions, push and pull delivery, acknowledgements, dead-letter retries, and schemas on port 5383.',
+  },
+  spanner: {
+    title: 'Spanner Emulator — Run Spanner Locally | LocalCloud',
+    description: 'Run Spanner locally: GoogleSQL and PostgreSQL queries, transactions, graph and vector search, and administration on ports 5386 and 5387.',
+  },
+  bigtable: {
+    title: 'Bigtable Emulator — Run Bigtable Locally | LocalCloud',
+    description: 'Run Bigtable locally: data, administration, GoogleSQL, change streams, materialized views, backups, and IAM workflows in one Docker container.',
+  },
+  firestore: {
+    title: 'Firestore Emulator — Run Firestore Locally | LocalCloud',
+    description: 'Run Firestore document and query workflows locally. Firestore is opt-in: add firestore to the --services list when you start LocalCloud.',
+  },
+  gcs: {
+    title: 'Cloud Storage Emulator — Run GCS Locally | LocalCloud',
+    description: 'Run Cloud Storage locally: buckets, object upload and download, IAM, Pub/Sub notifications, and HMAC-signed requests on port 5382.',
+  },
+};
+
 export const officialSampleLinks: Readonly<Record<string, string>> = {
   gcs: 'https://docs.cloud.google.com/storage/docs/samples',
   pubsub: 'https://docs.cloud.google.com/pubsub/docs/samples',

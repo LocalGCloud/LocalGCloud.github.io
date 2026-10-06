@@ -108,7 +108,8 @@ test('docs, service and comparison pages answer Accept: text/markdown with their
 test('_redirects and trailing-slash normalization answer with permanent redirects', async () => {
   for (const [path, location] of [
     ['/ai/AGENTS.md', '/ai/agent-template.md'],
-    ['/docs/bigquery-locally/', '/bigquery-emulator/'],
+    ['/docs/bigquery-locally/', '/services/bigquery/'],
+    ['/bigquery-emulator/', '/services/bigquery/'],
     ['/favicon.ico', '/favicon.png'],
     ['/docs', '/docs/'],
   ]) {

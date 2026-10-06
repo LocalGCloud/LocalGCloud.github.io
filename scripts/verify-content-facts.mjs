@@ -11,7 +11,7 @@ import { availableServiceCount, services, servicesInCatalogOrder, isServiceDisab
 import { pricingFaq, proTierServiceNames } from '../src/data/pricingFaq.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
 import { relatedAnchor, relatedPagePairs } from '../src/data/relatedPages.ts';
-import { getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
+import { emulatorSearchPages, getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
 const sdkExamplesSource = await readFile(new URL('../src/pages/docs/sdk-examples.mdx', import.meta.url), 'utf8');
 
 const publicDirectory = new URL('../public/', import.meta.url);
@@ -429,6 +429,33 @@ for (const service of services) {
 }
 for (const id of Object.keys(serviceGuides)) {
   if (!services.some((service) => service.id === id)) errors.push(`Service guide ${id} has no published service`);
+}
+
+// The service pages that replaced the root /<service>-emulator/ pages (plan R7, S11): the
+// head-term title, only ports the service uses in the description, and FAQPage JSON-LD that
+// holds exactly the questions and answers the page shows.
+for (const [id, searchPage] of Object.entries(emulatorSearchPages)) {
+  const service = services.find((item) => item.id === id);
+  const contractService = docsContract.services.find((item) => item.id === id);
+  const html = htmlPages.get(`services/${service?.slug}/index.html`);
+  if (!service || !contractService || !html) {
+    errors.push(`emulatorSearchPages.${id} has no built service page`);
+    continue;
+  }
+  const route = `services/${service.slug}/`;
+  if (decodeEntities(html.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? '') !== searchPage.title) errors.push(`${route} must use the title "${searchPage.title}"`);
+  const ports = new Set([contractService.port, ...Object.values(contractService.additionalPorts)].map(String));
+  for (const [port] of searchPage.description.matchAll(/\b\d{4,5}\b/g)) {
+    if (!ports.has(port)) errors.push(`${route} description names port ${port}, which ${service.name} does not use`);
+  }
+  const faqJson = [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)]
+    .map(([, json]) => JSON.parse(json)).find((schema) => schema['@type'] === 'FAQPage');
+  const faqSection = html.match(/<section\b[^>]*\bid="faq"[\s\S]*?<\/section>/)?.[0] ?? '';
+  const shown = [...faqSection.matchAll(/<h3\b[^>]*>([\s\S]*?)<\/h3>\s*<p\b[^>]*>([\s\S]*?)<\/p>/g)]
+    .map(([, question, answer]) => [question, answer].map((text) => visibleText(text).replace(/\s+/g, ' ').trim()));
+  const published = (faqJson?.mainEntity ?? []).map((entry) => [entry.name, entry.acceptedAnswer?.text]);
+  if (!shown.length) errors.push(`${route} must show its emulator FAQ in <section id="faq">`);
+  if (JSON.stringify(published) !== JSON.stringify(shown)) errors.push(`${route} FAQPage JSON-LD must hold exactly the questions and answers the page shows`);
 }
 
 // 4. Prohibit 'partial local emulation' or service status badging as 'partial' in published pages

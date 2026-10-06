@@ -45,7 +45,8 @@ const schemaFamilies = [
   [/^\/services\/[^/]+\/(?:ai-agent-local-testing\/)?$/, ['TechArticle', 'BreadcrumbList']],
   [/^\/(?:agents|workflows)\/[^/]+\/$/, ['TechArticle', 'BreadcrumbList']],
   [/^\/(?:compare|glossary)\/[^/]+\/$/, ['WebPage', 'BreadcrumbList']],
-  [/^\/(?:bigquery|bigtable|cloud-storage|firestore|pubsub|spanner)-emulator\/$/, ['WebPage', 'BreadcrumbList']],
+  // The service pages that answer "<service> emulator" searches carry the setup FAQ.
+  [/^\/services\/(?:bigquery|bigtable|cloud-storage|firestore|pubsub|spanner)\/$/, ['FAQPage']],
   [/^\/docs\//, ['TechArticle']],
 ];
 const productPages = new Set(['/', '/pricing/']);

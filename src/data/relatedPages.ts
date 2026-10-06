@@ -131,16 +131,6 @@ const pages: Record<string, RelatedPage> = {
 	},
 };
 
-// Root /<service>-emulator/ landing pages, by service slug.
-export const emulatorLandingPaths: Record<string, string> = {
-	bigquery: "/bigquery-emulator/",
-	pubsub: "/pubsub-emulator/",
-	spanner: "/spanner-emulator/",
-	bigtable: "/bigtable-emulator/",
-	firestore: "/firestore-emulator/",
-	"cloud-storage": "/cloud-storage-emulator/",
-};
-
 export const agentTestingPath = (slug: string) => `/services/${slug}/ai-agent-local-testing/`;
 
 // Every service that runs locally has a guide and an agent testing page.
@@ -156,8 +146,6 @@ for (const service of localServices) {
 		anchor: `${service.name} local testing for AI agents`,
 		note: "Endpoint routing, a representative local check, and copyable agent prompts.",
 	};
-	const landing = emulatorLandingPaths[service.slug];
-	if (landing) pages[landing] = { anchor: `${service.name} emulator overview`, note: "Setup and FAQ." };
 }
 
 // Pairs list the default survivor first. A page's counterparts appear in this order.
@@ -178,14 +166,7 @@ export const relatedPagePairs: RelatedPair[] = [
 	{ pages: ["/ai/", "/blog/localcloud-for-ai-agents/"], finding: "S6" },
 	{ pages: ["/gcp-emulator/", "/docs/what-is-gcp-emulator/"], finding: "A11" },
 	{ pages: ["/docs/what-is-gcp-emulator/", "/glossary/gcp-emulator/"], finding: "S26" },
-	...localServices.flatMap((service): RelatedPair[] => {
-		const guide = `/services/${service.slug}/`;
-		const landing = emulatorLandingPaths[service.slug];
-		return [
-			...(landing ? [{ pages: [guide, landing] as const, finding: "S11" }] : []),
-			{ pages: [guide, agentTestingPath(service.slug)] as const, finding: "S30" },
-		];
-	}),
+	...localServices.map((service): RelatedPair => ({ pages: [`/services/${service.slug}/`, agentTestingPath(service.slug)], finding: "S30" })),
 ];
 
 export const relatedPage = (path: string): RelatedPage => {

@@ -875,7 +875,7 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 		],
 		internalLinks: [
 			relatedLink(agentTestingPath("bigquery"), "Agent quickstart and caveats."),
-			relatedLink("/bigquery-emulator/"),
+			relatedLink("/services/bigquery/"),
 		],
 		sources: [
 			relatedLink("/docs/bigquery-emulator-features/", "LocalCloud tested coverage."),
