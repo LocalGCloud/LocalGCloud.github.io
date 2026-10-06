@@ -10,8 +10,8 @@ Baseline: Performance 87, Accessibility 99, Best Practices 100, SEO 100; FCP 2.6
 | --- | --- | --- |
 | Efficient cache lifetimes, 102 KiB estimated savings | First-party assets expire after 10 minutes; PostHog SDK 4 hours and config 5 minutes | Add Cloudflare static asset headers: one year immutable for fingerprinted `/_astro/` files, bounded cache for mutable images. Third-party TTLs remain vendor-controlled. Verify with local Wrangler and after deployment. |
 | Forced reflow | PostHog 23 ms; unattributed 17 ms | Move SDK loading after page load to idle time; disable unused surveys. Keep interaction analytics. Trace after build; unattributed work requires fresh measurement. |
-| Network dependency tree | Two stylesheet requests; 158 ms measured critical path | Inline page styles with Astro (reverted in R5; see the next row); self-host Latin variable fonts and preload the body font. Verify HTML and request graph. |
-| Render-blocking requests | Two first-party CSS files, 16.8 KiB transferred, 750 ms estimated duration | Originally: inline every stylesheet with Astro. Revised in October 2026 (plan R5): inlining put about 15 KB of compressed CSS in every HTML response, and HTML revalidates on each navigation, so `build.inlineStylesheets` is now `'auto'`. The shared stylesheet ships as a hashed `/_astro/*.css` file under the one-year immutable rule, and only styles under Vite's 4 KB inline limit stay in the page. First views pay one stylesheet request; later pages and repeat visits reuse the cached file. Verify with `test:performance` (hashed stylesheets, byte budgets) and a mobile trace of first-view LCP. |
+| Network dependency tree | Two stylesheet requests; 158 ms measured critical path | Inline page styles with Astro; self-host Latin variable fonts and preload the body font. Verify HTML and request graph. |
+| Render-blocking requests | Two first-party CSS files, 16.8 KiB transferred, 750 ms estimated duration | Use Astro's supported stylesheet inlining. HTML grows, but initial rendering needs no CSS network round trip. Verify compressed HTML and mobile Lighthouse. |
 | Duplicated JavaScript, 3 KiB | PostHog surveys and exception bundles share SDK internals | Disable unused surveys and defer SDK/extensions. Retain browser exception capture. Remaining SDK duplication belongs to the vendor. |
 | Legacy JavaScript, 17 KiB | PostHog SDK and surveys polyfills | Remove surveys from loading; defer remaining vendor SDK. Cannot remove vendor polyfills through site build settings. |
 | Layout shift culprits | Hero figure, CLS 0.007 | Reserve hero aspect ratio; replace asynchronous third-party font stylesheet with local optional fonts. Preserve artwork and layout. Verify dimensions and CLS. |
@@ -60,8 +60,6 @@ Lighthouse 13.5.0 mobile defaults, using the same local machine and plain static
 | Speed Index | 3.4 s | 1.7 s |
 
 The final audit reports no console errors, render-blocking stylesheet requests, or forced-reflow findings. Local Wrangler confirms one-year immutable caching for hashed fonts and scripts, seven-day caching for the brand mark, and the configured security headers. HTML and search index data retain revalidation.
-
-Since plan R5 (October 2026) the shared stylesheet is a linked, hashed `/_astro/*.css` file again (see the render-blocking row above), so first views make one stylesheet request with the same one-year immutable caching as fonts and scripts. The October 3 figures in this section describe the inlined build.
 
 ### Verification
 

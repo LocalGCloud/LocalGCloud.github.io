@@ -20,9 +20,8 @@ const unlistedPages = new Set(['https://local.cloud/immersive-demo/', 'https://l
 export default defineConfig({
   site: 'https://local.cloud/',
   compressHTML: true,
-  // The shared stylesheet ships as a hashed /_astro/*.css file under the immutable cache rule,
-  // so later pages and repeat visits reuse it; only small page-specific styles stay inline.
-  build: { inlineStylesheets: 'auto' },
+  // Avoid CSS request round trips on the initial mobile navigation.
+  build: { inlineStylesheets: 'always' },
   security: {
     csp: {
       scriptDirective: {

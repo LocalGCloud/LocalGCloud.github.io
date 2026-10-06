@@ -109,7 +109,7 @@ Runs `worker/index.mjs` with the built `dist/` in workerd (through Wrangler) aft
 pnpm run test:asset-manifest
 node scripts/asset-manifest.mjs carry
 ```
-A page opened or prefetched before a deploy still names the previous deploy's hashed `/_astro/` CSS and JS. Just before `wrangler deploy`, the carry step reads the live `https://local.cloud/asset-manifest.json` and downloads every listed file this build lacks into `dist/_astro/`; an unreachable or invalid manifest is a warning. The new manifest never lists carried files, so exactly one previous generation stays online. The node:test suite covers path validation, the merge plan and the one-generation rule. If the search client still fails to load, the search modal reloads the page once per session.
+A page opened or prefetched before a deploy still names the previous deploy's hashed `/_astro/` scripts and fonts. Just before `wrangler deploy`, the carry step reads the live `https://local.cloud/asset-manifest.json` and downloads every listed file this build lacks into `dist/_astro/`; an unreachable or invalid manifest is a warning. The new manifest never lists carried files, so exactly one previous generation stays online. The node:test suite covers path validation, the merge plan and the one-generation rule. If the search client still fails to load, the search modal reloads the page once per session.
 
 ### Upstream Contract Synchronization
 ```bash
