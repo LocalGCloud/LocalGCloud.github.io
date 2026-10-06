@@ -6,7 +6,7 @@ import CopyButton from '../../components/CopyButton.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
 import { getServiceCategoryLabel, getServiceImplementationLabel, isServiceDisabledByDefault, optInStartCommand, publishedServiceCount, services } from '../../data/services';
 import ServiceTier from '../../components/ServiceTier.astro';
-import { serviceTestingPages } from '../../data/agenticContent';
+import { serviceAgentSections } from '../../data/agenticContent';
 import { serviceCompatibilityEditorial } from '../../data/serviceEditorial';
 import { relatedAnchor } from '../../data/relatedPages';
 import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../data/productFacts';
@@ -32,7 +32,7 @@ const guide = serviceGuides[service.id];
 if (!compatibility || !guide) throw new Error(`Missing service guide for ${service.id}`);
 const codeExamples = isPlanned ? [] : getServiceCodeExamples(service.id, sdkExamplesSource);
 const environmentSetup = `${productFacts.installScriptCommand}\nlocalcloud start --local-only${isServiceDisabledByDefault(service) ? ` --services ${service.id}` : ''}\n# Export GOOGLE_CLOUD_PROJECT and ${service.envVar.split('=')[0]}\neval "$(localcloud env)"`;
-const agentTestingPage = isPlanned ? undefined : serviceTestingPages.find((page) => page.slug === service.slug);
+const agentSection = isPlanned ? undefined : serviceAgentSections.find((section) => section.slug === service.slug);
 // The six services searched for as "<service> emulator" carry a head-term title and the setup FAQ.
 const searchPage = isPlanned ? undefined : emulatorSearchPages[service.id];
 // Answered from the service contract; the FAQPage JSON-LD is built from the same list.
@@ -51,10 +51,6 @@ const faqItems = searchPage ? [
   },
 ] : [];
 const exampleLinks: ServiceExampleLink[] = isPlanned ? [] : [...(guide.examples ?? [])];
-if (agentTestingPage) exampleLinks.push({
-  title: relatedAnchor(agentTestingPage.path), href: agentTestingPage.path, label: 'Agent guide',
-  description: 'Endpoint routing, a representative local check, and copyable agent prompts.',
-});
 if (terraformExampleServiceIds.includes(service.id) && !isPlanned) exampleLinks.push({
   title: 'Provision resources with Terraform', href: '/docs/terraform/#supported-terraform-resources', label: 'Terraform · HCL',
   description: 'Documented resources, provider configuration, and local routing setup.',
@@ -129,6 +125,7 @@ const structuredData = [
             <a href="#usage">Example usage</a>
             <a href="#workflows">Workflows and boundaries</a>
             {exampleLinks.length > 0 && <a href="#examples">Code and integrations</a>}
+            {agentSection && <a href="#ai-agent">Use with an AI agent</a>}
             {faqItems.length > 0 && <a href="#faq">FAQ</a>}
           </nav>}
         </div>
@@ -238,6 +235,25 @@ const structuredData = [
         </div>
       </section>
     )}
+
+    {agentSection && <section id="ai-agent" class="site-section site-section--tight scroll-mt-24" aria-labelledby="ai-agent-title" data-service-agent>
+      <div class="container">
+        <div class="site-panel min-w-0 p-5 reveal sm:p-6">
+          <span class="site-kicker">Agent testing</span>
+          <h2 id="ai-agent-title" class="mt-3 text-2xl font-semibold tracking-tight">Use {service.name} with an AI agent</h2>
+          <p class="mt-4 max-w-[48rem] leading-7 text-[var(--text-2)]">{agentSection.validation}</p>
+          <article class="mt-5 min-w-0 rounded-xl border border-[var(--line)]" data-analytics-label={`agentic-copy-${service.slug}-${agentSection.prompt.id}`}>
+            <div class="flex items-center justify-between gap-3 px-4 pt-4">
+              <h3 class="min-w-0 text-base font-semibold">{agentSection.prompt.label}</h3>
+              <CopyButton text={agentSection.prompt.prompt} analyticsLabel={`agentic-copy-${service.slug}-${agentSection.prompt.id}`} label="Copy agent prompt" />
+            </div>
+            <pre class="whitespace-pre-wrap p-4 text-sm leading-7 [overflow-wrap:anywhere]"><code class="border-0 bg-transparent p-0" data-agent-prompt>{agentSection.prompt.prompt}</code></pre>
+          </article>
+          <p class="mt-5 max-w-[48rem] text-sm leading-7 text-[var(--text-2)]">{agentSection.boundary}</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]"><a href={`${base}ai/`}>{relatedAnchor('/ai/')}</a> has more prompts and the AGENTS.md template.</p>
+        </div>
+      </div>
+    </section>}
 
     {faqItems.length > 0 && <section id="faq" class="site-section site-section--tight scroll-mt-24" aria-labelledby="faq-title">
       <div class="container">

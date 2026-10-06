@@ -263,7 +263,6 @@ for (const path of [
   'src/data/agenticContent.ts',
   'src/pages/services/index.astro',
   'src/pages/services/[slug].astro',
-  'src/pages/services/[slug]/ai-agent-local-testing.astro',
   'src/pages/compatibility.astro',
   'src/pages/docs/services-overview.mdx',
 ]) routeSources.set(path, await readFile(new URL(`../${path}`, import.meta.url), 'utf8'));
@@ -289,7 +288,9 @@ for (const fact of ['registryDefaultEnabled', 'assembledDefaultEnabled', 'defaul
   assert(routeSources.get('src/data/agenticFacts.ts').includes(fact), `agentic metadata omits ${fact}`);
 }
 const agenticContentSource = routeSources.get('src/data/agenticContent.ts');
-assert(agenticContentSource.includes('["supported", "partial", "release-unverified"].includes(service.status)'), 'agent-testing pages must exclude unsupported, unknown, and planned services');
+assert(agenticContentSource.includes('["supported", "partial", "release-unverified"].includes(service.status)'), 'agent-testing sections must exclude unsupported, unknown, and planned services');
+// Agent testing is a section of each service page, not a route of its own (plan R7, S30).
+assert(detailSource.includes('serviceAgentSections') && detailSource.includes('id="ai-agent"') && detailSource.includes('agentSection.prompt.prompt'), 'detail route must render the "Use with an AI agent" section with its prompt');
 
 const compatibilitySource = routeSources.get('src/pages/compatibility.astro');
 assert(compatibilitySource.includes("service.catalogState === 'coming-soon'") && compatibilitySource.includes('colspan="2"'), 'compatibility page does not collapse unsupported services across its two detail columns');
@@ -302,4 +303,4 @@ for (const retiredPath of ['../localcloud/services.yaml', '../localcloud/localcl
   assert(!JSON.stringify(contract).includes(retiredPath), `retired evidence path remains: ${retiredPath}`);
 }
 
-console.log(`Documentation contract verified: ${contract.services.length} runtime surfaces, ${editorialEntries.size} overlays/icons, ${publicServiceIds.length} public service routes, ${contract.services.filter((service) => service.published && service.availability === "available" && !["unsupported", "unknown"].includes(service.status)).length} available agent-testing routes, schema v${contract.schemaVersion}.`);
+console.log(`Documentation contract verified: ${contract.services.length} runtime surfaces, ${editorialEntries.size} overlays/icons, ${publicServiceIds.length} public service routes, ${contract.services.filter((service) => service.published && service.availability === "available" && !["unsupported", "unknown"].includes(service.status)).length} available agent-testing sections, schema v${contract.schemaVersion}.`);

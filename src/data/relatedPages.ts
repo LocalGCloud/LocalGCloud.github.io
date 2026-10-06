@@ -131,9 +131,7 @@ const pages: Record<string, RelatedPage> = {
 	},
 };
 
-export const agentTestingPath = (slug: string) => `/services/${slug}/ai-agent-local-testing/`;
-
-// Every service that runs locally has a guide and an agent testing page.
+// Every service that runs locally has a guide.
 const localServices = servicesInCatalogOrder.filter(
 	(service) => service.catalogState === "available" && service.marketingStatus === "supported",
 );
@@ -141,10 +139,6 @@ for (const service of localServices) {
 	pages[`/services/${service.slug}/`] = {
 		anchor: `${service.name} service guide`,
 		note: "Local workflows, boundaries, and SDK examples for this service.",
-	};
-	pages[agentTestingPath(service.slug)] = {
-		anchor: `${service.name} local testing for AI agents`,
-		note: "Endpoint routing, a representative local check, and copyable agent prompts.",
 	};
 }
 
@@ -161,12 +155,10 @@ export const relatedPagePairs: RelatedPair[] = [
 	{ pages: ["/gcp-integration-testing/", "/workflows/integration-tests/"], finding: "S23" },
 	{ pages: ["/gcp-integration-testing/", "/workflows/agentic-ci/"], finding: "S23" },
 	{ pages: ["/agents/claude-code-gcp-sandbox/", "/blog/claude-code-local-gcp-sandbox/"], finding: "S24" },
-	{ pages: [agentTestingPath("bigquery"), "/blog/bigquery-locally-agent-written-pipelines/"], finding: "S24" },
 	{ pages: ["/local-cloud-for-ai-agents/", "/ai/"], finding: "S6" },
 	{ pages: ["/ai/", "/blog/localcloud-for-ai-agents/"], finding: "S6" },
 	{ pages: ["/gcp-emulator/", "/docs/what-is-gcp-emulator/"], finding: "A11" },
 	{ pages: ["/docs/what-is-gcp-emulator/", "/glossary/gcp-emulator/"], finding: "S26" },
-	...localServices.map((service): RelatedPair => ({ pages: [`/services/${service.slug}/`, agentTestingPath(service.slug)], finding: "S30" })),
 ];
 
 export const relatedPage = (path: string): RelatedPage => {

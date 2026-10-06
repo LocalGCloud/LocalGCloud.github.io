@@ -31,7 +31,7 @@ for (const slug of slugs) {
     assert.equal(normalize(match[1]), normalize(match[2]), `${slug}: copied code differs from the visible block`);
   }
 }
-for (const route of ['agents/claude-code-gcp-sandbox', 'compare/google-emulators', 'services/bigquery/ai-agent-local-testing']) {
+for (const route of ['agents/claude-code-gcp-sandbox', 'compare/google-emulators']) {
   assert(!/<div\b[^>]*class="[^"]*\bblog-page\b/.test(read(route)), `${route}: blog layout leaked into another page`);
 }
 console.log('Blog presentation passed: all articles indexed, contents targets, header actions, exact copy text, and non-blog layout isolation.');

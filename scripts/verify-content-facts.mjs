@@ -419,6 +419,14 @@ for (const service of services) {
   if (planned && /<section\b[^>]*(?:\sdata-service-typical-uses|\sid="usage")/.test(html)) errors.push(`Unsupported service ${service.id} renders the supported-service template`);
   if (planned && html.includes('data-service-example')) errors.push(`Planned service ${service.id} advertises local example links`);
   if (!planned && !html.includes('data-service-example')) errors.push(`Service ${service.id} omits integration guides`);
+  // Agent testing is a section of the service page (plan R7, S30), not a page of its own: a
+  // validation check, a prompt whose copy button copies exactly the prompt shown, and what still
+  // needs Google Cloud.
+  const agentSection = html.match(/<section\b[^>]*\bid="ai-agent"[\s\S]*?<\/section>/)?.[0] ?? '';
+  const agentPrompt = plainText(agentSection.match(/<code\b[^>]*data-agent-prompt[^>]*>([\s\S]*?)<\/code>/)?.[1] ?? '');
+  const copiedPrompt = plainText(agentSection.match(/\bdata-copy="([^"]*)"/)?.[1] ?? '');
+  if (!planned && (!agentPrompt || copiedPrompt !== agentPrompt || !plainText(agentSection).includes('Google Cloud project'))) errors.push(`Service ${service.id} must render the "Use with an AI agent" section with a copyable prompt`);
+  if (planned && agentSection) errors.push(`Unsupported service ${service.id} renders the AI agent section`);
   if (!planned && (!html.includes('data-example-environment') || !text.includes('eval "$(localcloud env)"') || !text.includes(service.envVar.split('=')[0]) || !text.includes('GOOGLE_CLOUD_PROJECT'))) errors.push(`Service ${service.id} omits generated environment setup`);
   if (planned && html.includes('data-example-environment')) errors.push(`Planned service ${service.id} advertises local environment setup`);
   for (const example of guide.examples ?? []) {
@@ -677,7 +685,7 @@ for (const file of htmlPages.keys()) {
 for (const hub of ['/services/', '/workflows/', '/compare/', '/glossary/', '/blog/']) {
   if (!agentsHubLinks.has(hub)) errors.push(`the /agents/ hub must link the ${hub} hub`);
 }
-const repeatedHubPages = [...agentsHubLinks].filter((href) => /^\/(?:workflows|compare|glossary|blog)\/[^/]+\/$|^\/services\/[^/]+\/ai-agent-local-testing\/$/.test(href));
+const repeatedHubPages = [...agentsHubLinks].filter((href) => /^\/(?:workflows|compare|glossary|blog)\/[^/]+\/$/.test(href));
 if (repeatedHubPages.length) errors.push(`the /agents/ hub repeats pages its section hubs list: ${repeatedHubPages.join(', ')}`);
 
 // Overlapping pages wait for search data before any merge (plan R7). Meanwhile each pair in

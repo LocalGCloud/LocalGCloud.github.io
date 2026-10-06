@@ -1,8 +1,9 @@
-import { agenticFacts, agenticServiceMetadata, joinClauses } from "./agenticFacts";
+import { agenticFacts, agentPromptLibrary, agenticServiceMetadata } from "./agenticFacts";
+import type { AgentPrompt } from "./agenticFacts";
 import { alternativesReviewedLabel } from "./alternatives";
 import { productFacts } from "./productFacts";
-import { agentTestingPath, relatedLink, relatedLinksFor } from "./relatedPages";
-import { availableServiceCount, serviceTierLabel } from "./services";
+import { relatedLink, relatedLinksFor } from "./relatedPages";
+import { availableServiceCount } from "./services";
 
 export type AgenticContentKind =
 	| "agent"
@@ -62,12 +63,6 @@ export interface AgenticContentPage {
 	reviewedAt?: string;
 }
 
-const serviceBySlug = (slug: string) => {
-	const service = agenticServiceMetadata.find((item) => item.slug === slug);
-	if (!service) throw new Error(`Missing service metadata for ${slug}`);
-	return service;
-};
-
 // Next steps for pages about running agent-written code locally.
 const localTestingLinks: ContentLink[] = [
 	{
@@ -81,8 +76,6 @@ const localTestingLinks: ContentLink[] = [
 		note: "Load deterministic fixtures for repeatable agent and CI runs.",
 	},
 ];
-
-const sentence = (text: string) => (/[.!?]$/.test(text) ? text : `${text}.`);
 
 // Pages that overlap with another page (src/data/relatedPages.ts) list it in Next steps,
 // unless their own links or sources already include it.
@@ -300,104 +293,16 @@ export const agentSandboxPages: AgenticContentPage[] = withRelatedLinks([
 	},
 ]);
 
-// Search snippets stay within 160 characters; long service and variable names drop the last clause.
-const serviceTestingDescription = (name: string, envName: string) => {
-	const full = `Let AI agents test ${name} code locally with LocalCloud: set ${envName}, use standard SDKs, and know what to validate in Google Cloud.`;
-	return full.length <= 160
-		? full
-		: `Let AI agents test ${name} code locally with LocalCloud: set ${envName} and use standard SDKs.`;
-};
-
-const servicePage = (
-	slug: string,
-	promptId: string,
-	extra: Partial<AgenticContentPage> = {},
-): AgenticContentPage => {
-	const service = serviceBySlug(slug);
-	return {
-		kind: "service",
-		slug,
-		path: agentTestingPath(slug),
-		parentLabel: service.name,
-		parentPath: `/services/${slug}/`,
-		eyebrow: `${service.name} agent testing`,
-		// Matches the H1; parenthetical variants such as "(Redis/Valkey)" stay out of the search title.
-		title: `${service.name.replace(/\s*\(.*\)$/, "")} Local Testing for AI Agents`,
-		description: serviceTestingDescription(service.name, service.envVar.split("=")[0]),
-		h1: `${service.name} local testing for AI agents`,
-		deck: `Use LocalCloud when an agent needs to create, exercise, and reset ${service.name} resources without touching a real Google Cloud project. The same SDK code points at localhost through ${service.envVar}.`,
-		// Most services use the project-integration prompt, so drop the repeat.
-		promptIds: [...new Set([promptId, "project-integration", "troubleshoot"])],
-		quickFacts: [
-			`Endpoint: ${service.envVar} (${service.endpointLabel}).`,
-			`${service.registryDefaultEnabled ? "Starts by default" : `Opt-in: add ${service.id} to localcloud start --services`}; minimum tier: ${serviceTierLabel(service) ?? service.minTier}.`,
-			`Persistence: ${service.persistence.scope}. ${sentence(service.persistence.restartBehavior)}`,
-		],
-		sections: [
-			{
-				kicker: "Agent quickstart",
-				title: "Route the SDK before writing code",
-				body: `Start LocalCloud, export ${service.envVar}, and make the agent perform one ${service.name} operation before changing application logic. That catches accidental production routing early.`,
-			},
-			{
-				kicker: "Validation example",
-				title: "Prefer one representative behavior over broad smoke tests",
-				body: `A useful agent check creates local ${service.name} state, reads it back with the project SDK, and records which feature was covered. It should not require a GCP account, service-account key, or billing project.`,
-			},
-			{
-				kicker: "State setup",
-				title: "Use only documented setup paths",
-				body:
-					"Create deterministic state through a contract-documented seed registrar or through an operation listed on this page. Do not assume every service supports seed data, reset, or persistent state.",
-			},
-			...(extra.sections ?? []),
-		],
-		snippets: [
-			{
-				label: "Environment",
-				language: "bash",
-				code: `${agenticFacts.envExportCommand}\n# Verify that the generated environment includes ${service.envVar.split("=")[0]}; do not replace a CLI-remapped value with a hard-coded port.`,
-			},
-			...(extra.snippets ?? []),
-		],
-		table: {
-			columns: ["Area", "LocalCloud local check", "Real GCP still needed for"],
-			rows: [
-				[
-					"SDK routing",
-					`${service.envVar} points clients at localhost.`,
-					"Production endpoint, auth, IAM, quota, and regional behavior.",
-				],
-				[
-					"Supported features",
-					joinClauses(service.supported),
-					service.gaps.length
-						? joinClauses(service.gaps)
-						: "Production scale, SLAs, and managed control-plane behavior.",
-				],
-				[
-					"Agent safety",
-					"No default cloud account, credentials, or billing project required.",
-					"Final release validation in the target GCP project.",
-				],
-			],
-		},
-		limitations: [...(extra.limitations ?? [])],
-		internalLinks: [
-			relatedLink(`/services/${slug}/`),
-			...localTestingLinks,
-		],
-		sources: [
-			{
-				label: "LocalCloud service metadata",
-				href: `/services/${slug}/`,
-				note: `Reviewed ${agenticFacts.evidence.reviewedAt}; implementation ${service.implementation}.`,
-			},
-			...(extra.sources ?? []),
-		],
-		reviewedAt: agenticFacts.evidence.reviewedAt,
-	};
-};
+// The "Use with an AI agent" section of each /services/<slug>/ page. It replaced the
+// /services/<slug>/ai-agent-local-testing/ pages (plan R7, S30 and A12) and keeps what they
+// added to the service page: a prompt to copy, one validation check, and what the local run
+// leaves for Google Cloud.
+export interface ServiceAgentSection {
+	slug: string;
+	prompt: AgentPrompt;
+	validation: string;
+	boundary: string;
+}
 
 const promptForService = (slug: string) => {
 	if (slug === "bigquery") return "bigquery";
@@ -406,9 +311,18 @@ const promptForService = (slug: string) => {
 	return "project-integration";
 };
 
-export const serviceTestingPages: AgenticContentPage[] = withRelatedLinks(agenticServiceMetadata
+export const serviceAgentSections: ServiceAgentSection[] = agenticServiceMetadata
 	.filter((service) => ["supported", "partial", "release-unverified"].includes(service.status))
-	.map((service) => servicePage(service.slug, promptForService(service.slug))));
+	.map((service) => {
+		const prompt = agentPromptLibrary.find((item) => item.id === promptForService(service.slug));
+		if (!prompt) throw new Error(`Missing agent prompt for ${service.slug}`);
+		return {
+			slug: service.slug,
+			prompt,
+			validation: `Before the agent changes application logic, have it create local ${service.name} state, read it back with the project SDK, and note which feature the check covered. That first local call catches accidental production routing and needs no GCP account, service-account key, or billing project.`,
+			boundary: "Production endpoints, auth, IAM, quotas, regional behavior, and final release validation still need the target Google Cloud project.",
+		};
+	});
 
 // The site's one GitHub Actions recipe, on /workflows/github-actions-gcp-emulator/ and
 // /gcp-integration-testing/.
@@ -874,8 +788,7 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 			"Unsupported areas include BQML, AEAD encryption functions, security policy enforcement, and full GEOGRAPHY parity.",
 		],
 		internalLinks: [
-			relatedLink(agentTestingPath("bigquery"), "Agent quickstart and caveats."),
-			relatedLink("/services/bigquery/"),
+			relatedLink("/services/bigquery/", "Setup, documented workflows, and a prompt for AI agents."),
 		],
 		sources: [
 			relatedLink("/docs/bigquery-emulator-features/", "LocalCloud tested coverage."),
@@ -1368,7 +1281,7 @@ export const blogDemoPages: AgenticContentPage[] = withRelatedLinks([
 			"LocalCloud BigQuery does not cover BQML, AEAD encryption functions, security policy enforcement, or full GEOGRAPHY parity.",
 		],
 		internalLinks: [
-			relatedLink(agentTestingPath("bigquery"), "SDK/env quickstart and compatibility table."),
+			relatedLink("/services/bigquery/", "SDK setup, documented workflows, and an agent prompt."),
 			relatedLink("/compare/bigquery-emulator-alternatives/", "Standalone and real BigQuery tradeoffs."),
 		],
 		sources: [
@@ -1430,8 +1343,7 @@ export const blogDemoPages: AgenticContentPage[] = withRelatedLinks([
 			"Dataproc local containers provide component-level compatibility (Spark, Hadoop, Hive), not GCP Dataproc control plane APIs.",
 		],
 		internalLinks: [
-			relatedLink(agentTestingPath("dataproc"), "Local testing guide for Dataproc jobs."),
-			relatedLink("/services/dataproc/", "Supported Dataproc operations and limitations."),
+			relatedLink("/services/dataproc/", "Supported Dataproc operations, limitations, and an agent prompt."),
 		],
 		sources: [
 			{

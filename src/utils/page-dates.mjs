@@ -17,9 +17,8 @@ const agenticPage = ['src/data/agenticContent.ts', 'src/components/AgenticConten
 const agenticIndex = ['src/data/agenticContent.ts', 'src/components/AgenticIndexPage.astro'];
 const contentSources = {
   'src/pages/index.astro': ['src/components/HomepageVariationFieldManual.astro', 'src/data/homepageFaq.ts'],
-  'src/pages/services/[slug].astro': ['src/data/serviceGuides.ts', 'src/data/serviceEditorial.ts'],
+  'src/pages/services/[slug].astro': ['src/data/serviceGuides.ts', 'src/data/serviceEditorial.ts', 'src/data/agenticContent.ts'],
   'src/pages/services/index.astro': ['src/data/serviceEditorial.ts'],
-  'src/pages/services/[slug]/ai-agent-local-testing.astro': agenticPage,
   'src/pages/agents/[slug].astro': agenticPage,
   'src/pages/blog/[slug].astro': agenticPage,
   'src/pages/compare/[slug].astro': agenticPage,
