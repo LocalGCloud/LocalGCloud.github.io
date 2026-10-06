@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Spanner Emulator Features
-description: Spanner dialects, endpoints, persistence, and operation-specific limitations with explicit release qualification.
+description: Spanner dialects, endpoints, persistence, and operation-specific limitations.
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -14,7 +14,7 @@ export const spanner = getDocumentationService('spanner');
 LocalCloud integrates an extended Cloud Spanner emulator. GoogleSQL and PostgreSQL dialects run through the Spanner API; dialect support does not imply complete SQL, transaction, graph, search, authorization, backup, or change-stream parity.
 
 <Callout type="warning" title="Use the operation boundaries">
-The table below retains the runtime's recorded operation boundaries and limitations. Standalone dependency features and tests do not qualify the assembled LocalCloud image. Validate the exact client, operation, dialect, and image used by the application.
+The table below retains the runtime's recorded operation boundaries and limitations. Standalone dependency tests don't cover the LocalCloud image. Validate the exact client, operation, dialect, and image used by the application.
 </Callout>
 
 ## Connections and persistence
@@ -24,7 +24,7 @@ The table below retains the runtime's recorded operation boundaries and limitati
 | gRPC API | `SPANNER_EMULATOR_HOST=localhost:5386` | Use generated host ports and test the selected SDK/version. |
 | REST gateway | `http://localhost:5387` | REST / grpc-gateway, not PostgreSQL wire. |
 | PostgreSQL dialect | Queries through the Spanner API | LocalCloud does not package PGAdapter; `psql` and pgJDBC need a separately configured adapter. |
-| State | LevelDB rows and JSON metadata under `/var/lib/localcloud/spanner-data` | Mounted storage is required for retained state; inspect recovery qualifications below. |
+| State | LevelDB rows and JSON metadata under `/var/lib/localcloud/spanner-data` | Mounted storage is required for retained state; see the recovery limits below. |
 
 Use `localcloud env` for the actual mapped endpoints. Provision the instance, database, and schema before querying; a code example that refers to an uncreated database is not a complete quick start.
 

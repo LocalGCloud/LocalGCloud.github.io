@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { presentContract } from "../src/utils/contract-presentation.mjs";
 import { cliQuickStart } from "../src/utils/quickstart.mjs";
 
 const root = new URL("../", import.meta.url);
@@ -7,7 +8,8 @@ const write = (path, content) => writeFile(new URL(path, root), content);
 
 let contract;
 try {
-	contract = JSON.parse(await read("src/data/docs-contract.snapshot.json"));
+	// The same reader copy the pages get: QA-ledger prose is rewritten before use.
+	contract = presentContract(JSON.parse(await read("src/data/docs-contract.snapshot.json")));
 } catch (error) {
 	throw new Error("Distributed docs contract is invalid JSON", {
 		cause: error,

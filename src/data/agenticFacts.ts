@@ -1,6 +1,7 @@
 import { cliQuickStart, dockerQuickStart } from "../utils/quickstart.mjs";
 import { docsContract } from "./docs-contract";
 import { productFacts } from "./productFacts";
+import { serviceCompatibilityEditorial } from "./serviceEditorial";
 import { services, type Service } from "./services";
 
 export interface EvidenceRecord {
@@ -121,12 +122,16 @@ export const joinClauses = (items: readonly string[]) =>
 		.filter(Boolean)
 		.join("; ");
 
+// Agent pages describe each service with the same curated capability and boundary
+// lists as /compatibility/ and the service guide, not the raw operation ledger.
 export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 	(service) => {
 		const status =
 			service.catalogState === "coming-soon"
 				? "planned"
 				: agenticStatusByEvidence[service.status];
+		const editorial = serviceCompatibilityEditorial[service.id];
+		if (!editorial) throw new Error(`Missing compatibility editorial for ${service.id}`);
 
 		return {
 			id: service.id,
@@ -146,41 +151,23 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
 			supported:
 				service.catalogState === "coming-soon"
 					? []
-					: service.operations
-							.filter(
-								(operation) =>
-									operation.status !== "unsupported" && operation.status !== "unknown",
-							)
-							.map(
-								(operation) =>
-									`${operation.label}${operation.limitations.length ? ` — ${operation.limitations.join(" ")}` : ""}`,
-							),
+					: editorial.capabilities.map((capability) => capability.summary),
 			gaps:
 				service.catalogState === "coming-soon"
 					? ["LocalCloud does not run this service locally."]
-					: [
-							...service.notSupported,
-							...service.operations
-								.filter(
-									(operation) =>
-										operation.status === "unsupported" || operation.status === "unknown",
-								)
-								.map((operation) => `${operation.label}: ${operation.status}`),
-						],
+					: [...editorial.boundaries],
 			registryDefaultEnabled: service.registryDefaultEnabled,
 			assembledDefaultEnabled: service.assembledDefaultEnabled,
 			defaultQualification: service.defaultQualification,
 			minTier: service.minTier,
 			persistence: service.persistence,
 			caveat:
-				service.catalogState === "coming-soon"
-					? "Unsupported: LocalCloud does not run this service locally; do not configure a local endpoint."
-					: service.status === "unsupported" || service.status === "unknown"
-						? "Unsupported: no supported application integration is established. Review the service guide before configuring clients."
+				service.catalogState === "coming-soon" || service.status === "unsupported" || service.status === "unknown"
+					? "Not available locally. Use Google Cloud for this service."
 					: !service.registryDefaultEnabled
-						? `Supported locally; disabled by default to save resources. Enable it by listing ${service.id} in localcloud start --services, which sets the exact services to run.`
-					: service.notSupported.length
-						? `Documented local workflows with these boundaries: ${joinClauses(service.notSupported.slice(0, 2))}.`
+						? `Opt-in to save memory: add ${service.id} to localcloud start --services, which sets the exact list of services to run.`
+					: editorial.boundaries.length
+						? `Documented local workflows with these boundaries: ${joinClauses(editorial.boundaries.slice(0, 2))}.`
 						: "Supported for local workflows; validate production behavior against real Google Cloud.",
 		};
 	},

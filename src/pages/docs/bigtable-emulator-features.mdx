@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: Bigtable Emulator Features
-description: Current Bigtable operation contracts, PostgreSQL persistence, SQL boundaries, and release qualification.
+description: Current Bigtable operation contracts, PostgreSQL persistence, and SQL boundaries.
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -11,10 +11,10 @@ export const bigtable = getDocumentationService('bigtable');
 
 # Bigtable emulator feature reference
 
-LocalCloud runs a separately maintained Bigtable emulator for row and administration APIs. The current Docker build pins a source commit. Historical cached-artifact observations do not establish support in the current assembled image.
+LocalCloud runs a separately maintained Bigtable emulator for row and administration APIs. The current Docker build pins a source commit.
 
-<Callout type="warning" title="Operation and image qualification">
-The runtime contract records each operation's concrete boundaries. The mutable LocalCloud image tag remains release-unverified. Confirm the packaged dependency identity and test the exact row, administration, and recovery paths you need.
+<Callout type="warning" title="Test the paths you need">
+The runtime contract records each operation's concrete boundaries. The `latest` image tag is mutable; confirm the packaged dependency version and test the exact row, administration, and recovery paths you need.
 </Callout>
 
 ## Connection and persistence
@@ -46,4 +46,4 @@ The runtime contract records each operation's concrete boundaries. The mutable L
   {bigtable.persistence.recoveryLimitations.map((limitation) => <li>{limitation}</li>)}
 </ul>
 
-Metadata-only backup, view, or IAM operations do not prove data restoration, query execution, or authorization enforcement. Assert exact row bytes through the application data client and qualify required connector behavior separately. Validate production-managed behavior in Google Cloud.
+Metadata-only backup, view, or IAM operations do not prove data restoration, query execution, or authorization enforcement. Assert exact row bytes through the application data client and test required connector behavior separately. Validate production-managed behavior in Google Cloud.

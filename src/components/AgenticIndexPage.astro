@@ -1,7 +1,6 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
-import { intentRouteMap } from '../data/agenticContent';
 import type { AgenticContentPage } from '../data/agenticContent';
 
 interface Props {
@@ -11,10 +10,11 @@ interface Props {
   eyebrow: string;
   deck: string;
   pages: AgenticContentPage[];
-  showIntentMap?: boolean;
+  // Names what the list holds, for example "Comparisons" or "Terms".
+  listHeading: string;
 }
 
-const { title, description, h1, eyebrow, deck, pages, showIntentMap = false } = Astro.props;
+const { title, description, h1, eyebrow, deck, pages, listHeading } = Astro.props;
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const localHref = (href: string) => href.startsWith('http') ? href : `${base}${href.replace(/^\//, '')}`;
@@ -37,45 +37,23 @@ const structuredData = [createBreadcrumbSchema([{ name: 'Home', url: productFact
     </div>
   </section>
 
-  {showIntentMap && (
-    <section class="site-section site-section--tight">
-      <div class="container">
-        <div class="reveal">
-          <span class="site-kicker">Intent-to-route map</span>
-          <h2 class="mt-3">Choose the canonical page, avoid thin variants</h2>
-        </div>
-        <div class="mt-8 grid gap-4 lg:grid-cols-2">
-          {intentRouteMap.map((item) => (
-            <article class="site-panel min-w-0 p-6 reveal [overflow-wrap:anywhere]">
-              <span class="site-kicker">{item.cluster}</span>
-              <h3 class="mt-3 text-xl">{item.intent}</h3>
-              <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Audience: {item.audience}</p>
-              <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Canonical route: <code>{item.route}</code></p>
-              <ul class="site-list mt-4">
-                {item.rejectVariants.map((variant) => <li>{variant}</li>)}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <span class="site-kicker">Published routes</span>
-        <h2 class="mt-3">Indexable pages with caveats</h2>
+        <h2>{listHeading}</h2>
       </div>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {pages.map((page) => (
           <article class="site-panel min-w-0 p-6 reveal [overflow-wrap:anywhere]">
             <span class="site-kicker">{page.eyebrow}</span>
             <h3 class="mt-3 text-xl"><a href={localHref(page.path)}>{page.h1}</a></h3>
-            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{page.description}</p>
-            <ul class="site-list mt-4">
-              {page.quickFacts.slice(0, 2).map((fact) => <li>{fact}</li>)}
-            </ul>
+            {/* A glossary card shows the definition itself. */}
+            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{page.kind === 'glossary' ? page.deck : page.description}</p>
+            {page.quickFacts.length > 0 && (
+              <ul class="site-list mt-4">
+                {page.quickFacts.slice(0, 2).map((fact) => <li>{fact}</li>)}
+              </ul>
+            )}
           </article>
         ))}
       </div>

@@ -2,6 +2,7 @@
 import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from './ServiceIcon.astro';
 import { getServiceSignalLabel, isServiceDisabledByDefault, services } from '../data/services';
+import { serviceCompatibilityEditorial } from '../data/serviceEditorial';
 import {
   createBreadcrumbSchema,
   createSoftwareApplicationSchema,
@@ -19,8 +20,11 @@ const isUnsupported = service.status === 'unsupported' || service.status === 'un
 const documentedOperations = isComingSoon
   ? []
   : service.operations.filter((operation) => operation.status !== 'unsupported' && operation.status !== 'unknown');
-const operationBoundaries = documentedOperations.filter((operation) => operation.limitations.length > 0);
-const unavailableOperations = service.operations.filter((operation) => operation.status === 'unsupported' || operation.status === 'unknown');
+// The same curated boundaries as /compatibility/ and the service guide; the operation
+// ledger stays on the service guide and the /docs/ feature references.
+const compatibility = serviceCompatibilityEditorial[service.id];
+if (!compatibility) throw new Error(`Missing compatibility editorial for ${service.id}`);
+const featureReference = ['bigquery', 'spanner', 'bigtable'].includes(service.slug) ? `${base}docs/${service.slug}-emulator-features/` : undefined;
 // Labels contain commas, so a mid-sentence list joins them with semicolons and lowercases
 // a leading capitalized word ("Native SQL" -> "native SQL"); acronyms and names keep their case.
 const properNouns = new Set(['Google', 'Redis', 'Valkey', 'Docker', 'Terraform', 'Spark']);
@@ -106,14 +110,9 @@ const structuredData = [
       <article class="site-panel site-panel--soft p-6 lg:col-span-2">
         <h2>Service boundaries</h2>
         <ul class="site-list mt-5">
-          {service.notSupported.map((item) => <li><span>{item}</span></li>)}
-          {operationBoundaries.map((operation) => <li><span><strong>{operation.label}</strong>: {operation.limitations.join(' ')}</span></li>)}
-          {unavailableOperations.map((operation) => (
-            <li><span><strong>{operation.label}</strong>: {operation.status === 'unsupported' ? 'Not supported locally.' : 'Local support is not documented.'}{operation.limitations.length ? ` ${operation.limitations.join(' ')}` : ''}</span></li>
-          ))}
-          <li><span>{service.persistence.restartBehavior}</span></li>
-          {service.persistence.recoveryLimitations.map((item) => <li><span>{item}</span></li>)}
+          {compatibility.boundaries.map((item) => <li><span>{item}</span></li>)}
         </ul>
+        <p class="mt-5 text-sm leading-7 text-[var(--text-2)]">The <a href={`${base}services/${service.slug}/`}>service guide</a> lists every documented workflow{featureReference ? <>, and the <a href={featureReference}>feature reference</a> covers each operation and recovery behavior in detail</> : ''}.</p>
       </article>
     </div></section>
   )}

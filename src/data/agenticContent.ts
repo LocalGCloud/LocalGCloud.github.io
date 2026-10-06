@@ -10,14 +10,6 @@ export type AgenticContentKind =
 	| "glossary"
 	| "blog";
 
-export interface IntentRoute {
-	intent: string;
-	route: string;
-	cluster: string;
-	audience: string;
-	rejectVariants: string[];
-}
-
 export interface ContentLink {
 	label: string;
 	href: string;
@@ -27,7 +19,7 @@ export interface ContentLink {
 export interface ContentSection {
 	kicker: string;
 	title: string;
-	body: string;
+	body?: string;
 	items?: string[];
 }
 
@@ -58,81 +50,13 @@ export interface AgenticContentPage {
 	sections: ContentSection[];
 	snippets?: ContentSnippet[];
 	table?: ContentTable;
+	// Page-specific limits only; the template adds the shared license and production sentence.
 	limitations: string[];
+	// Page-specific next steps only.
 	internalLinks: ContentLink[];
 	sources?: ContentLink[];
 	reviewedAt?: string;
 }
-
-export const intentRouteMap: IntentRoute[] = [
-	{
-		intent: "Agent wants a safe GCP sandbox for a specific coding surface.",
-		route: "/agents/",
-		cluster: "Agent sandbox",
-		audience:
-			"Developers using Claude Code, Codex-style CLIs, Cursor, or Gemini CLI.",
-		rejectVariants: [
-			"Do not create one-page-per-prompt variants.",
-			"Do not duplicate the generic /ai/ onboarding page.",
-		],
-	},
-	{
-		intent: "Agent needs to test one GCP service locally with SDKs and env vars.",
-		route: "/services/{service}/ai-agent-local-testing/",
-		cluster: "Service local testing",
-		audience:
-			"Agents and maintainers validating BigQuery, Pub/Sub, Spanner, Cloud Storage, or Bigtable code.",
-		rejectVariants: [
-			"Do not split by programming language unless examples become materially different.",
-			"Do not claim production parity.",
-		],
-	},
-	{
-		intent:
-			"An individual evaluator wants a repeatable local workflow for Terraform or integration tests; CI use requires a separate license grant.",
-		route: "/workflows/{workflow}/",
-		cluster: "Workflow",
-		audience:
-			"Platform, DevOps, and test owners wiring LocalCloud into automation.",
-		rejectVariants: [
-			"Do not publish separate pages for every CI vendor until the snippets diverge.",
-			"Do not imply real GCP validation is optional before production.",
-		],
-	},
-	{
-		intent:
-			"Buyer or agent compares LocalCloud with another local or hosted sandbox option.",
-		route: "/compare/{alternative}/",
-		cluster: "Comparison",
-		audience:
-			"Developers choosing between Google emulators, hosted code sandboxes, and BigQuery emulator options.",
-		rejectVariants: [
-			"Do not publish attack pages.",
-			"Do not hide where the alternative is better.",
-		],
-	},
-	{
-		intent:
-			"Researcher needs a precise definition for agentic local-cloud vocabulary.",
-		route: "/glossary/{term}/",
-		cluster: "Glossary",
-		audience: "Searchers, agents, and docs readers resolving terminology.",
-		rejectVariants: [
-			"Do not create near-synonym pages with the same definition.",
-			"Do not turn glossary entries into product landing pages.",
-		],
-	},
-	{
-		intent: "Reader wants a narrative demo or launch explanation.",
-		route: "/blog/{post}/",
-		cluster: "Blog and demo",
-		audience: "Developers evaluating practical agent workflows.",
-		rejectVariants: [
-			"Do not publish posts without commands, caveats, and internal next steps.",
-			"Do not repeat service pages without a story.",
-		],
-	},
-];
 
 const serviceBySlug = (slug: string) => {
 	const service = agenticServiceMetadata.find((item) => item.slug === slug);
@@ -140,17 +64,8 @@ const serviceBySlug = (slug: string) => {
 	return service;
 };
 
-const serviceLinks: ContentLink[] = [
-	{
-		label: "Compatibility matrix",
-		href: "/compatibility/",
-		note: "Check current support boundaries before relying on a local-only test.",
-	},
-	{
-		label: "Service catalog",
-		href: "/services/",
-		note: "Review every LocalCloud service, endpoint, and limitation.",
-	},
+// Next steps for pages about running agent-written code locally.
+const localTestingLinks: ContentLink[] = [
 	{
 		label: "SDK examples",
 		href: "/docs/sdk-examples/",
@@ -163,11 +78,7 @@ const serviceLinks: ContentLink[] = [
 	},
 ];
 
-const standardLimitations = [
-	agenticFacts.noCredentialBoundary,
-	agenticFacts.productionBoundary,
-	agenticFacts.releaseGuardrail,
-];
+const sentence = (text: string) => (/[.!?]$/.test(text) ? text : `${text}.`);
 
 // Install the CLI first; the Docker-only path exports its environment over HTTP.
 const quickStartSnippets: ContentSnippet[] = [
@@ -227,7 +138,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 			"Claude Code is not a hosted isolation boundary by itself; LocalCloud isolates Google Cloud side effects, not arbitrary shell commands.",
 			"If a test needs IAM, quota, latency, managed networking, or production-specific behavior, keep a real Google Cloud validation step.",
 		],
-		internalLinks: serviceLinks,
+		internalLinks: localTestingLinks,
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
 	{
@@ -275,7 +186,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 			"CLI installation, sandboxing, and approval behavior varies by Codex-compatible client.",
 			"LocalCloud validates local API and SDK behavior; release candidates still need real Google Cloud validation.",
 		],
-		internalLinks: serviceLinks,
+		internalLinks: localTestingLinks,
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
 	{
@@ -323,7 +234,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 			"Cursor-specific background agent environments can differ from the visible terminal.",
 			"Do not store fake local env vars in files that production jobs source without safeguards.",
 		],
-		internalLinks: serviceLinks,
+		internalLinks: localTestingLinks,
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
 	{
@@ -371,7 +282,7 @@ export const agentSandboxPages: AgenticContentPage[] = [
 			"Gemini CLI distributions and approval models change; verify current client docs before publishing client-specific install claims.",
 			"Local emulation does not replace final production validation against real Google Cloud.",
 		],
-		internalLinks: serviceLinks,
+		internalLinks: localTestingLinks,
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
 ];
@@ -392,14 +303,13 @@ const servicePage = (
 		title: `${service.name} Agent Local Testing with LocalCloud`,
 		description: `Test ${service.name} code locally with AI agents using LocalCloud, ${service.envVar}, standard SDKs, compatibility caveats, and real-GCP validation boundaries.`,
 		h1: `${service.name} local testing for AI agents`,
-		deck: `Use LocalCloud when an agent needs to create, exercise, and reset ${service.name} resources without touching a real Google Cloud project. The same SDK shape points at localhost through ${service.envVar}.`,
-		promptIds: [promptId, "project-integration", "troubleshoot"],
+		deck: `Use LocalCloud when an agent needs to create, exercise, and reset ${service.name} resources without touching a real Google Cloud project. The same SDK code points at localhost through ${service.envVar}.`,
+		// Most services use the project-integration prompt, so drop the repeat.
+		promptIds: [...new Set([promptId, "project-integration", "troubleshoot"])],
 		quickFacts: [
-			`Endpoint: ${service.envVar}.`,
-			`Endpoints: ${service.endpointLabel}.`,
-			`Evidence state: ${service.status}; ${service.caveat}`,
-			`Registry default: ${service.registryDefaultEnabled ? "on" : "off"}; assembled default: ${service.assembledDefaultEnabled ? "on" : "off"} (${service.defaultQualification}); minimum tier: ${service.minTier}.`,
-			`Persistence: ${service.persistence.scope} (${service.persistence.qualification}). ${service.persistence.restartBehavior}`,
+			`Endpoint: ${service.envVar} (${service.endpointLabel}).`,
+			`${service.registryDefaultEnabled ? "Starts by default" : `Opt-in: add ${service.id} to localcloud start --services`}; minimum tier: ${service.minTier}.`,
+			`Persistence: ${service.persistence.scope}. ${sentence(service.persistence.restartBehavior)}`,
 		],
 		sections: [
 			{
@@ -450,18 +360,14 @@ const servicePage = (
 				],
 			],
 		},
-		limitations: [
-			...standardLimitations,
-			service.caveat,
-			...(extra.limitations ?? []),
-		],
+		limitations: [...(extra.limitations ?? [])],
 		internalLinks: [
 			{
 				label: `${service.name} service page`,
 				href: `/services/${slug}/`,
-				note: "Service-specific supported and unsupported capability list.",
+				note: "Local workflows, boundaries, and SDK examples for this service.",
 			},
-			...serviceLinks,
+			...localTestingLinks,
 		],
 		sources: [
 			{
@@ -484,16 +390,7 @@ const promptForService = (slug: string) => {
 
 export const serviceTestingPages: AgenticContentPage[] = agenticServiceMetadata
 	.filter((service) => ["supported", "partial", "release-unverified"].includes(service.status))
-	.map((service) =>
-		servicePage(service.slug, promptForService(service.slug), {
-			limitations:
-				service.status === "release-unverified"
-					? [
-							"Do not execute a positive dependency-sensitive workflow until the assembled image and dependency revision are qualified together. Review the corrected BigQuery, Bigtable, and Spanner references for feature-specific boundaries.",
-						]
-					: [],
-		}),
-	);
+	.map((service) => servicePage(service.slug, promptForService(service.slug)));
 
 const githubActionsSnippet = [
 	"name: localcloud-integration-tests",
@@ -533,7 +430,7 @@ export const workflowPages: AgenticContentPage[] = [
 			"The Public Preview License permits individuals and organizations, including for-profit companies, to run ongoing internal CI without payment or a license key.",
 		promptIds: ["ci", "quickstart"],
 		quickFacts: [
-			"No GCP secrets are required for the bounded local job.",
+			"No GCP secrets are required for the local job.",
 			`Readiness gate: ${agenticFacts.readinessEndpoint}.`,
 			"Keep the workflow non-production and review the proprietary Public Preview License.",
 		],
@@ -558,7 +455,7 @@ export const workflowPages: AgenticContentPage[] = [
 				code: githubActionsSnippet,
 			},
 		],
-		limitations: standardLimitations,
+		limitations: [],
 		internalLinks: [
 			{
 				label: "Terraform docs",
@@ -570,7 +467,6 @@ export const workflowPages: AgenticContentPage[] = [
 				href: "/workflows/integration-tests/",
 				note: "How to structure localhost verification.",
 			},
-			...serviceLinks,
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -598,7 +494,7 @@ export const workflowPages: AgenticContentPage[] = [
 				kicker: "Endpoint export",
 				title: "Generate local provider overrides",
 				body:
-					"Use the LocalCloud Terraform export endpoint to set local service endpoints. Keep those overrides scoped to the personal local shell or eligible automation job.",
+					"Use the LocalCloud Terraform export endpoint to set local service endpoints. Keep those overrides scoped to the local shell or CI job that runs the validation.",
 			},
 			{
 				kicker: "Agent instruction",
@@ -621,7 +517,6 @@ export const workflowPages: AgenticContentPage[] = [
 			},
 		],
 		limitations: [
-			...standardLimitations,
 			"Terraform provider behavior that depends on IAM, org policy, quotas, or regional managed services still needs real Google Cloud validation.",
 		],
 		internalLinks: [
@@ -630,7 +525,6 @@ export const workflowPages: AgenticContentPage[] = [
 				href: "/docs/terraform/",
 				note: "LocalCloud Terraform setup details.",
 			},
-			...serviceLinks,
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -679,7 +573,7 @@ export const workflowPages: AgenticContentPage[] = [
 				].join("\n"),
 			},
 		],
-		limitations: standardLimitations,
+		limitations: [],
 		internalLinks: [
 			{
 				label: "SDK examples",
@@ -691,7 +585,6 @@ export const workflowPages: AgenticContentPage[] = [
 				href: "/docs/seed-data/",
 				note: "Repeatable fixture loading.",
 			},
-			...serviceLinks,
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -742,14 +635,13 @@ export const workflowPages: AgenticContentPage[] = [
 					"for i in $(seq 1 60); do\n  if curl -fsS http://localhost:5380/readiness; then exit 0; fi\n  sleep 2\ndone\nexit 1",
 			},
 		],
-		limitations: standardLimitations,
+		limitations: [],
 		internalLinks: [
 			{
 				label: "GitHub Actions workflow",
 				href: "/workflows/github-actions-gcp-emulator/",
 				note: "Concrete YAML starting point.",
 			},
-			...serviceLinks,
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -772,7 +664,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		promptIds: ["quickstart", "project-integration"],
 		quickFacts: [
 			"Google gcloud emulators include service-specific emulator groups.",
-			`LocalCloud currently lists ${availableServiceCount} documented local integrations in one Docker image; Firestore is disabled by default; review operation-specific qualification boundaries.`,
+			`LocalCloud runs ${availableServiceCount} local services in one Docker image; Firestore is opt-in, and each service documents its local boundaries.`,
 			"Neither path removes the need for real-GCP validation before production.",
 		],
 		sections: [
@@ -805,11 +697,11 @@ export const comparisonPages: AgenticContentPage[] = [
 				[
 					"Best fit",
 					"Single-service fidelity where Google ships an emulator.",
-					"Permitted personal multi-service testing, demos, and agent discovery.",
+					"Multi-service testing, demos, and agent discovery. Individuals and companies can use it free of charge for non-production work during the public preview.",
 				],
 			],
 		},
-		limitations: standardLimitations,
+		limitations: [],
 		internalLinks: [
 			{
 				label: "Google emulator overview",
@@ -848,7 +740,7 @@ export const comparisonPages: AgenticContentPage[] = [
 			"Compare LocalCloud with hosted code sandboxes such as E2B and Vercel Sandbox for agent workflows, including where each alternative is better.",
 		h1: "LocalCloud vs hosted agent sandboxes",
 		deck:
-			"E2B and Vercel Sandbox isolate arbitrary code execution for agents. LocalCloud replaces Google Cloud API calls with localhost emulators for personal workflows permitted by its license. The products address different boundaries.",
+			"E2B and Vercel Sandbox isolate arbitrary code execution for agents. LocalCloud replaces Google Cloud API calls with localhost emulators for the non-production work its license permits. The products address different boundaries.",
 		promptIds: ["quickstart", "project-integration"],
 		quickFacts: [
 			"E2B and Vercel focus on isolated code execution environments.",
@@ -891,7 +783,6 @@ export const comparisonPages: AgenticContentPage[] = [
 		},
 		limitations: [
 			"LocalCloud does not replace a hosted code-execution sandbox for untrusted shell workloads.",
-			...standardLimitations,
 		],
 		internalLinks: [
 			{
@@ -899,7 +790,6 @@ export const comparisonPages: AgenticContentPage[] = [
 				href: "/agents/",
 				note: "Use LocalCloud with terminal and IDE agents.",
 			},
-			...serviceLinks,
 		],
 		sources: [
 			{
@@ -960,8 +850,8 @@ export const comparisonPages: AgenticContentPage[] = [
 			rows: [
 				[
 					"LocalCloud BigQuery",
-					"Permitted personal multi-service local GCP workflows.",
-					"Partial coverage; validate release behavior in real BigQuery.",
+					"Multi-service local Google Cloud workflows, free of charge for individuals and companies during the public preview.",
+					"Coverage is documented feature by feature; validate release behavior in real BigQuery.",
 				],
 				[
 					"Standalone bigquery-emulator",
@@ -990,7 +880,6 @@ export const comparisonPages: AgenticContentPage[] = [
 				href: "/bigquery-emulator/",
 				note: "Product detail page.",
 			},
-			...serviceLinks,
 		],
 		sources: [
 			{
@@ -1022,7 +911,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		promptIds: ["quickstart", "project-integration"],
 		quickFacts: [
 			"LocalStack targets AWS service APIs; LocalCloud targets Google Cloud service APIs.",
-			`LocalCloud currently lists ${availableServiceCount} documented local integration guides in one Docker image.`,
+			`LocalCloud runs ${availableServiceCount} local services in one Docker image.`,
 			"The two are not interchangeable: AWS SDK calls do not reach LocalCloud, and Google Cloud SDK calls do not reach LocalStack.",
 		],
 		sections: [
@@ -1075,7 +964,7 @@ export const comparisonPages: AgenticContentPage[] = [
 				],
 			],
 		},
-		limitations: standardLimitations,
+		limitations: [],
 		internalLinks: [
 			{
 				label: "LocalStack for Google Cloud",
@@ -1123,7 +1012,7 @@ export const comparisonPages: AgenticContentPage[] = [
 		promptIds: ["quickstart", "project-integration"],
 		quickFacts: [
 			"Both projects target the same problem: Google Cloud APIs without a cloud project.",
-			`LocalCloud currently lists ${availableServiceCount} documented local integrations with per-operation compatibility status.`,
+			`LocalCloud runs ${availableServiceCount} local services with per-operation compatibility status.`,
 			"Packaging and licensing differ more than the core idea does; check both against your own constraints.",
 		],
 		sections: [
@@ -1176,7 +1065,7 @@ export const comparisonPages: AgenticContentPage[] = [
 				],
 			],
 		},
-		limitations: standardLimitations,
+		limitations: [],
 		internalLinks: [
 			{
 				label: "Compatibility",
@@ -1226,43 +1115,20 @@ const glossary = (
 	title: `${term} — LocalCloud Glossary`,
 	description: `${term} definition for local Google Cloud, AI agent, and LocalCloud workflows, with examples, caveats, and related resources.`,
 	h1: term,
+	// Reference layout: the definition is the lede, then how the term applies in
+	// LocalCloud, then related pages. No repeated fact cards.
 	deck: definition,
 	promptIds: ["quickstart"],
-	quickFacts: items.length
-		? items
-		: [
-				"Use the term precisely in agent instructions.",
-				"LocalCloud use is governed by a proprietary license with limited individual permitted use.",
-				"Validate authorized production behavior against real Google Cloud.",
-			],
-	sections: [
-		{
-			kicker: "Definition",
-			title: `What ${term} means here`,
-			body: definition,
-			items,
-		},
-		{
-			kicker: "LocalCloud boundary",
-			title: "How to use the term safely",
-			body:
-				"In LocalCloud content, this term should not imply production replacement, legal permission, hidden credentials, or complete cloud parity. It describes a bounded local-development workflow that still needs license review and release validation against real Google Cloud.",
-		},
-	],
-	limitations: standardLimitations,
+	quickFacts: [],
+	sections: items.length ? [{ kicker: "In LocalCloud", title: `${term} with LocalCloud`, items }] : [],
+	limitations: [],
 	internalLinks: [
 		...links,
 		{
-			label: "Agent routes",
+			label: "Agent setup guides",
 			href: "/agents/",
-			note: "Agent sandbox entry points.",
+			note: "Run coding agents against LocalCloud.",
 		},
-		{
-			label: "Compatibility",
-			href: "/compatibility/",
-			note: "Service support boundaries.",
-		},
-		...serviceLinks,
 	],
 	reviewedAt: agenticFacts.evidence.reviewedAt,
 });
@@ -1486,14 +1352,13 @@ export const blogDemoPages: AgenticContentPage[] = [
 					"Claude, use LocalCloud to run a local GCP smoke test for this repository. Do not request GCP credentials. Show the LocalCloud health check, active emulator env vars, and one SDK operation against localhost.",
 			},
 		],
-		limitations: standardLimitations,
+		limitations: [],
 		internalLinks: [
 			{
 				label: "Claude Code sandbox page",
 				href: "/agents/claude-code-gcp-sandbox/",
 				note: "Claude-specific setup and caveats.",
 			},
-			...serviceLinks,
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -1538,14 +1403,13 @@ export const blogDemoPages: AgenticContentPage[] = [
 					"Compare this repository's GCP usage with LocalCloud service coverage and Google official emulator availability. Recommend the smallest local validation path and list real-GCP checks that must remain.",
 			},
 		],
-		limitations: standardLimitations,
+		limitations: [],
 		internalLinks: [
 			{
 				label: "LocalCloud vs Google emulators",
 				href: "/compare/google-emulators/",
 				note: "Detailed comparison and sources.",
 			},
-			...serviceLinks,
 		],
 		sources: [
 			{
@@ -1599,7 +1463,6 @@ export const blogDemoPages: AgenticContentPage[] = [
 		],
 		limitations: [
 			"LocalCloud BigQuery does not cover BQML, AEAD encryption functions, security policy enforcement, or full GEOGRAPHY parity.",
-			...standardLimitations,
 		],
 		internalLinks: [
 			{
@@ -1612,7 +1475,6 @@ export const blogDemoPages: AgenticContentPage[] = [
 				href: "/compare/bigquery-emulator-alternatives/",
 				note: "Standalone and real BigQuery tradeoffs.",
 			},
-			...serviceLinks,
 		],
 		sources: [
 			{
@@ -1675,7 +1537,6 @@ export const blogDemoPages: AgenticContentPage[] = [
 		],
 		limitations: [
 			"Dataproc local containers provide component-level compatibility (Spark, Hadoop, Hive), not GCP Dataproc control plane APIs.",
-			...standardLimitations,
 		],
 		internalLinks: [
 			{
@@ -1688,7 +1549,6 @@ export const blogDemoPages: AgenticContentPage[] = [
 				href: "/services/dataproc/",
 				note: "Supported Dataproc operations and limitations.",
 			},
-			...serviceLinks,
 		],
 		sources: [
 			{

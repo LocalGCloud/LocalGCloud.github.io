@@ -1,4 +1,5 @@
 import snapshot from './docs-contract.snapshot.json' with { type: 'json' };
+import { presentContract } from '../utils/contract-presentation.mjs';
 
 export type EvidenceState = 'verified' | 'partial' | 'release-unverified' | 'unsupported' | 'unknown';
 export type ServiceTier = 'community' | 'pro';
@@ -217,7 +218,10 @@ function loadDocumentationContract(value: unknown): DocumentationContract {
   if (candidate.schemaVersion !== 4 || !Array.isArray(candidate.services)) {
     throw new Error('Documentation contract snapshot has an unsupported schema');
   }
-  return value as DocumentationContract;
+  // Pages read reader copy: the presentation layer rewrites QA-ledger prose (evidence
+  // tags, classification counts, SHAs, "qualification pending" notes) in every field
+  // that renders. The snapshot itself stays byte-identical to upstream.
+  return presentContract(value as DocumentationContract);
 }
 
 // The build verifier performs exhaustive structural and semantic validation.

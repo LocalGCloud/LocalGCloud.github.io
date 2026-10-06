@@ -17,12 +17,12 @@ LocalCloud's current source uses native GoogleSQL analysis and DuckDB execution.
 This page projects the dependency's versioned `docs/coverage-matrix.csv`. The matrix includes canonical and derived records; its total is a count of records, not a count of distinct canonical GoogleSQL capabilities or executed tests.
 
 <Callout type="warning" title="Recorded source coverage">
-These are the dependency's recorded classifications, not independent proof of semantic equivalence or qualification of LocalCloud's mutable assembled image. Unknown records are unassessed. Unsupported records include locally testable feature gaps as well as managed-cloud behavior.
+These counts are the dependency's recorded classifications. Test the features your application depends on with the LocalCloud image you run. Unknown records are unassessed. Unsupported records include local feature gaps as well as managed-cloud behavior.
 </Callout>
 
 ## Matrix summary
 
-<p>Dependency revision: <code>{coverage.revision}</code>. <a href={matrixUrl}>Read the complete matrix and evidence references</a>.</p>
+<p><a href={matrixUrl}>Read the complete matrix and its test references</a>.</p>
 
 <div className="docs-table-scroll" role="region" tabIndex={0} aria-label="BigQuery coverage matrix summary">
 <table>
@@ -35,18 +35,18 @@ These are the dependency's recorded classifications, not independent proof of se
 </table>
 </div>
 
-“Implemented” is a matrix classification tied to its listed implementation and test references. Review those references for the exact feature, input shape, client, and validation tier. “Implemented with limits” rows (the matrix classification <code>partial</code>) work locally within the concrete boundaries recorded below; derived rows can overlap their child features.
+“Implemented” is a matrix classification tied to its listed implementation and test references. Review those references for the exact feature, input shape, client, and validation tier. “Implemented with limits” rows work locally within the concrete boundaries listed below; derived rows can overlap their child features.
 
 ## Capabilities implemented with documented limits
 
-<p>The matrix records {coverage.partialCapabilities.length} development capabilities that work locally within documented limits. This table retains their source notes, including local input gaps and connector qualification limits.</p>
+<p>The matrix records {coverage.partialCapabilities.length} development capabilities that work locally within documented limits. Each row names the capability and the boundary recorded for it.</p>
 
 <div className="docs-table-scroll" role="region" tabIndex={0} aria-label="BigQuery capabilities implemented with documented limits">
 <table>
-  <thead><tr><th>Capability</th><th>Recorded boundary</th><th>Evidence notes</th></tr></thead>
+  <thead><tr><th>Capability</th><th>Recorded boundary</th></tr></thead>
   <tbody>
     {coverage.partialCapabilities.map((capability) => (
-      <tr><td><strong>{capability.name}</strong><br /><code>{capability.id}</code></td><td>{capability.boundary}</td><td>{capability.notes}</td></tr>
+      <tr><td><strong>{capability.name}</strong><br /><code>{capability.id}</code></td><td>{capability.boundary}</td></tr>
     ))}
   </tbody>
 </table>
@@ -56,7 +56,7 @@ These are the dependency's recorded classifications, not independent proof of se
 
 Use the complete matrix to inspect every unsupported or unknown record. These states must not be reduced to cloud scale alone: syntax, model variants, external sources, collation, and individual API methods can have developer-visible gaps. A successful dry run, stored configuration, or metadata operation does not prove execution support.
 
-## Qualification workflow
+## How to check a capability
 
 1. Check the required capability ID and its exact operation and input boundary.
 2. Confirm the dependency identity used by the LocalCloud image; dependency HEAD can differ from a packaged payload.

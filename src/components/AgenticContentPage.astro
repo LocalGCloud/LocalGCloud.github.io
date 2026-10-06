@@ -15,22 +15,24 @@ const { page } = Astro.props;
 const isBlog = page.kind === 'blog';
 const Layout = isBlog ? BlogLayout : LandingLayout;
 const blogMetadata = isBlog ? getBlogMetadata(page) : undefined;
+const prompts = page.promptIds
+  .map((id) => agentPromptLibrary.find((prompt) => prompt.id === id))
+  .filter((prompt) => prompt !== undefined);
+const snippets = page.snippets ?? [];
+const hasCommands = prompts.length > 0 || snippets.length > 0;
+// Reading order: lede, the page's answer, then copyable commands and prompts.
 const contents = [
-  { id: 'agent-prompts', label: 'Agent prompts' },
   ...page.sections.map((section, index) => ({ id: `blog-section-${index}`, label: section.title })),
-  ...(page.snippets?.length ? [{ id: 'commands', label: 'Commands and prompts' }] : []),
+  ...(hasCommands ? [{ id: 'commands', label: 'Commands and prompts' }] : []),
   ...(page.table ? [{ id: 'local-compatibility', label: 'Local compatibility' }] : []),
-  { id: 'validation', label: 'Validation boundaries' },
-  { id: 'next-steps', label: 'Next steps' },
+  { id: 'validation', label: 'Before production' },
+  ...(page.internalLinks.length ? [{ id: 'next-steps', label: 'Next steps' }] : []),
   ...(page.sources?.length ? [{ id: 'sources', label: 'Sources' }] : []),
 ];
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const localHref = (href: string) => href.startsWith('http') ? href : `${base}${href.replace(/^\//, '')}`;
 const pageUrl = new URL(page.path, productFacts.siteUrl).toString();
-const prompts = page.promptIds
-  .map((id) => agentPromptLibrary.find((prompt) => prompt.id === id))
-  .filter(Boolean);
 const structuredData = [
   createSoftwareApplicationSchema(pageUrl, page.description),
   createBreadcrumbSchema([
@@ -44,7 +46,7 @@ const structuredData = [
 <Layout title={`${page.title} — LocalCloud`} description={page.description} {structuredData} {contents}>
   <Fragment slot="hero">
   <section class="site-section site-section--hero">
-    <div class:list={['container grid gap-8', !isBlog && 'xl:grid-cols-[1fr_0.8fr]']}>
+    <div class="container">
       <div class="min-w-0 reveal">
         <nav class="mb-5 flex flex-wrap items-center gap-2 text-sm text-[var(--text-2)]" aria-label="Breadcrumb">
           <a href={localHref(page.parentPath)} class="hover:text-[var(--text)]">{page.parentLabel}</a>
@@ -64,98 +66,88 @@ const structuredData = [
           <a href={localHref('/docs/sdk-examples/')} class={isBlog ? undefined : 'site-button site-button--secondary'}>SDK examples</a>
         </div>
       </div>
-
-      {!isBlog && <aside class="site-panel min-w-0 p-5 reveal sm:p-6">
-        <span class="site-kicker">Agent prompt CTAs</span>
-        <div class="mt-4 space-y-4">
-          {prompts.map((prompt) => prompt && (
-            <article class="rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-4" data-analytics-label={`agentic-copy-${page.slug}-${prompt.id}`}>
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <h2 class="agentic-prompt-title">{prompt.label}</h2>
-                  <p class="mt-1 text-sm leading-6 text-[var(--text-2)]">{prompt.useCase}</p>
-                </div>
-                <CopyButton text={prompt.prompt} analyticsLabel={`agentic-copy-${page.slug}-${prompt.id}`} />
-              </div>
-              <pre class="agentic-prompt-pre mt-3 max-h-44 overflow-auto whitespace-pre-wrap [overflow-wrap:anywhere]"><code>{prompt.prompt}</code></pre>
-            </article>
-          ))}
-        </div>
-      </aside>}
     </div>
   </section>
   </Fragment>
 
-  {isBlog && <section class="site-section" id="agent-prompts">
-    <div class="container">
-      <span class="site-kicker">Try it locally</span>
-      <h2 class="mt-3">Agent prompts</h2>
-      <div class="blog-prompt-list mt-5">
-        {prompts.map((prompt) => prompt && <article class="site-panel" data-analytics-label={`agentic-copy-${page.slug}-${prompt.id}`}>
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0"><h3>{prompt.label}</h3><p class="mt-2 text-sm text-[var(--text-2)]">{prompt.useCase}</p></div>
-            <CopyButton text={prompt.prompt} analyticsLabel={`agentic-copy-${page.slug}-${prompt.id}`} />
-          </div>
-          <pre class="blog-prompt"><code>{prompt.prompt}</code></pre>
-        </article>)}
+  {page.quickFacts.length > 0 && (
+    <section class="site-section site-section--tight">
+      <div class="container">
+        {isBlog ? <aside class="site-panel site-panel--soft p-5">
+          <span class="site-kicker">At a glance</span>
+          <ul class="site-list mt-4">{page.quickFacts.map((fact) => <li>{fact}</li>)}</ul>
+        </aside> : <div class="grid gap-4 sm:grid-cols-3">
+          {page.quickFacts.map((fact) => (
+            <article class="site-panel site-panel--soft min-w-0 break-words p-5 reveal">
+              <span class="site-kicker">Fact</span>
+              <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{fact}</p>
+            </article>
+          ))}
+        </div>}
       </div>
-    </div>
-  </section>}
+    </section>
+  )}
 
-  <section class="site-section site-section--tight">
-    <div class="container">
-      {isBlog ? <aside class="site-panel site-panel--soft p-5">
-        <span class="site-kicker">At a glance</span>
-        <ul class="site-list mt-4">{page.quickFacts.map((fact) => <li>{fact}</li>)}</ul>
-      </aside> : <div class="grid gap-4 sm:grid-cols-3">
-        {page.quickFacts.map((fact) => (
-          <article class="site-panel site-panel--soft min-w-0 break-words p-5 reveal">
-            <span class="site-kicker">Fact</span>
-            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{fact}</p>
-          </article>
-        ))}
-      </div>}
-    </div>
-  </section>
-
-  <section class="site-section">
-    <div class="container">
-      <div class:list={['grid gap-4 lg:grid-cols-2', isBlog && 'blog-sections']}>
-        {page.sections.map((section, index) => (
-          <article class="site-panel min-w-0 break-words p-6 reveal" id={isBlog ? `blog-section-${index}` : undefined}>
-            <span class="site-kicker">{section.kicker}</span>
-            <h2 class="mt-3 text-2xl">{section.title}</h2>
-            <p class="mt-3 leading-7 text-[var(--text-2)]">{section.body}</p>
-            {section.items && (
-              <ul class="site-list mt-4">
-                {section.items.map((item) => <li>{item}</li>)}
-              </ul>
-            )}
-          </article>
-        ))}
+  {page.sections.length > 0 && (
+    <section class="site-section">
+      <div class="container">
+        <div class:list={['grid gap-4', page.sections.length > 1 && 'lg:grid-cols-2', isBlog && 'blog-sections']}>
+          {page.sections.map((section, index) => (
+            <article class="site-panel min-w-0 break-words p-6 reveal" id={isBlog ? `blog-section-${index}` : undefined}>
+              <span class="site-kicker">{section.kicker}</span>
+              <h2 class="mt-3 text-2xl">{section.title}</h2>
+              {section.body && <p class="mt-3 leading-7 text-[var(--text-2)]">{section.body}</p>}
+              {section.items && (
+                <ul class="site-list mt-4">
+                  {section.items.map((item) => <li>{item}</li>)}
+                </ul>
+              )}
+            </article>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
-  {page.snippets && page.snippets.length > 0 && (
+  {hasCommands && (
     <section class="site-section">
       <div class="container">
         <div class="reveal">
           <span class="site-kicker">Copy-ready setup</span>
           <h2 class="mt-3" id={isBlog ? 'commands' : undefined}>Commands and prompts</h2>
-          <p class="mt-3 max-w-[44rem] leading-7 text-[var(--text-2)]">Use these snippets as starting points, then keep the checks scoped to localhost until you intentionally validate against real Google Cloud.</p>
         </div>
-        <div class:list={['mt-8 grid gap-6 lg:grid-cols-2', isBlog && 'blog-snippets']}>
-          {page.snippets.map((snippet) => (
-            <article class="site-panel min-w-0 overflow-hidden reveal" data-analytics-label={`agentic-copy-snippet-${page.slug}-${snippet.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
-              <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-3">
-                <span class="site-kicker">{snippet.label}</span>
-                <CopyButton text={snippet.code} analyticsLabel={`agentic-copy-snippet-${page.slug}-${snippet.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} />
-              </div>
-              <pre class:list={['border-0 bg-[var(--surface-2)]', isBlog && snippet.language === 'text' && 'blog-prompt']}><code class="block whitespace-pre-wrap px-4 pb-4">{snippet.code}</code></pre>
-            </article>
-          ))}
-        </div>
+        {prompts.length > 0 && (
+          <div class="mt-8">
+            <h3 class="site-kicker">Copy a prompt for your coding agent</h3>
+            <div class:list={['mt-4', isBlog ? 'blog-prompt-list' : 'grid gap-4 lg:grid-cols-2']}>
+              {prompts.map((prompt) => (
+                <article class:list={['site-panel min-w-0', !isBlog && 'p-5 reveal']} data-analytics-label={`agentic-copy-${page.slug}-${prompt.id}`}>
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <h4 class="agentic-prompt-title">{prompt.label}</h4>
+                      <p class="mt-1 text-sm leading-6 text-[var(--text-2)]">{prompt.useCase}</p>
+                    </div>
+                    <CopyButton text={prompt.prompt} analyticsLabel={`agentic-copy-${page.slug}-${prompt.id}`} />
+                  </div>
+                  <pre class:list={[isBlog ? 'blog-prompt' : 'agentic-prompt-pre mt-3 max-h-44 overflow-auto whitespace-pre-wrap [overflow-wrap:anywhere]']}><code>{prompt.prompt}</code></pre>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
+        {snippets.length > 0 && (
+          <div class:list={['mt-8 grid gap-6 lg:grid-cols-2', isBlog && 'blog-snippets']}>
+            {snippets.map((snippet) => (
+              <article class="site-panel min-w-0 overflow-hidden reveal" data-analytics-label={`agentic-copy-snippet-${page.slug}-${snippet.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+                <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-3">
+                  <span class="site-kicker">{snippet.label}</span>
+                  <CopyButton text={snippet.code} analyticsLabel={`agentic-copy-snippet-${page.slug}-${snippet.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} />
+                </div>
+                <pre class:list={['border-0 bg-[var(--surface-2)]', isBlog && snippet.language === 'text' && 'blog-prompt']}><code class="block whitespace-pre-wrap px-4 pb-4">{snippet.code}</code></pre>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )}
@@ -186,23 +178,28 @@ const structuredData = [
   )}
 
   <section class="site-section">
-    <div class:list={['container grid gap-4 lg:grid-cols-[0.9fr_1.1fr]', isBlog && 'blog-sections']}>
+    <div class:list={['container grid gap-4', page.internalLinks.length > 0 && 'lg:grid-cols-[0.9fr_1.1fr]', isBlog && 'blog-sections']}>
       <article class="site-panel site-panel--soft min-w-0 break-words p-6 reveal">
-        <span class="site-kicker">Limitations</span>
-        <h2 class="mt-3 text-2xl" id={isBlog ? 'validation' : undefined}>Use the sandbox deliberately</h2>
-        <ul class="site-list mt-4">
-          {page.limitations.map((item) => <li>{item}</li>)}
-        </ul>
+        <span class="site-kicker">Production boundary</span>
+        <h2 class="mt-3 text-2xl" id={isBlog ? 'validation' : undefined}>Before production</h2>
+        <p class="mt-3 leading-7 text-[var(--text-2)]">Use LocalCloud for non-production development, testing, and CI under the <a href={localHref('/docs/licensing/')}>Public Preview License</a>, check <a href={localHref('/compatibility/')}>each service's local boundaries</a>, and validate against real Google Cloud before you deploy.</p>
+        {page.limitations.length > 0 && (
+          <ul class="site-list mt-4">
+            {page.limitations.map((item) => <li>{item}</li>)}
+          </ul>
+        )}
       </article>
-      <article class="site-panel min-w-0 break-words p-6 reveal">
-        <span class="site-kicker">Next routes</span>
-        <h2 class="mt-3 text-2xl" id={isBlog ? 'next-steps' : undefined}>Keep the agent on the supported path</h2>
-        <ul class="site-list mt-4">
-          {page.internalLinks.map((link) => (
-            <li><a href={localHref(link.href)}>{link.label}</a> — {link.note}</li>
-          ))}
-        </ul>
-      </article>
+      {page.internalLinks.length > 0 && (
+        <article class="site-panel min-w-0 break-words p-6 reveal">
+          <span class="site-kicker">Related</span>
+          <h2 class="mt-3 text-2xl" id={isBlog ? 'next-steps' : undefined}>Next steps</h2>
+          <ul class="site-list mt-4">
+            {page.internalLinks.map((link) => (
+              <li><a href={localHref(link.href)}>{link.label}</a> — {link.note}</li>
+            ))}
+          </ul>
+        </article>
+      )}
     </div>
   </section>
 

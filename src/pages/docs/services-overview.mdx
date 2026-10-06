@@ -42,7 +42,7 @@ A service guide separates the facts that affect normal use:
               <td>{service.registryDefaultEnabled ? 'yes' : 'no'}</td>
               <td>{service.minTier}</td>
               <td>{service.status === 'unsupported' || service.status === 'unknown' ? 'Unsupported' : 'Supported'}</td>
-              <td>{service.persistence.scope} ({service.persistence.qualification})</td>
+              <td>{service.persistence.scope}</td>
               <td>{service.endpointLabel}</td>
             </>
           )}
@@ -60,8 +60,7 @@ The catalog groups services by user goal—storage, databases, analytics, messag
 
 - Load the actual running endpoints with `localcloud env`; the host CLI may remap ports.
 - Check the service detail and operation limitations before relying on a workflow.
-- Treat release-unverified behavior as something to verify with the exact image version you run.
-- Keep the runtime loopback-bound and use fake local data.
+- Keep the runtime listening only on localhost and use fake local data.
 - Remove emulator variables and validate production behavior against real Google Cloud before release.
 
 Open the [service catalog](/services/) for all {publishedServiceCount} guides or [Compatibility](/compatibility/) for operation-level support and limitations.

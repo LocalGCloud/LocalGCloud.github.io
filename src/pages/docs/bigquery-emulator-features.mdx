@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: BigQuery Emulator Features
-description: GoogleSQL and DuckDB architecture, documented BigQuery operations, endpoints, and qualification boundaries.
+description: GoogleSQL and DuckDB architecture, documented BigQuery operations, endpoints, and limits.
 ---
 
 import Callout from '../../components/Callout.astro';
@@ -13,8 +13,8 @@ export const bigquery = getDocumentationService('bigquery');
 
 The current LocalCloud source packages a native **GoogleSQL Analyzer** and **DuckDB** query engine. Supervisord manages the BigQuery process inside the LocalCloud Docker container. Running LocalCloud requires Docker; the default BigQuery process does not need a Docker-socket mount. An optional custom BigQuery image uses a companion container and requires Docker access.
 
-<Callout type="warning" title="Source evidence and release qualification">
-The operation table describes the current source contract. The mutable LocalCloud image tag has no qualified assembled-image digest in this snapshot. Test the exact image and client you use; source-level implementation and a finite query benchmark do not establish complete semantic parity.
+<Callout type="warning" title="Test the image you run">
+The operation table describes the current source contract. The `latest` image tag is mutable, so pin an image digest when repeatability matters and test the exact image and client you use; source-level implementation and a finite query benchmark do not establish complete semantic parity.
 </Callout>
 
 ## Connection and endpoints
@@ -42,7 +42,7 @@ The CLI may remap host ports. The [Python SDK example](/docs/sdk-examples/#bigqu
 </table>
 </div>
 
-## Feature areas to qualify
+## Feature areas to test
 
 - **GoogleSQL execution:** test the exact types, expressions, joins, scripting, and error behavior used by the application.
 - **BQML:** selected local models are implemented; model types, feature shapes, and `TRANSFORM` variants have documented gaps.
@@ -50,7 +50,7 @@ The CLI may remap host ports. The [Python SDK example](/docs/sdk-examples/#bigqu
 - **Geography:** spherical functions have bounded geometry and input support, including remaining snapping, covering, and union gaps.
 - **Security and governance:** row policies, masking, and IAM-shaped APIs require path-specific tests. Nested policy tags and taxonomy operations have recorded boundaries.
 - **External tables and federation:** validate the exact source format and connector. An emulator fixture or stored connection does not prove a live federated query.
-- **Storage API and Spark:** qualify transport, TLS, schema, read/write method, connector version, and architecture separately.
+- **Storage API and Spark:** test transport, TLS, schema, read/write method, connector version, and architecture separately.
 
 The [coverage and known boundaries](/docs/bigquery-coverage-gaps/) page publishes the dependency's recorded matrix counts and the capabilities implemented with documented limits. The [comparison guide](/docs/bigquery-feature-comparison/) explains how to compare local engines without treating benchmark samples as global correctness guarantees.
 

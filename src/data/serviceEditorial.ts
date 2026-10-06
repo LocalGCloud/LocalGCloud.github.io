@@ -20,7 +20,7 @@ export interface ServiceEditorial {
 const editorial = {
   gcs: { slug: 'cloud-storage', category: 'storage', iconId: 'gcs', description: 'Bucket and object lifecycle workflows for local SDK and API development.' },
   pubsub: { slug: 'pubsub', category: 'integration', iconId: 'pubsub', description: 'Topic, subscription, publish, pull, and acknowledgement workflows.' },
-  firestore: { slug: 'firestore', category: 'databases', iconId: 'firestore', description: 'Document CRUD, query, and collection workflows. Disabled by default to save resources; enable when needed.' },
+  firestore: { slug: 'firestore', category: 'databases', iconId: 'firestore', description: 'Document CRUD, query, and collection workflows. Opt-in: add firestore to the services you start.' },
   bigtable: { slug: 'bigtable', category: 'databases', iconId: 'bigtable', description: 'Row mutation, read, table administration, and PostgreSQL-backed data workflows.' },
   spanner: { slug: 'spanner', category: 'databases', iconId: 'spanner', description: 'Spanner data and administration workflows over gRPC and REST.' },
   bigquery: { slug: 'bigquery', category: 'analytics', iconId: 'bigquery', description: 'Dataset, table, query, scripting, and API workflows.' },
@@ -38,11 +38,11 @@ const editorial = {
   logging: { slug: 'cloud-logging', category: 'operations', iconId: 'logging', description: 'Log ingestion, listing, metrics, and sink workflows.' },
   monitoring: { slug: 'cloud-monitoring', category: 'operations', iconId: 'monitoring', description: 'Time-series, metric-descriptor, alerting, and dashboard workflows.' },
   gke: { slug: 'gke', category: 'compute', iconId: 'gke', description: 'Pro cluster workflows with opt-in k3d runtime integration.' },
-  compute: { slug: 'compute-engine', category: 'compute', iconId: 'compute', description: 'Compute Engine application integration is currently unsupported; consult its operation boundaries.' },
+  compute: { slug: 'compute-engine', category: 'compute', iconId: 'compute', description: "Compute Engine doesn't run in LocalCloud; use Google Cloud for VM workloads." },
   cloudrun: { slug: 'cloud-run', category: 'compute', iconId: 'cloudrun', description: 'Pro service and revision workflows with host-runtime integration.' },
   memorystore: { slug: 'memorystore', category: 'databases', iconId: 'memorystore', description: 'Valkey-backed RESP data workflows.' },
   workflows: { slug: 'cloud-workflows', category: 'integration', iconId: 'workflows', description: 'Workflow deployment and execution workflows.' },
-  vertexai: { slug: 'vertex-ai', category: 'compute', iconId: 'vertexai', description: 'Vertex AI application integration is currently unsupported; consult its operation boundaries.' },
+  vertexai: { slug: 'vertex-ai', category: 'compute', iconId: 'vertexai', description: "Vertex AI doesn't run in LocalCloud; use Google Cloud for inference and training." },
   kms: { slug: 'cloud-kms', category: 'security', iconId: 'kms', description: 'Pro key-management and cryptographic workflows.' },
   cloudsql: { slug: 'cloud-sql', category: 'databases', iconId: 'cloudsql', description: 'Local control-plane and MySQL data-plane workflows.' },
 } as const satisfies Record<string, ServiceEditorial>;
@@ -278,7 +278,7 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
     ],
     boundaries: [
       "Limited Google filter semantics",
-      "Log-based metrics, exclusions, and sink delivery remain unqualified",
+      "Validate log-based metrics, exclusions, and sink delivery in Google Cloud",
     ],
   },
   monitoring: {
@@ -288,7 +288,7 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
     ],
     boundaries: [
       "Limited query alignment/aggregation",
-      "Alert evaluation, notifications, uptime execution, and dashboards remain unqualified",
+      "Validate alert evaluation, notifications, uptime execution, and dashboards in Google Cloud",
     ],
   },
   gke: {
@@ -337,7 +337,7 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["workflows.workflows.executions"], summary: "Local interpreter, standard library, and execution step history" },
     ],
     boundaries: [
-      "Bounded connector and expression support",
+      "Limited connector and expression support",
       "Active executions fail on restart with InstanceRestart",
     ],
   },
@@ -362,7 +362,7 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       "SOFTWARE keys; hardware custody and Google authority are cloud-only",
       "Inventory/Autokey: project-owned global Secret Manager resources only",
       "No folder ancestry or other protected-resource types",
-      "Google KeyRing deletion parity is not advertised",
+      "KeyRing deletion isn't guaranteed to match Google Cloud",
     ],
   },
   cloudsql: {

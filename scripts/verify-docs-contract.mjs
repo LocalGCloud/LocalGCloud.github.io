@@ -296,7 +296,7 @@ const compatibilitySource = routeSources.get('src/pages/compatibility.astro');
 assert(compatibilitySource.includes("service.catalogState === 'coming-soon'") && compatibilitySource.includes('colspan="2"'), 'compatibility page does not collapse unsupported services across its two detail columns');
 assert(compatibilitySource.includes('serviceCompatibilityEditorial') && compatibilitySource.includes('compatibility.capabilities.map') && compatibilitySource.includes('compatibility.boundaries.map'), 'compatibility page must render the operation-linked editorial summaries and boundaries');
 const overviewSource = routeSources.get('src/components/ServiceOverviewLanding.astro');
-assert(overviewSource.includes('operationBoundaries.map') && overviewSource.includes('service.notSupported.map'), 'shared emulator landing pages omit service and operation boundaries');
+assert(overviewSource.includes('serviceCompatibilityEditorial') && overviewSource.includes('compatibility.boundaries.map'), 'shared emulator landing pages must share the curated service boundaries with compatibility');
 const servicesOverviewSource = routeSources.get('src/pages/docs/services-overview.mdx');
 assert(servicesOverviewSource.includes('<tbody>') && servicesOverviewSource.includes('service.endpointLabel'), 'services overview does not render semantic endpoint rows');
 assert(!servicesOverviewSource.includes(".join('\\\\n')"), 'services overview still emits pipe-delimited row text');

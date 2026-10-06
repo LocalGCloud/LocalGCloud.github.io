@@ -42,3 +42,16 @@ After deploying, confirm that the homepage links to the new icon and the PNG ret
 - Confirmation that the current Docker image, service-count wording, and public licensing boundary in `src/data/productFacts.ts` are authoritative.
 - Confirmation of the Cloudflare Worker custom-domain routing and permission to set `SEO_VERIFY_BASE_URL` as a repository variable.
 - Access or an owner for Google Search Console, Bing Webmaster Tools, and PostHog reporting.
+
+## Agent page map
+
+This map used to render on `/agents/`. It is guidance for writers, so it lives here. Each job has one canonical page family; add a page only when its content materially differs from the existing ones.
+
+| Reader job | Canonical route | Audience | Avoid |
+|---|---|---|---|
+| Give a specific coding agent a safe Google Cloud sandbox | `/agents/` | Developers using Claude Code, Codex-style CLIs, Cursor, or Gemini CLI | One page per prompt; duplicating `/ai/` |
+| Test one service locally with SDKs and environment variables | `/services/{service}/ai-agent-local-testing/` | Agents and maintainers validating BigQuery, Pub/Sub, Spanner, Cloud Storage, or Bigtable code | Splitting by language before the examples differ; claiming production parity |
+| Set up a repeatable local workflow for Terraform, integration tests, or internal CI (the Public Preview License permits non-production internal CI) | `/workflows/{workflow}/` | Platform, DevOps, and test owners | One page per CI vendor before the snippets diverge; implying real Google Cloud validation is optional |
+| Compare LocalCloud with another local or hosted sandbox | `/compare/{alternative}/` | Developers choosing between Google emulators, hosted code sandboxes, and BigQuery emulators | Attack pages; hiding where the alternative is better |
+| Look up agentic local-cloud vocabulary | `/glossary/{term}/` | Searchers, agents, and docs readers | Near-synonym pages with the same definition; turning entries into landing pages |
+| Follow a narrative demo or launch explanation | `/blog/{post}/` | Developers evaluating agent workflows | Posts without commands, caveats, and next steps; repeating service pages without a story |

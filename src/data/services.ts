@@ -102,10 +102,6 @@ const protocolLabel = (protocol: string) => {
 
 export const serviceRegistryCount = docsContract.services.length;
 
-// Upstream limitation strings carry evidence tags such as "[partial]"; they are
-// classification metadata, not support states, so published copy omits them.
-const stripEvidenceTag = (text: string) => text.replace(/^\[[a-z_]+\]\s*/i, "");
-
 export const services: Service[] = docsContract.services.flatMap(
 	(contractService) => {
 		const editorial = getServiceEditorial(contractService);
@@ -150,15 +146,14 @@ export const services: Service[] = docsContract.services.flatMap(
 			status: contractService.status,
 			catalogState,
 			envVar: `${contractService.envVar}=${contractService.envValue}`,
-			description: isUnsupported
-				? (contractService.limitations[0] ? stripEvidenceTag(contractService.limitations[0]) : `${contractService.name} is unsupported in LocalCloud.`)
-				: editorial.description,
+			description: editorial.description,
 			operations: contractService.operations,
 			supported:
 				catalogState === "coming-soon"
 					? []
 					: positiveOperations.map((operation) => operation.label),
-			notSupported: contractService.limitations.map(stripEvidenceTag),
+			// docs-contract.ts already presents these as reader copy (no evidence tags).
+			notSupported: contractService.limitations,
 			iconId: editorial.iconId,
 			persistence: contractService.persistence,
 			evidence: [...contractService.evidence],
