@@ -67,7 +67,7 @@
       "../localcloud/docs/guides/mcp-integration.md": "sha256:1a674b42c9b5d54ad0dc1b74e821d4a525d1db25cb72ffdebad5c7ad4c3c320a",
       "../localcloud/specs/api/catalog.json": "sha256:654b876fce36783f3474c56e0540b34f35de89ab25d7407e44f75cfdc7830137",
       "../localcloud/Dockerfile": "sha256:3c518c3fe4ead9c13ad4b40ac6904036a2bf90755ddb0b5c61e1aee18f1af23a",
-      "../localcloud/LICENSE": "sha256:26e7152b644b9594f95335784453e7d79b89711a7af4d94811fbe14de1ea7a10",
+      "../localcloud/LICENSE": "sha256:007c741ba18ddbea4cbd92b4f4b93135381b39e5a4af01ae5128f14b1d19c041",
       "../localcloud/docker/bigquery-start.sh": "sha256:987e13b3a9cc853f8590259cd32b0131df141b900c4c0fec0cfa9e3562973f9e",
       "../localcloud/docker/docker-entrypoint.sh": "sha256:3b957a0c746a98334965995cf5bcb84228d430b38c8cd18b14eea1601c501815",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:72112ccbf6f7b9f4af5483067a6730528ad96608e276ec4261350df031b94e31",
@@ -84,6 +84,7 @@
     "worktreeSources": [
       "../localcloud/documentation.yaml",
       "../localcloud/specs/api/catalog.json",
+      "../localcloud/LICENSE",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java",
       "../localcloud-cli/README.md"

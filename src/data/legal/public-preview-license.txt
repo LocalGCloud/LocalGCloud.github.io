@@ -252,7 +252,7 @@ assignment in violation of this section is void. Licensor may freely assign
 this Agreement.
 
 9.7 Notices. Notices to Licensor must be sent in writing to
-data.oculus.llc@gmail.com or through https://local.cloud.
+info@local.cloud or through https://local.cloud.
 
 9.8 Export Compliance. You agree to comply with applicable export and import
 control laws and regulations in Your use of the Software.
@@ -264,7 +264,7 @@ CONTACT
 For questions regarding this Agreement, contact:
 
     LocalCloud Inc.
-    data.oculus.llc@gmail.com
+    info@local.cloud
     https://local.cloud
 
 ===============================================================================
