@@ -1237,7 +1237,7 @@ export const blogDemoPages: AgenticContentPage[] = withRelatedLinks([
 		quickFacts: [
 			"Demo target: one repo, one local service check, one production caveat.",
 			"Avoid credentials in the prompt and commands.",
-			"Link the next step to service-specific local testing pages.",
+			"For the next step, each service guide links its own agent testing page.",
 		],
 		sections: [
 			{
