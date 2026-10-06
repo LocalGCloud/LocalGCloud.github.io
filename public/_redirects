@@ -8,10 +8,15 @@
 /compare/localstack /localstack-for-google-cloud/ 301
 /compare/localstack/ /localstack-for-google-cloud/ 301
 /compare/localstack.md /localstack-for-google-cloud/ 301
+/docs/localcloud-vs-google-emulators /compare/google-emulators/ 301
+/docs/localcloud-vs-google-emulators/ /compare/google-emulators/ 301
+/docs/localcloud-vs-google-emulators.md /compare/google-emulators.md 301
+/blog/google-emulators-vs-localcloud-for-agents /compare/google-emulators/ 301
+/blog/google-emulators-vs-localcloud-for-agents/ /compare/google-emulators/ 301
+/docs/localcloud-vs-individual-emulators /compare/google-emulators/ 301
+/docs/localcloud-vs-individual-emulators/ /compare/google-emulators/ 301
 
 /favicon.ico /favicon.png 301
-/docs/localcloud-vs-individual-emulators /docs/localcloud-vs-google-emulators/ 301
-/docs/localcloud-vs-individual-emulators/ /docs/localcloud-vs-google-emulators/ 301
 /ai/AGENTS.md /ai/agent-template.md 301
 /ai/AGENTS.md/ /ai/agent-template.md 301
 /docs/bigquery-locally /bigquery-emulator/ 301

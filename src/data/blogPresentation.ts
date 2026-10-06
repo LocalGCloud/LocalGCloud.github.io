@@ -12,7 +12,6 @@ export const authoredBlogMetadata: Record<
 
 const blogTopics: Record<string, string> = {
   'claude-code-local-gcp-sandbox': 'AI agents',
-  'google-emulators-vs-localcloud-for-agents': 'Comparisons',
   'bigquery-locally-agent-written-pipelines': 'BigQuery',
 };
 

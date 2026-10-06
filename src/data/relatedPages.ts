@@ -33,18 +33,6 @@ const pages: Record<string, RelatedPage> = {
 		anchor: "BigQuery emulator alternatives",
 		note: "When a standalone emulator, LocalCloud or real BigQuery fits an agent workflow.",
 	},
-	"/compare/google-emulators/": {
-		anchor: "LocalCloud vs Google emulators",
-		note: "Decision table and sources for agent workflows.",
-	},
-	"/docs/localcloud-vs-google-emulators/": {
-		anchor: "When to use Google's service emulators",
-		note: "Decision model for choosing a Google-maintained emulator.",
-	},
-	"/blog/google-emulators-vs-localcloud-for-agents/": {
-		anchor: "Google emulators vs LocalCloud for agents",
-		note: "Demo post: count the workflow, not just the services.",
-	},
 	"/how-to-run-google-cloud-locally/": {
 		anchor: "How to run Google Cloud locally",
 		note: "Step-by-step setup with the LocalCloud CLI.",
@@ -146,8 +134,6 @@ for (const service of localServices) {
 
 // Pairs list the default survivor first. A page's counterparts appear in this order.
 export const relatedPagePairs: RelatedPair[] = [
-	{ pages: ["/compare/google-emulators/", "/docs/localcloud-vs-google-emulators/"], finding: "S18" },
-	{ pages: ["/compare/google-emulators/", "/blog/google-emulators-vs-localcloud-for-agents/"], finding: "S18" },
 	{ pages: ["/how-to-run-google-cloud-locally/", "/local-cloud-development/"], finding: "S20" },
 	{ pages: ["/reduce-gcp-dev-costs/", "/optimize-gcp-costs/"], finding: "S22" },
 	{ pages: ["/gcp-integration-testing/", "/workflows/github-actions-gcp-emulator/"], finding: "S23" },

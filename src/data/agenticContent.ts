@@ -683,13 +683,52 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 				kicker: "Where Google is better",
 				title: "Use official emulators for service-specific fidelity",
 				body:
-					"If a single supported official emulator covers your exact service and feature set, it may be the right lowest-risk local dependency.",
+					"If a single supported official emulator covers your exact service and feature set, it may be the right lowest-risk local dependency. Choose it when:",
+				items: [
+					"It covers the one service and operation you need.",
+					"Following Google's release and compatibility model matters more than a shared multi-service runtime.",
+					"You don't need a shared health check, environment export, seed data, console or cross-service operator routes.",
+				],
 			},
 			{
 				kicker: "Where LocalCloud is better",
 				title: "Use LocalCloud for multi-service agent workflows",
 				body:
-					"Agents benefit from one start command, one health check, unified env export, and a service catalog that includes services without official Google emulators such as BigQuery and Cloud Storage.",
+					"Count the workflow, not just the services: an agent needs startup, health, environment export, seed data, logs, docs and a clear failure boundary. LocalCloud packages that surface with one start command, one health check and a service catalog that includes services without official Google emulators, such as BigQuery and Cloud Storage. Choose it when:",
+				items: [
+					"One workflow needs several Google Cloud services in one runtime.",
+					"You want one service catalog with operation-level status for every service.",
+					"The CLI's generated endpoints and shared operator routes simplify the local workflow.",
+				],
+			},
+		],
+		snippets: [
+			{
+				label: "Google's emulators: one process per service",
+				language: "bash",
+				code: [
+					"# Pub/Sub",
+					"gcloud components install pubsub-emulator",
+					"gcloud beta emulators pubsub start --host-port=localhost:5383",
+					"",
+					"# Firestore",
+					"gcloud beta emulators firestore start --host-port=localhost:5384",
+					"",
+					"# Spanner",
+					"gcloud components install spanner-emulator",
+					"gcloud emulators spanner start --host-port=localhost:5386",
+				].join("\n"),
+			},
+			{
+				label: "LocalCloud: one runtime for every service",
+				language: "bash",
+				code: `${agenticFacts.cliQuickStart.script}\n\n# Use the endpoint values the CLI returns; it picks another port when a default one is in use.`,
+			},
+			{
+				label: "Comparison prompt",
+				language: "text",
+				code:
+					"Compare this repository's GCP usage with LocalCloud service coverage and Google official emulator availability. Recommend the smallest local validation path and list real-GCP checks that must remain.",
 			},
 		],
 		table: {
@@ -727,7 +766,6 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 				href: "https://docs.cloud.google.com/sdk/gcloud/reference/beta/emulators",
 				note: "Google emulator command groups.",
 			},
-			relatedLink("/docs/localcloud-vs-google-emulators/"),
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
@@ -1165,60 +1203,6 @@ export const blogDemoPages: AgenticContentPage[] = withRelatedLinks([
 		limitations: [],
 		internalLinks: [
 			relatedLink("/agents/claude-code-gcp-sandbox/"),
-		],
-		reviewedAt: agenticFacts.evidence.reviewedAt,
-	},
-	{
-		kind: "blog",
-		slug: "google-emulators-vs-localcloud-for-agents",
-		path: "/blog/google-emulators-vs-localcloud-for-agents/",
-		parentLabel: "Blog",
-		parentPath: "/blog/",
-		eyebrow: "Demo post",
-		title: "Google Emulators vs LocalCloud for Agents",
-		description:
-			"How to decide between official Google emulators and LocalCloud when AI agents need local GCP validation.",
-		h1: "Google emulators vs LocalCloud for agents",
-		deck:
-			"Official Google emulators are valuable; the agentic question is whether one emulator is enough. For a non-production repository spanning BigQuery, Pub/Sub, Storage, and Terraform, one LocalCloud runtime can be easier for an agent to operate safely.",
-		promptIds: ["project-integration", "ci"],
-		quickFacts: [
-			"Use official emulators for single-service fidelity when they fit.",
-			"Use LocalCloud for multi-service local-cloud workflows.",
-			"Validate production behavior against real GCP either way.",
-		],
-		sections: [
-			{
-				kicker: "Decision point",
-				title: "Count the workflow, not just the services",
-				body:
-					"An agent does not only need an API. It needs startup, health, env export, seed data, logs, docs, and a clear failure boundary. LocalCloud packages that operating surface.",
-			},
-			{
-				kicker: "Balanced take",
-				title: "Where Google remains the right answer",
-				body:
-					"If the exact Google-maintained emulator covers your target behavior, start there. LocalCloud is strongest when the agent needs a broader local GCP environment.",
-			},
-		],
-		snippets: [
-			{
-				label: "Comparison prompt",
-				language: "text",
-				code:
-					"Compare this repository's GCP usage with LocalCloud service coverage and Google official emulator availability. Recommend the smallest local validation path and list real-GCP checks that must remain.",
-			},
-		],
-		limitations: [],
-		internalLinks: [
-			relatedLink("/compare/google-emulators/", "Detailed comparison and sources."),
-		],
-		sources: [
-			{
-				label: "gcloud emulator reference",
-				href: "https://docs.cloud.google.com/sdk/gcloud/reference/beta/emulators",
-				note: "Official Google emulator groups.",
-			},
 		],
 		reviewedAt: agenticFacts.evidence.reviewedAt,
 	},
