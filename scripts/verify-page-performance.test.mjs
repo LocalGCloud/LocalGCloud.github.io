@@ -70,8 +70,8 @@ test('analytics still loads when load has already fired and idle callbacks are u
 test('Cloudflare analytics follows deployment configuration and supports explicit disablement', () => {
   const enabled = resolveCloudflareAnalyticsConfig();
   assert.match(enabled.token, /^[a-f0-9]{32}$/);
-  assert.equal(enabled.endpoint, '/cdn-cgi/rum');
-  assert.deepEqual(enabled.connectOrigins, []);
+  assert.equal(enabled.endpoint, 'https://cloudflareinsights.com/cdn-cgi/rum');
+  assert.deepEqual(enabled.connectOrigins, ['https://cloudflareinsights.com']);
   assert.equal(resolveCloudflareAnalyticsConfig({ SITE_DEPLOYMENT_TARGET: 'static' }).token, '');
   assert.deepEqual(resolveCloudflareAnalyticsConfig({ PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN: '' }).scriptOrigins, []);
   assert.deepEqual(resolveCloudflareAnalyticsConfig({ PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN: '' }).connectOrigins, []);
@@ -91,7 +91,7 @@ test('Cloudflare beacon loads from the trusted bootstrap with its public site to
   const token = resolveCloudflareAnalyticsConfig().token;
   runInNewContext(source, {
     cloudflareAnalyticsToken: token,
-    cloudflareAnalyticsEndpoint: '/cdn-cgi/rum',
+    cloudflareAnalyticsEndpoint: 'https://cloudflareinsights.com/cdn-cgi/rum',
     document: {
       createElement: () => ({ setAttribute(name, value) { this[name] = value; } }),
       head: { appendChild: (script) => inserted.push(script) },
@@ -100,7 +100,7 @@ test('Cloudflare beacon loads from the trusted bootstrap with its public site to
   assert.equal(inserted.length, 1);
   assert.equal(inserted[0].src, 'https://static.cloudflareinsights.com/beacon.min.js');
   assert.equal(inserted[0].async, true);
-  assert.deepEqual(JSON.parse(inserted[0]['data-cf-beacon']), { token, send: { to: '/cdn-cgi/rum' } });
+  assert.deepEqual(JSON.parse(inserted[0]['data-cf-beacon']), { token, send: { to: 'https://cloudflareinsights.com/cdn-cgi/rum' } });
 });
 
 test('CSP permits the exact emitted script bytes and preserves the style policy', async () => {
@@ -167,6 +167,35 @@ test('search queues one integrity-protected client load and initializes its expl
   assert.equal(initialized, 1);
   await context.loadPagefind();
   assert.equal(inserted.length, 1);
+});
+
+test('search renders Pagefind highlights while escaping other excerpt markup', async () => {
+  const source = readFileSync(new URL('../src/components/SearchModal.astro', import.meta.url), 'utf8');
+  const escaping = source.slice(source.indexOf('  function escapeHtml('), source.indexOf('  async function loadPagefind('));
+  const handler = source.slice(source.indexOf('  // Search input handler'), source.indexOf('  // Close on result click'));
+  let onInput;
+  let render;
+  const context = {
+    debounceTimer: null,
+    input: { value: 'BigQuery', addEventListener: (_, callback) => { onInput = callback; } },
+    results: {},
+    clearTimeout() {},
+    setTimeout: (callback) => { render = callback; },
+    loadPagefind: async () => ({ search: async () => ({ results: [{ data: async () => ({
+      url: '/bigquery-emulator/',
+      meta: { title: '<mark>Unsafe title</mark>' },
+      excerpt: '<mark>BigQuery</mark> <img src=x onerror="alert(1)"> <mark onclick="alert(1)">unsafe</mark> &lt;mark&gt;',
+    }) }] }) }),
+  };
+  runInNewContext(escaping + handler, context);
+  onInput();
+  await render();
+  assert.match(context.results.innerHTML, /<mark>BigQuery<\/mark>/);
+  assert.match(context.results.innerHTML, /&lt;img src=x onerror=&quot;alert\(1\)&quot;&gt;/);
+  assert.match(context.results.innerHTML, /&lt;mark onclick=&quot;alert\(1\)&quot;&gt;/);
+  assert.match(context.results.innerHTML, /&lt;mark&gt;Unsafe title&lt;\/mark&gt;/);
+  assert.match(context.results.innerHTML, /&amp;lt;mark&amp;gt;/);
+  assert.doesNotMatch(context.results.innerHTML, /<img\b|<mark\s/);
 });
 
 test('built homepage has local font preload, immediate styles, sized hero and nonredundant brand marks', () => {

@@ -7,8 +7,11 @@ This guide documents the build process, automated verification pipeline, and con
 ## 1. Quick Reference
 
 ```bash
-# Install dependencies
-pnpm install
+# Install the locked dependencies
+pnpm install --frozen-lockfile
+
+# Check all dependencies for security advisories
+pnpm run test:dependencies
 
 # Run local development server
 pnpm run dev
@@ -27,9 +30,10 @@ graft build
 
 ## 2. Environment Prerequisites
 
-- **Node.js:** `22.12.0` (specified in `package.json` engines)
-- **Package Manager:** `pnpm@10.28.0`
-- **Frameworks:** Astro 6, Tailwind CSS v4, Pagefind 1.5.2
+- **Node.js:** `24.21.0` (current LTS; pinned by Volta and CI)
+- **Package Manager:** `pnpm@12.9.1` (pinned in `package.json` and CI)
+- **Frameworks:** Astro 7, MDX 8, Vite 8, Tailwind CSS v4, Pagefind 1.5.2
+- **Install configuration:** `pnpm-workspace.yaml` declares the npm registry, hardlink imports, and the esbuild/Sharp/workerd build-script allowlist.
 
 ---
 
@@ -70,12 +74,18 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 | **9** | `node scripts/verify-rendered-docs.mjs` | Inspects compiled HTML output (e.g. comparison tables and accessible scroll wrappers) to ensure proper rendering. |
 | **10** | `node scripts/write-sitemap-alias.mjs` | Copies `sitemap-index.xml` to `sitemap.xml` for legacy crawler compatibility. |
 | **11** | `node scripts/verify-static-seo.mjs` | Verifies canonical URLs, meta descriptions, single H1 tags, robots.txt directives, JSON-LD structured data, and sitemap inclusion across 34 priority routes. |
-| **12** | `node --experimental-strip-types scripts/verify-content-facts.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all 128 published pages. |
+| **12** | `node scripts/verify-content-facts.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all 128 published pages. |
 | **13** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes. |
 
 ---
 
 ## 5. Separate Verification Suites
+
+### Dependency Security
+```bash
+pnpm run test:dependencies
+```
+Audits production, development, and optional dependencies. Any advisory fails the check; no advisories are suppressed. The Cloudflare deployment workflow and local deployment command run it before building or publishing.
 
 ### Installer Verification
 ```bash
@@ -106,6 +116,7 @@ Refreshes the `graft/` knowledge graph across all repository symbols, routes, an
 
 Before opening a pull request or concluding an editing session, verify that:
 
+- [ ] `pnpm run test:dependencies` exits with code 0.
 - [ ] `pnpm run build` exits with code 0.
 - [ ] `pnpm run test:installer` exits with code 0.
 - [ ] No service is tagged or badged as "partial".

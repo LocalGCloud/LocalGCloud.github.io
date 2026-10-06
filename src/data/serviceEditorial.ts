@@ -96,14 +96,19 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
   bigtable: {
     capabilities: [
       { operations: ["bigtable.admin.lifecycle", "bigtable.safety.forward-compat"], summary: "Instances, clusters, tables, families, app profiles, and schema bundles" },
-      { operations: ["bigtable.rows.data"], summary: "Atomic mutations, filters, aggregates, and read sessions" },
+      { operations: ["bigtable.rows.data"], summary: "Atomic mutations, row filters including Sink, aggregates, and read sessions" },
       { operations: ["bigtable.query.googlesql", "bigtable.materialized-views"], summary: "Prepared GoogleSQL, logical views, and continuous materialized views" },
       { operations: ["bigtable.change-streams"], summary: "Change streams" },
       { operations: ["bigtable.snapshots-backups", "bigtable.persistence"], summary: "Data-bearing backups, copy/restore, and seven-day table undelete" },
       { operations: ["bigtable.iam", "bigtable.cli.cbt", "bigtable.browser.console"], summary: "IAM policy storage, cbt, and Console browsing" },
     ],
     boundaries: [
-      "v0.5.0 tested on SQLite; LocalCloud image/PostgreSQL/cbt validation pending",
+      "Sink preserves cells past later filters; invalid inside a Condition",
+      "v0.5.0 has dependency tests; the candidate image run failed backup listing and project deletion",
+      "LocalCloud Sink, PostgreSQL durability, and cbt qualification remain pending",
+      "Delete owned backups and clear resource deletion protection before instance or project deletion",
+      "Failed project cleanup keeps the project record; confirm deletion through the native admin API",
+      "Native backup listing supports filter/order/pagination; REST ignores those options",
       "Console may report rejected writes as successful; check native API",
       "Permissive IAM; one change-stream partition",
       "No query statistics, view parameters, or legacy snapshot RPCs",

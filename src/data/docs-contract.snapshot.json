@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-10-04",
+  "reviewedAt": "2026-10-05",
   "provenance": {
     "runtimeRevision": "7b1913bfc3fa372b22ef1f9b51dd28bc86c5c304",
     "cliRevision": "793ec6311632c2cf0cb1940f4a5f1f1d6aba0825",
@@ -61,7 +61,7 @@
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
       "../localcloud/localcloud.defaults.yaml": "sha256:3ec4fe270e68cbb1b9a3283723d390fd469d808852ba0844da0c7b538e545ac5",
-      "../localcloud/documentation.yaml": "sha256:1f14a499711d6aa4ed2086df375b1321c2ea348b5dd2041951d1f6997035b67e",
+      "../localcloud/documentation.yaml": "sha256:d720fb23aee302d65290793656ecddc76be87a8ccb07c7a0607b4e98518edd6c",
       "../localcloud/docs/status/service-status.md": "sha256:ddad5257b8ba3b5fb4f12bfee0364fa7710e24a3afec22cae2255db33923538f",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:71d43c01c3bd8019587f19914e3c668acf2f20a090c798f7ab06ac5935cc6cce",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:1a674b42c9b5d54ad0dc1b74e821d4a525d1db25cb72ffdebad5c7ad4c3c320a",
@@ -74,7 +74,7 @@
       "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:fcfbe0a7977d5cca533cc0271a04145bec10418201b1a6480119a1c0c1109190",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:4978775941c8725a7fdfe1bab479ba7ceb76f30b0636d874fdc800164f3277b3",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:c46e92b57305c65722d32850797b5ed98567b836d62b6f879b5f7732ac749585",
-      "../localcloud-cli/README.md": "sha256:dbf62580f62987727871f5297b6bc08c5c79a2813fd3a2a9b1bac6bee16c14f2",
+      "../localcloud-cli/README.md": "sha256:49843541526c90184ac780ea48f6a77fef7237b1efe3ad95bdf14be356cd457f",
       "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c42c12d4664aae4e0c2be0fe319cd0d669db48c5967ce731c3d4abbcec9791c8",
       "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:9c86f18a4b5ffa452fc79ffa9a4a5d5f895fdbfba12d78608ac941bb36dfb809",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:875e1beed8476f64e92aa0e9def5be89bdf7d8e27ad4b0c7d7c6d7dd040d8c9c",
@@ -85,7 +85,8 @@
       "../localcloud/documentation.yaml",
       "../localcloud/specs/api/catalog.json",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java"
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java",
+      "../localcloud-cli/README.md"
     ]
   },
   "product": {
@@ -184,7 +185,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.7 from revision 793ec6311632c2cf0cb1940f4a5f1f1d6aba0825. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI 0.1.7 behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
@@ -854,7 +855,7 @@
           "label": "instances/tables/families",
           "status": "partial",
           "limitations": [
-            "The pinned little_bigtable dd5f9e7 (v0.5.0) emulates instance, cluster, app-profile, table and schema-bundle administration as validated metadata (ID and field rules, response views, update masks, pagination, deletion protection, soft delete and 7-day undelete, atomic column-family changes, initial splits, row key schema) with a durable long-running-operation registry. Cluster nodes and autoscaling settings are stored without capacity effects. Dependency conformance tests pass; LocalCloud image qualification of this revision is pending."
+            "The pinned little_bigtable dd5f9e7 (v0.5.0) emulates instance, cluster, app-profile, table and schema-bundle administration as validated metadata (ID and field rules, response views, update masks, pagination, deletion protection, soft delete and 7-day undelete, atomic column-family changes, initial splits, row key schema) with a durable long-running-operation registry. Cluster nodes and autoscaling settings are stored without capacity effects. Native instance deletion rejects remaining backups and deletion-protected resources. LocalCloud project deletion resets enabled services before removing the project record; an incomplete reset keeps that record. Bigtable reset currently calls native DeleteInstance without first removing these blockers. Dependency conformance tests pass; the candidate project-deletion failure leaves LocalCloud cleanup unverified."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -865,7 +866,7 @@
           "label": "row mutations and reads",
           "status": "partial",
           "limitations": [
-            "dd5f9e7 validates every mutation before applying any (single-row atomicity), reports real per-entry MutateRows codes, honors idempotency tokens and aggregate (Sum/Min/Max, HLL++) families, implements every RowFilter including Interleave duplicates, Sink and ValueBitmask, chunks ReadRows like production with request stats, samples SampleRowKeys within row ranges, enforces authorized-view, materialized-view and app-profile targets, and serves the OpenTable/OpenAuthorizedView/OpenMaterializedView session protocol. last_scanned_row_key is not emitted. Dependency conformance tests pass; LocalCloud image qualification is pending."
+            "dd5f9e7 validates every mutation before applying any (single-row atomicity), reports real per-entry MutateRows codes, honors idempotency tokens and aggregate (Sum/Min/Max, HLL++) families, implements every RowFilter including Interleave duplicates, Sink (cells bypass subsequent filters; invalid inside Condition) and ValueBitmask, chunks ReadRows like production with request stats, samples SampleRowKeys within row ranges, enforces authorized-view, materialized-view and app-profile targets, and serves the OpenTable/OpenAuthorizedView/OpenMaterializedView session protocol. last_scanned_row_key is not emitted. Sink output and rejection inside Condition have named dependency conformance tests; a dedicated LocalCloud Sink platform scenario is pending. Dependency conformance tests pass; LocalCloud image qualification is pending."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -942,7 +943,7 @@
           "label": "snapshots and backups",
           "status": "partial",
           "limitations": [
-            "dd5f9e7 backups are immutable schema-and-row snapshots with create, get, list (filter, order, pagination), update, copy, delete and restore to a new table independent of the live source, including expire-time, backup-type and quota rules. UndeleteTable restores a deleted table within 7 days. Legacy table snapshot RPCs return Unimplemented because they are a deprecated private-alpha API. LocalCloud image qualification is pending."
+            "dd5f9e7 backups are immutable schema-and-row snapshots with create, get, list (filter, order, pagination), update, copy, delete and restore to a new table independent of the live source, including expire-time, backup-type and quota rules. UndeleteTable restores a deleted table within 7 days. Legacy table snapshot RPCs return Unimplemented because they are a deprecated private-alpha API. Native ListBackups supports filters, ordering, pagination and the '-' cluster wildcard. LocalCloud's REST listing forwards only parent, so filter, orderBy, pageSize and pageToken are not forwarded. The candidate backup-listing failure leaves integration unverified."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -3035,6 +3036,6 @@
         "notes": "Native source-overlay 2026-09-27: pinned aggregate signature 2061, point union with duplicate removal, empty/no rows, fail-closed nonpoint/all-NULL and modifier cases, REST GEOGRAPHY publication. The previous array-scan refusal does not describe this bounded native path. Grouped point inputs pass; GEOGRAPHY-valued UNNEST array scans remain refused by the relation spine. 2026-09-28 validation: partial. Supported subset: point-only and polygon-only groups union with S2. Remaining boundary: Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused."
       }
     ],
-    "revision": "0bcdc016f4c1ccca2561a3cb8f2743e0c4c0c111"
+    "revision": "2505c372d9408b5cbeddabb70cc7c92661593dd1"
   }
 }

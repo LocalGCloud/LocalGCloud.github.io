@@ -5,20 +5,28 @@
 | Area | Repository-controlled action | External owner/action |
 |---|---|---|
 | Static build | `pnpm build` emits every priority route, a sitemap index, and `/sitemap.xml`; local verification fails on missing metadata, H1s, schema, or sitemap entries. | None. |
-| GitHub Pages | `.github/workflows/deploy.yml` builds from the committed repository artifact. | Confirm that `LocalStack-Google/localcloud-site` is the Pages source for `local.cloud`, and that the custom-domain/DNS configuration points to it. |
-| Live route check | Set the `SEO_VERIFY_BASE_URL` repository variable to enable the post-deploy route verifier. | Set it to `https://local.cloud` only after the custom domain serves the expected GitHub Pages artifact. |
+| Cloudflare Workers | `.github/workflows/deploy.yml` audits, builds, and deploys the committed repository; `wrangler.jsonc` serves `dist` and the analytics proxy. | Confirm that the `localcloud-site` Worker owns the `local.cloud` and `www.local.cloud` custom domains in the intended Cloudflare account. |
+| Live route check | Set the `SEO_VERIFY_BASE_URL` repository variable to enable the post-deploy route verifier. | Set it to `https://local.cloud` only after the custom domain serves the expected Cloudflare Worker deployment. |
 | Search indexing | No credentials are stored in this repository. | Verify the domain in Google Search Console and Bing Webmaster Tools, submit `https://local.cloud/sitemap-index.xml`, and inspect the priority URLs after release. |
 | Analytics | Existing PostHog page and copy events remain active. | Create saved segments for organic and answer-engine referrals; grant a reviewer read-only access if reporting is delegated. |
 
 ## Priority release checklist
 
-1. Run `corepack pnpm@10.28.0 install --frozen-lockfile`.
-2. Run `corepack pnpm@10.28.0 build`.
-3. Review only the intended SEO change files, then commit and push them through the configured Pages workflow.
+Use the Node and pnpm versions pinned in `package.json` (Node 24.21.0 and pnpm 12.9.1).
+
+1. Run `pnpm install --frozen-lockfile`.
+2. Run `pnpm run test:dependencies`, `pnpm run build:cloudflare`, and the installer, performance, analytics, and live-SEO regression suites.
+3. Review the intended change files, then commit and push them through the configured Cloudflare Workers workflow.
 4. Confirm the production verifier reports HTTP 200, the expected canonical URL, and no 404 content for each priority route.
 5. Confirm `https://local.cloud/sitemap-index.xml` and `https://local.cloud/sitemap.xml` both return valid XML.
 6. Submit the sitemap index to Google and Bing; use URL inspection for the comparison, GCP-emulator, compatibility, CI, and service-emulator routes.
 7. Copy the baseline template before measuring rankings or citations. Indexing and ranking are external outcomes, not deployment pass conditions.
+
+## Refreshing the Google Search icon
+
+The homepage declares `/favicon.png` (96×96), exported from `public/favicon.svg`, and `/apple-touch-icon.png` (180×180), exported from `public/brand/localcloud-app-icon.svg`. Keep these raster exports in sync when changing the brand. Google’s [favicon guidelines](https://developers.google.com/search/docs/appearance/favicon-in-search) list supported raster formats, require a square icon, and recommend a stable URL. `/favicon.ico` redirects to the PNG.
+
+After deploying, confirm that the homepage links to the new icon and the PNG returns HTTP 200. In the `local.cloud` Google Search Console property, inspect `https://local.cloud/`, test the live URL, and request indexing once. Google must recrawl and process the homepage and favicon; this can take several days to several weeks. A Cloudflare cache purge or repeated indexing requests does not force Google’s favicon cache to refresh.
 
 ## Monthly review
 
@@ -32,5 +40,5 @@
 ## Current external inputs needed
 
 - Confirmation that the current Docker image, service-count wording, and public licensing boundary in `src/data/productFacts.ts` are authoritative.
-- Confirmation of the GitHub Pages custom-domain source and permission to set `SEO_VERIFY_BASE_URL` as a repository variable.
+- Confirmation of the Cloudflare Worker custom-domain routing and permission to set `SEO_VERIFY_BASE_URL` as a repository variable.
 - Access or an owner for Google Search Console, Bing Webmaster Tools, and PostHog reporting.

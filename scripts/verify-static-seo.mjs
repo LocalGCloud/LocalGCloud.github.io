@@ -65,6 +65,23 @@ for (const route of expectedSearchRoutes) {
   if (!html) continue;
   if (!isHtmlRoute(route)) continue;
 
+  if (route.path === '/') {
+    for (const [rel, file, size] of [['icon', 'favicon.png', 96], ['apple-touch-icon', 'apple-touch-icon.png', 180]]) {
+      const link = html.match(new RegExp(`<link\\s+[^>]*rel=["']${rel}["'][^>]*>`, 'i'))?.[0] ?? '';
+      if (!link.includes(`href="/${file}"`) || !link.includes(`sizes="${size}x${size}"`)) {
+        errors.push(`Homepage must declare the ${size}x${size} /${file} ${rel}`);
+      }
+      try {
+        const png = await readFile(distPath(file));
+        if (png.length < 33 || png.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' || png.readUInt32BE(16) !== size || png.readUInt32BE(20) !== size) {
+          errors.push(`${file}: expected a ${size}x${size} PNG`);
+        }
+      } catch {
+        errors.push(`Missing generated icon: dist/${file}`);
+      }
+    }
+  }
+
   const title = html.match(/<title>([^<]+)<\/title>/i)?.[1]?.trim();
   const description = contentAttribute(html, 'description');
   const canonical = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i)?.[1];
@@ -106,6 +123,15 @@ const sitemapFiles = [...sitemapIndex.matchAll(/<loc>([^<]+)<\/loc>/g)].map((mat
 let sitemapXml = '';
 for (const sitemapFile of sitemapFiles) sitemapXml += await readRequired(sitemapFile);
 const sitemapUrls = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+
+for (const url of sitemapUrls) {
+  const route = { path: new URL(url).pathname };
+  if (!isHtmlRoute(route)) continue;
+  const html = await readRequired(routeToGeneratedFile(route));
+  if (/\bnoindex\b/i.test(contentAttribute(html, 'robots'))) {
+    errors.push(`${route.path}: noindex page must not appear in the sitemap`);
+  }
+}
 
 for (const route of expectedSearchRoutes) {
   const expectedUrl = new URL(route.path, siteOrigin).toString();

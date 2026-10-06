@@ -145,7 +145,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     debounceTimer = setTimeout(async function() {
       var pf = await loadPagefind();
       if (!pf) {
-        results.innerHTML = '<div class="search-modal__empty"><p>Search index not available. Run <code>pnpm build</code> first.</p></div>';
+        results.innerHTML = '<div class="search-modal__empty"><p>Search is temporarily unavailable. Please try again.</p></div>';
         return;
       }
 
@@ -161,7 +161,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
         var data = await items[i].data();
         html += '<li><a href="' + escapeHtml(data.url) + '" class="search-modal__result">';
         html += '<span class="search-modal__result-title">' + escapeHtml(data.meta?.title || data.url) + '</span>';
-        html += '<span class="search-modal__result-excerpt">' + escapeHtml(data.excerpt || '') + '</span>';
+        html += '<span class="search-modal__result-excerpt">' + escapeHtml(data.excerpt || '').replace(/&lt;(\/?)mark&gt;/g, '<$1mark>') + '</span>';
         html += '</a></li>';
       }
       html += '</ul>';

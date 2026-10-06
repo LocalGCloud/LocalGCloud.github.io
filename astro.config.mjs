@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import rehypeTableRegions from './src/utils/rehype-table-regions.mjs';
@@ -24,6 +25,7 @@ const rawAgentPages = [
 
 export default defineConfig({
   site: 'https://local.cloud/',
+  compressHTML: true,
   // Avoid CSS request round trips on the initial mobile navigation.
   build: { inlineStylesheets: 'always' },
   security: {
@@ -42,7 +44,7 @@ export default defineConfig({
       ],
     },
   },
-  integrations: [mdx({ gfm: true, rehypePlugins: [rehypeTableRegions] }), sitemap({ customPages: rawAgentPages })],
+  integrations: [mdx(), sitemap({ customPages: rawAgentPages, filter: (page) => page !== 'https://local.cloud/immersive-demo/' })],
   vite: {
     define: {
       'import.meta.env.PUBLIC_POSTHOG_HOST': JSON.stringify(posthog.apiHost),
@@ -52,6 +54,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   markdown: {
+    processor: unified({ gfm: true, rehypePlugins: [rehypeTableRegions] }),
     shikiConfig: {
       themes: {
         light: 'github-light',

@@ -4,44 +4,44 @@
   "description": "LocalCloud — Google Cloud Platform in a box. Official website and documentation.",
   "type": "module",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24.21.0",
+    "pnpm": ">=12.9.1"
   },
   "volta": {
-    "node": "22.12.0"
+    "node": "24.21.0"
   },
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@12.9.1",
   "scripts": {
     "dev": "astro dev",
     "build:cloudflare": "SITE_DEPLOYMENT_TARGET=cloudflare pnpm run build",
     "build:static": "SITE_DEPLOYMENT_TARGET=static pnpm run build",
-    "build": "node scripts/generate-distributed-docs.mjs && node scripts/verify-docs-contract.mjs && node scripts/verify-upstream-docs.mjs && node scripts/verify-cli-docs.mjs && node scripts/verify-doc-examples.mjs && node scripts/verify-policy-docs.mjs && node scripts/verify-distributed-docs.mjs && astro build && node scripts/verify-rendered-docs.mjs && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node --experimental-strip-types scripts/verify-content-facts.mjs && pagefind --site dist && node scripts/bundle-pagefind.mjs && node scripts/finalize-static-csp.mjs",
+    "build": "node scripts/generate-distributed-docs.mjs && node scripts/verify-docs-contract.mjs && node scripts/verify-upstream-docs.mjs && node scripts/verify-cli-docs.mjs && node scripts/verify-doc-examples.mjs && node scripts/verify-policy-docs.mjs && node scripts/verify-distributed-docs.mjs && astro build && node scripts/verify-rendered-docs.mjs && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node scripts/verify-content-facts.mjs && pagefind --site dist && node scripts/bundle-pagefind.mjs && node scripts/finalize-static-csp.mjs",
     "test:performance": "node --test scripts/verify-page-performance.test.mjs scripts/verify-static-response.test.mjs",
     "test:analytics": "node --test scripts/verify-posthog-proxy.test.mjs",
+    "test:dependencies": "pnpm audit --audit-level=low",
     "test:installer": "node scripts/verify-installer.mjs",
     "test:blog": "node scripts/verify-blog-presentation.mjs",
     "test:live-seo": "node --test scripts/verify-live-seo.test.mjs",
-    "deploy:cloudflare": "pnpm run build:cloudflare && pnpm run test:installer && pnpm run test:performance && pnpm run test:analytics && pnpm run test:live-seo && wrangler deploy",
+    "deploy:cloudflare": "pnpm run test:dependencies && pnpm run build:cloudflare && pnpm run test:installer && pnpm run test:performance && pnpm run test:analytics && pnpm run test:live-seo && wrangler deploy",
     "preview": "astro preview"
   },
   "dependencies": {
     "@fontsource-variable/roboto": "5.3.0",
     "@fontsource-variable/roboto-mono": "5.3.0",
-    "@astrojs/mdx": "^5.0.3",
-    "@astrojs/sitemap": "^3.7.2",
-    "@tailwindcss/vite": "^4.2.2",
-    "agentation": "^3.0.2",
-    "astro": "^6.1.8",
-    "puppeteer-core": "^24.42.0",
-    "tailwindcss": "^4.2.2"
+    "@astrojs/markdown-remark": "^7.3.1",
+    "@astrojs/mdx": "^8.0.2",
+    "@astrojs/sitemap": "^3.7.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "agentation": "^3.1.2",
+    "astro": "^7.3.5",
+    "puppeteer-core": "^25.12.0",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "esbuild": "0.28.2",
-    "vite": "7.3.5",
+    "vite": "8.3.2",
     "pagefind": "^1.5.2",
     "wrangler": "4.147.0",
-    "yaml": "^2.9.0"
-  },
-  "overrides": {
-    "vite": "7.3.5"
+    "yaml": "^2.9.1"
   }
 }
