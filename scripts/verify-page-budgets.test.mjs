@@ -12,7 +12,7 @@ const rawDocumentBytes = 21_800;
 // have their own ceilings: the largest twin and the bundle measured on 2026-10-05, plus 10%.
 const markdownTwinBytes = 15_400;
 const llmsFullBytes = 239_500;
-const isMarkdownTwin = (file) => /^(?:docs|services)\/[^/]+\.md$/.test(file);
+const isMarkdownTwin = (file) => /^(?:docs|services|compare)\/[^/]+\.md$/.test(file);
 
 const dist = new URL('../dist/', import.meta.url).pathname;
 const walk = (directory) => readdirSync(directory, { withFileTypes: true })

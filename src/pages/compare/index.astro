@@ -1,14 +1,32 @@
 ---
 import AgenticIndexPage from '../../components/AgenticIndexPage.astro';
+import AlternativesTable from '../../components/AlternativesTable.astro';
+import { alternativesReviewedAt, alternativesReviewedLabel, comparisonSummary } from '../../data/alternatives';
 import { comparisonPages } from '../../data/agenticContent';
 ---
 
 <AgenticIndexPage
   title="LocalCloud Comparisons for Agents"
-  description="Balanced LocalCloud comparisons against Google emulators, hosted agent sandboxes such as E2B and Vercel, and BigQuery emulator alternatives."
+  description="Compare LocalCloud with LocalStack, Google's Cloud CLI and Firebase emulators, community emulators and hosted agent sandboxes, with sources for every fact."
   h1="LocalCloud comparisons for agents"
   eyebrow="Compare"
   deck="Choose the right local or hosted sandbox by job: service fidelity, arbitrary code isolation, BigQuery-only testing, or multi-service local GCP workflows."
   pages={comparisonPages}
   listHeading="Comparisons"
-/>
+>
+  <section class="site-section" aria-labelledby="local-options">
+    <div class="container">
+      <div class="max-w-[48rem]">
+        <span class="site-kicker">Local options for Google Cloud</span>
+        <h2 class="mt-3" id="local-options">LocalCloud, LocalStack and Google's emulators</h2>
+        <p class="mt-4 leading-7 text-[var(--text-2)]">{comparisonSummary.join(' ')}</p>
+      </div>
+      <div class="mt-8">
+        <AlternativesTable variant="full" />
+      </div>
+      <p class="mt-4 text-sm leading-6 text-[var(--text-2)]">
+        Reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time> against each project's official documentation, pricing page or repository. Plans and features change; follow the source links for current terms.
+      </p>
+    </div>
+  </section>
+</AgenticIndexPage>

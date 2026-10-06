@@ -43,12 +43,12 @@ localcloud console
 - [Service matrix](https://local.cloud/ai/services.md): ports, environment variables, and guides
 - [Capabilities and boundaries](https://local.cloud/ai/compatibility.md): what each service runs locally
 - [Docs index for agents](https://local.cloud/ai/docs.md)
-- [Full documentation](https://local.cloud/llms-full.txt): every docs page and service guide in one Markdown file
+- [Full documentation](https://local.cloud/llms-full.txt): every docs page, service guide and comparison in one Markdown file
 - [Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): portable skills for `.agents/skills/`
 
 ## Docs
 
-Every docs page and service guide also has a Markdown version: replace the trailing slash with `.md`, for example https://local.cloud/docs/configuration.md and https://local.cloud/services/bigquery.md (the section pages are https://local.cloud/docs/index.md and https://local.cloud/services/index.md).
+Every docs page, service guide and comparison also has a Markdown version: replace the trailing slash with `.md`, for example https://local.cloud/docs/configuration.md, https://local.cloud/services/bigquery.md and https://local.cloud/compare/localstack.md (the section pages are https://local.cloud/docs/index.md, https://local.cloud/services/index.md and https://local.cloud/compare/index.md).
 
 - [Getting started](https://local.cloud/docs/): install, start, and make a first request
 - [Configuration](https://local.cloud/docs/configuration/): services, projects, persistence, and networking
@@ -106,6 +106,14 @@ The proprietary Public Preview License permits individuals and organizations, in
 - [Licensing](https://local.cloud/docs/licensing/): the terms in plain language
 - [License text](https://local.cloud/license/): the full Public Preview License Agreement, also as [plain text](https://local.cloud/license.txt)
 - [Pricing](https://local.cloud/pricing/)
+
+## How LocalCloud compares
+
+- LocalStack emulates AWS and Snowflake, not Google Cloud; teams on both clouds run both.
+- Google ships separate emulators for Bigtable, Datastore, Firestore, Pub/Sub and Spanner through the Google Cloud CLI, and the Firebase Local Emulator Suite for Firebase products. The Google Cloud CLI has no BigQuery or Cloud Storage emulator.
+- Single-service community emulators typically cover one Google Cloud service each, such as BigQuery or Cloud Storage; coverage and fidelity vary by project.
+- LocalCloud runs 25 Google Cloud services, including BigQuery and Cloud Storage, in one Docker container, using Google's Firestore emulator and a Spanner emulator built from Google's open-source emulator.
+- [Full comparison with sources](https://local.cloud/compare/), reviewed 2026-10-05, and [LocalCloud vs LocalStack](https://local.cloud/compare/localstack/).
 
 ## Contact
 

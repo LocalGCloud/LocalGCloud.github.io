@@ -6,6 +6,8 @@ import {
   createSoftwareApplicationSchema,
   productFacts,
 } from '../data/productFacts';
+import { alternativesReviewedAt, alternativesReviewedLabel } from '../data/alternatives';
+import { availableServiceCount } from '../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
@@ -16,6 +18,10 @@ const faqs = [
     question: 'Is there a LocalStack-style option for Google Cloud?',
     answer:
       'Yes. LocalCloud is a local Google Cloud runtime for non-production development, testing, CI, evaluation, and internal pilots permitted by its proprietary Public Preview License. It runs major GCP services in Docker so applications can use local endpoints instead of real cloud services.',
+  },
+  {
+    question: 'Does LocalStack support Google Cloud?',
+    answer: `Not as of ${alternativesReviewedLabel}. LocalStack's plans cover AWS and a separate Snowflake product. Since March 23, 2026, current LocalStack releases need a LocalStack account and auth token, and its free Hobby plan is for non-commercial use.`,
   },
   {
     question: 'Is LocalCloud affiliated with LocalStack?',
@@ -130,6 +136,16 @@ const structuredData = [
               <td class="p-4 text-[var(--text-2)]">Google Cloud workflows</td>
             </tr>
             <tr class="border-b border-[var(--border)]">
+              <th scope="row" class="p-4 text-left font-semibold text-[var(--text)]">Google Cloud services</th>
+              <td class="p-4 text-[var(--text-2)]">None; LocalStack covers AWS and Snowflake</td>
+              <td class="p-4 text-[var(--text-2)]">{availableServiceCount} in one Docker container</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
+              <th scope="row" class="p-4 text-left font-semibold text-[var(--text)]">Sign-up and plans</th>
+              <td class="p-4 text-[var(--text-2)]">Account and auth token required for current releases since March 23, 2026; free Hobby plan for non-commercial use, paid plans for commercial use</td>
+              <td class="p-4 text-[var(--text-2)]">No account or license key; free during the public preview, and free for open-source projects after it</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
               <th scope="row" class="p-4 text-left font-semibold text-[var(--text)]">Local development goal</th>
               <td class="p-4 text-[var(--text-2)]">Develop and test AWS-connected applications locally</td>
               <td class="p-4 text-[var(--text-2)]">Develop and test GCP-connected applications locally</td>
@@ -147,6 +163,9 @@ const structuredData = [
           </tbody>
         </table>
       </div>
+      <p class="mt-4 text-sm leading-6 text-[var(--text-2)]">
+        LocalStack facts reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time> from <a href="https://www.localstack.cloud/pricing">LocalStack pricing</a> and <a href="https://blog.localstack.cloud/localstack-single-image-next-steps/">LocalStack's single-image announcement</a>. See the <a href={`${base}compare/`}>full comparison</a>, including Google's own emulators.
+      </p>
     </div>
   </section>
 

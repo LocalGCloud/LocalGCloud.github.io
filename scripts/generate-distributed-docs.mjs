@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { alternativesReviewedAt, comparisonSummary } from "../src/data/alternatives.ts";
 import { presentContract } from "../src/utils/contract-presentation.mjs";
 import { cliQuickStart } from "../src/utils/quickstart.mjs";
 
@@ -152,12 +153,12 @@ ${quickStart.script}
 - [Service matrix](${site}ai/services.md): ports, environment variables, and guides
 - [Capabilities and boundaries](${site}ai/compatibility.md): what each service runs locally
 - [Docs index for agents](${site}ai/docs.md)
-- [Full documentation](${site}llms-full.txt): every docs page and service guide in one Markdown file
+- [Full documentation](${site}llms-full.txt): every docs page, service guide and comparison in one Markdown file
 - [Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): portable skills for \`.agents/skills/\`
 
 ## Docs
 
-Every docs page and service guide also has a Markdown version: replace the trailing slash with \`.md\`, for example ${site}docs/configuration.md and ${site}services/bigquery.md (the section pages are ${site}docs/index.md and ${site}services/index.md).
+Every docs page, service guide and comparison also has a Markdown version: replace the trailing slash with \`.md\`, for example ${site}docs/configuration.md, ${site}services/bigquery.md and ${site}compare/localstack.md (the section pages are ${site}docs/index.md, ${site}services/index.md and ${site}compare/index.md).
 
 - [Getting started](${site}docs/): install, start, and make a first request
 - [Configuration](${site}docs/configuration/): services, projects, persistence, and networking
@@ -190,6 +191,11 @@ ${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source pro
 - [Licensing](${site}docs/licensing/): the terms in plain language
 - [License text](${site}license/): the full Public Preview License Agreement, also as [plain text](${site}license.txt)
 - [Pricing](${site}pricing/)
+
+## How LocalCloud compares
+
+${comparisonSummary.map((line) => `- ${line}`).join("\n")}
+- [Full comparison with sources](${site}compare/), reviewed ${alternativesReviewedAt}, and [LocalCloud vs LocalStack](${site}compare/localstack/).
 
 ## Contact
 

@@ -182,9 +182,10 @@ const twinAsset = () => new Response(markdown, {
 });
 const varyValues = (response) => (response.headers.get('Vary') || '').split(',').map((value) => value.trim());
 
-test('the twin route list maps docs and service pages to Markdown files and back', () => {
+test('the twin route list maps docs, service and comparison pages to Markdown files and back', () => {
   for (const [page, twin] of [['/docs/', '/docs/index.md'], ['/docs/configuration/', '/docs/configuration.md'],
-    ['/services/', '/services/index.md'], ['/services/cloud-run/', '/services/cloud-run.md']]) {
+    ['/services/', '/services/index.md'], ['/services/cloud-run/', '/services/cloud-run.md'],
+    ['/compare/', '/compare/index.md'], ['/compare/localstack/', '/compare/localstack.md']]) {
     assert.equal(markdownTwinPath(page), twin, page);
     assert.equal(twinSourcePath(twin), page, twin);
   }

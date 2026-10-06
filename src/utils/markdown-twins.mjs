@@ -1,9 +1,9 @@
-// Pages that publish a Markdown twin: /docs/ and /services/ and their direct child pages.
+// Pages that publish a Markdown twin: /docs/, /services/ and /compare/ and their direct child pages.
 // BaseLayout, scripts/generate-markdown-twins.mjs and the Worker all read this module,
 // so the <link rel="alternate">, the built .md files and content negotiation agree.
 
-const TWIN_PAGE = /^\/(docs|services)\/(?:([a-z0-9]+(?:-[a-z0-9]+)*)\/)?$/;
-const TWIN_FILE = /^\/(docs|services)\/([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/;
+const TWIN_PAGE = /^\/(docs|services|compare)\/(?:([a-z0-9]+(?:-[a-z0-9]+)*)\/)?$/;
+const TWIN_FILE = /^\/(docs|services|compare)\/([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/;
 
 /** `/docs/configuration/` -> `/docs/configuration.md`; `/docs/` -> `/docs/index.md`; otherwise null. */
 export function markdownTwinPath(pathname) {

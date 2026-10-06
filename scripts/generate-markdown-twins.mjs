@@ -2,8 +2,8 @@ import { readFile, readdir, writeFile } from "node:fs/promises";
 import TurndownService from "turndown";
 import { markdownTwinPath } from "../src/utils/markdown-twins.mjs";
 
-// Writes a Markdown twin of every built /docs/ and /services/ page (the <main> element
-// only) and builds dist/llms-full.txt from llms.txt plus those twins.
+// Writes a Markdown twin of every built /docs/, /services/ and /compare/ page (the <main>
+// element only) and builds dist/llms-full.txt from llms.txt plus those twins.
 
 const site = "https://local.cloud";
 const dist = new URL("../dist/", import.meta.url);
@@ -156,10 +156,12 @@ if (!twinPages.some((page) => page.route === "/docs/") || !twinPages.some((page)
 	fail("expected docs and service pages in dist/");
 }
 
+// Docs first, then service guides, then comparisons; each section opens with its index page.
+const sectionOrder = ["docs", "services", "compare"];
 const rank = (page) => {
-	const [, section, slug] = page.twin.match(/^\/(docs|services)\/(.+)\.md$/);
+	const [, section, slug] = page.twin.match(/^\/(docs|services|compare)\/(.+)\.md$/);
 	const docsRank = docsOrder.indexOf(slug);
-	return [section === "docs" ? 0 : 1, section === "docs" && docsRank !== -1 ? docsRank : slug === "index" ? -1 : docsOrder.length, slug];
+	return [sectionOrder.indexOf(section), section === "docs" && docsRank !== -1 ? docsRank : slug === "index" ? -1 : docsOrder.length, slug];
 };
 const compare = (left, right) => {
 	const [a, b] = [rank(left), rank(right)];
@@ -180,7 +182,7 @@ const full = `${llms.trimEnd()}
 
 ---
 
-The sections below are the Markdown versions of every docs page and service guide on https://local.cloud/, in reading order. Each section names its source page.
+The sections below are the Markdown versions of every docs page, service guide and comparison on https://local.cloud/, in reading order. Each section names its source page.
 
 ---
 

@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { licenseWords } from '../src/utils/license-document.mjs';
+import { alternatives, alternativesReviewedAt, comparisonSummary } from '../src/data/alternatives.ts';
 import { docsContract } from '../src/data/docs-contract.ts';
 import { productFacts } from '../src/data/productFacts.ts';
 import { cliQuickStart } from '../src/utils/quickstart.mjs';
@@ -66,7 +67,7 @@ for (const required of [
 }
 
 // Agent text: the raw files agents and LLM tools read, including the Markdown twins of docs and service pages.
-const isMarkdownTwin = (file) => /^(?:docs|services)\/[^/]+\.md$/.test(file);
+const isMarkdownTwin = (file) => /^(?:docs|services|compare)\/[^/]+\.md$/.test(file);
 const agentText = new Map(await Promise.all([...files]
   .filter((file) => /^llms[^/]*\.txt$/.test(file) || /^ai\/[^/]+\.md$/.test(file) || isMarkdownTwin(file))
   .map(async (file) => [file, await readFile(new URL(file, distDirectory), 'utf8')])));
@@ -417,6 +418,33 @@ const changelogHtml = htmlPages.get('changelog/index.html') ?? '';
 for (const release of releaseData.releases) {
   if (!changelogHtml.includes(`id="${release.tag}"`) || !changelogHtml.includes(`href="${release.url}"`)) errors.push(`changelog omits ${release.tag}`);
 }
+
+// /compare/ publishes the alternatives table with its review date, and every fact about
+// another product links the official source it was checked against. Facts about other
+// products go stale, so an old review warns rather than fails.
+const compareHtml = htmlPages.get('compare/index.html') ?? '';
+const compareTable = compareHtml.match(/<table\b[^>]*data-alternatives-table="full"[\s\S]*?<\/table>/)?.[0] ?? '';
+if (!compareTable) errors.push('compare/index.html must publish the full alternatives table');
+else {
+  if (!compareTable.includes(`data-reviewed-at="${alternativesReviewedAt}"`) || !compareTable.includes(`<time datetime="${alternativesReviewedAt}"`)) errors.push(`the /compare/ table must show its review date ${alternativesReviewedAt}`);
+  for (const option of alternatives) {
+    if (!compareTable.includes(option.name)) errors.push(`the /compare/ table omits ${option.name}`);
+    for (const [row, cell] of Object.entries(option.cells)) {
+      // A generic category (community emulators) names no projects and links nothing;
+      // every named product cites its source.
+      if (option.generic && cell.sources.length) errors.push(`alternatives: ${option.id}.${row} is a generic category and must not link a project`);
+      if (!option.generic && !cell.sources.length) errors.push(`alternatives: ${option.id}.${row} has no source`);
+      for (const { href } of cell.sources) {
+        if (option.id !== 'localcloud' && !href.startsWith('https://')) errors.push(`alternatives: ${option.id}.${row} must cite an official https source, not ${href}`);
+        if (!compareTable.includes(`href="${href}"`)) errors.push(`the /compare/ table omits the source ${href} for ${option.id}.${row}`);
+      }
+      if (/\$\d|\bprice\s*:/i.test(cell.text)) errors.push(`alternatives: ${option.id}.${row} states a price; describe plans, not amounts`);
+    }
+  }
+}
+const reviewAgeDays = (Date.now() - Date.parse(`${alternativesReviewedAt}T00:00:00Z`)) / 86_400_000;
+if (reviewAgeDays > 120) console.warn(`::warning::The alternatives comparison was reviewed ${Math.floor(reviewAgeDays)} days ago (${alternativesReviewedAt}); re-check src/data/alternatives.ts against its sources.`);
+if (!llms.includes('\n## How LocalCloud compares\n') || !comparisonSummary.every((line) => llms.includes(line))) errors.push('llms.txt must include the "How LocalCloud compares" section from src/data/alternatives.ts');
 
 // The runtime repository is private: no page or agent text may link it.
 for (const file of [...files].filter((name) => /\.(?:html|md|txt|xml|json)$/.test(name) && !name.startsWith('pagefind/'))) {

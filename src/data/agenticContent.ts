@@ -1,4 +1,5 @@
 import { agenticFacts, agenticServiceMetadata, joinClauses } from "./agenticFacts";
+import { alternativesReviewedLabel } from "./alternatives";
 import { productFacts } from "./productFacts";
 import { availableServiceCount } from "./services";
 
@@ -910,7 +911,7 @@ export const comparisonPages: AgenticContentPage[] = [
 			"LocalStack is a mature local cloud development platform for AWS. LocalCloud is a local Google Cloud runtime. They solve the same shape of problem for different clouds, so the choice usually follows the cloud your application already targets rather than a feature score.",
 		promptIds: ["quickstart", "project-integration"],
 		quickFacts: [
-			"LocalStack targets AWS service APIs; LocalCloud targets Google Cloud service APIs.",
+			`LocalStack targets AWS service APIs (and Snowflake); LocalCloud targets Google Cloud service APIs. LocalStack had no Google Cloud services as of ${alternativesReviewedLabel}.`,
 			`LocalCloud runs ${availableServiceCount} local services in one Docker image.`,
 			"The two are not interchangeable: AWS SDK calls do not reach LocalCloud, and Google Cloud SDK calls do not reach LocalStack.",
 		],
@@ -939,7 +940,7 @@ export const comparisonPages: AgenticContentPage[] = [
 			rows: [
 				[
 					"Cloud emulated",
-					"Amazon Web Services.",
+					"Amazon Web Services, plus a separate Snowflake product.",
 					"Google Cloud.",
 				],
 				[
@@ -959,8 +960,13 @@ export const comparisonPages: AgenticContentPage[] = [
 				],
 				[
 					"Licensing",
-					"Review the LocalStack license and plan terms directly.",
-					"Proprietary LocalCloud Public Preview License; review before use.",
+					"Proprietary plans. Since March 23, 2026, current releases need a LocalStack account and auth token, including in CI.",
+					"Proprietary LocalCloud Public Preview License.",
+				],
+				[
+					"Cost and sign-up",
+					`A free Hobby plan covers non-commercial use; commercial use needs a paid plan (as of ${alternativesReviewedLabel}).`,
+					"Free during the public preview, with no account or license key; open-source projects stay free after it.",
 				],
 			],
 		},
@@ -987,6 +993,21 @@ export const comparisonPages: AgenticContentPage[] = [
 				label: "LocalStack",
 				href: "https://www.localstack.cloud/",
 				note: "Vendor description of the AWS local cloud development platform.",
+			},
+			{
+				label: "LocalStack pricing",
+				href: "https://www.localstack.cloud/pricing",
+				note: `Plans, the non-commercial Hobby plan, and covered products (AWS and Snowflake), reviewed ${alternativesReviewedLabel}.`,
+			},
+			{
+				label: "LocalStack single-image announcement",
+				href: "https://blog.localstack.cloud/localstack-single-image-next-steps/",
+				note: "Account and auth token required for current releases from March 23, 2026.",
+			},
+			{
+				label: "Full comparison table",
+				href: "/compare/",
+				note: "LocalCloud, LocalStack, Google's emulators and community emulators, with sources.",
 			},
 			{
 				label: "LocalCloud compatibility",
