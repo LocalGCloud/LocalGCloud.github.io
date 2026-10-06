@@ -144,6 +144,7 @@ export const runIndexNow = async (args) => {
       console.log(`::warning::IndexNow returned ${response.status}: ${(await response.text()).slice(0, 300)}`);
       return 1;
     }
+    console.log(`IndexNow accepted ${payload.urlList.length} URLs (HTTP ${response.status}).`);
   }
   return 0;
 };

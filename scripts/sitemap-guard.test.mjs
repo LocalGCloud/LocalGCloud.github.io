@@ -14,6 +14,7 @@ import {
   indexNowPayloads,
   parseRedirectSources,
   parseSitemap,
+  runIndexNow,
 } from './sitemap-guard.mjs';
 
 const run = promisify(execFile);
@@ -135,4 +136,21 @@ test('indexnow dry run lists only new and changed URLs', async (t) => {
   assert.match(stdout, /would submit 1 URLs/);
   assert.match(stdout, /https:\/\/local\.cloud\/docs\//);
   assert.doesNotMatch(stdout, /https:\/\/local\.cloud\/\n/);
+});
+
+test('indexnow logs the HTTP status when the submission is accepted', async (t) => {
+  const site = await withSite(t, { liveSitemap: undefined, builtFiles: [] });
+  await writeFile(join(site.dist, 'sitemap-index.xml'), '<sitemapindex><sitemap><loc>https://local.cloud/sitemap-0.xml</loc></sitemap></sitemapindex>');
+  await writeFile(join(site.dist, 'sitemap-0.xml'), urlset([['https://local.cloud/', '2026-10-01'], ['https://local.cloud/docs/', '2026-10-06']]));
+  const submitted = [];
+  t.mock.method(globalThis, 'fetch', async (url, init) => {
+    submitted.push({ url, body: JSON.parse(init.body) });
+    return new Response(null, { status: 202 });
+  });
+  const logged = [];
+  t.mock.method(console, 'log', (line) => logged.push(line));
+  assert.equal(await runIndexNow(['--dist', site.dist]), 0);
+  assert.equal(submitted.length, 1);
+  assert.equal(submitted[0].body.urlList.length, 2);
+  assert.ok(logged.includes('IndexNow accepted 2 URLs (HTTP 202).'), logged.join('\n'));
 });
