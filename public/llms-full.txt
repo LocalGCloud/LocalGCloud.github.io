@@ -1,8 +1,14 @@
 # LocalCloud
 
-> LocalCloud provides 27 service guides and 25 documented local integrations in one local Docker runtime. Availability does not imply full Google Cloud parity or default startup. Firestore is disabled by default; Google Sheets provides a limited read-only values facade.
+> LocalCloud is a local Google Cloud emulator: one Docker container that serves 25 Google Cloud services on localhost, so developers, CI jobs, and AI coding agents can run Google Cloud code without a GCP account, credentials, or billing.
 
-LocalCloud is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and internal pilots. Excluded uses include customer-facing or other production use, reselling LocalCloud or providing it as a hosted or managed service, redistribution or sublicensing, modification except where applicable law requires permission.
+- Runs BigQuery, Cloud Storage, Pub/Sub, Spanner, Bigtable, Firestore, Cloud SQL, Memorystore (Redis/Valkey), Dataproc, Cloud Run, and more in one container.
+- Standard Google Cloud SDKs and Terraform connect through generated emulator environment variables.
+- Stores local state in a named Docker volume and includes a web console for service health and local data.
+- Installs as a CLI on macOS and Linux; any Docker host can run the container directly.
+- Free during the public preview for non-production use, and free for open-source projects.
+
+Use LocalCloud for development, testing, and CI, and validate application behavior against real Google Cloud before production deployment.
 
 ## Quick start
 
@@ -15,62 +21,98 @@ eval "$(localcloud env)"
 localcloud console
 ```
 
+- Homebrew alternative to the first line: `brew install LocalGCloud/tap/localcloud`.
+- `localcloud start` waits for the runtime. The CLI remaps a default port when it is in use; use the URLs and endpoint values it returns.
+- Without the CLI (for example on Windows), follow the [manual Docker path](https://local.cloud/docs/#manual-docker-path).
+
 ## Runtime facts
 
 - Default project: `local-gcp-project`
 - Default user: `local-developer`
-- Default data volume: `localcloud-data`
+- Default data volume: `localcloud-data`; select another with `--data-volume NAME`.
 - CLI memory default: `4g`
+- Readiness endpoint (wait for it before application traffic): `http://localhost:5380/readiness`
 - Health endpoint: `http://localhost:5380/health`
-- Shell environment endpoint: `http://localhost:5380/env?format=shell`
-- Terraform environment endpoint: `http://localhost:5380/env?format=terraform`
+- Shell environment: `http://localhost:5380/env?format=shell`
+- Terraform environment: `http://localhost:5380/env?format=terraform`
 
-Wait for `/readiness` before application traffic. Trust URLs and endpoint values returned by the selected CLI runtime; occupied canonical ports may be remapped. Select durable storage with `--data-volume NAME`; project and caller remain request context. LocalCloud emulates bounded local development workflows. Validate application behavior against real Google Cloud before production deployment.
+## Agent resources
 
-## Useful URLs
+- [Agent guide](https://local.cloud/ai/agents.md): install-first quick start, rules, and workflow for coding agents
+- [AGENTS.md template](https://local.cloud/ai/agent-template.md): repository instructions to copy into a project
+- [Service matrix](https://local.cloud/ai/services.md): ports, environment variables, and guides
+- [Capabilities and boundaries](https://local.cloud/ai/compatibility.md): what each service runs locally
+- [Docs index for agents](https://local.cloud/ai/docs.md)
+- [Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): portable skills for `.agents/skills/`
 
+## Docs
+
+- [Getting started](https://local.cloud/docs/): install, start, and make a first request
+- [Configuration](https://local.cloud/docs/configuration/): services, projects, persistence, and networking
+- [SDK examples](https://local.cloud/docs/sdk-examples/): Google Cloud client libraries against localhost
+- [Terraform](https://local.cloud/docs/terraform/): provider endpoint overrides
+- [Seed data](https://local.cloud/docs/seed-data/): repeatable local fixtures
+- [Architecture](https://local.cloud/docs/architecture/)
+- [Web console](https://local.cloud/docs/console/)
 - [Service catalog](https://local.cloud/services/)
 - [Compatibility and limitations](https://local.cloud/compatibility/)
-- [Configuration](https://local.cloud/docs/configuration/)
-- [Pricing](https://local.cloud/pricing/)
-- [Licensing](https://local.cloud/docs/licensing/)
-- [LocalStack for Google Cloud](https://local.cloud/localstack-for-google-cloud/)
-- [Local cloud for AI agents](https://local.cloud/local-cloud-for-ai-agents/)
-- [Agent sandbox setup routes](https://local.cloud/agents/)
-- [Agent and automation workflows](https://local.cloud/workflows/)
-- [Comparisons and alternatives](https://local.cloud/compare/)
-- [Glossary](https://local.cloud/glossary/)
-- [AGENTS.md template](https://local.cloud/ai/agent-template.md)
-- [CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases)
+- [FAQ](https://local.cloud/docs/faq/)
+- [Privacy](https://local.cloud/docs/privacy/)
 
 ## Services
-- Cloud Storage — supported; starts by default; HTTP/REST :5382; `STORAGE_EMULATOR_HOST=http://localhost:5382`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Pub/Sub — supported; starts by default; gRPC :5383; `PUBSUB_EMULATOR_HOST=localhost:5383`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Firestore — supported; available but disabled by default; gRPC :5384; `FIRESTORE_EMULATOR_HOST=localhost:5384`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Bigtable — supported; starts by default; gRPC :5385; `BIGTABLE_EMULATOR_HOST=localhost:5385`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Spanner — supported; starts by default; gRPC :5386 · HTTP/REST :5387; `SPANNER_EMULATOR_HOST=localhost:5386`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- BigQuery — supported; starts by default; HTTP/REST :5388 · gRPC :5389; `BIGQUERY_EMULATOR_HOST=http://localhost:5388`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Google Sheets — supported; starts by default; HTTP/REST :5380; `SHEETS_EMULATOR_HOST=http://localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Secret Manager — supported; starts by default; gRPC :5380; `SECRET_MANAGER_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud Tasks — supported; starts by default; gRPC :5380; `CLOUD_TASKS_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud Scheduler — supported; starts by default; grpc+rest :5380; `CLOUD_SCHEDULER_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud Functions (2nd Gen) — supported; starts by default; gRPC :5380; `CLOUD_FUNCTIONS_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- AlloyDB — supported; starts by default; gRPC :5380; `ALLOYDB_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Dataproc — supported; starts by default; gRPC :5380; `DATAPROC_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud IAM — supported; starts by default; gRPC :5380; `IAM_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud Resource Manager — supported; starts by default; HTTP/REST :5380; `CLOUD_RESOURCE_MANAGER_EMULATOR_HOST=http://localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Service Usage — supported; starts by default; HTTP/REST :5380; `SERVICE_USAGE_EMULATOR_HOST=http://localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud Billing — supported; starts by default; HTTP/REST :5380; `CLOUD_BILLING_EMULATOR_HOST=http://localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud Logging — supported; starts by default; gRPC :5380; `CLOUD_LOGGING_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud Monitoring — supported; starts by default; gRPC :5380; `CLOUD_MONITORING_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- GKE — supported; available but disabled by default; gRPC :5380 · k3d :5443; `GKE_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Compute Engine — unsupported. No supported application integration is established; review the service guide before configuring a client.
-- Cloud Run — supported; available but disabled by default; gRPC :5380; `CLOUD_RUN_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Memorystore (Redis/Valkey) — supported; starts by default; RESP :5390; `REDIS_HOST=localhost:5390`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud Workflows — supported; starts by default; gRPC :5380; `WORKFLOWS_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Vertex AI — unsupported. No supported application integration is established; review the service guide before configuring a client.
-- Cloud KMS — supported; starts by default; grpc+rest :5380; `CLOUD_KMS_EMULATOR_HOST=localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
-- Cloud SQL — supported; starts by default; HTTP/REST :5380 · PostgreSQL :5391 · MySQL :5406; `CLOUD_SQL_EMULATOR_HOST=http://localhost:5380`. Supported for local workflows; real Google Cloud remains the production source of truth.
+
+Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-in: `--services` sets the exact list of service IDs to run, for example `localcloud start --local-only --services firestore,gcs,pubsub`. Google Sheets serves read-only spreadsheet values as fixtures for other services.
+
+| Service | ID | Starts by default | Endpoints | Environment variable | Guide |
+| --- | --- | --- | --- | --- | --- |
+| Cloud Storage | `gcs` | yes | HTTP/REST :5382 | `STORAGE_EMULATOR_HOST=http://localhost:5382` | [guide](https://local.cloud/services/cloud-storage/) |
+| Pub/Sub | `pubsub` | yes | gRPC :5383 | `PUBSUB_EMULATOR_HOST=localhost:5383` | [guide](https://local.cloud/services/pubsub/) |
+| Firestore | `firestore` | opt-in | gRPC :5384 | `FIRESTORE_EMULATOR_HOST=localhost:5384` | [guide](https://local.cloud/services/firestore/) |
+| Bigtable | `bigtable` | yes | gRPC :5385 | `BIGTABLE_EMULATOR_HOST=localhost:5385` | [guide](https://local.cloud/services/bigtable/) |
+| Spanner | `spanner` | yes | gRPC :5386 · HTTP/REST :5387 | `SPANNER_EMULATOR_HOST=localhost:5386` | [guide](https://local.cloud/services/spanner/) |
+| BigQuery | `bigquery` | yes | HTTP/REST :5388 · gRPC :5389 | `BIGQUERY_EMULATOR_HOST=http://localhost:5388` | [guide](https://local.cloud/services/bigquery/) |
+| Google Sheets | `sheets` | yes | HTTP/REST :5380 | `SHEETS_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/google-sheets/) |
+| Secret Manager | `secretmanager` | yes | gRPC :5380 | `SECRET_MANAGER_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/secret-manager/) |
+| Cloud Tasks | `cloudtasks` | yes | gRPC :5380 | `CLOUD_TASKS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-tasks/) |
+| Cloud Scheduler | `cloudscheduler` | yes | grpc+rest :5380 | `CLOUD_SCHEDULER_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-scheduler/) |
+| Cloud Functions (2nd Gen) | `cloudfunctions` | yes | gRPC :5380 | `CLOUD_FUNCTIONS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-functions/) |
+| AlloyDB | `alloydb` | yes | gRPC :5380 | `ALLOYDB_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/alloydb/) |
+| Dataproc | `dataproc` | yes | gRPC :5380 | `DATAPROC_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/dataproc/) |
+| Cloud IAM | `cloudiam` | yes | gRPC :5380 | `IAM_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-iam/) |
+| Cloud Resource Manager | `cloudresourcemanager` | yes | HTTP/REST :5380 | `CLOUD_RESOURCE_MANAGER_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/cloud-resource-manager/) |
+| Service Usage | `serviceusage` | yes | HTTP/REST :5380 | `SERVICE_USAGE_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/service-usage/) |
+| Cloud Billing | `cloudbilling` | yes | HTTP/REST :5380 | `CLOUD_BILLING_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/cloud-billing/) |
+| Cloud Logging | `logging` | yes | gRPC :5380 | `CLOUD_LOGGING_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-logging/) |
+| Cloud Monitoring | `monitoring` | yes | gRPC :5380 | `CLOUD_MONITORING_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-monitoring/) |
+| GKE | `gke` | opt-in | gRPC :5380 · k3d :5443 | `GKE_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/gke/) |
+| Cloud Run | `cloudrun` | opt-in | gRPC :5380 | `CLOUD_RUN_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-run/) |
+| Memorystore (Redis/Valkey) | `memorystore` | yes | RESP :5390 | `REDIS_HOST=localhost:5390` | [guide](https://local.cloud/services/memorystore/) |
+| Cloud Workflows | `workflows` | yes | gRPC :5380 | `WORKFLOWS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-workflows/) |
+| Cloud KMS | `kms` | yes | grpc+rest :5380 | `CLOUD_KMS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-kms/) |
+| Cloud SQL | `cloudsql` | yes | HTTP/REST :5380 · PostgreSQL :5391 · MySQL :5406 | `CLOUD_SQL_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/cloud-sql/) |
+
+Unsupported locally; use Google Cloud:
+
+- [Compute Engine](https://local.cloud/services/compute-engine/) — unsupported
+- [Vertex AI](https://local.cloud/services/vertex-ai/) — unsupported
+
+## License
+
+The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and internal pilots. Excluded uses: customer-facing or other production use; reselling LocalCloud or providing it as a hosted or managed service; redistribution or sublicensing; and modification except where applicable law requires permission. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends.
+
+- [Licensing](https://local.cloud/docs/licensing/)
+- [Pricing](https://local.cloud/pricing/)
+
+## Optional
+
+- [Local cloud for AI agents](https://local.cloud/local-cloud-for-ai-agents/)
+- [Agent sandbox setup](https://local.cloud/agents/)
+- [Agent and automation workflows](https://local.cloud/workflows/)
+- [LocalStack for Google Cloud](https://local.cloud/localstack-for-google-cloud/)
+- [Comparisons and alternatives](https://local.cloud/compare/)
+- [Glossary](https://local.cloud/glossary/)
+- [Blog](https://local.cloud/blog/)
+- [CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases)
 
 ## Safety boundaries
 

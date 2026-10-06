@@ -15,30 +15,35 @@ const distDirectory = new URL('../dist/', import.meta.url);
 const files = new Set(await readdir(distDirectory, { recursive: true }));
 const htmlPages = new Map(await Promise.all([...files].filter((file) => file.endsWith('.html')).map(async (file) => [file, await readFile(new URL(file, distDirectory), 'utf8')])));
 
+// Resolve a local URL to a built file the way the asset server does, then check any #fragment.
+const siteOrigin = new URL(productFacts.siteUrl).origin;
+const checkLocalLink = (file, target) => {
+  if (target.origin !== siteOrigin) return;
+  const path = decodeURIComponent(target.pathname).replace(/^\//, '');
+  const resolvedPath = files.has(path)
+    ? path
+    : [...files].find((f) => f.toLowerCase() === path.toLowerCase());
+  const destination = resolvedPath
+    ? resolvedPath
+    : !path || path.endsWith('/')
+    ? `${path}index.html`
+    : `${path}/index.html`;
+  const resolvedDestination = files.has(destination)
+    ? destination
+    : [...files].find((f) => f.toLowerCase() === destination.toLowerCase());
+  if (!resolvedDestination) errors.push(`${file} links to missing ${target.pathname}`);
+  else if (target.hash && htmlPages.has(resolvedDestination)) {
+    const id = decodeURIComponent(target.hash.slice(1));
+    if (!htmlPages.get(resolvedDestination).includes(`id="${id}"`)) errors.push(`${file} links to missing ${target.pathname}#${id}`);
+  }
+};
+
 // Check every published page, including generated agent routes, for missing local links.
 for (const [file, html] of htmlPages) {
   const pageUrl = new URL(file.replace(/index\.html$/, ''), productFacts.siteUrl);
   const markup = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
   for (const [, rawHref] of markup.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
-    const target = new URL(rawHref.replaceAll('&amp;', '&'), pageUrl);
-    if (target.origin !== new URL(productFacts.siteUrl).origin) continue;
-    const path = decodeURIComponent(target.pathname).replace(/^\//, '');
-    const resolvedPath = files.has(path)
-      ? path
-      : [...files].find((f) => f.toLowerCase() === path.toLowerCase());
-    const destination = resolvedPath
-      ? resolvedPath
-      : !path || path.endsWith('/')
-      ? `${path}index.html`
-      : `${path}/index.html`;
-    const resolvedDestination = files.has(destination)
-      ? destination
-      : [...files].find((f) => f.toLowerCase() === destination.toLowerCase());
-    if (!resolvedDestination) errors.push(`${file} links to missing ${target.pathname}`);
-    else if (target.hash && htmlPages.has(resolvedDestination)) {
-      const id = decodeURIComponent(target.hash.slice(1));
-      if (!htmlPages.get(resolvedDestination).includes(`id="${id}"`)) errors.push(`${file} links to missing ${target.pathname}#${id}`);
-    }
+    checkLocalLink(file, new URL(rawHref.replaceAll('&amp;', '&'), pageUrl));
   }
 }
 
@@ -49,6 +54,11 @@ for (const required of [
   new URL(productFacts.pricingPath, productFacts.siteUrl).toString(),
   'https://local.cloud/compatibility/',
   'https://local.cloud/localstack-for-google-cloud/',
+  'https://local.cloud/ai/agents.md',
+  'https://local.cloud/ai/agent-template.md',
+  'https://local.cloud/ai/services.md',
+  'https://local.cloud/docs/',
+  'https://local.cloud/services/bigquery/',
 ]) {
   if (!llms.includes(required)) errors.push(`llms.txt must contain ${required}`);
 }
@@ -57,6 +67,14 @@ for (const required of [
 const agentText = new Map(await Promise.all([...files]
   .filter((file) => /^llms[^/]*\.txt$/.test(file) || /^ai\/[^/]+\.md$/.test(file))
   .map(async (file) => [file, await readFile(new URL(file, distDirectory), 'utf8')])));
+
+// Links in agent text resolve like page links: absolute local.cloud URLs and root-relative Markdown links.
+for (const [file, text] of agentText) {
+  for (const [url] of text.matchAll(/https:\/\/local\.cloud\/[^\s)<>\]"'`|]*/g)) {
+    checkLocalLink(file, new URL(url.replace(/[.,;:]+$/, '')));
+  }
+  for (const [, path] of text.matchAll(/\]\((\/[^)\s]*)\)/g)) checkLocalLink(file, new URL(path, productFacts.siteUrl));
+}
 const decodeEntities = (text) => text.replace(/&#(x[\da-f]+|\d+);|&(amp|lt|gt|quot|apos);/gi, (_, number, name) => number
   ? String.fromCodePoint(Number.parseInt(number.replace(/^x/i, ''), /^x/i.test(number) ? 16 : 10))
   : ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[name.toLowerCase()]);

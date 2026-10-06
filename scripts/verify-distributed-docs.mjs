@@ -149,21 +149,26 @@ for (const path of [
 }
 
 const contract = JSON.parse(await read("src/data/docs-contract.snapshot.json"));
-const availableCount = contract.services.filter((service) => service.published && service.availability === "available" && !["unsupported", "unknown"].includes(service.status)).length;
+const isLocal = (service) => service.availability === "available" && !["unsupported", "unknown"].includes(service.status);
+const availableCount = contract.services.filter((service) => service.published && isLocal(service)).length;
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 for (const path of ["public/llms.txt", "public/llms-full.txt"]) {
 	const value = await read(path);
 	assert(
-		value.includes(`${availableCount} documented local integrations`),
-		`${path} lacks public service counts`,
+		value.startsWith(`# LocalCloud\n\n> LocalCloud is a local Google Cloud emulator: one Docker container that serves ${availableCount} Google Cloud services on localhost`),
+		`${path} must open with the one-sentence definition and the local service count`,
 	);
 	assert(
-		value.includes("Firestore is disabled by default") &&
-			value.includes("Google Sheets provides a limited read-only values facade"),
-		`${path} lacks service classification policy`,
+		/^\| Firestore \| `firestore` \| opt-in \|/m.test(value) && value.includes("are opt-in: `--services` sets the exact list"),
+		`${path} must list Firestore as a supported opt-in service and explain --services`,
+	);
+	assert(
+		value.includes("Google Sheets serves read-only spreadsheet values"),
+		`${path} lacks the Google Sheets fixture role`,
 	);
 	assert(value.includes("local-gcp-project"), `${path} lacks default project`);
 	assert(
-		value.includes("/health") && value.includes("/env"),
+		value.includes("/readiness") && value.includes("/env"),
 		`${path} lacks root operator routes`,
 	);
 	assert(
@@ -171,9 +176,23 @@ for (const path of ["public/llms.txt", "public/llms-full.txt"]) {
 			value.includes("internal development, testing, CI, evaluation, and internal pilots"),
 		`${path} lacks public-preview license boundaries`,
 	);
+	assert(value.includes("Free for open-source projects policy"), `${path} lacks the open-source free-use policy`);
 	assert(value.includes("https://local.cloud/pricing/"), `${path} lacks pricing URL`);
-	for (const service of contract.services.filter((service) => ["unsupported", "unknown"].includes(service.status))) {
-		assert(value.includes(`${service.name} — ${service.status}.`), `${path} misstates ${service.name} support`);
+	assert(
+		value.indexOf("\n## Services\n") !== -1 && value.indexOf("\n## Services\n") < value.indexOf("\n## License\n"),
+		`${path} must place the license after the services`,
+	);
+	// The production note is stated once, not repeated on every service line.
+	assert(
+		value.split("validate application behavior against real Google Cloud").length === 2 &&
+			!value.includes("production source of truth"),
+		`${path} must give the production note exactly once`,
+	);
+	for (const service of contract.services) {
+		const pattern = isLocal(service)
+			? `^\\| ${escapeRegExp(service.name)} \\| \`${service.id}\` \\|.*\\[guide\\]\\(https://local\\.cloud/services/[a-z0-9-]+/\\) \\|$`
+			: `^- \\[${escapeRegExp(service.name)}\\]\\(https://local\\.cloud/services/[a-z0-9-]+/\\) — unsupported$`;
+		assert(new RegExp(pattern, "m").test(value), `${path} misstates ${service.name} or omits its guide link`);
 	}
 }
 

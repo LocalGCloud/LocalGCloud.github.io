@@ -53,73 +53,153 @@ const endpointLabel = (service) =>
 			([protocol, port]) => `${protocolLabels[protocol] ?? protocol} :${port}`,
 		),
 	].join(" · ");
-const services = contract.services.flatMap((service) => {
+const site = contract.product.siteUrl;
+const services = contract.services.map((service) => {
 	const overlay = editorial.get(service.id);
 	if (!overlay) throw new Error(`Missing editorial overlay for ${service.id}`);
-
-	const comingSoon = service.availability !== "available";
-	if (!comingSoon && !(service.status in statusMap)) throw new Error(`Unmapped status ${service.status} for ${service.id}`);
-	return [
-		{
-			name: service.name,
-			slug: overlay.slug,
-			status: comingSoon ? "planned" : statusMap[service.status],
-			port: comingSoon
-				? "coming soon"
-				: [service.port, ...Object.values(service.additionalPorts)].join(" / "),
-			protocol: comingSoon ? "planned" : service.protocol,
-			endpointLabel: comingSoon ? "Coming soon" : endpointLabel(service),
-			envVar: comingSoon ? "" : `${service.envVar}=${service.envValue}`,
-			docsUrl: `${contract.product.siteUrl}services/${overlay.slug}/`,
-			implementation: service.implementation,
-			supported: comingSoon
-				? []
-				: service.operations
-						.filter(
-							(operation) => !["unsupported", "unknown"].includes(operation.status),
-						)
-						.map(
-							(operation) =>
-								`${operation.label}${operation.limitations.length ? ` — ${operation.limitations.join(" ")}` : ""}`,
-						),
-			gaps: comingSoon
-				? ["Service support is coming soon."]
-				: [
-						...service.limitations,
-						...service.operations
-							.filter((operation) =>
-								["unsupported", "unknown"].includes(operation.status),
-							)
-							.map(
-								(operation) =>
-									`${operation.label}: ${operation.status}${operation.limitations.length ? ` — ${operation.limitations.join(" ")}` : ""}`,
-							),
-					],
-			caveat: comingSoon
-				? "Service support is coming soon; do not configure a local endpoint yet."
-				: service.status === "unsupported" || service.status === "unknown"
-				? "No supported application integration is established; review the service guide before configuring a client."
-				: "Supported for local workflows; real Google Cloud remains the production source of truth.",
-			defaultEnabled: service.registryDefaultEnabled,
-		},
-	];
+	const available = service.availability === "available";
+	if (available && !(service.status in statusMap)) throw new Error(`Unmapped status ${service.status} for ${service.id}`);
+	return {
+		id: service.id,
+		name: service.name,
+		supported: available && statusMap[service.status] === "supported",
+		defaultEnabled: service.registryDefaultEnabled,
+		endpointLabel: endpointLabel(service),
+		envVar: `${service.envVar}=${service.envValue}`,
+		guideUrl: `${site}services/${overlay.slug}/`,
+	};
 });
-const availableServiceCount = contract.services.filter(
-	(service) => service.availability === "available" && !["unsupported", "unknown"].includes(service.status),
-).length;
-const serviceLines = services
+const localServices = services.filter((service) => service.supported);
+const optInServices = localServices.filter((service) => !service.defaultEnabled);
+const unsupportedServices = services.filter((service) => !service.supported);
+const byId = (id) => {
+	const service = localServices.find((candidate) => candidate.id === id);
+	if (!service) throw new Error(`llms.txt highlights ${id}, which does not run locally`);
+	return service;
+};
+
+const listNames = (names) =>
+	names.length < 3 ? names.join(" and ") : `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
+const tableCell = (value) => String(value).replaceAll("|", "\\|");
+const gateway = `http://localhost:${contract.operator.gatewayPort}`;
+const quickStart = cliQuickStart(contract);
+// --services replaces the default set, so the example keeps two default services alongside an opt-in one.
+const servicesExample = [...optInServices.slice(0, 1), ...localServices.filter((service) => service.defaultEnabled).slice(0, 2)]
+	.map((service) => service.id)
+	.join(",");
+const excludedUses = contract.licensing.excludedUse;
+const excludedUseList = `${excludedUses.slice(0, -1).join("; ")}; and ${excludedUses.at(-1)}`;
+const highlighted = ["bigquery", "gcs", "pubsub", "spanner", "bigtable", "firestore", "cloudsql", "memorystore", "dataproc", "cloudrun"]
+	.map((id) => byId(id).name);
+
+const serviceRows = localServices
 	.map((service) =>
-		["planned", "unsupported", "unknown"].includes(service.status)
-			? `- ${service.name} — ${service.status}. ${service.caveat}`
-			: `- ${service.name} — ${service.status}; ${service.defaultEnabled ? "starts by default" : "available but disabled by default"}; ${service.endpointLabel}; \`${service.envVar}\`. ${service.caveat}`,
+		[
+			service.name,
+			`\`${service.id}\``,
+			service.defaultEnabled ? "yes" : "opt-in",
+			service.endpointLabel,
+			`\`${service.envVar}\``,
+			`[guide](${service.guideUrl})`,
+		]
+			.map(tableCell)
+			.join(" | "),
 	)
+	.map((row) => `| ${row} |`)
 	.join("\n");
-const compact = `# LocalCloud\n\n> LocalCloud provides ${services.length} service guides and ${availableServiceCount} documented local integrations in one local Docker runtime. Availability does not imply full Google Cloud parity or default startup. Firestore is disabled by default; Google Sheets provides a limited read-only values facade.\n\nLocalCloud is not a production replacement. Use is governed by the proprietary LocalCloud license; review the license before use. ${contract.licensing.summary} Excluded uses include ${contract.licensing.excludedUse.join(", ")}.\n\n## Quick start\n\n\`\`\`bash\n${cliQuickStart(contract).script}\n\`\`\`\n\n## Runtime facts\n\n- Default project: \`${contract.product.defaultProject}\`\n- Default user: \`${contract.product.defaultUser}\`\n- Default data volume: \`${contract.product.defaultDataVolume}\`\n- CLI memory default: \`${contract.product.memory}\`\n- Health endpoint: \`http://localhost:${contract.operator.gatewayPort}${contract.operator.endpoints.health}\`\n- Shell environment endpoint: \`http://localhost:${contract.operator.gatewayPort}${contract.operator.endpoints.environment}?format=shell\`\n- Terraform environment endpoint: \`http://localhost:${contract.operator.gatewayPort}${contract.operator.endpoints.environment}?format=terraform\`\n\nWait for \`/readiness\` before application traffic. Trust URLs and endpoint values returned by the selected CLI runtime; occupied canonical ports may be remapped. Select durable storage with \`--data-volume NAME\`; project and caller remain request context. ${contract.product.productionBoundary}\n\n## Useful URLs\n\n- [Service catalog](https://local.cloud/services/)\n- [Compatibility and limitations](https://local.cloud/compatibility/)\n- [Configuration](https://local.cloud/docs/configuration/)\n- [Pricing](https://local.cloud/pricing/)\n- [Licensing](https://local.cloud/docs/licensing/)\n- [LocalStack for Google Cloud](https://local.cloud/localstack-for-google-cloud/)\n- [Local cloud for AI agents](https://local.cloud/local-cloud-for-ai-agents/)\n- [Agent sandbox setup routes](https://local.cloud/agents/)\n- [Agent and automation workflows](https://local.cloud/workflows/)\n- [Comparisons and alternatives](https://local.cloud/compare/)\n- [Glossary](https://local.cloud/glossary/)\n- [AGENTS.md template](https://local.cloud/ai/agent-template.md)\n- [CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases)\n\n## Services\n${serviceLines}\n`;
-await write("public/llms.txt", compact);
+
+// llmstxt.org layout: H1, a one-sentence definition, details, then link sections.
+const llms = `# LocalCloud
+
+> LocalCloud is a local Google Cloud emulator: one Docker container that serves ${localServices.length} Google Cloud services on localhost, so developers, CI jobs, and AI coding agents can run Google Cloud code without a GCP account, credentials, or billing.
+
+- Runs ${listNames([...highlighted, "more"])} in one container.
+- Standard Google Cloud SDKs and Terraform connect through generated emulator environment variables.
+- Stores local state in a named Docker volume and includes a web console for service health and local data.
+- Installs as a CLI on macOS and Linux; any Docker host can run the container directly.
+- Free during the public preview for non-production use, and free for open-source projects.
+
+Use LocalCloud for development, testing, and CI, and validate application behavior against real Google Cloud before production deployment.
+
+## Quick start
+
+\`\`\`bash
+${quickStart.script}
+\`\`\`
+
+- Homebrew alternative to the first line: \`${quickStart.homebrew}\`.
+- \`localcloud start\` waits for the runtime. The CLI remaps a default port when it is in use; use the URLs and endpoint values it returns.
+- Without the CLI (for example on Windows), follow the [manual Docker path](${site}docs/#manual-docker-path).
+
+## Runtime facts
+
+- Default project: \`${contract.product.defaultProject}\`
+- Default user: \`${contract.product.defaultUser}\`
+- Default data volume: \`${contract.product.defaultDataVolume}\`; select another with \`--data-volume NAME\`.
+- CLI memory default: \`${contract.product.memory}\`
+- Readiness endpoint (wait for it before application traffic): \`${gateway}${contract.operator.endpoints.readiness}\`
+- Health endpoint: \`${gateway}${contract.operator.endpoints.health}\`
+- Shell environment: \`${gateway}${contract.operator.endpoints.environment}?format=shell\`
+- Terraform environment: \`${gateway}${contract.operator.endpoints.environment}?format=terraform\`
+
+## Agent resources
+
+- [Agent guide](${site}ai/agents.md): install-first quick start, rules, and workflow for coding agents
+- [AGENTS.md template](${site}ai/agent-template.md): repository instructions to copy into a project
+- [Service matrix](${site}ai/services.md): ports, environment variables, and guides
+- [Capabilities and boundaries](${site}ai/compatibility.md): what each service runs locally
+- [Docs index for agents](${site}ai/docs.md)
+- [Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): portable skills for \`.agents/skills/\`
+
+## Docs
+
+- [Getting started](${site}docs/): install, start, and make a first request
+- [Configuration](${site}docs/configuration/): services, projects, persistence, and networking
+- [SDK examples](${site}docs/sdk-examples/): Google Cloud client libraries against localhost
+- [Terraform](${site}docs/terraform/): provider endpoint overrides
+- [Seed data](${site}docs/seed-data/): repeatable local fixtures
+- [Architecture](${site}docs/architecture/)
+- [Web console](${site}docs/console/)
+- [Service catalog](${site}services/)
+- [Compatibility and limitations](${site}compatibility/)
+- [FAQ](${site}docs/faq/)
+- [Privacy](${site}docs/privacy/)
+
+## Services
+
+Every service in the table runs locally. ${listNames(optInServices.map((service) => service.name))} are opt-in: \`--services\` sets the exact list of service IDs to run, for example \`localcloud start --local-only --services ${servicesExample}\`. Google Sheets serves read-only spreadsheet values as fixtures for other services.
+
+| Service | ID | Starts by default | Endpoints | Environment variable | Guide |
+| --- | --- | --- | --- | --- | --- |
+${serviceRows}
+
+Unsupported locally; use Google Cloud:
+
+${unsupportedServices.map((service) => `- [${service.name}](${service.guideUrl}) — unsupported`).join("\n")}
+
+## License
+
+${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends.
+
+- [Licensing](${site}docs/licensing/)
+- [Pricing](${site}pricing/)
+
+## Optional
+
+- [Local cloud for AI agents](${site}local-cloud-for-ai-agents/)
+- [Agent sandbox setup](${site}agents/)
+- [Agent and automation workflows](${site}workflows/)
+- [LocalStack for Google Cloud](${site}localstack-for-google-cloud/)
+- [Comparisons and alternatives](${site}compare/)
+- [Glossary](${site}glossary/)
+- [Blog](${site}blog/)
+- [CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases)
+`;
+await write("public/llms.txt", llms);
 await write(
 	"public/llms-full.txt",
-	`${compact}\n## Safety boundaries\n\n- The mutable image identity is ${contract.product.runtimeImage.qualification}; prefer the host CLI and pin a qualified digest for release work.\n- CLI Docker access defaults to auto; set host.docker_socket: false to opt out. Transparent networking defaults to off. Use --local-only on lifecycle commands to bind host ports to loopback; the unflagged CLI default publishes on all host interfaces.\n- Technical tiers and successful startup do not grant legal permission.\n- Runtime telemetry and other outbound behaviors are documented at https://local.cloud/docs/privacy/.\n- Validate allowed release behavior against real Google Cloud after clearing local endpoint variables.\n`,
+	`${llms}\n## Safety boundaries\n\n- The mutable image identity is ${contract.product.runtimeImage.qualification}; prefer the host CLI and pin a qualified digest for release work.\n- CLI Docker access defaults to auto; set host.docker_socket: false to opt out. Transparent networking defaults to off. Use --local-only on lifecycle commands to bind host ports to loopback; the unflagged CLI default publishes on all host interfaces.\n- Technical tiers and successful startup do not grant legal permission.\n- Runtime telemetry and other outbound behaviors are documented at https://local.cloud/docs/privacy/.\n- Validate allowed release behavior against real Google Cloud after clearing local endpoint variables.\n`,
 );
 console.log(
-	`Generated end-user context for ${availableServiceCount} documented integrations plus public/llms.txt and public/llms-full.txt.`,
+	`Generated public/llms.txt and public/llms-full.txt for ${localServices.length} local services.`,
 );
