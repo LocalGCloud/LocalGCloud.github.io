@@ -3,6 +3,7 @@ import CodeTabs from './CodeTabs.astro';
 import CopyButton from './CopyButton.astro';
 import { docsContract } from '../data/docs-contract';
 import { productFacts } from '../data/productFacts';
+import { latestCliRelease } from '../data/trust';
 import { cliQuickStart } from '../utils/quickstart.mjs';
 
 // Step 1 shows productFacts.installScriptCommand (the same contract value); step 2 runs the rest.
@@ -37,6 +38,7 @@ const launchCommand = cliQuickStart(docsContract).steps.join('\n');
                 <CopyButton
                   text={productFacts.installScriptCommand}
                   class="installation-methods__copy"
+                  label="Copy install command"
                   analyticsLabel="homepage-install-script"
                 />
               </div>
@@ -47,6 +49,7 @@ const launchCommand = cliQuickStart(docsContract).steps.join('\n');
                 <CopyButton
                   text={productFacts.homebrewInstallCommand}
                   class="installation-methods__copy"
+                  label="Copy Homebrew install command"
                   analyticsLabel="homepage-homebrew"
                 />
               </div>
@@ -65,18 +68,19 @@ const launchCommand = cliQuickStart(docsContract).steps.join('\n');
         <div class="installation-methods__step-content">
           <div class="installation-methods__command">
             <pre tabindex="0" aria-label="Start LocalCloud and open its console"><code>{launchCommand}</code></pre>
-            <CopyButton text={launchCommand} class="installation-methods__copy" />
+            <CopyButton text={launchCommand} class="installation-methods__copy" label="Copy start commands" analyticsLabel="homepage-start" />
           </div>
         </div>
       </li>
     </ol>
 
-    <!--<p class="installation-methods__meta">-->
-    <!--  Reviewed CLI source {docsContract.provenance.cliRevision.slice(0, 12)} ·-->
-    <!--  <a href={`${productFacts.cliRepositoryUrl}/releases`}>Checksums and Sigstore bundles</a> ·-->
-    <!--  <a href={productFacts.homebrewTapUrl}>Homebrew tap</a> ·-->
-    <!--  <a href="/docs/licensing/">License terms</a>-->
-    <!--</p>-->
+    <p class="installation-methods__meta">
+      CLI {latestCliRelease.version}, released <time datetime={latestCliRelease.publishedAt}>{latestCliRelease.publishedAt}</time> ·
+      <a href={latestCliRelease.url}>Checksums and Sigstore bundles</a> ·
+      <a href="/changelog/">Changelog</a> ·
+      <a href={productFacts.homebrewTapUrl}>Homebrew tap</a> ·
+      <a href="/license/">License terms</a>
+    </p>
   </div>
 </section>
 

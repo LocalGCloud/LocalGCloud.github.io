@@ -6,7 +6,11 @@ import { gzipSync } from 'node:zlib';
 
 // Ceilings are the largest page measured on 2026-10-05 plus 5%. Lower them as pages
 // get lighter; raise them only with a reviewed reason in the commit message.
-const htmlBudget = { rawBytes: 167_000, gzipBytes: 34_200, styleBytes: 90_500, scriptBytes: 14_800 };
+// 2026-10-06 (plan R6.8): the homepage, the largest page, gained the install command,
+// proof line, FAQ with the compact comparison table, and the trust strip with its
+// verification commands. rawBytes and gzipBytes are its new size (172,129 and 34,477
+// bytes) plus 5%.
+const htmlBudget = { rawBytes: 180_800, gzipBytes: 36_200, styleBytes: 90_500, scriptBytes: 14_800 };
 const rawDocumentBytes = 21_800;
 // The Markdown twins of docs and service pages and the llms-full.txt bundle built from them
 // have their own ceilings: the largest twin and the bundle measured on 2026-10-05, plus 10%.

@@ -7,7 +7,7 @@ const distDirectory = new URL('../dist/', import.meta.url);
 const distPath = (file) => join(distDirectory.pathname, file);
 const errors = [];
 const requiredSchemaTypes = new Map([
-  ['/', ['Organization', 'Product', 'SoftwareApplication']],
+  ['/', ['Organization', 'Product', 'SoftwareApplication', 'FAQPage']],
   ['/gcp-emulator/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
   ['/localstack-for-google-cloud/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
   ['/compatibility/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],

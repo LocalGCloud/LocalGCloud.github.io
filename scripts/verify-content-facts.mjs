@@ -6,7 +6,7 @@ import { alternatives, alternativesReviewedAt, comparisonSummary } from '../src/
 import { docsContract } from '../src/data/docs-contract.ts';
 import { productFacts } from '../src/data/productFacts.ts';
 import { cliQuickStart } from '../src/utils/quickstart.mjs';
-import { services, isServiceDisabledByDefault } from '../src/data/services.ts';
+import { availableServiceCount, services, isServiceDisabledByDefault } from '../src/data/services.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
 import { getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
 const sdkExamplesSource = await readFile(new URL('../src/pages/docs/sdk-examples.mdx', import.meta.url), 'utf8');
@@ -426,7 +426,7 @@ const compareHtml = htmlPages.get('compare/index.html') ?? '';
 const compareTable = compareHtml.match(/<table\b[^>]*data-alternatives-table="full"[\s\S]*?<\/table>/)?.[0] ?? '';
 if (!compareTable) errors.push('compare/index.html must publish the full alternatives table');
 else {
-  if (!compareTable.includes(`data-reviewed-at="${alternativesReviewedAt}"`) || !compareTable.includes(`<time datetime="${alternativesReviewedAt}"`)) errors.push(`the /compare/ table must show its review date ${alternativesReviewedAt}`);
+  if (!compareTable.includes(`data-reviewed-at="${alternativesReviewedAt}"`) || !compareHtml.includes(`<time datetime="${alternativesReviewedAt}"`)) errors.push(`the /compare/ table must show its review date ${alternativesReviewedAt}`);
   for (const option of alternatives) {
     if (!compareTable.includes(option.name)) errors.push(`the /compare/ table omits ${option.name}`);
     for (const [row, cell] of Object.entries(option.cells)) {
@@ -445,6 +445,50 @@ else {
 const reviewAgeDays = (Date.now() - Date.parse(`${alternativesReviewedAt}T00:00:00Z`)) / 86_400_000;
 if (reviewAgeDays > 120) console.warn(`::warning::The alternatives comparison was reviewed ${Math.floor(reviewAgeDays)} days ago (${alternativesReviewedAt}); re-check src/data/alternatives.ts against its sources.`);
 if (!llms.includes('\n## How LocalCloud compares\n') || !comparisonSummary.every((line) => llms.includes(line))) errors.push('llms.txt must include the "How LocalCloud compares" section from src/data/alternatives.ts');
+
+// Homepage first screen: a search-sized title and description, an H1 that names the
+// audience, a definition, a real "Start free" link to the install section of the docs, the
+// install command, and the trust strip with its evidence links and verification commands.
+const homepage = htmlPages.get('index.html') ?? '';
+const homepageMain = homepage.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? '';
+const homepageTitle = decodeEntities(homepage.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? '');
+const homepageDescription = decodeEntities(homepage.match(/<meta\b[^>]*name="description"[^>]*content="([^"]*)"/)?.[1] ?? '');
+if (!homepageTitle || homepageTitle.length > 60) errors.push(`homepage title must be 1-60 characters (${homepageTitle.length}): ${homepageTitle}`);
+if (!homepageDescription || homepageDescription.length > 155) errors.push(`homepage description must be 1-155 characters (${homepageDescription.length}): ${homepageDescription}`);
+const homepageH1 = visibleText(homepageMain.match(/<h1\b[\s\S]*?<\/h1>/)?.[0] ?? '').replace(/\s+/g, ' ').trim();
+if (homepageH1 !== 'Google Cloud In-a-Box for developers, CI and AI agents.') errors.push(`homepage H1 reads "${homepageH1}"`);
+const homepageDefinition = visibleText(homepageMain.match(/<\/h1>\s*<p\b[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '');
+if (!homepageDefinition.startsWith(`LocalCloud is a local Google Cloud emulator: one Docker container that serves ${availableServiceCount} Google Cloud services on localhost`)) {
+  errors.push(`the paragraph under the homepage H1 must define LocalCloud with the service count: "${homepageDefinition.slice(0, 120)}"`);
+}
+const startFree = [...homepageMain.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(([, , text]) => /Start free/.test(visibleText(text)));
+if (!startFree) errors.push('homepage needs an <a> whose text contains "Start free"');
+else {
+  const href = decodeEntities(startFree[1].match(/\bhref="([^"]+)"/)?.[1] ?? '');
+  const target = new URL(href, productFacts.siteUrl);
+  const targetFile = `${target.pathname.replace(/^\//, '')}${target.pathname.endsWith('/') ? 'index.html' : ''}`;
+  if (target.origin !== siteOrigin || !htmlPages.has(targetFile)) errors.push(`homepage "Start free" link ${href} must resolve to a built page`);
+  else if (target.hash !== '#install-the-cli' || !htmlPages.get(targetFile).includes('id="install-the-cli"')) errors.push(`homepage "Start free" link ${href} must open the docs section with id="install-the-cli"`);
+}
+const homepageHero = homepageMain.match(/<section\b[^>]*class="field-hero"[\s\S]*?<\/section>/)?.[0] ?? '';
+const installCode = new RegExp(`<code\\b[^>]*>${productFacts.installScriptCommand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</code>`);
+if (!installCode.test(homepageHero) || !homepageHero.includes('aria-label="Copy install command"')) errors.push('the homepage hero must show the install command with a "Copy install command" button');
+if (/<!--/.test(homepageMain)) errors.push('homepage <main> ships an HTML comment; use {/* */} in .astro templates');
+const trustStrip = homepageMain.match(/<section\b[^>]*class="field-trust"[\s\S]*?<\/section>/)?.[0] ?? '';
+for (const href of ['/changelog/', '/security/', '/contact/', '/license/', '/docs/privacy/', '/compatibility/', productFacts.cliReleasesUrl]) {
+  if (!trustStrip.includes(`href="${href}`)) errors.push(`homepage trust strip must link ${href}`);
+}
+for (const command of ['cosign verify-blob', '--certificate-oidc-issuer https://token.actions.githubusercontent.com', 'docker buildx imagetools inspect']) {
+  if (!trustStrip.includes(command)) errors.push(`homepage "Verify it yourself" must include ${command}`);
+}
+const homepageFaqJson = [...homepage.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)]
+  .map(([, json]) => JSON.parse(json)).find((schema) => schema['@type'] === 'FAQPage');
+const visibleQuestions = [...homepageMain.matchAll(/<summary\b[^>]*>([\s\S]*?)<\/summary>/g)].map(([, text]) => visibleText(text).trim());
+for (const question of homepageFaqJson?.mainEntity ?? []) {
+  if (!visibleQuestions.includes(question.name)) errors.push(`homepage FAQPage JSON-LD question is not shown on the page: ${question.name}`);
+}
+if (!homepageFaqJson) errors.push('homepage must publish FAQPage JSON-LD for its FAQ');
+if (!homepageMain.includes('data-alternatives-table="compact"')) errors.push('the homepage comparison answer must include the compact alternatives table');
 
 // LocalStack is the only competitor the site names; Google's own emulators and the Firebase
 // Local Emulator Suite are the platform vendor's tools. Small and upcoming projects are never

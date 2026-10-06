@@ -21,15 +21,17 @@ const rows = full ? comparisonRows : comparisonRows.filter((row) => compactRowId
 const label = 'Local options for Google Cloud development compared';
 ---
 
+{/* The visible note sits outside the scrolling region so it stays readable on narrow screens. */}
+<p class="alternatives-table__note">
+  Sources reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time>{full ? '; each fact about a named product links its source.' : '.'}
+</p>
 <div class="alternatives-table site-panel overflow-x-auto" tabindex="0" role="region" aria-label={label}>
   <table
     class:list={['w-full text-left text-sm', full ? 'min-w-[68rem]' : 'min-w-[44rem]']}
     data-alternatives-table={variant}
     data-reviewed-at={alternativesReviewedAt}
   >
-    <caption class="alternatives-table__caption">
-      {label}. Sources reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time>{full ? '; each fact about a named product links its source.' : '.'}
-    </caption>
+    <caption class="sr-only">{label}, sources reviewed {alternativesReviewedLabel}</caption>
     <thead class="border-b border-[var(--border)]">
       <tr>
         <td class="p-4"></td>
@@ -62,12 +64,11 @@ const label = 'Local options for Google Cloud development compared';
 </div>
 
 <style>
-  .alternatives-table__caption {
-    caption-side: top;
-    padding: 1rem 1rem 0.25rem;
+  .alternatives-table__note {
+    margin-bottom: 0.6rem;
     color: var(--text-2);
     font-size: var(--fs-small);
-    text-align: left;
+    line-height: 1.6;
   }
 
   .alternatives-table__ours {

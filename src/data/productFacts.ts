@@ -131,7 +131,7 @@ export const publicPreviewPriceLabel = `${new Intl.NumberFormat("en-US", {
 export const localCloudProductSchema: JsonLd = {
 	...createSoftwareApplicationSchema(
 		productFacts.siteUrl,
-		`LocalCloud is a local Google Cloud emulator that runs ${productFacts.serviceCountLabel} local services in one Docker container for development, testing, CI, evaluation, and internal pilots.`,
+		`LocalCloud is a local Google Cloud emulator for developers, CI pipelines and AI coding agents: one Docker container that serves ${productFacts.serviceCountLabel} Google Cloud services on localhost for development, testing, CI, evaluation, and internal pilots.`,
 	),
 	"@type": ["Product", "SoftwareApplication"],
 	"@id": new URL("#localcloud", productFacts.siteUrl).toString(),

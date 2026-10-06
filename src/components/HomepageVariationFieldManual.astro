@@ -1,15 +1,82 @@
 ---
 import ServiceIcon from './ServiceIcon.astro';
+import CopyButton from './CopyButton.astro';
+import AlternativesTable from './AlternativesTable.astro';
 import { availableServiceCount, serviceCategoryMeta, services } from '../data/services';
 import InstallationMethods from './InstallationMethods.astro';
-import { publicPreviewPriceLabel } from '../data/productFacts';
+import { docsContract } from '../data/docs-contract';
+import { productFacts } from '../data/productFacts';
+import { homepageFaq } from '../data/homepageFaq';
+import {
+  cosignVerifyCommand,
+  imageProvenanceCommand,
+  imageSbomCommand,
+  latestCliRelease,
+} from '../data/trust';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
+// The definition under the H1 mirrors the llms.txt opening sentence.
+const definition = `LocalCloud is a local Google Cloud emulator: one Docker container that serves ${availableServiceCount} Google Cloud services on localhost, so developers, CI jobs, and AI coding agents can run Google Cloud code without a GCP account, credentials, or billing.`;
+
 const heroSignals = [
-  { value: String(availableServiceCount), label: 'local services', note: 'documented limits per service' },
-  { value: '1', label: 'persistent runtime', note: 'localhost-only ports and persistent data' },
+  { value: String(availableServiceCount), label: 'Google Cloud services', note: 'each with documented compatibility limits' },
+  { value: '1', label: 'Docker container', note: 'persistent data on localhost ports the CLI picks' },
+];
+
+const formatDate = (date: string) =>
+  new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
+const telemetryVariable = `${docsContract.privacy.runtimeTelemetry.disableVariable}=false`;
+
+// Six short claims, each linked to the evidence a skeptical reader can check.
+const trustClaims = [
+  {
+    title: 'Signed CLI releases',
+    body: 'Every CLI release ships SHA-256 checksums and Sigstore bundles from its GitHub Actions release workflow, and the install script checks the checksum before installing.',
+    links: [
+      { label: 'CLI releases', href: productFacts.cliReleasesUrl },
+      { label: 'Changelog', href: `${base}changelog/` },
+    ],
+  },
+  {
+    title: 'Image SBOM and provenance',
+    body: `The ${productFacts.dockerImageRepository} image carries an SPDX software bill of materials and SLSA build provenance for linux/amd64 and linux/arm64.`,
+    links: [
+      { label: 'How to inspect them', href: `${base}security/#image-provenance` },
+      { label: 'Docker Hub', href: productFacts.dockerHubUrl },
+    ],
+  },
+  {
+    title: 'Your data stays local',
+    body: `Service data lives in a Docker volume on your machine. Usage telemetry is pseudonymous and turns off with ${telemetryVariable}.`,
+    links: [{ label: 'Privacy', href: `${base}docs/privacy/` }],
+  },
+  {
+    title: 'Published compatibility',
+    body: `Every service lists what runs locally and where its limits are, reviewed ${formatDate(docsContract.reviewedAt)}.`,
+    links: [{ label: 'Compatibility', href: `${base}compatibility/` }],
+  },
+  {
+    title: 'Preview and open-source terms',
+    body: 'Preview releases keep their terms, and open-source projects stay free after the preview ends.',
+    links: [
+      { label: 'License', href: `${base}license/` },
+      { label: 'Licensing summary', href: `${base}docs/licensing/` },
+    ],
+  },
+  {
+    title: 'A team you can reach',
+    body: `Email ${productFacts.contactEmail} for questions, licensing, privacy or security reports. AI agents and integrations: ${productFacts.agentContactEmail}.`,
+    links: [
+      { label: 'Contact', href: `${base}contact/` },
+      { label: 'Security', href: `${base}security/` },
+    ],
+  },
+];
+const verifyCommands = [
+  { id: 'verify-release', label: `Check the signature on the CLI ${latestCliRelease.version} checksums`, code: cosignVerifyCommand, copy: 'Copy release signature check' },
+  { id: 'verify-image', label: 'Inspect the runtime image SBOM and provenance', code: `${imageSbomCommand}\n${imageProvenanceCommand}`, copy: 'Copy image inspection commands' },
 ];
 
 const heroIllustration = {
@@ -52,13 +119,31 @@ const atlasSlots = atlasCategorySlots
     <section class="field-hero">
       <div class="field-hero__copy">
         <h1 class="field-hero__headline">
-          <span class="field-hero__headline-main">Google Cloud</span>
-          <span class="field-hero__headline-tag">In-a-Box.</span>
+          <span class="field-hero__headline-main">Google Cloud</span>{' '}
+          <span class="field-hero__headline-tag">In-a-Box</span>{' '}
+          <span class="field-hero__headline-audience">for developers, CI and AI agents.</span>
         </h1>
 
-        <!--<p class="field-intro">-->
-        <!--  Use {availableServiceCount} documented local integrations. Use the CLI to choose safe loopback ports, export SDK settings, and inspect documented compatibility limits.-->
-        <!--</p>-->
+        <p class="field-intro">{definition}</p>
+
+        <div class="field-actions">
+          <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-analytics-label="hero-start-free">Start free — install the CLI</a>
+          <a href={`${base}compare/`} class="site-button site-button--secondary" data-analytics-label="hero-compare">Compare with LocalStack and Google emulators</a>
+        </div>
+
+        <div class="field-install">
+          <pre tabindex="0" aria-label="Install the LocalCloud CLI"><code>{productFacts.installScriptCommand}</code></pre>
+          <CopyButton
+            text={productFacts.installScriptCommand}
+            class="field-install__copy"
+            label="Copy install command"
+            analyticsLabel="hero-install-script"
+          />
+        </div>
+
+        <p class="field-proof">
+          No account or license key. Free during the public preview, and free for open-source projects after it. CLI releases are <a href={`${base}security/#signed-releases`}>Sigstore-signed with SHA-256 checksums</a>.
+        </p>
 
         <ul class="field-signal-strip">
           {heroSignals.map((signal) => (
@@ -71,15 +156,6 @@ const atlasSlots = atlasCategorySlots
               </li>
           ))}
         </ul>
-
-        <div class="field-actions">
-          <a href="#manual-quickstart" class="site-button site-button--primary">Get started with LocalCloud</a>
-          <a href={`${base}docs/`} class="site-button site-button--secondary">Read the docs</a>
-        </div>
-        <p class="field-intro-secondary">
-          Free during public preview: <strong>{publicPreviewPriceLabel}</strong>.
-          <a href={`${base}pricing/`}>View pricing and terms</a>.
-        </p>
       </div>
 
       <figure class="field-board__figure">
@@ -202,19 +278,59 @@ const atlasSlots = atlasCategorySlots
       </div>
     </section>
 
-    <section class="field-cta">
-      <div>
-        <span class="field-kicker">Continue exploring</span>
-        <h2>Run Google Cloud workflows locally</h2>
-        <p>
-          The homepage tells you what LocalCloud is. The docs and service pages explain how to use it, what each service supports, and where the runtime boundaries are.
-        </p>
+    <section class="field-faq" aria-labelledby="field-faq-title">
+      <div class="field-section-heading">
+        <span class="field-kicker">Questions</span>
+        <h2 id="field-faq-title">Questions developers and agents ask</h2>
       </div>
 
-      <div class="field-cta__actions">
-        <a href={`${base}docs/`} class="site-button site-button--secondary">Open Documentation</a>
-        <a href={`${base}services/`} class="site-button site-button--primary">Open Service Catalog</a>
+      <div class="field-faq__list">
+        {homepageFaq.map((entry, index) => (
+          <details class="field-faq__item" id={`faq-${entry.id}`} open={index === 0}>
+            <summary>{entry.question}</summary>
+            <div class="field-faq__answer">
+              <p>{entry.answer}</p>
+              {entry.showsComparison && <AlternativesTable variant="compact" />}
+              <p class="field-faq__links">
+                {entry.links.map((link, linkIndex) => <>{linkIndex > 0 && ' · '}<a href={link.href}>{link.label}</a></>)}
+              </p>
+            </div>
+          </details>
+        ))}
       </div>
+    </section>
+
+    <section class="field-trust" aria-labelledby="field-trust-title">
+      <div class="field-section-heading">
+        <span class="field-kicker">Trust</span>
+        <h2 id="field-trust-title">Check it before you install it</h2>
+      </div>
+
+      <ul class="field-trust__grid">
+        {trustClaims.map((claim) => (
+          <li class="field-trust__item">
+            <strong>{claim.title}</strong>
+            <p>{claim.body}</p>
+            <p class="field-trust__links">
+              {claim.links.map((link, index) => <>{index > 0 && ' · '}<a href={link.href}>{link.label}</a></>)}
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      <details class="field-trust__verify">
+        <summary>Verify it yourself</summary>
+        {verifyCommands.map((command) => (
+          <div class="field-trust__command">
+            <h3 id={command.id}>{command.label}</h3>
+            <div class="field-trust__command-box">
+              <pre tabindex="0" aria-labelledby={command.id}><code>{command.code}</code></pre>
+              <CopyButton text={command.code} label={command.copy} analyticsLabel={`homepage-${command.id}`} />
+            </div>
+          </div>
+        ))}
+        <p>The <a href={`${base}security/`}>security page</a> explains each step and how to report a vulnerability.</p>
+      </details>
     </section>
   </div>
 </main>
@@ -237,7 +353,8 @@ const atlasSlots = atlasCategorySlots
   .field-ribbon,
   .field-atlas,
   .field-story,
-  .field-cta {
+  .field-faq,
+  .field-trust {
     position: relative;
     z-index: 1;
     padding: 0 1rem;
@@ -258,8 +375,7 @@ const atlasSlots = atlasCategorySlots
   .field-board__title,
   .field-ribbon__grid,
   .field-atlas__grid,
-  .field-story,
-  .field-cta {
+  .field-story {
     display: grid;
     gap: 1rem;
   }
@@ -310,8 +426,7 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-hero h1,
-  .field-section-heading h2,
-  .field-cta h2 {
+  .field-section-heading h2 {
     font-family: var(--font-display);
     letter-spacing: -0.045em;
     line-height: 0.95;
@@ -350,33 +465,201 @@ const atlasSlots = atlasCategorySlots
     line-height: 0.9;
   }
 
-  .field-intro-secondary {
-    margin-top: 0.85rem;
-    max-width: 46rem;
-    font-size: var(--fs-body);
-    line-height: 1.65;
+  /* The audience line reads as a subtitle inside the H1: smaller, body weight, muted. */
+  .field-hero__headline-audience {
+    margin-top: 0.4em;
     color: var(--text-2);
+    font-size: 0.36em;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
   }
 
-  .field-intro-secondary a {
+  .field-hero .field-intro {
+    margin-top: 1.1rem;
+    color: var(--text);
+    font-size: var(--fs-lead);
+  }
+
+  .field-install {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    max-width: 34rem;
+    margin-top: 1rem;
+    border: 1px solid var(--line);
+    border-radius: 0.75rem;
+    background: var(--surface-2);
+  }
+
+  .field-install pre {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .field-install pre > code {
+    display: block;
+    padding: 0.7rem 0.85rem;
+    color: var(--text);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .field-install :global(.field-install__copy) {
+    margin: 0.25rem;
+    border-color: var(--line);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    color: var(--accent-strong);
+  }
+
+  .field-proof {
+    max-width: 34rem;
+    margin-top: 0.85rem;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+  }
+
+  .field-proof a,
+  .field-faq__answer a,
+  .field-trust__links a,
+  .field-trust__verify a {
+    color: var(--accent-strong);
     text-decoration: underline;
     text-underline-offset: 0.18em;
+  }
+
+  .field-faq,
+  .field-trust {
+    margin-top: 2.5rem;
+  }
+
+  .field-faq__list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .field-faq__item,
+  .field-trust__verify {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+  }
+
+  .field-faq__item summary,
+  .field-trust__verify summary {
+    min-height: 2.75rem;
+    padding: 0.9rem 1.1rem;
+    color: var(--text);
+    font-size: var(--fs-lead);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .field-faq__answer {
+    display: grid;
+    gap: 0.85rem;
+    padding: 0 1.1rem 1.1rem;
+  }
+
+  .field-faq__answer p,
+  .field-trust__item p,
+  .field-trust__verify p {
+    color: var(--text-2);
+    font-size: var(--fs-body);
+    line-height: 1.65;
+  }
+
+  .field-trust__grid {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    list-style: none;
+  }
+
+  .field-trust__item {
+    display: grid;
+    align-content: start;
+    gap: 0.4rem;
+    padding: 1rem 0;
+  }
+
+  .field-trust__item + .field-trust__item {
+    border-top: 1px solid var(--line);
+  }
+
+  .field-trust__item strong {
+    color: var(--text);
+    font-size: var(--fs-lead);
+  }
+
+  .field-trust__links {
+    font-size: var(--fs-small);
+  }
+
+  .field-trust__verify {
+    margin-top: 1rem;
+  }
+
+  .field-trust__verify > p,
+  .field-trust__command {
+    padding: 0 1.1rem 1rem;
+  }
+
+  .field-trust__command h3 {
+    margin-bottom: 0.5rem;
+    color: var(--text);
+    font-size: var(--fs-body);
+  }
+
+  .field-trust__command-box {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.5rem;
+    padding: 0.35rem;
+    border: 1px solid var(--line);
+    border-radius: 0.75rem;
+    background: var(--surface-2);
+  }
+
+  .field-trust__command-box pre {
+    margin: 0;
+    padding: 0.6rem 0.75rem;
+    overflow-x: auto;
+    border: 0;
+    background: transparent;
+  }
+
+  .field-trust__command-box code {
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    white-space: pre;
   }
 
   .field-intro,
   .field-board__title p,
   .field-section-heading p,
   .field-column__head p,
-  .field-story__card p,
-
-  .field-cta p {
+  .field-story__card p {
     color: var(--text-2);
     font-size: var(--fs-body);
     line-height: 1.65;
   }
 
   .field-actions {
-    grid-template-columns: repeat(2, max-content);
+    display: flex;
+    flex-wrap: wrap;
     margin-top: 1.2rem;
   }
 
@@ -458,11 +741,6 @@ const atlasSlots = atlasCategorySlots
     display: block;
     width: 100%;
     height: auto;
-  }
-
-  .field-cta {
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow-md);
   }
 
   .field-ribbon {
@@ -688,73 +966,21 @@ const atlasSlots = atlasCategorySlots
     outline-offset: 2px;
   }
 
-  .field-cta {
-    position: relative;
-    display: grid;
-    gap: 1.25rem;
-    align-items: end;
-    margin: 2.5rem 1rem 0;
-    padding: clamp(1.5rem, 3.5vw, 2.5rem);
-    overflow: hidden;
-    /* Terminal-surface palette, scoped to this panel. */
-    --field-cta-bg: #20262f;
-    --field-cta-rule: rgba(255, 255, 255, 0.08);
-    --field-cta-grid: rgba(255, 255, 255, 0.03);
-    --field-cta-ink: var(--surface-3);
-    --field-cta-ink-2: rgba(232, 234, 237, 0.74);
-    border-color: var(--field-cta-rule);
-    border-radius: var(--radius-feature);
-    background: var(--field-cta-bg);
-  }
-
-  .field-cta::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(var(--field-cta-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--field-cta-grid) 1px, transparent 1px);
-    background-size: 2rem 2rem;
-    pointer-events: none;
-  }
-
-  .field-cta > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .field-cta h2,
-  .field-cta p,
-  .field-cta .field-kicker {
-    color: var(--field-cta-ink);
-  }
-
-  .field-cta p {
-    color: var(--field-cta-ink-2);
-  }
-
-  .field-cta__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-  }
-
-  .field-cta .field-kicker {
-    color: var(--field-cta-ink-2);
-  }
-
-  .field-cta h2 {
-    margin-top: 0.5rem;
-  }
-
-  .field-cta p {
-    margin-top: 0.75rem;
-    max-width: 46ch;
-  }
-
   @media (min-width: 760px) {
-    .field-story,
-    .field-cta {
+    .field-trust__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 1.5rem;
+    }
+
+    .field-trust__item + .field-trust__item {
+      border-top: 0;
+    }
+
+    .field-trust__item:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+
+    .field-story {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -782,8 +1008,19 @@ const atlasSlots = atlasCategorySlots
   }
 
   @media (min-width: 980px) {
-    .field-hero,
-    .field-cta {
+    .field-trust__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .field-trust__item:nth-child(n + 3) {
+      border-top: 0;
+    }
+
+    .field-trust__item:nth-child(n + 4) {
+      border-top: 1px solid var(--line);
+    }
+
+    .field-hero {
       grid-template-columns: minmax(0, 1.04fr) minmax(28rem, 0.9fr);
       align-items: center;
     }
@@ -794,11 +1031,6 @@ const atlasSlots = atlasCategorySlots
 
     .field-board__figure {
       justify-self: end;
-    }
-
-    .field-cta__actions {
-      justify-content: flex-end;
-      align-self: end;
     }
 
     .field-blog__grid {
@@ -840,19 +1072,17 @@ const atlasSlots = atlasCategorySlots
     }
 
     .field-actions {
-      grid-template-columns: 1fr;
+      flex-direction: column;
     }
 
-    .field-column,
-    .field-cta {
+    .field-column {
       padding: 0.9rem;
     }
   }
 
   @media (max-width: 560px) {
     .field-hero h1,
-    .field-section-heading h2,
-    .field-cta h2 {
+    .field-section-heading h2 {
       max-width: none;
     }
 

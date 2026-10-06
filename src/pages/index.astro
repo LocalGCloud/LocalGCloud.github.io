@@ -4,9 +4,16 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import HomepageVariationFieldManual from '../components/HomepageVariationFieldManual.astro';
 import { localCloudProductSchema } from '../data/productFacts';
+import { homepageFaqSchema } from '../data/homepageFaq';
+import { availableServiceCount } from '../data/services';
+
+// Four services are named, so the count of the rest comes from the services data.
+const namedServices = ['BigQuery', 'Pub/Sub', 'Spanner', 'Cloud Storage'];
+const title = 'LocalCloud – Google Cloud Emulator for Dev, CI and AI Agents';
+const description = `Run ${namedServices.slice(0, -1).join(', ')}, ${namedServices.at(-1)} and ${availableServiceCount - namedServices.length} more Google Cloud services on localhost in one container. For developers, CI and AI agents. Free.`;
 ---
 
-<BaseLayout title="LocalCloud — Local Google Cloud Emulator in Docker" description="Run BigQuery, Pub/Sub, Spanner, and more Google Cloud services on localhost in one Docker container. The CLI exports SDK endpoints. Free in public preview." structuredData={[localCloudProductSchema]}>
+<BaseLayout {title} {description} structuredData={[localCloudProductSchema, homepageFaqSchema]}>
   <link slot="head" rel="preload" as="image" href={`${import.meta.env.BASE_URL}illustrations/hero-laptop-service-grid.svg`} fetchpriority="high" />
   <Header />
   <HomepageVariationFieldManual />
