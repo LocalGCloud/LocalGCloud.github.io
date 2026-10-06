@@ -587,6 +587,15 @@ for (const file of [...files].filter((name) => /\.(?:html|md|txt|xml|json)$/.tes
   if (/github\.com\/jhsenjaliya\b/i.test(text)) errors.push(`${file} links the private runtime repository; link /license/ or a public page instead`);
 }
 
+// The docs sidebar (src/layouts/DocsLayout.astro) lists every built docs page.
+const docsSidebar = htmlPages.get('docs/index.html')?.match(/<aside\b[^>]*class="[^"]*docs-sidebar[\s\S]*?<\/aside>/)?.[0] ?? '';
+if (!docsSidebar) errors.push('docs/index.html renders no docs sidebar');
+for (const file of htmlPages.keys()) {
+  const slug = file.match(/^docs\/(?:([^/]+)\/)?index\.html$/);
+  const route = slug && `/docs/${slug[1] ? `${slug[1]}/` : ''}`;
+  if (route && !docsSidebar.includes(`href="${route}"`)) errors.push(`the docs sidebar omits ${route}; add it to sidebarSections in DocsLayout.astro`);
+}
+
 if (errors.length) {
   console.error('Product facts verification failed:');
   errors.forEach((error) => console.error(`- ${error}`));

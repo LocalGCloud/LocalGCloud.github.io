@@ -42,31 +42,36 @@ const articleSchema = createWebPageSchema({
   dateModified: updated ?? lastModifiedForRoute(currentPath),
 });
 
+// Groups don't overlap: start here, do a task, look up a service, understand the design,
+// read the rules. Every page under src/pages/docs/ appears exactly once, and the order
+// also sets each page's Previous and Next links.
 const sidebarSections = [
-  { title: 'Getting Started', items: [
+  { title: 'Get started', items: [
     { label: 'Introduction', href: `${base}docs/` },
     { label: 'What is a GCP Emulator?', href: `${base}docs/what-is-gcp-emulator/` },
   ]},
-  { title: 'Services', items: [{ label: 'Overview', href: `${base}docs/services-overview/` }] },
-  { title: 'Comparisons', items: [
-    { label: 'LocalCloud vs Google Emulators', href: `${base}docs/localcloud-vs-google-emulators/` },
-    { label: 'LocalStack for Google Cloud', href: `${base}localstack-for-google-cloud/` },
-    { label: 'Compatibility & limitations', href: `${base}compatibility/` },
-  ]},
-  { title: 'Reference', items: [
+  { title: 'Guides', items: [
     { label: 'Configuration', href: `${base}docs/configuration/` },
     { label: 'Seed Data', href: `${base}docs/seed-data/` },
     { label: 'SDK Examples', href: `${base}docs/sdk-examples/` },
     { label: 'Terraform', href: `${base}docs/terraform/` },
+    { label: 'Web Console', href: `${base}docs/console/` },
   ]},
-  { title: 'Learn', items: [
-    { label: 'Architecture', href: `${base}docs/architecture/` },
+  { title: 'Services', items: [
+    { label: 'Overview', href: `${base}docs/services-overview/` },
+    { label: 'Compatibility & limitations', href: `${base}compatibility/` },
     { label: 'BigQuery emulator features', href: `${base}docs/bigquery-emulator-features/` },
     { label: 'BigQuery feature comparison', href: `${base}docs/bigquery-feature-comparison/` },
     { label: 'BigQuery coverage gaps', href: `${base}docs/bigquery-coverage-gaps/` },
     { label: 'Bigtable emulator features', href: `${base}docs/bigtable-emulator-features/` },
     { label: 'Spanner emulator features', href: `${base}docs/spanner-emulator-features/` },
-    { label: 'Web Console', href: `${base}docs/console/` },
+  ]},
+  { title: 'Concepts', items: [
+    { label: 'Architecture', href: `${base}docs/architecture/` },
+    { label: 'LocalCloud vs Google Emulators', href: `${base}docs/localcloud-vs-google-emulators/` },
+    { label: 'LocalStack for Google Cloud', href: `${base}localstack-for-google-cloud/` },
+  ]},
+  { title: 'Policies', items: [
     { label: 'FAQ', href: `${base}docs/faq/` },
     { label: 'Licensing', href: `${base}docs/licensing/` },
     { label: 'Privacy', href: `${base}docs/privacy/` },
