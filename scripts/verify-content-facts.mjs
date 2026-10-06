@@ -253,6 +253,15 @@ for (const [file, html] of htmlPages) {
   if (raw) errors.push(`${file} renders a raw service tier (${raw[0]}); use the ServiceTier component`);
 }
 
+// The cost page leads with installing LocalCloud and works from labeled assumptions; licensing
+// is a secondary link, never the primary call to action.
+const costMain = htmlPages.get('reduce-gcp-dev-costs/index.html')?.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? '';
+const costPrimary = [...costMain.matchAll(/<a\b([^>]*class="[^"]*site-button--primary[^"]*"[^>]*)>/g)].map(([, attributes]) => attributes.match(/\bhref="([^"]+)"/)?.[1]);
+if (!costPrimary.length || costPrimary.some((href) => href !== '/docs/#install-the-cli')) errors.push(`reduce-gcp-dev-costs primary buttons must open /docs/#install-the-cli (found ${costPrimary.join(', ') || 'none'})`);
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+if (!new RegExp(`<code\\b[^>]*>${escapeRegExp(productFacts.installScriptCommand)}</code>`).test(costMain)) errors.push('reduce-gcp-dev-costs must show the install command');
+if (!costMain.includes('id="worked-example"') || !/Assumptions/.test(costMain)) errors.push('reduce-gcp-dev-costs must publish the assumption-labeled worked example');
+
 // Marketing Presentation Principles Verification:
 // 1. Exactly two categories: 'supported' or 'unsupported' (no 'partial' status)
 for (const service of services) {

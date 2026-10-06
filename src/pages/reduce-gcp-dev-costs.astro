@@ -1,8 +1,46 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
+import CopyButton from '../components/CopyButton.astro';
+import { docsContract } from '../data/docs-contract';
+import { productFacts } from '../data/productFacts';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+
+// A worked example with labeled, illustrative inputs. Every figure below is computed from these
+// assumptions; none is a measurement, benchmark or price.
+const example = {
+  developers: 6,
+  localRunsPerDeveloper: 4,
+  ciRunsPerDay: 40,
+  resourcesPerRun: 4,
+  workingDays: 20,
+};
+const runsPerDay = example.developers * example.localRunsPerDeveloper + example.ciRunsPerDay;
+const resourcesPerDay = runsPerDay * example.resourcesPerRun;
+const number = (value: number) => new Intl.NumberFormat('en-US').format(value);
+
+const assumptions = [
+  { id: 'A1', label: 'Developers', text: `${example.developers} developers each run the integration suite ${example.localRunsPerDeveloper} times a day before pushing.` },
+  { id: 'A2', label: 'CI', text: `The same suite runs in ${example.ciRunsPerDay} pull-request pipelines a day.` },
+  { id: 'A3', label: 'Suite', text: `Each run creates ${example.resourcesPerRun} test resources (a Cloud Storage bucket, a Pub/Sub topic and subscription, and a BigQuery dataset), runs its tests, and deletes them.` },
+  { id: 'A4', label: 'Coverage', text: 'The operations the suite uses are listed for those services in the compatibility matrix.' },
+  { id: 'A5', label: 'Month', text: `A month has ${example.workingDays} working days.` },
+];
+
+const results = [
+  { label: 'Suite runs a day that target localhost', value: number(runsPerDay), working: `${example.developers} × ${example.localRunsPerDeveloper} + ${example.ciRunsPerDay}` },
+  { label: 'Cloud test resources a day that are never created in Google Cloud', value: number(resourcesPerDay), working: `${runsPerDay} × ${example.resourcesPerRun}` },
+  { label: 'Cloud test resources a month that are never created in Google Cloud', value: number(resourcesPerDay * example.workingDays), working: `${resourcesPerDay} × ${example.workingDays}` },
+  { label: 'CI runs a month whose suite needs no Google Cloud credentials', value: number(example.ciRunsPerDay * example.workingDays), working: `${example.ciRunsPerDay} × ${example.workingDays}` },
+];
+
+const yourInputs = [
+  { input: 'Suite runs a day (developers and CI)', example: number(runsPerDay), source: 'Your CI history and team habits' },
+  { input: 'Billed cost of one run’s cloud test resources', example: 'Not assumed', source: 'Your billing export, filtered to the test project' },
+  { input: 'Time a pipeline spends creating and deleting those resources', example: 'Not assumed', source: 'Your pipeline step timings' },
+  { input: 'Time LocalCloud takes to report ready on your runner', example: 'Not assumed', source: 'One timed run on your runner' },
+];
 ---
 
 <LandingLayout
@@ -12,25 +50,144 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   <section class="site-section site-section--hero">
     <div class="container"><div class="max-w-[52rem] reveal">
       <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Cost evaluation</span>
-      <h1 class="mt-4">Measure your own local-development cost trade-off</h1>
-      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">LocalCloud does not publish a maintained savings benchmark. Use your own billing exports, workload profile, hardware cost, engineering time, and production-validation requirements.</p>
-      <div class="mt-8 flex flex-wrap gap-3"><a href={`${base}docs/licensing/`} class="site-button site-button--primary">Review licensing first</a><a href={`${base}compatibility/`} class="site-button site-button--secondary">Review compatibility</a></div>
+      <h1 class="mt-4">Run GCP tests on localhost: a worked cost example</h1>
+      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">An integration test that talks to LocalCloud instead of a Google Cloud project creates no billed test resources and waits on no cloud provisioning. The example below counts what moves to localhost for one team, with every assumption labeled, so you can repeat it with your own numbers.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-analytics-label="cost-start-free">Start free — install the CLI</a>
+        <a href="#worked-example" class="site-button site-button--secondary">See the worked example</a>
+      </div>
+      <div class="mt-6 site-panel p-4 sm:p-5">
+        <div class="flex items-center justify-between gap-3">
+          <span class="site-kicker">Install the CLI</span>
+          <CopyButton text={productFacts.installScriptCommand} label="Copy install command" analyticsLabel="cost-install-script" />
+        </div>
+        <pre tabindex="0" aria-label="Install the LocalCloud CLI" class="mt-3 overflow-x-auto text-sm leading-7"><code>{productFacts.installScriptCommand}</code></pre>
+      </div>
     </div></div>
   </section>
 
-  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--info"><div class="callout__body"><p class="callout__title">Free public preview</p><div class="callout__content"><p>The Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and pilots. Review the <a href={`${base}docs/licensing/`}>Licensing reference</a> for the non-production boundary.</p></div></div></aside></div></section>
+  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--info"><div class="callout__body"><p class="callout__title">Free public preview</p><div class="callout__content"><p>The Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and pilots, so moving test runs to localhost adds no license fee during the preview. The <a href={`${base}docs/licensing/`}>licensing summary</a> explains the non-production boundary.</p></div></div></aside></div></section>
 
-  <section class="site-section"><div class="container">
-    <div class="site-section-heading reveal"><span class="site-kicker">Method</span><h2>Build a reproducible comparison</h2><p>Record assumptions instead of copying generalized percentages or dollar ranges.</p></div>
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 stagger">
-      <article class="site-panel p-5"><h3>1. Establish the baseline</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Use dated billing exports to isolate developer, test, staging, and CI usage by service. Exclude unrelated production spend.</p></article>
-      <article class="site-panel p-5"><h3>2. Define the workflow</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">List exact SDK versions, services, operations, data volume, test frequency, retention, and required fidelity.</p></article>
-      <article class="site-panel p-5"><h3>3. Check compatibility</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Map each operation to the compatibility page. Unsupported behavior needs a different test path.</p></article>
-      <article class="site-panel p-5"><h3>4. Include local costs</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Account for compute, storage, Docker infrastructure, maintenance, developer time, and the cost of failed fidelity assumptions.</p></article>
-      <article class="site-panel p-5"><h3>5. Keep production validation</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Budget for guarded tests against real Google Cloud for IAM, quotas, regional behavior, managed integrations, performance, and release confidence.</p></article>
-      <article class="site-panel p-5"><h3>6. Measure, do not extrapolate</h3><p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Run a time-boxed evaluation and compare observed bills and cycle time. Publish the date, hardware, workload, and exclusions with any result.</p></article>
+  <section id="worked-example" class="site-section"><div class="container">
+    <div class="site-section-heading reveal"><span class="site-kicker">Worked example</span><h2>One team’s integration suite, counted</h2><p>The inputs are illustrative assumptions, not measurements. Replace them with your own.</p></div>
+    <div class="grid gap-4 lg:grid-cols-2">
+      <article class="site-panel p-6 reveal">
+        <h3>Assumptions</h3>
+        <dl class="cost-assumptions mt-4">
+          {assumptions.map((item) => (
+            <div><dt><span class="cost-tag">{item.id}</span> {item.label}</dt><dd>{item.text}</dd></div>
+          ))}
+        </dl>
+      </article>
+      <article class="site-panel p-6 reveal">
+        <h3>What moves to localhost</h3>
+        <dl class="cost-results mt-4">
+          {results.map((item) => (
+            <div><dt>{item.label}</dt><dd><strong>{item.value}</strong> <span>({item.working})</span></dd></div>
+          ))}
+        </dl>
+        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">Local runs keep their data in a Docker volume on the runner. A CI job can pass <code>--data-volume NAME</code> to get its own isolated runtime and storage.</p>
+      </article>
     </div>
   </div></section>
 
-  <section class="site-section"><div class="container"><div class="site-panel p-6 reveal"><h2>Estimate checklist</h2><ul class="site-list mt-5"><li>Dated billing data with project and service filters.</li><li>The LocalCloud image or CLI release being considered.</li><li>Service support levels and known gaps.</li><li>Local infrastructure and maintenance cost.</li><li>Real-GCP release-validation scope.</li><li>Governing license review for the intended user and purpose.</li></ul></div></div></section>
+  <section class="site-section"><div class="container">
+    <div class="site-section-heading reveal"><span class="site-kicker">Your numbers</span><h2>Turn the count into spend and time</h2><p>Multiply the runs that move by what one run costs you today. Each figure comes from your own records.</p></div>
+    <div class="site-panel overflow-x-auto p-2 sm:p-4 reveal" role="region" tabindex="0" aria-label="Inputs for your own estimate">
+      <table class="cost-table">
+        <thead><tr><th scope="col">Input</th><th scope="col">In the example</th><th scope="col">Where to get yours</th></tr></thead>
+        <tbody>
+          {yourInputs.map((row) => (
+            <tr><th scope="row">{row.input}</th><td>{row.example}</td><td>{row.source}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <ul class="site-list mt-6">
+      <li><span><strong>Cloud test spend avoided a month:</strong> runs that move to localhost × the billed cost of one run’s test resources.</span></li>
+      <li><span><strong>CI time avoided a month:</strong> CI runs × (resource setup and teardown time − LocalCloud start time), when the difference is positive.</span></li>
+    </ul>
+  </div></section>
+
+  <section class="site-section"><div class="container">
+    <div class="site-panel site-panel--soft p-6 reveal">
+      <h2>What stays on Google Cloud</h2>
+      <ul class="site-list mt-5">
+        <li><span>Release validation against real Google Cloud: IAM, quotas, regional behavior, managed integrations, and performance.</span></li>
+        <li><span>Operations a service doesn’t list in the <a href={`${base}compatibility/`}>compatibility matrix</a>.</span></li>
+        <li><span>Runner capacity for LocalCloud itself: Docker and a default memory limit of {docsContract.product.memory} per runtime.</span></li>
+      </ul>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-analytics-label="cost-start-free-footer">Start free — install the CLI</a>
+        <a href={`${base}gcp-integration-testing/`} class="site-button site-button--secondary">Set up CI integration tests</a>
+      </div>
+    </div>
+  </div></section>
 </LandingLayout>
+
+<style>
+  .cost-assumptions,
+  .cost-results {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .cost-assumptions dt,
+  .cost-results dt {
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+
+  .cost-assumptions dd,
+  .cost-results dd {
+    margin-top: 0.2rem;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+  }
+
+  .cost-results dd strong {
+    color: var(--text);
+    font-size: var(--fs-title);
+  }
+
+  .cost-tag {
+    display: inline-block;
+    min-width: 2rem;
+    color: var(--accent-strong);
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+  }
+
+  .cost-table {
+    width: 100%;
+    min-width: 34rem;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+    text-align: left;
+  }
+
+  .cost-table th,
+  .cost-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  .cost-table thead th {
+    color: var(--text-2);
+    font-weight: 600;
+  }
+
+  .cost-table tbody th {
+    font-weight: 600;
+  }
+
+  .cost-table tbody td {
+    color: var(--text-2);
+  }
+
+  .cost-table tbody tr:last-child > * {
+    border-bottom: 0;
+  }
+</style>
