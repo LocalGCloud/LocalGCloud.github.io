@@ -81,6 +81,7 @@ ${rules}
 - SDK examples: https://local.cloud/docs/sdk-examples/
 - Terraform: https://local.cloud/docs/terraform/
 - Seed data: https://local.cloud/docs/seed-data/
+- Contact for agent integrations: ${productFacts.agentContactEmail}
 `;
 
 export const agentsExecutionGuide = `# LocalCloud agent guide
@@ -122,6 +123,10 @@ ${endpointLines}
 - Seed data: https://local.cloud/docs/seed-data/
 - Agent Skills package: ${productFacts.agentSkillsUrl}
 - llms.txt: https://local.cloud/llms.txt
+
+## Contact
+- AI agents and integrations: ${productFacts.agentContactEmail}. Include the command, its output, and \`localcloud --version\`.
+- Bugs and feature requests: ${productFacts.cliIssuesUrl}
 `;
 
 export const agentResourceIndexMarkdown = `# LocalCloud agent Markdown resources

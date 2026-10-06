@@ -16,7 +16,20 @@ const requiredSchemaTypes = new Map([
   ['/compare/localstack/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
   ['/compare/localgcp/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
   ['/license/', ['Organization', 'WebPage', 'BreadcrumbList']],
+  ['/contact/', ['Organization', 'ContactPage', 'BreadcrumbList']],
+  ['/security/', ['Organization', 'WebPage', 'BreadcrumbList']],
+  ['/about/', ['Organization', 'AboutPage', 'BreadcrumbList']],
+  ['/changelog/', ['Organization', 'WebPage', 'BreadcrumbList']],
 ]);
+
+// The shared Organization node: a stable @id, the people-facing address and the
+// agent-facing address as contact points, and public profiles only.
+const organizationContract = {
+  '@id': `${siteOrigin}/#org`,
+  email: 'info@local.cloud',
+  contactEmails: ['info@local.cloud', 'agent@local.cloud'],
+  sameAs: ['https://github.com/LocalGCloud', 'https://github.com/LocalGCloud/localcloud-cli', 'https://hub.docker.com/r/agentcloud/localcloud'],
+};
 
 const isHtmlRoute = (route) => route.path === '/' || route.path.endsWith('/');
 const routeToGeneratedFile = (route) =>
@@ -45,6 +58,13 @@ const jsonLdTypes = (html, route) => {
       if (typeof value === 'object' && value && '@type' in value) {
         const schemaTypes = Array.isArray(value['@type']) ? value['@type'] : [value['@type']];
         types.push(...schemaTypes);
+        if (schemaTypes.includes('Organization')) {
+          const contactEmails = (value.contactPoint ?? []).map((point) => point.email).sort();
+          if (value['@id'] !== organizationContract['@id']) errors.push(`${route}: Organization JSON-LD must use @id ${organizationContract['@id']}`);
+          if (value.email !== organizationContract.email) errors.push(`${route}: Organization JSON-LD email must be ${organizationContract.email}`);
+          if (JSON.stringify(contactEmails) !== JSON.stringify([...organizationContract.contactEmails].sort())) errors.push(`${route}: Organization contactPoint emails must be ${organizationContract.contactEmails.join(' and ')}`);
+          if (JSON.stringify(value.sameAs) !== JSON.stringify(organizationContract.sameAs)) errors.push(`${route}: Organization sameAs must list the public profiles ${organizationContract.sameAs.join(', ')}`);
+        }
         if (schemaTypes.includes('Product')) {
           if (typeof value.image !== 'string' || !URL.canParse(value.image) || new URL(value.image).protocol !== 'https:') {
             errors.push(`${route}: Product JSON-LD must include an absolute HTTPS image URL`);

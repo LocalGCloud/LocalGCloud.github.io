@@ -1,0 +1,149 @@
+{
+  "repository": "https://github.com/LocalGCloud/localcloud-cli",
+  "releases": [
+    {
+      "version": "0.1.7",
+      "tag": "v0.1.7",
+      "title": "LocalCloud CLI 0.1.7",
+      "publishedAt": "2026-10-01",
+      "prerelease": false,
+      "url": "https://github.com/LocalGCloud/localcloud-cli/releases/tag/v0.1.7",
+      "summary": "Default runtime image: agentcloud/localcloud:latest. Supported hosts: macOS 13+ and Linux with glibc 2.35+ (Ubuntu 22.04 equivalent).",
+      "platforms": [
+        "Linux amd64",
+        "Linux arm64",
+        "macOS amd64",
+        "macOS arm64"
+      ],
+      "checksums": true,
+      "sigstore": true,
+      "homebrewFormula": true
+    },
+    {
+      "version": "0.1.6",
+      "tag": "v0.1.6",
+      "title": "LocalCloud CLI 0.1.6",
+      "publishedAt": "2026-09-29",
+      "prerelease": false,
+      "url": "https://github.com/LocalGCloud/localcloud-cli/releases/tag/v0.1.6",
+      "summary": "Supported hosts: macOS 13+ and Linux with glibc 2.35+ (Ubuntu 22.04 equivalent).",
+      "platforms": [
+        "Linux amd64",
+        "Linux arm64",
+        "macOS amd64",
+        "macOS arm64"
+      ],
+      "checksums": true,
+      "sigstore": true,
+      "homebrewFormula": true
+    },
+    {
+      "version": "0.1.5",
+      "tag": "v0.1.5",
+      "title": "LocalCloud CLI 0.1.5",
+      "publishedAt": "2026-09-18",
+      "prerelease": false,
+      "url": "https://github.com/LocalGCloud/localcloud-cli/releases/tag/v0.1.5",
+      "summary": "Supported hosts: macOS 13+ and Linux with glibc 2.35+ (Ubuntu 22.04 equivalent).",
+      "platforms": [
+        "Linux amd64",
+        "Linux arm64",
+        "macOS amd64",
+        "macOS arm64"
+      ],
+      "checksums": true,
+      "sigstore": true,
+      "homebrewFormula": true
+    },
+    {
+      "version": "0.1.4",
+      "tag": "v0.1.4",
+      "title": "LocalCloud CLI 0.1.4",
+      "publishedAt": "2026-09-08",
+      "prerelease": false,
+      "url": "https://github.com/LocalGCloud/localcloud-cli/releases/tag/v0.1.4",
+      "summary": "Supported hosts: macOS 13+ and Linux with glibc 2.35+ (Ubuntu 22.04 equivalent).",
+      "platforms": [
+        "Linux amd64",
+        "Linux arm64",
+        "macOS amd64",
+        "macOS arm64"
+      ],
+      "checksums": true,
+      "sigstore": true,
+      "homebrewFormula": true
+    },
+    {
+      "version": "0.1.3",
+      "tag": "v0.1.3",
+      "title": "LocalCloud CLI 0.1.3",
+      "publishedAt": "2026-09-04",
+      "prerelease": false,
+      "url": "https://github.com/LocalGCloud/localcloud-cli/releases/tag/v0.1.3",
+      "summary": "Supported hosts: macOS 13+ and Linux with glibc 2.35+ (Ubuntu 22.04 equivalent).",
+      "platforms": [
+        "Linux amd64",
+        "Linux arm64",
+        "macOS amd64",
+        "macOS arm64"
+      ],
+      "checksums": true,
+      "sigstore": true,
+      "homebrewFormula": true
+    },
+    {
+      "version": "0.1.2",
+      "tag": "v0.1.2",
+      "title": "LocalCloud CLI 0.1.2",
+      "publishedAt": "2026-09-01",
+      "prerelease": false,
+      "url": "https://github.com/LocalGCloud/localcloud-cli/releases/tag/v0.1.2",
+      "summary": "Supported hosts: macOS 13+ and Linux with glibc 2.35+ (Ubuntu 22.04 equivalent).",
+      "platforms": [
+        "Linux amd64",
+        "Linux arm64",
+        "macOS amd64",
+        "macOS arm64"
+      ],
+      "checksums": true,
+      "sigstore": true,
+      "homebrewFormula": true
+    },
+    {
+      "version": "0.1.1",
+      "tag": "v0.1.1",
+      "title": "LocalCloud CLI 0.1.1",
+      "publishedAt": "2026-08-25",
+      "prerelease": false,
+      "url": "https://github.com/LocalGCloud/localcloud-cli/releases/tag/v0.1.1",
+      "summary": "Supported hosts: macOS 13+ and Linux with glibc 2.35+ (Ubuntu 22.04 equivalent).",
+      "platforms": [
+        "Linux amd64",
+        "Linux arm64",
+        "macOS amd64",
+        "macOS arm64"
+      ],
+      "checksums": true,
+      "sigstore": true,
+      "homebrewFormula": true
+    },
+    {
+      "version": "0.1.0",
+      "tag": "v0.1.0",
+      "title": "LocalCloud CLI 0.1.0",
+      "publishedAt": "2026-08-19",
+      "prerelease": false,
+      "url": "https://github.com/LocalGCloud/localcloud-cli/releases/tag/v0.1.0",
+      "summary": "Supported hosts: macOS 13+ and Linux with glibc 2.35+ (Ubuntu 22.04 equivalent).",
+      "platforms": [
+        "Linux amd64",
+        "Linux arm64",
+        "macOS amd64",
+        "macOS arm64"
+      ],
+      "checksums": true,
+      "sigstore": true,
+      "homebrewFormula": true
+    }
+  ]
+}

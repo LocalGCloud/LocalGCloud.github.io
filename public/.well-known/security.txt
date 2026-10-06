@@ -1,0 +1,5 @@
+Contact: mailto:info@local.cloud
+Expires: 2027-10-05T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://local.cloud/.well-known/security.txt
+Policy: https://local.cloud/security/

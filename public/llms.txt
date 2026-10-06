@@ -107,8 +107,17 @@ The proprietary Public Preview License permits individuals and organizations, in
 - [License text](https://local.cloud/license/): the full Public Preview License Agreement, also as [plain text](https://local.cloud/license.txt)
 - [Pricing](https://local.cloud/pricing/)
 
+## Contact
+
+- AI agents and integrations: agent@local.cloud
+- People (general, licensing, privacy, partnerships): info@local.cloud, or [the contact page](https://local.cloud/contact/)
+- Security reports: info@local.cloud with the subject "Security report"; see [Security](https://local.cloud/security/)
+- Bugs and feature requests: [CLI issues on GitHub](https://github.com/LocalGCloud/localcloud-cli/issues)
+
 ## Optional
 
+- [Changelog](https://local.cloud/changelog/): CLI releases with dates
+- [About LocalCloud Inc.](https://local.cloud/about/)
 - [Local cloud for AI agents](https://local.cloud/local-cloud-for-ai-agents/)
 - [Agent sandbox setup](https://local.cloud/agents/)
 - [Agent and automation workflows](https://local.cloud/workflows/)

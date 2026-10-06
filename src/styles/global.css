@@ -848,6 +848,27 @@
   gap: 1rem;
 }
 
+.site-footer__meta-copy {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.site-footer__contact {
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.site-footer__contact a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 180ms ease;
+}
+
+.site-footer__contact a:hover {
+  color: var(--accent);
+}
+
 .site-footer__legal-links a {
   display: inline-block;
   padding-block: 0.375rem;

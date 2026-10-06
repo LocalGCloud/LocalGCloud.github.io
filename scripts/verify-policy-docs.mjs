@@ -60,7 +60,7 @@ for (const phrase of [
 	"Analytics providers",
 	"Search text and feedback",
 	"no built-in analytics opt-out",
-	"mailto:agents@local.cloud",
+	"mailto:info@local.cloud",
 ])
 	assert(privacy.includes(phrase), `privacy reference omits ${phrase}`);
 for (const obsoleteClaim of [
@@ -68,6 +68,7 @@ for (const obsoleteClaim of [
 	"No main-source caller",
 	"ca-probe",
 	"seven days of hourly events",
+	"agents@local.cloud",
 ])
 	assert(!privacy.includes(obsoleteClaim), `privacy reference retains obsolete claim ${obsoleteClaim}`);
 

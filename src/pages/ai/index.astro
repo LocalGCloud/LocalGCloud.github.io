@@ -105,9 +105,13 @@ const structuredData = [
               <dt class="shrink-0 text-[var(--text-2)]">Credentials</dt>
               <dd class="text-right text-[var(--text)]">No GCP account, credentials, or billing by default</dd>
             </div>
-            <div class="flex items-start justify-between gap-4">
+            <div class="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
               <dt class="shrink-0 text-[var(--text-2)]">Production boundary</dt>
               <dd class="text-right text-[var(--text)]">Validate against real GCP before production</dd>
+            </div>
+            <div class="flex items-start justify-between gap-4">
+              <dt class="shrink-0 text-[var(--text-2)]">Agent contact</dt>
+              <dd class="min-w-0 text-right font-mono text-[var(--text)] [overflow-wrap:anywhere]"><a href={`mailto:${productFacts.agentContactEmail}`}>{productFacts.agentContactEmail}</a></dd>
             </div>
           </dl>
         </aside>

@@ -1,0 +1,134 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
+
+const pageUrl = new URL(productFacts.contactPath, productFacts.siteUrl).toString();
+const mailto = (address: string, subject?: string) => `mailto:${address}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: 'Contact LocalCloud',
+    about: { '@id': new URL('#org', productFacts.siteUrl).toString() },
+  },
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Contact', url: pageUrl },
+  ]),
+];
+
+const routes = [
+  {
+    topic: 'General questions, licensing and partnerships',
+    body: 'Questions about LocalCloud, the Public Preview License, pricing, or working together.',
+    href: mailto(productFacts.contactEmail),
+    label: productFacts.contactEmail,
+  },
+  {
+    topic: 'Privacy and data requests',
+    body: 'Privacy questions and deletion requests, as described in the privacy notice.',
+    href: mailto(productFacts.contactEmail, 'Privacy request'),
+    label: productFacts.contactEmail,
+  },
+  {
+    topic: 'Security reports',
+    body: 'Report a vulnerability privately with the subject "Security report". The security page lists what to include.',
+    href: mailto(productFacts.contactEmail, 'Security report'),
+    label: productFacts.contactEmail,
+  },
+  {
+    topic: 'Bugs and feature requests',
+    body: 'Open an issue with the CLI version (localcloud --version) and the localcloud doctor output. Never include credentials or customer data.',
+    href: productFacts.cliIssuesUrl,
+    label: 'GitHub issues',
+  },
+  {
+    topic: 'AI agents and integrations',
+    body: 'Agent builders and coding agents can write about agent workflows, MCP and integration questions. Include the command, its output and the CLI version.',
+    href: mailto(productFacts.agentContactEmail),
+    label: productFacts.agentContactEmail,
+  },
+];
+---
+
+<LandingLayout
+  title="Contact LocalCloud"
+  description="Email LocalCloud Inc. about licensing, privacy, security or partnerships, report a bug on GitHub, or reach the address for AI agent integrations."
+  {structuredData}
+>
+  <section class="site-section site-section--hero">
+    <div class="container container--narrow">
+      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Contact</span>
+      <h1 class="mt-4">Contact LocalCloud</h1>
+      <p class="mt-5 text-lg leading-8 text-[var(--text-2)]">
+        LocalCloud Inc. makes LocalCloud, a local Google Cloud emulator for developers, CI and AI agents. Write to <a href={mailto(productFacts.contactEmail)}>{productFacts.contactEmail}</a>, or pick the route that fits your question.
+      </p>
+    </div>
+  </section>
+
+  <section class="site-section site-section--tight">
+    <div class="container container--narrow">
+      <dl class="contact-routes">
+        {routes.map((route) => (
+          <div class="contact-routes__item site-panel">
+            <dt>{route.topic}</dt>
+            <dd>
+              <a href={route.href}>{route.label}</a>
+              <p>{route.body}</p>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p class="mt-6 text-sm leading-7 text-[var(--text-2)]">
+        Security researchers can also read <a href={productFacts.securityPath}>how to report a vulnerability</a> and the <a href="/.well-known/security.txt">security.txt</a> file. For licensing terms, see the <a href={productFacts.licensePath}>license</a> and <a href={productFacts.pricingPath}>pricing</a>.
+      </p>
+    </div>
+  </section>
+</LandingLayout>
+
+<style>
+  .contact-routes {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .contact-routes__item {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1.1rem 1.25rem;
+  }
+
+  .contact-routes dt {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .contact-routes dd {
+    margin: 0;
+  }
+
+  .contact-routes dd a {
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--accent-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .contact-routes dd p {
+    margin-top: 0.35rem;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+  }
+
+  @media (min-width: 760px) {
+    .contact-routes__item {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+  }
+</style>

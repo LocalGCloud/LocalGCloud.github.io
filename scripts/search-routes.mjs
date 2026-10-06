@@ -36,4 +36,8 @@ export const expectedSearchRoutes = [
   { path: '/glossary/agent-environment/', intent: 'Agent environment definition' },
   { path: '/glossary/cloud-emulator/', intent: 'Cloud emulator definition' },
   { path: '/license/', intent: 'LocalCloud Public Preview License Agreement text' },
+  { path: '/contact/', intent: 'Contact LocalCloud Inc.' },
+  { path: '/security/', intent: 'LocalCloud release verification and vulnerability reporting' },
+  { path: '/about/', intent: 'About LocalCloud Inc.' },
+  { path: '/changelog/', intent: 'LocalCloud CLI release history' },
 ];

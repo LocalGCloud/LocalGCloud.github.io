@@ -1,0 +1,144 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import CopyButton from '../components/CopyButton.astro';
+import { docsContract } from '../data/docs-contract';
+import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
+import {
+  checksumVerifyCommand,
+  cosignVerifyCommand,
+  imageProvenanceCommand,
+  imageSbomCommand,
+  latestCliRelease,
+} from '../data/trust';
+
+const pageUrl = new URL(productFacts.securityPath, productFacts.siteUrl).toString();
+const reportHref = `mailto:${productFacts.contactEmail}?subject=${encodeURIComponent('Security report')}`;
+const telemetryVariable = `${docsContract.privacy.runtimeTelemetry.disableVariable}=false`;
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: 'LocalCloud security',
+    publisher: { '@id': new URL('#org', productFacts.siteUrl).toString() },
+  },
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Security', url: pageUrl },
+  ]),
+];
+const commands = [
+  { id: 'cosign', label: `Check the signature on the ${latestCliRelease.tag} checksums`, code: cosignVerifyCommand, copy: 'Copy signature check' },
+  { id: 'checksum', label: 'Then check a downloaded archive against them', code: checksumVerifyCommand, copy: 'Copy checksum check' },
+];
+const imageCommands = [
+  { id: 'sbom', label: 'Software bill of materials (SPDX)', code: imageSbomCommand, copy: 'Copy SBOM command' },
+  { id: 'provenance', label: 'Build provenance (SLSA)', code: imageProvenanceCommand, copy: 'Copy provenance command' },
+];
+---
+
+<LandingLayout
+  title="LocalCloud Security: Signed Releases and Reporting"
+  description="Verify signed LocalCloud CLI releases and the runtime image's SBOM and provenance, see where your data stays, and report a vulnerability."
+  {structuredData}
+>
+  <section class="site-section site-section--hero">
+    <div class="container container--narrow">
+      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Security</span>
+      <h1 class="mt-4">LocalCloud security</h1>
+      <p class="mt-5 text-lg leading-8 text-[var(--text-2)]">
+        Check what you install before you run it, keep your data on your machine, and reach us privately when you find a problem.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href={reportHref} class="site-button site-button--primary">Report a vulnerability</a>
+        <a href="/.well-known/security.txt" class="site-button site-button--secondary">security.txt</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section site-section--tight">
+    <div class="container container--narrow prose-site">
+      <h2 id="report">Report a vulnerability</h2>
+      <p>
+        Email <a href={reportHref}>{productFacts.contactEmail}</a> with the subject "Security report". Include the affected part (CLI, runtime image or website), its version (<code>localcloud --version</code> or the image digest), the steps to reproduce it, and the impact you observed.
+      </p>
+      <p>
+        Please don't include real credentials or customer data, and test only against systems you own. Our <a href="/.well-known/security.txt">security.txt</a> lists the same contact in the standard format.
+      </p>
+
+      <h2 id="signed-releases">Signed CLI releases</h2>
+      <p>
+        Every <a href={productFacts.cliReleasesUrl}>CLI release</a> publishes archives for macOS and Linux on amd64 and arm64, a <code>SHA256SUMS</code> file, and Sigstore bundles. The bundles are signed by the CLI's GitHub Actions release workflow, so cosign can confirm the files came from that workflow at a release tag. The install script checks each archive against <code>SHA256SUMS</code> before it installs anything.
+      </p>
+      {commands.map((command) => (
+        <div class="security-command">
+          <h3 id={`verify-${command.id}`}>{command.label}</h3>
+          <div class="security-command__box">
+            <pre tabindex="0" aria-labelledby={`verify-${command.id}`}><code>{command.code}</code></pre>
+            <CopyButton text={command.code} label={command.copy} analyticsLabel={`security-${command.id}`} />
+          </div>
+        </div>
+      ))}
+      <p>On older macOS versions, use <code>shasum -a 256 --check --ignore-missing SHA256SUMS</code>. Release history is on the <a href={productFacts.changelogPath}>changelog</a>.</p>
+
+      <h2 id="image-provenance">Runtime image SBOM and provenance</h2>
+      <p>
+        The <a href={productFacts.dockerHubUrl}><code>{productFacts.dockerImageRepository}</code></a> image is published for linux/amd64 and linux/arm64. Each platform carries an SPDX software bill of materials and a SLSA build provenance attestation. Inspect them with Docker:
+      </p>
+      {imageCommands.map((command) => (
+        <div class="security-command">
+          <h3 id={`image-${command.id}`}>{command.label}</h3>
+          <div class="security-command__box">
+            <pre tabindex="0" aria-labelledby={`image-${command.id}`}><code>{command.code}</code></pre>
+            <CopyButton text={command.code} label={command.copy} analyticsLabel={`security-image-${command.id}`} />
+          </div>
+        </div>
+      ))}
+      <p>For repeatable CI runs, pin the image by digest rather than the <code>{productFacts.dockerImageTag}</code> tag.</p>
+
+      <h2 id="data">Your data and telemetry</h2>
+      <p>
+        Service data stays in a Docker volume on your machine (<code>{docsContract.product.defaultDataVolume}</code> by default), and the quick start runs LocalCloud on localhost-only ports. LocalCloud needs no Google Cloud account or credentials.
+      </p>
+      <p>
+        The runtime sends pseudonymous usage and diagnostic reports. Set <code>{telemetryVariable}</code> in the container's environment to stop regular reporting. The <a href="/docs/privacy/">privacy notice</a> lists what is sent and what else can make network requests.
+      </p>
+    </div>
+  </section>
+</LandingLayout>
+
+<style>
+  .security-command {
+    margin: 1rem 0;
+  }
+
+  .security-command h3 {
+    margin-top: 0;
+  }
+
+  .security-command__box {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.5rem;
+    padding: 0.35rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    background: var(--surface-2);
+  }
+
+  .security-command__box pre {
+    margin: 0;
+    padding: 0.6rem 0.75rem;
+    overflow-x: auto;
+    border: 0;
+    background: transparent;
+  }
+
+  .security-command__box code {
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    white-space: pre;
+  }
+</style>

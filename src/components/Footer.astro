@@ -1,6 +1,7 @@
 ---
 import BrandMark from './BrandMark.astro';
 import { availableServiceCount } from '../data/services';
+import { productFacts } from '../data/productFacts';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
@@ -93,12 +94,23 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
         <li><a href="https://github.com/LocalGCloud/LocalGCloud.github.io" target="_blank" rel="noopener noreferrer">GitHub</a></li>
         <li><a href={`${base}docs/faq/`}>FAQ</a></li>
         <li><a href={`${base}docs/licensing/`}>Licensing</a></li>
+        <li><a href={`${base}about/`}>About</a></li>
+        <li><a href={`${base}changelog/`}>Changelog</a></li>
       </ul>
     </div>
   </div>
 
   <div class="container site-footer__meta">
-    <span>&copy; {new Date().getFullYear()} LocalCloud Inc. · 5365 California Street, Palo Alto, CA · Proprietary public preview; license text controls</span>
+    <div class="site-footer__meta-copy">
+      <span>&copy; {new Date().getFullYear()} LocalCloud Inc. · 5365 California Street, Palo Alto, CA · Proprietary public preview; license text controls</span>
+      <p class="site-footer__contact">
+        Email <a href={`mailto:${productFacts.contactEmail}`}>{productFacts.contactEmail}</a> ·
+        AI agents and integrations <a href={`mailto:${productFacts.agentContactEmail}`}>{productFacts.agentContactEmail}</a> ·
+        <a href={`${base}contact/`}>Contact</a> ·
+        <a href={`${base}security/`}>Security</a> ·
+        <a href={`${base}changelog/`}>Changelog</a>
+      </p>
+    </div>
     <span class="site-footer__legal-links">
       <a href={`${base}license/`}>License</a>
       <a href={`${base}docs/privacy/`}>Privacy</a>

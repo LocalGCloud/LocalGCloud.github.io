@@ -1,14 +1,20 @@
 ---
-interface Props { text: string; class?: string; analyticsLabel?: string; }
-const { text, class: className = '', analyticsLabel } = Astro.props;
+interface Props {
+  text: string;
+  class?: string;
+  analyticsLabel?: string;
+  // Accessible name that says what gets copied, for example "Copy install command".
+  label?: string;
+}
+const { text, class: className = '', analyticsLabel, label = 'Copy to clipboard' } = Astro.props;
 ---
 
 <button
   class:list={['copy-btn inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-[var(--radius-control)] border border-[var(--border)] text-[var(--text-2)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors cursor-pointer bg-transparent', className]}
   data-copy={text}
   data-analytics-label={analyticsLabel}
-  aria-label="Copy to clipboard"
-  title="Copy to clipboard"
+  aria-label={label}
+  title={label}
   style="font-family: var(--font-mono);"
 >
   <span class="copy-btn__icons" aria-hidden="true">
@@ -85,6 +91,7 @@ const { text, class: className = '', analyticsLabel } = Astro.props;
     btn.addEventListener('click', async () => {
       const text = btn.dataset.copy;
       if (!text) return;
+      const idleTitle = btn.getAttribute('aria-label') || 'Copy to clipboard';
 
       const label = btn.querySelector('.copy-label');
       const activeTimer = resetTimers.get(btn);
@@ -110,7 +117,7 @@ const { text, class: className = '', analyticsLabel } = Astro.props;
       const timer = window.setTimeout(() => {
         btn.classList.remove('is-copied');
         if (label) label.textContent = 'Copy';
-        btn.title = 'Copy to clipboard';
+        btn.title = idleTitle;
         resetTimers.delete(btn);
       }, copied ? 2000 : 5000);
       resetTimers.set(btn, timer);

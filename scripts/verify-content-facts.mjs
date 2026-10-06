@@ -365,6 +365,59 @@ try {
 } catch (error) {
   errors.push(`dist/license.txt must be published: ${error.message}`);
 }
+// People reach LocalCloud at info@ from every page's footer; agents get agent@ in the
+// text written for them. The contact page lists both.
+const peopleEmail = productFacts.contactEmail;
+const agentEmail = productFacts.agentContactEmail;
+for (const [file, html] of htmlPages) {
+  const footer = html.match(/<footer\b[^>]*class="[^"]*site-footer[^"]*"[^>]*>([\s\S]*?)<\/footer>/)?.[1];
+  if (footer === undefined) errors.push(`${file} has no site footer`);
+  else if (!footer.includes(`href="mailto:${peopleEmail}"`)) errors.push(`${file} footer must link mailto:${peopleEmail}`);
+}
+const contactHtml = htmlPages.get('contact/index.html') ?? '';
+if (!contactHtml) errors.push('dist/contact/index.html must be published');
+for (const address of [peopleEmail, agentEmail]) {
+  if (contactHtml && !contactHtml.includes(`href="mailto:${address}`)) errors.push(`contact page must link mailto:${address}`);
+}
+if (!/^## Contact\n[\s\S]*?agent@local\.cloud[\s\S]*?info@local\.cloud/m.test(llms) || !llms.includes(agentEmail)) errors.push(`llms.txt needs a Contact section with ${agentEmail} and ${peopleEmail}`);
+for (const file of ['ai/agents.md', 'ai/agent-template.md']) {
+  if (!(agentText.get(file) ?? '').includes(agentEmail)) errors.push(`${file} must name ${agentEmail} for agent integrations`);
+}
+if (!(htmlPages.get('ai/index.html') ?? '').includes(`href="mailto:${agentEmail}"`)) errors.push(`/ai/ must link mailto:${agentEmail}`);
+
+// security.txt (RFC 9116): required Contact and a single unexpired Expires; Canonical and
+// Policy point at this site. Renew it before it lapses.
+try {
+  const securityTxt = await readFile(new URL('.well-known/security.txt', distDirectory), 'utf8');
+  const fields = securityTxt.split(/\r?\n/).filter((line) => line.trim() && !line.startsWith('#')).map((line) => {
+    const match = line.match(/^([A-Za-z-]+):\s*(\S.*)$/);
+    if (!match) errors.push(`security.txt has a malformed line: ${line}`);
+    return match ? [match[1].toLowerCase(), match[2].trim()] : ['', ''];
+  });
+  const values = (name) => fields.filter(([field]) => field === name).map(([, value]) => value);
+  const expires = values('expires');
+  if (!values('contact').includes(`mailto:${peopleEmail}`)) errors.push(`security.txt must list Contact: mailto:${peopleEmail}`);
+  if (expires.length !== 1 || Number.isNaN(Date.parse(expires[0]))) errors.push('security.txt needs exactly one Expires date');
+  else {
+    const daysLeft = (Date.parse(expires[0]) - Date.now()) / 86_400_000;
+    if (daysLeft <= 0) errors.push(`security.txt expired on ${expires[0]}; set a new Expires date`);
+    else if (daysLeft > 366) errors.push(`security.txt Expires ${expires[0]} is more than a year away (RFC 9116 recommends less)`);
+    else if (daysLeft < 60) console.warn(`::warning::security.txt expires in ${Math.floor(daysLeft)} days (${expires[0]}); renew it.`);
+  }
+  if (values('preferred-languages').length > 1) errors.push('security.txt may list Preferred-Languages once');
+  if (!values('canonical').includes(`${siteOrigin}/.well-known/security.txt`)) errors.push('security.txt Canonical must be its own https://local.cloud URL');
+  for (const policy of values('policy')) checkLocalLink('.well-known/security.txt', new URL(policy));
+} catch (error) {
+  errors.push(`dist/.well-known/security.txt must be published: ${error.message}`);
+}
+
+// The changelog lists every release in the committed data, linked to GitHub.
+const releaseData = JSON.parse(await readFile(new URL('../src/data/releases.json', import.meta.url), 'utf8'));
+const changelogHtml = htmlPages.get('changelog/index.html') ?? '';
+for (const release of releaseData.releases) {
+  if (!changelogHtml.includes(`id="${release.tag}"`) || !changelogHtml.includes(`href="${release.url}"`)) errors.push(`changelog omits ${release.tag}`);
+}
+
 // The runtime repository is private: no page or agent text may link it.
 for (const file of [...files].filter((name) => /\.(?:html|md|txt|xml|json)$/.test(name) && !name.startsWith('pagefind/'))) {
   const text = htmlPages.get(file) ?? agentText.get(file) ?? await readFile(new URL(file, distDirectory), 'utf8');

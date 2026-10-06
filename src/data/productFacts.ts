@@ -36,6 +36,13 @@ export const productFacts = {
 	logoUrl: "https://local.cloud/brand/localcloud-mark.svg",
 	companyName: "LocalCloud Inc.",
 	companyAddress: "5365 California Street, Palo Alto, CA",
+	// People write to info@ (general, licensing, partnerships, privacy and security reports);
+	// agent@ is the address published in agent-facing text (llms.txt, /ai/, AGENTS.md).
+	contactEmail: "info@local.cloud",
+	agentContactEmail: "agent@local.cloud",
+	contactPath: "/contact/",
+	securityPath: "/security/",
+	changelogPath: "/changelog/",
 	serviceCountLabel: String(availableServiceCount),
 	availabilityStatement: docsContract.licensing.summary,
 	licensingPath: "/docs/licensing/",
@@ -64,6 +71,24 @@ export const organizationSchema: JsonLd = {
 	url: productFacts.siteUrl,
 	logo: productFacts.logoUrl,
 	description: productFacts.description,
+	email: productFacts.contactEmail,
+	contactPoint: [
+		{
+			"@type": "ContactPoint",
+			contactType: "customer support",
+			email: productFacts.contactEmail,
+			url: new URL(productFacts.contactPath, productFacts.siteUrl).toString(),
+			availableLanguage: "en",
+		},
+		{
+			"@type": "ContactPoint",
+			contactType: "technical support",
+			name: "AI agents and integrations",
+			email: productFacts.agentContactEmail,
+			url: new URL(productFacts.contactPath, productFacts.siteUrl).toString(),
+			availableLanguage: "en",
+		},
+	],
 	address: {
 		"@type": "PostalAddress",
 		streetAddress: "5365 California Street",

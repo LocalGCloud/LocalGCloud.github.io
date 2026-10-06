@@ -1,0 +1,63 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
+import { availableServiceCount } from '../data/services';
+
+const pageUrl = new URL('about/', productFacts.siteUrl).toString();
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: 'About LocalCloud Inc.',
+    about: { '@id': new URL('#org', productFacts.siteUrl).toString() },
+  },
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'About', url: pageUrl },
+  ]),
+];
+---
+
+<LandingLayout
+  title="About LocalCloud Inc."
+  description={`LocalCloud Inc. builds LocalCloud, a local Google Cloud emulator that runs ${availableServiceCount} services in one Docker container for developers, CI and AI agents.`}
+  {structuredData}
+>
+  <section class="site-section site-section--hero">
+    <div class="container container--narrow">
+      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>About</span>
+      <h1 class="mt-4">About LocalCloud Inc.</h1>
+      <p class="mt-5 text-lg leading-8 text-[var(--text-2)]">
+        LocalCloud Inc. builds LocalCloud, a local Google Cloud emulator. One Docker container serves {availableServiceCount} Google Cloud services on localhost, so you can develop and test Google Cloud code without a GCP account, credentials, or a cloud bill.
+      </p>
+    </div>
+  </section>
+
+  <section class="site-section site-section--tight">
+    <div class="container container--narrow prose-site">
+      <h2 id="who-its-for">Who it's for</h2>
+      <ul>
+        <li><strong>Developers</strong> who want BigQuery, Pub/Sub, Spanner, Cloud Storage and the rest of their stack on their own machine.</li>
+        <li><strong>CI pipelines</strong> that run integration tests against real Google Cloud SDK calls without a shared test project.</li>
+        <li><strong>AI coding agents</strong> that need a local Google Cloud target with no credentials or billing project. See the <a href="/ai/">agent guide</a>.</li>
+      </ul>
+
+      <h2 id="pricing-and-license">Pricing and license</h2>
+      <p>
+        LocalCloud is free during the public preview, with no account or license key. Open-source projects stay free after the preview ends. Use is governed by the proprietary <a href={productFacts.licensePath}>LocalCloud Public Preview License Agreement</a>; <a href={productFacts.pricingPath}>pricing</a> and the <a href={productFacts.licensingPath}>licensing summary</a> explain what it permits.
+      </p>
+
+      <h2 id="where-its-built">Where it's built</h2>
+      <p>
+        LocalCloud's public home on GitHub is the <a href={productFacts.githubOrganizationUrl}>LocalGCloud organization</a>. It hosts the <a href={productFacts.cliRepositoryUrl}>CLI</a> and its signed releases, the <a href={productFacts.homebrewTapUrl}>Homebrew tap</a>, and the source of this website. The runtime image is published on <a href={productFacts.dockerHubUrl}>Docker Hub</a>. Release history is on the <a href={productFacts.changelogPath}>changelog</a>, and the <a href={productFacts.securityPath}>security page</a> shows how to verify what you install.
+      </p>
+
+      <h2 id="contact">Contact</h2>
+      <p>
+        Email <a href={`mailto:${productFacts.contactEmail}`}>{productFacts.contactEmail}</a>. AI agents and integration builders can write to <a href={`mailto:${productFacts.agentContactEmail}`}>{productFacts.agentContactEmail}</a>. More options are on the <a href={productFacts.contactPath}>contact page</a>.
+      </p>
+    </div>
+  </section>
+</LandingLayout>

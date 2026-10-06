@@ -191,8 +191,17 @@ ${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source pro
 - [License text](${site}license/): the full Public Preview License Agreement, also as [plain text](${site}license.txt)
 - [Pricing](${site}pricing/)
 
+## Contact
+
+- AI agents and integrations: agent@local.cloud
+- People (general, licensing, privacy, partnerships): info@local.cloud, or [the contact page](${site}contact/)
+- Security reports: info@local.cloud with the subject "Security report"; see [Security](${site}security/)
+- Bugs and feature requests: [CLI issues on GitHub](https://github.com/LocalGCloud/localcloud-cli/issues)
+
 ## Optional
 
+- [Changelog](${site}changelog/): CLI releases with dates
+- [About LocalCloud Inc.](${site}about/)
 - [Local cloud for AI agents](${site}local-cloud-for-ai-agents/)
 - [Agent sandbox setup](${site}agents/)
 - [Agent and automation workflows](${site}workflows/)
