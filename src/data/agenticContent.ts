@@ -144,6 +144,12 @@ export const agentSandboxPages: AgenticContentPage[] = withRelatedLinks([
 				code:
 					"Read https://local.cloud/ai/agents.md, inspect this repository for Google Cloud SDK usage, start or reuse LocalCloud with Docker, export emulator env vars into this shell, and run the smallest local SDK smoke test. Do not ask for GCP credentials.",
 			},
+			{
+				label: "Claude Code smoke-test report",
+				language: "text",
+				code:
+					"Claude, use LocalCloud to run a local GCP smoke test for this repository. Do not request GCP credentials. Show the LocalCloud health check, active emulator env vars, and one SDK operation against localhost.",
+			},
 			...quickStartSnippets,
 		],
 		limitations: [
@@ -1046,106 +1052,6 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 ]);
 
 export const blogDemoPages: AgenticContentPage[] = withRelatedLinks([
-	{
-		kind: "blog",
-		slug: "claude-code-local-gcp-sandbox",
-		path: "/blog/claude-code-local-gcp-sandbox/",
-		parentLabel: "Blog",
-		parentPath: "/blog/",
-		eyebrow: "Demo post",
-		title: "Claude Code Local GCP Sandbox Demo",
-		description:
-			"A practical Claude Code workflow for starting LocalCloud, routing Google Cloud SDKs to localhost, and validating agent-written code before real GCP.",
-		h1: "Claude Code local GCP sandbox demo",
-		deck:
-			"The fastest safe demo is not a mock. Let Claude Code start LocalCloud, route SDKs to localhost, write one small integration check, and explain what still needs real Google Cloud validation.",
-		promptIds: ["quickstart", "project-integration"],
-		quickFacts: [
-			"Demo target: one repo, one local service check, one production caveat.",
-			"Avoid credentials in the prompt and commands.",
-			"For the next step, each service guide links its own agent testing page.",
-		],
-		sections: [
-			{
-				kicker: "Demo flow",
-				title: "Ask, start, route, test",
-				body:
-					"Claude reads /ai/agents.md, starts LocalCloud, exports env vars, creates a tiny local resource, and proves the project SDK talks to localhost.",
-			},
-			{
-				kicker: "Why it works",
-				title: "The agent gets a real API shape without a real bill",
-				body:
-					"LocalCloud keeps the SDK and API shape familiar while removing default cloud credentials and billing from the inner loop.",
-			},
-		],
-		snippets: [
-			{
-				label: "Demo prompt",
-				language: "text",
-				code:
-					"Claude, use LocalCloud to run a local GCP smoke test for this repository. Do not request GCP credentials. Show the LocalCloud health check, active emulator env vars, and one SDK operation against localhost.",
-			},
-		],
-		limitations: [],
-		internalLinks: [
-			relatedLink("/agents/claude-code-gcp-sandbox/"),
-		],
-		reviewedAt: agenticFacts.evidence.reviewedAt,
-	},
-	{
-		kind: "blog",
-		slug: "bigquery-locally-agent-written-pipelines",
-		path: "/blog/bigquery-locally-agent-written-pipelines/",
-		parentLabel: "Blog",
-		parentPath: "/blog/",
-		eyebrow: "Demo post",
-		title: "Run Agent-Written BigQuery Pipelines Locally",
-		description:
-			"Use LocalCloud BigQuery to test agent-written datasets, SQL, and pipeline checks locally before validating in real BigQuery.",
-		h1: "BigQuery locally for agent-written pipelines",
-		deck:
-			"Agents are good at writing SQL quickly. LocalCloud helps them test that SQL quickly, too: create local datasets, load small fixtures, run representative queries, and surface unsupported BigQuery features before a real-cloud run.",
-		promptIds: ["bigquery", "project-integration"],
-		quickFacts: [
-			"Use BIGQUERY_EMULATOR_HOST for local SDK routing.",
-			"Test representative query paths, not production scale.",
-			"Escalate unsupported SQL and managed features to real BigQuery validation.",
-		],
-		sections: [
-			{
-				kicker: "Pipeline loop",
-				title: "Fixture, query, assert",
-				body:
-					"Have the agent seed a tiny dataset, run the query or transformation it just wrote, and assert the result. This is faster and safer than using a shared dev project for every iteration.",
-			},
-			{
-				kicker: "Caveat",
-				title: "Local SQL coverage is not a production SLA",
-				body:
-					"LocalCloud BigQuery is designed for development and testing coverage, not billing, IAM, slots, reservations, or complete GoogleSQL parity.",
-			},
-		],
-		snippets: [
-			{
-				label: "BigQuery agent prompt",
-				language: "text",
-				code:
-					"Use LocalCloud BigQuery to test this pipeline locally. Set BIGQUERY_EMULATOR_HOST=http://localhost:5388, seed a tiny dataset, run the representative query, assert the expected rows, and list any SQL features that need real BigQuery validation.",
-			},
-		],
-		limitations: [
-			"LocalCloud BigQuery does not cover BQML, AEAD encryption functions, security policy enforcement, or full GEOGRAPHY parity.",
-		],
-		internalLinks: [
-			relatedLink(agentTestingPath("bigquery"), "SDK/env quickstart and compatibility table."),
-			relatedLink("/compare/bigquery-emulator-alternatives/", "Standalone and real BigQuery tradeoffs."),
-		],
-		sources: [
-			relatedLink("/docs/bigquery-emulator-features/", "LocalCloud tested coverage."),
-		],
-		reviewedAt: agenticFacts.evidence.reviewedAt,
-	},
 	{
 		kind: "blog",
 		slug: "run-dataproc-locally-docker",

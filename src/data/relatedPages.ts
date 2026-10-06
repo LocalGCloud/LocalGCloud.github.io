@@ -29,10 +29,6 @@ const pages: Record<string, RelatedPage> = {
 		anchor: "BigQuery emulator feature reference",
 		note: "Endpoints, documented operations and runtime limits.",
 	},
-	"/compare/bigquery-emulator-alternatives/": {
-		anchor: "BigQuery emulator alternatives",
-		note: "When a standalone emulator, LocalCloud or real BigQuery fits an agent workflow.",
-	},
 	"/gcp-integration-testing/": {
 		anchor: "GCP integration testing in CI",
 		note: "GitHub Actions, GitLab CI and Jenkins templates with health gates.",
@@ -40,18 +36,6 @@ const pages: Record<string, RelatedPage> = {
 	"/workflows/github-actions-gcp-emulator/": {
 		anchor: "GitHub Actions workflow",
 		note: "The full workflow: readiness gate, environment export and a credentialless job.",
-	},
-	"/agents/claude-code-gcp-sandbox/": {
-		anchor: "Claude Code GCP sandbox setup",
-		note: "Claude-specific setup and caveats.",
-	},
-	"/blog/claude-code-local-gcp-sandbox/": {
-		anchor: "Claude Code local GCP sandbox demo",
-		note: "Demo post: ask, start, route and test in one session.",
-	},
-	"/blog/bigquery-locally-agent-written-pipelines/": {
-		anchor: "BigQuery locally for agent-written pipelines",
-		note: "Demo post: seed a fixture, run the query, assert the rows.",
 	},
 	"/local-cloud-for-ai-agents/": {
 		anchor: "Local cloud for AI agents",
@@ -111,8 +95,6 @@ for (const service of localServices) {
 // Pairs list the default survivor first. A page's counterparts appear in this order.
 export const relatedPagePairs: RelatedPair[] = [
 	{ pages: ["/gcp-integration-testing/", "/workflows/github-actions-gcp-emulator/"], finding: "S23" },
-	{ pages: ["/agents/claude-code-gcp-sandbox/", "/blog/claude-code-local-gcp-sandbox/"], finding: "S24" },
-	{ pages: [agentTestingPath("bigquery"), "/blog/bigquery-locally-agent-written-pipelines/"], finding: "S24" },
 	{ pages: ["/local-cloud-for-ai-agents/", "/ai/"], finding: "S6" },
 	{ pages: ["/ai/", "/blog/localcloud-for-ai-agents/"], finding: "S6" },
 	{ pages: ["/gcp-emulator/", "/docs/what-is-gcp-emulator/"], finding: "A11" },

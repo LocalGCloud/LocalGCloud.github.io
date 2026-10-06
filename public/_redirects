@@ -23,6 +23,10 @@
 /workflows/agentic-ci/ /gcp-integration-testing/ 301
 /workflows/integration-tests /gcp-integration-testing/ 301
 /workflows/integration-tests/ /gcp-integration-testing/ 301
+/blog/claude-code-local-gcp-sandbox /agents/claude-code-gcp-sandbox/ 301
+/blog/claude-code-local-gcp-sandbox/ /agents/claude-code-gcp-sandbox/ 301
+/blog/bigquery-locally-agent-written-pipelines /services/bigquery/ 301
+/blog/bigquery-locally-agent-written-pipelines/ /services/bigquery/ 301
 
 /favicon.ico /favicon.png 301
 /ai/AGENTS.md /ai/agent-template.md 301

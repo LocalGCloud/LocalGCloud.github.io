@@ -10,11 +10,6 @@ export const authoredBlogMetadata: Record<
   { publishedAt: string; updatedAt?: string; minutes: number; topic: string }
 > = authoredBlogPosts;
 
-const blogTopics: Record<string, string> = {
-  'claude-code-local-gcp-sandbox': 'AI agents',
-  'bigquery-locally-agent-written-pipelines': 'BigQuery',
-};
-
 export function getBlogMetadata(page: AgenticContentPage) {
   const authored = authoredBlogMetadata[page.slug as keyof typeof authoredBlogMetadata];
   const text = [
@@ -28,7 +23,7 @@ export function getBlogMetadata(page: AgenticContentPage) {
     ...(page.sources ?? []).flatMap((source) => [source.label, source.note]),
   ].join(' ').trim();
   return {
-    topic: authored?.topic ?? blogTopics[page.slug] ?? page.eyebrow,
+    topic: authored?.topic ?? page.eyebrow,
     minutes: authored?.minutes ?? Math.max(1, Math.ceil(text.split(/\s+/).length / 200)),
     date: authored?.publishedAt ?? page.reviewedAt,
     dateLabel: authored ? 'Published' : 'Reviewed',
