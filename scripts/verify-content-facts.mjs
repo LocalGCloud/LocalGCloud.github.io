@@ -91,6 +91,60 @@ const decodeEntities = (text) => text.replace(/&#(x[\da-f]+|\d+);|&(amp|lt|gt|qu
   : ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[name.toLowerCase()]);
 const visibleText = (markup) => decodeEntities(markup.replace(/<script\b[\s\S]*?<\/script>|<style\b[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ''));
 
+// Vocabulary gate: QA-ledger and audit wording never reaches readers or agents
+// (AGENTS.md section 1). Contract prose is rewritten by src/utils/contract-presentation.mjs;
+// hand-written copy must avoid these terms. Scanned: the visible text and title,
+// description, og: and twitter: meta of every page; llms*.txt, /ai/*.md and the
+// Markdown twins; and <text> nodes in the public illustrations.
+const bannedVocabulary = [
+  [/\bpartial(?:ly)?\b/gi, '"partial" support wording'],
+  [/\b\d+\s+partial\b/gi, 'a classification count'],
+  [/\[partial\]/gi, 'an evidence tag'],
+  [/accepted-no-op/gi, 'a classification count'],
+  [/production-only exclusions?/gi, 'a classification count'],
+  [/release-unverified/gi, 'release-QA status'],
+  [/validation pending/gi, 'release-QA status'],
+  [/candidate image/gi, 'release-QA status'],
+  [/qualification/gi, 'release-QA status'],
+  [/semantic-compatibility:/gi, 'a capability-ID prefix'],
+  [/evidence-bounded/gi, 'audit jargon'],
+  [/loopback-bound/gi, 'audit jargon'],
+  [/license-gated/gi, 'audit jargon'],
+  [/\b[0-9a-f]{40}\b/gi, 'a commit SHA'],
+];
+// Technical phrases where "partial" names an API behavior, not a support status.
+const allowedPartialPhrases = /\bpartial (?:index(?:es)?|updates?|responses?)\b/gi;
+const metaText = (html) => [
+  html.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? '',
+  ...[...html.matchAll(/<meta\b[^>]*>/g)]
+    .map(([tag]) => tag)
+    .filter((tag) => /\b(?:name|property)="(?:description|og:[^"]*|twitter:[^"]*)"/.test(tag))
+    .map((tag) => tag.match(/\bcontent="([^"]*)"/)?.[1] ?? ''),
+].map(decodeEntities).join('\n');
+// Link targets are addresses, not copy: HTML hrefs are never part of visible text, and
+// Markdown link targets and bare URLs are skipped the same way.
+const withoutUrls = (text) => text.replace(/\]\([^)\s]*\)/g, ']').replace(/https?:\/\/[^\s)<>\]"'`|]+/g, '');
+const checkVocabulary = (source, text) => {
+  const scanned = text.replace(allowedPartialPhrases, '');
+  for (const [pattern, label] of bannedVocabulary) {
+    for (const match of scanned.matchAll(pattern)) {
+      const context = scanned.slice(Math.max(0, match.index - 50), match.index + match[0].length + 50).replace(/\s+/g, ' ').trim();
+      errors.push(`${source} publishes ${label} "${match[0]}": …${context}…`);
+    }
+  }
+};
+for (const [file, html] of htmlPages) {
+  checkVocabulary(file, visibleText(html.replace(/<!--[\s\S]*?-->/g, '')));
+  checkVocabulary(`${file} (meta)`, metaText(html));
+}
+for (const [file, text] of agentText) checkVocabulary(file, withoutUrls(text));
+const illustrationsDirectory = new URL('illustrations/', publicDirectory);
+for (const file of (await readdir(illustrationsDirectory)).filter((name) => name.endsWith('.svg'))) {
+  const svg = await readFile(new URL(file, illustrationsDirectory), 'utf8');
+  const svgText = [...svg.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)].map((match) => decodeEntities(match[1].replace(/<[^>]+>/g, ''))).join('\n');
+  checkVocabulary(`public/illustrations/${file}`, svgText);
+}
+
 // One quick start: the CLI lines appear verbatim and in order on every agent entry point.
 const quickStart = cliQuickStart(docsContract);
 for (const file of ['llms.txt', 'ai/agents.md', 'ai/agent-template.md', 'ai/docs.md']) {

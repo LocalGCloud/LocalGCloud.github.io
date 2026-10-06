@@ -6,7 +6,7 @@ import HomepageVariationFieldManual from '../components/HomepageVariationFieldMa
 import { localCloudProductSchema } from '../data/productFacts';
 ---
 
-<BaseLayout title="LocalCloud — Local Google Cloud Emulator in Docker" description="Start a loopback-bound LocalCloud runtime selected by Docker data volume, export actual SDK endpoints, and review evidence-backed compatibility limits for local Google Cloud workflows." structuredData={[localCloudProductSchema]}>
+<BaseLayout title="LocalCloud — Local Google Cloud Emulator in Docker" description="Run BigQuery, Pub/Sub, Spanner, and more Google Cloud services on localhost in one Docker container. The CLI exports SDK endpoints. Free in public preview." structuredData={[localCloudProductSchema]}>
   <link slot="head" rel="preload" as="image" href={`${import.meta.env.BASE_URL}illustrations/hero-laptop-service-grid.svg`} fetchpriority="high" />
   <Header />
   <HomepageVariationFieldManual />
