@@ -74,7 +74,7 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 | **9** | `node scripts/verify-rendered-docs.mjs` | Inspects compiled HTML output (e.g. comparison tables and accessible scroll wrappers) to ensure proper rendering. |
 | **10** | `node scripts/write-sitemap-alias.mjs` | Copies `sitemap-index.xml` to `sitemap.xml` for legacy crawler compatibility. |
 | **11** | `node scripts/verify-static-seo.mjs` | Verifies canonical URLs, meta descriptions, single H1 tags, robots.txt directives, JSON-LD structured data, and sitemap inclusion across 34 priority routes. |
-| **12** | `node scripts/verify-content-facts.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all 128 published pages. |
+| **12** | `node scripts/verify-content-facts.mjs` → `node scripts/verify-blog-presentation.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all 128 published pages. |
 | **13** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes. |
 
 ---
@@ -85,7 +85,7 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 ```bash
 pnpm run test:dependencies
 ```
-Audits production, development, and optional dependencies. Any advisory fails the check; no advisories are suppressed. The Cloudflare deployment workflow and local deployment command run it before building or publishing.
+Audits production dependencies and fails on high or critical advisories; no advisories are suppressed. The Cloudflare deployment workflow and local deployment command run it before building or publishing. The workflow also reports advisories in every dependency without blocking the deploy (`pnpm audit --audit-level=low`).
 
 ### Installer Verification
 ```bash

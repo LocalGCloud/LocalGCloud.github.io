@@ -62,3 +62,14 @@ test('continues to reject incorrect canonical URLs on HTML pages', async (t) => 
   assert.equal(result.code, 1);
   assert.match(result.stderr, /\/docs\/: canonical https:\/\/wrong\.example\/docs\/ does not equal/);
 });
+
+test('fails in CI when no base URL is configured, and skips locally', async () => {
+  const env = { ...process.env, SEO_VERIFY_BASE_URL: '' };
+  delete env.CI;
+  const local = await run(process.execPath, [validator.pathname], { env });
+  assert.match(local.stdout, /skipped/);
+  await assert.rejects(
+    run(process.execPath, [validator.pathname], { env: { ...env, CI: 'true' } }),
+    (error) => error.code === 1 && /requires SEO_VERIFY_BASE_URL in CI/.test(error.stderr),
+  );
+});

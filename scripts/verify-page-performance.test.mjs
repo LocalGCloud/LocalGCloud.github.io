@@ -225,6 +225,12 @@ test('built homepage has local font preload, immediate styles, sized hero and no
   const posthog = resolvePosthogConfig(loadEnv('production', process.cwd(), ''));
   assert.ok(html.includes(["connect-src 'self'", ...posthog.origins].join(' ')));
   if (!posthog.origins.length) assert.doesNotMatch(html, /https:\/\/us(?:-assets)?\.i\.posthog\.com/);
+  const cspMeta = html.match(/<meta\b[^>]*http-equiv="(?:Content-Security-Policy|content-security-policy)"[^>]*>/)[0];
+  const connectSources = cspMeta.match(/content="([^"]+)"/)[1].split(';').map((directive) => directive.trim().split(/\s+/))
+    .find(([name]) => name === 'connect-src').slice(1);
+  const cloudflare = resolveCloudflareAnalyticsConfig(loadEnv('production', process.cwd(), ''));
+  for (const origin of cloudflare.connectOrigins) assert.ok(connectSources.includes(origin), `connect-src must allow ${origin}`);
+  if (cloudflare.token) assert.ok(connectSources.includes(new URL(cloudflare.endpoint).origin), 'connect-src must allow the beacon endpoint');
   const modal = html.match(/<div\b[^>]*id="search-modal"[^>]*>/)[0];
   const clientPath = modal.match(/data-client-src="([^"]+)"/)[1];
   const integrity = modal.match(/data-client-integrity="([^"]+)"/)[1];

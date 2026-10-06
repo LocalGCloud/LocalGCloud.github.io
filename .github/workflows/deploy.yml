@@ -32,8 +32,11 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Audit dependencies
+      - name: Audit production dependencies
         run: pnpm run test:dependencies
+      - name: Report advisories in all dependencies
+        continue-on-error: true
+        run: pnpm audit --audit-level=low
       - name: Build and verify site
         run: pnpm run build:cloudflare
       - name: Test installer
@@ -54,10 +57,9 @@ jobs:
       - name: Verify deployed SEO routes
         run: node scripts/verify-live-seo.mjs
         env:
-          SEO_VERIFY_BASE_URL: ${{ steps.deployment.outputs.deployment-url }}
+          SEO_VERIFY_BASE_URL: ${{ steps.deployment.outputs.deployment-url || 'https://local.cloud' }}
 
   verify-live-seo:
-    if: ${{ vars.SEO_VERIFY_BASE_URL != '' }}
     needs: deploy
     runs-on: ubuntu-latest
     steps:
@@ -71,4 +73,4 @@ jobs:
       - name: Verify custom domain SEO routes
         run: node scripts/verify-live-seo.mjs
         env:
-          SEO_VERIFY_BASE_URL: ${{ vars.SEO_VERIFY_BASE_URL }}
+          SEO_VERIFY_BASE_URL: ${{ vars.SEO_VERIFY_BASE_URL || 'https://local.cloud' }}

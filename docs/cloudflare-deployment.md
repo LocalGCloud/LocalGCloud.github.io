@@ -39,9 +39,18 @@ Use `pnpm exec wrangler dev --port 8875` to validate these response headers loca
 
 ## Cloudflare Web Analytics
 
-The shared layout loads Cloudflare's beacon through a hashed inline bootstrap, so `strict-dynamic` authorizes it without allowing arbitrary inline scripts. The Cloudflare build sends measurements to its same-origin `/cdn-cgi/rum` endpoint, which Cloudflare handles before Worker routing. Static builds with an explicit token use `https://cloudflareinsights.com/cdn-cgi/rum`, with that origin added to `connect-src`. The default Cloudflare build uses local.cloud's existing public Web Analytics site token. Set `PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` to another 32-character hexadecimal site token, or set it to an empty value to disable the beacon. Static builds disable it by default; register the new hostname in Cloudflare Web Analytics and supply its manual-installation token to enable it on another host. A Cloudflare zone token must use the collection endpoint on its proxied hostname. This identifier is public and is not a Cloudflare API credential.
+The shared layout loads Cloudflare's beacon through a hashed inline bootstrap, so `strict-dynamic` authorizes it without allowing arbitrary inline scripts. Every build with a token sends measurements to `https://cloudflareinsights.com/cdn-cgi/rum` and adds that origin to `connect-src`; `scripts/verify-page-performance.test.mjs` checks that the built policy allows it. The default Cloudflare build uses local.cloud's existing public Web Analytics site token. Set `PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` to another 32-character hexadecimal site token, or set it to an empty value to disable the beacon. Static builds disable it by default; register the new hostname in Cloudflare Web Analytics and supply its manual-installation token to enable it on another host. A Cloudflare zone token must use the collection endpoint on its proxied hostname. This identifier is public and is not a Cloudflare API credential.
 
 `Cache-Control: public, max-age=0, must-revalidate, no-transform` prevents Cloudflare from injecting a second, untrusted copy after the build. The manually loaded beacon continues to send Web Analytics data. See Cloudflare's [manual setup and automatic injection guidance](https://developers.cloudflare.com/web-analytics/get-started/). Keep this header if automatic injection remains enabled in the zone, including when disabling the manual beacon. It also disables Cloudflare's automatic compression. `worker/static-response.mjs` therefore gzip-compresses eligible HTML responses before they reach the proxy, honoring `Accept-Encoding` and preserving the exact decompressed bytes, CSP, status codes, and revalidation policy. Range requests and already encoded responses pass through unchanged. Fingerprinted fonts and scripts retain their existing asset caching and compression.
+
+## Zone settings the site depends on
+
+These settings live in the Cloudflare dashboard, not in this repository. Confirm them after any zone change:
+
+- Brotli compression is on.
+- Rocket Loader and Email Address Obfuscation are off; both rewrite HTML and break hash-based CSP.
+- `/llms.txt`, `/llms-full.txt`, `/ai/*` and `/install.sh` are reachable by scripted clients. Python's standard-library `urllib` currently receives HTTP 403 on `/` and `/llms.txt`; find whether Browser Integrity Check, Bot Fight Mode or a WAF rule returns it. Bot Fight Mode on the Free plan cannot skip paths, so turn it off; exempt these paths from the others.
+- AI Crawl Control and managed robots.txt are off, or match `public/robots.txt`.
 
 ## Analytics proxy
 

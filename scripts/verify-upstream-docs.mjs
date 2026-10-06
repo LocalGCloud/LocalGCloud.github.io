@@ -20,7 +20,9 @@ const exists = async (url) => {
 };
 
 if (!(await exists(new URL("localcloud.defaults.yaml", runtimeRoot)))) {
-	console.log("Upstream documentation verification skipped: sibling projects are not present.");
+	const message = "Upstream documentation verification skipped: sibling projects are not present.";
+	// CI never has the siblings, so make the skip visible in the run summary.
+	console.log(process.env.GITHUB_ACTIONS ? `::warning title=Upstream documentation::${message}` : message);
 	process.exit(0);
 }
 

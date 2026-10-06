@@ -56,6 +56,11 @@ for (const source of contract.provenance.sources) {
 }
 strings(contract.provenance.worktreeSources, 'provenance.worktreeSources');
 for (const source of contract.provenance.worktreeSources) assert(contract.provenance.sources.includes(source), `${source} worktree marker is not a provenance source`);
+if (contract.provenance.worktreeSources.length) {
+  // Surface snapshots built from uncommitted upstream files; CI cannot re-check them.
+  const message = `snapshot includes uncommitted upstream files: ${contract.provenance.worktreeSources.join(', ')}`;
+  console.warn(process.env.GITHUB_ACTIONS ? `::warning title=Documentation contract::${message}` : `Warning: ${message}`);
+}
 array(contract.provenance.dependencyRevalidations, 'provenance.dependencyRevalidations', { nonempty: true }).forEach((item, index) => {
   exactKeys(item, ['id', 'revision', 'qualification', 'evidence'], `dependencyRevalidations[${index}]`);
   string(item.id, `dependencyRevalidations[${index}].id`);

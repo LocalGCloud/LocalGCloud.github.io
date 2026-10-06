@@ -57,6 +57,7 @@ const services = contract.services.flatMap((service) => {
 	if (!overlay) throw new Error(`Missing editorial overlay for ${service.id}`);
 
 	const comingSoon = service.availability !== "available";
+	if (!comingSoon && !(service.status in statusMap)) throw new Error(`Unmapped status ${service.status} for ${service.id}`);
 	return [
 		{
 			name: service.name,

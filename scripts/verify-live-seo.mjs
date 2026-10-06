@@ -5,6 +5,11 @@ const attempts = Number.parseInt(process.env.SEO_VERIFY_ATTEMPTS ?? '6', 10);
 const delayMs = Number.parseInt(process.env.SEO_VERIFY_DELAY_MS ?? '10000', 10);
 
 if (!baseUrl) {
+  // CI must always verify the deployment; only local runs may skip.
+  if (process.env.CI) {
+    console.error('Live SEO verification requires SEO_VERIFY_BASE_URL in CI.');
+    process.exit(1);
+  }
   console.log('Live SEO verification skipped: set SEO_VERIFY_BASE_URL to enable it.');
   process.exit(0);
 }

@@ -35,6 +35,7 @@ async function inject(directory) {
         const clean = tag.replace(/\s+data-client-(?:src|integrity)="[^"]*"/g, '');
         return clean.slice(0, -1) + ` data-client-src="${clientSrc}" data-client-integrity="${integrity}">`;
       });
+      if (!secured.includes(`data-client-src="${clientSrc}"`)) throw new Error(`search-modal tag was not rewritten in ${path}`);
       await writeFile(path, secured);
       count++;
     }
