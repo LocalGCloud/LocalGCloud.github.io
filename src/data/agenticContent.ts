@@ -410,7 +410,9 @@ export const serviceTestingPages: AgenticContentPage[] = withRelatedLinks(agenti
 	.filter((service) => ["supported", "partial", "release-unverified"].includes(service.status))
 	.map((service) => servicePage(service.slug, promptForService(service.slug))));
 
-const githubActionsSnippet = [
+// The site's one GitHub Actions recipe, on /workflows/github-actions-gcp-emulator/ and
+// /gcp-integration-testing/.
+export const githubActionsWorkflow = [
 	"name: localcloud-integration-tests",
 	"on: [pull_request]",
 	"jobs:",
@@ -470,7 +472,7 @@ export const workflowPages: AgenticContentPage[] = withRelatedLinks([
 			{
 				label: "GitHub Actions YAML",
 				language: "yaml",
-				code: githubActionsSnippet,
+				code: githubActionsWorkflow,
 			},
 		],
 		limitations: [],

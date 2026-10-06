@@ -1,41 +1,11 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import RelatedPages from '../components/RelatedPages.astro';
+import { githubActionsWorkflow } from '../data/agenticContent';
+import { relatedAnchor } from '../data/relatedPages';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
-
-const githubActionsYaml = `name: GCP Integration Tests
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    services:
-      localcloud:
-        image: agentcloud/localcloud:latest
-        ports:
-          - 5380:5380
-          - 5383:5383
-          - 5388:5388
-        options: --memory 4g
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Wait for LocalCloud
-        run: |
-          for i in $(seq 1 30); do
-            if curl -fsS http://localhost:5380/health; then exit 0; fi
-            sleep 2
-          done
-          docker logs localcloud
-          exit 1
-
-      - name: Run integration tests
-        env:
-          BIGQUERY_EMULATOR_HOST: http://localhost:5388
-          PUBSUB_EMULATOR_HOST: localhost:5383
-        run: pytest tests/integration/`;
 
 const gitlabCiYaml = `integration-tests:
   image: python:3.12
@@ -87,10 +57,6 @@ const jenkinsfile = `pipeline {
 
 const faqItems = [
   {
-    q: 'How much do GCP-integrated CI/CD pipelines cost?',
-    a: 'Cost depends on your Google Cloud usage, pricing, regions, and billing agreements. This site has no maintained dataset supporting a typical per-run or monthly savings figure. Use authorized billing data for estimates.',
-  },
-  {
     q: 'Does LocalCloud support GitHub Actions, GitLab CI, and Jenkins?',
     a: 'Yes. This page has templates for all three. The Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Test runner networking and service-container behavior on your runner.',
   },
@@ -99,12 +65,21 @@ const faqItems = [
     a: 'They can differ because of image identity, runner resources, networking, ports, concurrency, and retained state. Pin an image digest, isolate state, and validate production behavior separately.',
   },
   {
-    q: 'How fast does LocalCloud start in CI?',
-    a: 'No maintained cross-runner startup benchmark is available. Poll http://localhost:5380/health with a job timeout and inspect logs on failure.',
-  },
-  {
     q: 'Can I run parallel test suites against the same LocalCloud runtime?',
     a: 'Use one isolated data volume and project per job. Parallel clients can still contend for service state, resources, and ports; namespace fixtures and verify concurrency behavior rather than assuming isolation guarantees.',
+  },
+];
+
+const githubActionsPath = '/workflows/github-actions-gcp-emulator/';
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
   },
 ];
 ---
@@ -112,40 +87,8 @@ const faqItems = [
 <LandingLayout
   title="GCP Integration Testing in CI — LocalCloud"
   description="Run Google Cloud integration tests in CI against local LocalCloud endpoints, with health gates, pinned images, and a separate production validation step."
+  {structuredData}
 >
-  <script type="application/ld+json" is:inline>
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "How much do GCP-integrated CI/CD pipelines cost?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Cost depends on actual Google Cloud usage and pricing. This site has no maintained dataset supporting a typical per-run or monthly savings figure."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does LocalCloud support GitHub Actions, GitLab CI, and Jenkins?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes. This page has templates for all three. The Public Preview License permits individuals and organizations, including for-profit companies, to run LocalCloud in ongoing internal CI. Test runner behavior on your runner."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Will my tests behave differently in CI vs local development?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Local and CI behavior can differ because of image identity, resources, networking, concurrency, ports, and retained state. Validate production behavior separately."
-      }
-    }
-  ]
-}
-  </script>
-
   {/* HERO */}
   <section class="site-section site-section--hero">
     <div class="container">
@@ -190,7 +133,8 @@ const faqItems = [
       <div class="mt-8 space-y-6 reveal">
         <div class="site-panel p-6">
           <span class="site-kicker">GitHub Actions</span>
-          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code>{githubActionsYaml}</code></pre>
+          <pre class="mt-4 border-0 bg-[var(--surface-2)]"><code>{githubActionsWorkflow}</code></pre>
+          <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">The <a href={`${base}${githubActionsPath.slice(1)}`}>{relatedAnchor(githubActionsPath)}</a> guide covers the readiness gate and why the job needs no Google Cloud credentials.</p>
         </div>
 
         <div class="site-panel p-6">
@@ -204,7 +148,7 @@ const faqItems = [
         </div>
       </div>
 
-      <div class="mt-8 reveal"><RelatedPages path="/gcp-integration-testing/" heading="Related workflows" /></div>
+      <div class="mt-8 reveal"><RelatedPages path="/gcp-integration-testing/" heading="Related workflows" exclude={(href) => href === githubActionsPath} /></div>
     </div>
   </section>
 
