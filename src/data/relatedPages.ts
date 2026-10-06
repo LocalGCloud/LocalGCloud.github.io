@@ -1,9 +1,9 @@
 import { servicesInCatalogOrder } from "./services.ts";
 
-// Pages that overlap stay separate until search data shows which one to keep (plan R7).
-// Until then each pair keeps its own title, H1 and intent, links the other page in both
-// directions inside <main>, and every link to a page in a pair uses that page's one anchor
-// text below. scripts/verify-content-facts.mjs checks the built pages.
+// Pages that overlap but keep separate jobs; plan R7 merged the other candidates and
+// redirected them (public/_redirects). Each pair keeps its own title, H1 and intent, links
+// the other page in both directions inside <main>, and every link to a page in a pair uses
+// that page's one anchor text below. scripts/verify-content-facts.mjs checks the built pages.
 
 export interface RelatedPage {
 	// The one anchor text for links to this page.

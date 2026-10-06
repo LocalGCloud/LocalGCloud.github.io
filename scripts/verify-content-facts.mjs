@@ -653,8 +653,8 @@ for (const hub of ['/services/', '/workflows/', '/compare/', '/glossary/', '/blo
 const repeatedHubPages = [...agentsHubLinks].filter((href) => /^\/(?:workflows|compare|glossary|blog)\/[^/]+\/$|^\/services\/[^/]+\/ai-agent-local-testing\/$/.test(href));
 if (repeatedHubPages.length) errors.push(`the /agents/ hub repeats pages its section hubs list: ${repeatedHubPages.join(', ')}`);
 
-// Overlapping pages wait for search data before any merge (plan R7). Meanwhile each pair in
-// src/data/relatedPages.ts keeps its own title and H1 and links the other page inside <main>,
+// Overlapping pages that stay separate (the pairs in src/data/relatedPages.ts; plan R7 merged
+// the rest) each keep their own title and H1 and link the other page inside <main>,
 // and at least one of those links uses the target's canonical anchor text (case aside). No link
 // uses a page's anchor for a different page. A card link is named by its heading; aria-hidden
 // arrows don't count.
