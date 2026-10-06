@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { runInNewContext } from 'node:vm';
 import test from 'node:test';
 import { createHash } from 'node:crypto';
@@ -198,10 +198,43 @@ test('search renders Pagefind highlights while escaping other excerpt markup', a
   assert.doesNotMatch(context.results.innerHTML, /<img\b|<mark\s/);
 });
 
-test('built homepage has local font preload, immediate styles, sized hero and nonredundant brand marks', () => {
+// The headers public/_headers sets for one path pattern, as { name: value }.
+function headerRule(path) {
+  const rules = readFileSync(new URL('../public/_headers', import.meta.url), 'utf8').split(/\n(?=\S)/);
+  const rule = rules.find((block) => block.split('\n')[0].trim() === path) ?? '';
+  return Object.fromEntries(rule.split('\n').slice(1).map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('!') && !line.startsWith('#'))
+    .map((line) => [line.slice(0, line.indexOf(':')).trim(), line.slice(line.indexOf(':') + 1).trim()]));
+}
+
+const distRoot = new URL('../dist/', import.meta.url).pathname;
+const walkHtml = (directory) => readdirSync(directory, { withFileTypes: true }).flatMap((entry) => entry.isDirectory()
+  ? walkHtml(join(directory, entry.name))
+  : entry.name.endsWith('.html') ? [join(directory, entry.name)] : []);
+
+test('every built page links only hashed /_astro/ stylesheets served with the immutable cache rule', () => {
+  assert.equal(headerRule('/_astro/*')['Cache-Control'], 'public, max-age=31536000, immutable');
+  const pages = walkHtml(distRoot);
+  assert.ok(pages.length > 100, 'built pages are present');
+  const failures = [];
+  for (const file of pages) {
+    const html = readFileSync(file, 'utf8');
+    const links = [...html.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*>/g)].map((match) => match[0]);
+    if (!links.length) failures.push(`${file.slice(distRoot.length)} links no stylesheet`);
+    for (const link of links) {
+      const href = link.match(/\bhref="([^"]+)"/)?.[1] ?? '';
+      if (!/^\/_astro\/[^/]+\.[A-Za-z0-9_-]{8}\.css$/.test(href)) failures.push(`${file.slice(distRoot.length)} links ${href}, not a hashed /_astro/*.css file`);
+      else if (!existsSync(join(distRoot, href))) failures.push(`${file.slice(distRoot.length)} links missing ${href}`);
+    }
+  }
+  assert.deepEqual(failures, []);
+});
+
+test('built homepage has local font preload, cached hashed stylesheets, sized hero and nonredundant brand marks', () => {
   const html = readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8');
   assert.doesNotMatch(html, /fonts\.(googleapis|gstatic)\.com/);
-  assert.doesNotMatch(html, /<link\b[^>]*rel="stylesheet"/);
+  const stylesheets = [...html.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"/g)].map((match) => match[1]);
+  assert.ok(stylesheets.length > 0 && stylesheets.every((href) => /^\/_astro\/[^/]+\.[A-Za-z0-9_-]{8}\.css$/.test(href)));
   const fontLink = [...html.matchAll(/<link\b[^>]*>/g)].map((match) => match[0])
     .find((link) => link.includes('rel="preload"') && link.includes('as="font"'));
   assert.ok(fontLink, 'body font is discovered in the head');

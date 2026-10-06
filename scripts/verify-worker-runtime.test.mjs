@@ -66,6 +66,14 @@ test('_headers apply: no-transform only on HTML, immutable bundles, security hea
   const html = await (await get('/', { 'Accept-Encoding': 'identity' })).text();
   const bundle = html.match(/\/_astro\/[^"']+\.(?:js|woff2|css)/)[0];
   assert.equal((await get(bundle)).headers.get('Cache-Control'), 'public, max-age=31536000, immutable');
+  const stylesheets = [...html.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*href="(\/_astro\/[^"]+\.css)"/g)].map((match) => match[1]);
+  assert.ok(stylesheets.length > 0, 'the homepage links its stylesheets');
+  for (const href of stylesheets) {
+    const stylesheet = await get(href);
+    assert.equal(stylesheet.status, 200, href);
+    assert.match(stylesheet.headers.get('Content-Type'), /^text\/css/, href);
+    assert.equal(stylesheet.headers.get('Cache-Control'), 'public, max-age=31536000, immutable', href);
+  }
   assert.equal((await get('/brand/localcloud-mark.svg')).headers.get('Cache-Control'), 'public, max-age=604800');
   assert.match((await get('/brand/icons/')).headers.get('Cache-Control'), /max-age=0/);
   assert.match((await get('/ai/agent-template.md')).headers.get('Content-Disposition'), /filename="AGENTS\.md"/);
