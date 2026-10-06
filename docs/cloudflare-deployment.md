@@ -6,6 +6,11 @@ The site publishes Astro's static `dist/` output and the analytics proxy in `wor
 
 `.github/workflows/deploy.yml` runs on pushes to `main` and manual dispatch. It installs the locked dependencies, audits production dependencies, runs the complete site build, installer, analytics proxy, page performance, byte budget, workerd runtime and live SEO regression tests, deploys with Wrangler, and checks the resulting `workers.dev` URL. A separate job then checks `https://local.cloud` (or the `SEO_VERIFY_BASE_URL` repository variable) on every deploy: priority routes, robots.txt, sitemap URLs, redirects, 404s, encodings, charsets and host indexing.
 
+The deploy job checks out the full git history, because sitemap `lastmod` dates come from commit dates (`src/utils/page-dates.mjs`). Around the deploy, `scripts/sitemap-guard.mjs` protects and announces URLs:
+
+- **Before deploying (blocking):** it fetches the live `https://local.cloud/sitemap-0.xml` and fails if any listed URL is neither built in `dist/` nor a source in `public/_redirects`. Removing or renaming a page therefore needs a redirect in the same commit. If the live sitemap cannot be fetched, the step only warns.
+- **After deploying (non-blocking):** it POSTs the URLs that are new or whose `lastmod` changed, compared with the sitemap saved before the deploy, to IndexNow (`https://api.indexnow.org/indexnow`). The IndexNow key is `adc621f44f079b05ec91fa754dd7ca07`, hosted at `https://local.cloud/adc621f44f079b05ec91fa754dd7ca07.txt` from `public/adc621f44f079b05ec91fa754dd7ca07.txt`. The key is public by design; to rotate it, add a new key file, update `indexNowKey` in the script, and delete the old file after the next deploy. Preview a submission with `node scripts/sitemap-guard.mjs indexnow --dry-run`.
+
 GitHub Actions requires these repository secrets:
 
 - `CLOUDFLARE_API_TOKEN`: the account-scoped Workers deployment credential.

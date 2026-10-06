@@ -50,6 +50,12 @@ jobs:
         run: pnpm run test:worker
       - name: Test live SEO verification
         run: pnpm run test:live-seo
+      - name: Test the sitemap guard
+        run: pnpm run test:sitemap-guard
+      # Blocking: every URL in the live sitemap must still be built or be a _redirects
+      # source. An unreachable live sitemap is a warning only.
+      - name: Check that no live sitemap URL disappears
+        run: node scripts/sitemap-guard.mjs check --live-url https://local.cloud/sitemap-0.xml --save "$RUNNER_TEMP/live-sitemap-0.xml"
       - name: Deploy site and analytics proxy to Cloudflare
         id: deployment
         uses: cloudflare/wrangler-action@v4.1.3
@@ -63,6 +69,10 @@ jobs:
         run: node scripts/verify-live-seo.mjs
         env:
           SEO_VERIFY_BASE_URL: ${{ steps.deployment.outputs.deployment-url || 'https://local.cloud' }}
+      # Non-blocking: tell IndexNow engines about URLs that are new or whose lastmod changed.
+      - name: Submit new and changed URLs to IndexNow
+        continue-on-error: true
+        run: node scripts/sitemap-guard.mjs indexnow --live "$RUNNER_TEMP/live-sitemap-0.xml"
 
   verify-live-seo:
     needs: deploy

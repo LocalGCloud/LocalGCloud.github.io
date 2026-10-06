@@ -23,7 +23,8 @@
     "test:installer": "node scripts/verify-installer.mjs",
     "test:blog": "node scripts/verify-blog-presentation.mjs",
     "test:live-seo": "node --test scripts/verify-live-seo.test.mjs",
-    "deploy:cloudflare": "node scripts/verify-clean-release.mjs && pnpm run test:dependencies && pnpm run build:cloudflare && pnpm run test:installer && pnpm run test:performance && pnpm run test:worker && pnpm run test:analytics && pnpm run test:live-seo && wrangler deploy",
+    "test:sitemap-guard": "node --test scripts/sitemap-guard.test.mjs",
+    "deploy:cloudflare": "node scripts/verify-clean-release.mjs && pnpm run test:dependencies && pnpm run build:cloudflare && pnpm run test:installer && pnpm run test:performance && pnpm run test:worker && pnpm run test:analytics && pnpm run test:live-seo && pnpm run test:sitemap-guard && node scripts/sitemap-guard.mjs check && wrangler deploy",
     "preview": "astro preview"
   },
   "dependencies": {
