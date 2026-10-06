@@ -634,17 +634,20 @@ const atlasSlots = atlasCategorySlots
   }
 
   .field-trust__command-box pre {
+    min-width: 0;
     margin: 0;
-    padding: 0.6rem 0.75rem;
-    overflow-x: auto;
+    padding: 0;
     border: 0;
     background: transparent;
   }
 
-  .field-trust__command-box code {
+  /* Wrap rather than scroll, so the whole command stays readable on a phone. */
+  .field-trust__command-box pre > code {
+    padding: 0.6rem 0.75rem;
     font-size: var(--fs-small);
     line-height: 1.6;
-    white-space: pre;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 
   .field-intro,

@@ -34,13 +34,13 @@ const routes = [
   },
   {
     topic: 'Security reports',
-    body: 'Report a vulnerability privately with the subject "Security report". The security page lists what to include.',
+    body: 'Report a vulnerability privately with the subject “Security report”. The <a href="/security/#report">security page</a> lists what to include.',
     href: mailto(productFacts.contactEmail, 'Security report'),
     label: productFacts.contactEmail,
   },
   {
     topic: 'Bugs and feature requests',
-    body: 'Open an issue with the CLI version (localcloud --version) and the localcloud doctor output. Never include credentials or customer data.',
+    body: 'Open an issue with the output of <code>localcloud --version</code> and <code>localcloud doctor</code>. Never include credentials or customer data.',
     href: productFacts.cliIssuesUrl,
     label: 'GitHub issues',
   },
@@ -76,7 +76,8 @@ const routes = [
             <dt>{route.topic}</dt>
             <dd>
               <a href={route.href}>{route.label}</a>
-              <p>{route.body}</p>
+              {/* Bodies are the static strings above; some mark up command names. */}
+              <p set:html={route.body} />
             </dd>
           </div>
         ))}
@@ -109,7 +110,13 @@ const routes = [
     margin: 0;
   }
 
-  .contact-routes dd a {
+  .contact-routes dd p :global(a) {
+    color: var(--accent-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .contact-routes dd > a {
     font-family: var(--font-mono);
     font-size: var(--fs-small);
     color: var(--accent-strong);
