@@ -70,7 +70,7 @@ test('_headers apply: no-transform only on HTML, immutable bundles, security hea
 });
 
 test('text and Markdown assets declare UTF-8 and preserve GET and HEAD bodies', async () => {
-  const paths = ['/llms.txt', '/llms-full.txt', '/robots.txt', '/ai/agents.md', '/ai/services.md',
+  const paths = ['/llms.txt', '/llms-full.txt', '/robots.txt', '/license.txt', '/ai/agents.md', '/ai/services.md',
     '/ai/agent-template.md', '/ai/resources.md', '/ai/compatibility.md', '/ai/docs.md',
     '/docs/index.md', '/docs/configuration.md', '/services/bigquery.md'];
   for (const path of paths) {

@@ -89,6 +89,12 @@ contract.provenance.sourceDigests = Object.fromEntries(
 		sourceFiles.map(async (source) => [source.path, await sha256(source.url)]),
 	),
 );
+// The site publishes the governing license at /license/ and /license.txt from this copy;
+// refresh it with the digest recorded above (scripts/verify-policy-docs.mjs compares them).
+await writeFile(
+	new URL("src/data/legal/public-preview-license.txt", root),
+	await readFile(new URL("LICENSE", runtimeRoot)),
+);
 contract.provenance.worktreeSources = sourceFiles
 	.filter((source) => changed(source.repository, source.repositoryPath))
 	.map((source) => source.path);

@@ -1,0 +1,272 @@
+LOCALCLOUD PUBLIC PREVIEW LICENSE AGREEMENT
+
+Copyright (c) 2026 LocalCloud Inc.
+All rights reserved.
+
+Version 2.0 - Effective September 3, 2026
+
+IMPORTANT - READ CAREFULLY: This LocalCloud Public Preview License Agreement
+("Agreement") is a legal agreement between you (either an individual or a
+single entity, "You" or "Licensee") and LocalCloud Inc. ("Licensor") for the
+software product identified above, including computer software, container
+images, associated media, and online or electronic documentation
+(collectively, the "Software").
+
+BY DOWNLOADING, INSTALLING, COPYING, PULLING, RUNNING, OR OTHERWISE USING THE
+SOFTWARE, YOU AGREE TO BE BOUND BY THIS AGREEMENT. IF YOU DO NOT AGREE, DO NOT
+DOWNLOAD, INSTALL, COPY, PULL, RUN, OR USE THE SOFTWARE.
+
+===============================================================================
+1. DEFINITIONS
+===============================================================================
+
+1.1 "Preview Release" means a version of the Software that Licensor first
+makes available under this Agreement.
+
+1.2 "Authorized User" means an individual Licensee or an employee or
+contractor whom an entity Licensee authorizes to use the Software solely on
+its behalf. Licensee is responsible for each Authorized User's compliance
+with this Agreement.
+
+1.3 "Permitted Preview Use" means use of the Software by Licensee or its
+Authorized Users for one or more of the following non-production purposes:
+    (a) Personal learning, education, teaching, academic research, skill
+        development, experimentation, or personal projects;
+    (b) Internal software development, debugging, testing, quality assurance,
+        or ongoing continuous integration and delivery automation;
+    (c) Internal evaluation, proofs of concept, or internal pilots; or
+    (d) Internal development, testing, research, education, or mission-related
+        work performed by a nonprofit organization.
+
+Permitted Preview Use includes use by or for a for-profit company when that
+use remains within the non-production purposes above.
+
+1.4 "Production Use" means deploying or operating the Software to provide,
+run, support, or secure a live customer-facing service, public service,
+revenue-generating workload, or business-critical production workload.
+Production Use does not include the internal development, testing, CI,
+evaluation, or pilot activities expressly permitted by Section 1.3.
+
+1.5 "Container Artifacts" means container images, including Docker and
+OCI-compliant images, Dockerfiles, container manifests, image layers, image
+tarballs, and other packaging artifacts used to distribute or run the
+Software in a containerized environment.
+
+1.6 "Documentation" means user manuals, technical documentation,
+specifications, API references, and other materials provided with or
+describing the Software.
+
+===============================================================================
+2. GRANT OF LICENSE
+===============================================================================
+
+2.1 Public Preview License. Subject to this Agreement, Licensor grants You a
+limited, non-exclusive, non-transferable, non-sublicensable, royalty-free
+license for each Preview Release to:
+    (a) Download, pull, install, and run the Software and Container Artifacts
+        on devices and computing environments owned or controlled by You;
+    (b) Permit Authorized Users to use the Software solely on Your behalf;
+    (c) Use the Software solely for Permitted Preview Use; and
+    (d) Make a reasonable number of copies solely for backup or archival
+        purposes related to Your Permitted Preview Use.
+
+2.2 No Payment or Key Required. No payment, payment method, or license key is
+required to exercise the rights granted by Section 2.1.
+
+2.3 Preview Release Continuity. The license granted for a Preview Release
+continues under this Agreement even if Licensor later ends the public preview
+or distributes a later version under different terms. Licensor will not
+retroactively replace this Agreement for a Preview Release You obtained under
+it. This Section does not limit termination for breach under Section 8.3.
+
+2.4 Reservation of Rights. All rights not expressly granted under this
+Agreement are reserved by Licensor. The Software is licensed, not sold.
+Licensor retains all right, title, and interest in the Software, including all
+intellectual property rights.
+
+===============================================================================
+3. RESTRICTIONS
+===============================================================================
+
+3.1 General Restrictions. You shall not, and shall not permit any third party
+to:
+    (a) Engage in Production Use;
+    (b) sell, license, sublicense, rent, lease, or provide the Software as a
+        hosted, managed, or paid service;
+    (c) distribute, redistribute, publish, mirror, or otherwise transfer the
+        Software, Container Artifacts, or rights granted under this Agreement
+        to any third party;
+    (d) modify, adapt, translate, or create derivative works based upon the
+        Software, except as expressly permitted by applicable law
+        notwithstanding this limitation;
+    (e) remove, alter, or obscure proprietary notices, labels, copyright
+        notices, trademark notices, or license terms contained within or
+        applied to the Software;
+    (f) use the Software in a manner that violates applicable law or infringes
+        the rights of any third party;
+    (g) use the Software to develop, train, or improve a product or service
+        that competes with the Software or with a product or service offered
+        or planned by Licensor; or
+    (h) circumvent, disable, or interfere with any security, licensing,
+        telemetry, usage-measurement, or access-control feature of the
+        Software.
+
+3.2 Reverse Engineering Prohibition. You shall not, and shall not permit any
+third party to, reverse engineer, decompile, disassemble, deobfuscate, unpack,
+decompose, or otherwise attempt to derive, reconstruct, identify, or discover:
+    (a) source code, object code, underlying ideas, algorithms, file formats,
+        programming, or interoperability interfaces of the Software;
+    (b) the contents, structure, layers, configuration, build process, or
+        composition of Container Artifacts; or
+    (c) trade secrets, proprietary methods, or confidential information
+        embodied in or associated with the Software or Container Artifacts.
+
+This prohibition applies regardless of the technical means used, including
+debuggers, disassemblers, decompilers, container-inspection tools, layer-
+extraction tools, binary-analysis tools, or automated or manual analysis.
+It does not apply to the extent an activity is expressly required to be
+permitted by applicable law notwithstanding this contractual limitation.
+Where applicable law permits an activity only upon request to Licensor, You
+shall first contact Licensor in writing and provide a reasonable opportunity
+to address Your stated need.
+
+3.3 No Benchmarking Disclosure. You shall not publish or otherwise make
+available to a third party the results of a benchmark, performance test, or
+comparative analysis of the Software without Licensor's prior written consent.
+
+===============================================================================
+4. OWNERSHIP AND INTELLECTUAL PROPERTY
+===============================================================================
+
+4.1 Ownership. The Software, Container Artifacts, and Documentation are the
+proprietary property of Licensor and its licensors and are protected by
+copyright, trade-secret, trademark, and other intellectual-property laws.
+This Agreement does not transfer ownership or intellectual-property rights.
+
+4.2 Feedback. If You provide feedback, suggestions, ideas, bug reports,
+modifications, or other input regarding the Software ("Feedback"), You grant
+Licensor a perpetual, irrevocable, worldwide, royalty-free, fully paid-up,
+sublicensable, transferable license to use, reproduce, modify, distribute,
+and otherwise exploit that Feedback for any purpose without obligation or
+compensation. You represent that You have the right to grant this license.
+
+4.3 Trademarks. This Agreement does not grant any right to use Licensor's
+trademarks, service marks, trade names, or logos.
+
+===============================================================================
+5. NO WARRANTY
+===============================================================================
+
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE," WITHOUT WARRANTY OF ANY
+KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR
+A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. LICENSOR DOES NOT WARRANT
+THAT THE SOFTWARE WILL BE ERROR-FREE, UNINTERRUPTED, SECURE, OR FREE FROM
+HARMFUL COMPONENTS, OR THAT ITS OUTPUT WILL BE ACCURATE, RELIABLE, COMPLETE,
+OR TIMELY.
+
+YOU ASSUME ALL RISK ARISING FROM USE OF THE SOFTWARE. NO ORAL OR WRITTEN ADVICE
+OR INFORMATION CREATES A WARRANTY NOT EXPRESSLY STATED IN THIS AGREEMENT.
+
+===============================================================================
+6. LIMITATION OF LIABILITY
+===============================================================================
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, LICENSOR SHALL NOT BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR
+PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, REVENUE, DATA, USE, GOODWILL, OR
+BUSINESS INTERRUPTION, ARISING FROM THIS AGREEMENT OR THE USE OR INABILITY TO
+USE THE SOFTWARE, WHETHER BASED ON CONTRACT, TORT, STRICT LIABILITY, OR ANY
+OTHER LEGAL THEORY, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+LICENSOR'S TOTAL AGGREGATE LIABILITY ARISING FROM THIS AGREEMENT SHALL NOT
+EXCEED THE AMOUNT YOU PAID LICENSOR FOR THE SOFTWARE DURING THE TWELVE MONTHS
+PRECEDING THE EVENT GIVING RISE TO LIABILITY, OR ONE HUNDRED U.S. DOLLARS
+($100), WHICHEVER IS LESS. THE SOFTWARE IS PROVIDED FREE OF CHARGE UNDER THIS
+AGREEMENT, SO THIS AMOUNT IS EXPECTED TO BE ZERO.
+
+===============================================================================
+7. INDEMNIFICATION
+===============================================================================
+
+You agree to indemnify, defend, and hold harmless Licensor and its officers,
+directors, employees, and agents from claims, liabilities, damages, losses,
+costs, and expenses, including reasonable attorneys' fees, arising from:
+    (a) Your use of the Software in violation of this Agreement;
+    (b) Production Use or another use outside the granted rights;
+    (c) Your violation of law or the rights of a third party; or
+    (d) Feedback You provide to Licensor.
+
+===============================================================================
+8. TERM AND TERMINATION
+===============================================================================
+
+8.1 Term. This Agreement becomes effective for a Preview Release upon Your
+first download, installation, copy, or use of that Preview Release and
+continues unless terminated under this Section 8.
+
+8.2 Termination by You. You may terminate this Agreement at any time by
+ceasing all use and destroying all copies of the Software in Your possession
+or control.
+
+8.3 Termination for Breach. Licensor may terminate this Agreement upon notice
+if You breach a material term. If the breach can be cured, Licensor may provide
+a reasonable opportunity to cure it before termination. Licensor may terminate
+immediately if the breach cannot be cured or continued use could cause material
+harm to Licensor, the Software, or a third party.
+
+8.4 Future Releases. Licensor may end or extend the public preview and may
+offer future releases, services, support, or features under different terms.
+Such terms apply only when accepted or when a future release is obtained under
+them and do not alter Section 2.3.
+
+8.5 Effect of Termination. Upon termination for a Preview Release, all rights
+granted for that Preview Release cease, and You must cease use and destroy all
+copies in Your possession or control. Sections 3 through 7, 8.5, 9, and other
+provisions that by their nature should survive shall survive termination.
+
+===============================================================================
+9. GENERAL
+===============================================================================
+
+9.1 Governing Law. This Agreement is governed by the laws of the State of
+California, without regard to conflict-of-laws principles. The United Nations
+Convention on Contracts for the International Sale of Goods does not apply.
+
+9.2 Dispute Resolution. Any dispute arising from this Agreement shall be
+resolved exclusively in the state or federal courts located in Santa Clara
+County, California, and You consent to their personal jurisdiction.
+
+9.3 Entire Agreement. This Agreement is the entire agreement between You and
+Licensor concerning the Software and supersedes prior or contemporaneous
+communications, representations, or agreements concerning it.
+
+9.4 Severability. If a provision is held invalid, illegal, or unenforceable,
+the remaining provisions continue in effect, and the invalid provision shall
+be modified to the minimum extent necessary to preserve its intent.
+
+9.5 No Waiver. Failure to enforce a right or provision is not a waiver.
+
+9.6 Assignment. You may not assign or transfer this Agreement or any rights or
+obligations under it without Licensor's prior written consent. An attempted
+assignment in violation of this section is void. Licensor may freely assign
+this Agreement.
+
+9.7 Notices. Notices to Licensor must be sent in writing to
+data.oculus.llc@gmail.com or through https://local.cloud.
+
+9.8 Export Compliance. You agree to comply with applicable export and import
+control laws and regulations in Your use of the Software.
+
+===============================================================================
+CONTACT
+===============================================================================
+
+For questions regarding this Agreement, contact:
+
+    LocalCloud Inc.
+    data.oculus.llc@gmail.com
+    https://local.cloud
+
+===============================================================================
+END OF AGREEMENT
+===============================================================================

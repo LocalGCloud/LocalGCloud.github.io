@@ -279,7 +279,8 @@ const bigqueryHistory =
 for (const phrase of [
 	"GoogleSQL",
 	"DuckDB",
-	"coverage-matrix.csv",
+	// The matrix file lives in a private repository, so the page summarizes it without a link.
+	"versioned coverage matrix",
 	"recorded classifications",
 ]) {
 	assert(

@@ -1162,9 +1162,9 @@ export const glossaryPages: AgenticContentPage[] = [
 		],
 		[
 			{
-				label: "LocalCloud MCP integration",
-				href: `${productFacts.runtimeRepositoryUrl}/blob/main/docs/guides/mcp-integration.md`,
-				note: "Canonical runtime-owned endpoint and stdio bridge documentation.",
+				label: "AI agent guide",
+				href: "/ai/",
+				note: "Runtime endpoints, agent rules, and the AGENTS.md template.",
 			},
 		],
 	),

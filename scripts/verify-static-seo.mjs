@@ -15,6 +15,7 @@ const requiredSchemaTypes = new Map([
   ['/local-cloud-for-ai-agents/', ['Organization', 'SoftwareApplication', 'FAQPage', 'BreadcrumbList']],
   ['/compare/localstack/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
   ['/compare/localgcp/', ['Organization', 'SoftwareApplication', 'BreadcrumbList']],
+  ['/license/', ['Organization', 'WebPage', 'BreadcrumbList']],
 ]);
 
 const isHtmlRoute = (route) => route.path === '/' || route.path.endsWith('/');

@@ -121,27 +121,30 @@ for (const phrase of forbidden) {
 	);
 }
 
-const runtimeMcpGuideExpression =
-	"${productFacts.runtimeRepositoryUrl}/blob/main/docs/guides/mcp-integration.md";
+// The runtime repository is private, so published pages link public profiles only:
+// the LocalGCloud GitHub organization, its public repositories and Docker Hub.
+// scripts/verify-content-facts.mjs checks the built site for the same thing.
+const privateRepository = /github\.com\/jhsenjaliya\b/i;
+assert(!privateRepository.test(source), "a distributed file links the private runtime repository; link /license/ or a site page instead");
 const productFactsSource = await read("src/data/productFacts.ts");
 for (const repository of [
-	'https://github.com/LocalGCloud/localcloud-cli',
-	'https://github.com/jhsenjaliya/localcloud',
-	'https://github.com/LocalGCloud/LocalGCloud.github.io',
+	'https://github.com/LocalGCloud"',
+	'https://github.com/LocalGCloud/localcloud-cli"',
+	'https://github.com/LocalGCloud/LocalGCloud.github.io"',
+	'https://hub.docker.com/r/',
 ]) {
-	assert(productFactsSource.includes(repository), `productFacts omits repository owner ${repository}`);
+	assert(productFactsSource.includes(repository), `productFacts omits public profile ${repository}`);
 }
 assert(!productFactsSource.includes('githubUrl:'), 'productFacts still conflates repositories in githubUrl');
-for (const path of [
-	"src/pages/blog/localcloud-for-ai-agents.astro",
-	"src/pages/docs/licensing.mdx",
-	"src/data/agenticContent.ts",
+// MCP is documented on the site (the glossary entry); pages that mention it link there and
+// keep the runtime endpoint and the stdio bridge distinct.
+for (const [path, link] of [
+	["src/pages/blog/localcloud-for-ai-agents.astro", "/glossary/mcp-server/"],
+	["src/pages/docs/licensing.mdx", "/glossary/mcp-server/"],
+	["src/data/agenticContent.ts", '"mcp-server"'],
 ]) {
 	const value = await read(path);
-	assert(
-		value.includes(runtimeMcpGuideExpression),
-		`${path} does not use the canonical productFacts runtime MCP guide URL`,
-	);
+	assert(value.includes(link), `${path} does not link the site's MCP page`);
 	assert(
 		value.includes("/mcp") && value.includes("localcloud mcp"),
 		`${path} does not distinguish the runtime endpoint from the stdio bridge`,

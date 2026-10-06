@@ -16,9 +16,13 @@ export interface Evidence {
 export const productFacts = {
 	name: "LocalCloud",
 	siteUrl: "https://local.cloud/",
+	// Public profiles only: every URL here is published on the site and in structured data.
+	githubOrganizationUrl: "https://github.com/LocalGCloud",
 	cliRepositoryUrl: "https://github.com/LocalGCloud/localcloud-cli",
-	runtimeRepositoryUrl: "https://github.com/jhsenjaliya/localcloud",
+	cliReleasesUrl: "https://github.com/LocalGCloud/localcloud-cli/releases",
+	cliIssuesUrl: "https://github.com/LocalGCloud/localcloud-cli/issues",
 	siteRepositoryUrl: "https://github.com/LocalGCloud/LocalGCloud.github.io",
+	dockerHubUrl: `https://hub.docker.com/r/${docsContract.product.runtimeImage.repository}`,
 	agentSkillsUrl:
 		"https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills",
 	dockerImageRepository: docsContract.product.runtimeImage.repository,
@@ -35,6 +39,8 @@ export const productFacts = {
 	serviceCountLabel: String(availableServiceCount),
 	availabilityStatement: docsContract.licensing.summary,
 	licensingPath: "/docs/licensing/",
+	// The governing license text, published from src/data/legal/public-preview-license.txt.
+	licensePath: "/license/",
 	pricingPath: "/pricing/",
 	category: "Local Google Cloud emulator",
 	description:
@@ -52,6 +58,7 @@ export type JsonLd = Record<string, unknown>;
 export const organizationSchema: JsonLd = {
 	"@context": "https://schema.org",
 	"@type": "Organization",
+	"@id": new URL("#org", productFacts.siteUrl).toString(),
 	name: productFacts.companyName,
 	legalName: productFacts.companyName,
 	url: productFacts.siteUrl,
@@ -64,7 +71,7 @@ export const organizationSchema: JsonLd = {
 		addressRegion: "CA",
 		addressCountry: "US",
 	},
-	sameAs: [productFacts.cliRepositoryUrl, productFacts.runtimeRepositoryUrl],
+	sameAs: [productFacts.githubOrganizationUrl, productFacts.cliRepositoryUrl, productFacts.dockerHubUrl],
 };
 
 export const createSoftwareApplicationSchema = (
@@ -80,7 +87,7 @@ export const createSoftwareApplicationSchema = (
 	url,
 	description,
 	downloadUrl: `https://hub.docker.com/r/${productFacts.dockerImageRepository}`,
-	license: new URL(productFacts.licensingPath, productFacts.siteUrl).toString(),
+	license: new URL(productFacts.licensePath, productFacts.siteUrl).toString(),
 });
 
 export const publicPreviewPricing = {

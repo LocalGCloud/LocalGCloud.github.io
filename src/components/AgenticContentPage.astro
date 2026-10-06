@@ -182,7 +182,7 @@ const structuredData = [
       <article class="site-panel site-panel--soft min-w-0 break-words p-6 reveal">
         <span class="site-kicker">Production boundary</span>
         <h2 class="mt-3 text-2xl" id={isBlog ? 'validation' : undefined}>Before production</h2>
-        <p class="mt-3 leading-7 text-[var(--text-2)]">Use LocalCloud for non-production development, testing, and CI under the <a href={localHref('/docs/licensing/')}>Public Preview License</a>, check <a href={localHref('/compatibility/')}>each service's local boundaries</a>, and validate against real Google Cloud before you deploy.</p>
+        <p class="mt-3 leading-7 text-[var(--text-2)]">Use LocalCloud for non-production development, testing, and CI under the <a href={localHref('/license/')}>Public Preview License</a>, check <a href={localHref('/compatibility/')}>each service's local boundaries</a>, and validate against real Google Cloud before you deploy.</p>
         {page.limitations.length > 0 && (
           <ul class="site-list mt-4">
             {page.limitations.map((item) => <li>{item}</li>)}

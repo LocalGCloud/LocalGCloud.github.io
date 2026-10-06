@@ -187,7 +187,8 @@ ${unsupportedServices.map((service) => `- [${service.name}](${service.guideUrl})
 
 ${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends.
 
-- [Licensing](${site}docs/licensing/)
+- [Licensing](${site}docs/licensing/): the terms in plain language
+- [License text](${site}license/): the full Public Preview License Agreement, also as [plain text](${site}license.txt)
 - [Pricing](${site}pricing/)
 
 ## Optional

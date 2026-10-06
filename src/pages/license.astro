@@ -1,0 +1,108 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import licenseText from '../data/legal/public-preview-license.txt?raw';
+import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
+import { parseLicenseDocument } from '../utils/license-document.mjs';
+
+// The governing license, rendered from the committed copy that scripts/verify-policy-docs.mjs
+// checks against the documentation contract's digest. /license.txt serves the same bytes.
+const license = parseLicenseDocument(licenseText);
+const version = license.preamble.find((block) => block.type === 'paragraph' && /^Version /.test(block.text))?.text ?? '';
+const pageUrl = new URL('license/', productFacts.siteUrl).toString();
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: 'LocalCloud Public Preview License Agreement',
+    publisher: { '@id': new URL('#org', productFacts.siteUrl).toString() },
+  },
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'License', url: pageUrl },
+  ]),
+];
+---
+
+<LandingLayout
+  title="LocalCloud Public Preview License Agreement"
+  description="The full LocalCloud Public Preview License Agreement that governs LocalCloud preview releases, with a plain-text copy for download."
+  {structuredData}
+>
+  <section class="site-section site-section--hero">
+    <div class="container container--narrow">
+      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>License</span>
+      <h1 class="mt-4">LocalCloud Public Preview License Agreement</h1>
+      <p class="mt-5 text-lg leading-8 text-[var(--text-2)]">{version}. This is the complete agreement that governs LocalCloud preview releases. The <a href="/docs/licensing/">licensing summary</a> explains it in plain language; if the two differ, this text controls.</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="/license.txt" class="site-button site-button--secondary">Plain-text copy</a>
+        <a href="/pricing/" class="site-button site-button--secondary">Pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="site-section site-section--tight">
+    <div class="container container--narrow">
+      <article class="prose-site license-document" aria-labelledby="license-title">
+        <h2 id="license-title" class="license-document__title">{license.title}</h2>
+        {license.preamble.map((block) => <p>{block.text}</p>)}
+        <nav aria-label="License sections">
+          <ol class="license-document__toc">
+            {license.sections.filter((section) => section.blocks.length).map((section) => (
+              <li><a href={`#${section.id}`}>{section.heading}</a></li>
+            ))}
+          </ol>
+        </nav>
+        {license.sections.map((section) => (
+          <section aria-labelledby={section.id}>
+            <h2 id={section.id}>{section.heading}</h2>
+            {section.blocks.map((block) =>
+              block.type === 'paragraph' ? <p>{block.text}</p>
+              : block.type === 'list' ? (
+                <ol class="license-document__clauses">
+                  {block.items.map((item) => <li><span class="license-document__label">{item.label}</span> {item.text}</li>)}
+                </ol>
+              )
+              : <p class="license-document__lines">{block.lines.map((line, index) => <>{index > 0 && <br />}{line}</>)}</p>,
+            )}
+          </section>
+        ))}
+      </article>
+    </div>
+  </section>
+</LandingLayout>
+
+<style>
+  .license-document__title {
+    margin-top: 0;
+  }
+
+  .license-document__toc {
+    display: grid;
+    gap: 0.2rem;
+    margin: 1.25rem 0 0;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+    background: var(--surface-2);
+    list-style: none;
+  }
+
+  .license-document__clauses {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .license-document__clauses li {
+    padding-left: 2rem;
+    text-indent: -2rem;
+  }
+
+  .license-document__label {
+    display: inline-block;
+    min-width: 2rem;
+    text-indent: 0;
+    color: var(--text);
+  }
+</style>

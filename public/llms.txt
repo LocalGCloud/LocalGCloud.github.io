@@ -103,7 +103,8 @@ Unsupported locally; use Google Cloud:
 
 The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and internal pilots. Excluded uses: customer-facing or other production use; reselling LocalCloud or providing it as a hosted or managed service; redistribution or sublicensing; and modification except where applicable law requires permission. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends.
 
-- [Licensing](https://local.cloud/docs/licensing/)
+- [Licensing](https://local.cloud/docs/licensing/): the terms in plain language
+- [License text](https://local.cloud/license/): the full Public Preview License Agreement, also as [plain text](https://local.cloud/license.txt)
 - [Pricing](https://local.cloud/pricing/)
 
 ## Optional

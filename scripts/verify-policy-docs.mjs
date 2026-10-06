@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 
 const root = new URL("../", import.meta.url);
@@ -77,8 +78,23 @@ for (const phrase of [
 	"ongoing internal CI",
 	"No payment method or license key is required",
 	"Preview releases keep their terms",
+	"governingLicenseUrl = productFacts.licensePath",
+	'href="/license.txt"',
 ])
 	assert(licensing.includes(phrase), `licensing reference omits ${phrase}`);
+
+// /license/ and /license.txt publish this committed copy of the governing license. It must be
+// the exact file whose digest the documentation contract records; scripts/sync-upstream-docs.mjs
+// refreshes both together.
+const governingLicense = contract.licensing.governingLicense;
+const recordedDigest = contract.provenance.sourceDigests[governingLicense];
+const licenseCopy = await readFile(new URL("src/data/legal/public-preview-license.txt", root));
+const copyDigest = `sha256:${createHash("sha256").update(licenseCopy).digest("hex")}`;
+assert(recordedDigest, `the contract records no digest for ${governingLicense}`);
+assert(
+	copyDigest === recordedDigest,
+	`src/data/legal/public-preview-license.txt (${copyDigest}) differs from ${governingLicense} in the contract (${recordedDigest}); re-run scripts/sync-upstream-docs.mjs`,
+);
 
 const pricing = docs.get("src/components/PricingWorkbench.astro");
 for (const phrase of [

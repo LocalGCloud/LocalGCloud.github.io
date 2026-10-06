@@ -1,28 +1,25 @@
 ---
 layout: ../../layouts/DocsLayout.astro
 title: BigQuery Emulator Coverage and Known Boundaries
-description: Source-linked BigQuery coverage matrix counts, capabilities implemented with documented limits, and evidence boundaries.
+description: BigQuery coverage matrix counts, capabilities implemented with documented limits, and evidence boundaries for the LocalCloud BigQuery emulator.
 ---
 
 import Callout from '../../components/Callout.astro';
 import { docsContract } from '../../data/docs-contract';
 
 export const coverage = docsContract.bigqueryCoverage;
-export const matrixUrl = `https://github.com/jhsenjaliya/bigquery-emulator-on-duckdb/blob/${coverage.revision}/docs/coverage-matrix.csv`;
 
 # BigQuery coverage and known boundaries
 
 LocalCloud's current source uses native GoogleSQL analysis and DuckDB execution. The [feature reference](/docs/bigquery-emulator-features/) covers LocalCloud endpoints and runtime operation boundaries.
 
-This page projects the dependency's versioned `docs/coverage-matrix.csv`. The matrix includes canonical and derived records; its total is a count of records, not a count of distinct canonical GoogleSQL capabilities or executed tests.
+This page summarizes the BigQuery emulator's versioned coverage matrix. The matrix includes canonical and derived records; its total is a count of records, not a count of distinct canonical GoogleSQL capabilities or executed tests.
 
 <Callout type="warning" title="Recorded source coverage">
 These counts are the dependency's recorded classifications. Test the features your application depends on with the LocalCloud image you run. Unknown records are unassessed. Unsupported records include local feature gaps as well as managed-cloud behavior.
 </Callout>
 
 ## Matrix summary
-
-<p><a href={matrixUrl}>Read the complete matrix and its test references</a>.</p>
 
 <div className="docs-table-scroll" role="region" tabIndex={0} aria-label="BigQuery coverage matrix summary">
 <table>
@@ -35,7 +32,7 @@ These counts are the dependency's recorded classifications. Test the features yo
 </table>
 </div>
 
-“Implemented” is a matrix classification tied to its listed implementation and test references. Review those references for the exact feature, input shape, client, and validation tier. “Implemented with limits” rows work locally within the concrete boundaries listed below; derived rows can overlap their child features.
+“Implemented” is a matrix classification tied to the emulator's implementation and test references; test the exact feature, input shape, and client your application uses. “Implemented with limits” rows work locally within the concrete boundaries listed below; derived rows can overlap their child features.
 
 ## Capabilities implemented with documented limits
 
@@ -54,7 +51,7 @@ These counts are the dependency's recorded classifications. Test the features yo
 
 ## Unsupported and unknown records
 
-Use the complete matrix to inspect every unsupported or unknown record. These states must not be reduced to cloud scale alone: syntax, model variants, external sources, collation, and individual API methods can have developer-visible gaps. A successful dry run, stored configuration, or metadata operation does not prove execution support.
+Before relying on a capability that this page does not list, test it with your application's queries. Unsupported and unknown states must not be reduced to cloud scale alone: syntax, model variants, external sources, collation, and individual API methods can have developer-visible gaps. A successful dry run, stored configuration, or metadata operation does not prove execution support.
 
 ## How to check a capability
 

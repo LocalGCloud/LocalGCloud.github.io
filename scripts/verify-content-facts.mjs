@@ -1,5 +1,7 @@
+import { createHash } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { licenseWords } from '../src/utils/license-document.mjs';
 import { docsContract } from '../src/data/docs-contract.ts';
 import { productFacts } from '../src/data/productFacts.ts';
 import { cliQuickStart } from '../src/utils/quickstart.mjs';
@@ -342,6 +344,31 @@ for (const [file, html] of htmlPages) {
   if (/class="[^"]*badge[^"]*"[^>]*>\s*partial\s*</i.test(html) || /partial local emulation/i.test(html)) {
     errors.push(`${file} contains prohibited 'partial' status badge or phrasing`);
   }
+}
+
+// The governing license: /license.txt is the committed copy byte for byte and /license/
+// renders every word of it in order; both match the digest the documentation contract records.
+const recordedLicenseDigest = docsContract.provenance.sourceDigests[docsContract.licensing.governingLicense];
+try {
+  const licenseFile = await readFile(new URL('license.txt', distDirectory));
+  const digest = `sha256:${createHash('sha256').update(licenseFile).digest('hex')}`;
+  if (digest !== recordedLicenseDigest) errors.push(`dist/license.txt (${digest}) differs from the governing license digest ${recordedLicenseDigest}`);
+  const licensePage = htmlPages.get('license/index.html') ?? '';
+  const article = licensePage.match(/<article\b[^>]*class="[^"]*license-document[^"]*"[^>]*>([\s\S]*?)<\/article>/)?.[1] ?? '';
+  const renderedWords = visibleText(article.replace(/<nav\b[\s\S]*?<\/nav>/g, '').replace(/<\/(?:p|li|h\d)>|<br\b[^>]*>/g, ' ')).split(/\s+/).filter(Boolean);
+  const expectedWords = licenseWords(licenseFile.toString('utf8'));
+  const firstDifference = expectedWords.findIndex((word, index) => renderedWords[index] !== word);
+  if (firstDifference !== -1 || renderedWords.length !== expectedWords.length) {
+    const at = firstDifference === -1 ? Math.min(renderedWords.length, expectedWords.length) : firstDifference;
+    errors.push(`license/index.html does not render the license text verbatim; first difference at word ${at}: "${expectedWords.slice(at, at + 6).join(' ')}" vs "${renderedWords.slice(at, at + 6).join(' ')}"`);
+  }
+} catch (error) {
+  errors.push(`dist/license.txt must be published: ${error.message}`);
+}
+// The runtime repository is private: no page or agent text may link it.
+for (const file of [...files].filter((name) => /\.(?:html|md|txt|xml|json)$/.test(name) && !name.startsWith('pagefind/'))) {
+  const text = htmlPages.get(file) ?? agentText.get(file) ?? await readFile(new URL(file, distDirectory), 'utf8');
+  if (/github\.com\/jhsenjaliya\b/i.test(text)) errors.push(`${file} links the private runtime repository; link /license/ or a public page instead`);
 }
 
 if (errors.length) {
