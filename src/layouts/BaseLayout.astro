@@ -73,7 +73,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <meta name="theme-color" content="#ffffff" />
     <meta name="author" content="LocalCloud Inc." />
 
-    <!-- Open Graph -->
+    {/* Open Graph */}
     <meta property="og:site_name" content="LocalCloud" />
     <meta property="og:type" content={ogType} />
     {!noindex && <meta property="og:url" content={canonicalURL} />}
@@ -86,26 +86,26 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     {ogType === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
     {ogType === 'article' && (modifiedTime ?? publishedTime) && <meta property="article:modified_time" content={modifiedTime ?? publishedTime} />}
 
-    <!-- Twitter -->
+    {/* Twitter */}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
     <meta name="twitter:image:alt" content={ogImageAltText} />
 
-    <!-- One local variable body font covers all headline/body weights. -->
+    {/* One local variable body font covers all headline/body weights. */}
     <link rel="preload" href={robotoFont} as="font" type="font/woff2" crossorigin />
 
     <title>{title}</title>
 
-    <!-- Shared organization identity plus page-specific structured data. -->
+    {/* Shared organization identity plus page-specific structured data. */}
     <script type="application/ld+json" set:html={serializeJsonLd(organizationSchema)} />
     {structuredData.map((schema) => (
       <script type="application/ld+json" set:html={serializeJsonLd(schema)} />
     ))}
     <slot name="head" />
 
-    <!-- The hashed loader authorizes this beacon under strict-dynamic. -->
+    {/* The hashed loader authorizes this beacon under strict-dynamic. */}
     {cloudflareAnalyticsToken && (
       <script is:inline define:vars={{ cloudflareAnalyticsToken, cloudflareAnalyticsEndpoint }}>
         (function () {
@@ -121,7 +121,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       </script>
     )}
 
-    <!-- Queue analytics immediately; download the SDK after load, during idle time. -->
+    {/* Queue analytics immediately; download the SDK after load, during idle time. */}
     <script is:inline define:vars={{ posthogApiHost }}>
       !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js";var loadSdk=function(){(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r)};var scheduleSdk=function(){setTimeout(function(){if("requestIdleCallback" in window){window.requestIdleCallback(loadSdk,{timeout:2000})}else{loadSdk()}},1500)};if(t.readyState==="complete"){scheduleSdk()}else{window.addEventListener("load",scheduleSdk,{once:true})}var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags resetGroups onFeatureFlags addFeatureFlagsHandler onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 
@@ -192,7 +192,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       }
     </script>
 
-    <!-- PostHog custom event tracking -->
+    {/* PostHog custom event tracking */}
     <script is:inline>
       (function() {
         if (typeof window.posthog === 'undefined') return;

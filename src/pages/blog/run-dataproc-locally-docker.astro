@@ -183,7 +183,7 @@ const structuredData = [
   article={{ publishedAt: publishDate, headline: 'How to Run Dataproc 3.0 Locally with Docker' }}
 >
   <Fragment slot="hero">
-  <!-- Hero Section -->
+  {/* Hero Section */}
   <article class="site-section site-section--hero">
     <div class="container container--narrow">
       <nav class="mb-5 flex items-center gap-2 text-sm text-[var(--text-2)]" aria-label="Breadcrumb">
@@ -206,7 +206,7 @@ const structuredData = [
   </article>
   </Fragment>
 
-  <!-- Agent Prompt Box -->
+  {/* Agent Prompt Box */}
   <section class="site-section site-section--tight">
     <div class="container container--narrow">
       <div class="site-panel p-6 reveal">
@@ -225,10 +225,10 @@ const structuredData = [
     </div>
   </section>
 
-  <!-- Main Content Sections -->
+  {/* Main Content Sections */}
   <section class="site-section">
     <div class="container container--narrow space-y-12">
-      <!-- Why Run Locally -->
+      {/* Why Run Locally */}
       <section class="reveal">
         <span class="site-kicker">Why it matters</span>
         <h2 class="mt-3" id="why-local">The local feedback loop for developers and agents</h2>
@@ -252,7 +252,7 @@ const structuredData = [
         </div>
       </section>
 
-      <!-- Dataproc 3.0 Stack -->
+      {/* Dataproc 3.0 Stack */}
       <section class="reveal">
         <span class="site-kicker">Component stack</span>
         <h2 class="mt-3" id="component-stack">What's inside Dataproc 3.0 (Debian 13)</h2>
@@ -314,7 +314,7 @@ const structuredData = [
         </p>
       </section>
 
-      <!-- Step 1: Single Container -->
+      {/* Step 1: Single Container */}
       <section class="reveal">
         <span class="site-kicker">Step-by-step guide</span>
         <h2 class="mt-3" id="single-container">Mode 1: Single-container ad-hoc execution</h2>
@@ -323,7 +323,7 @@ const structuredData = [
         </p>
 
         <div class="mt-6 space-y-6">
-          <!-- Self Test -->
+          {/* Self Test */}
           <div class="site-panel p-5">
             <div class="flex items-center justify-between">
               <span class="font-semibold text-[var(--text)]">1. Run the built-in self-test suite</span>
@@ -335,7 +335,7 @@ const structuredData = [
             <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>docker run --rm agentcloud/dataproc:3.0.0-debian13 self-test</code></pre>
           </div>
 
-          <!-- Check Versions -->
+          {/* Check Versions */}
           <div class="site-panel p-5">
             <div class="flex items-center justify-between">
               <span class="font-semibold text-[var(--text)]">2. Inspect component versions</span>
@@ -344,7 +344,7 @@ const structuredData = [
             <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{versionsCommand}</code></pre>
           </div>
 
-          <!-- Submit PySpark Job -->
+          {/* Submit PySpark Job */}
           <div class="site-panel p-5">
             <div class="flex items-center justify-between">
               <span class="font-semibold text-[var(--text)]">3. Submit a PySpark workload</span>
@@ -366,7 +366,7 @@ const structuredData = [
             <pre class="mt-2 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{sparkSubmitCommand}</code></pre>
           </div>
 
-          <!-- Interactive Shells -->
+          {/* Interactive Shells */}
           <div class="site-panel p-5">
             <div class="flex items-center justify-between">
               <span class="font-semibold text-[var(--text)]">4. Launch interactive PySpark or Spark SQL shells</span>
@@ -375,7 +375,7 @@ const structuredData = [
             <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{shellsCommand}</code></pre>
           </div>
 
-          <!-- Standalone Hive & Raw Shell -->
+          {/* Standalone Hive & Raw Shell */}
           <div class="site-panel p-5">
             <div class="flex items-center justify-between">
               <span class="font-semibold text-[var(--text)]">5. Standalone Hive queries &amp; Bash access</span>
@@ -389,7 +389,7 @@ const structuredData = [
         </div>
       </section>
 
-      <!-- Step 2: Multi-Node Cluster -->
+      {/* Step 2: Multi-Node Cluster */}
       <section class="reveal">
         <span class="site-kicker">Cluster mode</span>
         <h2 class="mt-3" id="cluster">Mode 2: 3-Node Dataproc cluster with Docker Compose</h2>
@@ -464,7 +464,7 @@ const structuredData = [
         </div>
       </section>
 
-      <!-- Connecting to Storage -->
+      {/* Connecting to Storage */}
       <section class="reveal">
         <span class="site-kicker">Storage integration</span>
         <h2 class="mt-3" id="storage">Connecting to Cloud Storage &amp; BigQuery</h2>
@@ -510,7 +510,7 @@ const structuredData = [
         </div>
       </section>
 
-      <!-- CI/CD Automation -->
+      {/* CI/CD Automation */}
       <section class="reveal">
         <span class="site-kicker">Automation</span>
         <h2 class="mt-3" id="ci">CI/CD automation: Running Spark tests in GitHub Actions</h2>
@@ -527,7 +527,7 @@ const structuredData = [
         </div>
       </section>
 
-      <!-- Hardware & Performance Tips -->
+      {/* Hardware & Performance Tips */}
       <section class="reveal">
         <span class="site-kicker">Best practices</span>
         <h2 class="mt-3" id="resources">Performance and resource guidelines</h2>
@@ -553,7 +553,7 @@ const structuredData = [
         </div>
       </section>
 
-      <!-- Supported Versions Matrix -->
+      {/* Supported Versions Matrix */}
       <section class="reveal">
         <span class="site-kicker">Docker Hub repository</span>
         <h2 class="mt-3" id="versions">Available Dataproc image versions</h2>
@@ -625,7 +625,7 @@ const structuredData = [
         </div>
       </section>
 
-      <!-- Boundaries & Next Steps -->
+      {/* Boundaries & Next Steps */}
       <section class="reveal">
         <span class="site-kicker">Operational boundaries</span>
         <h2 class="mt-3" id="validation">Production validation boundaries</h2>

@@ -57,6 +57,13 @@ for (const [file, html] of htmlPages) {
   }
 }
 
+// compressHTML keeps HTML comments, so a template comment ships in every response and can
+// leak commented-out template source. .astro templates use {/* */}, which the build strips.
+for (const [file, html] of htmlPages) {
+  const comment = html.match(/<!--[\s\S]{0,60}/);
+  if (comment) errors.push(`${file} ships an HTML comment (${comment[0].replace(/\s+/g, ' ')}…); use {/* */} in .astro templates`);
+}
+
 // A .reveal element starts at opacity 0 and fades in after the reveal script runs, so a
 // headline inside one flashes and delays LCP. Hero containers must not carry the class.
 for (const [file, html] of htmlPages) {
@@ -531,7 +538,6 @@ else {
 const homepageHero = homepageMain.match(/<section\b[^>]*class="field-hero"[\s\S]*?<\/section>/)?.[0] ?? '';
 const installCode = new RegExp(`<code\\b[^>]*>${productFacts.installScriptCommand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</code>`);
 if (!installCode.test(homepageHero) || !homepageHero.includes('aria-label="Copy install command"')) errors.push('the homepage hero must show the install command with a "Copy install command" button');
-if (/<!--/.test(homepageMain)) errors.push('homepage <main> ships an HTML comment; use {/* */} in .astro templates');
 const trustStrip = homepageMain.match(/<section\b[^>]*class="field-trust"[\s\S]*?<\/section>/)?.[0] ?? '';
 for (const href of ['/changelog/', '/security/', '/contact/', '/license/', '/docs/privacy/', '/compatibility/', productFacts.cliReleasesUrl]) {
   if (!trustStrip.includes(`href="${href}`)) errors.push(`homepage trust strip must link ${href}`);
