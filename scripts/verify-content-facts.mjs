@@ -141,11 +141,20 @@ for (const [file, html] of htmlPages) {
   checkVocabulary(`${file} (meta)`, metaText(html));
 }
 for (const [file, text] of agentText) checkVocabulary(file, withoutUrls(text));
+// Illustration text states the same facts as the pages: every port number (a 4-5 digit number)
+// is a port in the services data, and no prices or startup-time promises appear.
+const servicePorts = new Set(docsContract.services.flatMap((service) => [service.port, ...Object.values(service.additionalPorts)]).map(String));
 const illustrationsDirectory = new URL('illustrations/', publicDirectory);
 for (const file of (await readdir(illustrationsDirectory)).filter((name) => name.endsWith('.svg'))) {
   const svg = await readFile(new URL(file, illustrationsDirectory), 'utf8');
   const svgText = [...svg.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)].map((match) => decodeEntities(match[1].replace(/<[^>]+>/g, ''))).join('\n');
   checkVocabulary(`public/illustrations/${file}`, svgText);
+  for (const [port] of svgText.matchAll(/(?<![\d.,])\d{4,5}(?![\d.,])/g)) {
+    if (!servicePorts.has(port)) errors.push(`public/illustrations/${file} shows port ${port}, which no service uses (service ports: ${[...servicePorts].sort().join(', ')})`);
+  }
+  for (const [pattern, claim] of [[/\$\s*\d/, 'a price'], [/<\s*\d+\s*(?:s|sec|seconds?|min|minutes?)\b/i, 'a startup-time promise']]) {
+    if (pattern.test(svgText)) errors.push(`public/illustrations/${file} states ${claim}: "${svgText.match(pattern)[0]}"`);
+  }
 }
 
 // One quick start: the CLI lines appear verbatim and in order on every agent entry point.

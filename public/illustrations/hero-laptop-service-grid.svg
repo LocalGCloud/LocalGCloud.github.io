@@ -1,6 +1,6 @@
 <svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
   <title>LocalCloud laptop service dashboard</title>
-  <desc>A polished laptop dashboard showing LocalCloud running major Google Cloud services locally with official service icons, readiness states, zero cost, and no-code-change callouts.</desc>
+  <desc>A laptop dashboard showing LocalCloud serving Google Cloud services on localhost with official service icons and endpoint protocols, Firestore as an opt-in service, and callouts for standard SDKs, no GCP billing and one container.</desc>
   <defs>
     <linearGradient id="heroBg" x1="100" y1="60" x2="1100" y2="720" gradientUnits="userSpaceOnUse">
       <stop stop-color="#FAFCFF"/>
@@ -66,7 +66,7 @@
     <text x="336" y="170" class="ui-label">LocalCloud runtime</text>
     <rect x="716" y="148" width="222" height="32" rx="16" fill="#254E83"/>
     <circle cx="742" cy="164" r="6" fill="#34A853"/>
-    <text x="760" y="170" class="ui-label">major services online</text>
+    <text x="760" y="170" class="ui-label">default services online</text>
 
     <rect x="246" y="214" width="40" height="316" rx="20" fill="#183A67" stroke="#2D5688"/>
     <image href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224%22%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill%3A%23aecbfa%3B%7D.cls-2%7Bfill%3A%23669df6%3B%7D.cls-3%7Bfill%3A%234285f4%3B%7D.cls-4%7Bfill%3A%23fff%3B%7D%3C%2Fstyle%3E%3C%2Fdefs%3E%3Ctitle%3EIcon_24px_CloudStorage_Color%3C%2Ftitle%3E%3Cg%20data-name%3D%22Product%20Icons%22%3E%3Crect%20class%3D%22cls-1%22%20height%3D%227%22%20width%3D%2220%22%20x%3D%222%22%20y%3D%224%22%2F%3E%3Crect%20class%3D%22cls-2%22%20height%3D%227%22%20width%3D%222%22%20x%3D%2220%22%20y%3D%224%22%2F%3E%3Cpolygon%20class%3D%22cls-3%22%20points%3D%2222%204%2020%204%2020%2011%2022%204%22%2F%3E%3Crect%20class%3D%22cls-2%22%20height%3D%227%22%20width%3D%222%22%20x%3D%222%22%20y%3D%224%22%2F%3E%3Crect%20class%3D%22cls-4%22%20height%3D%221%22%20width%3D%226%22%20x%3D%226%22%20y%3D%227%22%2F%3E%3Crect%20class%3D%22cls-4%22%20height%3D%223%22%20rx%3D%221.5%22%20width%3D%223%22%20x%3D%2215%22%20y%3D%226%22%2F%3E%3Crect%20class%3D%22cls-1%22%20height%3D%227%22%20width%3D%2220%22%20x%3D%222%22%20y%3D%2213%22%2F%3E%3Crect%20class%3D%22cls-2%22%20height%3D%227%22%20width%3D%222%22%20x%3D%2220%22%20y%3D%2213%22%2F%3E%3Cpolygon%20class%3D%22cls-3%22%20points%3D%2222%2013%2020%2013%2020%2020%2022%2013%22%2F%3E%3Crect%20class%3D%22cls-2%22%20height%3D%227%22%20width%3D%222%22%20x%3D%222%22%20y%3D%2213%22%2F%3E%3Crect%20class%3D%22cls-4%22%20height%3D%221%22%20width%3D%226%22%20x%3D%226%22%20y%3D%2216%22%2F%3E%3Crect%20class%3D%22cls-4%22%20height%3D%223%22%20rx%3D%221.5%22%20width%3D%223%22%20x%3D%2215%22%20y%3D%2215%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E" x="254" y="232" width="24" height="24"/>
@@ -107,17 +107,17 @@
       <text x="58" y="45" class="tile-detail">docs / queries</text>
       <rect x="58" y="56" width="64" height="16" rx="8" fill="#E6F4EA"/>
       <circle cx="70" cy="64" r="3.4" fill="#34A853"/>
-      <text x="79" y="68" class="tile-pill">gRPC</text>
+      <text x="79" y="68" class="tile-pill">opt-in</text>
     </g>
     <g class="service-tile" transform="translate(754 222)">
       <rect width="136" height="80" rx="14" fill="#F7FAFF" stroke="#C8D9F2"/>
       <rect x="12" y="12" width="36" height="36" rx="10" fill="#EAF2FF" stroke="#D4E4FA"/>
       <image href="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224%22%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill%3A%23aecbfa%3B%7D.cls-1%2C.cls-2%2C.cls-3%7Bfill-rule%3Aevenodd%3B%7D.cls-2%7Bfill%3A%23669df6%3B%7D.cls-3%7Bfill%3A%234285f4%3B%7D%3C%2Fstyle%3E%3C%2Fdefs%3E%3Ctitle%3EIcon_24px_BigQuery_Color%3C%2Ftitle%3E%3Cg%20data-name%3D%22Product%20Icons%22%3E%3Cg%3E%3Cpath%20class%3D%22cls-1%22%20d%3D%22M6.73%2C10.83v2.63A4.91%2C4.91%2C0%2C0%2C0%2C8.44%2C15.2V10.83Z%22%2F%3E%3Cpath%20class%3D%22cls-2%22%20d%3D%22M9.89%2C8.41v7.53A7.62%2C7.62%2C0%2C0%2C0%2C11%2C16%2C8%2C8%2C0%2C0%2C0%2C12%2C16V8.41Z%22%2F%3E%3Cpath%20class%3D%22cls-1%22%20d%3D%22M13.64%2C11.86v3.29a5%2C5%2C0%2C0%2C0%2C1.7-1.82V11.86Z%22%2F%3E%3Cpath%20class%3D%22cls-3%22%20d%3D%22M17.74%2C16.32l-1.42%2C1.42a.42.42%2C0%2C0%2C0%2C0%2C.6l3.54%2C3.54a.42.42%2C0%2C0%2C0%2C.59%2C0l1.43-1.43a.42.42%2C0%2C0%2C0%2C0-.59l-3.54-3.54a.42.42%2C0%2C0%2C0-.6%2C0%22%2F%3E%3Cpath%20class%3D%22cls-2%22%20d%3D%22M11%2C2a9%2C9%2C0%2C1%2C0%2C9%2C9%2C9%2C9%2C0%2C0%2C0-9-9m0%2C15.69A6.68%2C6.68%2C0%2C1%2C1%2C17.69%2C11%2C6.68%2C6.68%2C0%2C0%2C1%2C11%2C17.69%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" x="18" y="18" width="24" height="24" preserveAspectRatio="xMidYMid meet"/>
       <text x="58" y="27" class="tile-title">BigQuery</text>
-      <text x="58" y="45" class="tile-detail">SQL</text>
+      <text x="58" y="45" class="tile-detail">datasets / SQL</text>
       <rect x="58" y="56" width="64" height="16" rx="8" fill="#E6F4EA"/>
       <circle cx="70" cy="64" r="3.4" fill="#34A853"/>
-      <text x="79" y="68" class="tile-pill">SQL</text>
+      <text x="79" y="68" class="tile-pill">REST</text>
     </g>
     <g class="service-tile" transform="translate(304 316)">
       <rect width="136" height="80" rx="14" fill="#F7FAFF" stroke="#C8D9F2"/>
@@ -157,7 +157,7 @@
       <text x="58" y="45" class="tile-detail">queues / dispatch</text>
       <rect x="58" y="56" width="64" height="16" rx="8" fill="#E6F4EA"/>
       <circle cx="70" cy="64" r="3.4" fill="#34A853"/>
-      <text x="79" y="68" class="tile-pill">REST</text>
+      <text x="79" y="68" class="tile-pill">gRPC</text>
     </g>
     <g class="service-tile" transform="translate(304 410)">
       <rect width="136" height="80" rx="14" fill="#F7FAFF" stroke="#C8D9F2"/>
@@ -187,7 +187,7 @@
       <text x="58" y="45" class="tile-detail">local steps</text>
       <rect x="58" y="56" width="64" height="16" rx="8" fill="#E6F4EA"/>
       <circle cx="70" cy="64" r="3.4" fill="#34A853"/>
-      <text x="79" y="68" class="tile-pill">REST</text>
+      <text x="79" y="68" class="tile-pill">gRPC</text>
     </g>
     <g class="service-tile" transform="translate(754 410)">
       <rect width="136" height="80" rx="14" fill="#F7FAFF" stroke="#C8D9F2"/>
@@ -197,7 +197,7 @@
       <text x="58" y="45" class="tile-detail">Redis-compatible</text>
       <rect x="58" y="56" width="64" height="16" rx="8" fill="#E6F4EA"/>
       <circle cx="70" cy="64" r="3.4" fill="#34A853"/>
-      <text x="79" y="68" class="tile-pill">6379</text>
+      <text x="79" y="68" class="tile-pill">5390</text>
     </g>
 
     <g transform="translate(904 224)">
@@ -226,15 +226,15 @@
     <rect x="836" y="72" width="234" height="64" rx="18" fill="url(#glass)" stroke="#D5E3F7"/>
     <circle cx="872" cy="104" r="15" fill="#E6F4EA"/>
     <path d="M865 104L871 110L881 98" stroke="#34A853" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="900" y="99" class="badge-title">No code change</text>
-    <text x="900" y="119" class="badge-detail">same SDK and CLI flow</text>
+    <text x="900" y="99" class="badge-title">Standard SDKs</text>
+    <text x="900" y="119" class="badge-detail">via generated env vars</text>
   </g>
 
   <g filter="url(#chipShadow)">
     <rect x="118" y="524" width="202" height="64" rx="18" fill="url(#glass)" stroke="#D5E3F7"/>
     <circle cx="154" cy="556" r="15" fill="#EAF2FF"/>
     <text x="146" y="562" fill="#1A73E8" font-size="20" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="800">$</text>
-    <text x="184" y="551" class="badge-title">$0 cost</text>
+    <text x="184" y="551" class="badge-title">No GCP billing</text>
     <text x="184" y="571" class="badge-detail">during local dev</text>
   </g>
 
@@ -242,7 +242,7 @@
     <rect x="868" y="544" width="214" height="64" rx="18" fill="url(#glass)" stroke="#D5E3F7"/>
     <circle cx="904" cy="576" r="15" fill="#E6F4EA"/>
     <path d="M897 576L903 582L913 570" stroke="#34A853" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="932" y="571" class="badge-title">&lt; 1 min boot</text>
-    <text x="932" y="591" class="badge-detail">runtime ready locally</text>
+    <text x="932" y="571" class="badge-title">One container</text>
+    <text x="932" y="591" class="badge-detail">persistent local data</text>
   </g>
 </svg>

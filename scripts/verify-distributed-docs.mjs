@@ -107,6 +107,7 @@ const forbidden = [
 	"24443",
 	"free for developers",
 	"zero code changes",
+	"no code change",
 	"anonymous product analytics",
 	"does not send telemetry",
 	"~96%",
