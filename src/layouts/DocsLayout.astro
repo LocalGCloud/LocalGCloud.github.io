@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import DocFeedback from '../components/DocFeedback.astro';
 import FeedbackFab from '../components/FeedbackFab.astro';
 import RelatedPages from '../components/RelatedPages.astro';
+import { relatedAnchor } from '../data/relatedPages';
 import { createWebPageSchema } from '../data/productFacts';
 import { lastModifiedForRoute } from '../utils/page-dates.mjs';
 
@@ -69,7 +70,8 @@ const sidebarSections = [
   ]},
   { title: 'Concepts', items: [
     { label: 'Architecture', href: `${base}docs/architecture/` },
-    { label: 'LocalCloud vs Google Emulators', href: `${base}docs/localcloud-vs-google-emulators/` },
+    // "LocalCloud vs Google emulators" names /compare/google-emulators/ (src/data/relatedPages.ts).
+    { label: relatedAnchor('/docs/localcloud-vs-google-emulators/'), href: `${base}docs/localcloud-vs-google-emulators/` },
     { label: 'LocalStack for Google Cloud', href: `${base}localstack-for-google-cloud/` },
   ]},
   { title: 'Policies', items: [
