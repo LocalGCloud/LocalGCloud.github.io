@@ -154,9 +154,8 @@ const surfacePaths = [
 	"src/pages/docs/bigquery-emulator-features.mdx",
 	"src/pages/docs/bigtable-emulator-features.mdx",
 	"src/pages/docs/spanner-emulator-features.mdx",
-	"src/pages/bigquery-emulator.astro",
-	"src/pages/bigtable-emulator.astro",
-	"src/pages/spanner-emulator.astro",
+	"src/pages/services/[slug].astro",
+	"src/data/serviceGuides.ts",
 	"src/pages/gcp-integration-testing.astro",
 	"src/data/agenticContent.ts",
 	"agent-skills/skills/localcloud-seed-data/SKILL.md",
@@ -216,9 +215,8 @@ const dependencyPaths = [
 	"src/data/agenticContent.ts",
 	"src/pages/docs/bigtable-emulator-features.mdx",
 	"src/pages/docs/spanner-emulator-features.mdx",
-	"src/pages/bigquery-emulator.astro",
-	"src/pages/bigtable-emulator.astro",
-	"src/pages/spanner-emulator.astro",
+	"src/pages/services/[slug].astro",
+	"src/data/serviceGuides.ts",
 ];
 const dependencyDocs = dependencyPaths.map((path) => docs.get(path)).join("\n");
 for (const claim of [
@@ -248,14 +246,12 @@ for (const claim of [
 		`dependency-sensitive docs contain prohibited parity claim ${claim}`,
 	);
 }
-for (const service of ["bigquery", "bigtable", "spanner"]) {
-	assert(
-		docs
-			.get(`src/pages/${service}-emulator.astro`)
-			.includes("ServiceOverviewLanding"),
-		`${service} landing is not contract-derived`,
-	);
-}
+// The emulator FAQ on the service pages is built from the service contract, not hand-written.
+assert(
+	docs.get("src/pages/services/[slug].astro").includes("const faqItems = searchPage ?") &&
+		docs.get("src/pages/services/[slug].astro").includes("${service.envVar}"),
+	"service page emulator FAQ is not contract-derived",
+);
 const bigqueryFeatures = docs.get(
 	"src/pages/docs/bigquery-emulator-features.mdx",
 );

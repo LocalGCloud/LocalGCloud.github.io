@@ -11,7 +11,7 @@ import { availableServiceCount, services, servicesInCatalogOrder, isServiceDisab
 import { pricingFaq, proTierServiceNames } from '../src/data/pricingFaq.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
 import { relatedAnchor, relatedPagePairs } from '../src/data/relatedPages.ts';
-import { getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
+import { emulatorSearchPages, getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
 const sdkExamplesSource = await readFile(new URL('../src/pages/docs/sdk-examples.mdx', import.meta.url), 'utf8');
 
 const publicDirectory = new URL('../public/', import.meta.url);
@@ -24,10 +24,19 @@ const files = new Set((await readdir(distDirectory, { recursive: true, withFileT
   .map((entry) => relative(distDirectory.pathname, join(entry.parentPath, entry.name))));
 const htmlPages = new Map(await Promise.all([...files].filter((file) => file.endsWith('.html')).map(async (file) => [file, await readFile(new URL(file, distDirectory), 'utf8')])));
 
+// Merged pages leave a public/_redirects rule behind; links go to the rule's target instead.
+const redirectTargets = new Map((await readFile(publicPath('_redirects'), 'utf8')).split('\n')
+  .map((line) => line.trim()).filter((line) => line && !line.startsWith('#'))
+  .map((line) => line.split(/\s+/).slice(0, 2)));
+
 // Resolve a local URL to a built file the way the asset server does, then check any #fragment.
 const siteOrigin = new URL(productFacts.siteUrl).origin;
 const checkLocalLink = (file, target) => {
   if (target.origin !== siteOrigin) return;
+  if (redirectTargets.has(target.pathname)) {
+    errors.push(`${file} links ${target.pathname}, which public/_redirects sends to ${redirectTargets.get(target.pathname)}; link that page instead`);
+    return;
+  }
   const path = decodeURIComponent(target.pathname).replace(/^\//, '');
   const resolvedPath = files.has(path)
     ? path
@@ -419,6 +428,14 @@ for (const service of services) {
   if (planned && /<section\b[^>]*(?:\sdata-service-typical-uses|\sid="usage")/.test(html)) errors.push(`Unsupported service ${service.id} renders the supported-service template`);
   if (planned && html.includes('data-service-example')) errors.push(`Planned service ${service.id} advertises local example links`);
   if (!planned && !html.includes('data-service-example')) errors.push(`Service ${service.id} omits integration guides`);
+  // Agent testing is a section of the service page (plan R7, S30), not a page of its own: a
+  // validation check, a prompt whose copy button copies exactly the prompt shown, and what still
+  // needs Google Cloud.
+  const agentSection = html.match(/<section\b[^>]*\bid="ai-agent"[\s\S]*?<\/section>/)?.[0] ?? '';
+  const agentPrompt = plainText(agentSection.match(/<code\b[^>]*data-agent-prompt[^>]*>([\s\S]*?)<\/code>/)?.[1] ?? '');
+  const copiedPrompt = plainText(agentSection.match(/\bdata-copy="([^"]*)"/)?.[1] ?? '');
+  if (!planned && (!agentPrompt || copiedPrompt !== agentPrompt || !plainText(agentSection).includes('Google Cloud project'))) errors.push(`Service ${service.id} must render the "Use with an AI agent" section with a copyable prompt`);
+  if (planned && agentSection) errors.push(`Unsupported service ${service.id} renders the AI agent section`);
   if (!planned && (!html.includes('data-example-environment') || !text.includes('eval "$(localcloud env)"') || !text.includes(service.envVar.split('=')[0]) || !text.includes('GOOGLE_CLOUD_PROJECT'))) errors.push(`Service ${service.id} omits generated environment setup`);
   if (planned && html.includes('data-example-environment')) errors.push(`Planned service ${service.id} advertises local environment setup`);
   for (const example of guide.examples ?? []) {
@@ -429,6 +446,33 @@ for (const service of services) {
 }
 for (const id of Object.keys(serviceGuides)) {
   if (!services.some((service) => service.id === id)) errors.push(`Service guide ${id} has no published service`);
+}
+
+// The service pages that replaced the root /<service>-emulator/ pages (plan R7, S11): the
+// head-term title, only ports the service uses in the description, and FAQPage JSON-LD that
+// holds exactly the questions and answers the page shows.
+for (const [id, searchPage] of Object.entries(emulatorSearchPages)) {
+  const service = services.find((item) => item.id === id);
+  const contractService = docsContract.services.find((item) => item.id === id);
+  const html = htmlPages.get(`services/${service?.slug}/index.html`);
+  if (!service || !contractService || !html) {
+    errors.push(`emulatorSearchPages.${id} has no built service page`);
+    continue;
+  }
+  const route = `services/${service.slug}/`;
+  if (decodeEntities(html.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? '') !== searchPage.title) errors.push(`${route} must use the title "${searchPage.title}"`);
+  const ports = new Set([contractService.port, ...Object.values(contractService.additionalPorts)].map(String));
+  for (const [port] of searchPage.description.matchAll(/\b\d{4,5}\b/g)) {
+    if (!ports.has(port)) errors.push(`${route} description names port ${port}, which ${service.name} does not use`);
+  }
+  const faqJson = [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)]
+    .map(([, json]) => JSON.parse(json)).find((schema) => schema['@type'] === 'FAQPage');
+  const faqSection = html.match(/<section\b[^>]*\bid="faq"[\s\S]*?<\/section>/)?.[0] ?? '';
+  const shown = [...faqSection.matchAll(/<h3\b[^>]*>([\s\S]*?)<\/h3>\s*<p\b[^>]*>([\s\S]*?)<\/p>/g)]
+    .map(([, question, answer]) => [question, answer].map((text) => visibleText(text).replace(/\s+/g, ' ').trim()));
+  const published = (faqJson?.mainEntity ?? []).map((entry) => [entry.name, entry.acceptedAnswer?.text]);
+  if (!shown.length) errors.push(`${route} must show its emulator FAQ in <section id="faq">`);
+  if (JSON.stringify(published) !== JSON.stringify(shown)) errors.push(`${route} FAQPage JSON-LD must hold exactly the questions and answers the page shows`);
 }
 
 // 4. Prohibit 'partial local emulation' or service status badging as 'partial' in published pages
@@ -650,7 +694,7 @@ for (const file of htmlPages.keys()) {
 for (const hub of ['/services/', '/workflows/', '/compare/', '/glossary/', '/blog/']) {
   if (!agentsHubLinks.has(hub)) errors.push(`the /agents/ hub must link the ${hub} hub`);
 }
-const repeatedHubPages = [...agentsHubLinks].filter((href) => /^\/(?:workflows|compare|glossary|blog)\/[^/]+\/$|^\/services\/[^/]+\/ai-agent-local-testing\/$/.test(href));
+const repeatedHubPages = [...agentsHubLinks].filter((href) => /^\/(?:workflows|compare|glossary|blog)\/[^/]+\/$/.test(href));
 if (repeatedHubPages.length) errors.push(`the /agents/ hub repeats pages its section hubs list: ${repeatedHubPages.join(', ')}`);
 
 // Overlapping pages that stay separate (the pairs in src/data/relatedPages.ts; plan R7 merged

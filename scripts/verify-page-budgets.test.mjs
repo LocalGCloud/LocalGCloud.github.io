@@ -14,9 +14,10 @@ import { gzipSync } from 'node:zlib';
 const htmlBudget = { rawBytes: 184_700, gzipBytes: 37_400, styleBytes: 94_600, scriptBytes: 17_000 };
 const rawDocumentBytes = 21_800;
 // The Markdown twins of docs and service pages and the llms-full.txt bundle built from them
-// have their own ceilings: the largest twin and the bundle measured on 2026-10-05, plus 10%.
+// have their own ceilings: the largest twin measured on 2026-10-05, plus 10%, and the bundle
+// measured on 2026-10-06 after the R7 service merges (256,444 bytes), plus 5%.
 const markdownTwinBytes = 15_400;
-const llmsFullBytes = 239_500;
+const llmsFullBytes = 269_300;
 const isMarkdownTwin = (file) => /^(?:docs|services|compare)\/[^/]+\.md$/.test(file);
 
 const dist = new URL('../dist/', import.meta.url).pathname;

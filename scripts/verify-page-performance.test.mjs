@@ -372,11 +372,11 @@ function searchHarness(searchResults) {
   };
 }
 
-const bigQueryResult = (excerpt = '<mark>BigQuery</mark>') => ({ data: async () => ({ url: '/bigquery-emulator/', meta: { title: 'BigQuery' }, excerpt }) });
+const bigQueryResult = (excerpt = '<mark>BigQuery</mark>') => ({ data: async () => ({ url: '/services/bigquery/', meta: { title: 'BigQuery' }, excerpt }) });
 
 test('search renders Pagefind highlights while escaping other excerpt markup', async () => {
   const h = searchHarness(() => [{ data: async () => ({
-    url: '/bigquery-emulator/',
+    url: '/services/bigquery/',
     meta: { title: '<mark>Unsafe title</mark>' },
     excerpt: '<mark>BigQuery</mark> <img src=x onerror="alert(1)"> <mark onclick="alert(1)">unsafe</mark> &lt;mark&gt;',
   }) }]);

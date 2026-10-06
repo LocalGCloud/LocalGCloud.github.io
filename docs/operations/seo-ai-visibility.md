@@ -50,7 +50,7 @@ This map used to render on `/agents/`. It is guidance for writers, so it lives h
 | Reader job | Canonical route | Audience | Avoid |
 |---|---|---|---|
 | Give a specific coding agent a safe Google Cloud sandbox | `/agents/` | Developers using Claude Code, Codex-style CLIs, Cursor, or Gemini CLI | One page per prompt; duplicating `/ai/` |
-| Test one service locally with SDKs and environment variables | `/services/{service}/ai-agent-local-testing/` | Agents and maintainers validating BigQuery, Pub/Sub, Spanner, Cloud Storage, or Bigtable code | Splitting by language before the examples differ; claiming production parity |
+| Test one service locally with SDKs and environment variables | The "Use with an AI agent" section of `/services/{service}/` | Agents and maintainers validating BigQuery, Pub/Sub, Spanner, Cloud Storage, or Bigtable code | Splitting by language before the examples differ; claiming production parity |
 | Set up a repeatable local workflow for Terraform, integration tests, or internal CI (the Public Preview License permits non-production internal CI) | `/workflows/{workflow}/` | Platform, DevOps, and test owners | One page per CI vendor before the snippets diverge; implying real Google Cloud validation is optional |
 | Compare LocalCloud with another local or hosted sandbox | `/compare/{alternative}/` | Developers choosing between Google emulators, hosted code sandboxes, and BigQuery emulators | Attack pages; hiding where the alternative is better |
 | Look up agentic local-cloud vocabulary | `/glossary/{term}/` | Searchers, agents, and docs readers | Near-synonym pages with the same definition; turning entries into landing pages |

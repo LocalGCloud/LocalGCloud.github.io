@@ -15,18 +15,10 @@ const pagesDirectory = join(root, 'src', 'pages');
 // Template-driven pages: the page file is a thin shell around shared data and templates.
 const agenticPage = ['src/data/agenticContent.ts', 'src/components/AgenticContentPage.astro'];
 const agenticIndex = ['src/data/agenticContent.ts', 'src/components/AgenticIndexPage.astro'];
-const serviceLanding = ['src/components/ServiceOverviewLanding.astro', 'src/data/serviceEditorial.ts'];
 const contentSources = {
   'src/pages/index.astro': ['src/components/HomepageVariationFieldManual.astro', 'src/data/homepageFaq.ts'],
-  'src/pages/bigquery-emulator.astro': serviceLanding,
-  'src/pages/bigtable-emulator.astro': serviceLanding,
-  'src/pages/cloud-storage-emulator.astro': serviceLanding,
-  'src/pages/firestore-emulator.astro': serviceLanding,
-  'src/pages/pubsub-emulator.astro': serviceLanding,
-  'src/pages/spanner-emulator.astro': serviceLanding,
-  'src/pages/services/[slug].astro': ['src/data/serviceGuides.ts', 'src/data/serviceEditorial.ts'],
+  'src/pages/services/[slug].astro': ['src/data/serviceGuides.ts', 'src/data/serviceEditorial.ts', 'src/data/agenticContent.ts'],
   'src/pages/services/index.astro': ['src/data/serviceEditorial.ts'],
-  'src/pages/services/[slug]/ai-agent-local-testing.astro': agenticPage,
   'src/pages/agents/[slug].astro': agenticPage,
   'src/pages/blog/[slug].astro': agenticPage,
   'src/pages/compare/[slug].astro': agenticPage,

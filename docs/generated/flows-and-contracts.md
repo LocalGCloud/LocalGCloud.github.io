@@ -9,11 +9,10 @@ This reference describes site behavior from the recorded source. Emulator endpoi
 | `/` | `src/pages/index.astro:1–12`, homepage component | Evaluator entry with installation and catalog sections. |
 | `/pricing/` | Pricing page and `src/components/PricingWorkbench.astro:31–85` | One free-preview offer with Get started / View license. |
 | `/docs/` and `/docs/*/` | `src/pages/docs/*.mdx`, `src/layouts/DocsLayout.astro:8–73` | Frontmatter provides title/description and optional author/updated/reviewed dates. Shared navigation supplies previous/next links. |
-| `/services/`, `/services/{slug}/` | `services.ts`, `src/pages/services/[slug].astro:11–35` | One generated detail route per published service; slugs come from the editorial overlay. |
-| `/services/{slug}/ai-agent-local-testing/` | `src/data/agenticContent.ts:485–495` | Generated only for agent metadata not marked planned; includes service-specific boundaries. |
+| `/services/`, `/services/{slug}/` | `services.ts`, `src/pages/services/[slug].astro` | One generated detail route per published service; slugs come from the editorial overlay. Each local service has a "Use with an AI agent" section (`serviceAgentSections` in `src/data/agenticContent.ts`), and the six services in `emulatorSearchPages` (`src/data/serviceGuides.ts`) carry the "<service> emulator" title and FAQ. |
 | `/ai/` | AI onboarding page | Human entry to prompts, guides and machine-readable resources. |
 | `/agents/*/`, `/workflows/*/`, `/compare/*/`, `/glossary/*/`, generated `/blog/*/` | Typed arrays in `agenticContent.ts`, shared content renderer | Page records include identity, headings, prompts, sections, limitations and links. |
-| Service/search landing pages | `src/pages/*-emulator.astro` and other explicit landing routes | User intent pages; the priority set is defined in `scripts/search-routes.mjs:3–37`. |
+| Search landing pages | Explicit landing routes in `src/pages/` | User intent pages; the priority set is defined in `scripts/search-routes.mjs`. |
 | `/install.sh` | `public/install.sh` | Static installer download; does not run on the website server. |
 | `/llms.txt`, `/llms-full.txt` | Generated public files | Compact discovery and longer agent context; regeneration writes tracked files. |
 | `/immersive-demo/` | `src/pages/immersive-demo.astro:8–19` | Noindex visual experiment with mock data. |
