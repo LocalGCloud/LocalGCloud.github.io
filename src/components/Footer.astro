@@ -38,7 +38,8 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
     {/* Five groups that don't overlap. The header links the AI Agents landing page and
         Compare, and the docs sidebar links every docs page. No other page links About or
-        the cost evaluation page, so they must stay here. */}
+        the cost evaluation page, so they must stay here. The Emulators group links the
+        service guides, which the root /<service>-emulator/ URLs redirect to. */}
     <div class="site-footer__group">
       <h2>Product</h2>
       <ul>
@@ -75,12 +76,12 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
     <div class="site-footer__group">
       <h2>Emulators</h2>
       <ul>
-        <li><a href={`${base}bigquery-emulator/`}>BigQuery Emulator</a></li>
-        <li><a href={`${base}pubsub-emulator/`}>Pub/Sub Emulator</a></li>
-        <li><a href={`${base}spanner-emulator/`}>Spanner Emulator</a></li>
-        <li><a href={`${base}bigtable-emulator/`}>Bigtable Emulator</a></li>
-        <li><a href={`${base}firestore-emulator/`}>Firestore Emulator</a></li>
-        <li><a href={`${base}cloud-storage-emulator/`}>Cloud Storage Emulator</a></li>
+        <li><a href={`${base}services/bigquery/`}>BigQuery Emulator</a></li>
+        <li><a href={`${base}services/pubsub/`}>Pub/Sub Emulator</a></li>
+        <li><a href={`${base}services/spanner/`}>Spanner Emulator</a></li>
+        <li><a href={`${base}services/bigtable/`}>Bigtable Emulator</a></li>
+        <li><a href={`${base}services/firestore/`}>Firestore Emulator</a></li>
+        <li><a href={`${base}services/cloud-storage/`}>Cloud Storage Emulator</a></li>
       </ul>
     </div>
 
