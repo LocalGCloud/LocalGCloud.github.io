@@ -1,10 +1,12 @@
 ---
 import { publicPreviewPriceLabel } from '../data/productFacts';
+import { pricingFaq } from '../data/pricingFaq';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const docsHref = `${base}docs/`;
 const licenseHref = `${base}license/`;
+const siteHref = (path: string) => `${base}${path.replace(/^\//, '')}`;
 
 const workflows = [
   {
@@ -84,6 +86,21 @@ const workflows = [
         </div>
       </div>
     </div>
+
+    <section id="faq" class="preview-faq" aria-labelledby="preview-faq-title">
+      <span class="preview-workbench__label">Questions</span>
+      <h2 id="preview-faq-title">Pro tier and the end of the preview</h2>
+      <div class="preview-faq__list">
+        {pricingFaq.map((entry) => (
+          <article id={entry.id} class="preview-faq__item" aria-labelledby={`${entry.id}-question`}>
+            <h3 id={`${entry.id}-question`}>{entry.question}</h3>
+            <p>{entry.answer}</p>
+            <a class="preview-faq__source" href={siteHref(entry.source.href)}>{entry.source.label}</a>
+          </article>
+        ))}
+      </div>
+      <p class="preview-faq__note">These answers summarize the license; the <a href={licenseHref}>full license text</a> controls.</p>
+    </section>
   </div>
 </section>
 
@@ -275,7 +292,73 @@ const workflows = [
     text-wrap: pretty;
   }
 
+  .preview-faq {
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+
+  .preview-faq h2 {
+    margin-top: 0.85rem;
+    font-size: var(--fs-section);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+  }
+
+  .preview-faq__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+  }
+
+  .preview-faq__item {
+    padding: 1.5rem;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: 6rem;
+  }
+
+  .preview-faq__item h3 {
+    font-size: var(--fs-body);
+    letter-spacing: -0.02em;
+  }
+
+  .preview-faq__item p {
+    margin-top: 0.6rem;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+
+  .preview-faq__source,
+  .preview-faq__note a {
+    color: var(--text-2);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 0.25rem;
+  }
+
+  .preview-faq__source {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    margin-top: 0.35rem;
+    font-size: var(--fs-small);
+  }
+
+  .preview-faq__note {
+    margin-top: 1.25rem;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+  }
+
   @media (max-width: 840px) {
+    .preview-faq__list {
+      grid-template-columns: 1fr;
+    }
+
     .preview-workbench__offer {
       grid-template-columns: 1fr;
     }

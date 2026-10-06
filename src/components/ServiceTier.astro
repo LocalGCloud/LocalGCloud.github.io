@@ -1,0 +1,12 @@
+---
+// A service's tier in tables and runtime details. Pro links to the pricing answer that explains
+// it; services that don't run locally show a dash.
+import { pricingProTierPath, serviceTierLabel } from '../data/services';
+
+interface Props { service: { minTier: 'community' | 'pro'; status: string } }
+const { service } = Astro.props;
+const label = serviceTierLabel(service);
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+---
+{label === undefined ? '—' : service.minTier === 'pro' ? <a href={`${base}${pricingProTierPath.slice(1)}`} data-service-tier="pro">{label}</a> : label}

@@ -6,7 +6,8 @@ import { alternatives, alternativesReviewedAt, comparisonSummary } from '../src/
 import { docsContract } from '../src/data/docs-contract.ts';
 import { productFacts } from '../src/data/productFacts.ts';
 import { cliQuickStart } from '../src/utils/quickstart.mjs';
-import { availableServiceCount, services, isServiceDisabledByDefault } from '../src/data/services.ts';
+import { availableServiceCount, services, isServiceDisabledByDefault, proTierLabel } from '../src/data/services.ts';
+import { pricingFaq, proTierServiceNames } from '../src/data/pricingFaq.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
 import { getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
 const sdkExamplesSource = await readFile(new URL('../src/pages/docs/sdk-examples.mdx', import.meta.url), 'utf8');
@@ -228,6 +229,28 @@ try {
   }
 } catch {
   errors.push('dist/pricing/index.html must be published');
+}
+
+// "Pro" is explained once, on the pricing page, and every page that shows a service's tier uses
+// the same label and links there. Raw tier values (pro, community) never render.
+const pricingHtml = htmlPages.get('pricing/index.html') ?? '';
+const pricingText = visibleText(pricingHtml).replace(/\s+/g, ' ');
+for (const entry of pricingFaq) {
+  if (!pricingHtml.includes(`id="${entry.id}"`)) errors.push(`pricing page FAQ omits the #${entry.id} anchor`);
+  for (const text of [entry.question, entry.answer]) {
+    if (!pricingText.includes(text)) errors.push(`pricing page FAQ omits: ${text}`);
+  }
+}
+if (!proTierServiceNames.length || !proTierServiceNames.every((name) => (pricingFaq.find((entry) => entry.id === 'pro-tier')?.answer ?? '').includes(name))) errors.push('the pricing Pro-tier answer must name every supported Pro-tier service');
+const proTierLink = /<a\b[^>]*href="\/pricing\/#pro-tier"[^>]*data-service-tier="pro"[^>]*>([^<]*)<\/a>/;
+for (const service of services.filter((item) => item.minTier === 'pro' && item.marketingStatus === 'supported')) {
+  const html = htmlPages.get(`services/${service.slug}/index.html`) ?? '';
+  if (html.match(proTierLink)?.[1] !== proTierLabel) errors.push(`services/${service.slug}/ must show the tier as "${proTierLabel}" linked to /pricing/#pro-tier`);
+  if (!service.description.endsWith(`${proTierLabel}.`)) errors.push(`${service.id} catalog description must end with "${proTierLabel}."`);
+}
+for (const [file, html] of htmlPages) {
+  const raw = html.match(/<(?:dd|td)\b[^>]*>\s*(?:pro|community)\s*<\/(?:dd|td)>/);
+  if (raw) errors.push(`${file} renders a raw service tier (${raw[0]}); use the ServiceTier component`);
 }
 
 // Marketing Presentation Principles Verification:

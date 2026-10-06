@@ -4,7 +4,8 @@ title: Services Overview
 description: Compare available LocalCloud services, startup defaults, connections, and known limitations.
 ---
 
-import { availableServiceCount, comingSoonServiceCount, publishedServiceCount, serviceRegistryCount, services } from '../../data/services';
+import { availableServiceCount, comingSoonServiceCount, pricingProTierPath, proTierLabel, publishedServiceCount, serviceRegistryCount, services } from '../../data/services';
+import ServiceTier from '../../components/ServiceTier.astro';
 
 # Services overview
 
@@ -13,7 +14,7 @@ The runtime includes {serviceRegistryCount} service entries and publishes {publi
 A service guide separates the facts that affect normal use:
 
 1. **Starts by default** — whether `services.enabled: default` starts the service.
-2. **Minimum tier** — Community or Pro; this is a technical boundary, not a license grant.
+2. **Minimum tier** — Community, or <a href={pricingProTierPath}>{proTierLabel}</a>. The tier is a technical setting in the runtime; the license governs use.
 3. **Status** — Supported (ready for local use) or Unsupported (cloud-only).
 4. **Persistence** — whether data is volatile, metadata-only, service data, or stateless.
 5. **Connection** — the canonical container port and protocol. Use `localcloud env` for the actual host endpoint.
@@ -40,7 +41,7 @@ A service guide separates the facts that affect normal use:
           ) : (
             <>
               <td>{service.registryDefaultEnabled ? 'yes' : 'no'}</td>
-              <td>{service.minTier}</td>
+              <td><ServiceTier service={service} /></td>
               <td>{service.status === 'unsupported' || service.status === 'unknown' ? 'Unsupported' : 'Supported'}</td>
               <td>{service.persistence.scope}</td>
               <td>{service.endpointLabel}</td>

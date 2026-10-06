@@ -182,6 +182,19 @@ for (const path of ["public/llms.txt"]) {
 		`${path} lacks public-preview license boundaries`,
 	);
 	assert(value.includes("Free for open-source projects policy"), `${path} lacks the open-source free-use policy`);
+	// Pro-tier services carry the same label as the site, and preview releases keep their terms.
+	const proNames = contract.services.filter((service) => service.published && isLocal(service) && service.minTier === "pro").map((service) => service.name);
+	const proList = proNames.length < 3 ? proNames.join(" and ") : `${proNames.slice(0, -1).join(", ")}, and ${proNames.at(-1)}`;
+	assert(
+		proNames.length > 0 &&
+			value.includes(`${proList} are Pro-tier services, marked "Pro tier, free during preview": they are free during the public preview`) &&
+			value.includes("https://local.cloud/pricing/#pro-tier"),
+		`${path} must name every Pro-tier service as "Pro tier, free during preview" and link the pricing answer`,
+	);
+	assert(
+		value.includes("Each preview release keeps its terms if the preview ends or a later release uses different terms."),
+		`${path} must state that preview releases keep their terms`,
+	);
 	assert(value.includes("https://local.cloud/pricing/"), `${path} lacks pricing URL`);
 	assert(
 		value.indexOf("\n## Services\n") !== -1 && value.indexOf("\n## Services\n") < value.indexOf("\n## License\n"),

@@ -101,6 +101,17 @@ const protocolLabel = (protocol: string) => {
 	return protocol;
 };
 
+// The one label for the runtime's Pro service tier, used wherever a tier is shown; /pricing/#pro-tier
+// explains it. Public-preview releases run Pro-tier services without a license key.
+export const proTierLabel = "Pro tier, free during preview";
+export const pricingProTierPath = "/pricing/#pro-tier";
+
+// Undefined for services that don't run locally: a tier says nothing about them.
+export function serviceTierLabel(service: { minTier: "community" | "pro"; status: string }): string | undefined {
+	if (["unsupported", "unknown", "planned"].includes(service.status)) return undefined;
+	return service.minTier === "pro" ? proTierLabel : "Community";
+}
+
 export const serviceRegistryCount = docsContract.services.length;
 
 export const services: Service[] = docsContract.services.flatMap(
@@ -147,7 +158,11 @@ export const services: Service[] = docsContract.services.flatMap(
 			status: contractService.status,
 			catalogState,
 			envVar: `${contractService.envVar}=${contractService.envValue}`,
-			description: editorial.description,
+			// Catalog cards name the tier the same way the service pages and pricing do.
+			description:
+				contractService.minTier === "pro" && !isUnsupported && catalogState === "available"
+					? `${editorial.description} ${proTierLabel}.`
+					: editorial.description,
 			operations: contractService.operations,
 			supported:
 				catalogState === "coming-soon"

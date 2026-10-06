@@ -6,6 +6,7 @@ description: Configure LocalCloud projects, services, storage, TLS, and service-
 
 import Callout from '../../components/Callout.astro';
 import { docsContract } from '../../data/docs-contract';
+import ServiceTier from '../../components/ServiceTier.astro';
 
 # Configuration
 
@@ -99,14 +100,14 @@ The registry contains {docsContract.services.length} API surfaces, including the
 
 The default-disabled entries are {docsContract.services.filter((service) => !service.registryDefaultEnabled).map((service) => service.name).join(', ')}. Review the operation matrix before enabling them.
 
-<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Service registry defaults and license tiers">
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Service registry defaults and tiers">
 <table>
   <thead>
     <tr>
       <th>Service ID</th>
       <th>Service Name</th>
       <th>Starts by Default</th>
-      <th>Minimum License Tier</th>
+      <th>Minimum Tier</th>
     </tr>
   </thead>
   <tbody>
@@ -115,7 +116,7 @@ The default-disabled entries are {docsContract.services.filter((service) => !ser
         <td><code>{service.id}</code></td>
         <td>{service.name}{service.id === 'sheets' ? ' (Auxiliary integration API)' : ''}</td>
         <td>{service.registryDefaultEnabled ? 'yes' : 'no'}</td>
-        <td>{service.minTier}</td>
+        <td><ServiceTier service={service} /></td>
       </tr>
     ))}
   </tbody>

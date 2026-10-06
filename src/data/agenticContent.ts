@@ -1,7 +1,7 @@
 import { agenticFacts, agenticServiceMetadata, joinClauses } from "./agenticFacts";
 import { alternativesReviewedLabel } from "./alternatives";
 import { productFacts } from "./productFacts";
-import { availableServiceCount } from "./services";
+import { availableServiceCount, serviceTierLabel } from "./services";
 
 export type AgenticContentKind =
 	| "agent"
@@ -309,7 +309,7 @@ const servicePage = (
 		promptIds: [...new Set([promptId, "project-integration", "troubleshoot"])],
 		quickFacts: [
 			`Endpoint: ${service.envVar} (${service.endpointLabel}).`,
-			`${service.registryDefaultEnabled ? "Starts by default" : `Opt-in: add ${service.id} to localcloud start --services`}; minimum tier: ${service.minTier}.`,
+			`${service.registryDefaultEnabled ? "Starts by default" : `Opt-in: add ${service.id} to localcloud start --services`}; minimum tier: ${serviceTierLabel(service) ?? service.minTier}.`,
 			`Persistence: ${service.persistence.scope}. ${sentence(service.persistence.restartBehavior)}`,
 		],
 		sections: [

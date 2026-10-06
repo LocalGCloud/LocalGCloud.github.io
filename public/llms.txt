@@ -64,7 +64,7 @@ Every docs page, service guide and comparison also has a Markdown version: repla
 
 ## Services
 
-Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-in: `--services` sets the exact list of service IDs to run, for example `localcloud start --local-only --services firestore,gcs,pubsub`. Google Sheets serves read-only spreadsheet values as fixtures for other services.
+Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-in: `--services` sets the exact list of service IDs to run, for example `localcloud start --local-only --services firestore,gcs,pubsub`. Google Sheets serves read-only spreadsheet values as fixtures for other services. Bigtable, Spanner, GKE, Cloud Run, and Cloud KMS are Pro-tier services, marked "Pro tier, free during preview": they are free during the public preview and need no license key ([pricing](https://local.cloud/pricing/#pro-tier)).
 
 | Service | ID | Starts by default | Endpoints | Environment variable | Guide |
 | --- | --- | --- | --- | --- | --- |
@@ -101,7 +101,7 @@ Unsupported locally; use Google Cloud:
 
 ## License
 
-The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and internal pilots. Excluded uses: customer-facing or other production use; reselling LocalCloud or providing it as a hosted or managed service; redistribution or sublicensing; and modification except where applicable law requires permission. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends.
+The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and internal pilots. Excluded uses: customer-facing or other production use; reselling LocalCloud or providing it as a hosted or managed service; redistribution or sublicensing; and modification except where applicable law requires permission. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends. Each preview release keeps its terms if the preview ends or a later release uses different terms.
 
 - [Licensing](https://local.cloud/docs/licensing/): the terms in plain language
 - [License text](https://local.cloud/license/): the full Public Preview License Agreement, also as [plain text](https://local.cloud/license.txt)

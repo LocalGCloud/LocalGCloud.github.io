@@ -1,5 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { alternativesReviewedAt, comparisonSummary } from "../src/data/alternatives.ts";
+import { proTierServiceNames } from "../src/data/pricingFaq.ts";
+import { proTierLabel } from "../src/data/services.ts";
 import { presentContract } from "../src/utils/contract-presentation.mjs";
 import { cliQuickStart } from "../src/utils/quickstart.mjs";
 
@@ -174,7 +176,7 @@ Every docs page, service guide and comparison also has a Markdown version: repla
 
 ## Services
 
-Every service in the table runs locally. ${listNames(optInServices.map((service) => service.name))} are opt-in: \`--services\` sets the exact list of service IDs to run, for example \`localcloud start --local-only --services ${servicesExample}\`. Google Sheets serves read-only spreadsheet values as fixtures for other services.
+Every service in the table runs locally. ${listNames(optInServices.map((service) => service.name))} are opt-in: \`--services\` sets the exact list of service IDs to run, for example \`localcloud start --local-only --services ${servicesExample}\`. Google Sheets serves read-only spreadsheet values as fixtures for other services. ${listNames(proTierServiceNames)} are Pro-tier services, marked "${proTierLabel}": they are free during the public preview and need no license key ([pricing](${site}pricing/#pro-tier)).
 
 | Service | ID | Starts by default | Endpoints | Environment variable | Guide |
 | --- | --- | --- | --- | --- | --- |
@@ -186,7 +188,7 @@ ${unsupportedServices.map((service) => `- [${service.name}](${service.guideUrl})
 
 ## License
 
-${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends.
+${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends. Each preview release keeps its terms if the preview ends or a later release uses different terms.
 
 - [Licensing](${site}docs/licensing/): the terms in plain language
 - [License text](${site}license/): the full Public Preview License Agreement, also as [plain text](${site}license.txt)

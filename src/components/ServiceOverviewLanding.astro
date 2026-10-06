@@ -2,6 +2,7 @@
 import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from './ServiceIcon.astro';
 import { getServiceSignalLabel, isServiceDisabledByDefault, optInStartCommand, services } from '../data/services';
+import ServiceTier from './ServiceTier.astro';
 import { serviceCompatibilityEditorial } from '../data/serviceEditorial';
 import {
   createBreadcrumbSchema,
@@ -95,7 +96,7 @@ const structuredData = [
     <section class="site-section"><div class="container grid gap-4 lg:grid-cols-2">
       <article class="site-panel p-6"><h2>Runtime details</h2><dl class="mt-5 grid grid-cols-2 gap-4 text-sm">
         <div><dt class="font-semibold">Endpoints</dt><dd>{service.endpointLabel}</dd></div>
-        <div><dt class="font-semibold">Minimum tier</dt><dd>{service.minTier}</dd></div>
+        <div><dt class="font-semibold">Minimum tier</dt><dd><ServiceTier service={service} /></dd></div>
         <div><dt class="font-semibold">Persistence</dt><dd>{service.persistence.scope}</dd></div>
         <div><dt class="font-semibold">Documented workflows</dt><dd>{documentedOperations.length}</dd></div>
       </dl></article>

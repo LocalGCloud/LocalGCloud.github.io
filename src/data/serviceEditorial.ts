@@ -37,13 +37,13 @@ const editorial = {
   cloudbilling: { slug: 'cloud-billing', category: 'operations', iconId: 'cloudbilling', description: 'Billing-account, budget, and cost metadata workflows.' },
   logging: { slug: 'cloud-logging', category: 'operations', iconId: 'logging', description: 'Log ingestion, listing, metrics, and sink workflows.' },
   monitoring: { slug: 'cloud-monitoring', category: 'operations', iconId: 'monitoring', description: 'Time-series, metric-descriptor, alerting, and dashboard workflows.' },
-  gke: { slug: 'gke', category: 'compute', iconId: 'gke', description: 'Pro cluster workflows with opt-in k3d runtime integration.' },
+  gke: { slug: 'gke', category: 'compute', iconId: 'gke', description: 'Cluster workflows with opt-in k3d runtime integration.' },
   compute: { slug: 'compute-engine', category: 'compute', iconId: 'compute', description: "Compute Engine doesn't run in LocalCloud; use Google Cloud for VM workloads." },
-  cloudrun: { slug: 'cloud-run', category: 'compute', iconId: 'cloudrun', description: 'Pro service and revision workflows with host-runtime integration.' },
+  cloudrun: { slug: 'cloud-run', category: 'compute', iconId: 'cloudrun', description: 'Service and revision workflows with host-runtime integration.' },
   memorystore: { slug: 'memorystore', category: 'databases', iconId: 'memorystore', description: 'Valkey-backed RESP data workflows.' },
   workflows: { slug: 'cloud-workflows', category: 'integration', iconId: 'workflows', description: 'Workflow deployment and execution workflows.' },
   vertexai: { slug: 'vertex-ai', category: 'compute', iconId: 'vertexai', description: "Vertex AI doesn't run in LocalCloud; use Google Cloud for inference and training." },
-  kms: { slug: 'cloud-kms', category: 'security', iconId: 'kms', description: 'Pro key-management and cryptographic workflows.' },
+  kms: { slug: 'cloud-kms', category: 'security', iconId: 'kms', description: 'Key-management and cryptographic workflows.' },
   cloudsql: { slug: 'cloud-sql', category: 'databases', iconId: 'cloudsql', description: 'Local control-plane and MySQL data-plane workflows.' },
 } as const satisfies Record<string, ServiceEditorial>;
 
