@@ -39,7 +39,13 @@ export async function finalizeCsp(html, readAsset) {
     }
   }
   directives[scriptIndex] = `script-src ${[...sources].join(' ')}`;
-  return html.replace(meta, meta.replace(content, `${directives.join('; ')};`));
+  // A CSP <meta> governs only the elements after it, and Astro emits it after the head's
+  // inline scripts. Move it to directly after <meta charset> so it precedes every script.
+  html = html.replace(meta, '');
+  const charset = html.match(/<meta\b[^>]*\scharset=[^>]*>/i);
+  if (!charset) throw new Error('Missing <meta charset> to place the CSP metadata after');
+  const at = charset.index + charset[0].length;
+  return html.slice(0, at) + meta.replace(content, `${directives.join('; ')};`) + html.slice(at);
 }
 
 async function finalize() {

@@ -106,7 +106,7 @@ test('Cloudflare beacon loads from the trusted bootstrap with its public site to
 test('CSP permits the exact emitted script bytes and preserves the style policy', async () => {
   const inline = '\n window.ready = true;\n';
   const external = 'export const enabled = true;';
-  const html = `<head><meta http-equiv="Content-Security-Policy" content="script-src 'self' 'strict-dynamic'; style-src 'self' 'sha256-existing'; style-src-attr 'unsafe-inline';"><script>${inline}</script><script type="module" src="/_astro/app.js"></script></head>`;
+  const html = `<head><meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="script-src 'self' 'strict-dynamic'; style-src 'self' 'sha256-existing'; style-src-attr 'unsafe-inline';"><script>${inline}</script><script type="module" src="/_astro/app.js"></script></head>`;
   const hash = (text) => `sha256-${createHash('sha256').update(text).digest('base64')}`;
   const secured = await finalizeCsp(html, async (path) => {
     assert.equal(path, '/_astro/app.js');
@@ -126,9 +126,24 @@ test('CSP permits the exact emitted script bytes and preserves the style policy'
   await assert.rejects(finalizeCsp(html.replace('/_astro/app.js', 'https://unexpected.example/app.js'), async () => external), /Unexpected script origin/);
 });
 
+test('the CSP meta moves to directly after <meta charset>, ahead of every script', async () => {
+  const meta = `<meta http-equiv="content-security-policy" content="script-src 'self' 'strict-dynamic'; style-src 'self';">`;
+  const html = `<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><script>window.early = 1;</script><script type="application/ld+json">{"a":1}</script>${meta}<link rel="stylesheet" href="/_astro/a.css"></head><body><script>window.late = 1;</script></body></html>`;
+  const secured = await finalizeCsp(html, () => assert.fail('no external scripts'));
+  const moved = secured.match(/<meta charset="UTF-8">(<meta http-equiv="content-security-policy"[^>]*>)/);
+  assert.ok(moved, 'the policy follows the charset declaration');
+  assert.equal(secured.match(/http-equiv="content-security-policy"/g).length, 1);
+  assert.ok(secured.indexOf(moved[1]) < secured.indexOf('<script>'));
+  for (const script of secured.matchAll(/<script>([\s\S]*?)<\/script>/g)) {
+    assert.ok(moved[1].includes(`sha256-${createHash('sha256').update(script[1]).digest('base64')}`));
+  }
+  assert.equal(await finalizeCsp(secured, () => assert.fail('no external scripts')), secured);
+  await assert.rejects(finalizeCsp(html.replace('<meta charset="UTF-8">', ''), () => assert.fail('no external scripts')), /Missing <meta charset>/);
+});
+
 test('inline minification preserves cross-script globals and structured data', async () => {
   const schema = JSON.stringify({ '@context': 'https://schema.org', '@type': 'Organization', name: 'LocalCloud' });
-  const html = `<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'strict-dynamic' 'sha256-obsolete';"><script>var shared = { value: 7 }; function capture(value) { window.result = value; }</script><script>capture(shared.value);</script><script type="application/ld+json">${schema}</script>`;
+  const html = `<meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="script-src 'self' 'strict-dynamic' 'sha256-obsolete';"><script>var shared = { value: 7 }; function capture(value) { window.result = value; }</script><script>capture(shared.value);</script><script type="application/ld+json">${schema}</script>`;
   const secured = await finalizeCsp(html, () => assert.fail('no external scripts'));
   const context = { window: {} };
   for (const script of secured.matchAll(/<script>([\s\S]*?)<\/script>/g)) runInNewContext(script[1], context);
@@ -268,6 +283,26 @@ test('every built page links only hashed /_astro/ stylesheets served with the im
       if (!/^\/_astro\/[^/]+\.[A-Za-z0-9_-]{8}\.css$/.test(href)) failures.push(`${file.slice(distRoot.length)} links ${href}, not a hashed /_astro/*.css file`);
       else if (!existsSync(join(distRoot, href))) failures.push(`${file.slice(distRoot.length)} links missing ${href}`);
     }
+  }
+  assert.deepEqual(failures, []);
+});
+
+test('every built page declares its CSP directly after <meta charset>, before any executable script', () => {
+  const javascript = (attributes) => ['', 'module', 'text/javascript', 'application/javascript']
+    .includes((attributes.match(/\btype=["']?([^"'\s>]+)/i)?.[1] ?? '').toLowerCase());
+  const failures = [];
+  for (const file of walkHtml(distRoot)) {
+    const html = readFileSync(file, 'utf8');
+    const page = file.slice(distRoot.length);
+    const csp = html.match(/<meta\b[^>]*http-equiv=["']content-security-policy["'][^>]*>/i);
+    const charset = html.match(/<meta\b[^>]*\scharset=[^>]*>/i);
+    if (!csp || !charset) {
+      failures.push(`${page} lacks a CSP or charset meta`);
+      continue;
+    }
+    if (csp.index !== charset.index + charset[0].length) failures.push(`${page}: the CSP meta does not directly follow <meta charset>`);
+    const early = [...html.slice(0, csp.index).matchAll(/<script\b([^>]*)>/gi)].filter((match) => javascript(match[1]));
+    if (early.length) failures.push(`${page}: ${early.length} executable script(s) precede the CSP meta`);
   }
   assert.deepEqual(failures, []);
 });
