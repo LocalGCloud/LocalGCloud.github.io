@@ -53,6 +53,21 @@ const serializeJsonLd = (schema: JsonLd) => JSON.stringify(schema).replace(/</g,
 // Pagefind indexes only pages marked with data-pagefind-body, so the 404 page and
 // noindex pages stay out of site search.
 const pagefindBody = noindex ? undefined : '';
+// Chrome prefetches same-origin pages a visitor is likely to open (hover or pointerdown, the
+// "moderate" eagerness). Prefetch only fetches the HTML; it never prerenders, so no page
+// script or analytics runs early. The analytics proxy, the installer and raw agent documents
+// are never prefetched. finalize-static-csp hashes this block into script-src.
+const speculationRules = {
+  prefetch: [{
+    where: {
+      and: [
+        { href_matches: '/*' },
+        { not: { href_matches: ['/ingest*', '/install.sh', '/*.md', '/*.txt', '/license.txt'] } },
+      ],
+    },
+    eagerness: 'moderate',
+  }],
+};
 // Preserve inline presentation styles using the per-page CSP API.
 Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 ---
@@ -220,6 +235,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <a href="#main-content" class="skip-link">Skip to content</a>
     <slot />
     <SearchModal />
+    <script is:inline type="speculationrules" set:html={JSON.stringify(speculationRules)} />
 
     <script>
       // Enable reveal animations only when JS and IntersectionObserver are available;

@@ -473,6 +473,32 @@ test('every built page declares its CSP directly after <meta charset>, before an
   assert.deepEqual(failures, []);
 });
 
+test('every built page prefetches same-origin pages through CSP-hashed speculation rules, never prerendering', () => {
+  const failures = [];
+  for (const file of walkHtml(distRoot)) {
+    const html = readFileSync(file, 'utf8');
+    const page = file.slice(distRoot.length);
+    const blocks = [...html.matchAll(/<script\b[^>]*\btype="speculationrules"[^>]*>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
+    if (blocks.length !== 1) {
+      failures.push(`${page} has ${blocks.length} speculation rule blocks`);
+      continue;
+    }
+    const csp = html.match(/<meta\b[^>]*http-equiv="content-security-policy"[^>]*content="([^"]+)"/i)?.[1] ?? '';
+    const scriptSrc = csp.split(';').map((directive) => directive.trim()).find((directive) => directive.startsWith('script-src ')) ?? '';
+    if (!scriptSrc.includes(`'sha256-${createHash('sha256').update(blocks[0]).digest('base64')}'`)) failures.push(`${page}: script-src lacks the speculation rules hash`);
+    const rules = JSON.parse(blocks[0]);
+    if (Object.keys(rules).join() !== 'prefetch' || rules.prefetch.length !== 1) failures.push(`${page}: speculation rules must hold one prefetch rule and no prerender`);
+    const [rule] = rules.prefetch;
+    if (rule.eagerness !== 'moderate') failures.push(`${page}: prefetch eagerness is ${rule.eagerness}`);
+    const [sameOrigin, excluded] = rule.where?.and ?? [];
+    if (sameOrigin?.href_matches !== '/*') failures.push(`${page}: prefetch is not limited to same-origin links`);
+    for (const pattern of ['/ingest*', '/install.sh', '/*.md', '/*.txt', '/license.txt']) {
+      if (!excluded?.not?.href_matches?.includes(pattern)) failures.push(`${page}: prefetch does not exclude ${pattern}`);
+    }
+  }
+  assert.deepEqual(failures, []);
+});
+
 test('built homepage has local font preload, cached hashed stylesheets, sized hero and nonredundant brand marks', () => {
   const html = readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8');
   assert.doesNotMatch(html, /fonts\.(googleapis|gstatic)\.com/);
