@@ -4,7 +4,7 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import CopyButton from '../../components/CopyButton.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
-import { getServiceCategoryLabel, getServiceImplementationLabel, isServiceDisabledByDefault, publishedServiceCount, services } from '../../data/services';
+import { getServiceCategoryLabel, getServiceImplementationLabel, isServiceDisabledByDefault, optInStartCommand, publishedServiceCount, services } from '../../data/services';
 import { serviceTestingPages } from '../../data/agenticContent';
 import { serviceCompatibilityEditorial } from '../../data/serviceEditorial';
 import { getServiceCodeExamples, officialSampleLinks, serviceGuides, terraformExampleServiceIds } from '../../data/serviceGuides';
@@ -56,12 +56,12 @@ if (officialSampleLinks[service.id] && !isPlanned) exampleLinks.push({
   description: 'Browse language-specific samples. Adapt endpoints and use the local workflows listed above.',
 });
 const pageTitle = isPlanned
-  ? `${service.name} — Planned for LocalCloud`
+  ? `${service.name} — Unsupported in LocalCloud`
   : isAuxiliary
   ? `${service.name} Integration API — LocalCloud`
   : `${service.name} Local Emulator — LocalCloud`;
 const pageDescription = isPlanned
-  ? `${service.name} local support is planned. Learn what the service does and explore example uses on Google Cloud.`
+  ? `${service.name} doesn't run in LocalCloud yet; local support is planned. Use Google Cloud for ${service.name} and read the official documentation.`
   : `Learn what ${service.name} does, connect it to LocalCloud, and explore documented workflows, boundaries, code examples, and integrations.`;
 const exampleHref = (href: string) => href.startsWith('/') ? `${base}${href.slice(1)}` : href;
 ---
@@ -86,36 +86,38 @@ const exampleHref = (href: string) => href.startsWith('/') ? `${base}${href.slic
             <span class="service-hero-icon" data-service-hero-icon><ServiceIcon iconId={service.iconId} name={service.name} size={144} /></span>
             <div class="min-w-0">
               <h1>{service.name}</h1>
-              {isPlanned && <span class="site-chip site-chip--warn mt-3">Planned...</span>}
+              {isPlanned && <span class="site-chip site-chip--warn mt-3" data-unsupported-chip>Unsupported</span>}
             </div>
           </div>
           <p class="mt-5 max-w-[42rem] text-lg leading-8 text-[var(--text-2)] sm:text-xl">{guide.intro}</p>
-          <section class="mt-5" aria-labelledby="typical-uses-title" data-service-typical-uses>
+          {!isPlanned && <section class="mt-5" aria-labelledby="typical-uses-title" data-service-typical-uses>
             <h2 id="typical-uses-title" class="site-micro">Typical uses</h2>
             <p class="mt-3 max-w-[42rem] leading-7 text-[var(--text-2)]" data-service-when-to-use>{guide.whenToUse}</p>
             <p class="site-micro mt-4">Examples</p>
             <ul class="mt-3 flex flex-wrap gap-2" aria-label="Typical use examples">
               {guide.typicalUses.map((use) => <li class="site-chip">{use}</li>)}
             </ul>
-          </section>
+          </section>}
           <div class="mt-5" data-service-category><span class="site-chip site-chip--accent">{categoryLabel}</span></div>
           {!isPlanned && isServiceDisabledByDefault(service) && (
-            <p class="mt-4 text-sm leading-6 text-[var(--accent-strong)]">Enable {service.name} with <code>localcloud start --services {service.id}</code>. It is disabled by default to save workstation resources.</p>
+            <p class="mt-4 text-sm leading-6 text-[var(--accent-strong)]">{service.name} is opt-in to save memory. Add <code>{service.id}</code> to the services you start, for example <code>{optInStartCommand(service)}</code>; <code>--services</code> sets the exact list.</p>
           )}
-          <nav aria-label="On this page" class="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-[var(--accent-strong)]">
+          {!isPlanned && <nav aria-label="On this page" class="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-[var(--accent-strong)]">
             <a href="#workflows">Workflows &amp; boundaries</a>
             <a href="#usage">Example usage</a>
             {exampleLinks.length > 0 && <a href="#examples">Code &amp; integrations</a>}
-          </nav>
+          </nav>}
         </div>
 
         {isPlanned ? (
           <aside class="site-panel service-hero-connection p-6 reveal">
             <span class="site-kicker">Local availability</span>
-            <h2 class="mt-4 text-2xl font-semibold tracking-tight">Local support is planned</h2>
-            <p class="mt-4 leading-7 text-[var(--text-2)]">{service.name} is not available locally yet. Use Google Cloud for the example workflow on this page.</p>
-            {service.catalogState !== 'coming-soon' && <p class="mt-4 text-sm leading-6 text-[var(--text-2)]">Registry reference: {service.endpointLabel}. Stub routes only; no local execution.</p>}
-            <a class="mt-5 inline-block font-medium text-[var(--accent-strong)]" href={guide.reference}>Read the official service guide <span aria-hidden="true">↗</span></a>
+            <h2 class="mt-4 text-2xl font-semibold tracking-tight">Not available locally</h2>
+            <p class="mt-4 leading-7 text-[var(--text-2)]">{service.description}</p>
+            <ul class="mt-4 list-disc space-y-2 pl-5 text-sm leading-6 text-[var(--text-2)]" data-service-boundaries>
+              {compatibility.boundaries.map((boundary) => <li>{boundary}</li>)}
+            </ul>
+            <a class="mt-5 inline-block font-medium text-[var(--accent-strong)]" href={guide.reference}>Read the official {service.name} documentation <span aria-hidden="true">↗</span></a>
           </aside>
         ) : (
           <aside class="site-panel service-hero-connection p-5 reveal sm:p-6">
@@ -136,15 +138,13 @@ const exampleHref = (href: string) => href.startsWith('/') ? `${base}${href.slic
       </div>
     </section>
 
-    <section id="workflows" class="site-section site-section--tight scroll-mt-24">
+    {!isPlanned && <section id="workflows" class="site-section site-section--tight scroll-mt-24">
       <div class="container grid gap-4 lg:grid-cols-2">
         <section class="site-panel min-w-0 p-6 reveal" aria-labelledby="workflows-title">
           <h2 id="workflows-title" class="text-2xl font-semibold tracking-tight">Documented workflows</h2>
-          {isPlanned ? <p class="mt-5 leading-7 text-[var(--text-2)]">Planned... No local workflows are available yet.</p> : (
-            <ul class="mt-5 list-disc space-y-3 pl-5 leading-7 text-[var(--text-2)]" data-service-capabilities>
-              {compatibility.capabilities.map((capability) => <li>{capability.summary}</li>)}
-            </ul>
-          )}
+          <ul class="mt-5 list-disc space-y-3 pl-5 leading-7 text-[var(--text-2)]" data-service-capabilities>
+            {compatibility.capabilities.map((capability) => <li>{capability.summary}</li>)}
+          </ul>
         </section>
         <section class="site-panel site-panel--soft min-w-0 p-6 reveal" aria-labelledby="boundaries-title">
           <h2 id="boundaries-title" class="text-2xl font-semibold tracking-tight">Service boundaries</h2>
@@ -153,22 +153,20 @@ const exampleHref = (href: string) => href.startsWith('/') ? `${base}${href.slic
           </ul>
         </section>
       </div>
-    </section>
+    </section>}
 
-    <section id="usage" class="site-section site-section--tight scroll-mt-24" aria-labelledby="usage-title">
+    {!isPlanned && <section id="usage" class="site-section site-section--tight scroll-mt-24" aria-labelledby="usage-title">
       <div class="container">
         <div class="site-panel min-w-0 p-5 reveal sm:p-6">
-          <span class="site-kicker">{isPlanned ? 'Google Cloud example' : codeExamples.length ? 'Hello world' : 'Local workflow'}</span>
+          <span class="site-kicker">{codeExamples.length ? 'Hello world' : 'Local workflow'}</span>
           <h2 id="usage-title" class="mt-3 text-2xl font-semibold tracking-tight">Example usage</h2>
-          {!isPlanned && (
-            <div class="mt-5">
-              <p class="mb-3 text-sm leading-6 text-[var(--text-2)]">Start LocalCloud, wait for readiness, and export its environment in the same shell. Generated endpoints account for remapped ports.</p>
-              <div class="rounded-xl border border-[var(--line)] bg-[var(--surface-2)]">
-                <div class="flex items-center justify-between gap-3 border-b border-[var(--line)] px-4 py-3"><span class="site-micro">1. Environment · shell</span><CopyButton text={environmentSetup} /></div>
-                <pre class="overflow-x-auto p-4 text-sm leading-7"><code class="border-0 bg-transparent p-0" data-example-environment>{environmentSetup}</code></pre>
-              </div>
+          <div class="mt-5">
+            <p class="mb-3 text-sm leading-6 text-[var(--text-2)]">Start LocalCloud, wait for readiness, and export its environment in the same shell. Generated endpoints account for remapped ports.</p>
+            <div class="rounded-xl border border-[var(--line)] bg-[var(--surface-2)]">
+              <div class="flex items-center justify-between gap-3 border-b border-[var(--line)] px-4 py-3"><span class="site-micro">1. Environment · shell</span><CopyButton text={environmentSetup} /></div>
+              <pre class="overflow-x-auto p-4 text-sm leading-7"><code class="border-0 bg-transparent p-0" data-example-environment>{environmentSetup}</code></pre>
             </div>
-          )}
+          </div>
           {codeExamples.length > 0 ? (
             <div class:list={['mt-5 grid min-w-0 gap-5', codeExamples.length > 1 && 'xl:grid-cols-2']}>
               {codeExamples.map((example) => (
@@ -197,7 +195,7 @@ const exampleHref = (href: string) => href.startsWith('/') ? `${base}${href.slic
           )}
         </div>
       </div>
-    </section>
+    </section>}
 
     {exampleLinks.length > 0 && (
       <section id="examples" class="site-section scroll-mt-24">

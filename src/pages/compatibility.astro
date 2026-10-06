@@ -19,7 +19,7 @@ const structuredData = [
     <div class="container"><div class="max-w-[54rem] reveal">
       <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Supported services</span>
       <h1 class="mt-4">LocalCloud supported services and boundaries</h1>
-      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">Build and test Google Cloud applications locally with standard SDKs, real queries, and local execution workflows. Services tagged Planned... are not available locally yet. Select a service for its detailed API guide.</p>
+      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">Build and test Google Cloud applications locally with standard SDKs, real queries, and local execution workflows. Services marked Unsupported don't run locally yet. Select a service for its detailed API guide.</p>
       <div class="mt-8 flex flex-wrap gap-3"><a href={`${base}services/`} class="site-button site-button--primary">Browse all {publishedServiceCount} guides</a><a href={`${base}docs/configuration/`} class="site-button site-button--secondary">Configure services</a></div>
       <p class="mt-5 text-sm text-[var(--text-2)]">Reviewed against upstream documentation on <time datetime={docsContract.reviewedAt}>{docsContract.reviewedAt}</time>.</p>
     </div></div>
@@ -45,7 +45,7 @@ const structuredData = [
                 <th scope="row" class="py-5 pr-6 font-normal">
                   <div class="flex flex-wrap items-center gap-2">
                     <a class="font-semibold text-[var(--accent-strong)]" href={`${base}services/${service.slug}/`}>{service.name}</a>
-                    {unsupported && <span class="site-chip site-chip--warn">Planned...</span>}
+                    {unsupported && <span class="site-chip site-chip--warn" data-unsupported-chip>Unsupported</span>}
                   </div>
                   <div class="mt-2 font-mono text-xs leading-5 text-[var(--text-2)]">{service.catalogState === 'coming-soon' ? 'No local endpoint' : service.endpointLabel}</div>
                   {unsupported && service.catalogState !== 'coming-soon' && <p class="mt-1 text-xs text-[var(--text-2)]">Stub routes only</p>}

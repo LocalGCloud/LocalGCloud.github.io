@@ -1,7 +1,7 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from './ServiceIcon.astro';
-import { getServiceSignalLabel, isServiceDisabledByDefault, services } from '../data/services';
+import { getServiceSignalLabel, isServiceDisabledByDefault, optInStartCommand, services } from '../data/services';
 import { serviceCompatibilityEditorial } from '../data/serviceEditorial';
 import {
   createBreadcrumbSchema,
@@ -36,15 +36,8 @@ const pageUrl = new URL(Astro.url.pathname, productFacts.siteUrl).toString();
 
 // FAQ answers are generated from the service contract so they stay accurate as
 // the upstream documentation snapshot changes.
-const faqItems = isUnsupported
-  ? [{ q: `Can I use ${service.name} in LocalCloud?`, a: `${service.name} is unsupported in LocalCloud. Its registry entry or configuration does not establish a supported application integration. Read the service guide and operation matrix before planning a workflow.` }]
-  : isComingSoon
-  ? [
-      {
-        q: `Is there a local ${service.name} emulator in LocalCloud?`,
-        a: `No. ${service.name} is unsupported in LocalCloud, so there is no local endpoint to configure. Use real Google Cloud for this service.`,
-      },
-    ]
+const faqItems = isUnsupported || isComingSoon
+  ? [{ q: `Can I use ${service.name} in LocalCloud?`, a: `No. ${service.name} is not available locally, so there is no local endpoint to configure. Use Google Cloud for this service.` }]
   : [
       {
         q: `How do I run ${service.name} locally?`,
@@ -93,7 +86,7 @@ const structuredData = [
     <h1 class="mt-6">{isUnsupported || isComingSoon ? `${service.name} is unsupported in LocalCloud` : `Run ${service.name} workflows locally`}</h1>
     <p class="mt-6 text-lg leading-8 text-[var(--text-2)]">{service.description}</p>
     {!isUnsupported && isServiceDisabledByDefault(service) && (
-      <p class="mt-3 text-sm text-[var(--accent-strong)]">Note: {service.name} is disabled by default to save workstation resources. Start it with <code>localcloud start --services {service.id}</code>.</p>
+      <p class="mt-3 text-sm leading-6 text-[var(--accent-strong)]">{service.name} is opt-in to save memory. Add <code>{service.id}</code> to the services you start, for example <code>{optInStartCommand(service)}</code>; <code>--services</code> sets the exact list.</p>
     )}
     <div class="mt-8 flex flex-wrap gap-3"><a class="site-button site-button--primary" href={`${base}services/${service.slug}/`}>View service guide</a><a class="site-button site-button--secondary" href={`${base}compatibility/`}>Compatibility matrix</a><a class="site-button site-button--secondary" href={`${base}gcp-emulator/`}>All local GCP services</a></div>
   </div></div></section>

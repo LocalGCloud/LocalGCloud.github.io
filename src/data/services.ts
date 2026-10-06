@@ -186,9 +186,20 @@ export function isServiceDisabledByDefault(service: Service): boolean {
 	return service.marketingStatus === "supported" && !service.registryDefaultEnabled;
 }
 
+// `--services` sets the exact list of services to start, so an opt-in example keeps two
+// default services alongside the opt-in one.
+export function optInStartCommand(service: Service): string {
+	const defaults = services
+		.filter((candidate) => candidate.registryDefaultEnabled && candidate.marketingStatus === "supported" && candidate.id !== service.id)
+		.slice(0, 2)
+		.map((candidate) => candidate.id);
+	return `localcloud start --local-only --services ${[service.id, ...defaults].join(",")}`;
+}
+
 export function getServiceSignalLabel(service: Service): string {
 	if (service.catalogState === "coming-soon" || service.marketingStatus === "unsupported") return "Unsupported";
-	if (isServiceDisabledByDefault(service)) return "Disabled by default";
+	// Opt-in services (Firestore, GKE, Cloud Run) are supported; their descriptions and
+	// pages say how to enable them, so the signal stays positive.
 	const count = service.supported.length;
 	return `${count} documented ${count === 1 ? "workflow" : "workflows"}`;
 }

@@ -88,7 +88,7 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["firestore.queries.indexes"], summary: "Queries and single-field indexes" },
     ],
     boundaries: [
-      "Opt-in: localcloud start --services firestore",
+      "Opt-in: add firestore to localcloud start --services",
       "Validate composite indexes, concurrent transactions, listeners, and transforms",
       "Security Rules and Firestore triggers need runtime validation",
     ],

@@ -217,12 +217,17 @@ const compatibilityHeaders = [...compatibilityHead.matchAll(/<th\b[^>]*>([\s\S]*
 if (JSON.stringify(compatibilityHeaders) !== JSON.stringify(['Service', 'Local capabilities', 'Boundaries'])) errors.push('Compatibility table must contain only Service, Local capabilities, and Boundaries columns');
 const compatibilityBody = compatibilityTable.match(/<tbody\b[^>]*>([\s\S]*?)<\/tbody>/)?.[1] ?? '';
 const compatibilityRows = [...compatibilityBody.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/g)].map((match) => match[1]);
+// Unsupported is the one status label for services that do not run locally.
+const unsupportedChip = /<span\b[^>]*data-unsupported-chip[^>]*>Unsupported<\/span>/;
+for (const [file, html] of htmlPages) {
+  if (html.includes('Planned...')) errors.push(`${file} uses the retired "Planned..." status label; use Unsupported`);
+}
 if (compatibilityRows.length !== services.length) errors.push('Compatibility table must include every published service');
 for (const service of services) {
   const row = compatibilityRows.find((markup) => markup.includes(`/services/${service.slug}/`)) ?? '';
   const serviceCell = row.match(/<th\b[^>]*scope="row"[^>]*>([\s\S]*?)<\/th>/)?.[1] ?? '';
   const unsupported = service.catalogState === 'coming-soon' || service.marketingStatus === 'unsupported';
-  if (serviceCell.includes('>Planned...</span>') !== unsupported) errors.push(`Compatibility tag disagrees with support state for ${service.id}`);
+  if (unsupportedChip.test(serviceCell) !== unsupported) errors.push(`Compatibility tag disagrees with support state for ${service.id}`);
   if (service.catalogState !== 'coming-soon' && !serviceCell.includes(service.endpointLabel)) errors.push(`Compatibility service cell omits protocol/ports for ${service.id}`);
   if (unsupported && !row.includes('colspan="2"')) errors.push(`Unsupported compatibility row ${service.id} must span its two detail columns`);
 }
@@ -253,12 +258,17 @@ for (const service of services) {
     }
   }
   if (html.includes('id="performance"') || text.includes('Measure your workload') || text.includes('Performance considerations')) errors.push(`Service ${service.id} still renders the removed performance section`);
-  for (const required of [guide.intro, guide.whenToUse, ...guide.typicalUses, ...(codeExamples.length ? [] : [guide.example.title, ...guide.example.steps]), 'Related guides']) {
+  const planned = service.catalogState === 'coming-soon' || service.marketingStatus === 'unsupported';
+  // An unsupported service page is condensed: status, what to use instead, and the official docs.
+  const requiredGuideContent = planned
+    ? [guide.intro, 'Related guides']
+    : [guide.intro, guide.whenToUse, ...guide.typicalUses, ...(codeExamples.length ? [] : [guide.example.title, ...guide.example.steps]), 'Related guides'];
+  for (const required of requiredGuideContent) {
     if (!text.includes(required)) errors.push(`Service ${service.id} omits guide content: ${required}`);
   }
   if (!html.includes(`href="${guide.reference}"`)) errors.push(`Service ${service.id} omits official reference`);
-  const planned = service.catalogState === 'coming-soon' || service.marketingStatus === 'unsupported';
-  if (planned !== html.includes('>Planned...</span>')) errors.push(`Service ${service.id} planned tag disagrees with compatibility`);
+  if (planned !== unsupportedChip.test(html)) errors.push(`Service ${service.id} Unsupported tag disagrees with compatibility`);
+  if (planned && /<section\b[^>]*(?:\sdata-service-typical-uses|\sid="usage")/.test(html)) errors.push(`Unsupported service ${service.id} renders the supported-service template`);
   if (planned && html.includes('data-service-example')) errors.push(`Planned service ${service.id} advertises local example links`);
   if (!planned && !html.includes('data-service-example')) errors.push(`Service ${service.id} omits integration guides`);
   if (!planned && (!html.includes('data-example-environment') || !text.includes('eval "$(localcloud env)"') || !text.includes(service.envVar.split('=')[0]) || !text.includes('GOOGLE_CLOUD_PROJECT'))) errors.push(`Service ${service.id} omits generated environment setup`);
