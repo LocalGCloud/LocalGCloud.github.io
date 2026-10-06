@@ -36,33 +36,41 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
       </p>
     </div>
 
+    {/* Five groups that don't overlap. The header links the AI Agents landing page and
+        Compare, and the docs sidebar links every docs page. No other page links About,
+        Cost Optimization or Local Cloud Development, so they must stay here. */}
     <div class="site-footer__group">
       <h2>Product</h2>
       <ul>
-        <li><a href={base}>Homepage</a></li>
         <li><a href={`${base}services/`}>Services</a></li>
-        <li><a href={`${base}gcp-emulator/`}>GCP Emulator</a></li>
-        <li><a href={`${base}pricing/`}>Pricing</a></li>
         <li><a href={`${base}compatibility/`}>Compatibility</a></li>
-        <li><a href={`${base}docs/console/`}>Web Console</a></li>
-        <li><a href={`${base}docs/what-is-gcp-emulator/`}>What is a GCP Emulator?</a></li>
+        <li><a href={`${base}pricing/`}>Pricing</a></li>
+        <li><a href={`${base}gcp-emulator/`}>GCP Emulator Overview</a></li>
+        <li><a href={`${base}optimize-gcp-costs/`}>Cost Optimization</a></li>
+        <li><a href={`${base}reduce-gcp-dev-costs/`}>Evaluate Local Dev Costs</a></li>
       </ul>
     </div>
 
     <div class="site-footer__group">
-      <h2>For AI agents</h2>
+      <h2>Docs</h2>
       <ul>
-        <li><a href={`${base}local-cloud-for-ai-agents/`}>Local Cloud for AI Agents</a></li>
+        <li><a href={`${base}docs/`}>Getting Started</a></li>
+        <li><a href={`${base}how-to-run-google-cloud-locally/`}>Run GCP Locally</a></li>
+        <li><a href={`${base}local-cloud-development/`}>Local Cloud Development</a></li>
+        <li><a href={`${base}gcp-integration-testing/`}>Integration Testing</a></li>
+        <li><a href={`${base}docs/sdk-examples/`}>SDK Examples</a></li>
+        <li><a href={`${base}docs/faq/`}>FAQ</a></li>
+      </ul>
+    </div>
+
+    <div class="site-footer__group">
+      <h2>AI agents</h2>
+      <ul>
         <li><a href={`${base}ai/`}>AI Agent Guide</a></li>
-        <li><a href={`${base}ai/agents.md`}>Agent Guide (Markdown)</a></li>
-        <li><a href={`${base}llms.txt`}>llms.txt</a></li>
         <li><a href={`${base}agents/`}>Agent Sandboxes</a></li>
         <li><a href={`${base}workflows/`}>Agent Workflows</a></li>
-        <li><a href={`${base}compare/`}>Comparisons</a></li>
-        <li><a href={`${base}glossary/`}>Glossary</a></li>
-        <li><a href={`${base}blog/`}>Blog and Demos</a></li>
-        <li><a href={`${base}blog/localcloud-for-ai-agents/`}>LocalCloud for AI Agents</a></li>
-        <li><a href={`${base}blog/run-dataproc-locally-docker/`}>Run Dataproc in Docker</a></li>
+        <li><a href={`${base}ai/agents.md`}>Agent Guide (Markdown)</a></li>
+        <li><a href={`${base}llms.txt`}>llms.txt</a></li>
       </ul>
     </div>
 
@@ -79,22 +87,10 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
     </div>
 
     <div class="site-footer__group">
-      <h2>Resources</h2>
+      <h2>Company</h2>
       <ul>
-        <li><a href={`${base}docs/`}>Getting Started</a></li>
-        <li><a href={`${base}how-to-run-google-cloud-locally/`}>Run GCP Locally</a></li>
-        <li><a href={`${base}local-cloud-development/`}>Local Cloud Development</a></li>
-        <li><a href={`${base}gcp-integration-testing/`}>Integration Testing</a></li>
-        <li><a href={`${base}optimize-gcp-costs/`}>Cost Optimization</a></li>
-        <li><a href={`${base}reduce-gcp-dev-costs/`}>Evaluate Local Dev Costs</a></li>
-        <li><a href={`${base}docs/architecture/`}>Architecture</a></li>
-        <li><a href={`${base}docs/sdk-examples/`}>SDK Examples</a></li>
-        <li><a href={`${base}immersive-demo/`}>Interactive IDE Demo</a></li>
-        <li><a href={`${base}localstack-for-google-cloud/`}>LocalStack for Google Cloud</a></li>
-        <li><a href="https://github.com/LocalGCloud/LocalGCloud.github.io" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-        <li><a href={`${base}docs/faq/`}>FAQ</a></li>
-        <li><a href={`${base}docs/licensing/`}>Licensing</a></li>
         <li><a href={`${base}about/`}>About</a></li>
+        <li><a href={`${base}blog/`}>Blog</a></li>
         <li><a href={`${base}changelog/`}>Changelog</a></li>
       </ul>
     </div>
@@ -107,8 +103,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
         Email <a href={`mailto:${productFacts.contactEmail}`}>{productFacts.contactEmail}</a> ·
         AI agents and integrations <a href={`mailto:${productFacts.agentContactEmail}`}>{productFacts.agentContactEmail}</a> ·
         <a href={`${base}contact/`}>Contact</a> ·
-        <a href={`${base}security/`}>Security</a> ·
-        <a href={`${base}changelog/`}>Changelog</a>
+        <a href={`${base}security/`}>Security</a>
       </p>
     </div>
     <span class="site-footer__legal-links">

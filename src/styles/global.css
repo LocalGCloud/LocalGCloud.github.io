@@ -769,7 +769,7 @@
 
 .site-footer__grid {
   display: grid;
-  grid-template-columns: 1.15fr repeat(4, minmax(0, 1fr));
+  grid-template-columns: 1.4fr repeat(5, minmax(0, 1fr));
   gap: 2rem;
   padding: 2.5rem 0 2rem;
   border-top: 1px solid var(--line);
