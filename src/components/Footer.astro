@@ -38,7 +38,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
     {/* Five groups that don't overlap. The header links the AI Agents landing page and
         Compare, and the docs sidebar links every docs page. No other page links About or
-        Cost Optimization, so they must stay here. */}
+        the cost evaluation page, so they must stay here. */}
     <div class="site-footer__group">
       <h2>Product</h2>
       <ul>
@@ -46,7 +46,6 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
         <li><a href={`${base}compatibility/`}>Compatibility</a></li>
         <li><a href={`${base}pricing/`}>Pricing</a></li>
         <li><a href={`${base}gcp-emulator/`}>GCP Emulator Overview</a></li>
-        <li><a href={`${base}optimize-gcp-costs/`}>Cost Optimization</a></li>
         <li><a href={`${base}reduce-gcp-dev-costs/`}>Evaluate Local Dev Costs</a></li>
       </ul>
     </div>

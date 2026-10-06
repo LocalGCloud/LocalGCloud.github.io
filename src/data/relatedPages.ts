@@ -33,14 +33,6 @@ const pages: Record<string, RelatedPage> = {
 		anchor: "BigQuery emulator alternatives",
 		note: "When a standalone emulator, LocalCloud or real BigQuery fits an agent workflow.",
 	},
-	"/reduce-gcp-dev-costs/": {
-		anchor: "Evaluate local GCP development costs",
-		note: "A worked example for test runs moved to localhost.",
-	},
-	"/optimize-gcp-costs/": {
-		anchor: "Optimize GCP costs",
-		note: "A production cost checklist that starts from your own billing exports.",
-	},
 	"/gcp-integration-testing/": {
 		anchor: "GCP integration testing in CI",
 		note: "GitHub Actions, GitLab CI and Jenkins templates with health gates.",
@@ -126,7 +118,6 @@ for (const service of localServices) {
 
 // Pairs list the default survivor first. A page's counterparts appear in this order.
 export const relatedPagePairs: RelatedPair[] = [
-	{ pages: ["/reduce-gcp-dev-costs/", "/optimize-gcp-costs/"], finding: "S22" },
 	{ pages: ["/gcp-integration-testing/", "/workflows/github-actions-gcp-emulator/"], finding: "S23" },
 	{ pages: ["/gcp-integration-testing/", "/workflows/integration-tests/"], finding: "S23" },
 	{ pages: ["/gcp-integration-testing/", "/workflows/agentic-ci/"], finding: "S23" },

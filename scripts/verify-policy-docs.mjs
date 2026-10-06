@@ -29,7 +29,6 @@ const paths = [
 	"src/components/SearchModal.astro",
 	"src/components/DocFeedback.astro",
 	"src/components/FeedbackFab.astro",
-	"src/pages/optimize-gcp-costs.astro",
 	"src/pages/reduce-gcp-dev-costs.astro",
 	"src/pages/localstack-for-google-cloud.astro",
 	"src/data/productFacts.ts",
@@ -168,8 +167,9 @@ for (const path of [
 		`${path} lacks adjacent privacy disclosure`,
 	);
 }
+// The one cost page (/optimize-gcp-costs/ redirects to it) keeps the license boundary next to
+// its example and states no savings figure.
 for (const path of [
-	"src/pages/optimize-gcp-costs.astro",
 	"src/pages/reduce-gcp-dev-costs.astro",
 ]) {
 	const source = docs.get(path);

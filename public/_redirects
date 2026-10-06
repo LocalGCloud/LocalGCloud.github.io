@@ -17,6 +17,8 @@
 /docs/localcloud-vs-individual-emulators/ /compare/google-emulators/ 301
 /local-cloud-development /how-to-run-google-cloud-locally/ 301
 /local-cloud-development/ /how-to-run-google-cloud-locally/ 301
+/optimize-gcp-costs /reduce-gcp-dev-costs/ 301
+/optimize-gcp-costs/ /reduce-gcp-dev-costs/ 301
 
 /favicon.ico /favicon.png 301
 /ai/AGENTS.md /ai/agent-template.md 301
