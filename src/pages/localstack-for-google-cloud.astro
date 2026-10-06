@@ -8,7 +8,6 @@ import {
 } from '../data/productFacts';
 import { alternativesReviewedAt, alternativesReviewedLabel } from '../data/alternatives';
 import { availableServiceCount } from '../data/services';
-import { relatedAnchor } from '../data/relatedPages';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
@@ -136,6 +135,11 @@ const structuredData = [
               <td class="p-4 text-[var(--text-2)]">{availableServiceCount} in one Docker container</td>
             </tr>
             <tr class="border-b border-[var(--border)]">
+              <th scope="row" class="p-4 text-left font-semibold text-[var(--text)]">SDK routing</th>
+              <td class="p-4 text-[var(--text-2)]">AWS SDK endpoint overrides</td>
+              <td class="p-4 text-[var(--text-2)]">Google Cloud SDK emulator environment variables and endpoint overrides</td>
+            </tr>
+            <tr class="border-b border-[var(--border)]">
               <th scope="row" class="p-4 text-left font-semibold text-[var(--text)]">Sign-up and plans</th>
               <td class="p-4 text-[var(--text-2)]">Account and auth token required for current releases since March 23, 2026; free Hobby plan for non-commercial use, paid plans for commercial use</td>
               <td class="p-4 text-[var(--text-2)]">No account or license key; free during the public preview, and free for open-source projects after it</td>
@@ -146,9 +150,9 @@ const structuredData = [
               <td class="p-4 text-[var(--text-2)]">Develop and test GCP-connected applications locally</td>
             </tr>
             <tr class="border-b border-[var(--border)]">
-              <th scope="row" class="p-4 text-left font-semibold text-[var(--text)]">LocalCloud fit</th>
-              <td class="p-4 text-[var(--text-2)]">Not a substitute for AWS emulation</td>
-              <td class="p-4 text-[var(--text-2)]">GCP services, local endpoints, console, and permitted non-production workflows</td>
+              <th scope="row" class="p-4 text-left font-semibold text-[var(--text)]">Agent sandbox use</th>
+              <td class="p-4 text-[var(--text-2)]">Gives agent-written AWS code a local target</td>
+              <td class="p-4 text-[var(--text-2)]">Gives agent-written Google Cloud code a local target with no default credentials or billing project</td>
             </tr>
             <tr>
               <th scope="row" class="p-4 text-left font-semibold text-[var(--text)]">Production validation</th>
@@ -159,7 +163,7 @@ const structuredData = [
         </table>
       </div>
       <p class="mt-4 text-sm leading-6 text-[var(--text-2)]">
-        LocalStack facts reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time> from <a href="https://www.localstack.cloud/pricing">LocalStack pricing</a> and <a href="https://blog.localstack.cloud/localstack-single-image-next-steps/">LocalStack's single-image announcement</a>. See the <a href={`${base}compare/`}>full comparison</a>, including Google's own emulators.
+        LocalStack facts reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time> from <a href="https://www.localstack.cloud/">LocalStack's site</a>, <a href="https://www.localstack.cloud/pricing">LocalStack pricing</a> and <a href="https://blog.localstack.cloud/localstack-single-image-next-steps/">LocalStack's single-image announcement</a>. See the <a href={`${base}compare/`}>full comparison</a>, including Google's own emulators.
       </p>
     </div>
   </section>
@@ -170,13 +174,12 @@ const structuredData = [
         <span class="site-kicker">Straight answer</span>
         <h2 class="mt-4">When LocalStack is the better choice</h2>
         <p class="mt-4 leading-8 text-[var(--text-2)]">
-          If your application calls AWS APIs, use LocalStack. LocalCloud cannot serve S3, DynamoDB, Lambda, or SQS calls, and no amount of configuration will change that. LocalStack is also the older and more widely deployed project. LocalCloud is the right pick only when the code under test targets Google Cloud &mdash; BigQuery, Pub/Sub, Spanner, Bigtable, or Cloud Storage.
+          If your application calls AWS APIs, use LocalStack. AWS SDK calls don't reach LocalCloud, and Google Cloud SDK calls don't reach LocalStack, so LocalCloud cannot serve S3, DynamoDB, Lambda, or SQS calls. LocalStack is also the older and more widely deployed project, with a larger community and a wider published integration surface. LocalCloud is the right pick only when the code under test targets Google Cloud &mdash; BigQuery, Pub/Sub, Spanner, Bigtable, or Cloud Storage.
         </p>
         <p class="mt-4 leading-8 text-[var(--text-2)]">
           Teams building on both clouds commonly run both. The two runtimes bind different local ports and set different SDK environment variables, so they coexist in one development environment.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href={`${base}compare/localstack/`} class="site-button site-button--secondary">{relatedAnchor('/compare/localstack/')}</a>
           <a href={`${base}local-cloud-for-ai-agents/`} class="site-button site-button--secondary">Local cloud for AI agents</a>
           <a href={`${base}compare/`} class="site-button site-button--secondary">All comparisons</a>
         </div>

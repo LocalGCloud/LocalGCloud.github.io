@@ -5,6 +5,9 @@
 /docs/bigquery-feature-comparison /compare/bigquery-emulator-alternatives/ 301
 /docs/bigquery-feature-comparison/ /compare/bigquery-emulator-alternatives/ 301
 /docs/bigquery-feature-comparison.md /compare/bigquery-emulator-alternatives.md 301
+/compare/localstack /localstack-for-google-cloud/ 301
+/compare/localstack/ /localstack-for-google-cloud/ 301
+/compare/localstack.md /localstack-for-google-cloud/ 301
 
 /favicon.ico /favicon.png 301
 /docs/localcloud-vs-individual-emulators /docs/localcloud-vs-google-emulators/ 301

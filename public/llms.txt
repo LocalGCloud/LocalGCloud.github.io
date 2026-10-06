@@ -48,7 +48,7 @@ localcloud console
 
 ## Docs
 
-Every docs page, service guide and comparison also has a Markdown version: replace the trailing slash with `.md`, for example https://local.cloud/docs/configuration.md, https://local.cloud/services/bigquery.md and https://local.cloud/compare/localstack.md (the section pages are https://local.cloud/docs/index.md, https://local.cloud/services/index.md and https://local.cloud/compare/index.md).
+Every docs page, service guide and comparison also has a Markdown version: replace the trailing slash with `.md`, for example https://local.cloud/docs/configuration.md, https://local.cloud/services/bigquery.md and https://local.cloud/compare/google-emulators.md (the section pages are https://local.cloud/docs/index.md, https://local.cloud/services/index.md and https://local.cloud/compare/index.md).
 
 - [Getting started](https://local.cloud/docs/): install, start, and make a first request
 - [Configuration](https://local.cloud/docs/configuration/): services, projects, persistence, and networking
@@ -113,7 +113,7 @@ The proprietary Public Preview License permits individuals and organizations, in
 - Google ships separate emulators for Bigtable, Datastore, Firestore, Pub/Sub and Spanner through the Google Cloud CLI, and the Firebase Local Emulator Suite for Firebase products. The Google Cloud CLI has no BigQuery or Cloud Storage emulator.
 - Single-service community emulators typically cover one Google Cloud service each, such as BigQuery or Cloud Storage; coverage and fidelity vary by project.
 - LocalCloud runs 25 Google Cloud services, including BigQuery and Cloud Storage, in one Docker container, using Google's Firestore emulator and a Spanner emulator built from Google's open-source emulator.
-- [Full comparison with sources](https://local.cloud/compare/), reviewed 2026-10-05, and [LocalCloud vs LocalStack](https://local.cloud/compare/localstack/).
+- [Full comparison with sources](https://local.cloud/compare/), reviewed 2026-10-05, and [LocalStack for Google Cloud](https://local.cloud/localstack-for-google-cloud/).
 
 ## Contact
 
@@ -129,7 +129,6 @@ The proprietary Public Preview License permits individuals and organizations, in
 - [Local cloud for AI agents](https://local.cloud/local-cloud-for-ai-agents/)
 - [Agent sandbox setup](https://local.cloud/agents/)
 - [Agent and automation workflows](https://local.cloud/workflows/)
-- [LocalStack for Google Cloud](https://local.cloud/localstack-for-google-cloud/)
 - [Comparisons and alternatives](https://local.cloud/compare/)
 - [Glossary](https://local.cloud/glossary/)
 - [Blog](https://local.cloud/blog/)

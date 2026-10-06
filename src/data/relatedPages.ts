@@ -33,14 +33,6 @@ const pages: Record<string, RelatedPage> = {
 		anchor: "BigQuery emulator alternatives",
 		note: "When a standalone emulator, LocalCloud or real BigQuery fits an agent workflow.",
 	},
-	"/localstack-for-google-cloud/": {
-		anchor: "LocalStack for Google Cloud",
-		note: "What a LocalStack-style workflow looks like on Google Cloud.",
-	},
-	"/compare/localstack/": {
-		anchor: "LocalCloud vs LocalStack",
-		note: "Decision table with sources, including when LocalStack fits better.",
-	},
 	"/compare/google-emulators/": {
 		anchor: "LocalCloud vs Google emulators",
 		note: "Decision table and sources for agent workflows.",
@@ -154,7 +146,6 @@ for (const service of localServices) {
 
 // Pairs list the default survivor first. A page's counterparts appear in this order.
 export const relatedPagePairs: RelatedPair[] = [
-	{ pages: ["/localstack-for-google-cloud/", "/compare/localstack/"], finding: "S17" },
 	{ pages: ["/compare/google-emulators/", "/docs/localcloud-vs-google-emulators/"], finding: "S18" },
 	{ pages: ["/compare/google-emulators/", "/blog/google-emulators-vs-localcloud-for-agents/"], finding: "S18" },
 	{ pages: ["/how-to-run-google-cloud-locally/", "/local-cloud-development/"], finding: "S20" },

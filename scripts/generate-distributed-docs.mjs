@@ -161,7 +161,7 @@ ${quickStart.script}
 
 ## Docs
 
-Every docs page, service guide and comparison also has a Markdown version: replace the trailing slash with \`.md\`, for example ${site}docs/configuration.md, ${site}services/bigquery.md and ${site}compare/localstack.md (the section pages are ${site}docs/index.md, ${site}services/index.md and ${site}compare/index.md).
+Every docs page, service guide and comparison also has a Markdown version: replace the trailing slash with \`.md\`, for example ${site}docs/configuration.md, ${site}services/bigquery.md and ${site}compare/google-emulators.md (the section pages are ${site}docs/index.md, ${site}services/index.md and ${site}compare/index.md).
 
 - [Getting started](${site}docs/): install, start, and make a first request
 - [Configuration](${site}docs/configuration/): services, projects, persistence, and networking
@@ -198,7 +198,7 @@ ${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source pro
 ## How LocalCloud compares
 
 ${comparisonSummary.map((line) => `- ${line}`).join("\n")}
-- [Full comparison with sources](${site}compare/), reviewed ${alternativesReviewedAt}, and [LocalCloud vs LocalStack](${site}compare/localstack/).
+- [Full comparison with sources](${site}compare/), reviewed ${alternativesReviewedAt}, and [LocalStack for Google Cloud](${site}localstack-for-google-cloud/).
 
 ## Contact
 
@@ -214,7 +214,6 @@ ${comparisonSummary.map((line) => `- ${line}`).join("\n")}
 - [Local cloud for AI agents](${site}local-cloud-for-ai-agents/)
 - [Agent sandbox setup](${site}agents/)
 - [Agent and automation workflows](${site}workflows/)
-- [LocalStack for Google Cloud](${site}localstack-for-google-cloud/)
 - [Comparisons and alternatives](${site}compare/)
 - [Glossary](${site}glossary/)
 - [Blog](${site}blog/)

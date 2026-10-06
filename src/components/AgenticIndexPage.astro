@@ -3,13 +3,17 @@ import LandingLayout from '../layouts/LandingLayout.astro';
 import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
 import type { AgenticContentPage, ContentLink } from '../data/agenticContent';
 
+// A hub lists its own section's pages and may add a page that lives at another URL, such
+// as /localstack-for-google-cloud/ on /compare/.
+type HubEntry = Pick<AgenticContentPage, 'path' | 'eyebrow' | 'h1' | 'description' | 'summary' | 'quickFacts'>;
+
 interface Props {
   title: string;
   description: string;
   h1: string;
   eyebrow: string;
   deck: string;
-  pages: AgenticContentPage[];
+  pages: HubEntry[];
   // Names what the list holds, for example "Comparisons" or "Terms".
   listHeading: string;
   // Other hubs to send readers to after the list, one link each.

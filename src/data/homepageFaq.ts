@@ -28,7 +28,7 @@ export const homepageFaq: HomepageFaqEntry[] = [
 		answer: comparisonSummary.join(" "),
 		links: [
 			{ label: "Full comparison with sources", href: "/compare/" },
-			{ label: "LocalCloud vs LocalStack", href: "/compare/localstack/" },
+			{ label: "LocalStack for Google Cloud", href: "/localstack-for-google-cloud/" },
 		],
 		showsComparison: true,
 	},

@@ -3,6 +3,18 @@ import AgenticIndexPage from '../../components/AgenticIndexPage.astro';
 import AlternativesTable from '../../components/AlternativesTable.astro';
 import { alternativesReviewedAt, alternativesReviewedLabel, comparisonSummary } from '../../data/alternatives';
 import { comparisonPages } from '../../data/agenticContent';
+
+// The LocalStack comparison lives at the URL people search for; the hub lists it with the rest.
+const localstackPage = {
+  path: '/localstack-for-google-cloud/',
+  eyebrow: 'Comparison',
+  h1: 'LocalStack for Google Cloud',
+  description: 'LocalStack emulates AWS; LocalCloud emulates Google Cloud. When each one fits, how SDK routing differs, and why multi-cloud teams run both.',
+  quickFacts: [
+    `LocalStack had no Google Cloud services as of ${alternativesReviewedLabel}.`,
+    'AWS SDK calls do not reach LocalCloud, and Google Cloud SDK calls do not reach LocalStack.',
+  ],
+};
 ---
 
 <AgenticIndexPage
@@ -11,7 +23,7 @@ import { comparisonPages } from '../../data/agenticContent';
   h1="LocalCloud comparisons for agents"
   eyebrow="Compare"
   deck="Choose the right local or hosted sandbox by job: service fidelity, arbitrary code isolation, BigQuery-only testing, or multi-service local GCP workflows."
-  pages={comparisonPages}
+  pages={[...comparisonPages, localstackPage]}
   listHeading="Comparisons"
 >
   <section class="site-section" aria-labelledby="local-options">
