@@ -23,7 +23,6 @@ for (const path of [
 	"src/components/InstallationMethods.astro",
 	"src/pages/gcp-emulator.astro",
 	"src/pages/how-to-run-google-cloud-locally.astro",
-	"src/pages/local-cloud-development.astro",
 	"src/pages/404.astro",
 	"public/install.sh",
 ]) {
@@ -246,7 +245,6 @@ const catalogSurfaces = [
 	"src/pages/docs/index.mdx",
 	"src/pages/gcp-emulator.astro",
 	"src/pages/how-to-run-google-cloud-locally.astro",
-	"src/pages/local-cloud-development.astro",
 ];
 for (const path of catalogSurfaces) {
 	const source = sources.get(path);

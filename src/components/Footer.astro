@@ -37,8 +37,8 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
     </div>
 
     {/* Five groups that don't overlap. The header links the AI Agents landing page and
-        Compare, and the docs sidebar links every docs page. No other page links About,
-        Cost Optimization or Local Cloud Development, so they must stay here. */}
+        Compare, and the docs sidebar links every docs page. No other page links About or
+        Cost Optimization, so they must stay here. */}
     <div class="site-footer__group">
       <h2>Product</h2>
       <ul>
@@ -56,7 +56,6 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
       <ul>
         <li><a href={`${base}docs/`}>Getting Started</a></li>
         <li><a href={`${base}how-to-run-google-cloud-locally/`}>Run GCP Locally</a></li>
-        <li><a href={`${base}local-cloud-development/`}>Local Cloud Development</a></li>
         <li><a href={`${base}gcp-integration-testing/`}>Integration Testing</a></li>
         <li><a href={`${base}docs/sdk-examples/`}>SDK Examples</a></li>
         <li><a href={`${base}docs/faq/`}>FAQ</a></li>

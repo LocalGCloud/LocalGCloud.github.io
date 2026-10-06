@@ -15,6 +15,8 @@
 /blog/google-emulators-vs-localcloud-for-agents/ /compare/google-emulators/ 301
 /docs/localcloud-vs-individual-emulators /compare/google-emulators/ 301
 /docs/localcloud-vs-individual-emulators/ /compare/google-emulators/ 301
+/local-cloud-development /how-to-run-google-cloud-locally/ 301
+/local-cloud-development/ /how-to-run-google-cloud-locally/ 301
 
 /favicon.ico /favicon.png 301
 /ai/AGENTS.md /ai/agent-template.md 301

@@ -1,7 +1,6 @@
 ---
 import LandingLayout from '../layouts/LandingLayout.astro';
 import ServiceIcon from '../components/ServiceIcon.astro';
-import RelatedPages from '../components/RelatedPages.astro';
 import { docsContract } from '../data/docs-contract';
 import { cliQuickStart } from '../utils/quickstart.mjs';
 import { availableServiceCount, publishedServiceCount, serviceCatalogGroups, services } from '../data/services';
@@ -132,7 +131,6 @@ const structuredData = [
           <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">The CLI selects a Docker data volume, manages a runtime that listens only on localhost, and exports its endpoints. Organization use must comply with the proprietary license.</p>
         </article>
       </div>
-      <div class="mt-8 reveal"><RelatedPages path="/how-to-run-google-cloud-locally/" /></div>
     </div>
   </section>
 
@@ -267,6 +265,43 @@ localcloud status</code></pre>
         <p class="text-sm text-[var(--text-2)] leading-7">
           See the <a href={`${base}gcp-integration-testing/`} class="underline">automation eligibility and integration guide</a> before using a hosted runner.
         </p>
+      </div>
+    </div>
+  </section>
+
+  {/* BEST PRACTICES */}
+  <section class="site-section" id="best-practices">
+    <div class="container">
+      <div class="reveal">
+        <h2>Best practices for local cloud development</h2>
+      </div>
+      <div class="mt-8 grid gap-6 lg:grid-cols-2 reveal">
+        <article class="site-panel min-w-0 p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Keep local and production settings apart</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">Set emulator variables only in local and CI environments, so local development never reaches production APIs by accident.</p>
+          <pre class="mt-4 overflow-x-auto rounded-xl border-0 bg-[var(--surface-2)] p-3 text-xs"><code># .env.local
+BIGQUERY_EMULATOR_HOST=http://localhost:5388
+STORAGE_EMULATOR_HOST=http://localhost:5382
+
+# .env.production
+# (no emulator variables — uses real GCP)</code></pre>
+        </article>
+        <article class="site-panel min-w-0 p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Seed test data from version control</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">Keep fixtures in the repository and load them the same way on every run, so supported tests repeat. Seed support is service-specific; see <a href={`${base}docs/seed-data/`} class="underline">seed data</a>.</p>
+        </article>
+        <article class="site-panel min-w-0 p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Know each service's limits</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">Read the <a href={`${base}compatibility/`} class="underline">compatibility matrix</a> before relying on a local result, test edge cases against real Google Cloud in a staging environment that mirrors production, and watch for behavior differences.</p>
+        </article>
+        <article class="site-panel min-w-0 p-6">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Don't benchmark locally</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">Local emulators perform differently from managed services. Don't infer production latency, throughput or capacity from local runs; load test against real Google Cloud before launch.</p>
+        </article>
+        <article class="site-panel min-w-0 p-6 lg:col-span-2">
+          <h3 class="text-lg font-semibold text-[var(--text)]">Give the team one setup</h3>
+          <p class="mt-3 text-[var(--text-2)] leading-7">Pin the reviewed image and check the LocalCloud configuration into version control, so every developer and CI job runs the same setup. Document the one-command start in the README. The Public Preview License covers team and organization use for non-production development, testing, and internal CI.</p>
+        </article>
       </div>
     </div>
   </section>
