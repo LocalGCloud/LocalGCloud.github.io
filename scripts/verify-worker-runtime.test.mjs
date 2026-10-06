@@ -105,14 +105,15 @@ test('docs, service and comparison pages answer Accept: text/markdown with their
   assert.equal(direct.headers.get('Link'), '<https://local.cloud/docs/configuration/>; rel="canonical"');
 });
 
+// Every rule, so merged pages keep answering at their old URLs. verify-static-response.test.mjs
+// checks that each source is absent from dist, each target is built and no target redirects again.
+const redirectRules = readFileSync(new URL('../public/_redirects', import.meta.url), 'utf8').split('\n')
+  .map((line) => line.trim()).filter((line) => line && !line.startsWith('#'))
+  .map((line) => line.split(/\s+/).slice(0, 2));
+
 test('_redirects and trailing-slash normalization answer with permanent redirects', async () => {
-  for (const [path, location] of [
-    ['/ai/AGENTS.md', '/ai/agent-template.md'],
-    ['/docs/bigquery-locally/', '/services/bigquery/'],
-    ['/bigquery-emulator/', '/services/bigquery/'],
-    ['/favicon.ico', '/favicon.png'],
-    ['/docs', '/docs/'],
-  ]) {
+  assert.ok(redirectRules.length > 0, 'public/_redirects has no rules');
+  for (const [path, location] of [...redirectRules, ['/docs', '/docs/']]) {
     const response = await get(path);
     assert.equal(response.status, 301, path);
     assert.equal(new URL(response.headers.get('Location'), site).pathname, location, path);

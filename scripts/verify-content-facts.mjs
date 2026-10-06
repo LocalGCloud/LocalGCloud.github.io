@@ -24,10 +24,19 @@ const files = new Set((await readdir(distDirectory, { recursive: true, withFileT
   .map((entry) => relative(distDirectory.pathname, join(entry.parentPath, entry.name))));
 const htmlPages = new Map(await Promise.all([...files].filter((file) => file.endsWith('.html')).map(async (file) => [file, await readFile(new URL(file, distDirectory), 'utf8')])));
 
+// Merged pages leave a public/_redirects rule behind; links go to the rule's target instead.
+const redirectTargets = new Map((await readFile(publicPath('_redirects'), 'utf8')).split('\n')
+  .map((line) => line.trim()).filter((line) => line && !line.startsWith('#'))
+  .map((line) => line.split(/\s+/).slice(0, 2)));
+
 // Resolve a local URL to a built file the way the asset server does, then check any #fragment.
 const siteOrigin = new URL(productFacts.siteUrl).origin;
 const checkLocalLink = (file, target) => {
   if (target.origin !== siteOrigin) return;
+  if (redirectTargets.has(target.pathname)) {
+    errors.push(`${file} links ${target.pathname}, which public/_redirects sends to ${redirectTargets.get(target.pathname)}; link that page instead`);
+    return;
+  }
   const path = decodeURIComponent(target.pathname).replace(/^\//, '');
   const resolvedPath = files.has(path)
     ? path
