@@ -11,7 +11,6 @@ import Steps from '../../components/Steps.astro';
 import Step from '../../components/Step.astro';
 import CodeTabs from '../../components/CodeTabs.astro';
 import { publishedServiceCount } from '../../data/services';
-import { docsContract } from '../../data/docs-contract';
 
 # Get started with LocalCloud
 
@@ -47,9 +46,7 @@ The install script downloads the appropriate macOS or Linux release, verifies it
 In an interactive terminal, the installer can offer to run diagnostics and start LocalCloud after you confirm. In automation or with `--no-start`, it prints absolute-path next steps instead. If it adds the CLI to your shell startup file, run the exact `source` command printed by the installer before continuing.
 
 <Callout type="note" title="Check your CLI version">
-{docsContract.cli.releaseBoundary}
-
-Run `localcloud --version` before following version-specific instructions.
+Run `localcloud --version` to see which release you have installed; the [changelog](/changelog/) lists every release.
 </Callout>
 
 ## Start your first runtime
@@ -71,16 +68,11 @@ localcloud start --local-only
 ```
 
 A successful command reports `started`, `already_running`, `restarted`, or
-`reconfigured`. Runtime selection precedence is `--data-volume`, the selected
-configuration's `host.data_volume`, the active-runtime record, then the
-built-in `localcloud-data` fallback. Other built-in defaults are:
+`reconfigured`.
 
-- project `local-gcp-project`
-- caller `local-developer`
-- persistent data
-- Docker access mode **auto**: the socket is mounted only when selected services require it; set `host.docker_socket: false` to opt out
-- transparent networking **off**
-- gateway TLS **off**; enable it explicitly when needed
+The runtime starts with the [built-in defaults](/docs/configuration/#built-in-defaults).
+
+[Runtime selection](/docs/configuration/#runtime-selection) explains which data volume, and so which runtime, a command uses.
 
 The example selects `--local-only`, which binds published ports to `127.0.0.1`. Without that flag, the current CLI publishes ports on all host interfaces. Use it again on subsequent `start`, `restart`, and `reset` commands to retain loopback binding. If a default port is already in use,
 the CLI can remap host ports. Use `--verbose` to inspect the complete
@@ -147,15 +139,8 @@ If the SDK tries to contact Google Cloud, stop instead of adding real credential
 localcloud status --verbose
 localcloud logs --tail 50
 ```
-Use `--data-volume NAME` with any runtime command to select an isolated durable
-runtime identity and its storage. Without the flag or a configured
-`data_volume`, runtime commands use the revalidated active-runtime record before
-falling back to `localcloud-data`.
-`localcloud stop` stops that selected runtime and retains persistent storage.
-`localcloud reset --all-projects` prints manual recreation steps and deletes nothing. The CLI may operate a compatible container created by another tool, but never
-removes or relabels Docker resources it does not own. Running the
-installer with `--uninstall` removes only a script-managed CLI and its PATH
-block; containers and persistent volumes remain intact.
+
+[Stop, reset, and uninstall](/docs/configuration/#stop-reset-and-uninstall) explains what `localcloud stop`, `localcloud reset` and the installer's `--uninstall` keep and remove.
 
 ## Manual Docker path
 

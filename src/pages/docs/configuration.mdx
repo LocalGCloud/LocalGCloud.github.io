@@ -17,6 +17,17 @@ localcloud start --local-only
 eval "$(localcloud env)"
 ```
 
+## Built-in defaults
+
+Without a configuration file or flags, `localcloud start` uses:
+
+- project `local-gcp-project`
+- caller `local-developer`
+- persistent data
+- Docker access mode **auto**: the socket is mounted only when selected services require it; set `host.docker_socket: false` to opt out
+- transparent networking **off**
+- gateway TLS **off**; enable it explicitly when needed
+
 ## Create `localcloud.yaml`
 
 The configuration format is versioned (`version: 1`) and logically structured by lifecycle scope:
@@ -68,11 +79,20 @@ Configuration file selection uses this order:
 
 The file is a recursive overlay: omitted values inherit defaults and mapping members set to `null` are deleted. Command-line flags override their corresponding fields. An explicit, environment, or remembered path that is missing fails rather than silently falling back.
 
-The current unflagged CLI publishes ports on all host interfaces. Use `--local-only` on `start`, `restart`, and `reset` to select loopback binding. `host.docker_socket: auto` mounts the host socket when enabled services declare a Docker dependency; `false` is a hard opt-out. TLS and transparent networking are disabled by default.
+The current unflagged CLI publishes ports on all host interfaces. Use `--local-only` on `start`, `restart`, and `reset` to select loopback binding. `host.docker_socket: auto` mounts the host socket when enabled services declare a Docker dependency; `false` is a hard opt-out.
 
 <Callout type="note" title="Schema Migration">
 Legacy flat top-level keys such as <code>project:</code>, <code>data_volume:</code>, and <code>server.iam:</code> are rejected. Use hierarchical keys: <code>context.project</code>, <code>host.data_volume</code>, and service-owned configurations under <code>services.catalog.&lt;service&gt;.config</code>.
 </Callout>
+
+## Runtime selection
+
+A runtime is identified by its Docker data volume. Runtime commands select one in this order:
+
+1. `--data-volume NAME`, accepted by any runtime command, which selects an isolated durable runtime identity and its storage.
+2. The selected configuration's `host.data_volume`.
+3. The active-runtime record, revalidated before use.
+4. The built-in `localcloud-data` fallback.
 
 ---
 
@@ -217,6 +237,17 @@ host:
 
 - **Loopback Ports (Default)**: Services listen on published canonical ports **5380–5405**. Client SDKs use generated values, including the URL scheme where required (e.g. `STORAGE_EMULATOR_HOST=http://localhost:5382`). Some clients need explicit endpoint options.
 - **Transparent Networking**: Uses local DNS on UDP port `5410` (mapped to host `53/udp`), routing standard Google Cloud domains (`storage.googleapis.com`, `bigquery.googleapis.com`) directly to LocalCloud.
+
+---
+
+## Stop, reset, and uninstall
+
+What each lifecycle action keeps and removes:
+
+- `localcloud stop` stops the runtime that [runtime selection](#runtime-selection) picks and retains persistent storage.
+- `localcloud reset --all-projects` prints manual recreation steps and deletes nothing.
+- The CLI may operate a compatible container created by another tool, but never removes or relabels Docker resources it does not own.
+- Running the installer with `--uninstall` removes only a script-managed CLI and its PATH block; containers and persistent volumes remain intact.
 
 ---
 

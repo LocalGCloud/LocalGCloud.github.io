@@ -49,7 +49,6 @@ for (const phrase of [
 	"macOS 13+",
 	"glibc 2.35+",
 	"local-gcp-project",
-	"local-developer",
 	"already_running",
 	"reconfigured",
 	"restarted",
@@ -60,18 +59,43 @@ for (const phrase of [
 		`getting started omits CLI contract phrase: ${phrase}`,
 	);
 }
+// The tutorial links to the runtime defaults, runtime selection, and lifecycle rules,
+// which /docs/configuration/ documents (S33).
+const configuration = sources.get("src/pages/docs/configuration.mdx");
+const normalizedConfiguration = configuration.replace(/\s+/g, " ");
+for (const section of ["built-in-defaults", "runtime-selection", "stop-reset-and-uninstall"]) {
+	assert(
+		tutorial.includes(`](/docs/configuration/#${section})`),
+		`getting started must link to /docs/configuration/#${section}`,
+	);
+}
 for (const phrase of [
+	"## Built-in defaults",
+	"project `local-gcp-project`",
+	"caller `local-developer`",
+	"## Runtime selection",
+	"## Stop, reset, and uninstall",
 	"built-in `localcloud-data` fallback",
 	"durable runtime identity",
 	"--data-volume NAME",
 	"never removes or relabels Docker resources it does not own",
+	"persistent volumes remain intact",
 ]) {
-	const normalizedPhrase = phrase.replace(/\s+/g, " ");
-	const found = [...sources.values()].some((source) =>
-		source.replace(/\s+/g, " ").includes(normalizedPhrase),
+	assert(
+		normalizedConfiguration.includes(phrase.replace(/\s+/g, " ")),
+		`configuration omits runtime contract phrase: ${phrase}`,
 	);
-	assert(found, `public docs omit data-volume contract phrase: ${phrase}`);
 }
+const precedence = [
+	"`--data-volume NAME`",
+	"configuration's `host.data_volume`",
+	"active-runtime record",
+	"built-in `localcloud-data` fallback",
+].map((phrase) => normalizedConfiguration.indexOf(phrase));
+assert(
+	precedence.every((index, position) => index !== -1 && (position === 0 || index > precedence[position - 1])),
+	"configuration must list runtime selection in precedence order: --data-volume, host.data_volume, active-runtime record, localcloud-data",
+);
 assert(
 	tutorial.includes("SHA-256"),
 	"getting started must describe checksum verification",
@@ -96,9 +120,15 @@ assert(
 	tutorial.includes("so it can run repeatedly"),
 	"tutorial must explain repeatability",
 );
+// Readers check their release with the CLI and the changelog; the snapshot provenance in
+// docsContract.cli.releaseBoundary is for maintainers, not the tutorial (S33).
 assert(
-	tutorial.includes("docsContract.cli.releaseBoundary"),
-	"tutorial must identify the documented CLI release and show how to check it",
+	tutorial.includes("Run `localcloud --version`") && tutorial.includes("](/changelog/)"),
+	"tutorial must tell readers to run localcloud --version and link the changelog of releases",
+);
+assert(
+	!tutorial.includes("releaseBoundary"),
+	"tutorial must not show the internal source-snapshot release boundary",
 );
 assert(
 	tutorial.includes("127.0.0.1:5380-5405:5380-5405"),
@@ -191,7 +221,6 @@ assert(
 	"homepage does not warn that the CLI can pick another port",
 );
 
-const configuration = sources.get("src/pages/docs/configuration.mdx");
 for (const phrase of [
 	"version: 1",
 	"context:",
