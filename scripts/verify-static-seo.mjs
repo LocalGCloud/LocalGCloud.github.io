@@ -108,7 +108,14 @@ const robots = await readRequired('robots.txt');
 if (robots && !robots.includes(`${siteOrigin}/sitemap-index.xml`)) {
   errors.push('robots.txt does not reference the canonical sitemap index');
 }
-for (const crawler of ['GPTBot', 'ChatGPT-User', 'PerplexityBot', 'ClaudeBot', 'anthropic-ai', 'Google-Extended', 'Bingbot']) {
+for (const crawler of [
+  'GPTBot', 'OAI-SearchBot', 'ChatGPT-User',
+  'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'anthropic-ai',
+  'PerplexityBot', 'Perplexity-User',
+  'Google-Extended', 'Google-CloudVertexBot',
+  'Applebot', 'Applebot-Extended',
+  'Bingbot', 'Meta-ExternalAgent', 'Amazonbot', 'DuckAssistBot', 'CCBot',
+]) {
   const crawlerRule = new RegExp(`User-agent:\\s*${crawler}\\s*\\nAllow:\\s*/`, 'i');
   if (robots && !crawlerRule.test(robots)) errors.push(`robots.txt does not explicitly allow ${crawler}`);
 }

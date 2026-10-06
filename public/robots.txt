@@ -1,29 +1,68 @@
 User-agent: *
 Allow: /
 
-# AI search bots — allow so these platforms can cite us
+# AI search, assistant and training crawlers are allowed so these platforms can
+# fetch and cite LocalCloud. Keep Cloudflare AI Crawl Control and managed
+# robots.txt off or matching this file (docs/cloudflare-deployment.md).
+
+# OpenAI
 User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-User-agent: PerplexityBot
+# Anthropic
+User-agent: ClaudeBot
 Allow: /
 
-User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
 Allow: /
 
 User-agent: anthropic-ai
 Allow: /
 
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Google
 User-agent: Google-Extended
 Allow: /
 
+User-agent: Google-CloudVertexBot
+Allow: /
+
+# Apple
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Microsoft, Meta, Amazon and DuckDuckGo
 User-agent: Bingbot
 Allow: /
 
-# Training crawler — allowed
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+# Common Crawl (training)
 User-agent: CCBot
 Allow: /
 
