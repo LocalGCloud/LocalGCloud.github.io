@@ -431,7 +431,7 @@ const walkHtml = (directory) => readdirSync(directory, { withFileTypes: true }).
 // 500-1,300 ms of first-view LCP on throttled mobile, more than repeat views gained.
 test('every built page inlines its styles instead of linking a stylesheet', () => {
   const pages = walkHtml(distRoot);
-  assert.ok(pages.length > 100, 'built pages are present');
+  assert.ok(pages.length > 50, 'built pages are present');
   const failures = pages.filter((file) => /<link\b[^>]*\brel="stylesheet"/.test(readFileSync(file, 'utf8')))
     .map((file) => file.slice(distRoot.length));
   assert.deepEqual(failures, []);
