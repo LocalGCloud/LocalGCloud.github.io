@@ -16,11 +16,73 @@ function unavailable() {
   });
 }
 
+const INSTALL_SCRIPT = '/install.sh';
+const CAPTURE_URL = `https://${API_HOST}/i/v0/e/`;
+const SITE_HOSTS = ['local.cloud', 'www.local.cloud'];
+
+// The page that linked the script, as a local.cloud path without query or fragment.
+// curl and wget send no Referer, and other sites' paths are not recorded.
+function referrerPath(request) {
+  try {
+    const referrer = new URL(request.headers.get('Referer'));
+    const sameSite = SITE_HOSTS.includes(referrer.hostname) || referrer.hostname === new URL(request.url).hostname;
+    return sameSite ? referrer.pathname.slice(0, 200) : null;
+  } catch {
+    return null;
+  }
+}
+
+function userAgentFamily(request) {
+  const agent = request.headers.get('User-Agent') || '';
+  if (/^curl\//i.test(agent)) return 'curl';
+  if (/^wget2?\//i.test(agent)) return 'wget';
+  return 'other';
+}
+
+// One anonymous event per install-script download: a random distinct ID, no person profile,
+// no GeoIP lookup and no client IP (the request is new, so no client header reaches PostHog).
+function installScriptEvent(request, apiKey) {
+  return {
+    api_key: apiKey,
+    event: 'install_script_fetched',
+    distinct_id: crypto.randomUUID(),
+    properties: {
+      $process_person_profile: false,
+      $geoip_disable: true,
+      referrer_path: referrerPath(request),
+      ua_family: userAgentFamily(request),
+      country: request.cf?.country ?? null,
+    },
+  };
+}
+
+// Counts successful GETs of /install.sh after the response is ready. The event is sent through
+// ctx.waitUntil, so it never delays or changes the response, and every failure is ignored.
+function trackInstallScript(request, response, env, ctx, sendUpstream) {
+  try {
+    if (request.method !== 'GET' || response.status !== 200 || !env?.POSTHOG_PROJECT_KEY || typeof ctx?.waitUntil !== 'function') return;
+    if (new URL(request.url).pathname !== INSTALL_SCRIPT) return;
+    const capture = new Request(CAPTURE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(installScriptEvent(request, env.POSTHOG_PROJECT_KEY)),
+    });
+    ctx.waitUntil(Promise.resolve()
+      .then(() => sendUpstream(capture, { signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) }))
+      .then((received) => received?.body?.cancel())
+      .catch(() => {}));
+  } catch {
+    // Analytics never affects the download.
+  }
+}
+
 // The injectable transport lets tests verify forwarding without sending real events.
-export async function handleRequest(request, env, sendUpstream = fetch) {
+export async function handleRequest(request, env, sendUpstream = fetch, ctx = undefined) {
   const url = new URL(request.url);
   if (url.pathname !== PREFIX && !url.pathname.startsWith(`${PREFIX}/`)) {
-    return serveSite(request, env);
+    const response = await serveSite(request, env);
+    trackInstallScript(request, response, env, ctx, sendUpstream);
+    return response;
   }
   if (!METHODS.includes(request.method)) {
     return new Response('Method not allowed', {
@@ -76,7 +138,7 @@ export async function handleRequest(request, env, sendUpstream = fetch) {
 }
 
 export default {
-  fetch(request, env) {
-    return handleRequest(request, env);
+  fetch(request, env, ctx) {
+    return handleRequest(request, env, fetch, ctx);
   },
 };

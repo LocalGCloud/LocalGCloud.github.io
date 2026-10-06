@@ -15,6 +15,8 @@ before(async () => {
   worker = await unstable_startWorker({
     config: new URL('../wrangler.jsonc', import.meta.url).pathname,
     dev: { server: { hostname: '127.0.0.1', port: 0 }, inspector: false, watch: false, logLevel: 'error' },
+    // An empty key turns off the /install.sh event, so tests never send analytics to PostHog.
+    bindings: { POSTHOG_PROJECT_KEY: { type: 'plain_text', value: '' } },
   });
   await worker.ready;
 }, { timeout: 120_000 });

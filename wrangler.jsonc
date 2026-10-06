@@ -4,6 +4,7 @@
   "main": "worker/index.mjs",
   "compatibility_date": "2026-10-03",
   "workers_dev": true,
+  "vars": { "POSTHOG_PROJECT_KEY": "phc_o9nQDAQjEgsPcamE8pCnhv7ekA8CmA2VQXechLju9LA9" },
   "routes": [
     { "pattern": "local.cloud", "custom_domain": true },
     { "pattern": "www.local.cloud", "custom_domain": true }
