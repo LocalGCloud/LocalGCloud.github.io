@@ -152,7 +152,8 @@ const contract = JSON.parse(await read("src/data/docs-contract.snapshot.json"));
 const isLocal = (service) => service.availability === "available" && !["unsupported", "unknown"].includes(service.status);
 const availableCount = contract.services.filter((service) => service.published && isLocal(service)).length;
 const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-for (const path of ["public/llms.txt", "public/llms-full.txt"]) {
+// dist/llms-full.txt is built after astro build; verify-content-facts checks it starts with llms.txt.
+for (const path of ["public/llms.txt"]) {
 	const value = await read(path);
 	assert(
 		value.startsWith(`# LocalCloud\n\n> LocalCloud is a local Google Cloud emulator: one Docker container that serves ${availableCount} Google Cloud services on localhost`),

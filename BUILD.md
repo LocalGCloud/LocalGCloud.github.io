@@ -16,7 +16,7 @@ pnpm run test:dependencies
 # Run local development server
 pnpm run dev
 
-# Run full build with all 13 verification stages
+# Run full build with all 14 build and verification stages
 pnpm run build
 
 # Run installer verification test suite
@@ -57,25 +57,26 @@ For architectural design details, see [docs/site-marketing-principles.md](file:/
 
 ---
 
-## 4. The 13-Stage Build & Verification Pipeline
+## 4. The 14-Stage Build & Verification Pipeline
 
 When running `pnpm run build`, the pipeline executes the following checks in sequence. Any failure halts the build with exit code 1:
 
 | Stage | Script / Command | Purpose & Guarantees |
 |-------|------------------|----------------------|
-| **1** | `node scripts/generate-distributed-docs.mjs` | Generates `public/llms.txt` and `public/llms-full.txt` from contract snapshots and editorial data, applying the two-category supported model. |
+| **1** | `node scripts/generate-distributed-docs.mjs` | Generates `public/llms.txt` from contract snapshots and editorial data, applying the two-category supported model and the shared install-first quick start (`src/utils/quickstart.mjs`). |
 | **2** | `node scripts/verify-docs-contract.mjs` | Validates that the local contract snapshot (`src/data/docs-contract.snapshot.json`) adheres to schema boundaries, service counts (27), and required properties. |
 | **3** | `node scripts/verify-upstream-docs.mjs` | Verifies SHA256 integrity hashes of upstream `documentation.yaml` against the contract snapshot to prevent silent drift. |
 | **4** | `node scripts/verify-cli-docs.mjs` | Ensures CLI flags, memory defaults, commands, and port bindings in docs match the product specification. |
 | **5** | `node scripts/verify-doc-examples.mjs` | Validates that all code snippets and examples across docs are syntactically valid and refer to valid local endpoints. |
 | **6** | `node scripts/verify-policy-docs.mjs` | Verifies privacy policies, license terms, free preview pricing statements, and navigation order. |
-| **7** | `node scripts/verify-distributed-docs.mjs` | Verifies `public/llms.txt` and `public/llms-full.txt` for required public facts, pricing URLs, absence of retired MCP packages, and accurate service counts. |
+| **7** | `node scripts/verify-distributed-docs.mjs` | Verifies `public/llms.txt` for required public facts (definition, opt-in services, license after services, open-source policy), pricing URLs, a guide link per service, absence of retired MCP packages, and accurate service counts. |
 | **8** | `astro build` | Compiles static pages, markdown routes, and sitemaps into `dist/`. |
-| **9** | `node scripts/verify-rendered-docs.mjs` | Inspects compiled HTML output (e.g. comparison tables and accessible scroll wrappers) to ensure proper rendering. |
-| **10** | `node scripts/write-sitemap-alias.mjs` | Copies `sitemap-index.xml` to `sitemap.xml` for legacy crawler compatibility. |
-| **11** | `node scripts/verify-static-seo.mjs` | Verifies canonical URLs, meta descriptions, single H1 tags, robots.txt directives, JSON-LD structured data, and sitemap inclusion across 34 priority routes. |
-| **12** | `node scripts/verify-content-facts.mjs` → `node scripts/verify-blog-presentation.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all 128 published pages. |
-| **13** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` → `node scripts/precompress-html.mjs` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes and writes a Brotli sidecar for every page. |
+| **9** | `node scripts/generate-markdown-twins.mjs` | Converts `<main>` of every built `/docs/` and `/services/` page into a Markdown twin (`dist/docs/<slug>.md`, `dist/services/<slug>.md`) with turndown, checks each page declares its twin with `<link rel="alternate" type="text/markdown">` (`src/utils/markdown-twins.mjs`), and writes `dist/llms-full.txt` as llms.txt plus one section per twin, under a hard size limit. |
+| **10** | `node scripts/verify-rendered-docs.mjs` | Inspects compiled HTML output (e.g. comparison tables and accessible scroll wrappers) to ensure proper rendering. |
+| **11** | `node scripts/write-sitemap-alias.mjs` | Copies `sitemap-index.xml` to `sitemap.xml` for legacy crawler compatibility. |
+| **12** | `node scripts/verify-static-seo.mjs` | Verifies canonical URLs, meta descriptions, single H1 tags, robots.txt directives, JSON-LD structured data, and sitemap inclusion across 34 priority routes. |
+| **13** | `node scripts/verify-content-facts.mjs` → `node scripts/verify-blog-presentation.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all published pages, and every `https://local.cloud` or root-relative link in `llms*.txt`, `/ai/*.md` and the Markdown twins.<br>• Checks that the CLI quick start appears verbatim in llms.txt and `/ai/*.md` and in order on the homepage, that agent pages install the CLI before using it, and that agent text has no `..` or `.;` join artifacts. |
+| **14** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` → `node scripts/precompress-html.mjs` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes and writes a Brotli sidecar for every page. |
 
 ---
 
@@ -101,7 +102,7 @@ Executes `scripts/verify-installer.mjs` which validates:
 ```bash
 pnpm run test:worker
 ```
-Runs `worker/index.mjs` with the built `dist/` in workerd (through Wrangler) after a build. It checks that HTML decodes exactly once for Brotli, gzip and identity, that `_headers` and `_redirects` apply, that agent text is UTF-8, and that missing pages, `/404` and Brotli sidecars return 404.
+Runs `worker/index.mjs` with the built `dist/` in workerd (through Wrangler) after a build. It checks that HTML decodes exactly once for Brotli, gzip and identity, that `_headers` and `_redirects` apply, that agent text and Markdown twins are UTF-8, that docs and service pages answer `Accept: text/markdown` with their twin (with `Vary: Accept`), and that missing pages, `/404` and Brotli sidecars return 404.
 
 ### Upstream Contract Synchronization
 ```bash

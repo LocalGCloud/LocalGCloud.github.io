@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 import { brotliCompressSync, brotliDecompressSync, gunzipSync } from 'node:zlib';
-import { compressHtml, serveSite } from '../worker/static-response.mjs';
+import { compressHtml, prefersMarkdown, serveSite } from '../worker/static-response.mjs';
 import { handleRequest } from '../worker/index.mjs';
+import { markdownTwinPath, twinSourcePath } from '../src/utils/markdown-twins.mjs';
 
 const html = '<!doctype html><html><body>LocalCloud — ' + 'static content '.repeat(400) + '</body></html>';
 const brotli = brotliCompressSync(Buffer.from(html));
@@ -170,8 +171,102 @@ test('HTML revalidation responses vary on encoding and carry the weak ETag', asy
   const env = { ASSETS: assets({ '/docs/': () => new Response(null, { status: 304, headers: { ETag: '"release-content"' } }) }) };
   const response = await serveSite(request('br', { headers: { 'If-None-Match': 'W/"release-content"', 'Accept-Encoding': 'br' } }), env);
   assert.equal(response.status, 304);
-  assert.equal(response.headers.get('Vary'), 'Accept-Encoding');
+  // /docs/ also has a Markdown twin, so it varies on Accept as well.
+  assert.equal(response.headers.get('Vary'), 'Accept, Accept-Encoding');
   assert.equal(response.headers.get('ETag'), 'W/"release-content"');
+});
+
+const markdown = '# Configuration\n\n> Source: https://local.cloud/docs/configuration/\n';
+const twinAsset = () => new Response(markdown, {
+  headers: { 'Content-Type': 'text/markdown; charset=utf-8', 'Cache-Control': 'public, max-age=0, must-revalidate', 'ETag': '"twin"' },
+});
+const varyValues = (response) => (response.headers.get('Vary') || '').split(',').map((value) => value.trim());
+
+test('the twin route list maps docs and service pages to Markdown files and back', () => {
+  for (const [page, twin] of [['/docs/', '/docs/index.md'], ['/docs/configuration/', '/docs/configuration.md'],
+    ['/services/', '/services/index.md'], ['/services/cloud-run/', '/services/cloud-run.md']]) {
+    assert.equal(markdownTwinPath(page), twin, page);
+    assert.equal(twinSourcePath(twin), page, twin);
+  }
+  for (const page of ['/', '/docs', '/pricing/', '/ai/', '/services/bigquery/ai-agent-local-testing/', '/docs/configuration/index.html']) {
+    assert.equal(markdownTwinPath(page), null, page);
+  }
+  for (const path of ['/ai/agents.md', '/llms.txt', '/docs/configuration/', '/services/bigquery/notes.md']) assert.equal(twinSourcePath(path), null, path);
+});
+
+test('Accept selects Markdown only when the client ranks it above HTML', () => {
+  for (const accept of ['text/markdown', 'text/x-markdown', 'text/markdown; charset=utf-8', 'text/markdown, text/html;q=0.9',
+    'text/html;q=0.5, text/markdown;q=0.8', 'text/markdown, */*', 'text/markdown, text/html', 'TEXT/MARKDOWN']) {
+    assert.equal(prefersMarkdown(accept), true, accept);
+  }
+  for (const accept of [null, '', '*/*', 'text/html', 'text/html, text/markdown', 'text/markdown;q=0', 'text/markdown;q=0.5, */*',
+    'text/markdown;q=invalid', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']) {
+    assert.equal(prefersMarkdown(accept), false, String(accept));
+  }
+});
+
+test('a docs page serves its Markdown twin to clients that prefer Markdown', async () => {
+  const env = { ASSETS: assets({ '/docs/configuration/': () => asset(), '/docs/configuration.md': twinAsset }) };
+  const response = await serveSite(request('gzip', { headers: { 'Accept': 'text/markdown, text/html;q=0.9', 'Accept-Encoding': 'gzip' } }, 'https://local.cloud/docs/configuration/'), env);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('Content-Type'), 'text/markdown; charset=utf-8');
+  assert.equal(response.headers.get('Content-Location'), '/docs/configuration.md');
+  assert.equal(response.headers.get('Content-Encoding'), null, 'the Worker does not encode Markdown itself');
+  assert.equal(response.headers.get('X-Robots-Tag'), null);
+  assert.ok(varyValues(response).includes('Accept'));
+  assert.equal(await response.text(), markdown);
+  assert.deepEqual(env.ASSETS.requested.map(({ path }) => path), ['/docs/configuration.md']);
+});
+
+test('browsers and HTML-first clients get the HTML page, which also varies on Accept', async () => {
+  const env = { ASSETS: assets({ '/docs/configuration/': () => asset(), '/docs/configuration.md': twinAsset }) };
+  for (const accept of ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'text/html, text/markdown', undefined]) {
+    const headers = { 'Accept-Encoding': 'gzip', ...(accept ? { 'Accept': accept } : {}) };
+    const response = await serveSite(request('gzip', { headers }, 'https://local.cloud/docs/configuration/'), env);
+    assert.equal(response.headers.get('Content-Encoding'), 'gzip', String(accept));
+    assert.equal(gunzipSync(Buffer.from(await response.arrayBuffer())).toString(), html);
+    assert.equal(response.headers.get('Vary'), 'Origin, Accept, Accept-Encoding');
+  }
+  assert.ok(env.ASSETS.requested.every(({ path }) => path === '/docs/configuration/'));
+});
+
+test('a missing twin falls back to HTML, and pages without a twin ignore Accept', async () => {
+  const env = { ASSETS: assets({ '/docs/configuration/': () => asset(), '/pricing/': () => asset() }) };
+  const missing = await serveSite(request(undefined, { headers: { 'Accept': 'text/markdown' } }, 'https://local.cloud/docs/configuration/'), env);
+  assert.equal(missing.status, 200);
+  assert.match(missing.headers.get('Content-Type'), /^text\/html/);
+  assert.ok(varyValues(missing).includes('Accept'));
+  assert.equal(await missing.text(), html);
+  const pricing = await serveSite(request(undefined, { headers: { 'Accept': 'text/markdown' } }, 'https://local.cloud/pricing/'), env);
+  assert.match(pricing.headers.get('Content-Type'), /^text\/html/);
+  assert.ok(!varyValues(pricing).includes('Accept'));
+  assert.ok(!env.ASSETS.requested.some(({ path }) => path === '/pricing.md'), 'pages without a twin never look for one');
+});
+
+test('Markdown twins revalidate on their own ETag and answer HEAD', async () => {
+  const env = { ASSETS: assets({ '/docs/index.md': (received) => received.headers.get('If-None-Match') === '"twin"'
+    ? new Response(null, { status: 304, headers: { 'ETag': '"twin"' } })
+    : twinAsset() }) };
+  const revalidated = await serveSite(request(undefined, { headers: { 'Accept': 'text/markdown', 'If-None-Match': '"twin"' } }, 'https://local.cloud/docs/'), env);
+  assert.equal(revalidated.status, 304);
+  assert.equal(revalidated.headers.get('ETag'), '"twin"', 'the Markdown ETag is not weakened like compressed HTML');
+  assert.ok(varyValues(revalidated).includes('Accept'));
+  const head = await serveSite(request(undefined, { method: 'HEAD', headers: { 'Accept': 'text/markdown' } }, 'https://local.cloud/docs/'), env);
+  assert.equal(head.status, 200);
+  assert.equal(head.headers.get('Content-Type'), 'text/markdown; charset=utf-8');
+  assert.equal(env.ASSETS.requested.at(-1).method, 'HEAD');
+});
+
+test('a twin URL names its HTML page as canonical, and preview hosts stay noindex', async () => {
+  const env = { ASSETS: assets({ '/services/bigquery.md': twinAsset, '/docs/index.md': twinAsset, '/services/bigquery/': () => asset() }) };
+  const direct = await serveSite(request(undefined, {}, 'https://local.cloud/services/bigquery.md'), env);
+  assert.equal(direct.headers.get('Link'), '<https://local.cloud/services/bigquery/>; rel="canonical"');
+  assert.equal(await direct.text(), markdown);
+  const index = await serveSite(request(undefined, {}, 'https://local.cloud/docs/index.md'), env);
+  assert.equal(index.headers.get('Link'), '<https://local.cloud/docs/>; rel="canonical"');
+  const preview = await serveSite(request(undefined, { headers: { 'Accept': 'text/markdown' } }, 'https://localcloud-site.example.workers.dev/services/bigquery/'), env);
+  assert.equal(preview.headers.get('Content-Location'), '/services/bigquery.md');
+  assert.equal(preview.headers.get('X-Robots-Tag'), 'noindex');
 });
 
 test('only local.cloud is indexable', async () => {

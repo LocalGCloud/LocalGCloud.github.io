@@ -149,9 +149,12 @@ ${quickStart.script}
 - [Service matrix](${site}ai/services.md): ports, environment variables, and guides
 - [Capabilities and boundaries](${site}ai/compatibility.md): what each service runs locally
 - [Docs index for agents](${site}ai/docs.md)
+- [Full documentation](${site}llms-full.txt): every docs page and service guide in one Markdown file
 - [Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): portable skills for \`.agents/skills/\`
 
 ## Docs
+
+Every docs page and service guide also has a Markdown version: replace the trailing slash with \`.md\`, for example ${site}docs/configuration.md and ${site}services/bigquery.md (the section pages are ${site}docs/index.md and ${site}services/index.md).
 
 - [Getting started](${site}docs/): install, start, and make a first request
 - [Configuration](${site}docs/configuration/): services, projects, persistence, and networking
@@ -196,10 +199,5 @@ ${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source pro
 - [CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases)
 `;
 await write("public/llms.txt", llms);
-await write(
-	"public/llms-full.txt",
-	`${llms}\n## Safety boundaries\n\n- The mutable image identity is ${contract.product.runtimeImage.qualification}; prefer the host CLI and pin a qualified digest for release work.\n- CLI Docker access defaults to auto; set host.docker_socket: false to opt out. Transparent networking defaults to off. Use --local-only on lifecycle commands to bind host ports to loopback; the unflagged CLI default publishes on all host interfaces.\n- Technical tiers and successful startup do not grant legal permission.\n- Runtime telemetry and other outbound behaviors are documented at https://local.cloud/docs/privacy/.\n- Validate allowed release behavior against real Google Cloud after clearing local endpoint variables.\n`,
-);
-console.log(
-	`Generated public/llms.txt and public/llms-full.txt for ${localServices.length} local services.`,
-);
+// dist/llms-full.txt is built after `astro build` by scripts/generate-markdown-twins.mjs.
+console.log(`Generated public/llms.txt for ${localServices.length} local services.`);

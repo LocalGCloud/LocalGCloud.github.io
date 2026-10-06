@@ -43,9 +43,12 @@ localcloud console
 - [Service matrix](https://local.cloud/ai/services.md): ports, environment variables, and guides
 - [Capabilities and boundaries](https://local.cloud/ai/compatibility.md): what each service runs locally
 - [Docs index for agents](https://local.cloud/ai/docs.md)
+- [Full documentation](https://local.cloud/llms-full.txt): every docs page and service guide in one Markdown file
 - [Agent Skills](https://github.com/LocalGCloud/LocalGCloud.github.io/tree/main/agent-skills): portable skills for `.agents/skills/`
 
 ## Docs
+
+Every docs page and service guide also has a Markdown version: replace the trailing slash with `.md`, for example https://local.cloud/docs/configuration.md and https://local.cloud/services/bigquery.md (the section pages are https://local.cloud/docs/index.md and https://local.cloud/services/index.md).
 
 - [Getting started](https://local.cloud/docs/): install, start, and make a first request
 - [Configuration](https://local.cloud/docs/configuration/): services, projects, persistence, and networking

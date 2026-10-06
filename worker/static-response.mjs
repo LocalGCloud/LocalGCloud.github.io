@@ -1,18 +1,35 @@
+import { markdownTwinPath, twinSourcePath } from '../src/utils/markdown-twins.mjs';
+
 const CANONICAL_HOST = 'local.cloud';
 const HTML = /^text\/html\b/i;
 const BROTLI_SIDECAR = '.html.br';
 const ERROR_PAGE = '/404';
 
-function encodingQualities(value) {
-  const qualities = new Map();
-  for (const entry of (value || '').split(',')) {
+// Header list entries in order, with their q-values (invalid q counts as 0).
+function weightedEntries(value) {
+  return (value || '').split(',').map((entry, index) => {
     const [name, ...parameters] = entry.trim().toLowerCase().split(';');
     const quality = parameters.map((part) => part.trim()).find((part) => part.startsWith('q='));
     const raw = quality?.slice(2) ?? '1';
     const q = /^(?:0(?:\.\d{0,3})?|1(?:\.0{0,3})?)$/.test(raw) ? Number(raw) : 0;
-    qualities.set(name, q);
-  }
-  return qualities;
+    return { name: name.trim(), q, index };
+  }).filter((entry) => entry.name);
+}
+
+function encodingQualities(value) {
+  return new Map(weightedEntries(value).map(({ name, q }) => [name, q]));
+}
+
+// True when Accept ranks Markdown above HTML. At equal quality an explicit text/markdown
+// beats a wildcard, and between explicit types the one listed first wins.
+export function prefersMarkdown(accept) {
+  const ranges = weightedEntries(accept);
+  const markdown = ranges.find(({ name }) => name === 'text/markdown' || name === 'text/x-markdown');
+  if (!markdown || markdown.q <= 0) return false;
+  const html = ranges.find(({ name }) => name === 'text/html') ??
+    ranges.find(({ name }) => name === 'text/*') ?? ranges.find(({ name }) => name === '*/*');
+  if (!html || html.q !== markdown.q) return !html || html.q < markdown.q;
+  return html.name !== 'text/html' || markdown.index < html.index;
 }
 
 // Cloudflare may normalize Accept-Encoding before the Worker; cf.clientAcceptEncoding keeps the original.
@@ -96,15 +113,49 @@ async function errorPage(request, env) {
   return withHeaders(page, {}, 404);
 }
 
-// Static site responses: permanent redirects, real 404s, host-scoped indexing and compressed HTML.
+function varyOn(response, name) {
+  const headers = new Headers(response.headers);
+  appendVary(headers, name);
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
+// The Markdown twin of a docs or service page, fetched with the client's method and
+// conditional headers so it revalidates on its own ETag. Null when the twin is missing.
+async function markdownTwin(request, env, path) {
+  const response = await env.ASSETS.fetch(new Request(new URL(path, request.url), { method: request.method, headers: request.headers }));
+  if ([200, 206, 304].includes(response.status)) return withHeaders(response, { 'Content-Location': path });
+  await response.body?.cancel();
+  return null;
+}
+
+// Static site responses: permanent redirects, real 404s, host-scoped indexing, compressed HTML
+// and Markdown twins for clients that prefer text/markdown.
 export async function serveSite(request, env) {
   const url = new URL(request.url);
+  const twin = markdownTwinPath(url.pathname);
   let response;
+  let servedTwin = false;
   if (url.pathname.endsWith(BROTLI_SIDECAR)) {
     response = await errorPage(request, env);
   } else {
-    response = await env.ASSETS.fetch(request);
+    if (twin && ['GET', 'HEAD'].includes(request.method) && prefersMarkdown(request.headers.get('Accept'))) {
+      response = await markdownTwin(request, env, twin);
+      servedTwin = Boolean(response);
+    }
+    response ??= await env.ASSETS.fetch(request);
     if (url.pathname === ERROR_PAGE && response.status === 200) response = withHeaders(response, {}, 404);
+  }
+  // Pages with a twin answer by Accept, so caches must key on it for both representations.
+  if (twin && (servedTwin || response.status === 304 || HTML.test(response.headers.get('Content-Type') || ''))) {
+    response = varyOn(response, 'Accept');
+  }
+  if (servedTwin) {
+    return url.hostname === CANONICAL_HOST ? response : withHeaders(response, { 'X-Robots-Tag': 'noindex' });
+  }
+  // A twin's own URL points search engines at the HTML page it mirrors.
+  const twinSource = twinSourcePath(url.pathname);
+  if (twinSource && response.status === 200) {
+    response = withHeaders(response, { Link: `<https://${CANONICAL_HOST}${twinSource}>; rel="canonical"` });
   }
   // Only local.cloud is indexable; workers.dev and preview hosts serve the same pages.
   if (url.hostname !== CANONICAL_HOST) response = withHeaders(response, { 'X-Robots-Tag': 'noindex' });

@@ -63,10 +63,21 @@ for (const required of [
   if (!llms.includes(required)) errors.push(`llms.txt must contain ${required}`);
 }
 
-// Agent text: the raw files agents and LLM tools read.
+// Agent text: the raw files agents and LLM tools read, including the Markdown twins of docs and service pages.
+const isMarkdownTwin = (file) => /^(?:docs|services)\/[^/]+\.md$/.test(file);
 const agentText = new Map(await Promise.all([...files]
-  .filter((file) => /^llms[^/]*\.txt$/.test(file) || /^ai\/[^/]+\.md$/.test(file))
+  .filter((file) => /^llms[^/]*\.txt$/.test(file) || /^ai\/[^/]+\.md$/.test(file) || isMarkdownTwin(file))
   .map(async (file) => [file, await readFile(new URL(file, distDirectory), 'utf8')])));
+
+// llms-full.txt is llms.txt followed by one section per Markdown twin.
+const llmsFull = agentText.get('llms-full.txt') ?? '';
+if (!llmsFull.startsWith(agentText.get('llms.txt')?.trimEnd() ?? '\0')) errors.push('llms-full.txt must start with llms.txt');
+for (const [file, text] of agentText) {
+  if (!isMarkdownTwin(file)) continue;
+  const source = text.match(/^> Source: (\S+)$/m)?.[1];
+  if (!source) errors.push(`${file} must name its source page`);
+  else if (!llmsFull.includes(`> Source: ${source}\n`)) errors.push(`llms-full.txt omits the section for ${source}`);
+}
 
 // Links in agent text resolve like page links: absolute local.cloud URLs and root-relative Markdown links.
 for (const [file, text] of agentText) {
@@ -100,7 +111,8 @@ for (const line of quickStart.lines) {
 
 // Every agent path installs the CLI before it runs the CLI.
 const agentPages = [...htmlPages.keys()].filter((file) => /^(?:ai|local-cloud-for-ai-agents|blog\/localcloud-for-ai-agents|agents\/[^/]+)\/index\.html$/.test(file));
-for (const [file, text] of [...agentText, ...agentPages.map((file) => [file, visibleText(htmlPages.get(file))])]) {
+const agentEntryText = [...agentText].filter(([file]) => !isMarkdownTwin(file) && file !== 'llms-full.txt');
+for (const [file, text] of [...agentEntryText, ...agentPages.map((file) => [file, visibleText(htmlPages.get(file))])]) {
   const firstCliUse = Math.min(...['localcloud doctor', 'eval "$(localcloud env)"'].map((command) => text.indexOf(command)).filter((index) => index !== -1));
   if (Number.isFinite(firstCliUse) && !text.slice(0, firstCliUse).includes(quickStart.install)) errors.push(`${file} runs the LocalCloud CLI before installing it`);
 }

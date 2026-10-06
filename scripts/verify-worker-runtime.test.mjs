@@ -70,7 +70,8 @@ test('_headers apply: no-transform only on HTML, immutable bundles, security hea
 
 test('text and Markdown assets declare UTF-8 and preserve GET and HEAD bodies', async () => {
   const paths = ['/llms.txt', '/llms-full.txt', '/robots.txt', '/ai/agents.md', '/ai/services.md',
-    '/ai/agent-template.md', '/ai/resources.md', '/ai/compatibility.md', '/ai/docs.md'];
+    '/ai/agent-template.md', '/ai/resources.md', '/ai/compatibility.md', '/ai/docs.md',
+    '/docs/index.md', '/docs/configuration.md', '/services/bigquery.md'];
   for (const path of paths) {
     const type = path.endsWith('.md') ? 'text/markdown' : 'text/plain';
     for (const method of ['GET', 'HEAD']) {
@@ -80,6 +81,24 @@ test('text and Markdown assets declare UTF-8 and preserve GET and HEAD bodies', 
       assert.equal(await response.text(), method === 'HEAD' ? '' : distFile(path.slice(1)).toString('utf8'), `${method} ${path}`);
     }
   }
+});
+
+test('docs and service pages answer Accept: text/markdown with their Markdown twin', async () => {
+  const vary = (response) => (response.headers.get('Vary') || '').split(',').map((value) => value.trim());
+  for (const [page, twin] of [['/docs/', 'docs/index.md'], ['/docs/configuration/', 'docs/configuration.md'], ['/services/bigquery/', 'services/bigquery.md']]) {
+    const response = await get(page, { 'Accept': 'text/markdown, text/html;q=0.9' });
+    assert.equal(response.status, 200, page);
+    assert.equal(response.headers.get('Content-Type'), 'text/markdown; charset=utf-8', page);
+    assert.equal(response.headers.get('Content-Location'), `/${twin}`, page);
+    assert.ok(vary(response).includes('Accept'), page);
+    assert.equal(await response.text(), distFile(twin).toString('utf8'), page);
+  }
+  const page = await get('/docs/configuration/', { 'Accept': 'text/html,application/xhtml+xml,*/*;q=0.8', 'Accept-Encoding': 'identity' });
+  assert.match(page.headers.get('Content-Type'), /^text\/html/);
+  assert.ok(vary(page).includes('Accept'));
+  assert.match(await page.text(), /<link rel="alternate" type="text\/markdown" href="\/docs\/configuration\.md"/);
+  const direct = await get('/docs/configuration.md');
+  assert.equal(direct.headers.get('Link'), '<https://local.cloud/docs/configuration/>; rel="canonical"');
 });
 
 test('_redirects and trailing-slash normalization answer with permanent redirects', async () => {

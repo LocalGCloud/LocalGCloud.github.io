@@ -3,6 +3,7 @@ import robotoFont from '@fontsource-variable/roboto/files/roboto-latin-wght-norm
 import '../styles/global.css';
 import SearchModal from '../components/SearchModal.astro';
 import { organizationSchema, type JsonLd } from '../data/productFacts';
+import { markdownTwinPath } from '../utils/markdown-twins.mjs';
 
 interface Props {
   title: string;
@@ -26,6 +27,8 @@ const {
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = ogImage ? new URL(ogImage, Astro.site) : undefined;
+// Docs and service pages also publish a Markdown twin (scripts/generate-markdown-twins.mjs).
+const markdownTwin = markdownTwinPath(Astro.url.pathname);
 // Preserve inline presentation styles using the per-page CSP API.
 Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 ---
@@ -42,6 +45,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <link rel="icon" href={`${base}favicon.png`} type="image/png" sizes="96x96" />
     <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} sizes="180x180" />
     <link rel="alternate" type="text/plain" href={`${base}llms.txt`} title="LocalCloud llms.txt" />
+    {markdownTwin && <link rel="alternate" type="text/markdown" href={markdownTwin} title="Markdown version" />}
     <meta name="theme-color" content="#ffffff" />
     <meta name="author" content="LocalCloud Inc." />
 
