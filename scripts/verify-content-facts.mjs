@@ -625,6 +625,20 @@ for (const file of htmlPages.keys()) {
   if (route && !docsSidebar.includes(`href="${route}"`)) errors.push(`the docs sidebar omits ${route}; add it to sidebarSections in DocsLayout.astro`);
 }
 
+// The glossary hub works as a reference: each entry shows its term's one-sentence definition,
+// the first sentence of the term page's lede, not a templated description.
+const glossaryHubMain = htmlPages.get('glossary/index.html')?.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? '';
+const glossaryEntries = [...glossaryHubMain.matchAll(/<article\b[\s\S]*?<\/article>/g)].map(([card]) => card);
+const glossaryTerms = [...htmlPages.keys()].filter((file) => /^glossary\/[^/]+\/index\.html$/.test(file));
+if (glossaryEntries.length !== glossaryTerms.length) errors.push(`the glossary hub lists ${glossaryEntries.length} entries for ${glossaryTerms.length} glossary pages`);
+for (const card of glossaryEntries) {
+  const href = card.match(/<a\b[^>]*href="\/(glossary\/[^"/]+\/)"/)?.[1];
+  const shown = visibleText(card.match(/<\/h3>\s*<p\b[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '').trim();
+  const lede = visibleText(htmlPages.get(`${href}index.html`)?.match(/<\/h1>\s*<p\b[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '').trim();
+  if (!href || !lede) errors.push(`a glossary hub entry links no built glossary page: ${visibleText(card).replace(/\s+/g, ' ').trim().slice(0, 80)}`);
+  else if (!/^[^.!?]+[.!?]$/.test(shown) || !lede.startsWith(shown)) errors.push(`the glossary hub entry for /${href} must show the first sentence of its definition ("${lede.match(/^.+?[.!?](?=\s|$)/)?.[0]}"), not "${shown}"`);
+}
+
 // Overlapping pages wait for search data before any merge (plan R7). Meanwhile each pair in
 // src/data/relatedPages.ts keeps its own title and H1 and links the other page inside <main>,
 // and at least one of those links uses the target's canonical anchor text (case aside). A card

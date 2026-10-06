@@ -47,6 +47,8 @@ export interface AgenticContentPage {
 	description: string;
 	h1: string;
 	deck: string;
+	// The line under the page's link on its hub; defaults to the description.
+	summary?: string;
 	promptIds: string[];
 	quickFacts: string[];
 	sections: ContentSection[];
@@ -1035,6 +1037,8 @@ const glossary = (
 	// Reference layout: the definition is the lede, then how the term applies in
 	// LocalCloud, then related pages. No repeated fact cards.
 	deck: definition,
+	// The glossary hub lists each term with its one-sentence definition.
+	summary: firstSentence(definition),
 	promptIds: ["quickstart"],
 	quickFacts: [],
 	sections: items.length ? [{ kicker: "In LocalCloud", title: `${term} with LocalCloud`, items }] : [],
@@ -1142,7 +1146,7 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 	glossary(
 		"agent-sandbox-vs-cloud-emulator",
 		"Agent sandbox vs cloud emulator",
-		"Two different controls that are often confused. An agent sandbox isolates where generated code runs. A cloud emulator replaces what that code talks to. Using one does not give you the other.",
+		"An agent sandbox isolates where generated code runs, while a cloud emulator replaces the cloud APIs that code calls. The two controls are often confused, and using one does not give you the other.",
 		[
 			"A sandbox with real cloud credentials can still create real cloud resources and real charges.",
 			"An emulator without a sandbox still lets generated shell commands touch the host.",
