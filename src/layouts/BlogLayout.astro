@@ -8,11 +8,16 @@ interface Props {
   structuredData?: JsonLd[];
   contents?: { id: string; label: string }[];
   index?: boolean;
+  /** Set on every post (not the index): publishes it as an Open Graph article. */
+  article?: { publishedAt: string; updatedAt?: string };
 }
-const { contents = [], index = false, ...layoutProps } = Astro.props;
+const { contents = [], index = false, article, ...layoutProps } = Astro.props;
+const articleMeta = article
+  ? { ogType: 'article' as const, publishedTime: article.publishedAt, modifiedTime: article.updatedAt ?? article.publishedAt }
+  : {};
 ---
 
-<LandingLayout {...layoutProps}>
+<LandingLayout {...layoutProps} {...articleMeta}>
   <div class:list={['blog-page', 'container', index && 'blog-page--index']}>
     <div class="blog-hero"><slot name="hero" /></div>
     <div class="blog-body">

@@ -115,6 +115,32 @@ for (const route of expectedSearchRoutes) {
   if (html && isHtmlRoute(route) && isNoindex(html)) errors.push(`${route.path}: unexpectedly contains noindex`);
 }
 
+// PNG signature plus IHDR width and height; undefined when the file is not a PNG.
+const pngSize = (png) =>
+  png.length >= 33 && png.subarray(0, 8).toString('hex') === '89504e470d0a1a0a'
+    ? { width: png.readUInt32BE(16), height: png.readUInt32BE(20) }
+    : undefined;
+// JPEG starts with FF D8 FF; WebP is a RIFF container tagged WEBP.
+const isRaster = (image) =>
+  pngSize(image) !== undefined ||
+  image.subarray(0, 3).toString('hex') === 'ffd8ff' ||
+  (image.subarray(0, 4).toString() === 'RIFF' && image.subarray(8, 12).toString() === 'WEBP');
+const shareImages = new Map();
+const readShareImage = async (url) => {
+  if (!shareImages.has(url)) {
+    let image;
+    try {
+      const { origin, pathname } = new URL(url);
+      if (origin === siteOrigin) image = await readFile(distPath(decodeURIComponent(pathname).replace(/^\//, '')));
+    } catch {
+      image = undefined;
+    }
+    shareImages.set(url, image);
+  }
+  return shareImages.get(url);
+};
+const propertyContent = (html, property) => metaContent(html, 'property', property);
+
 const indexableRoutes = [];
 const seenTitles = new Map();
 const seenDescriptions = new Map();
@@ -131,8 +157,8 @@ for (const file of pageFiles) {
         errors.push(`Homepage must declare the ${size}x${size} /${file} ${rel}`);
       }
       try {
-        const png = await readFile(distPath(file));
-        if (png.length < 33 || png.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' || png.readUInt32BE(16) !== size || png.readUInt32BE(20) !== size) {
+        const dimensions = pngSize(await readFile(distPath(file)));
+        if (dimensions?.width !== size || dimensions?.height !== size) {
           errors.push(`${file}: expected a ${size}x${size} PNG`);
         }
       } catch {
@@ -153,6 +179,34 @@ for (const file of pageFiles) {
     errors.push(`${route.path}: canonical ${canonical ?? 'missing'} does not equal ${expectedCanonical}`);
   }
   if (h1Count !== 1) errors.push(`${route.path}: expected one H1, found ${h1Count}`);
+
+  // Share previews: a raster og:image served by this site, with its size and alt text,
+  // and a large Twitter card. Social networks and chat apps ignore SVG images.
+  const ogImage = propertyContent(html, 'og:image');
+  const ogImageWidth = Number(propertyContent(html, 'og:image:width'));
+  const ogImageHeight = Number(propertyContent(html, 'og:image:height'));
+  const image = ogImage ? await readShareImage(ogImage) : undefined;
+  if (!ogImage) errors.push(`${route.path}: missing og:image`);
+  else if (!ogImage.startsWith(`${siteOrigin}/`)) errors.push(`${route.path}: og:image must be an absolute ${siteOrigin} URL: ${ogImage}`);
+  else if (!image) errors.push(`${route.path}: og:image ${ogImage} is not a built file`);
+  else if (!isRaster(image)) errors.push(`${route.path}: og:image ${ogImage} must be a PNG, JPEG or WebP image`);
+  else if (pngSize(image) && (pngSize(image).width !== ogImageWidth || pngSize(image).height !== ogImageHeight)) {
+    errors.push(`${route.path}: og:image:width and og:image:height must match the ${pngSize(image).width}x${pngSize(image).height} PNG`);
+  }
+  if (!propertyContent(html, 'og:image:alt')) errors.push(`${route.path}: missing og:image:alt`);
+  if (propertyContent(html, 'og:site_name') !== 'LocalCloud') errors.push(`${route.path}: og:site_name must be LocalCloud`);
+  if (propertyContent(html, 'og:url') !== expectedCanonical) errors.push(`${route.path}: og:url must equal the canonical URL`);
+  if (contentAttribute(html, 'twitter:card') !== 'summary_large_image') errors.push(`${route.path}: twitter:card must be summary_large_image`);
+  if (contentAttribute(html, 'twitter:image') !== ogImage) errors.push(`${route.path}: twitter:image must match og:image`);
+  // Blog posts are articles with publish and update times; every other page is a website.
+  const isBlogPost = /^\/blog\/[^/]+\/$/.test(route.path);
+  const ogType = propertyContent(html, 'og:type');
+  if (ogType !== (isBlogPost ? 'article' : 'website')) errors.push(`${route.path}: og:type must be ${isBlogPost ? 'article' : 'website'}, found ${ogType || 'none'}`);
+  if (isBlogPost) {
+    for (const property of ['article:published_time', 'article:modified_time']) {
+      if (!/^\d{4}-\d{2}-\d{2}/.test(propertyContent(html, property))) errors.push(`${route.path}: missing ${property}`);
+    }
+  }
 
   if (title.length > titleLength.max) errors.push(`${route.path}: title is ${title.length} characters (max ${titleLength.max}): ${title}`);
   else if (title.length > titleLength.warn) warnings.push(`${route.path}: title is ${title.length} characters (aim for ${titleLength.warn} or fewer): ${title}`);

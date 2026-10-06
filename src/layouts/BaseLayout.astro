@@ -8,10 +8,24 @@ import { markdownTwinPath } from '../utils/markdown-twins.mjs';
 interface Props {
   title: string;
   description?: string;
+  /** A raster (PNG or JPEG) share image; the default is the 1200x630 brand card. */
   ogImage?: string;
+  ogImageAlt?: string;
+  /** "article" adds article:published_time and article:modified_time (blog posts). */
+  ogType?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
   noindex?: boolean;
   structuredData?: JsonLd[];
 }
+
+// Social networks and chat apps do not render SVG share images.
+const defaultSocialCard = {
+  path: '/brand/localcloud-social-card.png',
+  width: 1200,
+  height: 630,
+  alt: 'LocalCloud: run major Google Cloud services locally in one Docker container for development, CI and AI agents.',
+};
 
 const rawBase = import.meta.env.BASE_URL;
 const posthogApiHost = import.meta.env.PUBLIC_POSTHOG_HOST;
@@ -22,11 +36,16 @@ const {
   title,
   description = 'Run Google Cloud service workflows locally in one Docker container. Before use, review compatibility, privacy, and the proprietary license.',
   ogImage,
+  ogImageAlt,
+  ogType = 'website',
+  publishedTime,
+  modifiedTime,
   noindex = false,
   structuredData = [],
 } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImageURL = ogImage ? new URL(ogImage, Astro.site) : undefined;
+const ogImageURL = new URL(ogImage ?? defaultSocialCard.path, Astro.site);
+const ogImageAltText = ogImageAlt ?? (ogImage ? title : defaultSocialCard.alt);
 // Docs and service pages also publish a Markdown twin (scripts/generate-markdown-twins.mjs).
 const markdownTwin = markdownTwinPath(Astro.url.pathname);
 // Preserve inline presentation styles using the per-page CSP API.
@@ -50,17 +69,24 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <meta name="author" content="LocalCloud Inc." />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LocalCloud" />
+    <meta property="og:type" content={ogType} />
     {!noindex && <meta property="og:url" content={canonicalURL} />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    {ogImageURL && <meta property="og:image" content={ogImageURL} />}
+    <meta property="og:image" content={ogImageURL} />
+    {!ogImage && <meta property="og:image:width" content={String(defaultSocialCard.width)} />}
+    {!ogImage && <meta property="og:image:height" content={String(defaultSocialCard.height)} />}
+    <meta property="og:image:alt" content={ogImageAltText} />
+    {ogType === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {ogType === 'article' && (modifiedTime ?? publishedTime) && <meta property="article:modified_time" content={modifiedTime ?? publishedTime} />}
 
     <!-- Twitter -->
-    <meta name="twitter:card" content={ogImageURL ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    {ogImageURL && <meta name="twitter:image" content={ogImageURL} />}
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content={ogImageAltText} />
 
     <!-- One local variable body font covers all headline/body weights. -->
     <link rel="preload" href={robotoFont} as="font" type="font/woff2" crossorigin />

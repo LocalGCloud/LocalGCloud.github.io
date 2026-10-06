@@ -46,7 +46,7 @@ const structuredData = [
 ];
 ---
 
-<BlogLayout title={searchTitle} {description} {structuredData} {contents}>
+<BlogLayout title={searchTitle} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt }}>
   <Fragment slot="hero">
     <article class="site-section site-section--hero">
       <div class="container container--narrow">
