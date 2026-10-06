@@ -299,18 +299,34 @@ if (sitemapIndex && sitemapAlias && sitemapIndex !== sitemapAlias) {
 const sitemapFiles = [...sitemapIndex.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname.replace(/^\//, ''));
 let sitemapXml = '';
 for (const sitemapFile of sitemapFiles) sitemapXml += await readRequired(sitemapFile);
-const sitemapUrls = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+const sitemapEntries = [...sitemapXml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, entry]) => ({
+  url: entry.match(/<loc>([^<]+)<\/loc>/)?.[1] ?? '',
+  lastmod: entry.match(/<lastmod>([^<]+)<\/lastmod>/)?.[1],
+}));
+const sitemapUrls = sitemapEntries.map((entry) => entry.url);
 
-for (const url of sitemapUrls) {
+for (const { url, lastmod } of sitemapEntries) {
   const route = { path: new URL(url).pathname };
-  if (!isHtmlRoute(route)) continue;
+  // Raw Markdown and text routes are linked from llms.txt, not listed in the sitemap.
+  if (!isHtmlRoute(route)) {
+    errors.push(`${route.path}: only HTML pages belong in the sitemap`);
+    continue;
+  }
   const html = await readRequired(routeToGeneratedFile(route));
   if (isNoindex(html)) {
     errors.push(`${route.path}: noindex page must not appear in the sitemap`);
   }
+  if (!isoDate.test(lastmod ?? '')) errors.push(`${route.path}: sitemap entry has no lastmod`);
+  else if (new Date(lastmod) > new Date()) errors.push(`${route.path}: sitemap lastmod ${lastmod} is in the future`);
 }
 
-for (const route of expectedSearchRoutes) {
+// Every indexable page is discoverable through the sitemap (V2).
+const sitemapUrlSet = new Set(sitemapUrls);
+for (const path of indexableRoutes) {
+  if (!sitemapUrlSet.has(new URL(path, siteOrigin).toString())) errors.push(`${path}: indexable page is missing from the sitemap`);
+}
+
+for (const route of expectedSearchRoutes.filter(isHtmlRoute)) {
   const expectedUrl = new URL(route.path, siteOrigin).toString();
   const matches = sitemapUrls.filter((url) => url === expectedUrl).length;
   if (matches !== 1) errors.push(`${route.path}: expected exactly one sitemap entry, found ${matches}`);

@@ -7,21 +7,15 @@ import rehypeTableRegions from './src/utils/rehype-table-regions.mjs';
 import { loadEnv } from 'vite';
 import { resolvePosthogConfig } from './src/utils/posthog-config.mjs';
 import { resolveCloudflareAnalyticsConfig } from './src/utils/cloudflare-analytics-config.mjs';
+import { lastModifiedForUrl } from './src/utils/page-dates.mjs';
 
 const env = loadEnv(process.env.NODE_ENV || 'production', process.cwd(), '');
 const posthog = resolvePosthogConfig(env);
 const cloudflareAnalytics = resolveCloudflareAnalyticsConfig(env);
 
-const rawAgentPages = [
-  'https://local.cloud/ai/agents.md',
-  'https://local.cloud/ai/agent-template.md',
-  'https://local.cloud/ai/resources.md',
-  'https://local.cloud/ai/services.md',
-  'https://local.cloud/ai/compatibility.md',
-  'https://local.cloud/ai/docs.md',
-  'https://local.cloud/llms.txt',
-  'https://local.cloud/llms-full.txt',
-];
+// Noindex pages stay out of the sitemap. The raw Markdown and text routes are not listed
+// either: llms.txt links them, and they would compete with their HTML pages.
+const unlistedPages = new Set(['https://local.cloud/immersive-demo/', 'https://local.cloud/brand/icons/']);
 
 export default defineConfig({
   site: 'https://local.cloud/',
@@ -44,7 +38,14 @@ export default defineConfig({
       ],
     },
   },
-  integrations: [mdx(), sitemap({ customPages: rawAgentPages, filter: (page) => page !== 'https://local.cloud/immersive-demo/' })],
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) => !unlistedPages.has(page),
+      // lastmod: frontmatter updated, blog dates, or the commit history of the page source.
+      serialize: (item) => ({ ...item, lastmod: lastModifiedForUrl(item.url) }),
+    }),
+  ],
   vite: {
     define: {
       'import.meta.env.PUBLIC_POSTHOG_HOST': JSON.stringify(posthog.apiHost),

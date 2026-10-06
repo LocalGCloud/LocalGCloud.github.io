@@ -20,6 +20,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7.0.1
+        with:
+          # Full history: sitemap lastmod and docs dateModified come from commit dates.
+          fetch-depth: 0
       - name: Setup pnpm
         uses: pnpm/action-setup@v6.1.0
         with:
