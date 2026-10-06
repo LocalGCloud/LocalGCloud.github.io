@@ -828,25 +828,18 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 	},
 ]);
 
-// Emulator head terms belong to the service and /gcp-emulator/ pages; their glossary
-// entries answer the definition question instead.
+// Emulator head terms belong to the service and /gcp-emulator/ pages; the glossary entry
+// answers the definition question instead.
 const glossaryTitles: Record<string, string> = {
 	"gcp-emulator": "What Is a GCP Emulator?",
-	"bigquery-emulator": "What Is a BigQuery Emulator?",
-	"service-emulator": "What Is a Service Emulator?",
-	"cloud-emulator": "What Is a Cloud Emulator?",
 };
 // Search snippets for definitions that run past 160 characters or open with a
 // sentence too short to stand alone.
 const glossarySummaries: Record<string, string> = {
 	"mcp-server":
 		"A Model Context Protocol (MCP) server exposes tools, resources, and prompts to AI agent clients through a structured protocol, as LocalCloud does at /mcp.",
-	"credentialless-cloud-development":
-		"A development pattern where cloud SDK calls run against localhost services, with no access to cloud accounts, service-account keys, or billing projects.",
 	"credentialless-agent-testing":
 		"Running an AI agent's generated code against local endpoints with no cloud credentials or billing project, so a mistake can't create cloud resources or charges.",
-	"agent-sandbox-vs-cloud-emulator":
-		"An agent sandbox isolates where generated code runs; a cloud emulator replaces what that code talks to. Most agent setups that handle cloud code want both.",
 };
 const firstSentence = (text: string) => text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text;
 
@@ -892,8 +885,14 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 		"GCP emulator",
 		"A local implementation of a Google Cloud service API used for development and testing before code touches real Google Cloud.",
 		[
+			"Also called a cloud emulator or service emulator. It emulates cloud service APIs, unlike a cloud-hosted device emulator, which runs a mobile operating system on remote hardware.",
 			"Can be official, third-party, custom, or a local facade.",
 			"Usually requires SDK endpoint overrides.",
+			"Trades managed-cloud fidelity for speed and isolation; each emulator documents its supported calls and gaps, and production behavior is validated against Google Cloud.",
+		],
+		[
+			relatedLink("/docs/what-is-gcp-emulator/", "The long-form explanation, with endpoint routing and production limits."),
+			relatedLink("/gcp-emulator/", "Run every LocalCloud service locally in one Docker container."),
 		],
 	),
 	glossary(
@@ -901,8 +900,17 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 		"AI agent sandbox",
 		"A constrained environment where an AI coding agent can run commands, write code, and verify behavior without causing unwanted external side effects.",
 		[
-			"LocalCloud is a GCP API sandbox, not a universal shell sandbox.",
-			"Hosted sandboxes and LocalCloud can be complementary.",
+			"It has two boundaries: where the agent's code runs (execution) and what that code can call (dependencies).",
+			"Code sandboxes such as E2B, Vercel Sandbox or Docker Sandboxes contain execution; LocalCloud contains Google Cloud dependencies, so agent-written cloud calls resolve to localhost.",
+			"A sandbox with real cloud credentials can still create real cloud resources and charges, and an emulator without a sandbox still lets generated shell commands touch the host, so most agent setups that handle cloud code use both.",
+		],
+		[
+			relatedLink("/local-cloud-for-ai-agents/", "How the two boundaries fit together."),
+			{
+				label: "LocalCloud vs hosted agent sandboxes",
+				href: "/compare/e2b-vercel-sandboxes/",
+				note: "Where each boundary applies.",
+			},
 		],
 	),
 	glossary(
@@ -925,32 +933,8 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 			"LocalCloud jobs should fail closed on missing health or env vars.",
 			"Do not mix local emulator checks with deployment secrets.",
 		],
-	),
-	glossary(
-		"credentialless-cloud-development",
-		"Credentialless cloud development",
-		"A local-development pattern where cloud-shaped SDK calls run against localhost services without default access to cloud accounts, service-account keys, or billing projects.",
 		[
-			"Useful for inner-loop tests and demos.",
-			"Not a replacement for production authorization tests.",
-		],
-	),
-	glossary(
-		"bigquery-emulator",
-		"BigQuery emulator",
-		"A local BigQuery-compatible API and SQL runtime used to test datasets, tables, queries, and ingestion paths before validating in real BigQuery.",
-		[
-			"Coverage varies by emulator.",
-			"Use real BigQuery for full production semantics.",
-		],
-	),
-	glossary(
-		"service-emulator",
-		"Service emulator",
-		"A local process that implements enough of a managed service API for development and integration testing workflows.",
-		[
-			"Emulators trade managed-cloud behavior for speed and safety.",
-			"Document supported and unsupported calls.",
+			relatedLink("/gcp-integration-testing/", "Health gates, test design, and a prompt for the first agent-prepared CI change."),
 		],
 	),
 	glossary(
@@ -958,37 +942,16 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 		"Localhost cloud API",
 		"A cloud SDK endpoint override that sends service calls to a local process such as LocalCloud instead of a public cloud endpoint.",
 		[
-			"Environment variables are the usual routing mechanism.",
+			"Environment variables are the usual routing mechanism; many standard client libraries read them, so application code stays the same.",
+			"Some clients ignore those variables and need explicit endpoint configuration.",
+			"Confirm the client is not silently falling back to real Google Cloud before trusting a local result.",
 			"Unset overrides before real-cloud validation.",
-		],
-	),
-	glossary(
-		"agent-environment",
-		"Agent environment",
-		"The set of runtimes, tools, files, and network endpoints an AI coding agent can reach while it works on a task. It covers both where the agent executes code and what that code is allowed to call.",
-		[
-			"An agent environment has two halves: an execution boundary and a dependency boundary.",
-			"Code sandboxes such as E2B or Docker sandboxes provide the execution boundary.",
-			"LocalCloud provides a Google Cloud dependency boundary so agent-written cloud calls resolve to localhost.",
-		],
-		[
-			relatedLink("/local-cloud-for-ai-agents/", "How the two boundaries fit together."),
-		],
-	),
-	glossary(
-		"agent-sandbox-vs-cloud-emulator",
-		"Agent sandbox vs cloud emulator",
-		"An agent sandbox isolates where generated code runs, while a cloud emulator replaces the cloud APIs that code calls. The two controls are often confused, and using one does not give you the other.",
-		[
-			"A sandbox with real cloud credentials can still create real cloud resources and real charges.",
-			"An emulator without a sandbox still lets generated shell commands touch the host.",
-			"Most agent setups that handle cloud code want both controls in place.",
 		],
 		[
 			{
-				label: "LocalCloud vs hosted agent sandboxes",
-				href: "/compare/e2b-vercel-sandboxes/",
-				note: "Where each boundary applies.",
+				label: "SDK examples",
+				href: "/docs/sdk-examples/",
+				note: "Routing standard Google Cloud clients at LocalCloud.",
 			},
 		],
 	),
@@ -998,7 +961,8 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 		"Running an AI agent's generated code against local service endpoints without providing cloud credentials, service-account keys, or a billing project, so a mistake cannot create cloud resources or charges.",
 		[
 			"Removes the blast radius of an agent calling a destructive cloud API.",
-			"Does not remove the need to validate the same code against real Google Cloud before release.",
+			"The same pattern serves human inner-loop development and demos.",
+			"Does not remove the need to validate the same code against real Google Cloud before release, or replace production authorization tests.",
 			"Keep local automation credentialless and put real-cloud validation in a separate guarded step.",
 		],
 	),
@@ -1017,36 +981,6 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 				href: "/compatibility/",
 				note: "Per-operation LocalCloud status.",
 			},
-		],
-	),
-	glossary(
-		"sandboxed-cloud-sdk",
-		"Sandboxed cloud SDK",
-		"A standard cloud client library configured so its requests resolve to a local emulator instead of the public cloud endpoint, without changing application code.",
-		[
-			"Routing is normally done with emulator environment variables loaded into the process.",
-			"Some clients ignore those variables and need explicit endpoint configuration.",
-			"Confirm the client is not silently falling back to real Google Cloud before trusting a local result.",
-		],
-		[
-			{
-				label: "SDK examples",
-				href: "/docs/sdk-examples/",
-				note: "Routing standard Google Cloud clients at LocalCloud.",
-			},
-		],
-	),
-	glossary(
-		"cloud-emulator",
-		"Cloud emulator",
-		"A local program that implements a cloud provider's service APIs so application code can be developed and tested without calling the managed cloud. Distinct from a cloud-hosted device emulator, which runs a mobile operating system on remote hardware.",
-		[
-			"In this documentation, cloud emulator always means an emulator of cloud service APIs.",
-			"Emulators trade managed-cloud fidelity for speed, isolation, and zero cloud cost.",
-			"Every emulator has documented gaps; production behavior is validated against the real provider.",
-		],
-		[
-			relatedLink("/docs/what-is-gcp-emulator/", "Longer explanation with endpoint routing."),
 		],
 	),
 ]);

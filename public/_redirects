@@ -29,6 +29,20 @@
 /blog/bigquery-locally-agent-written-pipelines/ /services/bigquery/ 301
 /blog/localcloud-for-ai-agents /ai/ 301
 /blog/localcloud-for-ai-agents/ /ai/ 301
+/glossary/cloud-emulator /glossary/gcp-emulator/ 301
+/glossary/cloud-emulator/ /glossary/gcp-emulator/ 301
+/glossary/service-emulator /glossary/gcp-emulator/ 301
+/glossary/service-emulator/ /glossary/gcp-emulator/ 301
+/glossary/bigquery-emulator /services/bigquery/ 301
+/glossary/bigquery-emulator/ /services/bigquery/ 301
+/glossary/credentialless-cloud-development /glossary/credentialless-agent-testing/ 301
+/glossary/credentialless-cloud-development/ /glossary/credentialless-agent-testing/ 301
+/glossary/sandboxed-cloud-sdk /glossary/localhost-cloud-api/ 301
+/glossary/sandboxed-cloud-sdk/ /glossary/localhost-cloud-api/ 301
+/glossary/agent-sandbox-vs-cloud-emulator /glossary/ai-agent-sandbox/ 301
+/glossary/agent-sandbox-vs-cloud-emulator/ /glossary/ai-agent-sandbox/ 301
+/glossary/agent-environment /glossary/ai-agent-sandbox/ 301
+/glossary/agent-environment/ /glossary/ai-agent-sandbox/ 301
 
 /favicon.ico /favicon.png 301
 /ai/AGENTS.md /ai/agent-template.md 301
