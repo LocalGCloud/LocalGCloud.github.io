@@ -6,7 +6,10 @@ description: Configure LocalCloud projects, services, storage, TLS, and service-
 
 import Callout from '../../components/Callout.astro';
 import { docsContract } from '../../data/docs-contract';
+import { inCatalogOrder } from '../../data/services';
 import ServiceTier from '../../components/ServiceTier.astro';
+
+export const registry = inCatalogOrder(docsContract.services);
 
 # Configuration
 
@@ -116,9 +119,9 @@ services:
     - pubsub
 ```
 
-The registry contains {docsContract.services.length} API surfaces, including the auxiliary Google Sheets fixture integration. {docsContract.services.filter((service) => service.registryDefaultEnabled).length} are selected by default. Registry availability and default selection do not establish operation support or readiness. The currently unsupported entries are {docsContract.services.filter((service) => service.status === "unsupported").map((service) => service.name).join(", ")}. Check each service’s operation boundaries before use.
+The registry contains {docsContract.services.length} API surfaces, including the auxiliary Google Sheets fixture integration. {docsContract.services.filter((service) => service.registryDefaultEnabled).length} are selected by default. Registry availability and default selection do not establish operation support or readiness. The currently unsupported entries are {registry.filter((service) => service.status === "unsupported").map((service) => service.name).join(", ")}. Check each service’s operation boundaries before use.
 
-The default-disabled entries are {docsContract.services.filter((service) => !service.registryDefaultEnabled).map((service) => service.name).join(', ')}. Review the operation matrix before enabling them.
+The default-disabled entries are {registry.filter((service) => !service.registryDefaultEnabled).map((service) => service.name).join(', ')}. Review the operation matrix before enabling them.
 
 <div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Service registry defaults and tiers">
 <table>
@@ -131,7 +134,7 @@ The default-disabled entries are {docsContract.services.filter((service) => !ser
     </tr>
   </thead>
   <tbody>
-    {docsContract.services.map((service) => (
+    {registry.map((service) => (
       <tr>
         <td><code>{service.id}</code></td>
         <td>{service.name}{service.id === 'sheets' ? ' (Auxiliary integration API)' : ''}</td>

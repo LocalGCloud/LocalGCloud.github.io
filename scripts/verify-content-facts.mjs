@@ -369,6 +369,16 @@ for (const [file, expected] of [
   const listed = [...new Set([...main.matchAll(/href="\/services\/([a-z0-9-]+)\/"/g)].map((match) => match[1]))].filter((slug) => catalogSlugs.includes(slug));
   if (JSON.stringify(listed) !== JSON.stringify(expected)) errors.push(`${file} must list ${expected.length} services in the shared catalog order (servicesInCatalogOrder); found ${listed.join(', ') || 'none'}`);
 }
+// The same order in generated text: the service tables in llms.txt and /ai/services.md, and the
+// service registry table on /docs/configuration/.
+for (const file of ['llms.txt', 'ai/services.md']) {
+  const rows = (agentText.get(file) ?? '').split('\n').filter((line) => line.startsWith('| '));
+  const listed = [...new Set(rows.flatMap((line) => [...line.matchAll(/https:\/\/local\.cloud\/services\/([a-z0-9-]+)\//g)].map((match) => match[1])))];
+  if (JSON.stringify(listed) !== JSON.stringify(localSlugs)) errors.push(`${file} must list its ${localSlugs.length} local services in the shared catalog order (servicesInCatalogOrder); found ${listed.join(', ') || 'none'}`);
+}
+const registryTable = htmlPages.get('docs/configuration/index.html')?.match(/<table\b[\s\S]*?<\/table>/g)?.find((table) => table.includes('<th>Service ID</th>')) ?? '';
+const registryIds = [...registryTable.matchAll(/<td><code>([a-z0-9-]+)<\/code><\/td>/g)].map((match) => match[1]);
+if (JSON.stringify(registryIds) !== JSON.stringify(servicesInCatalogOrder.map((service) => service.id))) errors.push(`docs/configuration/ must list the service registry in the shared catalog order; found ${registryIds.join(', ') || 'none'}`);
 
 // Keep every service page aligned with the compatibility table, including future updates.
 const plainText = (markup) => markup.replace(/<[^>]+>/g, '').replaceAll('&amp;', '&').replaceAll('&#39;', "'").replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replace(/\s+/g, ' ').trim();

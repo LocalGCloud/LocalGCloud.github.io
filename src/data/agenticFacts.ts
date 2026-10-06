@@ -2,7 +2,7 @@ import { cliQuickStart, dockerQuickStart } from "../utils/quickstart.mjs";
 import { docsContract } from "./docs-contract";
 import { productFacts } from "./productFacts";
 import { serviceCompatibilityEditorial } from "./serviceEditorial";
-import { services, type Service } from "./services";
+import { servicesInCatalogOrder, type Service } from "./services";
 
 export interface EvidenceRecord {
 	source: string;
@@ -124,7 +124,8 @@ export const joinClauses = (items: readonly string[]) =>
 
 // Agent pages describe each service with the same curated capability and boundary
 // lists as /compatibility/ and the service guide, not the raw operation ledger.
-export const agenticServiceMetadata: AgenticServiceMetadata[] = services.map(
+// In the shared catalog order, so /ai/ and every agent Markdown file list services like /services/.
+export const agenticServiceMetadata: AgenticServiceMetadata[] = servicesInCatalogOrder.map(
 	(service) => {
 		const status =
 			service.catalogState === "coming-soon"

@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { alternativesReviewedAt, comparisonSummary } from "../src/data/alternatives.ts";
 import { proTierServiceNames } from "../src/data/pricingFaq.ts";
-import { proTierLabel } from "../src/data/services.ts";
+import { inCatalogOrder, proTierLabel } from "../src/data/services.ts";
 import { presentContract } from "../src/utils/contract-presentation.mjs";
 import { cliQuickStart } from "../src/utils/quickstart.mjs";
 
@@ -60,7 +60,8 @@ const endpointLabel = (service) =>
 		),
 	].join(" · ");
 const site = contract.product.siteUrl;
-const services = contract.services.map((service) => {
+// The shared catalog order of /services/, so llms.txt lists services the way the site does.
+const services = inCatalogOrder(contract.services).map((service) => {
 	const overlay = editorial.get(service.id);
 	if (!overlay) throw new Error(`Missing editorial overlay for ${service.id}`);
 	const available = service.availability === "available";

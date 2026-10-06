@@ -64,35 +64,35 @@ Every docs page, service guide and comparison also has a Markdown version: repla
 
 ## Services
 
-Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-in: `--services` sets the exact list of service IDs to run, for example `localcloud start --local-only --services firestore,gcs,pubsub`. Google Sheets serves read-only spreadsheet values as fixtures for other services. Bigtable, Spanner, GKE, Cloud Run, and Cloud KMS are Pro-tier services, marked "Pro tier, free during preview": they are free during the public preview and need no license key ([pricing](https://local.cloud/pricing/#pro-tier)).
+Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-in: `--services` sets the exact list of service IDs to run, for example `localcloud start --local-only --services firestore,bigtable,spanner`. Google Sheets serves read-only spreadsheet values as fixtures for other services. Bigtable, Spanner, GKE, Cloud Run, and Cloud KMS are Pro-tier services, marked "Pro tier, free during preview": they are free during the public preview and need no license key ([pricing](https://local.cloud/pricing/#pro-tier)).
 
 | Service | ID | Starts by default | Endpoints | Environment variable | Guide |
 | --- | --- | --- | --- | --- | --- |
-| Cloud Storage | `gcs` | yes | HTTP/REST :5382 | `STORAGE_EMULATOR_HOST=http://localhost:5382` | [guide](https://local.cloud/services/cloud-storage/) |
-| Pub/Sub | `pubsub` | yes | gRPC :5383 | `PUBSUB_EMULATOR_HOST=localhost:5383` | [guide](https://local.cloud/services/pubsub/) |
 | Firestore | `firestore` | opt-in | gRPC :5384 | `FIRESTORE_EMULATOR_HOST=localhost:5384` | [guide](https://local.cloud/services/firestore/) |
 | Bigtable | `bigtable` | yes | gRPC :5385 | `BIGTABLE_EMULATOR_HOST=localhost:5385` | [guide](https://local.cloud/services/bigtable/) |
 | Spanner | `spanner` | yes | gRPC :5386 · HTTP/REST :5387 | `SPANNER_EMULATOR_HOST=localhost:5386` | [guide](https://local.cloud/services/spanner/) |
-| BigQuery | `bigquery` | yes | HTTP/REST :5388 · gRPC :5389 | `BIGQUERY_EMULATOR_HOST=http://localhost:5388` | [guide](https://local.cloud/services/bigquery/) |
-| Google Sheets | `sheets` | yes | HTTP/REST :5380 | `SHEETS_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/google-sheets/) |
-| Secret Manager | `secretmanager` | yes | gRPC :5380 | `SECRET_MANAGER_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/secret-manager/) |
+| AlloyDB | `alloydb` | yes | gRPC :5380 | `ALLOYDB_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/alloydb/) |
+| Memorystore (Redis/Valkey) | `memorystore` | yes | RESP :5390 | `REDIS_HOST=localhost:5390` | [guide](https://local.cloud/services/memorystore/) |
+| Cloud SQL | `cloudsql` | yes | HTTP/REST :5380 · PostgreSQL :5391 · MySQL :5406 | `CLOUD_SQL_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/cloud-sql/) |
+| Pub/Sub | `pubsub` | yes | gRPC :5383 | `PUBSUB_EMULATOR_HOST=localhost:5383` | [guide](https://local.cloud/services/pubsub/) |
 | Cloud Tasks | `cloudtasks` | yes | gRPC :5380 | `CLOUD_TASKS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-tasks/) |
 | Cloud Scheduler | `cloudscheduler` | yes | gRPC + HTTP/REST :5380 | `CLOUD_SCHEDULER_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-scheduler/) |
+| Cloud Workflows | `workflows` | yes | gRPC :5380 | `WORKFLOWS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-workflows/) |
 | Cloud Functions (2nd Gen) | `cloudfunctions` | yes | gRPC :5380 | `CLOUD_FUNCTIONS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-functions/) |
-| AlloyDB | `alloydb` | yes | gRPC :5380 | `ALLOYDB_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/alloydb/) |
-| Dataproc | `dataproc` | yes | gRPC :5380 | `DATAPROC_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/dataproc/) |
+| GKE | `gke` | opt-in | gRPC :5380 · k3d :5443 | `GKE_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/gke/) |
+| Cloud Run | `cloudrun` | opt-in | gRPC :5380 | `CLOUD_RUN_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-run/) |
+| Secret Manager | `secretmanager` | yes | gRPC :5380 | `SECRET_MANAGER_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/secret-manager/) |
 | Cloud IAM | `cloudiam` | yes | gRPC :5380 | `IAM_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-iam/) |
+| Cloud KMS | `kms` | yes | gRPC + HTTP/REST :5380 | `CLOUD_KMS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-kms/) |
 | Cloud Resource Manager | `cloudresourcemanager` | yes | HTTP/REST :5380 | `CLOUD_RESOURCE_MANAGER_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/cloud-resource-manager/) |
 | Service Usage | `serviceusage` | yes | HTTP/REST :5380 | `SERVICE_USAGE_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/service-usage/) |
 | Cloud Billing | `cloudbilling` | yes | HTTP/REST :5380 | `CLOUD_BILLING_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/cloud-billing/) |
 | Cloud Logging | `logging` | yes | gRPC :5380 | `CLOUD_LOGGING_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-logging/) |
 | Cloud Monitoring | `monitoring` | yes | gRPC :5380 | `CLOUD_MONITORING_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-monitoring/) |
-| GKE | `gke` | opt-in | gRPC :5380 · k3d :5443 | `GKE_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/gke/) |
-| Cloud Run | `cloudrun` | opt-in | gRPC :5380 | `CLOUD_RUN_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-run/) |
-| Memorystore (Redis/Valkey) | `memorystore` | yes | RESP :5390 | `REDIS_HOST=localhost:5390` | [guide](https://local.cloud/services/memorystore/) |
-| Cloud Workflows | `workflows` | yes | gRPC :5380 | `WORKFLOWS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-workflows/) |
-| Cloud KMS | `kms` | yes | gRPC + HTTP/REST :5380 | `CLOUD_KMS_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/cloud-kms/) |
-| Cloud SQL | `cloudsql` | yes | HTTP/REST :5380 · PostgreSQL :5391 · MySQL :5406 | `CLOUD_SQL_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/cloud-sql/) |
+| Cloud Storage | `gcs` | yes | HTTP/REST :5382 | `STORAGE_EMULATOR_HOST=http://localhost:5382` | [guide](https://local.cloud/services/cloud-storage/) |
+| BigQuery | `bigquery` | yes | HTTP/REST :5388 · gRPC :5389 | `BIGQUERY_EMULATOR_HOST=http://localhost:5388` | [guide](https://local.cloud/services/bigquery/) |
+| Dataproc | `dataproc` | yes | gRPC :5380 | `DATAPROC_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/dataproc/) |
+| Google Sheets | `sheets` | yes | HTTP/REST :5380 | `SHEETS_EMULATOR_HOST=http://localhost:5380` | [guide](https://local.cloud/services/google-sheets/) |
 
 Unsupported locally; use Google Cloud:
 

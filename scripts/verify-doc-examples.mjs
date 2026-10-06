@@ -335,8 +335,9 @@ for (const endpoint of [
 	assert(combined.includes(endpoint), `docs omit contract endpoint ${endpoint}`);
 
 const configuration = docs.get("src/pages/docs/configuration.mdx");
+// The registry table lists every docsContract service, in the shared catalog order.
 assert(
-	configuration.includes("docsContract.services.map"),
+	configuration.includes("registry = inCatalogOrder(docsContract.services)") && configuration.includes("registry.map"),
 	"configuration must list all registry services, not only published routes",
 );
 
