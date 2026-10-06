@@ -114,18 +114,21 @@ for (const phrase of [
 assert(!/\$\d/.test(pricing), "pricing page publishes a numeric price");
 assert(!/Contact us|Commercial|commercial/.test(pricing), "pricing page retains a commercial offer");
 
+// Header navigation (S5): six entries, each naming its own destination. The logo links
+// home, Services covers the GCP emulator overview, and Pricing follows AI Agents directly.
 const header = docs.get("src/components/Header.astro");
-const aiNavIndex = header.indexOf("label: 'AI Agents'");
-const pricingNavIndex = header.indexOf("label: 'Pricing'");
-const emulatorNavIndex = header.indexOf("label: 'GCP Emulator'");
+const navLabels = [...header.matchAll(/label: '([^']+)'/g)].map((match) => match[1]);
+for (const label of ["Services", "AI Agents", "Pricing", "Docs"])
+	assert(navLabels.includes(label), `header must expose a ${label} navigation entry`);
 assert(
-	aiNavIndex !== -1 && pricingNavIndex !== -1 && emulatorNavIndex !== -1,
-	"header must expose AI Agents, Pricing, and GCP Emulator navigation entries",
+	navLabels[navLabels.indexOf("AI Agents") + 1] === "Pricing",
+	"Pricing navigation must appear immediately after AI Agents",
 );
-assert(
-	aiNavIndex < pricingNavIndex && pricingNavIndex < emulatorNavIndex,
-	"Pricing navigation must appear immediately after AI",
-);
+for (const label of ["GCP Emulator", "Home"])
+	assert(
+		!navLabels.includes(label),
+		`header must not expose a ${label} entry; the Services entry and the logo cover it`,
+	);
 
 for (const phrase of [
 	"anonymous product analytics",

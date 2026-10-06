@@ -4,17 +4,23 @@ import BrandMark from './BrandMark.astro';
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 const currentPath = Astro.url.pathname;
+const withSlash = (path: string) => (path.endsWith('/') ? path : `${path}/`);
 
+// Services covers the catalog and every page that presents it: the GCP emulator overview,
+// compatibility, and the six root emulator landing pages.
+const rootEmulatorPages = ['bigquery', 'pubsub', 'spanner', 'bigtable', 'firestore', 'cloud-storage'].map(
+  (name) => `${base}${name}-emulator/`,
+);
+const isServicesPath =
+  ['services', 'gcp-emulator', 'compatibility'].some((prefix) => currentPath.startsWith(`${base}${prefix}`)) ||
+  rootEmulatorPages.includes(withSlash(currentPath));
+
+// The logo links home, so the navigation has no Home entry.
 const navLinks = [
-  {
-    label: 'Home',
-    href: base,
-    isActive: currentPath === base || currentPath === base.slice(0, -1),
-  },
   {
     label: 'Services',
     href: `${base}services/`,
-    isActive: currentPath.startsWith(`${base}services`),
+    isActive: isServicesPath,
   },
   {
     label: 'AI Agents',
@@ -31,24 +37,14 @@ const navLinks = [
     isActive: currentPath.startsWith(`${base}pricing`),
   },
   {
-    label: 'GCP Emulator',
-    href: `${base}gcp-emulator/`,
-    isActive: currentPath.startsWith(`${base}gcp-emulator`),
+    label: 'Docs',
+    href: `${base}docs/`,
+    isActive: currentPath.startsWith(`${base}docs`) || currentPath.startsWith(`${base}glossary`),
   },
   {
     label: 'Compare',
     href: `${base}compare/`,
     isActive: currentPath.startsWith(`${base}compare`) || currentPath.startsWith(`${base}localstack-for-google-cloud`),
-  },
-  {
-    label: 'Guides',
-    href: `${base}how-to-run-google-cloud-locally/`,
-    isActive:
-      currentPath.startsWith(`${base}how-to-run-google-cloud-locally`) ||
-      currentPath.startsWith(`${base}optimize-gcp-costs`) ||
-      currentPath.startsWith(`${base}local-cloud-development`) ||
-      currentPath.startsWith(`${base}gcp-integration-testing`) ||
-      currentPath.startsWith(`${base}glossary`),
   },
   {
     label: 'Blog',
@@ -92,7 +88,8 @@ const navLinks = [
         <span class="site-nav__search-text">Search</span>
         <kbd class="site-nav__search-kbd">&#8984;K</kbd>
       </button>
-      <a href={`${base}docs/`} class="site-header__cta">Get started</a>
+      {/* The Docs link opens the docs; Get started goes straight to the install step. */}
+      <a href={`${base}docs/#install-the-cli`} class="site-header__cta">Get started</a>
     </nav>
   </div>
 
@@ -103,7 +100,7 @@ const navLinks = [
           {link.label}
         </a>
       ))}
-      <a href={`${base}docs/`}>Get started</a>
+      <a href={`${base}docs/#install-the-cli`}>Get started</a>
     </div>
   </div>
 </header>
