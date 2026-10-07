@@ -8,7 +8,7 @@
 @media(min-width:64rem){
   .site-view-switch{display:block}
   .desktop-view{
-    --accent:#005fff;--accent-strong:#0054d8;--bg:#e7e5dd;--bg-2:#eceae4;--surface:#fff;--surface-2:#f3f2ee;--line:#d4d1c8;--fs-display:clamp(3rem,4.8vw,4.7rem);
+    --accent:#005fff;--accent-strong:#0054d8;--text-3:var(--text-2);--bg:#e7e5dd;--bg-2:#eceae4;--surface:#fff;--surface-2:#f3f2ee;--line:#d4d1c8;--fs-display:clamp(3rem,4.8vw,4.7rem);
     & body{overflow:hidden}
     & body::before,& .site-view-switch{display:none}
     & .desktop-root{display:block}

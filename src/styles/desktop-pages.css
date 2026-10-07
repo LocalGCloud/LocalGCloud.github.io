@@ -72,10 +72,10 @@
   & .service-filter__search{padding:.7rem 1rem;border:1px solid var(--line);border-radius:.6rem;background:white}
   & .desktop-catalog-search input,& .service-filter__search{flex:1;min-width:0}
   & .desktop-catalog-search input{background:white;border:1px solid var(--line);border-radius:.6rem;padding:.8rem 1rem}
-  & .desktop-catalog-search a,& .desktop-catalog-compatibility{color:var(--accent);white-space:nowrap}
+  & .desktop-catalog-search a,& .desktop-catalog-compatibility{color:var(--accent-strong);white-space:nowrap}
   &.desktop-ready .desktop-catalog-categories{display:flex!important;flex-wrap:wrap;gap:.7rem 1.3rem;margin:1.1rem 0 .25rem;color:var(--accent);font-size:.95rem}
   & .desktop-catalog-breadcrumb{font-size:.95rem;margin-bottom:.9rem;color:#526581}
-  & .desktop-catalog-breadcrumb a{color:var(--accent);margin-right:.5rem}
+  & .desktop-catalog-breadcrumb a{color:var(--accent-strong);margin-right:.5rem;text-decoration:underline}
   & .service-catalog-page h1{font-size:2.8rem!important;letter-spacing:-.045em;line-height:1.1;margin-top:0}
   & .service-catalog-page .site-section--hero p.mt-4{margin-top:.3rem;font-size:1.1rem;line-height:1.4}
   & .service-catalog-page .site-section-heading{margin-bottom:.7rem;gap:.1rem}
