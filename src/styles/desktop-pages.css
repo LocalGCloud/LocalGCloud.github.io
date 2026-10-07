@@ -1,7 +1,7 @@
 /* Deferred presentation for the selected Desktop view. Classic rules remain untouched. */
 @media(min-width:64rem){
  .desktop-view{
-  --accent:#005fff;--accent-strong:#0054d8;--accent-soft:#eef4ff;
+  --accent-soft:#eef4ff;
   & .desktop-brand span{color:var(--accent)}
   & .desktop-menu nav{position:absolute;top:2rem;left:-.6rem;min-width:12rem;padding:.4rem;border:1px solid var(--line);border-radius:.6rem;background:white;box-shadow:var(--shadow-lg)}
   & .desktop-menu a{display:block;padding:.6rem}
@@ -23,7 +23,7 @@
   & .desktop-history-preview p{max-width:38rem;margin-top:1rem}
   & .desktop-taskbar a{max-width:12rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   & .desktop-taskbar button:disabled{opacity:.4;cursor:default}
-  & .desktop-markdown{margin-left:auto;font-size:.8rem;color:var(--accent)}
+  & .desktop-markdown{margin-left:auto;font-size:.8rem;color:var(--accent-strong)}
   & .desktop-markdown+.desktop-open-tab{margin-left:0}
   & .desktop-shortcuts-left img[data-desktop-icon*='folder'],& img[data-desktop-icon*='tag']{filter:hue-rotate(170deg) saturate(1.3) drop-shadow(0 2px 2px #0002)}
   & img[data-desktop-icon*='docs-book']{scale:.96;translate:0 2px;filter:hue-rotate(-45deg) saturate(1.5) drop-shadow(0 2px 2px #0002)}

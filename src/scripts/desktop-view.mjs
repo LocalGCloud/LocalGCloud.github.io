@@ -90,8 +90,10 @@ export async function initDesktop() {
   styles.rel = 'stylesheet';
   styles.href = root.dataset.pageStyles;
   const loaded = new Promise((resolve) => {
-    styles.onload = () => resolve(true);
-    styles.onerror = () => resolve(false);
+    const finish = (ready) => { clearTimeout(timer); resolve(ready); };
+    const timer = setTimeout(() => finish(false), 8000);
+    styles.onload = () => finish(true);
+    styles.onerror = () => finish(false);
     document.head.append(styles);
   });
   const presentContent = () => {
@@ -104,7 +106,6 @@ export async function initDesktop() {
     if(hero && !hero.dataset.heroReady){hero.after(hero.content.cloneNode(true));hero.dataset.heroReady='true';}
   };
   presentContent();
-  root.querySelectorAll('[data-desktop-icon]').forEach((icon) => { icon.src = icon.dataset.desktopIcon; });
 
   const wide = matchMedia('(min-width: 64rem)');
   const base = root.dataset.base || '/';
@@ -195,7 +196,6 @@ export async function initDesktop() {
       if (url) link.href = url;
     });
   };
-  formatLinks(document);
   const results = document.getElementById('search-results');
   if (results) new MutationObserver(() => formatLinks(results)).observe(results, { childList: true });
 
@@ -255,6 +255,8 @@ export async function initDesktop() {
   else {
     document.documentElement.classList.remove('desktop-view');
     document.documentElement.dataset.siteView = 'classic';
+    main.hidden = false;
+    initClassic();
   }
 }
 

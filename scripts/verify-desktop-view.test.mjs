@@ -123,7 +123,7 @@ test('the real analytics stub retains the initial and early routes exactly once 
 });
 
 function viewHarness({ query = '', saved, wide = true, blockedStorage = false } = {}) {
-  const scripts = [], classes = new Set(), listeners = new Map();
+  const scripts = [], classes = new Set(), listeners = new Map(), timers = [], cleared = [];
   const root = { dataset: {}, classList: {
     toggle: (name, enabled) => enabled ? classes.add(name) : classes.delete(name),
     remove: (name) => classes.delete(name),
@@ -131,6 +131,7 @@ function viewHarness({ query = '', saved, wide = true, blockedStorage = false } 
   const breakpoint = { matches: wide, addEventListener: (_, callback) => listeners.set('breakpoint', callback) };
   const context = {
     desktopScript: '/_astro/desktop-view.mjs', desktopPageStyles: '/_astro/desktop-pages.css', homeImages:null, URL, URLSearchParams, console,
+    setTimeout(callback, delay) { timers.push({callback, delay}); return timers.length; }, clearTimeout(id) { cleared.push(id); },
     location: { search: query, href: 'https://local.cloud/docs/#install-the-cli', origin: 'https://local.cloud' },
     localStorage: {
       getItem: () => { if (blockedStorage) throw Error('blocked'); return saved; },
@@ -141,7 +142,7 @@ function viewHarness({ query = '', saved, wide = true, blockedStorage = false } 
   };
   context.window = context;
   runInNewContext(bootstrap, context);
-  return { context, root, classes, scripts, listeners, breakpoint };
+  return { context, root, classes, scripts, listeners, breakpoint, timers, cleared };
 }
 
 test('desktop bootstrap uses a trusted module script, loads once on widening, and falls back on failure', () => {
@@ -162,6 +163,25 @@ test('desktop bootstrap uses a trusted module script, loads once on widening, an
   assert.equal(h.classes.has('desktop-view'), false);
   assert.equal(viewHarness({ query: '?view=classic' }).scripts.length, 1, 'Classic loads only the shared URL controller, no Desktop styles');
   assert.equal(viewHarness({ saved: 'classic' }).root.dataset.siteView, 'desktop', 'plain URLs always default to Desktop');
+});
+
+test('a stalled Desktop controller restores readable Classic content and a late arrival keeps Classic', () => {
+  const h = viewHarness();
+  assert.equal(h.timers.length, 1);
+  assert.equal(h.timers[0].delay, 8000);
+  h.timers[0].callback();
+  assert.equal(h.classes.has('desktop-view'), false, 'pending visibility guard is removed');
+  assert.equal(h.root.dataset.siteView, 'classic');
+  let classic = false;
+  h.context.document.readyState = 'complete';
+  h.context.initClassic = () => { classic = true; };
+  h.context.initDesktop = () => { throw Error('late module must not start Desktop'); };
+  h.context.switchView = () => {};
+  const source = readFileSync(new URL('../src/scripts/desktop-view.mjs', import.meta.url), 'utf8');
+  runInNewContext(source.slice(source.indexOf("if (typeof document !== 'undefined')")), h.context);
+  h.scripts[1].onload();
+  assert.equal(classic, true);
+  assert.equal(h.classes.has('desktop-view'), false);
 });
 
 test('view switching preserves the real current page and fragment', () => {
@@ -202,7 +222,8 @@ test('Classic keeps explicit view URLs for page links and dynamic search results
   assert.equal(searchLink.href, 'https://local.cloud/services/bigquery/?view=classic');
 });
 
-test('window controls bind while styles are pending, and closing the only page hides it without a reload', async () => {
+test('pending styles keep controls responsive and a failed or stalled download restores usable Classic content', async () => {
+  for (const outcome of ['load', 'error', 'timeout']) {
   const listeners = new Map();
   const button = (action) => ({ dataset: { windowAction: action }, addEventListener: (_, handler) => listeners.set(action, handler) });
   let styles, focused = false, assigned = false;
@@ -211,8 +232,12 @@ test('window controls bind while styles are pending, and closing the only page h
   const deck = { replaceChildren() {} }, tasks = { replaceChildren() {} }, back = { addEventListener() {} }, openTab = {};
   const elements = { '[data-desktop-main]': main, '[data-desktop-history]': deck, '[data-desktop-tasks]': tasks, '[data-desktop-restore]': restore, '[data-desktop-back]': back, '.desktop-open-tab': openTab };
   const root = { dataset: { pageStyles: '/desktop.css', pageLabel: 'Home' }, querySelector: (selector) => elements[selector], querySelectorAll: () => [] };
-  const html = { dataset: { siteView: 'desktop' }, classList: { add() {}, remove() {} } };
+  const classes = new Set(['desktop-view']);
+  const html = { dataset: { siteView: 'desktop' }, classList: { add: name => classes.add(name), remove: name => classes.delete(name) } };
+  let timeout, cleared = false, classic = false;
   const context = {
+    setTimeout(callback, delay) { assert.equal(delay, 8000); timeout = callback; return 1; },
+    clearTimeout(id) { assert.equal(id, 1); cleared = true; }, initClassic() { classic = true; },
     URL, pageWindowURL, desktopPageURL, readPageHistory, location: { href: 'https://local.cloud/', assign() { assigned = true; } },
     sessionStorage: { getItem: () => null }, history: { replaceState() {} },
     matchMedia: () => ({ matches: true, addEventListener() {} }), window: { addEventListener() {} },
@@ -225,9 +250,22 @@ test('window controls bind while styles are pending, and closing the only page h
   assert.equal(restore.hidden, false);
   assert.equal(focused, true);
   assert.equal(assigned, false);
-  styles.onerror();
+  if (outcome === 'timeout') timeout();
+  else styles['on' + outcome]();
   await pending;
-  assert.equal(html.dataset.siteView, 'classic', 'failed presentation falls back safely');
+  assert.equal(cleared, true);
+  if (outcome === 'load') {
+    assert.ok(classes.has('desktop-ready'), 'ready layout can be painted');
+    assert.equal(classic, false);
+  } else {
+    assert.equal(html.dataset.siteView, 'classic');
+    assert.equal(classes.has('desktop-view'), false, 'pending visibility guard no longer applies');
+    assert.equal(main.hidden, false, 'fallback content remains visible even after closing a pending window');
+    assert.equal(classic, true, 'fallback links retain Classic mode');
+    styles.onload();
+    assert.equal(classes.has('desktop-ready'), false, 'late styling cannot reactivate Desktop after timeout');
+  }
+  }
 });
 
 test('hidden windows do not accumulate reading time and Escape cancels queued keyboard help', () => {
@@ -404,6 +442,7 @@ test('all pre-change HTML routes retain their canonical and original main conten
     assert.match(html, /<main\b[^>]*id="main-content"/, route.path);
     assert.equal((html.match(/<h1\b/g) || []).length, 1, route.path);
     if (route.canonical) assert.ok(html.includes('href="' + route.canonical + '"'), 'changed canonical: ' + route.path);
+    assert.doesNotMatch(html.replace(/<a\b[^>]*data-view-choice[^>]*>/g, ''), /<a\b[^>]*href="[^"]*[?&]view=(?:classic|desktop)/, 'server-rendered page links need no Desktop rewrite: ' + route.path);
   }
 });
 
