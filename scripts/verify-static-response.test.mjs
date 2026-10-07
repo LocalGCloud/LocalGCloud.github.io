@@ -185,14 +185,25 @@ const varyValues = (response) => (response.headers.get('Vary') || '').split(',')
 test('the twin route list maps docs, service and comparison pages to Markdown files and back', () => {
   for (const [page, twin] of [['/docs/', '/docs/index.md'], ['/docs/configuration/', '/docs/configuration.md'],
     ['/services/', '/services/index.md'], ['/services/cloud-run/', '/services/cloud-run.md'],
-    ['/compare/', '/compare/index.md'], ['/compare/google-emulators/', '/compare/google-emulators.md']]) {
+    ['/compare/', '/compare/index.md'], ['/compare/google-emulators/', '/compare/google-emulators.md'],
+    ['/', '/index.md'], ['/pricing/', '/pricing.md'], ['/blog/', '/blog/index.md'], ['/blog/new-post/', '/blog/new-post.md'], ['/ai/', '/ai/index.md'],
+    ['/services/bigquery/ai-agent-local-testing/', '/services/bigquery/ai-agent-local-testing.md']]) {
     assert.equal(markdownTwinPath(page), twin, page);
     assert.equal(twinSourcePath(twin), page, twin);
   }
-  for (const page of ['/', '/docs', '/pricing/', '/ai/', '/services/bigquery/ai-agent-local-testing/', '/docs/configuration/index.html']) {
+  for (const page of ['/docs', '/404/', '/ai/agents/', '/ingest/', '/docs/configuration/index.html']) {
     assert.equal(markdownTwinPath(page), null, page);
   }
-  for (const path of ['/ai/agents.md', '/llms.txt', '/docs/configuration/', '/services/bigquery/notes.md']) assert.equal(twinSourcePath(path), null, path);
+  for (const path of ['/ai/agents.md', '/llms.txt', '/docs/configuration/', '/pricing/index.md']) assert.equal(twinSourcePath(path), null, path);
+});
+
+test('Markdown exports of noindex content retain the indexing boundary', async () => {
+  const env = { ASSETS: assets({ '/immersive-demo.md': twinAsset }) };
+  for (const [path, headers] of [['/immersive-demo.md', {}], ['/immersive-demo/', { Accept: 'text/markdown' }]]) {
+    const response = await serveSite(request(undefined, { headers }, 'https://local.cloud' + path), env);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('X-Robots-Tag'), 'noindex');
+  }
 });
 
 test('Accept selects Markdown only when the client ranks it above HTML', () => {
@@ -231,7 +242,7 @@ test('browsers and HTML-first clients get the HTML page, which also varies on Ac
   assert.ok(env.ASSETS.requested.every(({ path }) => path === '/docs/configuration/'));
 });
 
-test('a missing twin falls back to HTML, and pages without a twin ignore Accept', async () => {
+test('missing twins fall back to HTML while representation caches still vary by Accept', async () => {
   const env = { ASSETS: assets({ '/docs/configuration/': () => asset(), '/pricing/': () => asset() }) };
   const missing = await serveSite(request(undefined, { headers: { 'Accept': 'text/markdown' } }, 'https://local.cloud/docs/configuration/'), env);
   assert.equal(missing.status, 200);
@@ -240,8 +251,8 @@ test('a missing twin falls back to HTML, and pages without a twin ignore Accept'
   assert.equal(await missing.text(), html);
   const pricing = await serveSite(request(undefined, { headers: { 'Accept': 'text/markdown' } }, 'https://local.cloud/pricing/'), env);
   assert.match(pricing.headers.get('Content-Type'), /^text\/html/);
-  assert.ok(!varyValues(pricing).includes('Accept'));
-  assert.ok(!env.ASSETS.requested.some(({ path }) => path === '/pricing.md'), 'pages without a twin never look for one');
+  assert.ok(varyValues(pricing).includes('Accept'));
+  assert.ok(env.ASSETS.requested.some(({ path }) => path === '/pricing.md'));
 });
 
 test('Markdown twins revalidate on their own ETag and answer HEAD', async () => {

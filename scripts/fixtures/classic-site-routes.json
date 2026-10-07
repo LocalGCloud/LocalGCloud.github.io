@@ -1,0 +1,342 @@
+{
+  "siteRevision": "c79afabff9bf3c65d2d1229ed63c90f8fe4486d2",
+  "upstreamRuntimeRevision": "9480fce902a5cfcbb47ae441df94b4eda11d0fee",
+  "routes": [
+    {
+      "path": "404.html",
+      "canonical": null
+    },
+    {
+      "path": "about/index.html",
+      "canonical": "https://local.cloud/about/"
+    },
+    {
+      "path": "agents/claude-code-gcp-sandbox/index.html",
+      "canonical": "https://local.cloud/agents/claude-code-gcp-sandbox/"
+    },
+    {
+      "path": "agents/codex-cli-gcp-sandbox/index.html",
+      "canonical": "https://local.cloud/agents/codex-cli-gcp-sandbox/"
+    },
+    {
+      "path": "agents/cursor-gcp-sandbox/index.html",
+      "canonical": "https://local.cloud/agents/cursor-gcp-sandbox/"
+    },
+    {
+      "path": "agents/gemini-cli-gcp-sandbox/index.html",
+      "canonical": "https://local.cloud/agents/gemini-cli-gcp-sandbox/"
+    },
+    {
+      "path": "agents/index.html",
+      "canonical": "https://local.cloud/agents/"
+    },
+    {
+      "path": "ai/index.html",
+      "canonical": "https://local.cloud/ai/"
+    },
+    {
+      "path": "blog/index.html",
+      "canonical": "https://local.cloud/blog/"
+    },
+    {
+      "path": "blog/localcloud-for-open-source/index.html",
+      "canonical": "https://local.cloud/blog/localcloud-for-open-source/"
+    },
+    {
+      "path": "blog/run-dataproc-locally-docker/index.html",
+      "canonical": "https://local.cloud/blog/run-dataproc-locally-docker/"
+    },
+    {
+      "path": "brand/icons/index.html",
+      "canonical": null
+    },
+    {
+      "path": "changelog/index.html",
+      "canonical": "https://local.cloud/changelog/"
+    },
+    {
+      "path": "compare/bigquery-emulator-alternatives/index.html",
+      "canonical": "https://local.cloud/compare/bigquery-emulator-alternatives/"
+    },
+    {
+      "path": "compare/e2b-vercel-sandboxes/index.html",
+      "canonical": "https://local.cloud/compare/e2b-vercel-sandboxes/"
+    },
+    {
+      "path": "compare/google-emulators/index.html",
+      "canonical": "https://local.cloud/compare/google-emulators/"
+    },
+    {
+      "path": "compare/index.html",
+      "canonical": "https://local.cloud/compare/"
+    },
+    {
+      "path": "compatibility/index.html",
+      "canonical": "https://local.cloud/compatibility/"
+    },
+    {
+      "path": "contact/index.html",
+      "canonical": "https://local.cloud/contact/"
+    },
+    {
+      "path": "docs/architecture/index.html",
+      "canonical": "https://local.cloud/docs/architecture/"
+    },
+    {
+      "path": "docs/bigquery-emulator-features/index.html",
+      "canonical": "https://local.cloud/docs/bigquery-emulator-features/"
+    },
+    {
+      "path": "docs/bigtable-emulator-features/index.html",
+      "canonical": "https://local.cloud/docs/bigtable-emulator-features/"
+    },
+    {
+      "path": "docs/configuration/index.html",
+      "canonical": "https://local.cloud/docs/configuration/"
+    },
+    {
+      "path": "docs/console/index.html",
+      "canonical": "https://local.cloud/docs/console/"
+    },
+    {
+      "path": "docs/faq/index.html",
+      "canonical": "https://local.cloud/docs/faq/"
+    },
+    {
+      "path": "docs/index.html",
+      "canonical": "https://local.cloud/docs/"
+    },
+    {
+      "path": "docs/licensing/index.html",
+      "canonical": "https://local.cloud/docs/licensing/"
+    },
+    {
+      "path": "docs/privacy/index.html",
+      "canonical": "https://local.cloud/docs/privacy/"
+    },
+    {
+      "path": "docs/sdk-examples/index.html",
+      "canonical": "https://local.cloud/docs/sdk-examples/"
+    },
+    {
+      "path": "docs/seed-data/index.html",
+      "canonical": "https://local.cloud/docs/seed-data/"
+    },
+    {
+      "path": "docs/services-overview/index.html",
+      "canonical": "https://local.cloud/docs/services-overview/"
+    },
+    {
+      "path": "docs/spanner-emulator-features/index.html",
+      "canonical": "https://local.cloud/docs/spanner-emulator-features/"
+    },
+    {
+      "path": "docs/terraform/index.html",
+      "canonical": "https://local.cloud/docs/terraform/"
+    },
+    {
+      "path": "docs/what-is-gcp-emulator/index.html",
+      "canonical": "https://local.cloud/docs/what-is-gcp-emulator/"
+    },
+    {
+      "path": "gcp-emulator/index.html",
+      "canonical": "https://local.cloud/gcp-emulator/"
+    },
+    {
+      "path": "gcp-integration-testing/index.html",
+      "canonical": "https://local.cloud/gcp-integration-testing/"
+    },
+    {
+      "path": "glossary/agentic-ci/index.html",
+      "canonical": "https://local.cloud/glossary/agentic-ci/"
+    },
+    {
+      "path": "glossary/ai-agent-sandbox/index.html",
+      "canonical": "https://local.cloud/glossary/ai-agent-sandbox/"
+    },
+    {
+      "path": "glossary/credentialless-agent-testing/index.html",
+      "canonical": "https://local.cloud/glossary/credentialless-agent-testing/"
+    },
+    {
+      "path": "glossary/gcp-emulator/index.html",
+      "canonical": "https://local.cloud/glossary/gcp-emulator/"
+    },
+    {
+      "path": "glossary/index.html",
+      "canonical": "https://local.cloud/glossary/"
+    },
+    {
+      "path": "glossary/local-cloud-api-surface/index.html",
+      "canonical": "https://local.cloud/glossary/local-cloud-api-surface/"
+    },
+    {
+      "path": "glossary/localhost-cloud-api/index.html",
+      "canonical": "https://local.cloud/glossary/localhost-cloud-api/"
+    },
+    {
+      "path": "glossary/mcp-server/index.html",
+      "canonical": "https://local.cloud/glossary/mcp-server/"
+    },
+    {
+      "path": "how-to-run-google-cloud-locally/index.html",
+      "canonical": "https://local.cloud/how-to-run-google-cloud-locally/"
+    },
+    {
+      "path": "immersive-demo/index.html",
+      "canonical": null
+    },
+    {
+      "path": "index.html",
+      "canonical": "https://local.cloud/"
+    },
+    {
+      "path": "license/index.html",
+      "canonical": "https://local.cloud/license/"
+    },
+    {
+      "path": "local-cloud-for-ai-agents/index.html",
+      "canonical": "https://local.cloud/local-cloud-for-ai-agents/"
+    },
+    {
+      "path": "localstack-for-google-cloud/index.html",
+      "canonical": "https://local.cloud/localstack-for-google-cloud/"
+    },
+    {
+      "path": "pricing/index.html",
+      "canonical": "https://local.cloud/pricing/"
+    },
+    {
+      "path": "reduce-gcp-dev-costs/index.html",
+      "canonical": "https://local.cloud/reduce-gcp-dev-costs/"
+    },
+    {
+      "path": "security/index.html",
+      "canonical": "https://local.cloud/security/"
+    },
+    {
+      "path": "services/alloydb/index.html",
+      "canonical": "https://local.cloud/services/alloydb/"
+    },
+    {
+      "path": "services/bigquery/index.html",
+      "canonical": "https://local.cloud/services/bigquery/"
+    },
+    {
+      "path": "services/bigtable/index.html",
+      "canonical": "https://local.cloud/services/bigtable/"
+    },
+    {
+      "path": "services/cloud-billing/index.html",
+      "canonical": "https://local.cloud/services/cloud-billing/"
+    },
+    {
+      "path": "services/cloud-functions/index.html",
+      "canonical": "https://local.cloud/services/cloud-functions/"
+    },
+    {
+      "path": "services/cloud-iam/index.html",
+      "canonical": "https://local.cloud/services/cloud-iam/"
+    },
+    {
+      "path": "services/cloud-kms/index.html",
+      "canonical": "https://local.cloud/services/cloud-kms/"
+    },
+    {
+      "path": "services/cloud-logging/index.html",
+      "canonical": "https://local.cloud/services/cloud-logging/"
+    },
+    {
+      "path": "services/cloud-monitoring/index.html",
+      "canonical": "https://local.cloud/services/cloud-monitoring/"
+    },
+    {
+      "path": "services/cloud-resource-manager/index.html",
+      "canonical": "https://local.cloud/services/cloud-resource-manager/"
+    },
+    {
+      "path": "services/cloud-run/index.html",
+      "canonical": "https://local.cloud/services/cloud-run/"
+    },
+    {
+      "path": "services/cloud-scheduler/index.html",
+      "canonical": "https://local.cloud/services/cloud-scheduler/"
+    },
+    {
+      "path": "services/cloud-sql/index.html",
+      "canonical": "https://local.cloud/services/cloud-sql/"
+    },
+    {
+      "path": "services/cloud-storage/index.html",
+      "canonical": "https://local.cloud/services/cloud-storage/"
+    },
+    {
+      "path": "services/cloud-tasks/index.html",
+      "canonical": "https://local.cloud/services/cloud-tasks/"
+    },
+    {
+      "path": "services/cloud-workflows/index.html",
+      "canonical": "https://local.cloud/services/cloud-workflows/"
+    },
+    {
+      "path": "services/compute-engine/index.html",
+      "canonical": "https://local.cloud/services/compute-engine/"
+    },
+    {
+      "path": "services/dataproc/index.html",
+      "canonical": "https://local.cloud/services/dataproc/"
+    },
+    {
+      "path": "services/firestore/index.html",
+      "canonical": "https://local.cloud/services/firestore/"
+    },
+    {
+      "path": "services/gke/index.html",
+      "canonical": "https://local.cloud/services/gke/"
+    },
+    {
+      "path": "services/google-sheets/index.html",
+      "canonical": "https://local.cloud/services/google-sheets/"
+    },
+    {
+      "path": "services/index.html",
+      "canonical": "https://local.cloud/services/"
+    },
+    {
+      "path": "services/memorystore/index.html",
+      "canonical": "https://local.cloud/services/memorystore/"
+    },
+    {
+      "path": "services/pubsub/index.html",
+      "canonical": "https://local.cloud/services/pubsub/"
+    },
+    {
+      "path": "services/secret-manager/index.html",
+      "canonical": "https://local.cloud/services/secret-manager/"
+    },
+    {
+      "path": "services/service-usage/index.html",
+      "canonical": "https://local.cloud/services/service-usage/"
+    },
+    {
+      "path": "services/spanner/index.html",
+      "canonical": "https://local.cloud/services/spanner/"
+    },
+    {
+      "path": "services/vertex-ai/index.html",
+      "canonical": "https://local.cloud/services/vertex-ai/"
+    },
+    {
+      "path": "workflows/github-actions-gcp-emulator/index.html",
+      "canonical": "https://local.cloud/workflows/github-actions-gcp-emulator/"
+    },
+    {
+      "path": "workflows/index.html",
+      "canonical": "https://local.cloud/workflows/"
+    },
+    {
+      "path": "workflows/terraform-gcp-emulator/index.html",
+      "canonical": "https://local.cloud/workflows/terraform-gcp-emulator/"
+    }
+  ]
+}

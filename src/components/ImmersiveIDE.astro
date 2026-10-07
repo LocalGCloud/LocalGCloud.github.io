@@ -660,12 +660,14 @@ const sidebarServices = services.filter(s =>
     const results = document.getElementById('results-view');
     const agentMsg = document.getElementById('agent-feedback');
     
-    if (!sqlEl) return;
+    if (!sqlEl || sqlEl.dataset.consoleReady) return;
+    sqlEl.dataset.consoleReady='true';
 
     const query = sqlEl.getAttribute('data-text') || '';
     let i = 0;
 
     function typeQuery() {
+      if(!sqlEl.isConnected)return;
       if (i === 0) sqlEl.textContent = "";
       if (i < query.length) {
         sqlEl.textContent += query.charAt(i);
@@ -679,12 +681,15 @@ const sidebarServices = services.filter(s =>
     }
 
     function executeSequence() {
+      if(!sqlEl.isConnected)return;
       runBtn.classList.add('is-active');
       setTimeout(() => {
+        if(!sqlEl.isConnected)return;
         loading.style.display = 'flex';
         agentMsg.textContent = "LocalCloud BigQuery emulator is processing the request...";
         
         setTimeout(() => {
+          if(!sqlEl.isConnected)return;
           loading.style.display = 'none';
           results.classList.add('visible');
           agentMsg.textContent = "Execution complete. 10 rows returned from your local database in 14ms.";
@@ -701,7 +706,9 @@ const sidebarServices = services.filter(s =>
     }, { threshold: 0.4 });
 
     observer.observe(sqlEl);
+    document.addEventListener('astro:before-swap',()=>observer.disconnect(),{once:true});
   }
 
   initConsoleAnim();
+  document.addEventListener('astro:page-load',initConsoleAnim);
 </script>

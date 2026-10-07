@@ -47,6 +47,8 @@
 <script is:inline>
 (function() {
   document.querySelectorAll('[data-feedback-widget]').forEach(function(widget) {
+    if(widget.dataset.feedbackReady) return;
+    widget.dataset.feedbackReady='true';
     var prompt = widget.querySelector('[data-feedback-prompt]');
     var followup = widget.querySelector('[data-feedback-followup]');
     var thanks = widget.querySelector('[data-feedback-thanks]');

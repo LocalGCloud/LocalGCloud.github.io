@@ -12,6 +12,9 @@ import { gzipSync } from 'node:zlib';
 // analytics toggle and speculation rules. scriptBytes: docs/ (16,164 bytes) carries the R5.4
 // privacy, search and copy logic.
 const htmlBudget = { rawBytes: 184_700, gzipBytes: 37_400, styleBytes: 94_600, scriptBytes: 17_000 };
+// Desktop startup also fetches the controller, router, interactions and page filter modules.
+// Count each fetched file once, including files loaded by inline bootstraps rather than script tags.
+const startupScriptBytes = 45_000;
 const rawDocumentBytes = 21_800;
 // The Markdown twins of docs and service pages and the llms-full.txt bundle built from them
 // have their own ceilings: the largest twin measured on 2026-10-05, plus 10%, and the bundle
@@ -26,7 +29,7 @@ const walk = (directory) => readdirSync(directory, { withFileTypes: true })
 const files = walk(dist);
 const bytes = (text) => Buffer.byteLength(text);
 
-test('every built page stays within the HTML, inline style and script byte budgets', () => {
+test('every built page stays within static byte budgets and the aggregate Desktop startup ceiling', () => {
   const pages = files.filter((file) => file.endsWith('.html'));
   assert.ok(pages.length > 0, 'no built pages found');
   const failures = [];
@@ -36,16 +39,21 @@ test('every built page stays within the HTML, inline style and script byte budge
     const inlineScriptBytes = [...html.matchAll(/<script\b(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/g)]
       .filter((match) => !/application\/ld\+json|speculationrules/.test(match[1]))
       .reduce((sum, match) => sum + bytes(match[2]), 0);
-    const externalScriptBytes = [...html.matchAll(/<script\b[^>]*\bsrc="\/([^"]+)"/g)]
-      .map((match) => join(dist, match[1]))
+    const scriptPaths = [...html.matchAll(/<script\b[^>]*\bsrc="\/([^"]+)"/g)].map(match=>match[1]);
+    const externalScriptBytes = scriptPaths.map(path => join(dist,path))
       .reduce((sum, path) => sum + (existsSync(path) ? statSync(path).size : 0), 0);
+    const startupSources = [html,...scriptPaths.map(path=>readFileSync(join(dist,path),'utf8'))].join('\n');
+    const startupPaths = new Set([...scriptPaths,...[...startupSources.matchAll(/\/(_astro\/(?:desktop-view|desktop-navigation|site-interactions|service-filter)\.[^"'\s<>]+\.mjs)/g)].map(match=>match[1])]);
+    assert.ok([...startupPaths].some(path=>path.includes('/desktop-view.')),file+' must count the externally bootstrapped controller');
+    if(file.endsWith('/services/index.html'))assert.ok([...startupPaths].some(path=>path.includes('/service-filter.')),file+' must count its filter bootstrap');
     const measured = {
       rawBytes: bytes(html),
       gzipBytes: gzipSync(html, { level: 9 }).length,
       styleBytes,
       scriptBytes: inlineScriptBytes + externalScriptBytes,
+      startupScriptBytes: inlineScriptBytes + [...startupPaths].reduce((sum,path)=>sum+statSync(join(dist,path)).size,0),
     };
-    for (const [metric, limit] of Object.entries(htmlBudget)) {
+    for (const [metric, limit] of Object.entries({...htmlBudget,startupScriptBytes})) {
       if (measured[metric] > limit) failures.push(`${file.slice(dist.length)}: ${metric} ${measured[metric]} > ${limit}`);
     }
   }

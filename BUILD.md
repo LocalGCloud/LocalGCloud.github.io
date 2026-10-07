@@ -71,16 +71,24 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 | **6** | `node scripts/verify-policy-docs.mjs` | Verifies privacy policies, license terms, free preview pricing statements, and navigation order. |
 | **7** | `node scripts/verify-distributed-docs.mjs` | Verifies `public/llms.txt` for required public facts (definition, opt-in services, license after services, open-source policy), pricing URLs, a guide link per service, absence of retired MCP packages, and accurate service counts. |
 | **8** | `astro build` | Compiles static pages, markdown routes, and sitemaps into `dist/`. |
-| **9** | `node scripts/generate-markdown-twins.mjs` | Converts `<main>` of every built `/docs/` and `/services/` page into a Markdown twin (`dist/docs/<slug>.md`, `dist/services/<slug>.md`) with turndown, checks each page declares its twin with `<link rel="alternate" type="text/markdown">` (`src/utils/markdown-twins.mjs`), and writes `dist/llms-full.txt` as llms.txt plus one section per twin, under a hard size limit. |
+| **9** | `node scripts/generate-markdown-twins.mjs` | Converts canonical `<main>` content from every content page into a Markdown twin with turndown (83 pages; 404 excluded), verifies its `<link rel="alternate" type="text/markdown">`, and preserves curated `/ai/*.md` resources. `llms-full.txt` retains its bounded 47-page technical corpus rather than including all marketing pages. |
 | **10** | `node scripts/verify-rendered-docs.mjs` | Inspects compiled HTML output (e.g. comparison tables and accessible scroll wrappers) to ensure proper rendering. |
 | **11** | `node scripts/write-sitemap-alias.mjs` | Copies `sitemap-index.xml` to `sitemap.xml` for legacy crawler compatibility. |
 | **12** | `node scripts/verify-static-seo.mjs` | On every indexable page: unique titles (≤65 characters) and descriptions (70–160), canonical URL, one H1, a raster `og:image` and share metadata, valid JSON-LD with the required types per page family; plus robots.txt, a sitemap that lists every indexable page with `lastmod` and no raw files, and the priority routes. |
 | **13** | `node scripts/verify-content-facts.mjs` → `node scripts/verify-blog-presentation.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all published pages, and every `https://local.cloud` or root-relative link in `llms*.txt`, `/ai/*.md` and the Markdown twins.<br>• Checks that the CLI quick start appears verbatim in llms.txt and `/ai/*.md` and in order on the homepage, that agent pages install the CLI before using it, and that agent text has no `..` or `.;` join artifacts.<br>• Fails when any built page ships an HTML comment or renders its `<h1>` inside a `.reveal` element (tag tokenizer in `scripts/html-structure.mjs`). |
-| **14** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` → `node scripts/precompress-html.mjs` → `node scripts/asset-manifest.mjs write` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes (including the speculation rules) and moves it to directly after `<meta charset>`, writes a Brotli sidecar for every page, and lists every `/_astro/` file in `dist/asset-manifest.json` so the next deploy can keep this one's bundles. |
+| **14** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` → `node scripts/generate-desktop-content.mjs` → `node scripts/precompress-html.mjs` → `node scripts/asset-manifest.mjs write` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes (including the speculation rules) and moves it to directly after `<meta charset>`, generates immutable build-pinned Desktop manifests and content payloads, writes a Brotli sidecar for every page, and lists every `/_astro/` file in `dist/asset-manifest.json` so the next deploy can keep this one's bundles. |
 
 ---
 
 ## 5. Separate Verification Suites
+
+### Desktop and Classic Readiness
+```bash
+pnpm run test:performance
+```
+Includes Desktop startup/navigation, Classic retention, installed metadata, fragment/widget lifecycle, version-pinned manifests, asset budgets and static response tests. Existing static-script limits remain unchanged; the aggregate app startup limit is 45 KB. After CSP finalization the build generates immutable Desktop manifests and payloads under `/_astro/`, embeds each document's manifest URL, and keeps the legacy mutable endpoint empty so old clients reload safely. Immutable assets, including pinned manifests, are retained by the previous-generation carry.
+
+Production readiness also requires `pnpm run test:worker`, `pnpm run test:analytics`, `pnpm run test:live-seo`, `pnpm run test:sitemap-guard` and `pnpm run test:asset-manifest`. Deployment's live verifier checks the public domains; verify Desktop and Classic in a browser after release.
 
 ### Dependency Security
 ```bash

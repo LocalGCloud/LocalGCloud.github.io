@@ -1,0 +1,122 @@
+---
+interface Props { title: string; }
+import desktopPageStyles from '../styles/desktop-pages.css?url';
+import desktopNavigation from '../scripts/desktop-navigation.mjs?url';
+import { desktopSection } from '../scripts/desktop-view.mjs';
+import { markdownTwinPath } from '../utils/markdown-twins.mjs';
+const { title } = Astro.props;
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+const path = Astro.url.pathname;
+const pagePath = path === base + '404/' ? base + '404.html' : path;
+const markdownPath = markdownTwinPath(path);
+const section = desktopSection(path, base);
+const pageLabel = path === base ? 'Home' : title.replace(/^LocalCloud\s*[|—–]\s*/, '').split(/[|—–]/)[0].replace(/^LocalCloud\s+/, '').trim();
+const left = [
+  { label: 'Services', href: base + 'services/', icon: 'icons/gcs.svg', active: section === 'Services' },
+  { label: 'AI Agents', href: base + 'local-cloud-for-ai-agents/', icon: 'icons/features/ci-pipeline.svg', active: section === 'AI Agents' },
+  { label: 'Docs', href: base + 'docs/', icon: 'icons/features/real-sdks.svg', active: section === 'Docs' },
+  { label: 'Pricing', href: base + 'pricing/', icon: 'icons/features/zero-cloud-bill.svg', active: section === 'Pricing' },
+];
+const right = [
+  { label: 'Console demo', href: base + 'immersive-demo/', icon: 'icons/features/web-console.svg' },
+  { label: 'Examples', href: base + 'docs/sdk-examples/', icon: 'icons/features/real-sdks.svg' },
+  { label: 'Quickstart', href: base + 'docs/#install-the-cli', icon: 'brand/localcloud-cli-icon.svg' },
+  { label: 'Changelog', href: base + 'changelog/', icon: 'icons/features/instant-iteration.svg' },
+];
+const desktopIcons: Record<string, string> = {
+  Services: 'folder.webp', 'AI Agents': 'ai-robot-v2.webp', Docs: 'docs-book.webp', Pricing: 'tag.webp',
+  'Console demo': 'terminal.svg', Examples: 'folder.webp', Quickstart: 'document.webp', Changelog: 'document.webp',
+};
+const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view=classic' : '');
+---
+
+<div class="desktop-root" data-desktop-shell data-desktop-manifest="" data-base={base} data-page-label={pageLabel} data-page-styles={desktopPageStyles} data-navigation-script={desktopNavigation}>
+  <div class="desktop-background desktop-chrome" aria-hidden="true" data-pagefind-ignore></div>
+  <header class="desktop-toolbar desktop-chrome" data-pagefind-ignore>
+    <a href={base} class="desktop-brand" data-desktop-home aria-label="LocalCloud home">
+      <img src={base + 'brand/localcloud-icon.svg'} width="32" height="32" alt="" loading="lazy" />
+      <strong>Local<span>Cloud</span></strong>
+    </a>
+    <nav class="desktop-navigation" aria-label="Desktop navigation">
+      <a href={base}>Home</a>
+      <details class="desktop-menu">
+        <summary>Explore</summary>
+        <nav aria-label="Explore LocalCloud">
+          <a href={base + 'services/'} data-desktop-open>Service catalog</a>
+          <a href={base + 'compatibility/'} data-desktop-open>Compatibility</a>
+          <a href={base + 'local-cloud-for-ai-agents/'} data-desktop-open>AI agents</a>
+          <a href={base + 'compare/'} data-desktop-open>Compare</a>
+          <a href={base + 'blog/'} data-desktop-open>Blog</a>
+          <a href={base + 'about/'} data-desktop-open>About LocalCloud</a>
+        </nav>
+      </details>
+      <a href={base + 'docs/'} data-desktop-open>Docs</a>
+      <details class="desktop-menu">
+        <summary>Help</summary>
+        <nav aria-label="LocalCloud help">
+          <a href={base + 'docs/faq/'} data-desktop-open>FAQ</a>
+          <a href={base + 'contact/'} data-desktop-open>Contact</a>
+          <a href={base + 'security/'} data-desktop-open>Security</a>
+          <a href={base + 'license/'} data-desktop-open>License</a>
+          <a href={base + 'docs/privacy/'} data-desktop-open>Privacy</a>
+        </nav>
+      </details>
+    </nav>
+    <span class="desktop-current" data-desktop-current aria-live="polite">{pageLabel}</span>
+    <div class="desktop-toolbar-actions">
+      <button type="button" data-search-trigger aria-label="Search documentation">Search <kbd>⌘K</kbd></button>
+      <a href={base + 'docs/#install-the-cli'} class="desktop-start" data-desktop-open>Get started</a>
+    </div>
+  </header>
+
+  <nav class="desktop-shortcuts desktop-shortcuts-left desktop-chrome" aria-label="Main desktop shortcuts" data-pagefind-ignore>
+    {left.map((item) => (
+      <a href={item.href} class:list={['desktop-shortcut', item.active && 'is-active']} data-desktop-shortcut data-window-label={item.label} aria-current={item.active ? 'page' : undefined}>
+        <img src={base + 'icons/desktop/' + desktopIcons[item.label]} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="56" height="56" alt="" loading="lazy" decoding="async" />
+        <span>{item.label}</span>
+      </a>
+    ))}
+  </nav>
+  <nav class="desktop-shortcuts desktop-shortcuts-right desktop-chrome" aria-label="Tools and local installation" data-pagefind-ignore>
+    {right.map((item) => (
+      <a href={item.href} class="desktop-shortcut" data-desktop-shortcut data-window-label={item.label}>
+        <img src={base + 'icons/desktop/' + desktopIcons[item.label]} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="56" height="56" alt="" loading="lazy" decoding="async" />
+        <span>{item.label}</span>
+      </a>
+    ))}
+    <a href="http://localhost:5380" target="_blank" rel="noopener noreferrer" class="desktop-shortcut desktop-my-cloud" aria-label="My cloud: open your local LocalCloud console in a new browser tab">
+      <img src={base + 'brand/localcloud-app-icon.svg'} width="64" height="64" alt="" loading="lazy" decoding="async" />
+      <span>My cloud</span>
+      <small>localhost:5380 ↗</small>
+    </a>
+  </nav>
+
+  <div class="desktop-stage" data-desktop-stage>
+    <div class="desktop-history" data-desktop-history data-pagefind-ignore></div>
+    <div id="desktop-main-window" class="desktop-window desktop-main" data-desktop-main data-desktop-window>
+      <header class="desktop-titlebar" data-window-titlebar tabindex="-1" aria-label="Current content window" data-pagefind-ignore>
+        <div class="desktop-controls">
+          <button type="button" class="desktop-close" data-window-action="close" aria-label="Close current page window" title="Close window"></button>
+          <button type="button" class="desktop-minimize" data-window-action="minimize" aria-label="Minimize current page window" title="Minimize window"></button>
+          <button type="button" class="desktop-expand" data-window-action="expand" aria-label="Expand window" aria-pressed="false" title="Expand window"></button>
+        </div>
+        <span>local.cloud — {pageLabel}</span>
+        {markdownPath && <a href={markdownPath} target="_blank" rel="noopener noreferrer" class="desktop-markdown" aria-label="Read this page as Markdown">.md</a>}
+        <a href={pagePath} target="_blank" rel="noopener noreferrer" class="desktop-open-tab" aria-label="Open current page in a browser tab">Open tab</a>
+      </header>
+      <div class="desktop-content" data-desktop-content>
+        <template data-desktop-content-start></template>
+        <slot />
+        <template data-desktop-content-end></template>
+      </div>
+    </div>
+  </div>
+  <footer class="desktop-taskbar" data-pagefind-ignore>
+    <button type="button" data-desktop-back disabled aria-label="Return to previous page">Back</button>
+    <button type="button" data-desktop-restore hidden>Show current page</button>
+    <div data-desktop-tasks></div>
+    <a href={currentViewURL('classic')} data-view-choice="classic">Classic site</a>
+  </footer>
+</div>
+<a href={currentViewURL('desktop')} class="site-view-switch" data-view-choice="desktop" data-pagefind-ignore>Desktop view</a>

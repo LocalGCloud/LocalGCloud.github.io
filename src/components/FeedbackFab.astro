@@ -56,6 +56,8 @@ const repo = 'https://github.com/LocalGCloud/LocalGCloud.github.io';
   var issueLink = fab?.querySelector('[data-fab-issue]');
 
   if (!fab || !trigger || !menu) return;
+  if(fab.dataset.fabReady) return;
+  fab.dataset.fabReady='true';
 
   // Build GitHub issue URLs with page context
   function buildFeatureUrl() {
@@ -100,12 +102,14 @@ const repo = 'https://github.com/LocalGCloud/LocalGCloud.github.io';
   });
 
   // Close on outside click
-  document.addEventListener('click', function(e) {
+  var outsideClick = function(e) {
     if (!fab.contains(e.target) && !menu.hidden) {
       menu.hidden = true;
       trigger.setAttribute('aria-expanded', 'false');
     }
-  });
+  };
+  document.addEventListener('click', outsideClick);
+  document.addEventListener('astro:before-swap', function(){document.removeEventListener('click',outsideClick);}, {once:true});
 
   // Track clicks
   featureLink?.addEventListener('click', function() {

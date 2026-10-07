@@ -153,12 +153,16 @@ export async function serveSite(request, env) {
     response = varyOn(response, 'Accept');
   }
   if (servedTwin) {
-    return url.hostname === CANONICAL_HOST ? response : withHeaders(response, { 'X-Robots-Tag': 'noindex' });
+    return url.hostname === CANONICAL_HOST && !['/immersive-demo/', '/brand/icons/'].includes(url.pathname)
+      ? response : withHeaders(response, { 'X-Robots-Tag': 'noindex' });
   }
   // A twin's own URL points search engines at the HTML page it mirrors.
   const twinSource = twinSourcePath(url.pathname);
   if (twinSource && response.status === 200) {
     response = withHeaders(response, { Link: `<https://${CANONICAL_HOST}${twinSource}>; rel="canonical"` });
+  }
+  if (['/immersive-demo/', '/brand/icons/'].includes(twinSource || (servedTwin ? url.pathname : ''))) {
+    response = withHeaders(response, { 'X-Robots-Tag': 'noindex' });
   }
   // Only local.cloud is indexable; workers.dev and preview hosts serve the same pages.
   if (url.hostname !== CANONICAL_HOST) response = withHeaders(response, { 'X-Robots-Tag': 'noindex' });

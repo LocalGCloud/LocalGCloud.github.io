@@ -1,6 +1,13 @@
 ---
 import robotoFont from '@fontsource-variable/roboto/files/roboto-latin-wght-normal.woff2?url';
 import '../styles/global.css';
+import '../styles/desktop.css';
+import DesktopShell from '../components/DesktopShell.astro';
+import desktopScript from '../scripts/desktop-view.mjs?url';
+import desktopPageStyles from '../styles/desktop-pages.css?url';
+import keyboardScript from '../scripts/keyboard-shortcuts.mjs?url';
+import pageInteractions from '../scripts/site-interactions.mjs?url';
+import desktopHero from '../assets/desktop-home-desk.webp?url';
 import SearchModal from '../components/SearchModal.astro';
 import { organizationSchema, type JsonLd } from '../data/productFacts';
 import { markdownTwinPath } from '../utils/markdown-twins.mjs';
@@ -33,6 +40,7 @@ const cloudflareAnalyticsToken = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOK
 const cloudflareAnalyticsEndpoint = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_ENDPOINT;
 const siteRelease = import.meta.env.PUBLIC_SITE_RELEASE;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const homeImages = Astro.url.pathname === base ? { desktop: desktopHero, classic: base + 'illustrations/hero-laptop-service-grid.svg' } : null;
 const {
   title,
   description = 'Run Google Cloud service workflows locally in one Docker container. Before use, review compatibility, privacy, and the proprietary license.',
@@ -74,7 +82,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-site-view="classic">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -111,8 +119,43 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 
     {/* One local variable body font covers all headline/body weights. */}
     <link rel="preload" href={robotoFont} as="font" type="font/woff2" crossorigin />
+    <link rel="modulepreload" href={pageInteractions} />
 
     <title>{title}</title>
+
+    <script is:inline define:vars={{ desktopScript, desktopPageStyles, homeImages }}>
+      (function () {
+        var root = document.documentElement, query = new URLSearchParams(location.search).get('view');
+        var view = query === 'classic' ? 'classic' : 'desktop';
+        root.dataset.siteView = view;
+        root.classList.toggle('desktop-view', view === 'desktop');
+        var wide = matchMedia('(min-width: 64rem)'), loaded = false;
+        if (homeImages) {
+          var hero = document.createElement('link');
+          hero.rel = 'preload'; hero.as = 'image'; hero.fetchPriority = 'high';
+          hero.href = view === 'desktop' && wide.matches ? homeImages.desktop : homeImages.classic;
+          document.head.appendChild(hero);
+        }
+        var loadDesktop = function () {
+          if (view === 'desktop' && !wide.matches || loaded) return;
+          loaded = true;
+          if (view === 'desktop') {
+            var styles = document.createElement('link');
+            styles.rel = 'preload';
+            styles.as = 'style';
+            styles.href = desktopPageStyles;
+            document.head.appendChild(styles);
+          }
+          var script = document.createElement('script');
+          script.type = 'module';
+          script.src = desktopScript;
+          script.onerror = function () { root.classList.remove('desktop-view'); root.dataset.siteView = 'classic'; };
+          document.head.appendChild(script);
+        };
+        if (view === 'desktop') wide.addEventListener('change', loadDesktop);
+        loadDesktop();
+      })();
+    </script>
 
     {/* Shared organization identity plus page-specific structured data. */}
     <script type="application/ld+json" set:html={serializeJsonLd(organizationSchema)} />
@@ -131,19 +174,21 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         : /^(?:1|yes)$/.test(String(navigator.doNotTrack || window.doNotTrack || '')) ? 'Do Not Track' : '';
       var choiceKey = 'lc-analytics';
       var analyticsOn = productionHost && !privacySignal;
+      var analyticsReady = false;
       try { if (localStorage.getItem(choiceKey) === 'off') analyticsOn = false; } catch (e) {}
       var webVitalsSampled = Math.random() < 0.2;
 
       !function(t,e){var o,n;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture opt_out_capturing opt_in_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 
       posthog.init('phc_o9nQDAQjEgsPcamE8pCnhv7ekA8CmA2VQXechLju9LA9', {
+        loaded: function() { analyticsReady = true; },
         api_host: posthogApiHost,
         ui_host: 'https://us.posthog.com',
         defaults: '2026-01-30', // Pin SDK defaults to prevent upstream behavior changes
 
         // Page tracking — gives us geo (IP), pages visited, exit pages
-        capture_pageview: true,
-        capture_pageleave: 'if_capture_pageview',
+        capture_pageview: false,
+        capture_pageleave: true,
 
         // Keep broad click/form autocapture off; use explicit events, heatmaps and dead clicks.
         autocapture: false,
@@ -195,6 +240,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           network_timing: false,
         },
       });
+      if (analyticsOn) posthog.capture('$pageview', { $current_url: location.href, $title: document.title });
 
       var posthogRequested = false;
       var beaconRequested = false;
@@ -238,8 +284,10 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       window.lcAnalytics = {
         privacySignal: privacySignal,
         isOn: function () { return analyticsOn; },
+        isReady: function () { return analyticsReady; },
         setOn: function (on) {
           if (on && (privacySignal || !productionHost)) return false;
+          if (on === analyticsOn) return true;
           analyticsOn = on;
           try {
             if (on) localStorage.removeItem(choiceKey);
@@ -254,21 +302,27 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           }
           if (on) {
             posthog.opt_in_capturing();
+            posthog.capture('$pageview', { $current_url: location.href, $title: document.title });
             startAnalytics();
           } else {
             posthog.opt_out_capturing();
           }
+          window.dispatchEvent(new CustomEvent('lc:analytics-choice'));
           return true;
         },
       };
+      window.addEventListener('storage', function (event) {
+        if (event.key === choiceKey) window.lcAnalytics.setOn(event.newValue !== 'off');
+      });
     </script>
   </head>
-  <body data-pagefind-body={pagefindBody}>
+  <body data-pagefind-body={pagefindBody} data-keyboard-script={keyboardScript}>
     <a href="#main-content" class="skip-link">Skip to content</a>
-    <slot />
+    <DesktopShell {title}>
+      <slot />
+    </DesktopShell>
     <SearchModal />
     <script is:inline type="speculationrules" set:html={JSON.stringify(speculationRules)} />
-
     <script>
       // Enable reveal animations only when JS and IntersectionObserver are available;
       // without them .reveal content renders visible by default. Content already on screen
@@ -301,154 +355,11 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     </script>
 
     {/* PostHog custom event tracking */}
-    <script is:inline>
-      (function() {
-        if (typeof window.posthog === 'undefined') return;
-
-        // ─── Code copy: copy buttons dispatch lc:copied only after the clipboard write succeeds ───
-        document.addEventListener('lc:copied', function(e) {
-          var labelled = e.target.closest && e.target.closest('[data-analytics-label]');
-          posthog.capture('code_copied', {
-            page_path: window.location.pathname,
-            page_title: document.title,
-            copy_target: labelled ? labelled.getAttribute('data-analytics-label') : null,
-          });
-        });
-
-        // ─── Click tracking: labelled calls to action + GitHub clickthrough ───
-        document.addEventListener('click', function(e) {
-          var cta = e.target.closest('a[data-analytics-label]');
-          if (cta) {
-            posthog.capture('cta_clicked', {
-              page_path: window.location.pathname,
-              cta_label: cta.getAttribute('data-analytics-label'),
-              href: cta.getAttribute('href'),
-            });
-          }
-
-          var ghLink = e.target.closest('a[href*="github.com"]');
-          if (ghLink) {
-            posthog.capture('github_click', {
-              page_path: window.location.pathname,
-            });
-          }
-        });
-
-        // ─── Time on page — 2 buckets: casual (30s) vs engaged (120s) ───
-        var pageStart = Date.now();
-        var timeBuckets = [30, 120];
-        var timeFired = new Set();
-
-        var timeInterval = setInterval(function() {
-          if (document.hidden) return;
-          var elapsed = Math.floor((Date.now() - pageStart) / 1000);
-          timeBuckets.forEach(function(bucket) {
-            if (elapsed >= bucket && !timeFired.has(bucket)) {
-              timeFired.add(bucket);
-              posthog.capture('time_on_page', {
-                seconds: bucket,
-                page_path: window.location.pathname,
-                page_title: document.title,
-              });
-            }
-          });
-          if (timeFired.size >= timeBuckets.length) clearInterval(timeInterval);
-        }, 5000);
-
-        // ─── Keyboard shortcuts ───
-        (function() {
-          var base = document.querySelector('[data-base]')?.dataset?.base || '/';
-          var searchInput = document.getElementById('search-input');
-          var gKeyBuffer = null;
-
-          // Help modal
-          var helpModal = document.createElement('div');
-          helpModal.className = 'kbd-help';
-          helpModal.hidden = true;
-          helpModal.setAttribute('role', 'dialog');
-          helpModal.setAttribute('aria-label', 'Keyboard shortcuts');
-          helpModal.innerHTML = '<div class="kbd-help__backdrop"></div><div class="kbd-help__panel"><h2>Keyboard Shortcuts</h2><table><tbody><tr><td><kbd>/</kbd></td><td>Focus search</td></tr><tr><td><kbd>Cmd+K</kbd></td><td>Open search</td></tr><tr><td><kbd>J</kbd></td><td>Next page</td></tr><tr><td><kbd>K</kbd></td><td>Previous page</td></tr><tr><td><kbd>G</kbd> <kbd>H</kbd></td><td>Go home</td></tr><tr><td><kbd>G</kbd> <kbd>D</kbd></td><td>Go to docs</td></tr><tr><td><kbd>G</kbd> <kbd>S</kbd></td><td>Go to services</td></tr><tr><td><kbd>?</kbd></td><td>Show this help</td></tr><tr><td><kbd>Esc</kbd></td><td>Close modals</td></tr></tbody></table><button type="button" class="kbd-help__close" aria-label="Close">Got it</button></div>';
-          document.body.appendChild(helpModal);
-
-          helpModal.querySelector('.kbd-help__backdrop')?.addEventListener('click', function() {
-            helpModal.hidden = true;
-          });
-          helpModal.querySelector('.kbd-help__close')?.addEventListener('click', function() {
-            helpModal.hidden = true;
-          });
-
-          function closeHelp() { helpModal.hidden = true; }
-
-          document.addEventListener('keydown', function(e) {
-            // Don't trigger shortcuts when typing in inputs
-            var tag = document.activeElement?.tagName?.toLowerCase();
-            var isEditing = tag === 'input' || tag === 'textarea' || tag === 'select' || document.activeElement?.isContentEditable;
-
-            // Escape closes help, including when another control has focus.
-            if (e.key === 'Escape') {
-              closeHelp();
-              return;
-            }
-
-            // / to focus search (not in inputs)
-            if (e.key === '/' && !isEditing) {
-              e.preventDefault();
-              if (searchInput) {
-                if (typeof window.__lcSearch !== 'undefined') window.__lcSearch.open();
-                setTimeout(function() { searchInput.focus(); }, 60);
-              }
-              return;
-            }
-
-            // ? to show help (not in inputs)
-            if (e.key === '?' && !isEditing && !e.metaKey && !e.ctrlKey) {
-              e.preventDefault();
-              helpModal.hidden = !helpModal.hidden;
-              return;
-            }
-
-            // G + key navigation (vim-style)
-            if (e.key === 'g' && !isEditing && !e.metaKey && !e.ctrlKey) {
-              if (gKeyBuffer) { clearTimeout(gKeyBuffer); gKeyBuffer = null; }
-              gKeyBuffer = setTimeout(function() { gKeyBuffer = null; }, 500);
-              return;
-            }
-
-            if (gKeyBuffer) {
-              clearTimeout(gKeyBuffer);
-              gKeyBuffer = null;
-              if (e.key === 'h') { window.location.href = base; return; }
-              if (e.key === 'd') { window.location.href = base + 'docs/'; return; }
-              if (e.key === 's') { window.location.href = base + 'services/'; return; }
-              return;
-            }
-
-            // J/K for doc pagination (not in inputs)
-            if ((e.key === 'j' || e.key === 'k') && !isEditing && !e.metaKey && !e.ctrlKey && !e.altKey) {
-              var nextLink = document.querySelector('.docs-pagination__link--next');
-              var prevLink = document.querySelector('.docs-pagination__link--previous');
-              if (e.key === 'j' && nextLink) { nextLink.click(); return; }
-              if (e.key === 'k' && prevLink) { prevLink.click(); return; }
-            }
-          });
-
-          // FAB dismiss (store preference in localStorage)
-          var fab = document.querySelector('[data-feedback-fab]');
-          if (fab && localStorage.getItem('lc-fab-dismissed')) {
-            fab.style.display = 'none';
-          }
-          if (fab) {
-            var fabTrigger = fab.querySelector('[data-fab-trigger]');
-            fab.addEventListener('dblclick', function() {
-              fab.style.display = 'none';
-              localStorage.setItem('lc-fab-dismissed', '1');
-              if (typeof posthog !== 'undefined') {
-                posthog.capture('feedback_fab_dismissed', { page_path: window.location.pathname });
-              }
-            });
-          }
-        })();
-      })();
+<script is:inline define:vars={{ pageInteractions }}>
+      var interactions = document.createElement('script');
+      interactions.type = 'module';
+      interactions.src = pageInteractions;
+      document.head.appendChild(interactions);
     </script>
   </body>
 </html>

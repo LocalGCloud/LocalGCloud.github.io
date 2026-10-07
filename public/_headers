@@ -14,6 +14,18 @@
   ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
+/_astro/*.js
+  X-Robots-Tag: noindex
+/_astro/*.mjs
+  X-Robots-Tag: noindex
+/_astro/*.css
+  X-Robots-Tag: noindex
+/_astro/*.json
+  X-Robots-Tag: noindex
+
+/_desktop/*
+  X-Robots-Tag: noindex
+
 # These paths are mutable; keep their cache lifetime bounded.
 # /brand/icons/ is an HTML page, so only image files get the longer lifetime.
 /brand/*.svg

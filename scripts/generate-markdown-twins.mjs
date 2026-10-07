@@ -1,9 +1,9 @@
-import { readFile, readdir, writeFile } from "node:fs/promises";
+import { readFile, readdir, writeFile, mkdir } from "node:fs/promises";
 import TurndownService from "turndown";
 import { markdownTwinPath } from "../src/utils/markdown-twins.mjs";
 
-// Writes a Markdown twin of every built /docs/, /services/ and /compare/ page (the <main>
-// element only) and builds dist/llms-full.txt from llms.txt plus those twins.
+// Writes a Markdown twin of every content page's <main>. The technical docs/services/
+// comparisons remain the bounded reading corpus in llms-full.txt.
 
 const site = "https://local.cloud";
 const dist = new URL("../dist/", import.meta.url);
@@ -37,6 +37,7 @@ function converter(pageUrl) {
 	const service = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced", bulletListMarker: "-", emDelimiter: "_" });
 	service.remove(["script", "style", "noscript", "template", "svg", "button", "form", "textarea", "select", "input", "iframe"]);
 	service.remove(isNoise);
+	service.addRule('desktopPresentation', { filter: (node) => node.hasAttribute?.('data-desktop-copy'), replacement: () => '' });
 	service.addRule("code", {
 		filter: "pre",
 		replacement: (_, node) => {
@@ -85,7 +86,8 @@ function converter(pageUrl) {
 				return `\n- [${singleLine(heading.textContent)}](${href})${summary ? `: ${summary}` : ""}\n`;
 			}
 			const text = singleLine(content);
-			return text ? `[${text}](${href})` : "";
+			const link = text ? `[${text}](${href})` : "";
+			return link && classes(node).includes("field-service") ? `\n- ${link}\n` : link;
 		},
 	});
 	service.addRule("image", {
@@ -169,11 +171,13 @@ const compare = (left, right) => {
 };
 
 const twins = [];
-for (const page of twinPages.sort(compare)) {
+const technical = twinPages.filter((page) => /^\/(docs|services|compare)\//.test(page.route));
+for (const page of twinPages) {
 	const markdown = await twinFor(page);
+	await mkdir(new URL('.', new URL(page.twin.slice(1), dist)), { recursive: true });
 	await writeFile(new URL(page.twin.slice(1), dist), markdown);
-	twins.push(markdown);
 }
+for (const page of technical.sort(compare)) twins.push(await readFile(new URL(page.twin.slice(1), dist), 'utf8'));
 
 // One heading level down, so each page is a "##" section under the llms.txt title.
 const demote = (markdown) => outsideCode(markdown, (text) => text.replace(/^(#{1,5}) /gm, "#$1 "));
@@ -190,4 +194,4 @@ ${twins.map(demote).join("\n---\n\n")}`;
 const bytes = Buffer.byteLength(full);
 if (bytes > LLMS_FULL_MAX_BYTES) fail(`llms-full.txt is ${bytes} bytes, over the ${LLMS_FULL_MAX_BYTES}-byte ceiling`);
 await writeFile(new URL("llms-full.txt", dist), full);
-console.log(`Wrote ${twins.length} Markdown twins and llms-full.txt (${bytes} bytes).`);
+console.log(`Wrote ${twinPages.length} content Markdown twins; llms-full.txt retains ${twins.length} technical pages (${bytes} bytes).`);

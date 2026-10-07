@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { request } from 'node:http';
 import { after, before, test } from 'node:test';
 import { brotliDecompressSync, gunzipSync } from 'node:zlib';
@@ -66,9 +66,50 @@ test('_headers apply: no-transform only on HTML, immutable bundles, security hea
   const html = await (await get('/', { 'Accept-Encoding': 'identity' })).text();
   const bundle = html.match(/\/_astro\/[^"']+\.(?:js|woff2|css)/)[0];
   assert.equal((await get(bundle)).headers.get('Cache-Control'), 'public, max-age=31536000, immutable');
+  for (const prefix of ['desktop-view.', 'desktop-navigation.', 'site-interactions.', 'keyboard-shortcuts.', 'desktop-pages.', 'service-filter.', 'desktop-home-desk.']) {
+    const file = readdirSync(new URL('../dist/_astro/', import.meta.url)).find((name) => name.startsWith(prefix) && !name.endsWith('.map'));
+    assert.ok(file, prefix);
+    const response = await get('/_astro/' + file);
+    assert.equal(response.status, 200, file);
+    const type = file.endsWith('.css') ? /^text\/css\b/ : file.endsWith('.webp') ? /^image\/webp\b/ : /^(?:text|application)\/javascript\b/;
+    assert.match(response.headers.get('Content-Type'), type, file);
+    assert.equal(response.headers.get('Cache-Control'), 'public, max-age=31536000, immutable');
+    assert.equal(response.headers.get('X-Robots-Tag'),file.endsWith('.webp')?null:'noindex',file+' image/code indexing');
+  }
   assert.equal((await get('/brand/localcloud-mark.svg')).headers.get('Cache-Control'), 'public, max-age=604800');
   assert.match((await get('/brand/icons/')).headers.get('Cache-Control'), /max-age=0/);
   assert.match((await get('/ai/agent-template.md')).headers.get('Content-Disposition'), /filename="AGENTS\.md"/);
+});
+
+test('Desktop manifest and route JSON answer with their real body MIME cache and noindex contracts',async()=>{
+  const manifestURL=distFile('index.html').toString().match(/data-desktop-manifest="([^"]+)"/)[1];
+  const manifest=JSON.parse(distFile(manifestURL.slice(1)));
+  assert.deepEqual(JSON.parse(distFile('_desktop/manifest.json')),{routes:{}});
+  for(const path of ['/_desktop/manifest.json',manifestURL,...['/','/docs/','/services/bigquery/','/404.html'].map(route=>manifest.routes[route])]){
+    assert.ok(path);
+    const response=await get(path);
+    assert.equal(response.status,200,path);
+    assert.match(response.headers.get('Content-Type'),/^application\/json\b/,path);
+    assert.equal(response.headers.get('X-Robots-Tag'),'noindex',path);
+    assert.equal(response.headers.get('Cache-Control'),path.startsWith('/_astro/')?'public, max-age=31536000, immutable':'public, max-age=0, must-revalidate',path);
+    assert.deepEqual(await response.json(),JSON.parse(distFile(path.slice(1))),path);
+  }
+});
+
+test('clean and Classic URLs preserve complete HTML and AI discovery bytes',async()=>{
+  for(const [path,file] of [['/','index.html'],['/docs/','docs/index.html'],['/services/bigquery/','services/bigquery/index.html'],['/ai/','ai/index.html']]){
+    for(const query of ['', '?view=classic']){
+      const response=await get(path+query,{'Accept-Encoding':'identity'});
+      assert.equal(response.status,200,path+query);assert.equal(response.headers.get('Content-Type'),'text/html; charset=utf-8');
+      const html=await response.text();assert.equal(html,distFile(file).toString('utf8'));
+      assert.match(html,/<link rel="canonical"/);assert.match(html,/<script type="application\/ld\+json"/);
+      assert.match(html,/<link rel="alternate" type="text\/markdown"/);assert.match(html,/href="\/llms.txt"/);
+    }
+  }
+  for(const path of ['/robots.txt','/llms.txt','/llms-full.txt','/sitemap.xml','/sitemap-index.xml']){
+    const response=await get(path);assert.equal(response.status,200,path);
+    assert.equal(await response.text(),distFile(path.slice(1)).toString('utf8'),path);
+  }
 });
 
 test('text and Markdown assets declare UTF-8 and preserve GET and HEAD bodies', async () => {
@@ -89,7 +130,8 @@ test('text and Markdown assets declare UTF-8 and preserve GET and HEAD bodies', 
 test('docs, service and comparison pages answer Accept: text/markdown with their Markdown twin', async () => {
   const vary = (response) => (response.headers.get('Vary') || '').split(',').map((value) => value.trim());
   for (const [page, twin] of [['/docs/', 'docs/index.md'], ['/docs/configuration/', 'docs/configuration.md'], ['/services/bigquery/', 'services/bigquery.md'],
-    ['/compare/', 'compare/index.md'], ['/compare/google-emulators/', 'compare/google-emulators.md']]) {
+    ['/compare/', 'compare/index.md'], ['/compare/google-emulators/', 'compare/google-emulators.md'],
+    ['/', 'index.md'], ['/pricing/', 'pricing.md'], ['/blog/', 'blog/index.md'], ['/ai/', 'ai/index.md'], ['/compatibility/', 'compatibility.md']]) {
     const response = await get(page, { 'Accept': 'text/markdown, text/html;q=0.9' });
     assert.equal(response.status, 200, page);
     assert.equal(response.headers.get('Content-Type'), 'text/markdown; charset=utf-8', page);

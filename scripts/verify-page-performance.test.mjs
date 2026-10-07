@@ -14,7 +14,7 @@ import { resolveCloudflareAnalyticsConfig } from '../src/utils/cloudflare-analyt
 const layout = readFileSync(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8');
 const inlineScripts = [...layout.matchAll(/<script is:inline[^>]*>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
 const bootstrap = inlineScripts.find((script) => script.includes('posthog.init('));
-const eventTracking = inlineScripts.find((script) => script.includes("posthog.capture('code_copied'"));
+const eventTracking = readFileSync(new URL('../src/scripts/site-interactions.mjs', import.meta.url), 'utf8');
 const cloudflareToken = resolveCloudflareAnalyticsConfig().token;
 const sdkSrc = '/ingest/static/array.js';
 const beaconSrc = 'https://static.cloudflareinsights.com/beacon.min.js';
@@ -32,15 +32,18 @@ function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, sto
     cloudflareAnalyticsToken: token,
     cloudflareAnalyticsEndpoint: '/cdn-cgi/rum',
     siteRelease: 'fixture-release',
-    location: { hostname, pathname },
+    location: { hostname, pathname, href:'https://'+hostname+pathname },
     Math: { random: () => random },
     navigator,
+    CustomEvent: class { constructor(type) { this.type = type; } },
+    dispatchEvent: (event) => listeners.get(event.type)?.callback(event),
     localStorage: {
       getItem: (key) => { if (storageThrows) throw new Error('SecurityError'); return storage.get(key) ?? null; },
       setItem: (key, value) => { if (storageThrows) throw new Error('SecurityError'); storage.set(key, value); },
       removeItem: (key) => { if (storageThrows) throw new Error('SecurityError'); storage.delete(key); },
     },
     document: {
+      title:'Fixture visit',
       readyState,
       createElement: () => ({ setAttribute(name, value) { this[name] = value; } }),
       head: { appendChild: (script) => inserted.push(script) },
@@ -90,7 +93,7 @@ test('analytics queues interactions, then loads PostHog and the Cloudflare beaco
 
 test('analytics still loads when load has already fired and idle callbacks are unavailable', () => {
   const h = analyticsHarness('complete', { supportsIdle: false });
-  assert.equal(h.listeners.size, 0);
+  assert.equal(h.listeners.has('load'), false);
   assert.equal(h.inserted.length, 0);
   h.timers[0].callback();
   assert.deepEqual(h.srcs(), [sdkSrc, beaconSrc]);
@@ -194,11 +197,11 @@ test('the footer choice turns analytics off and back on, never against a privacy
   h.context.posthog.capture('time_on_page', { seconds: 120 });
   assert.equal(h.context.lcAnalytics.setOn(true), true);
   assert.equal(h.storage.has('lc-analytics'), false);
-  assert.ok(!h.queued().includes('capture'), 'events recorded while off are never sent');
-  assert.equal(h.queued().at(-1), 'opt_in_capturing');
+  assert.deepEqual(Array.from(h.context.posthog).filter(call=>call[0]==='capture').map(call=>call[1]),['$pageview'],'opt-in captures the current visit and discards events recorded while off');
   assert.deepEqual(h.srcs(), [sdkSrc, beaconSrc], 'turning analytics on loads it at once');
   h.context.lcAnalytics.setOn(true);
   assert.equal(h.inserted.length, 2, 'scripts load once');
+  assert.equal(Array.from(h.context.posthog).filter(call=>call[1]==='$pageview').length,1,'repeated opt-in preserves one queued current pageview');
 
   const signalled = analyticsHarness('loading', { navigator: { globalPrivacyControl: true } });
   assert.equal(signalled.context.lcAnalytics.setOn(true), false);
@@ -210,6 +213,32 @@ test('the footer choice turns analytics off and back on, never against a privacy
   assert.equal(blocked.context.lcAnalytics.setOn(false), true, 'blocked storage still turns analytics off for this page');
   blocked.runSchedule();
   assert.deepEqual(blocked.srcs(), []);
+});
+
+test('analytics storage changes update capture and notify controls in the current document', () => {
+  const h = analyticsHarness('loading');
+  let updates = 0;
+  h.context.addEventListener('lc:analytics-choice', () => updates++);
+  h.listeners.get('storage').callback({ key: 'lc-analytics', newValue: 'off' });
+  assert.equal(h.context.lcAnalytics.isOn(), false);
+  assert.equal(updates, 1);
+  h.listeners.get('storage').callback({ key: 'lc-analytics', newValue: null });
+  assert.equal(h.context.lcAnalytics.isOn(), true);
+  assert.equal(updates, 2);
+  h.listeners.get('storage').callback({ key: 'lc-site-view', newValue: 'classic' });
+  assert.equal(updates, 2);
+});
+
+test('initially opted-out analytics captures the current visit once when enabled, before or after SDK readiness',()=>{
+  for(const ready of [false,true]){
+    const h=analyticsHarness('loading',{stored:'off'});
+    h.context.location.href='https://local.cloud/docs/';h.context.document.title='Docs';
+    if(ready)h.context.posthog._i[0][1].loaded();
+    assert.equal(h.context.lcAnalytics.setOn(true),true);assert.equal(h.context.lcAnalytics.setOn(true),true);
+    const views=Array.from(h.context.posthog).filter(call=>call[0]==='capture'&&call[1]==='$pageview');
+    assert.equal(views.length,1);assert.equal(views[0][2].$current_url,'https://local.cloud/docs/');assert.equal(views[0][2].$title,'Docs');
+    assert.equal(h.context.posthog._i[0][1].capture_pageview,false);
+  }
 });
 
 test('code_copied names the closest analytics label and fires only on a successful copy', () => {
@@ -432,7 +461,7 @@ function searchHarness(searchResults) {
   const context = {
     debounceTimer: null,
     input: { value: '', addEventListener: (event, callback) => { listeners[event] = callback; } },
-    results: {},
+    results: { querySelector: () => null },
     clearTimeout: (timer) => { if (timer) timer.cleared = true; },
     setTimeout: (callback, delay) => {
       const timer = { callback, delay, cleared: false };
@@ -455,6 +484,8 @@ function searchHarness(searchResults) {
     context,
     captured,
     source,
+    change(value) { context.input.value = value; listeners.input(); },
+    debounce: () => fire(200),
     async type(value, { changeBeforeRender } = {}) {
       context.input.value = value;
       listeners.input();
@@ -462,11 +493,41 @@ function searchHarness(searchResults) {
       await fire(200);
     },
     settle: () => fire(1500),
-    press: (key) => listeners.keydown({ key }),
+    press: (key) => listeners.keydown({ key, preventDefault() {} }),
   };
 }
 
 const bigQueryResult = (excerpt = '<mark>BigQuery</mark>') => ({ data: async () => ({ url: '/services/bigquery/', meta: { title: 'BigQuery' }, excerpt }) });
+
+test('Enter activates the first search result through the same clickable link path', async () => {
+  const h = searchHarness(() => [bigQueryResult()]);
+  let clicks = 0;
+  h.context.results.querySelector = () => ({ click() { clicks++; } });
+  await h.type('BigQuery');
+  h.press('Enter');
+  assert.equal(clicks, 1);
+});
+
+test('changing a search query clears old links and ignores older asynchronous results', async () => {
+  let releaseOld;
+  const oldData = new Promise((resolve) => { releaseOld = resolve; });
+  const h = searchHarness((query) => query === 'old' ? [{ data: () => oldData }] : [bigQueryResult()]);
+  let clicks = 0;
+  h.context.results.querySelector = () => h.context.results.innerHTML.includes('search-modal__result')
+    ? { click() { clicks++; } } : null;
+  await h.type('bigquery');
+  h.change('firestore');
+  h.press('Enter');
+  assert.equal(clicks, 0, 'the preceding query cannot be opened during debounce');
+  h.change('old');
+  const pending = h.debounce();
+  await new Promise((resolve) => setImmediate(resolve));
+  await h.type('new');
+  const fresh = h.context.results.innerHTML;
+  releaseOld({ url: '/old/', meta: { title: 'Old result' } });
+  await pending;
+  assert.equal(h.context.results.innerHTML, fresh, 'older responses cannot replace the current results');
+});
 
 test('search renders Pagefind highlights while escaping other excerpt markup', async () => {
   const h = searchHarness(() => [{ data: async () => ({

@@ -1,0 +1,21 @@
+---
+import filterScript from '../scripts/service-filter.mjs?url';
+const { lazy = false } = Astro.props;
+---
+{lazy && <template data-service-filter-script={filterScript}></template>}
+<script is:inline define:vars={{ filterScript, lazy }}>
+  if (lazy) {
+    if (!window.lcServiceFilter) {
+      window.lcServiceFilter = function (event) {
+        var marker = event.target.querySelector('[data-service-filter-script]');
+        if (marker) import(marker.dataset.serviceFilterScript).then(function (module) { module.initServiceFilters(); });
+      };
+      document.addEventListener('lc:fragment-show', window.lcServiceFilter);
+    }
+  } else {
+    var script = document.createElement('script');
+    script.type = 'module';
+    script.src = filterScript;
+    document.head.appendChild(script);
+  }
+</script>

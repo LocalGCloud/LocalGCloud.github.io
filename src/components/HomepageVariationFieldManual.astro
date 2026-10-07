@@ -1,5 +1,7 @@
 ---
+import desktopHero from '../assets/desktop-home-desk.webp?url';
 import ServiceIcon from './ServiceIcon.astro';
+import ServiceFilterBootstrap from './ServiceFilterBootstrap.astro';
 import CopyButton from './CopyButton.astro';
 import AlternativesTable from './AlternativesTable.astro';
 import { availableServiceCount, serviceCatalogGroups } from '../data/services';
@@ -112,19 +114,27 @@ for (const column of atlasColumns) {
   <div class="field-home__shell">
     <section class="field-hero">
       <div class="field-hero__copy">
+        <p class="desktop-hero-eyebrow" data-desktop-copy data-pagefind-ignore>Google Cloud in-a-box</p>
         <h1 class="field-hero__headline">
-          <span class="field-hero__headline-main">Google Cloud</span>{' '}
-          <span class="field-hero__headline-tag">In-a-Box</span>{' '}
-          <span class="field-hero__headline-audience">for developers, CI and AI agents.</span>
+          <span class="field-hero__headline-main" data-classic-copy>Google Cloud</span>{' '}
+          <span class="field-hero__headline-tag" data-classic-copy>In-a-Box</span>{' '}
+          <span class="field-hero__headline-audience" data-classic-copy>for developers, CI and AI agents.</span>
         </h1>
-
-        <p class="field-intro">{definition}</p>
+        <p class="field-intro" data-classic-copy>{definition}</p>
+        <template data-desktop-headline data-desktop-copy data-pagefind-ignore>
+          <span data-desktop-copy data-pagefind-ignore>Your cloud. <span class="field-hero__desktop-accent">On your computer.</span></span>
+        </template>
+        <p class="field-intro" data-desktop-copy data-pagefind-ignore>Build, test and give your AI agents a local Google Cloud.</p>
 
         <div class="field-actions">
-          <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-analytics-label="hero-start-free">Start free — install the CLI</a>
-          <a href={`${base}compare/`} class="site-button site-button--secondary" data-analytics-label="hero-compare">Compare with LocalStack and Google emulators</a>
+          <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-classic-copy data-analytics-label="hero-start-free"><span data-classic-copy>Start free — install the CLI</span></a>
+          <a href={`${base}compare/`} class="site-button site-button--secondary" data-classic-copy data-analytics-label="hero-compare">Compare with LocalStack and Google emulators</a>
         </div>
 
+        <div class="desktop-install-heading" data-desktop-copy data-pagefind-ignore>
+          <span>Start free</span>
+          <a href={base + 'services/'} data-analytics-label="hero-explore-services">Explore the services →</a>
+        </div>
         <div class="field-install">
           <pre tabindex="0" aria-label="Install the LocalCloud CLI"><code>{productFacts.installScriptCommand}</code></pre>
           <CopyButton
@@ -135,7 +145,8 @@ for (const column of atlasColumns) {
           />
         </div>
 
-        <p class="field-proof">
+        <p class="desktop-hero-proof" data-desktop-copy data-pagefind-ignore>Free for OSS developers. No account or license key required. <a href={`${base}docs/licensing/#free-for-open-source-projects`}>OSS terms</a></p>
+        <p class="field-proof" data-classic-copy>
           No account or license key. Free during the public preview, and free for open-source projects after it. CLI releases are <a href={`${base}security/#signed-releases`}>Sigstore-signed with SHA-256 checksums</a>.
         </p>
 
@@ -152,18 +163,29 @@ for (const column of atlasColumns) {
         </ul>
       </div>
 
-      <figure class="field-board__figure">
+      <figure class="field-board__figure" data-classic-copy>
         <img
             src={heroIllustration.src}
             alt={heroIllustration.alt}
             class="field-board__image"
             width="1200"
             height="760"
-            loading="eager"
+            loading="lazy"
             fetchpriority="high"
             decoding="async"
         />
       </figure>
+      <template data-desktop-hero data-desktop-copy data-pagefind-ignore>
+        <figure class="desktop-hero-art" data-desktop-copy data-pagefind-ignore>
+          <img src={desktopHero} width="1800" height="600" alt="A LocalCloud laptop on a desk, connected to local Google Cloud service icons, with notebooks, a mug, books and a plant." loading="eager" fetchpriority="high" decoding="async" />
+        </figure>
+      </template>
+      <div class="desktop-hero-summary" data-desktop-copy data-pagefind-ignore>
+        <h2>A cloud that feels like yours.</h2>
+        <article><img src={base + 'icons/features/real-sdks.svg'} width="30" height="30" alt="" loading="lazy" /><div><strong>For developers</strong><p>Build and experiment with Google Cloud services locally.</p></div></article>
+        <article><img src={base + 'icons/features/ci-pipeline.svg'} width="30" height="30" alt="" loading="lazy" /><div><strong>For CI</strong><p>Fast, repeatable environments in your pipelines.</p></div></article>
+        <article><img src={base + 'icons/features/instant-iteration.svg'} width="30" height="30" alt="" loading="lazy" /><div><strong>For AI agents</strong><p>Give your coding agents a local cloud to work with.</p></div></article>
+      </div>
     </section>
 
     <InstallationMethods />
@@ -185,25 +207,32 @@ for (const column of atlasColumns) {
     </section>
 
 
-    <section class="field-atlas">
+    <section class="field-atlas" data-service-catalog data-lazy-service-filter>
+      <ServiceFilterBootstrap lazy />
       <div class="field-section-heading reveal">
         <span class="field-kicker">Service catalog</span>
         <h2>{availableServiceCount} services, running locally</h2>
       </div>
 
+      <div class="desktop-catalog-tools" data-desktop-copy data-pagefind-ignore>
+        <div class="desktop-catalog-search"><label class="sr-only" for="home-service-search">Search local services</label><input id="home-service-search" type="search" placeholder={`Search ${availableServiceCount} local services…`} autocomplete="off" data-filter-input /><a href={base + 'compatibility/'}>Compatibility</a></div>
+        <nav class="desktop-catalog-categories" aria-label="Local service categories">{atlasColumns.map((column) => <a href={'#home-service-' + column.category}>{column.title}</a>)}</nav>
+        <p class="catalog-empty" data-service-empty hidden>No matching services. Try another service name.</p>
+      </div>
       <div class="field-atlas__grid">
         {atlasSlots.map((slot) => (
           <div class:list={['field-atlas__slot', slot.length > 1 && 'field-atlas__slot--split']}>
             {slot.map((column) => (
-              <article class="field-column reveal">
+              <article class="field-column reveal" id={'home-service-' + column.category} data-service-section>
                 <div class="field-column__head">
-                  <span class="field-kicker">{column.title}</span>
+                  <span class="field-kicker" data-classic-copy>{column.title}</span>
+                  <h3 data-desktop-copy data-pagefind-ignore>{column.title}</h3>
                   <p>{column.note}</p>
                 </div>
 
                 <div class="field-column__list">
                   {column.items.map((service) => (
-                    <a href={`${base}services/${service.slug}/`} class="field-service">
+                    <a href={`${base}services/${service.slug}/`} class="field-service" data-service-name={service.name.toLowerCase()}>
                       <div class="field-service__main">
                         <span class="field-service__icon">
                           <ServiceIcon iconId={service.iconId} name={service.name} size={34} />
@@ -217,6 +246,7 @@ for (const column of atlasColumns) {
                       <div class="field-service__tags">
                         <span>{service.endpointLabel}</span>
                       </div>
+                      <span class="desktop-service-guide" data-desktop-copy data-pagefind-ignore>View guide</span>
                     </a>
                   ))}
                 </div>

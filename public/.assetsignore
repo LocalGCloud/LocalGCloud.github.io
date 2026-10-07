@@ -30,6 +30,12 @@ graft/
 .opencode/
 .pi/
 .planning/
+_bmad/
+_bmad-output/
+
+# Unused local desktop icon sources and alternatives
+/icons/desktop/ai-robot-v2.png
+/icons/desktop/robot.webp
 /output/
 /screenshots/
 /prompts/hero-cloud-in-a-box/

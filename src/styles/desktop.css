@@ -1,0 +1,48 @@
+/* The original page is the fallback. The new shell never duplicates its content. */
+.desktop-chrome,.desktop-titlebar,.desktop-taskbar,.desktop-history{display:none}
+[data-desktop-copy]{display:none!important}
+.desktop-root,.desktop-stage,.desktop-main,.desktop-content{display:contents}
+.site-view-switch{display:none;position:fixed;bottom:1rem;left:1rem;z-index:65;padding:.55rem .85rem;border:1px solid var(--line);border-radius:2rem;background:var(--surface);font-size:.875rem;color:var(--accent-strong);box-shadow:var(--shadow-md)}
+/* Reuse CSS Gradient Animator's native pattern; no artwork, canvas or JS engine. */
+@keyframes desktop-ambient{0%,100%{transform:translate3d(-3%,0,0)}50%{transform:translate3d(3%,0,0)}}
+@media(min-width:64rem){
+  .site-view-switch{display:block}
+  .desktop-view{
+    --bg:#e7e5dd;--bg-2:#eceae4;--surface:#fff;--surface-2:#f3f2ee;--line:#d4d1c8;--fs-display:clamp(3rem,4.8vw,4.7rem);
+    & body{overflow:hidden}
+    & body::before,& .site-view-switch{display:none}
+    & .desktop-root{display:block}
+    & .desktop-chrome{display:flex}
+    & .desktop-background{position:fixed;inset:-8%;background:linear-gradient(270deg,#cadcf4,#dfdfd8,#b9ccec);animation:desktop-ambient 40s ease infinite;pointer-events:none}
+    & .desktop-toolbar{position:fixed;inset:0 0 auto;height:3rem;z-index:80;align-items:center;gap:1.4rem;padding:0 1rem;background:#f7f5ee;border-bottom:1px solid #d4d1c8;font-size:.875rem}
+    & .desktop-brand{display:flex;align-items:center;gap:.6rem;color:var(--text);font-size:1.1rem}
+    & .desktop-navigation,& .desktop-toolbar-actions{display:flex;align-items:center;gap:1.1rem}
+    & .desktop-toolbar-actions{margin-left:auto}
+    & .desktop-toolbar-actions button,& .desktop-start{padding:.45rem .7rem;border:1px solid var(--line);border-radius:.5rem;background:var(--surface);color:var(--text)}
+    & .desktop-start{background:var(--accent);border-color:var(--accent);color:white}
+    & .desktop-current{max-width:16rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-2)}
+    & .desktop-menu{position:relative}
+    & .desktop-menu summary{cursor:pointer}
+    & .desktop-shortcuts{position:fixed;top:4rem;bottom:3rem;z-index:1;width:10%;align-items:center;flex-direction:column;gap:.6rem;overflow:auto}
+    & .desktop-shortcuts-left{left:0}
+    & .desktop-shortcuts-right{right:0}
+    & .desktop-shortcut{display:flex;align-items:center;flex-direction:column;gap:.35rem;width:6.7rem;padding:.6rem .3rem;border:1px solid transparent;border-radius:.7rem;color:#202124;text-align:center;font-size:.875rem;line-height:1.3}
+    & .desktop-stage{display:block;position:fixed;inset:3rem 0 2.5rem;pointer-events:none;z-index:2}
+    & .desktop-window{display:flex;position:absolute;left:11%;top:2.2rem;width:78%;height:calc(100% - 2.2rem);min-width:26rem;min-height:18rem;flex-direction:column;overflow:hidden;border:1px solid #c5c1b6;border-radius:.9rem;background:var(--bg);box-shadow:0 12px 32px #253d6326;pointer-events:auto;z-index:5}
+    & .desktop-window[hidden]{display:none}
+    & .desktop-window[data-expanded]{left:0!important;top:0!important;width:100%!important;height:100%!important;resize:none;border-radius:0}
+    & .desktop-titlebar{display:flex;min-height:2.5rem;align-items:center;gap:1rem;padding:0 .8rem;background:#eeece5;border-bottom:1px solid var(--line);font-size:.875rem;user-select:none}
+    & .desktop-titlebar>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    & .desktop-controls{display:flex;gap:.15rem;flex-shrink:0}
+    & .desktop-controls button{width:1.6rem;height:1.6rem;border:0;background:transparent;border-radius:50%;cursor:pointer}
+    & .desktop-controls button::before{content:'';display:block;width:.8rem;height:.8rem;border-radius:50%;margin:auto;border:1px solid #0001}
+    & .desktop-close::before{background:#f56359}
+    & .desktop-minimize::before{background:#f8bc3d}
+    & .desktop-expand::before{background:#3bbc58}
+    & .desktop-content{display:block;min-height:0;overflow:auto;flex:1}
+    & .desktop-taskbar{display:flex;position:fixed;inset:auto 0 0;min-height:2.5rem;align-items:center;gap:1rem;padding:.3rem 1rem;background:#f7f5ee;border-top:1px solid var(--line);font-size:.75rem;z-index:80}
+    & .desktop-taskbar>div{display:flex;gap:.35rem;flex:1;overflow:auto}
+    & .desktop-content .site-header{display:none}
+  }
+}
+@media(prefers-reduced-motion:reduce){.desktop-background{animation:none!important}}

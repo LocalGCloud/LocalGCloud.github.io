@@ -84,7 +84,7 @@ const { text, class: className = '', analyticsLabel, label = 'Copy to clipboard'
 <script>
   const resetTimers = new WeakMap<Element, number>();
 
-  document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((btn) => {
+  function initCopyButtons() { document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((btn) => {
     if (btn.dataset.copyReady === 'true') return;
     btn.dataset.copyReady = 'true';
 
@@ -124,5 +124,7 @@ const { text, class: className = '', analyticsLabel, label = 'Copy to clipboard'
       }, copied ? 2000 : 5000);
       resetTimers.set(btn, timer);
     });
-  });
+  }); }
+  initCopyButtons();
+  document.addEventListener('astro:page-load', initCopyButtons);
 </script>

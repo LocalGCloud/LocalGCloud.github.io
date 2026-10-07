@@ -337,7 +337,9 @@ const structuredData = [
   </main>
 
   <script>
-    document.querySelectorAll('[data-copy-text]').forEach((button) => {
+    function initAgentCopy() { document.querySelectorAll('[data-copy-text]').forEach((button) => {
+      if(button.hasAttribute('data-copy-ready'))return;
+      button.setAttribute('data-copy-ready','');
       button.addEventListener('click', async () => {
         const text = button.getAttribute('data-copy-text') || '';
         try {
@@ -353,7 +355,9 @@ const structuredData = [
           button.textContent = 'Copy failed';
         }
       });
-    });
+    }); }
+    initAgentCopy();
+    document.addEventListener('astro:page-load',initAgentCopy);
   </script>
 
   <Footer />

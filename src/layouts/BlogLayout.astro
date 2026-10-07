@@ -117,10 +117,10 @@ const articleProps = article
 
 <script>
   const wideScreen = window.matchMedia('(min-width: 1100px)');
-  const contents = document.querySelector<HTMLDetailsElement>('.blog-contents details');
-  if (contents) {
-    const updateContents = () => { contents.open = wideScreen.matches; };
-    updateContents();
-    wideScreen.addEventListener('change', updateContents);
-  }
+  const updateContents = () => {
+    document.querySelectorAll<HTMLDetailsElement>('.blog-contents details').forEach(contents => { contents.open = wideScreen.matches; });
+  };
+  updateContents();
+  document.addEventListener('astro:page-load', updateContents);
+  wideScreen.addEventListener('change', updateContents);
 </script>

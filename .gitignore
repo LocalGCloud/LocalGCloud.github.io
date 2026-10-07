@@ -39,6 +39,16 @@ Desktop.ini
 !.env.example
 !.env.*.example
 
+# Local BMad runtime and review workspace
+/_bmad/
+/_bmad-output/
+
+# Unused local artwork sources and icon alternatives
+/src/assets/desktop-home-desk-source.png
+/src/assets/desktop-home-desk-source-v2.png
+/public/icons/desktop/ai-robot-v2.png
+/public/icons/desktop/robot.webp
+
 # Existing local AI-agent state
 /.design-extract/
 /.pi/

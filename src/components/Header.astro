@@ -106,10 +106,9 @@ const navLinks = [
 </header>
 
 <script>
-  const toggle = document.getElementById('site-nav-toggle') as HTMLButtonElement | null;
-  const mobileMenu = document.getElementById('site-nav-mobile') as HTMLElement | null;
-
   const setMenuOpen = (open: boolean) => {
+    const toggle = document.getElementById('site-nav-toggle') as HTMLButtonElement | null;
+    const mobileMenu = document.getElementById('site-nav-mobile') as HTMLElement | null;
     if (!toggle || !mobileMenu) return;
     toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
@@ -117,11 +116,13 @@ const navLinks = [
     mobileMenu.classList.toggle('is-open', open);
   };
 
-  toggle?.addEventListener('click', () => {
-    setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true');
+  document.addEventListener('click', (event) => {
+    const toggle = (event.target as Element).closest('#site-nav-toggle');
+    if (toggle) setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true');
   });
 
   document.addEventListener('keydown', (event) => {
+    const toggle = document.getElementById('site-nav-toggle');
     if (event.key !== 'Escape' || toggle?.getAttribute('aria-expanded') !== 'true') return;
     setMenuOpen(false);
     toggle.focus();

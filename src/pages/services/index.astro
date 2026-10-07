@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
+import ServiceFilterBootstrap from '../../components/ServiceFilterBootstrap.astro';
 import { availableServiceCount, comingSoonServiceCount, getServiceSignalLabel, publishedServiceCount, serviceCatalogGroups } from '../../data/services';
 
 const rawBase = import.meta.env.BASE_URL;
@@ -15,14 +16,17 @@ const categoryGroups = serviceCatalogGroups;
 
 <BaseLayout title={`LocalCloud Services — ${publishedServiceCount} Service Guides`} description={`Browse guides for ${publishedServiceCount} Google Cloud services in LocalCloud: ${availableServiceCount} run locally with setup steps, workflows, and code examples; ${publishedServiceCount - availableServiceCount} are unsupported.`}>
   <Header />
-  <main id="main-content" class="site-page">
+  <main id="main-content" class="site-page service-catalog-page" data-service-catalog>
     <section class="site-section site-section--hero" style="padding-bottom: 0;">
       <div class="container">
         <div class="max-w-[52rem]">
-          <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>{availableServiceCount} local services</span>
-          <h1 class="mt-4">LocalCloud service catalog</h1>
+          <p class="desktop-catalog-breadcrumb" data-desktop-copy data-pagefind-ignore><a href={base}>Home</a> / Services</p>
+          <span class="site-eyebrow" data-classic-copy><span class="site-eyebrow__pulse"></span>{availableServiceCount} local services</span>
+          <h1 class="mt-4"><span data-classic-copy>LocalCloud service catalog</span></h1>
+          <template data-desktop-headline data-desktop-copy data-pagefind-ignore><span data-desktop-copy data-pagefind-ignore>Service catalog</span></template>
           <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
-            Find connection details, workflows, and limits for every local service. Services that don't run locally are marked Unsupported.
+            <span data-classic-copy>Find connection details, workflows, and limits for every local service. Services that don't run locally are marked Unsupported.</span>
+            <span data-desktop-copy data-pagefind-ignore>Find a local service, explore its workflows and connect your tools.<br />{availableServiceCount} local services</span>
           </p>
         </div>
       </div>
@@ -35,16 +39,19 @@ const categoryGroups = serviceCatalogGroups;
             <label class="sr-only" for="service-search">Search services</label>
             <input id="service-search" type="search" class="service-filter__input" placeholder={`Search ${publishedServiceCount} service guides…`} autocomplete="off" data-filter-input />
           </div>
+          <a class="desktop-catalog-compatibility" href={base + 'compatibility/'} data-desktop-copy data-pagefind-ignore>Compatibility</a>
         </div>
+        <nav class="desktop-catalog-categories" aria-label="Service categories" data-desktop-copy data-pagefind-ignore>{categoryGroups.map((group) => <a href={'#catalog-' + group.category}>{group.title}</a>)}</nav>
+        <p class="catalog-empty" data-service-empty hidden data-desktop-copy data-pagefind-ignore>No matching services. Try another service name.</p>
       </div>
     </section>
 
     {categoryGroups.map((group) => (
-      <section class="site-section site-section--tight" data-service-section>
+      <section class="site-section site-section--tight" id={'catalog-' + group.category} data-service-section>
         <div class="container">
           <div class="site-section-heading reveal">
-            <span class="site-kicker">{group.title}</span>
-            <h2>{group.category === 'auxiliary' ? 'Auxiliary integration APIs' : `${group.title} services`}</h2>
+            <span class="site-kicker" data-classic-copy>{group.title}</span>
+            <h2><span data-classic-copy>{group.category === 'auxiliary' ? 'Auxiliary integration APIs' : `${group.title} services`}</span><span data-desktop-copy data-pagefind-ignore>{group.title}</span></h2>
             <p>{group.description}</p>
           </div>
           <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 stagger">
@@ -67,7 +74,7 @@ const categoryGroups = serviceCatalogGroups;
                   </div>
                   <span class:list={['site-chip', getServiceSignalLabel(service) === 'Unsupported' ? 'site-chip--warn' : 'site-chip--accent']}>{getServiceSignalLabel(service)}</span>
                 </div>
-                <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">{service.description}</p>
+                <p class="mt-4 text-sm leading-7 text-[var(--text-2)]" title={service.description}>{service.description}</p>
                 <div class="mt-5 text-sm font-semibold text-[var(--text)]">{service.category === 'auxiliary' ? 'View integration guide' : 'View service guide'}</div>
               </a>
             ))}
@@ -88,23 +95,6 @@ const categoryGroups = serviceCatalogGroups;
     </section>
   </main>
 
-  <script>
-    (function() {
-      var input = document.querySelector('[data-filter-input]');
-      function update() {
-        var query = (input?.value || '').toLowerCase().trim();
-        document.querySelectorAll('[data-service-section]').forEach(function(section) {
-          var visible = 0;
-          section.querySelectorAll('[data-service-name]').forEach(function(card) {
-            var searchMatch = !query || (card.dataset.serviceName || '').includes(query) || (card.dataset.serviceDesc || '').includes(query);
-            card.style.display = searchMatch ? '' : 'none';
-            if (searchMatch) visible++;
-          });
-          section.style.display = visible ? '' : 'none';
-        });
-      }
-      input?.addEventListener('input', update);
-    })();
-  </script>
+  <ServiceFilterBootstrap />
   <Footer />
 </BaseLayout>

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-10-06",
+  "reviewedAt": "2026-10-07",
   "provenance": {
-    "runtimeRevision": "9480fce902a5cfcbb47ae441df94b4eda11d0fee",
+    "runtimeRevision": "8da58755226ded8d2185789c87ccf0f93bc0ec1f",
     "cliRevision": "85b39cf4708ca1359bb45e5999de10f45e382439",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
@@ -60,20 +60,20 @@
     ],
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
-      "../localcloud/localcloud.defaults.yaml": "sha256:bb0cd045666db19c278c5ade5368e34e57bbc5e924b0e53b51ccf32652941f3a",
-      "../localcloud/documentation.yaml": "sha256:fb0179c6a6220dd63b045757a57765cc65bdf18d9407cc964978d7d0cb2763db",
+      "../localcloud/localcloud.defaults.yaml": "sha256:1296cf0c2869e3978e558c6980c21896f76b77c90ae23434181ebd7a67169dd2",
+      "../localcloud/documentation.yaml": "sha256:318c91469c13850bc80d64169926fb35cc6c7a33886e381f9f2dc192c2ab94ae",
       "../localcloud/docs/status/service-status.md": "sha256:ddad5257b8ba3b5fb4f12bfee0364fa7710e24a3afec22cae2255db33923538f",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:71d43c01c3bd8019587f19914e3c668acf2f20a090c798f7ab06ac5935cc6cce",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:1a674b42c9b5d54ad0dc1b74e821d4a525d1db25cb72ffdebad5c7ad4c3c320a",
-      "../localcloud/specs/api/catalog.json": "sha256:1f72d4baf878724c0dc096f9a8c3ec585d98d5f2f5d184476cd463e7dda30bd0",
-      "../localcloud/Dockerfile": "sha256:396d8813eaa7f5d0e183836185f35c9f4cf7a630dfbfa9c59284ae255b20faef",
+      "../localcloud/specs/api/catalog.json": "sha256:6e359c154012af2f989749342403ff31e0f4a8f0b0d417a77b7ed43095e4cd43",
+      "../localcloud/Dockerfile": "sha256:16b2fd184a7edd7cda1bf741337bc38f4ca0ba04ad050940225e1efb043ae721",
       "../localcloud/LICENSE": "sha256:007c741ba18ddbea4cbd92b4f4b93135381b39e5a4af01ae5128f14b1d19c041",
       "../localcloud/docker/bigquery-start.sh": "sha256:987e13b3a9cc853f8590259cd32b0131df141b900c4c0fec0cfa9e3562973f9e",
       "../localcloud/docker/docker-entrypoint.sh": "sha256:cecd14c3326147f002713e4062915a2144258e1effd3b3c1138420b2f24f58eb",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:7a0189739dfe3dbdd197dd659360f35c79912ca558e6be51f74a810a58d0bcbf",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:fcfbe0a7977d5cca533cc0271a04145bec10418201b1a6480119a1c0c1109190",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:20a822c2f1478fc2b5746dfac025c5d50e8aa21acbe4e22cabda2ce4c1e0c97f",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:0ef1a44d3d4f4245fb7a214483ac21f8ef4353a36f4da55fad1537f79e074602",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:4978775941c8725a7fdfe1bab479ba7ceb76f30b0636d874fdc800164f3277b3",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:5e0227a975b8196b4779cf0f76eadd66cc8cb71caf9f3e699634129fbc7bddee",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:4cf196417fa1f1e9f88db0a812a9e9ac7b2c0952e296d4e9a1e6a326e2941503",
       "../localcloud-cli/README.md": "sha256:aa80710ee32cf0260ab73853fd5cd35c868a4d662b14382e4855171a5d314723",
       "../localcloud-cli/src/localcloud_cli/config.py": "sha256:e0c9cffd3788051576a8645844641352e6f1efa794808529969fd556c8ed623e",
       "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:45117d1c983fb78ce950acd1d266cd6547a01e98d86e3ca44931db5a555fe494",
@@ -631,7 +631,8 @@
       },
       "status": "partial",
       "limitations": [
-        "Exactly-once delivery, authenticated push, export subscriptions, transforms and other unlisted advanced fields remain unsupported.",
+        "Exactly-once delivery, export subscriptions, transforms, PushConfig attributes and payload wrappers, and other unlisted advanced fields remain unsupported.",
+        "Authenticated push tokens are signed by the LocalCloud issuer (/identity/status, keys at /oauth2/v3/certs), not https://accounts.google.com; receivers must trust the local JWKS. Revoking the Pub/Sub service agent's token-creator role is not modeled.",
         "Retry dispatch and retention cleanup are approximate local schedules; this does not reproduce Google production scale, availability or service-agent IAM.",
         "Schema definitions must be self-contained; imported protobuf types are unsupported, matching the Pub/Sub schema restriction.",
         "Stored Pub/Sub IAM policies can be read and evaluated through IAM APIs, but publish and topic deletion do not enforce those resource bindings. Strict mode and successful testIamPermissions do not establish Pub/Sub data-plane authorization."
@@ -714,8 +715,19 @@
           ]
         },
         {
+          "id": "pubsub.authenticated-push",
+          "label": "PushConfig oidcToken on create/update/modifyPushConfig, signed push delivery",
+          "status": "partial",
+          "limitations": [
+            "google.pubsub.v1 PushConfig.OidcToken (proto-google-cloud-pubsub-v1 1.157.0) is accepted over REST and gRPC, persisted in the subscription and returned on readback. Each push attempt sends one Authorization: Bearer ID token from the LocalCloud issuer for serviceAccountEmail, with the email claim and the configured audience or, when empty, the exact push endpoint URL. In enforcing IAM modes (strict, gcp-live), setting it requires iam.serviceAccounts.actAs on the account. The Pub/Sub service agent's token-creator grant is modeled as Google's default; revoking it is not. If no token can be minted (account missing, disabled or identity not ready), the message is not sent and follows the normal NACK, retry and dead-letter path, and LocalCloud logs IDENTITY_UNAVAILABLE:<reason>; sibling subscriptions on the topic are unaffected. Google requires an explicit token-creator grant to the service agent only for projects that enabled Pub/Sub on or before 2021-04-08, so a missing agent grant cannot occur locally. A non-2xx endpoint response is a NACK: the message is redelivered with a freshly minted token. The actAs check is component-tested in strict mode. Partial until the packaged-image receipt test has run against a candidate image."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
           "id": "pubsub.other-advanced-fields",
-          "label": "exactly-once delivery, authenticated push, export subscriptions, transforms",
+          "label": "exactly-once delivery, export subscriptions, transforms, push attributes and payload wrappers",
           "status": "unsupported",
           "limitations": [
             "Outside the reviewed implementation scope; unsupported fields fail explicitly."
@@ -1466,12 +1478,13 @@
       },
       "status": "partial",
       "limitations": [
-        "OAuth/OIDC token minting, App Engine delivery, queue routing/header overrides and logging sampling are rejected as unsupported rather than silently stored.",
+        "Task and queue OAuth/OIDC credentials are minted by the LocalCloud issuer, not Google, and verify only against LocalCloud's JWKS. A queue httpTarget credential overrides task credentials and every task Authorization header; at queue level both the service account and the audience/scope are required. OIDC audience defaults to the full task URL and OAuth scope to cloud-platform. Each attempt mints through the delivery token cache; when no token can be minted (for example, a disabled or deleted account) the request is not sent and the attempt records IDENTITY_UNAVAILABLE:<reason> with normal retry semantics. Strict and gcp-live modes require iam.serviceAccounts.actAs on the account when a task or queue is configured; the account is not checked against the queue's project. Redirect responses are not followed.",
+        "App Engine delivery, queue httpTarget uriOverride/httpMethod/headerOverrides and logging sampling are rejected as unsupported rather than silently stored.",
         "No FIFO, exactly-once, dead-letter queue, transactional cancellation, adaptive Google throttling or production throughput guarantees. Removed task IDs have no Google-style deduplication tombstone. Unlimited retry settings have no automatic task-retention expiry.",
         "HTTP attempt deadlines are durations from 15 to 1800 seconds (default 600). Failed attempts use configured fractional backoff; finite attempt and duration bounds must both be exhausted. A zero duration leaves only the attempt limit; -1 attempts is unlimited.",
         "Local activity retains completed attempt metadata for seven days, with no request URL, headers, payload or response body archive. Interrupted or unpersisted outcomes may remain unknown. Successful/terminal tasks leave the active queue; absence alone is not success.",
         "Pending and interrupted in-flight tasks recover after restart with possible redelivery. Pause, purge and deletion do not cancel requests already in flight. Never replay an ambiguous create or run request automatically.",
-        "BASIC omits payload and headers; FULL requires cloudtasks.tasks.fullView in enforcing IAM modes. Queue/task operations evaluate stored allow policies in strict and gcp-live modes; open/permissive modes do not enforce them."
+        "BASIC omits payload, headers and the OAuth/OIDC configuration; FULL requires cloudtasks.tasks.fullView in enforcing IAM modes. Queue/task operations evaluate stored allow policies in strict and gcp-live modes; open/permissive modes do not enforce them."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1493,7 +1506,7 @@
           "label": "queues.create/get/list/update/pause/resume/purge/delete",
           "status": "partial",
           "limitations": [
-            "REST and gRPC share authorized, project/location-scoped queue lifecycle and dispatch settings. Console configuration uses an etag precondition; native service parity remains partial."
+            "REST and gRPC share authorized, project/location-scoped queue lifecycle and dispatch settings. Console configuration uses an etag precondition; native service parity remains partial. Queue httpTarget.oauthToken/oidcToken overrides are stored, returned and applied at delivery, with update masks http_target, http_target.oauth_token and http_target.oidc_token (component evidence; exact-image qualification pending). uriOverride, httpMethod and headerOverrides are rejected as unimplemented."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1504,7 +1517,7 @@
           "label": "tasks.create/get/list/delete/run",
           "status": "partial",
           "limitations": [
-            "Durable task creation, BASIC/FULL inspection, pagination and immediate manual dispatch. Automatic dispatch honors queue rate/concurrency and fractional retry settings; retained local attempt records establish observed HTTP outcomes."
+            "Durable task creation, BASIC/FULL inspection, pagination and immediate manual dispatch. Automatic dispatch honors queue rate/concurrency and fractional retry settings; retained local attempt records establish observed HTTP outcomes. Task httpRequest.oidcToken/oauthToken deliver local-issuer tokens minted per attempt (component evidence; exact-image qualification pending)."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1543,7 +1556,8 @@
       "status": "partial",
       "limitations": [
         "Five-field UNIX cron uses the installed cron-utils parser and Java IANA zones. Preview and dispatch share that parser. Tested cases include DST gaps/overlaps, leap dates, monthly day 31 and inclusive day-of-month/day-of-week semantics; this does not qualify every cron expression or future timezone database revision.",
-        "HTTP and Pub/Sub delivery are implemented. App Engine and OAuth/OIDC configurations are rejected before saving; Google-trusted credentials and managed App Engine execution are unavailable.",
+        "HTTP and Pub/Sub delivery are implemented. App Engine configurations are rejected before saving; managed App Engine execution is unavailable.",
+        "httpTarget oidcToken and oauthToken are stored with the job and minted at each attempt by the local issuer, not Google. The OIDC audience defaults to the full target URI including the query; the OAuth scope defaults to cloud-platform. The generated header is the only Authorization header; a user Authorization header stays rejected. Receivers must trust the local issuer and JWKS. In strict and gcp-live, create and every update of a job carrying a token need iam.serviceAccounts.actAs on its account; a missing account is reported as the same denial. At delivery a missing, deleted or disabled account (or unavailable issuer) fails the attempt with IDENTITY_UNAVAILABLE:<reason> through normal retry and history, and the request is not sent. Revoking the Scheduler service agent is not modeled.",
         "Queued runs and retries survive restart. An attempt interrupted while RUNNING becomes UNKNOWN and is not replayed because the target may already have received it. Manual runs can overlap; automatic schedules skip occurrences while an earlier automatic run or retry chain is active. Missed downtime occurrences are not backfilled.",
         "Retry count is limited to 0–5, doublings to 0–16, and backoff to 0–86400 seconds. Fractional and explicit zero durations are retained. Retry duration starts with the first actual attempt; when both count and duration are configured both limits must be exhausted. HTTP deadlines are 15–1800 seconds; Pub/Sub ignores attemptDeadline.",
         "Full project/location/job names scope jobs and history. Google-shaped endpoints retain configured gateway IAM enforcement; legacy browse/mutate endpoints retain the existing administrative bypass. Stored IAM policies do not establish per-job enforcement.",
@@ -1569,7 +1583,7 @@
           "label": "jobs.create/list/get/update/delete/pause/resume/run",
           "status": "partial",
           "limitations": [
-            "Shared REST, gRPC and admin lifecycle validates before persistence and schedules real HTTP/Pub/Sub delivery. Full job readback, masked updates, runtime cron preview, exact-owner history, durable queued retries and HTTP deadlines are verified. App Engine, OAuth and OIDC configurations are explicitly rejected; no credentials are fabricated."
+            "Shared REST, gRPC and admin lifecycle validates before persistence and schedules real HTTP/Pub/Sub delivery. Full job readback, masked updates, runtime cron preview, exact-owner history, durable queued retries and HTTP deadlines are verified. HTTP targets accept oidcToken or oauthToken; each manual, scheduled or retried attempt sends one Authorization header signed by the local issuer and re-minted once the cached token reaches its refresh margin, verified in component tests. A protected target that refuses the account (HTTP 401/403) is recorded as a failed attempt. Exact-image receipts for authenticated delivery are pending. App Engine configurations are explicitly rejected."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1608,8 +1622,9 @@
       "status": "partial",
       "limitations": [
         "Function metadata, HTTP forwarding and Pub/Sub trigger routing exist. Source builds and managed function-container execution are not implemented.",
-        "Firestore/Storage/Audit Log Eventarc delivery is not established by the current Pub/Sub trigger path.",
-        "HTTP forwarding does not propagate browser credentials or LocalCloud caller headers to execution targets. Production Google identity token minting and external function stdout collection are not provided.",
+        "Only Pub/Sub messagePublished triggers are supported. Storage, Firestore, Audit Log and other Eventarc event types are refused with 400 on create and update; no function, subscription or delivery is recorded for them.",
+        "LocalCloud never starts, stops or supervises a function's process. Stored serviceConfig.serviceAccountEmail gives that process no credentials; register it with POST /identity/sessions and a function field, then start the session's relay and the process yourself. The session lasts 12 hours and ends when the function is deleted, linked to Cloud Run or given another runtime account; the process keeps running. Readback reports this state in stateMessages (type LocalCloudExternalRuntime), a field Google also uses for function conditions.",
+        "Invocation forwards the caller's Authorization and X-Serverless-Authorization (unsigned) to the target, never cookies or LocalCloud caller headers. Tokens are LocalCloud-signed, not Google-signed, and external function stdout collection is not provided. Triggers created before local identity push without a token until the function's eventTrigger is updated; in strict and gcp-live such pushes are refused.",
         "Pub/Sub registration and metadata persistence span separate services; a failed or interrupted mutation requires inspecting saved metadata and the managed subscription before retrying. No cross-service transaction is claimed."
       ],
       "evidence": [
@@ -1632,7 +1647,7 @@
           "label": "functions.create/list/get/delete/update",
           "status": "partial",
           "limitations": [
-            "Metadata CRUD, HTTP forwarding and Pub/Sub trigger routing exist; builds and managed function-container execution are not implemented."
+            "Metadata CRUD, HTTP forwarding and Pub/Sub trigger routing exist; builds and managed function-container execution are not implemented. With local workload identity, the function URL (url) is http://localhost:{gateway port}/functions/trigger/{project}/{location}/{function}. Invocation there follows the IAM mode - open forwards every call, permissive verifies and logs, strict and gcp-live require a local ID token whose aud is the function URL, serviceConfig.uri or, for a Cloud Run target, the service URL or a customAudiences entry (401 otherwise, including access tokens), and cloudfunctions.functions.invoke on the function or run.routes.invoke on its Cloud Run service (403; roles/cloudfunctions.invoker grants the former). X-Serverless-Authorization, when present, is the only checked credential. The caller's Authorization reaches the function unchanged and X-Serverless-Authorization without its signature; the function's own account is never minted for an inbound call. A Pub/Sub trigger records eventTrigger.serviceAccountEmail (default@{project} when unset), needs iam.serviceAccounts.actAs on it in strict and gcp-live, and its push subscription delivers that account's ID token with the function URL as audience, so the account needs invoke permission in enforcing modes. Only google.cloud.pubsub.topic.v1.messagePublished triggers are accepted; other event types are refused with 400 and create no function or subscription. A function not backed by Cloud Run runs outside LocalCloud, so readback adds an INFO stateMessages entry of type LocalCloudExternalRuntime, and its process gets Application Default Credentials only from an identity session registered with POST /identity/sessions and a function field naming it, which serves the function's runtime account (serviceConfig.serviceAccountEmail, else default@{project}) until the function is deleted, linked to Cloud Run or given another runtime account."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1747,7 +1762,7 @@
         "Requires Docker daemon access for Dataproc cluster and job container execution.",
         "Restarting or stopping LocalCloud cancels running Dataproc jobs and stops cluster containers; a job accepted before the restart ends ERROR (exit 143) and must be resubmitted. Clusters resume on the next start.",
         "Elastic multi-node cloud scaling, automated node repair, and Google production SLAs are production-only.",
-        "Jobs and runtime-migration workloads reach Cloud Storage through STORAGE_EMULATOR_HOST without credentials, and the cluster's gceClusterConfig.serviceAccount is not applied to them. Under strict IAM their Storage requests are evaluated as the default local developer (user:local-developer@localcloud.invalid), not as the cluster or job service account Google uses; under gcp-live they are rejected. Grant that member the Storage roles the jobs need, or run them with open or permissive IAM."
+        "Jobs and runtime-migration workloads reach Cloud Storage through STORAGE_EMULATOR_HOST without credentials. Code that uses ADC gets the cluster account's tokens from its metadata relay, but emulator-host clients do not send them, so under strict IAM those Storage requests are evaluated as the default local developer (user:local-developer@localcloud.invalid), not as the cluster account Google uses; under gcp-live they are rejected. Grant that member the Storage roles the jobs need, or run them with open or permissive IAM. Runtime-migration workloads have no attached account."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1769,7 +1784,7 @@
           "label": "clusters.create/list/get/delete",
           "status": "verified",
           "limitations": [
-            "Run Dataproc clusters locally in cluster mode with Docker runtime execution."
+            "Run Dataproc clusters locally in cluster mode with Docker runtime execution. With local workload identity, a cluster runs as config.gceClusterConfig.serviceAccount (default@{project} when unset) with serviceAccountScopes (cloud-platform when unset); REST and gRPC keep and return gceClusterConfig, and an explicit account must exist, be enabled and, in strict and gcp-live, allow the caller iam.serviceAccounts.actAs. A localcloud-relay sidecar in the cluster container's network namespace serves that account at GCE_METADATA_HOST=127.0.0.1:8081, publishes nothing, stops and restarts with the cluster and is removed with it."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1780,7 +1795,7 @@
           "label": "jobs submit/list/get",
           "status": "verified",
           "limitations": [
-            "Submit and run Spark/Hadoop jobs locally in serverless and cluster modes."
+            "Submit and run Spark/Hadoop jobs locally in serverless and cluster modes. With local workload identity, cluster jobs see their cluster's metadata relay, so a job's driver obtains the cluster account's ID token, also after a cancelled job is resubmitted; a runtime job (no cluster container) starts behind its own relay as the cluster's account, never as the submitting developer, keeps the runtime hardening (read-only root, all capabilities dropped, no-new-privileges, limits) and is removed with its relay on completion or cancellation. A relay that cannot be removed is revoked at once and kept on its binding, and the next reconciliation removes it."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1821,7 +1836,13 @@
         "Open/permissive testIamPermissions echoes requested permissions; strict/gcp-live uses the resolved caller and shared policy evaluator. This is not an arbitrary-principal troubleshooter.",
         "Shared condition evaluation, predefined roles, custom role lifecycle, key enable/disable, and resource-to-project inheritance exist. Full CEL/resource attributes, organization/folder ancestry, deny policies, policy history and recommendations remain incomplete.",
         "Policy API support does not establish uniform data-plane enforcement. In-process Pub/Sub publish and topic deletion do not enforce stored resource bindings; direct external listeners also have service-specific boundaries.",
-        "Enterprise identity federation (Workforce Identity Pools, Workload Identity Pools), SCIM tenant provisioning, and Microsoft Active Directory integration are production-only infrastructure features excluded from local development."
+        "Workforce Identity Pools, SCIM tenant provisioning and Microsoft Active Directory integration are production-only infrastructure features excluded from local development. Workload identity federation is local for OIDC providers only. STS rejects SAML 2.0, AWS GetCallerIdentity and X.509 (mTLS) subjects, access-token downscoping (Credential Access Boundary), actor tokens, options.userProject and workforce-pool audiences with explicit invalid_request errors instead of exchanging them; AWS, SAML and X.509 providers can be stored but never exchange.",
+        "OIDC trust keys come from the provider's inline oidc.jwksJson, or from this runtime's own key ring when issuerUri is the LocalCloud issuer. LocalCloud does not fetch remote discovery documents or JWKS, so a remote issuer without jwksJson fails with invalid_grant. HTTP issuerUri values are accepted as a local extension (Google requires HTTPS). Provider CEL supports the standard library, macros and extract(); other extension functions fail to compile. Mapping values are strings or lists of strings, at most 8 KB in total.",
+        "Federated principals: the gateway, service-layer IAM evaluator and IAM Credentials resolve principal:// and principalSet:// members from the verified STS token. Cloud KMS keeps its own authorizer and matches only the exact principal:// member, not principalSet:// sets; principalSet:// evaluation through the Cloud Storage authorization callback is unverified. domain: bindings never match federated subjects. The wording of STS error descriptions is LocalCloud's; Google documents only some of them.",
+        "google-auth-library-java 1.54.0 accepts only https token_url and service_account_impersonation_url values and a service_account_impersonation.token_lifetime_seconds of 600 to 43200; Java clients need the gateway TLS listener (tls.enabled) and a trusted LocalCloud certificate. Python google-auth 2.57.1 looks the project up at cloudresourcemanager.googleapis.com when an external_account file is loaded with scopes; load it without scopes and call with_scopes.",
+        "SDK helpers that hardcode Google hosts cannot use explicit LocalCloud endpoints: impersonated ID tokens in google-auth-library-java 1.54.0 (ImpersonatedCredentials.idTokenWithAudience) and google-auth 2.57.1 (impersonated_credentials.IDTokenCredentials), cloud.google.com/go/auth 0.20.0 credentials/impersonate, and Node google-auth-library 10.5.0 key-file credentials (gtoken 8.0.0 posts to oauth2.googleapis.com). They work through the transparent TLS profile (host.transparent_network, only those hosts mapped to the TLS listener and the LocalCloud CA trusted by the process); explicit alternatives are listed in the SDK guide.",
+        "Python google-auth 2.57.1 starts a background Regional Access Boundary lookup at iamcredentials.googleapis.com whenever service-account credentials authorize a request; it cannot be disabled, fails without affecting the call, and is a Google connection unless that host is mapped away.",
+        "IAM Credentials tokens are signed by this runtime's issuer. Receivers must trust the local issuer and JWKS; Google-only verifiers that hardcode Google certificates reject them by design. A disabled or deleted account stops LocalCloud's own verification immediately; an external receiver sees revocation only at token expiry. Disabling or deleting an account key stops its JWT-bearer exchanges, self-signed JWT access and publication immediately, but tokens already issued through that key are not tied to it and stay valid, in LocalCloud and at external receivers, until they expire."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -1866,6 +1887,28 @@
           "status": "verified",
           "limitations": [
             "Service account display name/description patching, key enable/disable toggling, and queryTestablePermissions."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "cloudiam.credentials.tokens",
+          "label": "iamcredentials projects.serviceAccounts.generateAccessToken/generateIdToken/signBlob/signJwt (REST and gRPC)",
+          "status": "partial",
+          "limitations": [
+            "Locally signed ID and access tokens for projects/-/serviceAccounts/{email-or-uniqueId} with ordered delegates, scopes, includeEmail and organizationNumberIncluded (null; local projects have no organization), lifetimes up to 3600 s or 43200 s for server.identity.lifetime_extension_accounts. In strict and gcp-live every delegation link needs implicitDelegation and the last link the method permission. signBlob and signJwt use one non-exportable SYSTEM_MANAGED key per account, published at /service_accounts/v1/metadata/{x509,jwk}/{email}; IAM v1 signBlob (bytesToSign) and signJwt on a named project keep their v1 shapes on the same paths. A disabled account gets 400 FAILED_PRECONDITION from every method, IAM v1 signing included, and a deleted one 404 NOT_FOUND (IAM Credentials answers PERMISSION_DENIED in strict and gcp-live); invalid base64 or JWT payloads are 400 INVALID_ARGUMENT. Impersonating another project's account needs the grant on that account or its project, not the caller's. organizationNumberIncluded is REST-only, because the gRPC GenerateIdTokenRequest of google-cloud-iamcredentials 2.99.0 has no such field. Served with the Cloud IAM facade. Tokens are signed by the LocalCloud issuer, not Google."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "cloudiam.workload-identity.federation",
+          "label": "sts v1 token (RFC 8693) and iam projects.locations.workloadIdentityPools/providers create/get/list/patch/delete/undelete",
+          "status": "partial",
+          "limitations": [
+            "POST /v1/token exchanges an OIDC JWT or ID token (RS256 or ES256, kid required, iat at most 24 hours old) for a locally signed federated access token, as RFC form or Discovery JSON, against a durable OIDC provider of a global workload identity pool. The provider's issuerUri, allowedAudiences (default its canonical name, with or without https:), jwksJson, attributeMapping (CEL; google.subject required, at most 127 bytes; google.groups; attribute.*) and attributeCondition (CEL) decide the exchange. The token's identity is principal://iam.googleapis.com/projects/{number}/locations/global/workloadIdentityPools/{pool}/subject/{subject}, a member of the pool, group and attribute principalSet:// sets; it can call LocalCloud APIs directly and can impersonate a service account through IAM Credentials only with roles/iam.workloadIdentityUser (or another getAccessToken/getOpenIdToken grant) on that account. A disabled provider stops new exchanges; a disabled or deleted pool or a deleted provider also stops existing tokens. Errors are 400 invalid_request, invalid_grant, invalid_target or unsupported_grant_type. Served with the Cloud IAM facade. The pinned Java, Python, Node and Go clients federate subject tokens from file, URL (text and json) and executable credential sources, directly and with service_account_impersonation_url, against the packaged image (integration:identity-sdk-matrix); each SDK runs an executable source only when GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES=1."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2233,7 +2276,10 @@
       "limitations": [
         "Real local clusters require a working k3d/Docker runtime. Provisioning runs in the create operation; a failure finishes the operation with the error and leaves the cluster in ERROR, as GKE does, until it is deleted. No simulated cluster is persisted.",
         "GKE and AlloyDB share the canonical REST path /v1/projects/{project}/locations/{location}/clusters. The gateway serves AlloyDB there and GKE REST under /container/v1 (GOOGLE_CONTAINER_CUSTOM_ENDPOINT from /env, CLOUDSDK_API_ENDPOINT_OVERRIDES_CONTAINER=<gateway>/container/). Legacy zonal /v1/projects/{project}/zones/{zone}/clusters routes are GKE's under both /v1 and /container/v1. Transparent networking (container.googleapis.com) still reaches the shared /v1 path and therefore AlloyDB. GKE gRPC is unaffected.",
-        "Node-pool create/autoscaling explicitly reject. Node-pool metadata, local resizing and upgrade lifecycle are implementable local gaps."
+        "Node-pool create/autoscaling explicitly reject. Node-pool metadata, local resizing and upgrade lifecycle are implementable local gaps.",
+        "Pod workload identity needs tls.enabled true and local identity (server.identity.enabled); the cluster's API server calls the admission webhook on the TLS listener at the gateway's runtime-network address, which the generated gateway certificate names. A create that requests a workload pool without them fails with FAILED_PRECONDITION. Custom TLS material must name that address.",
+        "Pods admitted before a gateway restart that changes its runtime-network address keep the old relay gateway address; recreate them. Running clusters get the webhook's new address and trust when the gateway starts.",
+        "UpdateCluster (enabling workload identity on an existing cluster), node pool workloadMetadataConfig, direct principal:// workload identity federation and host-network pods are not supported. Nodes never receive credentials; pods without the opt-in label have no metadata server."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2256,6 +2302,17 @@
           "status": "partial",
           "limitations": [
             "Create records the cluster as PROVISIONING and returns a pending operation while k3d provisions; the operation is read through projects.locations.operations.get/list (and the legacy zones/{zone}/operations routes) and finishes DONE with the cluster RUNNING, or with the error and the cluster in ERROR. Delete completes before it answers and returns its finished operation. Cluster GET echoes the create request with GKE-assigned fields, including networkConfig, legacyAbac and resourceLabels. Terraform google_container_cluster apply, a no-change plan and destroy (provider 7.46.0, container_custom_endpoint <gateway>/container/v1/) passed against a jar-overlay runtime; exact-image qualification is pending."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "gke.workload-identity.pods",
+          "label": "pod workload identity (workloadIdentityConfig.workloadPool, KSA to GSA mapping through the pod metadata relay)",
+          "status": "partial",
+          "limitations": [
+            "Local workload identity (GKE pod identity). Create accepts workloadIdentityConfig.workloadPool only as {project}.svc.id.goog and returns it on GET. Before the cluster is RUNNING the gateway loads a relay-only image (derived from the LocalCloud image, k3d image import) and registers the MutatingWebhookConfiguration localcloud-workload-identity (failurePolicy Fail, namespaces labelled localcloud.dev/workload-identity=enabled, never kube-system, pods labelled localcloud.dev/workload-identity=disabled skipped, caBundle = the LocalCloud CA). Admission adds localcloud-relay as a native sidecar (init container with restartPolicy Always, k3s v1.32.5) with a projected token of audience localcloud-workload-identity mounted only into it, and sets GCE_METADATA_HOST/GCE_METADATA_IP=127.0.0.1:8081 and a metadata.google.internal host alias for the other containers. The relay presents the token; the gateway validates it with a TokenReview against that cluster (cluster-admin kubeconfig), reads the Kubernetes service account's iam.gke.io/gcp-service-account annotation and requires serviceAccount:{project}.svc.id.goog[{namespace}/{ksa}] to hold roles/iam.workloadIdentityUser (iam.serviceAccounts.getAccessToken) on that account, in every IAM mode. Pod tokens are bound to a per-pod workload binding that pod deletion, grant removal, annotation changes and cluster deletion revoke. A service account without the annotation (direct principal:// federation) gets an explicit unsupported diagnostic. The pinned Java, Python, Node and Go clients run as pods with no credential configured and obtain, verify and refresh the annotated account's tokens through ADC; a pod whose service account lacks the grant gets none (integration:identity-sdk-matrix, which enables GKE for its pod stage). GKE is default-disabled, so the platform tests are deferred with the GKE suite and were run by local opt-in."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2328,7 +2385,7 @@
           "label": "instances.create/get/list/start/stop/delete",
           "status": "unsupported",
           "limitations": [
-            "Compute Engine is default-disabled and outside LocalCloud's supported surface. When enabled, an instance is a Docker container booted from a public image family (debian-cloud debian-11, debian-12, debian-12-arm64; ubuntu-os-cloud ubuntu-2204-lts, ubuntu-2404-lts-amd64, ubuntu-2404-lts-arm64) and kept running like an idle VM; instances.insert returns a pending zonal operation readable through zoneOperations get, wait and list, and delete, start and stop return finished operations. images.get, images.getFromFamily, images.list, the boot disk's disks.get/list and zones.get answer as Compute Engine does; unknown images are JSON 404s. Terraform google_compute_instance apply, a no-change plan and destroy (provider 7.46.0) passed against a jar-overlay runtime; exact-image qualification is pending."
+            "Compute Engine is default-disabled and outside LocalCloud's supported surface. When enabled, an instance is a Docker container booted from a public image family (debian-cloud debian-11, debian-12, debian-12-arm64; ubuntu-os-cloud ubuntu-2204-lts, ubuntu-2404-lts-amd64, ubuntu-2404-lts-arm64) and kept running like an idle VM; instances.insert returns a pending zonal operation readable through zoneOperations get, wait and list, and delete, start and stop return finished operations. images.get, images.getFromFamily, images.list, the boot disk's disks.get/list and zones.get answer as Compute Engine does; unknown images are JSON 404s. Terraform google_compute_instance apply, a no-change plan and destroy (provider 7.46.0) passed against a jar-overlay runtime; exact-image qualification is pending. With local workload identity, each instance starts behind a localcloud-relay container that owns its network namespace, and the instance's metadata server at 127.0.0.1:8081 (GCE_METADATA_HOST) mints tokens for serviceAccounts[0].email with its scopes, for default@{project} when serviceAccounts is absent, and for no account when it is empty. An explicit account must exist and be enabled (400 otherwise); strict and gcp-live require iam.serviceAccounts.actAs on it (403), checked on the account's own project, before anything is stored or launched. An instance's ADC source is the operator's real credential bridge when one is selected (mounted read-only at /credentials/gcp.json), otherwise its relay's metadata; GET /browse/compute reports identity.serviceAccount and identity.credentialSource."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2378,7 +2435,8 @@
       "status": "partial",
       "limitations": [
         "Service create/update executes Docker containers when available; job create/run explicitly reject, and full revision traffic-splitting semantics are not implemented.",
-        "Local domain mappings and host/revision routing are software gaps. Google Front End and production managed routing/TLS guarantees are production-only."
+        "Local domain mappings and host/revision routing are software gaps. Google Front End and production managed routing/TLS guarantees are production-only.",
+        "Secret Manager-backed environment variables (v2 env[].valueSource.secretKeyRef, Knative v1 env[].valueFrom.secretKeyRef) are not resolved and are rejected with UNIMPLEMENTED (HTTP 501 on v1) instead of being dropped; set literal values."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2400,7 +2458,7 @@
           "label": "services/revisions",
           "status": "partial",
           "limitations": [
-            "Service/revision metadata and Docker create/update execution exist, with launch-failure rollback tests; broader serving/routing semantics remain partial. CreateService and UpdateService return a pending long-running operation, polled through google.longrunning.Operations or REST GET /v2/projects/{project}/locations/{location}/operations/{operation}. A create reserves the service name (a duplicate gets ALREADY_EXISTS), one deployment runs per service at a time, and a failed first launch releases the name instead of keeping a failed Service resource."
+            "Service/revision metadata and Docker create/update execution exist, with launch-failure rollback tests; broader serving/routing semantics remain partial. CreateService and UpdateService return a pending long-running operation, polled through google.longrunning.Operations or REST GET /v2/projects/{project}/locations/{location}/operations/{operation}. A create reserves the service name (a duplicate gets ALREADY_EXISTS), one deployment runs per service at a time, and a failed first launch releases the name instead of keeping a failed Service resource. With local workload identity, each revision runs behind a localcloud-relay container; its metadata server serves template.serviceAccount (default@{project} when unset, kept when a replacement omits it), and uri is the relay's protected ingress, so the container port is never published (a C24 breaking change in enforcing modes). Ingress follows the IAM mode - open admits anonymous calls, permissive verifies and logs, strict and gcp-live require a local ID token whose aud is the uri or a customAudiences entry (401 otherwise, including access tokens) and run.routes.invoke on the service (403). X-Serverless-Authorization, when present, is the only checked credential and reaches the container without its signature. A Cloud Functions invocation of a function backed by the service is checked at the gateway (cloudfunctions functions.metadata) and reaches the relay with a one-time gateway grant, so the caller's own token reaches the container unchanged. Container.env literal values (v2 env[].value, Knative v1 env[].value) reach the revision container on the direct and relay launch paths, beside the runtime contract's PORT, K_SERVICE, K_REVISION and K_CONFIGURATION, and are stored with the service and each revision, so GET and List Service and Revision return them in the v2 and v1 shapes. UpdateService and Knative replace take the container's env as a whole (a container without env clears it; an update naming no container keeps the serving revision's env, as for its image and port). As in Cloud Run, the four contract names, empty names, names containing '=' or starting with X_GOOGLE_, names or values over 32768 characters or bytes and more than 1000 variables get INVALID_ARGUMENT (HTTP 400 on v1) before anything is reserved. With a workload identity relay, GCE_METADATA_HOST, GCE_METADATA_IP and LOCALCLOUD_RELAY_CAPABILITY are also refused because the relay supplies them (a LocalCloud restriction; Cloud Run does not reserve them). Each revision declares one ADC source on its workload binding - the relay's local metadata (the default), the operator's real credential bridge (gcp_credentials.source adc or service-account, its file mounted read-only at /credentials/gcp.json with GOOGLE_APPLICATION_CREDENTIALS, and GOOGLE_CLOUD_PROJECT set to its project), or the template's own GOOGLE_APPLICATION_CREDENTIALS, kept unchanged. A template GOOGLE_APPLICATION_CREDENTIALS while the bridge is selected is a conflict, and create and update (v2 and Knative v1) get INVALID_ARGUMENT before anything is reserved or launched. GET /browse/cloudrun reports each service's identity.serviceAccount and identity.credentialSource (local, bridge or user)."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2535,8 +2593,10 @@
       "limitations": [
         "Workflow definitions and execution records persist, but active execution state does not resume after restart; orphaned executions are marked FAILED with InstanceRestart.",
         "Connectors and expression/runtime behavior have bounded implementations and tests; complete Google connector/runtime parity remains unverified.",
-        "Cloud KMS and Cloud Storage connector calls are authorized as the workflow's service account (the Workflows service agent when none is set), not as the caller who started the execution; other connectors send no identity.",
-        "Setting a workflow's serviceAccount does not check iam.serviceAccounts.actAs on that account, so anyone who can create or update a workflow can run its Cloud KMS and Cloud Storage connectors as any service account."
+        "An execution runs as the workflow's serviceAccount, fixed when the execution is created; child executions use the child workflow's account. When serviceAccount is unset Google uses the Compute Engine default service account; LocalCloud uses the project's local default account (default@<project>.iam.gserviceaccount.com), which exists only for the gateway's configured project unless you create it.",
+        "http.* auth OIDC and OAuth2 sign as the execution account. Google allows these only for HTTPS endpoints; LocalCloud also signs for HTTP targets as a local development extension. A token that cannot be minted raises AuthError with IDENTITY_UNAVAILABLE:<reason> and sends nothing; an unknown auth.type raises ValueError (local message text).",
+        "Cloud KMS and Cloud Storage connector calls are authorized as the workflow's service account through LocalCloud's internal caller identity (the Workflows service agent, not the local default account, when none is set). Other connector calls to LocalCloud carry an access token for the execution account; in open and permissive modes a connector call whose token cannot be minted is sent without credentials, while strict and gcp-live raise AuthError.",
+        "Creating a workflow with a serviceAccount, or an update that sets one, requires iam.serviceAccounts.actAs on that account in strict and gcp-live; open and permissive only log the decision. An unset serviceAccount is not checked, and LocalCloud's own seed and file-watcher deployments are not checked."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2569,7 +2629,7 @@
           "label": "executions",
           "status": "partial",
           "limitations": [
-            "Public executions verify interpreter and standard-library scenarios, including JSON step-history entries; broader connector/runtime parity remains unverified."
+            "Public executions verify interpreter and standard-library scenarios, including JSON step-history entries; broader connector/runtime parity remains unverified. http.* auth (OIDC and OAuth2) and connector access tokens use the execution's service account; that has component evidence only, without exact-image qualification."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"

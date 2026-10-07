@@ -75,9 +75,11 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["pubsub.delivery-policies"], summary: "Attribute filters, dead-letter forwarding, and retries" },
       { operations: ["pubsub.snapshots-replay"], summary: "Retention, snapshots, and timestamp/snapshot seek" },
       { operations: ["pubsub.schemas"], summary: "Avro/Protobuf schemas, revisions, and JSON/binary validation" },
+      { operations: ["pubsub.authenticated-push"], summary: "Authenticated push with locally signed OIDC tokens" },
     ],
     boundaries: [
-      "No exactly-once delivery, authenticated push, exports, or transforms",
+      "No exactly-once delivery, exports, transforms, or push payload wrappers",
+      "Push receivers must trust LocalCloud's issuer and JWKS; validate delivery with your application",
       "Approximate local retry and retention schedules",
       "Stored IAM bindings do not enforce publish or topic deletion",
     ],
@@ -178,9 +180,11 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["cloudtasks.queues.lifecycle"], summary: "Queue lifecycle, pause/resume, and purge" },
       { operations: ["cloudtasks.tasks.lifecycle"], summary: "Task CRUD and manual/automatic HTTP dispatch" },
       { operations: ["cloudtasks.tasks.lifecycle"], summary: "Rate/concurrency limits, deadlines, retries, and attempt history" },
+      { operations: ["cloudtasks.tasks.lifecycle"], summary: "HTTP delivery with locally issued OAuth/OIDC credentials" },
     ],
     boundaries: [
-      "No OAuth/OIDC, App Engine delivery, or routing/header overrides",
+      "No App Engine delivery or routing/header overrides",
+      "Authenticated receivers must trust LocalCloud's issuer and JWKS",
       "No logging sampling",
       "Restart may redeliver; pause/purge/delete cannot cancel in-flight requests",
       "Check attempt history before replaying ambiguous requests",
@@ -191,9 +195,10 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["cloudscheduler.jobs.lifecycle"], summary: "Job CRUD, pause/resume, and manual runs" },
       { operations: ["cloudscheduler.jobs.lifecycle"], summary: "Timezone-aware cron and schedule previews" },
       { operations: ["cloudscheduler.jobs.lifecycle"], summary: "HTTP/Pub/Sub delivery, retries, deadlines, and attempt history" },
+      { operations: ["cloudscheduler.jobs.lifecycle"], summary: "HTTP delivery with locally issued OAuth/OIDC credentials" },
     ],
     boundaries: [
-      "No App Engine targets or OAuth/OIDC credentials",
+      "No App Engine targets; authenticated receivers must trust the local issuer and JWKS",
       "No interrupted-attempt replay or downtime backfill",
       "Stored policies do not enforce per-job authorization",
     ],
@@ -235,12 +240,15 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["cloudiam.policies.permissions"], summary: "Allow policies, permission checks, supported conditions, and project inheritance" },
       { operations: ["cloudiam.custom-roles.lifecycle"], summary: "Custom roles and grantable-role queries" },
       { operations: ["cloudiam.service-accounts.management"], summary: "Service-account metadata, key enable/disable, and testable-permission queries" },
+      { operations: ["cloudiam.credentials.tokens"], summary: "Local access/ID tokens, impersonation, and blob/JWT signing" },
+      { operations: ["cloudiam.workload-identity.federation"], summary: "OIDC workload identity pools, providers, and token exchange" },
     ],
     boundaries: [
       "Enforcement varies by service, transport, and IAM mode",
       "Open/permissive probes do not establish enforced access",
       "No full CEL, organization/folder ancestry, or deny policies",
-      "No federation or enterprise identity integrations",
+      "Tokens use LocalCloud's issuer; configure receivers to trust its local JWKS",
+      "Federation uses durable OIDC providers; other enterprise identity integrations require validation",
     ],
   },
   cloudresourcemanager: {
@@ -298,11 +306,13 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
     capabilities: [
       { operations: ["gke.clusters.lifecycle"], summary: "Cluster metadata lifecycle" },
       { operations: ["gke.clusters.lifecycle"], summary: "Real local Kubernetes clusters through k3d" },
+      { operations: ["gke.workload-identity.pods"], summary: "Pod ADC through annotated Kubernetes-to-Google service-account bindings" },
     ],
     boundaries: [
       "Requires k3d and Docker",
       "No node-pool creation, autoscaling, resize, or upgrades",
       "GKE REST cluster calls require AlloyDB disabled; gRPC is separate",
+      "Pod identity requires the service-account annotation and workloadIdentityUser grant; direct principal federation is unsupported",
     ],
   },
   compute: {

@@ -117,6 +117,8 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   function closeSearch() {
     if (!modal) return;
     reportSearch();
+    searchVersion++;
+    clearTimeout(debounceTimer);
     modal.hidden = true;
     document.body.style.overflow = '';
     if (input) input.value = '';
@@ -159,6 +161,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   var settledSearch = null;
   var reportedQuery = null;
   var settleTimer = null;
+  var searchVersion = 0;
 
   function searchShown(query, resultsCount) {
     clearTimeout(settleTimer);
@@ -185,25 +188,29 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   input?.addEventListener('input', function() {
     clearTimeout(debounceTimer);
     clearTimeout(settleTimer);
+    settledSearch = null;
+    var version = ++searchVersion;
     var query = input.value.trim();
 
     if (!query) {
-      settledSearch = null;
       results.innerHTML = '<div class="search-modal__empty"><p>Type to search across all documentation pages</p><p class="search-modal__hint">Try: "bigquery", "configuration", "seed data"</p></div>';
       return;
     }
 
+    results.innerHTML = '<div class="search-modal__empty"><p>Searching…</p></div>';
     debounceTimer = setTimeout(async function() {
       var pf = await loadPagefind();
+      if (version !== searchVersion || query !== input.value.trim()) return;
       if (!pf) {
         results.innerHTML = '<div class="search-modal__empty"><p>Search is temporarily unavailable. Please try again.</p></div>';
         return;
       }
 
       var search = await pf.search(query);
+      if (version !== searchVersion || query !== input.value.trim()) return;
       if (!search.results.length) {
         results.innerHTML = '<div class="search-modal__empty"><p>No results for "<strong>' + escapeHtml(query) + '</strong>"</p></div>';
-        if (query === input.value.trim()) searchShown(query, 0);
+        searchShown(query, 0);
         return;
       }
 
@@ -217,13 +224,18 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
         html += '</a></li>';
       }
       html += '</ul>';
+      if (version !== searchVersion || query !== input.value.trim()) return;
       results.innerHTML = html;
-      if (query === input.value.trim()) searchShown(query, search.results.length);
+      searchShown(query, search.results.length);
     }, 200);
   });
 
   input?.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') reportSearch();
+    if (e.key === 'Enter') {
+      reportSearch();
+      var first = results?.querySelector('.search-modal__result');
+      if (first) { e.preventDefault(); first.click(); }
+    }
   });
 
   // Close on result click

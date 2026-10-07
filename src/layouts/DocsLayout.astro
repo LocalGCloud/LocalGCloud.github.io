@@ -282,6 +282,7 @@ const nextItem = currentIndex >= 0 && currentIndex < allLinks.length - 1 ? allLi
     } else {
       enhanceDocsCodeBlocks();
     }
+    document.addEventListener('astro:page-load', enhanceDocsCodeBlocks);
   </script>
 
   <FeedbackFab />

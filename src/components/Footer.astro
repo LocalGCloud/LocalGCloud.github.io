@@ -120,20 +120,21 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
   // Global Privacy Control and Do Not Track keep it off, and the control says so.
   type AnalyticsChoice = { privacySignal: string; isOn(): boolean; setOn(on: boolean): boolean };
   const analytics = (window as Window & { lcAnalytics?: AnalyticsChoice }).lcAnalytics;
-  const toggle = document.querySelector<HTMLButtonElement>('[data-analytics-toggle]');
-  if (analytics && toggle) {
-    const render = () => {
+  const render = () => {
+    const toggle = document.querySelector<HTMLButtonElement>('[data-analytics-toggle]');
+    if (analytics && toggle) {
       toggle.textContent = analytics.privacySignal
         ? `Analytics: Off (${analytics.privacySignal})`
         : `Analytics: ${analytics.isOn() ? 'On' : 'Off'}`;
       if (analytics.privacySignal) toggle.setAttribute('aria-disabled', 'true');
-    };
-    toggle.addEventListener('click', () => {
-      if (analytics.privacySignal) return;
-      analytics.setOn(!analytics.isOn());
-      render();
-    });
-    render();
-    toggle.hidden = false;
-  }
+      toggle.hidden = false;
+    }
+  };
+  document.addEventListener('click',(event)=>{
+    if (!(event.target as Element).closest('[data-analytics-toggle]') || !analytics || analytics.privacySignal) return;
+    analytics.setOn(!analytics.isOn());render();
+  });
+  render();
+  document.addEventListener('astro:page-load',render);
+  window.addEventListener('lc:analytics-choice',render);
 </script>

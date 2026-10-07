@@ -14,7 +14,6 @@ const description = `Run ${namedServices.slice(0, -1).join(', ')}, ${namedServic
 ---
 
 <BaseLayout {title} {description} structuredData={[localCloudProductSchema, homepageFaqSchema]}>
-  <link slot="head" rel="preload" as="image" href={`${import.meta.env.BASE_URL}illustrations/hero-laptop-service-grid.svg`} fetchpriority="high" />
   <Header />
   <HomepageVariationFieldManual />
   <Footer />
