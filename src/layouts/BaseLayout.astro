@@ -31,6 +31,7 @@ const rawBase = import.meta.env.BASE_URL;
 const posthogApiHost = import.meta.env.PUBLIC_POSTHOG_HOST;
 const cloudflareAnalyticsToken = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN;
 const cloudflareAnalyticsEndpoint = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_ENDPOINT;
+const siteRelease = import.meta.env.PUBLIC_SITE_RELEASE;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const {
   title,
@@ -124,14 +125,16 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         load event, a 1.5-second delay and an idle callback. Neither loads when the visitor turned
         analytics off with the footer control or the browser sends Global Privacy Control or Do
         Not Track. The hashed bootstrap authorizes both scripts under strict-dynamic. */}
-    <script is:inline define:vars={{ posthogApiHost, cloudflareAnalyticsToken, cloudflareAnalyticsEndpoint }}>
+    <script is:inline define:vars={{ posthogApiHost, cloudflareAnalyticsToken, cloudflareAnalyticsEndpoint, siteRelease }}>
+      var productionHost = /^(?:www\.)?local\.cloud$/.test(window.location.hostname);
       var privacySignal = navigator.globalPrivacyControl === true ? 'Global Privacy Control'
         : /^(?:1|yes)$/.test(String(navigator.doNotTrack || window.doNotTrack || '')) ? 'Do Not Track' : '';
       var choiceKey = 'lc-analytics';
-      var analyticsOn = !privacySignal;
+      var analyticsOn = productionHost && !privacySignal;
       try { if (localStorage.getItem(choiceKey) === 'off') analyticsOn = false; } catch (e) {}
+      var webVitalsSampled = Math.random() < 0.2;
 
-      !function(t,e){var o,n;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags resetGroups onFeatureFlags addFeatureFlagsHandler onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+      !function(t,e){var o,n;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture opt_out_capturing opt_in_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 
       posthog.init('phc_o9nQDAQjEgsPcamE8pCnhv7ekA8CmA2VQXechLju9LA9', {
         api_host: posthogApiHost,
@@ -142,8 +145,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         capture_pageview: true,
         capture_pageleave: 'if_capture_pageview',
 
-        // Only the explicit events below and in SearchModal and the feedback components;
-        // no automatic click, form or text capture.
+        // Keep broad click/form autocapture off; use explicit events, heatmaps and dead clicks.
         autocapture: false,
 
         // Error tracking
@@ -156,12 +158,42 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         // Events use PostHog distinct/session identifiers; see /docs/privacy/.
         person_profiles: 'identified_only',
 
-        // Disabled — enable via feature flag when needed
-        disable_session_recording: true,
+        // Sampling applies to the whole page's vital measurements, never to conversion
+        // events or exceptions. Mark the stream so reports can separate it from runtime data.
+        before_send: function (event) {
+          if (!analyticsOn) return null;
+          if (event.event === '$web_vitals' && !webVitalsSampled) return null;
+          event.properties.telemetry_source = 'website';
+          event.properties.site_release = siteRelease;
+          // Retire the old visitor-scoped landing values; PostHog's sessions supply
+          // the actual entry page/referrer for acquisition reports.
+          delete event.properties.landing_page;
+          delete event.properties.landing_referrer;
+          return event;
+        },
+
+        // Sample whole sessions consistently across pages. The project's replay settings
+        // enforce a 15-second minimum; there is no client-side minimum-duration option.
+        disable_session_recording: false,
+        session_recording: {
+          sampleRate: 0.1,
+          strictMinimumDuration: true,
+          maskAllInputs: true,
+          blockSelector: 'input[type="hidden"], input[type="file"]',
+          recordHeaders: false,
+          recordBody: false,
+          captureCanvas: { recordCanvas: false },
+        },
+        enable_recording_console_log: false,
         disable_surveys: true, // Marketing site has no surveys; avoid their extra bundle.
-        capture_heatmaps: false,
-        capture_dead_clicks: false,
-        capture_performance: false,
+        // Mirror the three Free-plan URL rules while server enforcement rolls out.
+        capture_heatmaps: /^\/(?:$|pricing\/?$|docs\/)/.test(window.location.pathname),
+        capture_dead_clicks: true, // Only detected dead clicks consume analytics events.
+        capture_performance: {
+          web_vitals: true,
+          web_vitals_attribution: false,
+          network_timing: false,
+        },
       });
 
       var posthogRequested = false;
@@ -207,7 +239,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         privacySignal: privacySignal,
         isOn: function () { return analyticsOn; },
         setOn: function (on) {
-          if (on && privacySignal) return false;
+          if (on && (privacySignal || !productionHost)) return false;
           analyticsOn = on;
           try {
             if (on) localStorage.removeItem(choiceKey);
@@ -322,13 +354,6 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           });
           if (timeFired.size >= timeBuckets.length) clearInterval(timeInterval);
         }, 5000);
-
-        // ─── Landing context (once per session) ───
-        posthog.register_once({
-          site: 'localcloud-docs',
-          landing_page: window.location.pathname,
-          landing_referrer: document.referrer || 'direct',
-        });
 
         // ─── Keyboard shortcuts ───
         (function() {

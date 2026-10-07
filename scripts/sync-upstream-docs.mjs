@@ -191,7 +191,9 @@ for (const event of ["service_error", "console_summary"]) {
 // Certificate setup now imports explicitly mounted CAs; the remote probe was removed.
 contract.privacy.outboundBehaviors = contract.privacy.outboundBehaviors.filter((item) => item.id !== "ca-probe");
 contract.privacy.websiteAnalytics.processor = "PostHog and Cloudflare Web Analytics";
-for (const event of ["page-load and performance measurements", "IP-based location information"]) {
+contract.privacy.websiteAnalytics.events = contract.privacy.websiteAnalytics.events
+	.filter((event) => event !== "autocapture interactions");
+for (const event of ["explicit interactions", "sampled session recordings", "heatmaps", "dead clicks", "sampled browser web vitals and website release", "page-load and performance measurements", "IP-based location information"]) {
 	if (!contract.privacy.websiteAnalytics.events.includes(event)) contract.privacy.websiteAnalytics.events.push(event);
 }
 for (const path of ["src/utils/cloudflare-analytics-config.mjs", "worker/index.mjs"]) {

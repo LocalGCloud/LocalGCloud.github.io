@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { execFileSync } from 'node:child_process';
 import mdx from '@astrojs/mdx';
 import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
@@ -12,6 +13,7 @@ import { lastModifiedForUrl } from './src/utils/page-dates.mjs';
 const env = loadEnv(process.env.NODE_ENV || 'production', process.cwd(), '');
 const posthog = resolvePosthogConfig(env);
 const cloudflareAnalytics = resolveCloudflareAnalyticsConfig(env);
+const siteRelease = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 
 // Noindex pages stay out of the sitemap. The raw Markdown and text routes are not listed
 // either: llms.txt links them, and they would compete with their HTML pages.
@@ -47,10 +49,31 @@ export default defineConfig({
     }),
   ],
   vite: {
+    // Keep processed scripts at real URLs so PostHog can retrieve their standard maps.
+    // Styles still follow inlineStylesheets: 'always' above.
+    build: {
+      assetsInlineLimit: 0,
+      sourcemap: true,
+    },
+    environments: {
+      client: {
+        build: {
+          // A source-only change can leave minified JS identical but change its map.
+          // Override Astro's client defaults so each release retains a distinct pair.
+          rolldownOptions: {
+            output: {
+              entryFileNames: `_astro/[name].[hash].${siteRelease.slice(0, 12)}.js`,
+              chunkFileNames: `_astro/[name].[hash].${siteRelease.slice(0, 12)}.js`,
+            },
+          },
+        },
+      },
+    },
     define: {
       'import.meta.env.PUBLIC_POSTHOG_HOST': JSON.stringify(posthog.apiHost),
       'import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN': JSON.stringify(cloudflareAnalytics.token),
       'import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_ENDPOINT': JSON.stringify(cloudflareAnalytics.endpoint),
+      'import.meta.env.PUBLIC_SITE_RELEASE': JSON.stringify(siteRelease),
     },
     plugins: [tailwindcss()],
   },

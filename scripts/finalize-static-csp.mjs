@@ -6,9 +6,19 @@ import { transform } from 'esbuild';
 
 const scriptHash = (content) => `sha256-${createHash('sha256').update(content).digest('base64')}`;
 
+export function createMappedScript(code, sourceMap, prefix) {
+  const digest = createHash('sha256').update(code).update(sourceMap).digest('hex').slice(0, 16);
+  const name = `${prefix}.${digest}.js`;
+  return {
+    src: `/_astro/${name}`,
+    code: `${code.trimEnd()}\n//# sourceMappingURL=${name}.map\n`,
+    map: `${JSON.stringify({ ...JSON.parse(sourceMap), file: name })}\n`,
+  };
+}
+
 // Minify rendered inline JavaScript before hashing its exact final bytes.
 // Astro's processed scripts are already minified during bundling.
-export async function finalizeCsp(html, readAsset) {
+export async function finalizeCsp(html, readAsset, externalizeScript) {
   const meta = html.match(/<meta\b[^>]*http-equiv=["']content-security-policy["'][^>]*>/i)?.[0];
   if (!meta) throw new Error('Missing Astro CSP metadata');
   const content = meta.match(/\bcontent="([^"]*)"/)[1];
@@ -30,11 +40,21 @@ export async function finalizeCsp(html, readAsset) {
     } else if (match[2].trim()) {
       const type = match[1].match(/\btype=["']([^"']+)["']/i)?.[1].toLowerCase() || '';
       const javascript = ['', 'module', 'text/javascript', 'application/javascript'].includes(type);
-      const code = javascript ? (await transform(match[2], {
-        loader: 'js', target: 'es2022', minify: true, legalComments: 'none', treeShaking: false,
-      })).code.trimEnd() : match[2];
-      sources.add(`'${scriptHash(code)}'`);
-      const replacement = `<script${match[1]}>${code}</script>`;
+      let replacement;
+      if (javascript && externalizeScript) {
+        // Processed modules must remain Vite assets, preserving their original maps/imports.
+        if (type === 'module') throw new Error('Inline module remains; disable Astro script inlining before finalizing CSP');
+        const { src, code } = await externalizeScript(match[2]);
+        const hash = scriptHash(code);
+        sources.add(`'${hash}'`);
+        replacement = `<script${match[1]} src="${src}" integrity="${hash}"></script>`;
+      } else {
+        const code = javascript ? (await transform(match[2], {
+          loader: 'js', target: 'es2022', minify: true, legalComments: 'none', treeShaking: false,
+        })).code.trimEnd() : match[2];
+        sources.add(`'${scriptHash(code)}'`);
+        replacement = `<script${match[1]}>${code}</script>`;
+      }
       html = html.slice(0, match.index) + replacement + html.slice(match.index + match[0].length);
     }
   }
@@ -51,6 +71,21 @@ export async function finalizeCsp(html, readAsset) {
 async function finalize() {
   const root = resolve('dist');
   let count = 0;
+  const scripts = new Map();
+  async function externalizeScript(source) {
+    if (scripts.has(source)) return scripts.get(source);
+    // These maps describe the readable rendered script, including its build-time values.
+    // The repository and all of this browser code are public; no upload credential is needed.
+    const transformed = await transform(source, {
+      loader: 'js', target: 'es2022', minify: true, legalComments: 'none', treeShaking: false,
+      sourcemap: 'external', sourcesContent: true, sourcefile: 'rendered-inline.js',
+    });
+    const asset = createMappedScript(transformed.code, transformed.map, 'inline');
+    await writeFile(resolve(root, asset.src.slice(1)), asset.code);
+    await writeFile(resolve(root, `${asset.src.slice(1)}.map`), asset.map);
+    scripts.set(source, asset);
+    return asset;
+  }
   async function visit(directory) {
     for (const entry of await readdir(directory, { withFileTypes: true })) {
       const path = resolve(directory, entry.name);
@@ -61,7 +96,7 @@ async function finalize() {
           const pathFromRoot = relative(root, asset);
           if (pathFromRoot === '..' || pathFromRoot.startsWith(`..${sep}`)) throw new Error('Script path escapes dist');
           return readFile(asset);
-        });
+        }, externalizeScript);
         await writeFile(path, result);
         count++;
       }

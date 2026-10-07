@@ -2,6 +2,7 @@ import { build } from 'esbuild';
 import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { createMappedScript } from './finalize-static-csp.mjs';
 
 // Pagefind's dynamic ES-module import is blocked by some browsers under a
 // hash-based strict CSP. Bundle its public API into a lazy classic script;
@@ -11,6 +12,8 @@ const result = await build({
   entryPoints: [resolve(root, 'pagefind/pagefind.js')],
   bundle: true,
   write: false,
+  outfile: resolve(root, '_astro/pagefind-client.js'),
+  sourcemap: 'external',
   format: 'iife',
   globalName: 'LocalCloudPagefind',
   minify: true,
@@ -18,11 +21,16 @@ const result = await build({
   // The loader always supplies basePath explicitly; import.meta is unused.
   logOverride: { 'empty-import-meta': 'silent' },
 });
-const bytes = result.outputFiles[0].contents;
-const digest = createHash('sha256').update(bytes).digest('hex');
+const asset = createMappedScript(
+  result.outputFiles.find((file) => file.path.endsWith('.js')).text,
+  result.outputFiles.find((file) => file.path.endsWith('.js.map')).text,
+  'pagefind-client',
+);
+const bytes = Buffer.from(asset.code);
 const integrity = `sha256-${createHash('sha256').update(bytes).digest('base64')}`;
-const clientSrc = `/_astro/pagefind-client.${digest.slice(0, 16)}.js`;
+const clientSrc = asset.src;
 await writeFile(resolve(root, clientSrc.slice(1)), bytes);
+await writeFile(resolve(root, `${clientSrc.slice(1)}.map`), asset.map);
 let count = 0;
 async function inject(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {

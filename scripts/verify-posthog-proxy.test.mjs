@@ -42,6 +42,8 @@ function executeBootstrap(bootstrap, apiHost) {
     posthogApiHost: apiHost,
     cloudflareAnalyticsToken: '',
     cloudflareAnalyticsEndpoint: '',
+    siteRelease: 'fixture-release',
+    location: { hostname: 'local.cloud' },
     navigator: {},
     localStorage: { getItem: () => null },
     document: {
@@ -72,8 +74,11 @@ test('the actual analytics bootstrap uses the selected host for SDK loading and 
 
 test('the emitted HTML serializes the hosting configuration into the real bootstrap', () => {
   const html = readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8');
-  const bootstrap = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)]
-    .map((match) => match[1]).find((script) => script.includes('posthog.init('));
+  const bootstrap = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)]
+    .map((match) => {
+      const src = match[1].match(/\bsrc="([^"]+)"/)?.[1];
+      return src ? readFileSync(new URL(`../dist${src}`, import.meta.url), 'utf8') : match[2];
+    }).find((script) => script.includes('posthog.init('));
   const expected = resolvePosthogConfig(loadEnv('production', process.cwd(), ''));
   const { inserted, context } = executeBootstrap(bootstrap);
   assert.equal(context.posthog._i[0][1].api_host, expected.apiHost);

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-10-05",
+  "reviewedAt": "2026-10-06",
   "provenance": {
-    "runtimeRevision": "7b1913bfc3fa372b22ef1f9b51dd28bc86c5c304",
-    "cliRevision": "793ec6311632c2cf0cb1940f4a5f1f1d6aba0825",
+    "runtimeRevision": "9480fce902a5cfcbb47ae441df94b4eda11d0fee",
+    "cliRevision": "85b39cf4708ca1359bb45e5999de10f45e382439",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -60,35 +60,28 @@
     ],
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
-      "../localcloud/localcloud.defaults.yaml": "sha256:3ec4fe270e68cbb1b9a3283723d390fd469d808852ba0844da0c7b538e545ac5",
-      "../localcloud/documentation.yaml": "sha256:d720fb23aee302d65290793656ecddc76be87a8ccb07c7a0607b4e98518edd6c",
+      "../localcloud/localcloud.defaults.yaml": "sha256:bb0cd045666db19c278c5ade5368e34e57bbc5e924b0e53b51ccf32652941f3a",
+      "../localcloud/documentation.yaml": "sha256:fb0179c6a6220dd63b045757a57765cc65bdf18d9407cc964978d7d0cb2763db",
       "../localcloud/docs/status/service-status.md": "sha256:ddad5257b8ba3b5fb4f12bfee0364fa7710e24a3afec22cae2255db33923538f",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:71d43c01c3bd8019587f19914e3c668acf2f20a090c798f7ab06ac5935cc6cce",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:1a674b42c9b5d54ad0dc1b74e821d4a525d1db25cb72ffdebad5c7ad4c3c320a",
-      "../localcloud/specs/api/catalog.json": "sha256:654b876fce36783f3474c56e0540b34f35de89ab25d7407e44f75cfdc7830137",
-      "../localcloud/Dockerfile": "sha256:3c518c3fe4ead9c13ad4b40ac6904036a2bf90755ddb0b5c61e1aee18f1af23a",
+      "../localcloud/specs/api/catalog.json": "sha256:1f72d4baf878724c0dc096f9a8c3ec585d98d5f2f5d184476cd463e7dda30bd0",
+      "../localcloud/Dockerfile": "sha256:396d8813eaa7f5d0e183836185f35c9f4cf7a630dfbfa9c59284ae255b20faef",
       "../localcloud/LICENSE": "sha256:007c741ba18ddbea4cbd92b4f4b93135381b39e5a4af01ae5128f14b1d19c041",
       "../localcloud/docker/bigquery-start.sh": "sha256:987e13b3a9cc853f8590259cd32b0131df141b900c4c0fec0cfa9e3562973f9e",
-      "../localcloud/docker/docker-entrypoint.sh": "sha256:3b957a0c746a98334965995cf5bcb84228d430b38c8cd18b14eea1601c501815",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:72112ccbf6f7b9f4af5483067a6730528ad96608e276ec4261350df031b94e31",
+      "../localcloud/docker/docker-entrypoint.sh": "sha256:cecd14c3326147f002713e4062915a2144258e1effd3b3c1138420b2f24f58eb",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:7a0189739dfe3dbdd197dd659360f35c79912ca558e6be51f74a810a58d0bcbf",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:fcfbe0a7977d5cca533cc0271a04145bec10418201b1a6480119a1c0c1109190",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:4978775941c8725a7fdfe1bab479ba7ceb76f30b0636d874fdc800164f3277b3",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:c46e92b57305c65722d32850797b5ed98567b836d62b6f879b5f7732ac749585",
-      "../localcloud-cli/README.md": "sha256:49843541526c90184ac780ea48f6a77fef7237b1efe3ad95bdf14be356cd457f",
-      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c42c12d4664aae4e0c2be0fe319cd0d669db48c5967ce731c3d4abbcec9791c8",
-      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:9c86f18a4b5ffa452fc79ffa9a4a5d5f895fdbfba12d78608ac941bb36dfb809",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:5e0227a975b8196b4779cf0f76eadd66cc8cb71caf9f3e699634129fbc7bddee",
+      "../localcloud-cli/README.md": "sha256:aa80710ee32cf0260ab73853fd5cd35c868a4d662b14382e4855171a5d314723",
+      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:e0c9cffd3788051576a8645844641352e6f1efa794808529969fd556c8ed623e",
+      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:45117d1c983fb78ce950acd1d266cd6547a01e98d86e3ca44931db5a555fe494",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:875e1beed8476f64e92aa0e9def5be89bdf7d8e27ad4b0c7d7c6d7dd040d8c9c",
-      "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:d505d66829fb6aaaaea36543d2c8a19140e0cee0f8f7667155a8f0e86208130e",
+      "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:33d7c279b0ec012312f102a85662e5e5d51a08a5c240aba2c8bda9523966592e",
       "public/install.sh": "sha256:2c660fac584a1db052ef80956c0001fa6d71034fceb1e6617f81965741bcc796"
     },
-    "worktreeSources": [
-      "../localcloud/documentation.yaml",
-      "../localcloud/specs/api/catalog.json",
-      "../localcloud/LICENSE",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java",
-      "../localcloud-cli/README.md"
-    ]
+    "worktreeSources": []
   },
   "product": {
     "name": "LocalCloud",
@@ -186,7 +179,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI 0.1.7 behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.8 from revision 85b39cf4708ca1359bb45e5999de10f45e382439. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
@@ -385,7 +378,6 @@
       "processor": "PostHog and Cloudflare Web Analytics",
       "events": [
         "page views and leaves",
-        "autocapture interactions",
         "exceptions",
         "UTM and referrer data",
         "search text",
@@ -394,7 +386,12 @@
         "GitHub clicks",
         "time on page",
         "page-load and performance measurements",
-        "IP-based location information"
+        "IP-based location information",
+        "explicit interactions",
+        "sampled session recordings",
+        "heatmaps",
+        "dead clicks",
+        "sampled browser web vitals and website release"
       ],
       "evidence": [
         "src/layouts/BaseLayout.astro",
@@ -484,7 +481,9 @@
         "[partial] HMAC supports local project-ID-scoped service-account identities. Project-number aliases and default-compute identities are not resolved; real-Google gcp-live impersonation is not qualified. Secrets are excluded from project YAML exports; encrypted key state is retained in full filesystem snapshots.",
         "[prod_only] Object lifecycle scheduling, retention policies and retention enforcement are production-only and excluded from developer completeness.",
         "[unsupported] Managed-folder APIs are not implemented.",
+        "[partial] Bucket metadata: buckets.insert, patch, update (PUT) and get keep labels, uniform bucket-level access, public access prevention, location, storage class and metageneration, and patch/update honor ifMetagenerationMatch. Lifecycle, CORS, website, logging, retention, soft-delete, hierarchical-namespace, RPO, encryption, billing and Autoclass fields are accepted but not stored or returned. projectNumber is always 0, so import buckets into Terraform as project/bucket; a bare-name import falls back to the provider's default project.",
         "[partial] Path-style HMAC XML requests accept localhost and loopback IPs with discovered Docker ports. Virtual-host requests use the configured public hostname (localhost); signed Host headers must not be rewritten after signing.",
+        "[partial] LocalCloud's own Storage work (seed, reset, remote-sync import and manifest cleanup, project checkpoints and migration fixtures) runs as LocalCloud with a process-local internal credential, so strict and gcp-live policies do not block it; sync refuses a bucket another local project owns. Console browse, mutation and export keep the caller's identity, and Workflows Storage connectors run as the workflow's service account (the Workflows service agent when none is set). A reset whose Storage listing or deletes the running emulator rejects reports partial_failure, and a failed sync-manifest cleanup keeps the manifest; an unreachable emulator is still treated as having nothing to reset.",
         "[partial] Local live-container HTTP qualification includes multipart uploads, admin caller propagation, strict signed IAM, notification recovery and reset. These fixes require a rebuilt image; trusted release-image and full LocalCloud TLS qualification remain pending."
       ],
       "evidence": [
@@ -507,7 +506,7 @@
           "label": "buckets.create/list/delete",
           "status": "verified",
           "limitations": [
-            "Core bucket lifecycle through the local HTTP emulator."
+            "Core bucket lifecycle through the local HTTP emulator. Bucket get, patch and update (PUT) keep the metadata listed in the limitations."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -829,12 +828,12 @@
       },
       "status": "partial",
       "limitations": [
-        "The pinned little_bigtable dd5f9e7 (v0.5.0) passes its dependency test suite, and its executable ledger covers all 89 registered RPCs. That evidence is for the dependency source, not LocalCloud. It ran on SQLite rather than LocalCloud's PostgreSQL backend and skipped the pinned cbt test. The 2026-10-05 UTC arm64 candidate (sha256:2bd0813e574ddf6af1bfd9be6f3b318e6290117b4c5fc1142d651de5d274b754) embeds this revision and completed platform testing with two failing Bigtable cases (project deletion and backup listing). Full LocalCloud Bigtable qualification remains open.",
+        "The pinned little_bigtable dd5f9e7 (v0.5.0) passes its dependency test suite, and its executable ledger covers all 89 registered RPCs. That evidence is for the dependency source, not LocalCloud. It ran on SQLite rather than LocalCloud's PostgreSQL backend and skipped the pinned cbt test. The 2026-10-05 UTC arm64 candidate (sha256:2bd0813e574ddf6af1bfd9be6f3b318e6290117b4c5fc1142d651de5d274b754) embeds this revision and completed platform testing with two failing Bigtable cases (project deletion and backup listing). The LocalCloud fixes for both pass BigtablePlatformTest with a source JAR over that image; exact-image and full LocalCloud Bigtable qualification remain open.",
         "IAM policies persist but are not enforced. TestIamPermissions grants every requested permission because the emulator is unauthenticated; the direct gRPC listener also bypasses gateway IAM.",
         "Change streams use one partition with no split or merge. last_scanned_row_key is not emitted, logical views do not support view parameters, query statistics are not recorded, and google.cloud.location.Locations is not served.",
         "HLL++ aggregate sketch bytes and multi-column materialized-view row keys use emulator-specific encodings that are not byte-compatible with production.",
         "Legacy table snapshot RPCs (SnapshotTable, GetSnapshot, ListSnapshots, DeleteSnapshot, CreateTableFromSnapshot) return Unimplemented; they are a deprecated private-alpha API. Use backups for data protection.",
-        "The Console REST admin facade ignores emulator errors on row writes and deletes and on most instance, table, app-profile, view and backup routes, then reports success from local placeholder state. It also drops update masks for logical and materialized views. Verify through the native API when a result must reflect emulator validation."
+        "The Console REST admin facade ignores emulator errors on row writes and deletes and on app-profile and view routes, then reports success from local placeholder state. Instance PATCH/PUT and table PATCH answer locally without reaching the emulator, and logical and materialized view updates drop their update masks. Verify through the native API when a result must reflect emulator validation."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -856,7 +855,7 @@
           "label": "instances/tables/families",
           "status": "partial",
           "limitations": [
-            "The pinned little_bigtable dd5f9e7 (v0.5.0) emulates instance, cluster, app-profile, table and schema-bundle administration as validated metadata (ID and field rules, response views, update masks, pagination, deletion protection, soft delete and 7-day undelete, atomic column-family changes, initial splits, row key schema) with a durable long-running-operation registry. Cluster nodes and autoscaling settings are stored without capacity effects. Native instance deletion rejects remaining backups and deletion-protected resources. LocalCloud project deletion resets enabled services before removing the project record; an incomplete reset keeps that record. Bigtable reset currently calls native DeleteInstance without first removing these blockers. Dependency conformance tests pass; the candidate project-deletion failure leaves LocalCloud cleanup unverified."
+            "The pinned little_bigtable dd5f9e7 (v0.5.0) emulates instance, cluster, app-profile, table and schema-bundle administration as validated metadata (ID and field rules, response views, update masks, pagination, deletion protection, soft delete and 7-day undelete, atomic column-family changes, initial splits, row key schema) with a durable long-running-operation registry. Cluster nodes and autoscaling settings are stored without capacity effects. Dependency conformance tests pass; LocalCloud image qualification of this revision is pending."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -889,7 +888,7 @@
           "label": "localcloud console data browser",
           "status": "partial",
           "limitations": [
-            "REST endpoints for instance/table/row CRUD exposed via BigtableAdminService:\n- GET  /.../tables/{table}/rows — browse rows\n- POST /.../tables/{table}/rows — write cells\n- DELETE /.../tables/{table}/rows/{rowKey} — delete row\nSDK and console share the same PostgreSQL-backed emulator state.\nRow writes and deletes, and most instance, table, app-profile, view and backup routes, ignore emulator errors and report success from local placeholder state, so a rejected Console request can appear to succeed.\n"
+            "REST endpoints for instance/table/row CRUD exposed via BigtableAdminService:\n- GET  /.../tables/{table}/rows — browse rows\n- POST /.../tables/{table}/rows — write cells\n- DELETE /.../tables/{table}/rows/{rowKey} — delete row\nSDK and console share the same PostgreSQL-backed emulator state.\nInstance, table and backup routes forward to the emulator and return its errors with the Google API HTTP mapping (FAILED_PRECONDITION as 400, for example). Row writes and deletes, app-profile and view routes still ignore emulator errors and report success from local placeholder state, and instance PATCH/PUT and table PATCH answer locally without reaching the emulator, so a rejected request on those routes can appear to succeed.\n"
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -944,7 +943,7 @@
           "label": "snapshots and backups",
           "status": "partial",
           "limitations": [
-            "dd5f9e7 backups are immutable schema-and-row snapshots with create, get, list (filter, order, pagination), update, copy, delete and restore to a new table independent of the live source, including expire-time, backup-type and quota rules. UndeleteTable restores a deleted table within 7 days. Legacy table snapshot RPCs return Unimplemented because they are a deprecated private-alpha API. Native ListBackups supports filters, ordering, pagination and the '-' cluster wildcard. LocalCloud's REST listing forwards only parent, so filter, orderBy, pageSize and pageToken are not forwarded. The candidate backup-listing failure leaves integration unverified."
+            "dd5f9e7 backups are immutable schema-and-row snapshots with create, get, list (filter, order, pagination), update, copy, delete and restore to a new table independent of the live source, including expire-time, backup-type and quota rules. UndeleteTable restores a deleted table within 7 days. Legacy table snapshot RPCs return Unimplemented because they are a deprecated private-alpha API. The LocalCloud REST facade forwards backup create, get, list, update (with the required updateMask), copy, delete, restore and undelete to the emulator and returns its errors. LocalCloud image qualification is pending."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -1746,7 +1745,9 @@
       "status": "verified",
       "limitations": [
         "Requires Docker daemon access for Dataproc cluster and job container execution.",
-        "Elastic multi-node cloud scaling, automated node repair, and Google production SLAs are production-only."
+        "Restarting or stopping LocalCloud cancels running Dataproc jobs and stops cluster containers; a job accepted before the restart ends ERROR (exit 143) and must be resubmitted. Clusters resume on the next start.",
+        "Elastic multi-node cloud scaling, automated node repair, and Google production SLAs are production-only.",
+        "Jobs and runtime-migration workloads reach Cloud Storage through STORAGE_EMULATOR_HOST without credentials, and the cluster's gceClusterConfig.serviceAccount is not applied to them. Under strict IAM their Storage requests are evaluated as the default local developer (user:local-developer@localcloud.invalid), not as the cluster or job service account Google uses; under gcp-live they are rejected. Grant that member the Storage roles the jobs need, or run them with open or permissive IAM."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2084,7 +2085,7 @@
       },
       "status": "partial",
       "limitations": [
-        "Ingestion, listing, sink metadata and local runtime/KMS audit events exist; full Google filter semantics and log-based metrics/exclusion APIs remain incomplete.",
+        "Ingestion, listing, sink metadata, logs-based metric definitions and local runtime/KMS audit events exist; full Google filter semantics and exclusion APIs remain incomplete, and no metric values are derived from log entries.",
         "Creating a sink stores configuration; destination delivery, filtering, retry and failure behavior require separate qualification. Local audit events do not claim Google-generated audit provenance."
       ],
       "evidence": [
@@ -2108,6 +2109,17 @@
           "status": "partial",
           "limitations": [
             "Local ingestion exists; query/filter parity is limited."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
+        },
+        {
+          "id": "logging.metrics.logs-based",
+          "label": "logs-based metric create/get/list/update/delete (MetricsServiceV2 gRPC and REST)",
+          "status": "partial",
+          "limitations": [
+            "Metric definitions are stored per project and returned as sent; LocalCloud does not derive metric values from log entries."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2173,6 +2185,17 @@
           "evidence": [
             "../localcloud/documentation.yaml"
           ]
+        },
+        {
+          "id": "monitoring.alert-policies",
+          "label": "alert policy create/get/list/update/delete (AlertPolicyService gRPC and REST)",
+          "status": "partial",
+          "limitations": [
+            "Display name, conditions, combiner, notification channels, documentation and enabled are stored and shared by gRPC and REST. Over gRPC, other fields and list filters return UNIMPLEMENTED. Policies are not evaluated."
+          ],
+          "evidence": [
+            "../localcloud/documentation.yaml"
+          ]
         }
       ],
       "published": true,
@@ -2208,8 +2231,8 @@
       },
       "status": "partial",
       "limitations": [
-        "Real local clusters require a working k3d/Docker runtime. Provisioning failures reject creation without persisting a simulated cluster.",
-        "GKE and AlloyDB share the canonical REST clusters path. With both enabled, AlloyDB owns that REST route; disable AlloyDB (LOCALCLOUD_ENABLE_ALLOYDB=false) for GKE REST cluster calls. GKE gRPC remains separately addressable.",
+        "Real local clusters require a working k3d/Docker runtime. Provisioning runs in the create operation; a failure finishes the operation with the error and leaves the cluster in ERROR, as GKE does, until it is deleted. No simulated cluster is persisted.",
+        "GKE and AlloyDB share the canonical REST path /v1/projects/{project}/locations/{location}/clusters. The gateway serves AlloyDB there and GKE REST under /container/v1 (GOOGLE_CONTAINER_CUSTOM_ENDPOINT from /env, CLOUDSDK_API_ENDPOINT_OVERRIDES_CONTAINER=<gateway>/container/). Legacy zonal /v1/projects/{project}/zones/{zone}/clusters routes are GKE's under both /v1 and /container/v1. Transparent networking (container.googleapis.com) still reaches the shared /v1 path and therefore AlloyDB. GKE gRPC is unaffected.",
         "Node-pool create/autoscaling explicitly reject. Node-pool metadata, local resizing and upgrade lifecycle are implementable local gaps."
       ],
       "evidence": [
@@ -2232,7 +2255,7 @@
           "label": "clusters CRUD",
           "status": "partial",
           "limitations": [
-            "Local facade exists for cluster metadata and k3d-oriented workflows."
+            "Create records the cluster as PROVISIONING and returns a pending operation while k3d provisions; the operation is read through projects.locations.operations.get/list (and the legacy zones/{zone}/operations routes) and finishes DONE with the cluster RUNNING, or with the error and the cluster in ERROR. Delete completes before it answers and returns its finished operation. Cluster GET echoes the create request with GKE-assigned fields, including networkConfig, legacyAbac and resourceLabels. Terraform google_container_cluster apply, a no-change plan and destroy (provider 7.46.0, container_custom_endpoint <gateway>/container/v1/) passed against a jar-overlay runtime; exact-image qualification is pending."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2281,8 +2304,8 @@
       },
       "status": "unsupported",
       "limitations": [
-        "Compute Engine is not currently supported by LocalCloud. References and Docker-backed approximation stubs are maintained for future implementation.",
-        "Instances are Docker-backed approximations. Disk create explicitly rejects; local persistent-volume lifecycle and attachment are not implemented.",
+        "Compute Engine is not currently supported by LocalCloud. It is default-disabled; its Docker-backed instances are kept for applications that enable it explicitly.",
+        "Instances are Docker containers, not VMs. The boot disk is the instance's container filesystem; standalone disks.insert explicitly rejects, and attaching existing or additional disks is refused at instances.insert. Public images map to Debian and Ubuntu container images; other image families are not found.",
         "Snapshots, instance templates and VPC configuration/network behavior remain local software gaps. Real hypervisor migration and Google network/storage guarantees are production-only."
       ],
       "evidence": [
@@ -2305,7 +2328,7 @@
           "label": "instances.create/get/list/start/stop/delete",
           "status": "unsupported",
           "limitations": [
-            "Compute Engine is not currently supported by LocalCloud. Docker-backed instance approximation stubs exist for future implementation; VM lifecycle is not supported."
+            "Compute Engine is default-disabled and outside LocalCloud's supported surface. When enabled, an instance is a Docker container booted from a public image family (debian-cloud debian-11, debian-12, debian-12-arm64; ubuntu-os-cloud ubuntu-2204-lts, ubuntu-2404-lts-amd64, ubuntu-2404-lts-arm64) and kept running like an idle VM; instances.insert returns a pending zonal operation readable through zoneOperations get, wait and list, and delete, start and stop return finished operations. images.get, images.getFromFamily, images.list, the boot disk's disks.get/list and zones.get answer as Compute Engine does; unknown images are JSON 404s. Terraform google_compute_instance apply, a no-change plan and destroy (provider 7.46.0) passed against a jar-overlay runtime; exact-image qualification is pending."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2377,7 +2400,7 @@
           "label": "services/revisions",
           "status": "partial",
           "limitations": [
-            "Service/revision metadata and Docker create/update execution exist, with launch-failure rollback tests; broader serving/routing semantics remain partial."
+            "Service/revision metadata and Docker create/update execution exist, with launch-failure rollback tests; broader serving/routing semantics remain partial. CreateService and UpdateService return a pending long-running operation, polled through google.longrunning.Operations or REST GET /v2/projects/{project}/locations/{location}/operations/{operation}. A create reserves the service name (a duplicate gets ALREADY_EXISTS), one deployment runs per service at a time, and a failed first launch releases the name instead of keeping a failed Service resource."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2511,7 +2534,9 @@
       "status": "partial",
       "limitations": [
         "Workflow definitions and execution records persist, but active execution state does not resume after restart; orphaned executions are marked FAILED with InstanceRestart.",
-        "Connectors and expression/runtime behavior have bounded implementations and tests; complete Google connector/runtime parity remains unverified."
+        "Connectors and expression/runtime behavior have bounded implementations and tests; complete Google connector/runtime parity remains unverified.",
+        "Cloud KMS and Cloud Storage connector calls are authorized as the workflow's service account (the Workflows service agent when none is set), not as the caller who started the execution; other connectors send no identity.",
+        "Setting a workflow's serviceAccount does not check iam.serviceAccounts.actAs on that account, so anyone who can create or update a workflow can run its Cloud KMS and Cloud Storage connectors as any service account."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2878,6 +2903,7 @@
       "limitations": [
         "PostgreSQL and shared on-demand MySQL 8.4 data planes exist; MySQL logical schemas and wire users are isolated per project/instance, not separate servers.",
         "Only PostgreSQL/MySQL databaseVersion identifiers are accepted. Version labels map to the installed shared engines; they do not provision a separate engine version per instance. Per-instance databaseFlags are rejected and the flags catalog is empty; tier, disk, IP, backup and maintenance settings remain descriptive metadata. PATCH preserves omitted settings.",
+        "Instance reads report ipAddresses from settings.ipConfiguration like Cloud SQL assigns them (PRIMARY unless ipv4Enabled is false, PRIVATE when privateNetwork is set); every address is 127.0.0.1, and the client uses the engine port (PostgreSQL 5391, MySQL 5406). IP settings and activationPolicy NEVER do not change where the data planes listen; a stopped instance stays RUNNABLE and keeps its addresses, as in Cloud SQL.",
         "New databases apply native charset/collation and store native readback values. PostgreSQL encoding/collation cannot change in place; migrate data into a new database. MySQL ALTER DATABASE changes defaults, not existing column encodings. Older mismatched databases and missing user passwords require explicit repair or migration. New PostgreSQL clusters initialize with UTF8 encoding and C locale; existing clusters are preserved.",
         "Required native work fails when the data plane is unavailable. Schema discovery returns per-database errors, shown in the Console. Creation reserves metadata before native provisioning and compensates newly created resources on failure.",
         "SSL certificate endpoints use development certificate material. Public certificate inventory is persisted in PostgreSQL and deleted with its instance, with metadata derived from the actual certificate. Native TLS is not qualified.",

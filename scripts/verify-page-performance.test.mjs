@@ -4,7 +4,9 @@ import { join, resolve } from 'node:path';
 import { runInNewContext } from 'node:vm';
 import test from 'node:test';
 import { createHash } from 'node:crypto';
-import { finalizeCsp } from './finalize-static-csp.mjs';
+import { execFileSync } from 'node:child_process';
+import { finalizeCsp, createMappedScript } from './finalize-static-csp.mjs';
+import { transform } from 'esbuild';
 import { loadEnv } from 'vite';
 import { resolvePosthogConfig } from '../src/utils/posthog-config.mjs';
 import { resolveCloudflareAnalyticsConfig } from '../src/utils/cloudflare-analytics-config.mjs';
@@ -19,7 +21,7 @@ const beaconSrc = 'https://static.cloudflareinsights.com/beacon.min.js';
 
 // Runs the head bootstrap the way the browser would, with the visitor's privacy signals and
 // stored choice. inserted lists the scripts it appends to <head> by src.
-function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, stored = null, storageThrows = false, token = cloudflareToken } = {}) {
+function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, stored = null, storageThrows = false, token = cloudflareToken, hostname = 'local.cloud', pathname = '/', random = 0.1 } = {}) {
   const inserted = [];
   const timers = [];
   const idle = [];
@@ -29,6 +31,9 @@ function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, sto
     posthogApiHost: '/ingest',
     cloudflareAnalyticsToken: token,
     cloudflareAnalyticsEndpoint: '/cdn-cgi/rum',
+    siteRelease: 'fixture-release',
+    location: { hostname, pathname },
+    Math: { random: () => random },
     navigator,
     localStorage: {
       getItem: (key) => { if (storageThrows) throw new Error('SecurityError'); return storage.get(key) ?? null; },
@@ -94,6 +99,67 @@ test('analytics still loads when load has already fired and idle callbacks are u
   assert.deepEqual(staticBuild.srcs(), [sdkSrc], 'builds without a Cloudflare token load no beacon');
 });
 
+test('behavior analytics keeps replay sampling and expensive capture bounded', () => {
+  const h = analyticsHarness('loading');
+  const config = h.context.posthog._i[0][1];
+  assert.equal(config.disable_session_recording, false);
+  assert.ok(config.session_recording.sampleRate > 0 && config.session_recording.sampleRate <= 0.1,
+    'record at most approximately 10% of sessions');
+  assert.equal(config.session_recording.strictMinimumDuration, true);
+  assert.equal(config.session_recording.maskAllInputs, true);
+  assert.equal(config.session_recording.blockSelector, 'input[type="hidden"], input[type="file"]');
+  assert.equal(config.session_recording.recordHeaders, false);
+  assert.equal(config.session_recording.recordBody, false);
+  assert.equal(config.session_recording.captureCanvas.recordCanvas, false);
+  assert.equal(config.enable_recording_console_log, false);
+  assert.equal(config.capture_performance.web_vitals, true);
+  assert.equal(config.capture_performance.web_vitals_attribution, false);
+  assert.equal(config.capture_performance.network_timing, false);
+  assert.equal(config.autocapture, false, 'do not turn every click into a billable event');
+  assert.equal(config.capture_heatmaps, true);
+  assert.equal(config.capture_dead_clicks, true);
+  h.context.lcAnalytics.setOn(false);
+  h.runSchedule();
+  assert.deepEqual(h.srcs(), [], 'opt-out prevents even sampled recordings and heatmaps');
+  h.context.lcAnalytics.setOn(true);
+  assert.equal(h.context.posthog._i.length, 1, 'opt-in retains the same sampling configuration');
+});
+
+test('heatmaps are limited to the three production URL rules without disabling other events', () => {
+  for (const [pathname, enabled] of [['/', true], ['/pricing/', true], ['/docs/', true], ['/docs/configuration/', true], ['/services/', false], ['/pricing-extra/', false]]) {
+    const h = analyticsHarness('loading', { pathname });
+    const config = h.context.posthog._i[0][1];
+    assert.equal(config.capture_heatmaps, enabled, pathname);
+    assert.ok(config.before_send({ event: 'code_copied', properties: {} }));
+  }
+});
+
+test('production-only analytics samples vitals without losing conversion, error or replay events', () => {
+  for (const [random, sampled] of [[0, true], [0.199, true], [0.2, false], [0.99, false]]) {
+    const h = analyticsHarness('loading', { random });
+    const send = h.context.posthog._i[0][1].before_send;
+    for (const name of ['$web_vitals', 'code_copied', '$exception', '$snapshot']) {
+      const event = { event: name, properties: { landing_page: '/stale/', landing_referrer: 'old visitor context' } };
+      const sent = send(event);
+      assert.equal(sent === null, name === '$web_vitals' && !sampled);
+      if (sent) {
+        assert.equal(sent.properties.telemetry_source, 'website');
+        assert.equal(sent.properties.site_release, 'fixture-release');
+        assert.equal('landing_page' in sent.properties, false);
+        assert.equal('landing_referrer' in sent.properties, false);
+      }
+    }
+    h.context.lcAnalytics.setOn(false);
+    assert.equal(send({ event: 'code_copied', properties: {} }), null);
+  }
+  for (const hostname of ['localhost', '127.0.0.1', 'preview.workers.dev', 'local.cloud.example']) {
+    const h = analyticsHarness('loading', { hostname });
+    h.runSchedule();
+    assert.deepEqual(h.srcs(), []);
+    assert.equal(h.context.lcAnalytics.setOn(true), false);
+  }
+});
+
 test('Global Privacy Control, Do Not Track and a stored opt-out load neither PostHog nor the beacon', () => {
   for (const [options, signal] of [
     [{ navigator: { globalPrivacyControl: true } }, 'Global Privacy Control'],
@@ -150,7 +216,7 @@ test('code_copied names the closest analytics label and fires only on a successf
   const listeners = new Map();
   const captured = [];
   const context = {
-    posthog: { capture: (event, properties) => captured.push({ event, properties }), register_once() {} },
+    posthog: { capture: (event, properties) => captured.push({ event, properties }), register_for_session() {} },
     location: { pathname: '/docs/' },
     document: {
       title: 'Docs',
@@ -251,6 +317,34 @@ test('inline minification preserves cross-script globals and structured data', a
   assert.ok(secured.includes(`<script type="application/ld+json">${schema}</script>`));
   assert.ok(!secured.includes('sha256-obsolete'));
   assert.equal(await finalizeCsp(secured, () => assert.fail('no external scripts')), secured);
+});
+
+test('mapped scripts keep execution order, matching maps and exact CSP/SRI bytes', async () => {
+  const source = 'var shared = 7; function record(value) { window.recorded = value; }';
+  const transformed = await transform(source, {
+    loader: 'js', minify: true, treeShaking: false, sourcemap: 'external', sourcefile: 'rendered-inline.js',
+  });
+  const first = createMappedScript(transformed.code, transformed.map, 'inline');
+  const second = createMappedScript('record(shared);', JSON.stringify({ version: 3, sources: ['second.js'], sourcesContent: ['record(shared);'], names: [], mappings: 'AAAA' }), 'inline');
+  const schema = '{"@type":"Organization"}';
+  const html = `<meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="script-src 'self' 'strict-dynamic';"><script>${source}</script><script>record(shared);</script><script type="application/ld+json">${schema}</script>`;
+  const assets = [first, second];
+  let next = 0;
+  const secured = await finalizeCsp(html, async () => assert.fail('no original external asset'), async () => assets[1 - next++]);
+  assert.ok(secured.indexOf(first.src) < secured.indexOf(second.src));
+  assert.ok(!secured.includes('defer') && !secured.includes('async'), 'classic script timing is preserved');
+  assert.ok(secured.includes(`<script type="application/ld+json">${schema}</script>`));
+  const context = { window: {} };
+  for (const asset of assets) {
+    const hash = `sha256-${createHash('sha256').update(asset.code).digest('base64')}`;
+    assert.ok(secured.includes(`integrity="${hash}"`) && secured.includes(`'${hash}'`));
+    runInNewContext(asset.code, context);
+  }
+  assert.equal(context.window.recorded, 7);
+  assert.equal(JSON.parse(first.map).sourcesContent[0], source);
+  assert.match(first.code, /^\/\/# sourceMappingURL=inline\.[a-f0-9]+\.js\.map$/m);
+  assert.notEqual(createMappedScript(transformed.code, transformed.map.replace(source, source + ' '), 'inline').src, first.src,
+    'a mapping change cannot reuse an immutable asset URL');
 });
 
 test('search queues one integrity-protected client load and initializes its explicit base path', async () => {
@@ -426,6 +520,21 @@ const distRoot = new URL('../dist/', import.meta.url).pathname;
 const walkHtml = (directory) => readdirSync(directory, { withFileTypes: true }).flatMap((entry) => entry.isDirectory()
   ? walkHtml(join(directory, entry.name))
   : entry.name.endsWith('.html') ? [join(directory, entry.name)] : []);
+
+test('built scripts retain matching public maps at distinct immutable release URLs', () => {
+  const release = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim().slice(0, 12);
+  const files = JSON.parse(readFileSync(join(distRoot, 'asset-manifest.json'), 'utf8')).files;
+  const scripts = files.filter((file) => file.endsWith('.js'));
+  assert.ok(scripts.length > 5, 'compiled scripts are present');
+  for (const file of scripts) {
+    if (!/\/(?:inline|pagefind-client)\./.test(file)) assert.ok(file.endsWith(`.${release}.js`), file);
+    const code = readFileSync(join(distRoot, file), 'utf8');
+    assert.ok(code.includes(`\n//# sourceMappingURL=${file.split('/').at(-1)}.map`), file);
+    assert.ok(files.includes(`${file}.map`), `${file}: map retained in manifest`);
+    const map = JSON.parse(readFileSync(join(distRoot, `${file}.map`), 'utf8'));
+    assert.ok(map.mappings && map.sourcesContent?.some(Boolean), `${file}: readable mappings`);
+  }
+});
 
 // Inline styles avoid one blocking request before first paint: an external stylesheet cost
 // 500-1,300 ms of first-view LCP on throttled mobile, more than repeat views gained.

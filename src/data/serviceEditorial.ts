@@ -275,16 +275,19 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
     capabilities: [
       { operations: ["logging.logs.write-list"], summary: "Log ingestion, listing, and local filtering" },
       { operations: ["logging.logs.write-list"], summary: "Sink configuration and runtime/KMS audit events" },
+      { operations: ["logging.metrics.logs-based"], summary: "Logs-based metric definition create/get/list/update/delete APIs" },
     ],
     boundaries: [
       "Limited Google filter semantics",
+      "Metric definitions do not derive values from log entries",
       "Validate log-based metrics, exclusions, and sink delivery in Google Cloud",
     ],
   },
   monitoring: {
     capabilities: [
       { operations: ["monitoring.metrics.time-series"], summary: "Time-series and metric-descriptor create/list APIs" },
-      { operations: ["monitoring.metrics.time-series"], summary: "Alert-policy and notification-channel metadata" },
+      { operations: ["monitoring.metrics.time-series"], summary: "Notification-channel metadata" },
+      { operations: ["monitoring.alert-policies"], summary: "Alert-policy create/get/list/update/delete APIs" },
     ],
     boundaries: [
       "Limited query alignment/aggregation",
