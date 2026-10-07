@@ -75,9 +75,10 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["pubsub.delivery-policies"], summary: "Attribute filters, dead-letter forwarding, and retries" },
       { operations: ["pubsub.snapshots-replay"], summary: "Retention, snapshots, and timestamp/snapshot seek" },
       { operations: ["pubsub.schemas"], summary: "Avro/Protobuf schemas, revisions, and JSON/binary validation" },
+      { operations: ["pubsub.authenticated-push"], summary: "Authenticated push with locally signed OIDC tokens" },
     ],
     boundaries: [
-      "No exactly-once delivery, authenticated push, exports, or transforms",
+      "No exactly-once delivery, exports, or transforms",
       "Approximate local retry and retention schedules",
       "Stored IAM bindings do not enforce publish or topic deletion",
     ],
@@ -235,12 +236,14 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["cloudiam.policies.permissions"], summary: "Allow policies, permission checks, supported conditions, and project inheritance" },
       { operations: ["cloudiam.custom-roles.lifecycle"], summary: "Custom roles and grantable-role queries" },
       { operations: ["cloudiam.service-accounts.management"], summary: "Service-account metadata, key enable/disable, and testable-permission queries" },
+      { operations: ["cloudiam.credentials.tokens"], summary: "Locally signed service-account access and ID tokens, signBlob, and signJwt" },
+      { operations: ["cloudiam.workload-identity.federation"], summary: "Workload identity pools, OIDC providers, and STS token exchange" },
     ],
     boundaries: [
       "Enforcement varies by service, transport, and IAM mode",
       "Open/permissive probes do not establish enforced access",
       "No full CEL, organization/folder ancestry, or deny policies",
-      "No federation or enterprise identity integrations",
+      "Tokens are signed by LocalCloud, not Google; no workforce or enterprise identity integrations",
     ],
   },
   cloudresourcemanager: {
@@ -298,9 +301,11 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
     capabilities: [
       { operations: ["gke.clusters.lifecycle"], summary: "Cluster metadata lifecycle" },
       { operations: ["gke.clusters.lifecycle"], summary: "Real local Kubernetes clusters through k3d" },
+      { operations: ["gke.workload-identity.pods"], summary: "Pod workload identity: Kubernetes service accounts mapped to IAM service accounts" },
     ],
     boundaries: [
       "Requires k3d and Docker",
+      "Pod workload identity requires TLS (tls.enabled) for its admission webhook",
       "No node-pool creation, autoscaling, resize, or upgrades",
       "GKE REST cluster calls require AlloyDB disabled; gRPC is separate",
     ],
