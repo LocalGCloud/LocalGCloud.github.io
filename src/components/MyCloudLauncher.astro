@@ -20,26 +20,35 @@ const setupCommand = consoleQuickStart(docsContract);
   (() => {
     const link = document.querySelector('[data-my-cloud]');
     const dialog = document.querySelector('[data-my-cloud-dialog]');
-    let loaded;
+    let loaded, launching;
     const load = (source) => new Promise((resolve, reject) => {
       const url = new URL(source, location.href);
       const base = document.querySelector('[data-desktop-shell]')?.dataset.base || '/';
-      if (url.origin !== location.origin || !url.pathname.startsWith(base + '_astro/')) return reject(new Error('Invalid setup asset'));
+      if (url.origin !== location.origin || !url.pathname.startsWith(base + '_astro/')) return reject();
       const script = document.createElement('script');
       script.type = 'module'; script.src = url.href;
-      const timer = setTimeout(() => { script.remove(); reject(new Error('Setup timed out')); }, 8000);
-      script.onload = () => { clearTimeout(timer); script.remove(); resolve(); };
-      script.onerror = () => { clearTimeout(timer); script.remove(); reject(new Error('Setup unavailable')); };
+      const finish = (ok) => { clearTimeout(timer); script.remove(); ok ? resolve() : reject(); };
+      const timer = setTimeout(finish, 8000);
+      script.onload = () => finish(true);
+      script.onerror = () => finish();
       document.head.append(script);
     });
     link?.addEventListener('click', async (event) => {
       if (!dialog?.showModal || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
+      if (launching) return;
+      launching = true;
+      // Reserve the tab during the click so the async probe cannot trigger popup blocking.
+      const tab = dialog.open ? null : window.open();
+      if (tab) tab.opener = null;
       try {
         loaded ||= Promise.all([load(link.dataset.myCloudScript), load(link.dataset.copyScript)]);
         await loaded;
-        dialog.dispatchEvent(new CustomEvent('lc:my-cloud-open'));
-      } catch { loaded = undefined; location.assign(link.href); }
+        dialog.dispatchEvent(new CustomEvent('lc:my-cloud-open', { detail: { tab } }));
+      } catch {
+        loaded = undefined;
+        (tab && !tab.closed ? tab : window).location.href = link.href;
+      } finally { launching = false; }
     });
   })();
 </script>

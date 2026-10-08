@@ -1,25 +1,24 @@
-.my-cloud-dialog{width:min(40rem,calc(100% - 2rem));max-height:calc(100dvh - 2rem);margin:auto;padding:0;border:1px solid #c5c1b6;border-radius:.9rem;background:var(--surface);color:var(--text);box-shadow:0 12px 32px #253d6326;overflow:auto}
-.my-cloud-dialog::backdrop{background:#0002}
-.my-cloud-dialog[open]{animation:my-cloud-open 120ms ease-out}
-@keyframes my-cloud-open{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-.my-cloud-titlebar{position:sticky;top:0;z-index:1;display:flex;min-height:2.75rem;align-items:center;gap:.75rem;padding:.35rem .8rem;background:#eeece5;border-bottom:1px solid var(--line);font-size:.875rem;user-select:none}
-.my-cloud-titlebar form{display:flex;margin:0}
-.my-cloud-close{position:relative;display:grid;place-items:center;width:1.75rem;height:1.75rem;padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer}
-.my-cloud-close::before{content:'';width:.8rem;height:.8rem;border-radius:50%;background:#f56359;border:1px solid #0001}
-.my-cloud-close::after{content:'×';position:absolute;color:#67201b;opacity:0;font-size:.8rem}
-.my-cloud-close:hover::after,.my-cloud-close:focus-visible::after{opacity:1}
-.my-cloud-body{padding:1.25rem 1.5rem}
+.my-cloud-dialog{width:min(36rem,calc(100% - 2rem));max-height:calc(100dvh - 2rem);margin:auto;padding:0;border:1px solid var(--line);border-radius:1.5rem;background:var(--surface);color:var(--text);box-shadow:0 24px 80px #253d6340;overflow:auto}
+.my-cloud-dialog::backdrop{background:#15233755;backdrop-filter:blur(8px)}
+.my-cloud-dialog[open]{animation:my-cloud-open 180ms ease-out}
+@keyframes my-cloud-open{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.my-cloud-dismiss{position:absolute;top:.75rem;right:.75rem;margin:0}
+.my-cloud-close{display:grid;place-items:center;width:2.5rem;height:2.5rem;padding:0;border:0;border-radius:50%;background:var(--surface-2);color:var(--text-2);font-size:1.5rem;cursor:pointer}
+.my-cloud-body{padding:2rem}
+.my-cloud-orbit{display:grid;place-items:center;width:3.75rem;height:3.75rem;margin-bottom:1.25rem;border:1px solid var(--line);border-radius:50%;background:var(--surface-2);color:var(--accent-strong);box-shadow:0 0 0 .5rem #598bce0d,0 0 0 1rem #598bce06;font-size:2rem}
+.my-cloud-body h2{margin:0 0 .75rem;font-size:1.7rem;letter-spacing:-.03em}
+.my-cloud-body h3{margin:1.25rem 0 .5rem;font-size:1rem}
 .my-cloud-body p{margin:.5rem 0;line-height:1.6}
-.my-cloud-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin:1rem 0}
-.my-cloud-actions a,.my-cloud-actions button,.my-cloud-body .copy-btn{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.5rem .85rem;border:1px solid var(--line);border-radius:.5rem;background:var(--surface-2);color:var(--text);cursor:pointer;text-decoration:none}
+.my-cloud-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin:1.5rem 0 0}
+.my-cloud-actions a,.my-cloud-actions button,.my-cloud-body .copy-btn{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.5rem .85rem;border:1px solid var(--line);border-radius:.6rem;background:var(--surface-2);color:var(--text);cursor:pointer;text-decoration:none}
 .my-cloud-actions a{background:var(--accent);border-color:var(--accent);color:white}
-.my-cloud-body .copy-btn{color:var(--accent-strong)}
-.my-cloud-actions :focus-visible,.my-cloud-body .copy-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.my-cloud-body section{border-top:1px solid var(--line);padding-top:1rem}
-.my-cloud-body h2{margin:0 0 .75rem;font-size:1.25rem}
-.my-cloud-body ol{margin:.75rem 0;padding-left:1.25rem;line-height:1.6;list-style:decimal}
-.my-cloud-body li+li{margin-top:.4rem}
-.my-cloud-body pre{margin:1rem 0 .5rem;padding:1rem;border-radius:.5rem;background:var(--surface-2);white-space:pre-wrap;overflow-wrap:anywhere}
+.my-cloud-actions a.is-running{background:#166534;border-color:#166534;color:white}
+.my-cloud-actions button:disabled{cursor:wait;opacity:.65}
+.my-cloud-dialog :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.my-cloud-command{position:relative;margin:1rem 0 .5rem;border:1px solid var(--line);border-radius:.75rem;background:var(--surface-2);overflow:hidden}
+.my-cloud-body pre{margin:0;padding:3.5rem 1rem 1rem;font-size:.8rem;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.my-cloud-command .copy-btn{position:absolute;top:.4rem;right:.4rem;min-height:2.5rem;padding:.35rem .65rem;color:var(--accent-strong);font-size:.8rem}
 .my-cloud-note{font-size:.875rem;color:var(--text-2)}
 .my-cloud-note a{text-decoration:underline}
+@media(max-width:30rem){.my-cloud-body{padding:1.5rem}.my-cloud-actions{flex-direction:column}}
 @media(prefers-reduced-motion:reduce){.my-cloud-dialog[open]{animation:none}}
