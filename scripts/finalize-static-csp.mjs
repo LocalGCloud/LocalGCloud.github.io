@@ -81,6 +81,21 @@ async function finalize() {
   const root = resolve('dist');
   let count = 0;
   const scripts = new Map();
+  const viewAssets = new Map();
+  // ?url modules bypass Vite's JS minifier. Reuse mapped assets before hashing HTML.
+  for (const name of await readdir(resolve(root, '_astro'))) {
+    const match = name.match(/^(desktop-view|desktop-controller|mobile-view|desktop-navigation)\..*\.mjs$/);
+    if (!match) continue;
+    const source = await readFile(resolve(root, '_astro', name), 'utf8');
+    const transformed = await transform(source, {
+      loader: 'js', target: 'es2022', format: 'esm', minify: true, legalComments: 'none',
+      sourcemap: 'external', sourcesContent: true, sourcefile: `src/scripts/${match[1]}.mjs`,
+    });
+    const asset = createMappedScript(transformed.code, transformed.map, match[1]);
+    await writeFile(resolve(root, asset.src.slice(1)), asset.code);
+    await writeFile(resolve(root, `${asset.src.slice(1)}.map`), asset.map);
+    viewAssets.set(`/_astro/${name}`, asset.src);
+  }
   async function externalizeScript(source) {
     if (scripts.has(source)) return scripts.get(source);
     // These maps describe the readable rendered script, including its build-time values.
@@ -100,7 +115,9 @@ async function finalize() {
       const path = resolve(directory, entry.name);
       if (entry.isDirectory()) await visit(path);
       else if (entry.name.endsWith('.html')) {
-        const result = await finalizeCsp(await readFile(path, 'utf8'), async (pathname) => {
+        let html = await readFile(path, 'utf8');
+        for (const [original, mapped] of viewAssets) html = html.replaceAll(original, mapped);
+        const result = await finalizeCsp(html, async (pathname) => {
           const asset = resolve(root, `.${decodeURIComponent(pathname)}`);
           const pathFromRoot = relative(root, asset);
           if (pathFromRoot === '..' || pathFromRoot.startsWith(`..${sep}`)) throw new Error('Script path escapes dist');

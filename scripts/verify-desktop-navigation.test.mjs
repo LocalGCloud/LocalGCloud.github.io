@@ -19,20 +19,20 @@ async function harness(delayB=false,pageScripts={}, options={}){
   const attrs=new Map(),listeners=new Map(),writes=[];
   const pane={scrollTop:options.initialScroll||0,setAttribute:(k,v)=>attrs.set(k,v),removeAttribute:k=>attrs.delete(k),addEventListener:(k,fn)=>listeners.set(k,fn),set innerHTML(value){writes.push(value);this.scrollTop=0;listeners.get('scroll')?.();}};
   const root={dataset:{base:'/',pageStyles:'/_astro/refinements.css',desktopManifest:options.unpinned?undefined:'/_astro/desktop-manifest.0000000000000000.json'},querySelector:()=>pane};
-  const location={href:'https://local.cloud/a/',pathname:'/a/',search:'',assign(){throw Error('unexpected native fallback');}};
+  const location={href:'https://local.cloud/a/'+(options.hash||''),pathname:'/a/',search:'',assign(){throw Error('unexpected native fallback');}};
   const setURL=value=>{const url=new URL(value,location.href);location.href=url.href;location.pathname=url.pathname;location.search=url.search;};
   const replacements=[],entries=[{href:location.href,state:null}];let entryIndex=0;
   const history={state:null,replaceState(state){replacements.push(state);this.state=state;entries[entryIndex]={href:location.href,state};},pushState(state,_,href){this.state=state;setURL(href);entries.splice(++entryIndex,Infinity,{href:location.href,state});}};
   const events=[],empty='empty-style',focused=[];
   const page=path=>({path,title:path,label:path,content:path,style:{key:empty},scripts:pageScripts[path]||[],metadata:[],schemas:[],canonical:null,...options.pages?.[path]});
   let release;
-  const documentListeners=new Map(),requests=[];
-  const context={URL,Event,TextEncoder,Promise,Map,Set,root,safeDesktopAsset,sha:async()=>empty,location,history,matchMedia:()=>({matches:true}),window:{addEventListener(){}},document:{scripts:options.initialScripts||[],querySelectorAll:()=>[],querySelector:()=>null,getElementById:()=>({scrollIntoView(){pane.scrollTop=433;}}),head:{append(){},insertBefore(){}},createElement:()=>({remove(){}}),dispatchEvent:event=>events.push(event.type),addEventListener:(name,fn)=>documentListeners.set(name,fn),title:'A'},fetch:async url=>{requests.push(url);return {ok:true,headers:{get:()=> 'application/json'},json:async()=>url.includes('/desktop-manifest.')?{routes:Object.fromEntries(['b','c','d','e'].map(name=>['/'+name+'/','/_desktop/'+name+'.json']))}:delayB&&url.endsWith('b.json')?new Promise(resolve=>{release=()=>resolve(page('/b/'));}):page('/'+url.match(/([^/]+)\.json$/)[1]+'/')};}};
+  const documentListeners=new Map(),windowListeners=new Map(),requests=[];
+  const context={URL,Event,TextEncoder,Promise,Map,Set,root,safeDesktopAsset,sha:async()=>empty,location,history,matchMedia:()=>({matches:true}),window:{addEventListener:(name,fn)=>windowListeners.set(name,fn)},document:{documentElement:{dataset:{siteView:options.siteView||'desktop'}},scripts:options.initialScripts||[],querySelectorAll:()=>[],querySelector:()=>null,getElementById:()=>({scrollIntoView(){pane.scrollTop=433;}}),head:{append(){},insertBefore(){}},createElement:()=>({remove(){}}),dispatchEvent:event=>events.push(event.type),addEventListener:(name,fn)=>documentListeners.set(name,fn),title:'A'},fetch:async url=>{requests.push(url);return {ok:true,headers:{get:()=> 'application/json'},json:async()=>url.includes('/desktop-manifest.')?{routes:Object.fromEntries(['b','c','d','e'].map(name=>['/'+name+'/','/_desktop/'+name+'.json']))}:delayB&&url.endsWith('b.json')?new Promise(resolve=>{release=()=>resolve(page('/b/'));}):page('/'+url.match(/([^/]+)\.json$/)[1]+'/')};}};
   const timers=new Map();let timerID=0;
   Object.assign(context,{crypto:{randomUUID:()=> 'fresh-install'},AbortController,setTimeout:(fn)=>{timers.set(++timerID,fn);return timerID;},clearTimeout:id=>timers.delete(id),navigator:{},...options.context});
   const navigate=await runInNewContext('('+installDesktopNavigation.toString()+')({root,validate:href=>new URL(href,location.href).href,before(){},mounted(){}})',context);
   context.document.getElementById=()=>({scrollIntoView(){pane.scrollTop=433;},hasAttribute:()=>false,setAttribute(){},focus(options){focused.push(options);}});
-  return {pane,attrs,listeners,writes,context,navigate,setURL,events,focused,replacements,timers,documentListeners,requests,root,entries,async back(){const previous=entries[--entryIndex];history.state=previous.state;setURL(previous.href);return navigate(location.href,true);},get release(){return release;}};
+  return {pane,attrs,listeners,writes,context,navigate,setURL,events,focused,replacements,timers,documentListeners,windowListeners,requests,root,entries,async back(){const previous=entries[--entryIndex];history.state=previous.state;setURL(previous.href);return navigate(location.href,true);},get release(){return release;}};
 }
 
 test('rapid scrolling coalesces history writes and navigation flushes the final reading position',async()=>{
@@ -45,6 +45,54 @@ test('rapid scrolling coalesces history writes and navigation flushes the final 
 
 test('installing the router preserves an already scrolled page',async()=>{
   const h=await harness(false,{}, {initialScroll:312});assert.equal(h.pane.scrollTop,312);
+});
+
+test('late router installation cannot scroll a Mobile fragment',async()=>{
+  const h=await harness(false,{}, {siteView:'mobile',hash:'#section',initialScroll:312});
+  assert.equal(h.pane.scrollTop,312);assert.deepEqual(h.replacements,[]);
+});
+
+test('Mobile never warms or swaps Desktop content, including after a pending request',async()=>{
+  const h=await harness();
+  h.context.document.documentElement.dataset.siteView='mobile';
+  assert.equal(await h.navigate('/b/'),false);
+  h.documentListeners.get('pointerover')({target:{closest:()=>({href:'/b/',hasAttribute:()=>false})}});
+  assert.deepEqual(h.requests,[]);assert.deepEqual(h.writes,[]);
+  const pending=await harness(true),navigation=pending.navigate('/b/');
+  while(!pending.release)await new Promise(resolve=>setImmediate(resolve));
+  pending.context.document.documentElement.dataset.siteView='mobile';
+  pending.release();assert.equal(await navigation,false);assert.deepEqual(pending.writes,[]);
+});
+
+test('leaving Desktop invalidates pending clicks and reloads a pending Back destination',async()=>{
+  const h=await harness(true),pending=h.navigate('/b/');
+  while(!h.release)await new Promise(resolve=>setImmediate(resolve));
+  h.context.document.documentElement.dataset.siteView='mobile';
+  h.windowListeners.get('lc:view-change')();
+  h.setURL('/a/#section');h.context.document.documentElement.dataset.siteView='desktop';
+  h.release();assert.equal(await pending,false);assert.deepEqual(h.writes,[]);assert.equal(h.context.location.href,'https://local.cloud/a/#section');
+  const back=await harness(true);let reloaded=0;
+  back.context.location.reload=()=>reloaded++;
+  back.setURL('/b/');const traversal=back.navigate('/b/',true);
+  while(!back.release)await new Promise(resolve=>setImmediate(resolve));
+  back.context.document.documentElement.dataset.siteView='mobile';back.windowListeners.get('lc:view-change')();
+  assert.equal(reloaded,1,'Back destination gets its real document');
+  back.release();assert.equal(await traversal,false);assert.deepEqual(back.writes,[]);
+});
+
+test('pending Desktop failures and prewarming do not act after narrowing',async()=>{
+  const h=await harness(true),assigned=[],links=[];
+  h.context.location.assign=url=>assigned.push(url);
+  const pending=h.navigate('/b/');while(!h.release)await new Promise(resolve=>setImmediate(resolve));
+  h.context.document.documentElement.dataset.siteView='mobile';
+  for(const timeout of [...h.timers.values()])timeout();await pending;
+  assert.deepEqual(assigned,[]);
+  const warm=await harness(true,{'/b/':[{src:'/_astro/widget.js',key:'widget',integrity:'sha256-YWJj'}]});
+  warm.context.document.head.append=tag=>links.push(tag);
+  warm.documentListeners.get('pointerover')({target:{closest:()=>({href:'/b/',hasAttribute:()=>false})}});
+  while(!warm.release)await new Promise(resolve=>setImmediate(resolve));
+  warm.context.document.documentElement.dataset.siteView='mobile';warm.release();
+  await new Promise(resolve=>setImmediate(resolve));assert.deepEqual(links,[]);
 });
 
 test('successful content navigation focuses the destination heading without disturbing scroll or history focus',async()=>{

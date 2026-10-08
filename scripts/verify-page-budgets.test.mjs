@@ -15,6 +15,14 @@ import { gzipSync } from 'node:zlib';
 // direct module tag, so scriptBytes includes a previously dynamic module. Account for those
 // existing bytes here; the aggregate startup ceiling below still counts and bounds all JS.
 const htmlBudget = { rawBytes: 196_000, gzipBytes: 40_000, styleBytes: 94_600, scriptBytes: 21_000 };
+// Mobile adds one shared CSS presentation (~8KB raw) and a Home service strip/persona
+// section (~18KB raw/~2.2KB gzip). Bound that actual new UI separately; other HTML/script
+// ceilings and the 45KB Desktop startup ceiling stay unchanged.
+const mobileStyleBytes = 8_500;
+const mobileHomeBytes = { rawBytes: 20_000, gzipBytes: 3_000 };
+// The separately added My Cloud dialog contributes ~5.7KB HTML, ~1KB CSS and
+// ~1.8KB processed JS. Keep its fixed allowance conditional on that widget.
+const consoleDialogBytes = { rawBytes: 6_000, gzipBytes: 1_000, styleBytes: 1_500, scriptBytes: 2_500 };
 // Desktop startup also fetches the controller, router, interactions and page filter modules.
 // Count each fetched file once, including files loaded by inline bootstraps rather than script tags.
 const startupScriptBytes = 45_000;
@@ -46,7 +54,7 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     const externalScriptBytes = scriptPaths.map(path => join(dist,path))
       .reduce((sum, path) => sum + (existsSync(path) ? statSync(path).size : 0), 0);
     const startupSources = [html,...scriptPaths.map(path=>readFileSync(join(dist,path),'utf8'))].join('\n');
-    const startupPaths = new Set([...scriptPaths,...[...startupSources.matchAll(/\/(_astro\/(?:desktop-view|desktop-navigation|site-interactions|service-filter)\.[^"'\s<>]+\.mjs)/g)].map(match=>match[1])]);
+    const startupPaths = new Set([...scriptPaths,...[...startupSources.matchAll(/\/(_astro\/(?:desktop-view|desktop-controller|desktop-navigation|site-interactions|service-filter)\.[^"'\s<>]+\.(?:mjs|js))/g)].map(match=>match[1])]);
     assert.ok([...startupPaths].some(path=>path.includes('/desktop-view.')),file+' must count the externally bootstrapped controller');
     if(file.endsWith('/services/index.html'))assert.ok([...startupPaths].some(path=>path.includes('/service-filter.')),file+' must count its filter bootstrap');
     const measured = {
@@ -56,7 +64,11 @@ test('every built page stays within static byte budgets and the aggregate Deskto
       scriptBytes: inlineScriptBytes + externalScriptBytes,
       startupScriptBytes: inlineScriptBytes + [...startupPaths].reduce((sum,path)=>sum+statSync(join(dist,path)).size,0),
     };
-    for (const [metric, limit] of Object.entries({...htmlBudget,startupScriptBytes})) {
+    const isHome = file === join(dist, 'index.html');
+    const limits = {...htmlBudget, styleBytes:htmlBudget.styleBytes+mobileStyleBytes, startupScriptBytes};
+    if (isHome) for (const [metric, extra] of Object.entries(mobileHomeBytes)) limits[metric] += extra;
+    if (html.includes('id="my-cloud-dialog"')) for (const [metric, extra] of Object.entries(consoleDialogBytes)) limits[metric] += extra;
+    for (const [metric, limit] of Object.entries(limits)) {
       if (measured[metric] > limit) failures.push(`${file.slice(dist.length)}: ${metric} ${measured[metric]} > ${limit}`);
     }
   }

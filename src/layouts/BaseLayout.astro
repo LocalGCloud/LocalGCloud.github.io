@@ -2,13 +2,14 @@
 import robotoFont from '@fontsource-variable/roboto/files/roboto-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import '../styles/desktop.css';
+import '../styles/mobile.css';
 import DesktopShell from '../components/DesktopShell.astro';
 import desktopScript from '../scripts/desktop-view.mjs?url';
 import desktopPageStyles from '../styles/desktop-pages.css?url';
 import keyboardScript from '../scripts/keyboard-shortcuts.mjs?url';
 import pageInteractions from '../scripts/site-interactions.mjs?url';
 import { getImage } from 'astro:assets';
-import { desktopHeroOptions, classicHero } from '../utils/home-images';
+import { desktopHeroOptions, mobileHeroOptions, classicHero } from '../utils/home-images';
 import SearchModal from '../components/SearchModal.astro';
 import { organizationSchema, type JsonLd } from '../data/productFacts';
 import { markdownTwinPath } from '../utils/markdown-twins.mjs';
@@ -42,8 +43,10 @@ const cloudflareAnalyticsEndpoint = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_
 const siteRelease = import.meta.env.PUBLIC_SITE_RELEASE;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const hero = Astro.url.pathname === base ? await getImage(desktopHeroOptions) : null;
+const mobileHero = hero ? await getImage(mobileHeroOptions) : null;
 const homeImages = hero ? {
   desktop: { href: hero.src, imageSrcset: hero.srcSet.attribute, imageSizes: desktopHeroOptions.sizes },
+  mobile: { href: mobileHero!.src, imageSrcset: mobileHero!.srcSet.attribute, imageSizes: mobileHeroOptions.sizes },
   classic: { href: classicHero },
 } : null;
 const {
@@ -90,7 +93,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 <html lang="en" data-site-view="classic">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {/* A noindex page (such as the 404 page served at every missing URL) must not claim a canonical URL. */}
@@ -131,36 +134,39 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <script is:inline data-critical-bootstrap define:vars={{ desktopScript, desktopPageStyles, homeImages }}>
       (function () {
         var root = document.documentElement, query = new URLSearchParams(location.search).get('view');
-        var view = query === 'classic' ? 'classic' : 'desktop';
-        root.dataset.siteView = view;
-        root.classList.toggle('desktop-view', view === 'desktop');
-        var wide = matchMedia('(min-width: 64rem)'), loaded = false;
+        var wide = matchMedia('(min-width: 64rem)'), loaded = false, preloaded = false, failed = false;
+        var applyView = function () {
+          if (failed) return;
+          var view = query === 'classic' || query === 'mobile' ? query : wide.matches ? 'desktop' : 'mobile';
+          root.dataset.siteView = view;
+          root.classList.toggle('desktop-view', view === 'desktop');
+          root.classList.toggle('mobile-view', view === 'mobile');
+          if (view === 'desktop' && !preloaded) {
+            preloaded = true;
+            var styles = document.createElement('link');
+            styles.rel = 'preload'; styles.as = 'style'; styles.href = desktopPageStyles;
+            document.head.appendChild(styles);
+          }
+          if (loaded) window.dispatchEvent(new Event('lc:view-change'));
+        };
+        applyView();
         if (homeImages) {
           var hero = document.createElement('link');
           hero.rel = 'preload'; hero.as = 'image'; hero.fetchPriority = 'high';
-          Object.assign(hero, homeImages[view === 'desktop' && wide.matches ? 'desktop' : 'classic']);
+          Object.assign(hero, homeImages[root.dataset.siteView]);
           document.head.appendChild(hero);
         }
-        var loadDesktop = function () {
-          if (view === 'desktop' && !wide.matches || loaded) return;
-          loaded = true;
-          if (view === 'desktop') {
-            var styles = document.createElement('link');
-            styles.rel = 'preload';
-            styles.as = 'style';
-            styles.href = desktopPageStyles;
-            document.head.appendChild(styles);
-          }
+        loaded = true;
+        (function () {
           var script = document.createElement('script');
           script.type = 'module';
           script.src = desktopScript;
-          script.onerror = function () { clearTimeout(timer); root.classList.remove('desktop-view'); root.dataset.siteView = 'classic'; };
+          script.onerror = function () { clearTimeout(timer); failed = true; root.classList.remove('desktop-view', 'mobile-view'); root.dataset.siteView = 'classic'; };
           var timer = setTimeout(script.onerror, 8000);
           script.onload = () => clearTimeout(timer);
           document.head.appendChild(script);
-        };
-        if (view === 'desktop') wide.addEventListener('change', loadDesktop);
-        loadDesktop();
+        })();
+        if (query !== 'classic' && query !== 'mobile') wide.addEventListener('change', applyView);
       })();
     </script>
 

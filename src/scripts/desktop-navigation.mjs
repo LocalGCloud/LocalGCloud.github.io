@@ -11,6 +11,7 @@ const sha = async (text) => [...new Uint8Array(await crypto.subtle.digest('SHA-2
 
 export async function installDesktopNavigation({root, validate, before, mounted, synchronized = () => {}}) {
   const pane = root.querySelector('[data-desktop-content]'), base = root.dataset.base || '/';
+  const active=()=>document.documentElement.dataset.siteView==='desktop'&&matchMedia('(min-width:64rem)').matches;
   const originalStyle = await sha([...document.querySelectorAll('style')].map(el => el.textContent).join('\n'));
   const ran = new Set(await Promise.all([...document.scripts].map(async script => script.src ? 'url:' + new URL(script.src).pathname : 'inline:' + await sha(script.textContent))));
   const cache = new Map();
@@ -80,6 +81,7 @@ export async function installDesktopNavigation({root, validate, before, mounted,
   };
   const assets=new Set();
   const warmAssets=(page)=>{
+    if (!active()) return;
     const items=page.scripts.filter(item=>item.rerun||!ran.has(item.key));
     if(page.style.key!==originalStyle&&!page.style.coveredBy?.includes(originalStyle))items.push({...page.style,type:'style'});
     for(const item of items){
@@ -107,14 +109,21 @@ export async function installDesktopNavigation({root, validate, before, mounted,
     if(traversal||!url.hash)pane.scrollTop=scroll||0;
   };
   const positions=new Map(),session=crypto.randomUUID();let entry=0,renderedEntry=session+':0';
+  window.addEventListener('lc:view-change',()=>{
+    if(active())return;
+    ++sequence;changing=false;pane.removeAttribute('aria-busy');
+    const current=new URL(location.href);
+    // A pending Back already changed the URL; use its real document when leaving Desktop.
+    if(current.pathname!==rendered.pathname||current.search!==rendered.search)location.reload();
+  });
   const saveScroll=()=>{
     clearTimeout(scrollTimer);scrollTimer=undefined;
-    if(swapping)return;
+    if(swapping||!active())return;
     positions.set(renderedEntry,pane.scrollTop);
     if(positions.size>50)positions.delete(positions.keys().next().value);
     if(rendered.pathname===location.pathname&&rendered.search===location.search)history.replaceState({...history.state,lcDesktop:true,lcEntry:renderedEntry,lcScroll:pane.scrollTop},'',location.href);
   };
-  saveScroll();if(rendered.hash)scrollToContent(rendered);
+  saveScroll();if(rendered.hash&&active())scrollToContent(rendered);
   pane.addEventListener('scroll',()=>{
     if(swapping)return;
     positions.set(renderedEntry,pane.scrollTop);if(positions.size>50)positions.delete(positions.keys().next().value);
@@ -122,6 +131,7 @@ export async function installDesktopNavigation({root, validate, before, mounted,
   },{passive:true});
   window.addEventListener('pagehide',saveScroll);
   const navigate = async (href, traversal = false) => {
+    if (!active()) return false;
     const target = validate(href);
     if (!target) return false;
     if(!root.dataset.desktopManifest){location.assign(target);return false;}
@@ -139,10 +149,10 @@ export async function installDesktopNavigation({root, validate, before, mounted,
     let nextStyle,mountedVersion;
     try {
       const page = await content(url);
-      if (version!==sequence) return false;
+      if (version!==sequence || !active()) return false;
       warmAssets(page);
       nextStyle = await styling(page);
-      if(version!==sequence){if(nextStyle!==activeStyle)nextStyle?.remove();return false;}
+      if(version!==sequence||!active()){if(nextStyle!==activeStyle)nextStyle?.remove();return false;}
       before();
       document.dispatchEvent(new Event('astro:before-swap'));
       saveScroll();swapping=true;
@@ -157,20 +167,20 @@ export async function installDesktopNavigation({root, validate, before, mounted,
       for(const item of page.scripts){if(mountedVersion!==contentVersion)return false;await script(item);}
       if(mountedVersion!==contentVersion)return false;
       document.dispatchEvent(new Event('astro:page-load'));
-      if(version===sequence){scrollToContent(url,positions.get(renderedEntry)??savedScroll,traversal);if(!url.hash&&!traversal)focus(pane.querySelector?.('main h1, main'));}
+      if(version===sequence&&active()){scrollToContent(url,positions.get(renderedEntry)??savedScroll,traversal);if(!url.hash&&!traversal)focus(pane.querySelector?.('main h1, main'));}
       return true;
     } catch(error) {
-      if(version===sequence||mountedVersion===contentVersion&&!changing){if(nextStyle!==activeStyle)nextStyle?.remove();location.assign(mountedVersion===contentVersion?rendered:url);}
+      if(active()&&(version===sequence||mountedVersion===contentVersion&&!changing)){if(nextStyle!==activeStyle)nextStyle?.remove();location.assign(mountedVersion===contentVersion?rendered:url);}
       return false;
     } finally { if(version===sequence){changing=false;pane.removeAttribute('aria-busy');} }
   };
   window.addEventListener('popstate',()=>{
-    if (!matchMedia('(min-width:64rem)').matches || new URL(location.href).searchParams.get('view')==='classic') return location.reload();
+    if (!active()) { if (history.state?.lcDesktop) location.reload(); return; }
     navigate(location.href,true);
   });
   const warmed=new Set();
   const warm=(event)=>{
-    if(!matchMedia('(min-width:64rem)').matches||navigator.connection?.saveData||/^(slow-)?2g$/.test(navigator.connection?.effectiveType||''))return;
+    if(!active()||navigator.connection?.saveData||/^(slow-)?2g$/.test(navigator.connection?.effectiveType||''))return;
     const link=event.target.closest('a');
     if(!link||link.hasAttribute('download')||link.hasAttribute('data-view-choice')||link.target&&link.target!=='_self')return;
     const url=validate(link.href);if(!url)return;

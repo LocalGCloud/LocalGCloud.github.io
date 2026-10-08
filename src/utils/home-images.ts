@@ -11,3 +11,11 @@ export const desktopHeroOptions = {
   format: 'webp' as const,
   quality: 80,
 };
+
+export const mobileHeroOptions = {
+  ...desktopHeroOptions,
+  width: 800,
+  height: 267,
+  widths: [320, 480, 640, 800],
+  sizes: '(min-width: 768px) 640px, calc(100vw - 64px)',
+};

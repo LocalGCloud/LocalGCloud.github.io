@@ -5,7 +5,8 @@
           var gKeyBuffer = null;
           function navigate(href) {
             var url = new URL(href, window.location.href);
-            if (new URL(window.location.href).searchParams.get('view') === 'classic') url.searchParams.set('view', 'classic');
+            var view = new URL(window.location.href).searchParams.get('view');
+            if (view === 'classic' || view === 'mobile') url.searchParams.set('view', view);
             href = url.href;
             var event = new CustomEvent('lc:navigate', { detail: { href: href }, cancelable: true });
             if (document.dispatchEvent(event)) window.location.href = href;

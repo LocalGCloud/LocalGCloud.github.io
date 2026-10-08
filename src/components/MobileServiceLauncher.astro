@@ -1,0 +1,26 @@
+---
+import ServiceIcon from './ServiceIcon.astro';
+import { servicesInCatalogOrder } from '../data/services';
+
+interface Props { title?: string; }
+const { title = 'Explore services' } = Astro.props;
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+const eligible = servicesInCatalogOrder.filter(service => service.catalogState === 'available' && service.marketingStatus === 'supported');
+const promotedIds = ['gcs', 'bigquery', 'pubsub', 'spanner', 'firestore', 'cloudrun'];
+const byId = new Map(eligible.map(service => [service.id, service]));
+const promoted = promotedIds.flatMap(id => { const service = byId.get(id); return service ? [service] : []; });
+const launcherServices = [...promoted, ...eligible.filter(service => !promotedIds.includes(service.id))];
+---
+
+<section class="mobile-launcher" data-mobile-only data-pagefind-ignore>
+  <div class="mobile-launcher__heading"><h2>{title}</h2><a href={base + 'services/'}>View all <span aria-hidden="true">→</span></a></div>
+  <nav class="mobile-service-strip" tabindex="0" aria-label={title}>
+    {launcherServices.map(service => (
+      <a href={base + 'services/' + service.slug + '/#main-content'} aria-label={service.name} aria-current={Astro.url.pathname === base + 'services/' + service.slug + '/' ? 'page' : undefined}>
+        <span class="mobile-service-tile"><ServiceIcon iconId={service.iconId} name={service.name} size={40} /></span>
+        <span>{service.id === 'gcs' ? 'Storage' : service.name}</span>
+      </a>
+    ))}
+  </nav>
+</section>

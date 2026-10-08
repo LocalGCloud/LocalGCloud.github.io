@@ -711,7 +711,9 @@ test('built scripts retain matching public maps at distinct immutable release UR
   const scripts = files.filter((file) => file.endsWith('.js'));
   assert.ok(scripts.length > 5, 'compiled scripts are present');
   for (const file of scripts) {
-    if (!/\/(?:inline|pagefind-client)\./.test(file)) assert.ok(file.endsWith(`.${release}.js`), file);
+    // Mapped view modules use the same code-and-map digest as inline/Pagefind assets.
+    const mapped = /\/(?:inline|pagefind-client|desktop-view|desktop-controller|mobile-view|desktop-navigation)\.[a-f0-9]{16}\.js$/.test(file);
+    if (!mapped) assert.ok(file.endsWith(`.${release}.js`), file);
     const code = readFileSync(join(distRoot, file), 'utf8');
     assert.ok(code.includes(`\n//# sourceMappingURL=${file.split('/').at(-1)}.map`), file);
     assert.ok(files.includes(`${file}.map`), `${file}: map retained in manifest`);

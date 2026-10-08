@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 import { runInNewContext } from 'node:vm';
-import { pickView, switchView, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic, initDesktop } from '../src/scripts/desktop-view.mjs';
+import { pickView, switchView, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic, initViewLinks, loadViewModule } from '../src/scripts/desktop-view.mjs';
+import { initDesktop } from '../src/scripts/desktop-controller.mjs';
+import { initMobile } from '../src/scripts/mobile-view.mjs';
 import { markdownTwinPath } from '../src/utils/markdown-twins.mjs';
 import { initServiceFilters } from '../src/scripts/service-filter.mjs';
 import { transformSync } from 'esbuild';
@@ -12,6 +14,24 @@ const layout = readFileSync(new URL('../src/layouts/BaseLayout.astro', import.me
 const inline = [...layout.matchAll(/<script is:inline[^>]*>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
 inline.push(readFileSync(new URL('../src/scripts/site-interactions.mjs', import.meta.url), 'utf8'));
 const bootstrap = inline.find((script) => script.includes('desktopScript'));
+
+test('Mobile and Classic overrides beat the automatic breakpoint', () => {
+  for (const [override, wide, expected] of [
+    [undefined, false, 'mobile'], [undefined, true, 'desktop'],
+    ['mobile', false, 'mobile'], ['mobile', true, 'mobile'],
+    ['classic', false, 'classic'], ['classic', true, 'classic'],
+    ['desktop', false, 'mobile'], ['desktop', true, 'desktop'],
+    ['unknown', false, 'mobile'],
+  ]) assert.equal(pickView({ override, wide }), expected);
+});
+
+test('a stalled optional view controller has a bounded failure', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const pending = loadViewModule('data:text/javascript,await new Promise(() => {});');
+  const rejected = assert.rejects(pending, /View controller timed out/);
+  t.mock.timers.tick(8000);
+  await rejected;
+});
 
 test('release performance checks include both Desktop suites',()=>{
   const pkg=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
@@ -126,11 +146,12 @@ function viewHarness({ query = '', saved, wide = true, blockedStorage = false } 
   const scripts = [], classes = new Set(), listeners = new Map(), timers = [], cleared = [];
   const root = { dataset: {}, classList: {
     toggle: (name, enabled) => enabled ? classes.add(name) : classes.delete(name),
-    remove: (name) => classes.delete(name),
+    remove: (...names) => names.forEach(name => classes.delete(name)),
   } };
   const breakpoint = { matches: wide, addEventListener: (_, callback) => listeners.set('breakpoint', callback) };
   const context = {
-    desktopScript: '/_astro/desktop-view.mjs', desktopPageStyles: '/_astro/desktop-pages.css', homeImages:null, URL, URLSearchParams, console,
+    desktopScript: '/_astro/desktop-view.mjs', desktopPageStyles: '/_astro/desktop-pages.css', homeImages:null, URL, URLSearchParams, Event, console,
+    addEventListener: (type, callback) => listeners.set(type, callback), dispatchEvent: event => listeners.get(event.type)?.(event),
     setTimeout(callback, delay) { timers.push({callback, delay}); return timers.length; }, clearTimeout(id) { cleared.push(id); },
     location: { search: query, href: 'https://local.cloud/docs/#install-the-cli', origin: 'https://local.cloud' },
     localStorage: {
@@ -147,18 +168,19 @@ function viewHarness({ query = '', saved, wide = true, blockedStorage = false } 
 
 test('desktop bootstrap uses a trusted module script, loads once on widening, and falls back on failure', () => {
   const h = viewHarness({ query: '?view=desktop', wide: false, blockedStorage: true });
-  assert.equal(h.root.dataset.siteView, 'desktop');
-  assert.equal(h.scripts.length, 0, 'mobile never requests the window controller');
+  assert.equal(h.root.dataset.siteView, 'mobile');
+  assert.equal(h.scripts.length, 1, 'Mobile loads URL helpers, without Desktop styles or router');
+  assert.equal(h.scripts[0].type, 'module');
+  assert.equal(h.scripts[0].src, '/_astro/desktop-view.mjs');
   h.breakpoint.matches = true;
   h.listeners.get('breakpoint')();
   assert.equal(h.scripts.length, 2);
-  assert.equal(h.scripts[0].rel, 'preload', 'Desktop styles start downloading alongside the controller');
-  assert.equal(h.scripts[0].href, '/_astro/desktop-pages.css');
-  assert.equal(h.scripts[1].type, 'module');
-  assert.equal(h.scripts[1].src, '/_astro/desktop-view.mjs');
+  assert.equal(h.root.dataset.siteView, 'desktop');
+  assert.equal(h.scripts[1].rel, 'preload', 'Desktop styles download only when Desktop is selected');
+  assert.equal(h.scripts[1].href, '/_astro/desktop-pages.css');
   h.listeners.get('breakpoint')();
   assert.equal(h.scripts.length, 2, 'resizing does not load a second controller');
-  h.scripts[1].onerror();
+  h.scripts[0].onerror();
   assert.equal(h.root.dataset.siteView, 'classic');
   assert.equal(h.classes.has('desktop-view'), false);
   assert.equal(viewHarness({ query: '?view=classic' }).scripts.length, 1, 'Classic loads only the shared URL controller, no Desktop styles');
@@ -184,6 +206,83 @@ test('a stalled Desktop controller restores readable Classic content and a late 
   assert.equal(h.classes.has('desktop-view'), false);
 });
 
+test('automatic resizing updates the view, while explicit Mobile and Classic stay stable', () => {
+  const h = viewHarness({ wide: false });
+  h.breakpoint.matches = true; h.listeners.get('breakpoint')();
+  assert.equal(h.root.dataset.siteView, 'desktop');
+  h.breakpoint.matches = false; h.listeners.get('breakpoint')();
+  assert.equal(h.root.dataset.siteView, 'mobile');
+  assert.ok(h.classes.has('mobile-view')); assert.ok(!h.classes.has('desktop-view'));
+  for (const choice of ['mobile', 'classic']) {
+    const explicit = viewHarness({ query: '?view=' + choice });
+    assert.equal(explicit.root.dataset.siteView, choice);
+    assert.ok(!explicit.listeners.has('breakpoint'));
+    assert.equal(explicit.scripts.length, 1);
+  }
+});
+
+test('Mobile centers only the strip once, preserves traversal and never scrolls the document', () => {
+  for (const traversal of [false, true]) {
+    const strip = { dataset: {}, scrollLeft: 17, clientWidth: 320, querySelector: () => ({ offsetLeft: 600, offsetWidth: 80 }) };
+    const context = { URL, location: { href: 'https://local.cloud/services/cloud-run/' },
+      performance: { getEntriesByType: () => [{ type: traversal ? 'back_forward' : 'navigate' }] },
+      initViewLinks() {}, desktopSection,
+      document: { querySelector: () => null, querySelectorAll: selector => selector === '.mobile-service-strip' ? [strip] : [], scrollTo: () => assert.fail('document must not scroll') } };
+    runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
+    assert.equal(strip.scrollLeft, traversal ? 17 : 480);
+    strip.scrollLeft = 100;
+    runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
+    assert.equal(strip.scrollLeft, 100, 'resizing preserves a manual horizontal scroll');
+  }
+});
+
+test('Mobile leaves an overview disclosure open for an existing descendant fragment', () => {
+  const target = {};
+  const overview = { dataset: {}, open: true, contains: node => node === target };
+  const context = { URL, initViewLinks() {}, desktopSection, location: { href: 'https://local.cloud/services/bigquery/#typical-uses-title' },
+    document: { getElementById: id => id === 'typical-uses-title' ? target : null, querySelector: () => null, querySelectorAll: selector => selector === '.mobile-service-context' ? [overview] : [] } };
+  runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
+  assert.equal(overview.open, true);
+  context.location.href = 'https://local.cloud/services/bigquery/';
+  runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
+  assert.equal(overview.open, false);
+});
+
+test('native Mobile history restores a valid horizontal offset and ignores corrupt scroll state', () => {
+  for (const saved of ['1200', 'broken', '-1', null]) {
+    const strip={dataset:{},scrollLeft:17,clientWidth:320,querySelector:()=>({offsetLeft:600,offsetWidth:80})};
+    const context={URL,initViewLinks(){},desktopSection,location:{href:'https://local.cloud/services/bigquery/'},
+      performance:{getEntriesByType:()=>[{type:'back_forward'}]},sessionStorage:{getItem:()=>saved},
+      document:{querySelector:()=>null,querySelectorAll:selector=>selector==='.mobile-service-strip'?[strip]:[]}};
+    runInNewContext('('+initMobile.toString()+')({initViewLinks,desktopSection})',context);
+    assert.equal(strip.scrollLeft,saved==='1200'?1200:17);
+  }
+});
+
+test('explicit Mobile survives service links and dynamic search, preserving the content anchor', () => {
+  const link = { href: '/services/spanner/#main-content', hasAttribute: () => false };
+  const search = { href: '/docs/#install-the-cli', hasAttribute: () => false };
+  const results = { dataset: {}, querySelectorAll: () => [search] };
+  let observed;
+  const context = { URL, pageWindowURL, location: { href: 'https://local.cloud/?view=mobile' },
+    MutationObserver: class { constructor(fn) { observed = fn; } observe() {} },
+    document: { querySelector: () => null, querySelectorAll: () => [link], getElementById: () => results } };
+  runInNewContext('(' + initViewLinks.toString() + ')("mobile")', context);
+  observed();
+  assert.equal(link.href, 'https://local.cloud/services/spanner/?view=mobile#main-content');
+  assert.equal(search.href, 'https://local.cloud/docs/?view=mobile#install-the-cli');
+});
+
+test('automatic fallback keeps clean links and native view-choice URLs retain query and fragment', () => {
+  const plain={href:'/docs/#usage',hasAttribute:()=>false};
+  const choice={href:'/?view=mobile',dataset:{viewChoice:'mobile'},hasAttribute:attr=>attr==='data-view-choice'};
+  const context={URL,pageWindowURL,location:{href:'https://local.cloud/?q=x#section'},
+    document:{querySelector:()=>null,querySelectorAll:()=>[plain,choice],getElementById:()=>null}};
+  runInNewContext('const initViewLinks='+initViewLinks.toString()+';('+initClassic.toString()+')()',context);
+  assert.equal(plain.href,'https://local.cloud/docs/#usage');
+  assert.equal(choice.href,'https://local.cloud/?q=x&view=mobile#section');
+});
+
 test('view switching preserves the real current page and fragment', () => {
   const h = viewHarness();
   const click = { target: { closest: () => ({ dataset: { viewChoice: 'classic' } }) }, preventDefault() {} };
@@ -205,19 +304,20 @@ test('view switching preserves the real current page and fragment', () => {
 
 test('Classic keeps explicit view URLs for page links and dynamic search results, leaving files external links and view choices alone', () => {
   const link = (href, attributes = []) => ({ href, hasAttribute: (name) => attributes.includes(name) });
-  const links = [link('/services/'), link('/docs/#install-the-cli'), link('/pricing.md'), link('https://example.com/'), link('/', ['data-view-choice']), link('/docs/', ['download'])];
+  const choice = { ...link('/', ['data-view-choice']), dataset: { viewChoice: 'desktop' } };
+  const links = [link('/services/'), link('/docs/#install-the-cli'), link('/pricing.md'), link('https://example.com/'), choice, link('/docs/', ['download'])];
   let observed;
-  const results = { querySelectorAll: () => [searchLink] };
+  const results = { dataset: {}, querySelectorAll: () => [searchLink] };
   const searchLink = link('/services/bigquery/');
   const context = {
     URL, pageWindowURL, location: { href: 'https://local.cloud/?view=classic' },
     MutationObserver: class { constructor(callback) { observed = callback; } observe() {} },
     document: { querySelector: () => ({ dataset: { base: '/' } }), querySelectorAll: () => links, getElementById: () => results },
   };
-  runInNewContext('(' + initClassic.toString() + ')()', context);
+  runInNewContext('const initViewLinks = ' + initViewLinks.toString() + ';(' + initClassic.toString() + ')()', context);
   assert.equal(links[0].href, 'https://local.cloud/services/?view=classic');
   assert.equal(links[1].href, 'https://local.cloud/docs/?view=classic#install-the-cli');
-  assert.deepEqual(links.slice(2).map(l => l.href), ['/pricing.md', 'https://example.com/', '/', '/docs/']);
+  assert.deepEqual(links.slice(2).map(l => l.href), ['/pricing.md', 'https://example.com/', 'https://local.cloud/', '/docs/']);
   observed();
   assert.equal(searchLink.href, 'https://local.cloud/services/bigquery/?view=classic');
 });
@@ -235,16 +335,23 @@ test('pending styles keep controls responsive and a failed or stalled download r
   const classes = new Set(['desktop-view']);
   const html = { dataset: { siteView: 'desktop' }, classList: { add: name => classes.add(name), remove: name => classes.delete(name) } };
   let timeout, cleared = false, classic = false;
+  let resized;
+  const wide = { matches: true, addEventListener: (_, fn) => { resized = fn; } };
   const context = {
     setTimeout(callback, delay) { assert.equal(delay, 8000); timeout = callback; return 1; },
     clearTimeout(id) { assert.equal(id, 1); cleared = true; }, initClassic() { classic = true; },
-    URL, pageWindowURL, desktopPageURL, readPageHistory, location: { href: 'https://local.cloud/', assign() { assigned = true; } },
+    URL, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, location: { href: 'https://local.cloud/', assign() { assigned = true; } },
     sessionStorage: { getItem: () => null }, history: { replaceState() {} },
-    matchMedia: () => ({ matches: true, addEventListener() {} }), window: { addEventListener() {} },
-    document: { documentElement: html, createElement: () => ({}), head: { append: (link) => { styles = link; } }, querySelector: (selector) => selector === '[data-desktop-shell]' ? root : null, querySelectorAll: () => [], getElementById: () => null, addEventListener() {} },
+    matchMedia: () => wide, window: { addEventListener() {} },
+    document: { documentElement: html, createElement: () => ({}), head: { append: (link) => { styles = link; } }, querySelector: (selector) => selector === '[data-desktop-shell]' ? root : null, querySelectorAll: () => [], getElementById: () => null, addEventListener: (name, fn) => listeners.set(name, fn) },
   };
-  const pending = runInNewContext('(' + initDesktop.toString() + ')()', context);
+  const pending = runInNewContext('(' + initDesktop.toString() + ')({pageWindowURL,desktopPageURL,readPageHistory,desktopSection,initClassic})', context);
   assert.ok(listeners.has('close'), 'control must not wait for the stylesheet');
+  listeners.get('lc:navigate')({ detail: { href: '/docs/' }, preventDefault() {} });
+  html.dataset.siteView = 'mobile'; wide.matches = false; resized();
+  html.dataset.siteView = 'desktop'; wide.matches = true; resized();
+  await Promise.resolve();
+  assert.equal(assigned, false, 'a queued native fallback is canceled across Mobile and back');
   listeners.get('close')();
   assert.equal(main.hidden, true);
   assert.equal(restore.hidden, false);
@@ -370,21 +477,26 @@ test('deep links retain their desktop shortcut category', () => {
 
 test('deferred desktop, keyboard and page-style assets stay small without changing the initial page ceilings', () => {
   const directory = new URL('../dist/_astro/', import.meta.url);
-  // Router grew from 8,980 to 11,359 raw bytes for bounded fetches/assets, throttled/flushable history,
-  // fragment reveal and concurrent SRI preloads. The all-page 45KB startup guard also applies.
-  for (const [prefix, limit] of [['desktop-view.', 16000], ['desktop-navigation.', 12000], ['site-interactions.', 5500], ['keyboard-shortcuts.', 5500], ['desktop-pages.', 9000], ['service-filter.', 2000]]) {
-    const file = readdirSync(directory).find((name) => name.startsWith(prefix) && !name.endsWith('.map'));
+  // View modules now have content-addressed minified assets and public source maps.
+  for (const [prefix, limit] of [['desktop-view.', 6500], ['desktop-controller.', 10000], ['mobile-view.', 2500], ['desktop-navigation.', 12000], ['site-interactions.', 5500], ['keyboard-shortcuts.', 5500], ['desktop-pages.', 9000], ['service-filter.', 2000]]) {
+    const files = readdirSync(directory).filter(name => name.startsWith(prefix) && !name.endsWith('.map'));
+    const file = files.find(name => name.endsWith('.js')) ?? files[0];
     assert.ok(file, 'missing deferred asset: ' + prefix);
     assert.ok(readFileSync(new URL(file, directory)).length <= limit, file + ' exceeds its deferred asset budget');
+    if (/^(desktop-view|desktop-controller|mobile-view|desktop-navigation)\./.test(file)) {
+      const map = JSON.parse(readFileSync(new URL(file + '.map', directory), 'utf8'));
+      assert.ok(map.sourcesContent.some(source => source.includes('export ')), file + ' retains readable source');
+      assert.ok(readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8').includes('/_astro/' + file), 'Home references the mapped asset ' + file);
+    }
   }
 });
 
 test('Home startup preloads only the image for the selected view and viewport',()=>{
   const home=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
   assert.doesNotMatch(home,/<link\b[^>]*rel="preload"[^>]*as="image"/,'Home images preload only through the view/viewport selector');
-  for(const [query,wide,image] of [['',true,'desktop'],['?view=classic',true,'classic'],['',false,'classic']]){
+  for(const [query,wide,image] of [['',true,'desktop'],['?view=classic',true,'classic'],['',false,'mobile'],['?view=mobile',true,'mobile']]){
     const h=viewHarness({query,wide});
-    h.context.homeImages={desktop:{href:'/desktop.webp',imageSrcset:'/small.webp 480w, /desktop.webp 1800w',imageSizes:'56.16vw'},classic:{href:'/classic.svg'}};
+    h.context.homeImages={desktop:{href:'/desktop.webp',imageSrcset:'/small.webp 480w, /desktop.webp 1800w',imageSizes:'56.16vw'},mobile:{href:'/mobile.webp',imageSrcset:'/small.webp 320w, /mobile.webp 800w',imageSizes:'calc(100vw - 64px)'},classic:{href:'/classic.svg'}};
     h.scripts.length=0;
     runInNewContext(bootstrap,h.context);
     const images=h.scripts.filter(item=>item.as==='image');

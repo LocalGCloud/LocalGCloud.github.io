@@ -37,7 +37,7 @@ function converter(pageUrl) {
 	const service = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced", bulletListMarker: "-", emDelimiter: "_" });
 	service.remove(["script", "style", "noscript", "template", "svg", "button", "form", "textarea", "select", "input", "iframe"]);
 	service.remove(isNoise);
-	service.addRule('desktopPresentation', { filter: (node) => node.hasAttribute?.('data-desktop-copy'), replacement: () => '' });
+	service.addRule('viewPresentation', { filter: (node) => node.hasAttribute?.('data-desktop-copy') || node.hasAttribute?.('data-mobile-only'), replacement: () => '' });
 	service.addRule("code", {
 		filter: "pre",
 		replacement: (_, node) => {

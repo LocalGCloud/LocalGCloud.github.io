@@ -1,10 +1,12 @@
 ---
 import { getImage } from 'astro:assets';
-import { desktopHeroOptions, classicHero } from '../utils/home-images';
+import { desktopHeroOptions, mobileHeroOptions, classicHero } from '../utils/home-images';
 import developerIcon from '../../public/icons/personas/code-block.svg?url';
 import ciIcon from '../../public/icons/personas/gear-six.svg?url';
 import agentIcon from '../../public/icons/personas/robot.svg?url';
 const desktopHero = await getImage(desktopHeroOptions);
+const mobileHero = await getImage(mobileHeroOptions);
+import MobileServiceLauncher from './MobileServiceLauncher.astro';
 import ServiceIcon from './ServiceIcon.astro';
 import ServiceFilterBootstrap from './ServiceFilterBootstrap.astro';
 import CopyButton from './CopyButton.astro';
@@ -119,6 +121,7 @@ for (const column of atlasColumns) {
   <div class="field-home__shell">
     <section class="field-hero">
       <div class="field-hero__copy">
+        <p class="mobile-eyebrow" data-mobile-only data-pagefind-ignore>Google Cloud in-a-box</p>
         <p class="desktop-hero-eyebrow" data-desktop-copy data-pagefind-ignore>Google Cloud in-a-box</p>
         <h1 class="field-hero__headline">
           <span class="field-hero__headline-main" data-classic-copy>Google Cloud</span>{' '}
@@ -126,9 +129,14 @@ for (const column of atlasColumns) {
           <span class="field-hero__headline-audience" data-classic-copy>for developers, CI and AI agents.</span>
         </h1>
         <p class="field-intro" data-classic-copy>{definition}</p>
+        <p class="mobile-intro" data-mobile-only data-pagefind-ignore>Build, test and give your AI agents a local Google Cloud.</p>
+        <div class="mobile-hero-actions" data-mobile-only data-pagefind-ignore><a class="site-button site-button--primary" href={base + 'services/'} data-analytics-label="hero-explore-services">Explore services <span aria-hidden="true">→</span></a></div>
+        <p class="mobile-audience" data-mobile-only data-pagefind-ignore>Development · CI · AI agents</p>
+        <template data-mobile-hero><figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="eager" fetchpriority="high" decoding="async" /></figure></template>
         <template data-desktop-headline data-desktop-copy data-pagefind-ignore>
           <span data-desktop-copy data-pagefind-ignore>Your cloud. <span class="field-hero__desktop-accent">On your computer.</span></span>
         </template>
+        <template data-mobile-headline><span data-mobile-only data-pagefind-ignore>Your cloud. <span class="field-hero__mobile-accent">On your computer.</span></span></template>
         <p class="field-intro" data-desktop-copy data-pagefind-ignore>Build, test and give your AI agents a local Google Cloud.</p>
 
         <div class="field-actions">
@@ -193,6 +201,14 @@ for (const column of atlasColumns) {
       </div>
     </section>
 
+    <MobileServiceLauncher />
+    <section class="mobile-personas" data-mobile-only data-pagefind-ignore aria-labelledby="mobile-personas-title">
+      <h2 id="mobile-personas-title">A cloud that feels like yours.</h2>
+      <a href={base + 'docs/sdk-examples/'}><img src={developerIcon} width="32" height="32" alt="" loading="lazy" /><div><strong>For developers</strong><p>Build and experiment with Google Cloud services locally.</p></div></a>
+      <a href={base + 'gcp-integration-testing/'}><img src={ciIcon} width="32" height="32" alt="" loading="lazy" /><div><strong>For CI</strong><p>Fast, repeatable environments in your pipelines.</p></div></a>
+      <a href={base + 'local-cloud-for-ai-agents/'}><img src={agentIcon} width="32" height="32" alt="" loading="lazy" /><div><strong>For AI agents</strong><p>Give your coding agents a local cloud to work with.</p></div></a>
+    </section>
+    <p class="mobile-computer-note" data-mobile-only data-pagefind-ignore>Ready to try it? Set up LocalCloud on your computer using the steps below.</p>
     <InstallationMethods />
     <section class="field-ribbon">
       <div class="field-ribbon__grid stagger">
