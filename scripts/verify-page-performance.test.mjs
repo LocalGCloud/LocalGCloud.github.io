@@ -21,11 +21,12 @@ const beaconSrc = 'https://static.cloudflareinsights.com/beacon.min.js';
 
 // Runs the head bootstrap the way the browser would, with the visitor's privacy signals and
 // stored choice. inserted lists the scripts it appends to <head> by src.
-function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, stored = null, storageThrows = false, token = cloudflareToken, hostname = 'local.cloud', pathname = '/', random = 0.1 } = {}) {
+function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, stored = null, storageThrows = false, token = cloudflareToken, hostname = 'local.cloud', pathname = '/', random = 0.1, mobile = false } = {}) {
   const inserted = [];
   const timers = [];
   const idle = [];
   const listeners = new Map();
+  const viewport = { matches: !mobile, addEventListener: (event, callback) => listeners.set('viewport:' + event, { callback }) };
   const storage = new Map(stored === null ? [] : [['lc-analytics', stored]]);
   const context = {
     posthogApiHost: '/ingest',
@@ -34,6 +35,7 @@ function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, sto
     siteRelease: 'fixture-release',
     location: { hostname, pathname, href:'https://'+hostname+pathname },
     Math: { random: () => random },
+    matchMedia: () => viewport,
     navigator,
     CustomEvent: class { constructor(type) { this.type = type; } },
     dispatchEvent: (event) => listeners.get(event.type)?.callback(event),
@@ -60,7 +62,7 @@ function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, sto
     timers.splice(0).forEach((timer) => timer.callback());
     idle.splice(0).forEach((request) => request.callback());
   };
-  return { context, inserted, timers, idle, listeners, storage, queued, runSchedule, srcs: () => inserted.map((script) => script.src) };
+  return { context, inserted, timers, idle, listeners, storage, viewport, queued, runSchedule, srcs: () => inserted.map((script) => script.src) };
 }
 
 test('analytics queues interactions, then loads PostHog and the Cloudflare beacon after load and idle', () => {
@@ -126,6 +128,37 @@ test('behavior analytics keeps replay sampling and expensive capture bounded', (
   assert.deepEqual(h.srcs(), [], 'opt-out prevents even sampled recordings and heatmaps');
   h.context.lcAnalytics.setOn(true);
   assert.equal(h.context.posthog._i.length, 1, 'opt-in retains the same sampling configuration');
+});
+
+test('mobile disables replay and heatmaps while preserving visits, actions and errors', () => {
+  const h = analyticsHarness('loading', { mobile: true });
+  const config = h.context.posthog._i[0][1];
+  assert.equal(config.disable_session_recording, true);
+  assert.equal(config.capture_heatmaps, false);
+  assert.equal(config.capture_exceptions, true);
+  assert.equal(config.capture_pageleave, true);
+  assert.equal(h.context.posthog[0][1], '$pageview');
+  for (const event of ['code_copied', 'cta_clicked', 'search_result_clicked', '$exception']) {
+    h.context.posthog.capture(event, {});
+    assert.equal(config.before_send({ event, properties: {} }).event, event);
+  }
+  h.runSchedule();
+  assert.deepEqual(h.srcs(), [sdkSrc, beaconSrc]);
+  h.context.lcAnalytics.setOn(false);
+  assert.equal(config.before_send({ event: 'cta_clicked', properties: {} }), null);
+});
+
+test('crossing the desktop breakpoint updates replay and heatmaps without changing event capture', () => {
+  const h = analyticsHarness('loading');
+  for (const wide of [false, true]) {
+    h.viewport.matches = wide;
+    h.listeners.get('viewport:change').callback();
+    const [method, config] = [...h.context.posthog].at(-1);
+    assert.equal(method, 'set_config');
+    assert.equal(config.disable_session_recording, !wide);
+    assert.equal(config.capture_heatmaps, wide);
+    assert.equal(h.context.lcAnalytics.isOn(), true);
+  }
 });
 
 test('heatmaps are limited to the three production URL rules without disabling other events', () => {
@@ -376,6 +409,23 @@ test('mapped scripts keep execution order, matching maps and exact CSP/SRI bytes
     'a mapping change cannot reuse an immutable asset URL');
 });
 
+test('critical startup scripts execute inline with exact CSP hashes and the same public source coordinates', async () => {
+  const source = 'var firstVisit = 7; window.visits = firstVisit;';
+  const mapped = await transform(source, { loader: 'js', minify: true, treeShaking: false, sourcemap: 'external', sourcefile: 'rendered-inline.js' });
+  const asset = createMappedScript(mapped.code, mapped.map, 'inline');
+  const html = `<meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="script-src 'self' 'strict-dynamic';"><script data-critical-bootstrap>${source}</script>`;
+  const secured = await finalizeCsp(html, () => assert.fail('no external request'), async () => asset);
+  const body = secured.match(/<script data-critical-bootstrap>([\s\S]*?)<\/script>/)[1];
+  assert.ok(secured.includes(`'sha256-${createHash('sha256').update(body).digest('base64')}'`));
+  assert.ok(!secured.includes(' src=') && !secured.includes('unsafe-inline'));
+  assert.equal(body.split('\n')[0], asset.code.split('\n')[0], 'same generated line and columns as the served script');
+  assert.ok(body.includes(`//# sourceURL=https://local.cloud${asset.src}\n//# sourceMappingURL=${asset.src}.map`));
+  assert.equal(JSON.parse(asset.map).sourcesContent[0], source);
+  const context = { window: {} };
+  runInNewContext(body, context);
+  assert.equal(context.window.visits, 7);
+});
+
 test('search queues one integrity-protected client load and initializes its explicit base path', async () => {
   const source = readFileSync(new URL('../src/components/SearchModal.astro', import.meta.url), 'utf8');
   const loader = source.slice(source.indexOf('  async function loadPagefind()'), source.indexOf('  function openSearch()'));
@@ -581,6 +631,23 @@ const distRoot = new URL('../dist/', import.meta.url).pathname;
 const walkHtml = (directory) => readdirSync(directory, { withFileTypes: true }).flatMap((entry) => entry.isDirectory()
   ? walkHtml(join(directory, entry.name))
   : entry.name.endsWith('.html') ? [join(directory, entry.name)] : []);
+
+test('every page includes only its two critical bootstraps inline with retained maps and exact CSP', () => {
+  for (const path of walkHtml(distRoot)) {
+    const html = readFileSync(path, 'utf8');
+    const scripts = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap[^>]*>([\s\S]*?)<\/script>/g)];
+    assert.equal(scripts.length, 2, path);
+    for (const [, code] of scripts) {
+      const src = code.match(/\/\/# sourceURL=https:\/\/local\.cloud(\/[^\n]+)/)?.[1];
+      assert.ok(src, path);
+      const served = readFileSync(join(distRoot, src), 'utf8');
+      assert.equal(code.split('\n')[0], served.split('\n')[0]);
+      assert.ok(code.includes(`//# sourceMappingURL=${src}.map`));
+      assert.ok(existsSync(join(distRoot, `${src}.map`)));
+      assert.ok(html.includes(`'sha256-${createHash('sha256').update(code).digest('base64')}'`), path);
+    }
+  }
+});
 
 test('built scripts retain matching public maps at distinct immutable release URLs', () => {
   const release = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim().slice(0, 12);

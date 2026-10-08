@@ -39,6 +39,10 @@
     & .desktop-close::before{background:#f56359}
     & .desktop-minimize::before{background:#f8bc3d}
     & .desktop-expand::before{background:#3bbc58}
+    & .desktop-open-tab{margin-left:auto;flex-shrink:0;color:var(--text-2);font-size:.75rem}
+    & .desktop-markdown{margin-left:auto;font-size:.8rem;color:var(--accent-strong)}
+    & .desktop-markdown+.desktop-open-tab{margin-left:0}
+    & [data-classic-copy],& .field-home__shell>:not(.field-hero),& .field-home~.site-footer{display:none!important}
     & .desktop-content{display:block;min-height:0;overflow:auto;flex:1}
     /* Reveal the final layout together, without painting the Classic layout first. */
     &:not(.desktop-ready) .desktop-content{visibility:hidden}

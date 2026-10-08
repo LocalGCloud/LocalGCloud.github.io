@@ -33,7 +33,7 @@ Update checks, license validation where enforced, live-cloud authentication, and
 
 We use basic web analytics to understand visits, usage, and performance. Analytics providers collect the browser, device, network, and interaction details needed to provide these services. Search text and feedback you submit may also be recorded to improve the documentation.
 
-PostHog also collects heatmaps, dead clicks (clicks with no visible response), and sampled session recordings to help us find usability problems. Input values are masked in recordings. Console logs, network request and response contents, and canvas recording are disabled.
+PostHog also collects dead clicks (clicks with no visible response) to help us find usability problems. On desktop-sized viewports, it collects heatmaps and sampled session recordings. On mobile-sized viewports, recordings and heatmaps are disabled; page visits, clicks, searches, copy actions, and errors remain enabled. Input values are masked in recordings. Console logs, network request and response contents, and canvas recording are disabled.
 
 We collect sampled browser performance measurements to find slow pages and interactions. Reports include the website release so we can identify regressions after changes.
 

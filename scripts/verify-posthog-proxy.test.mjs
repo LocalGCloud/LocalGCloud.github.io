@@ -45,6 +45,7 @@ function executeBootstrap(bootstrap, apiHost) {
     siteRelease: 'fixture-release',
     location: { hostname: 'local.cloud' },
     navigator: {},
+    matchMedia: () => ({ matches: true, addEventListener() {} }),
     addEventListener() {},
     localStorage: { getItem: () => null },
     document: {

@@ -109,7 +109,7 @@ test('the real analytics stub retains the initial and early routes exactly once 
     const events=new Map();
     const context={URL,Date,Math,posthogApiHost:'/ingest',cloudflareAnalyticsToken:'',cloudflareAnalyticsEndpoint:'',siteRelease:'fixture',
       navigator:{globalPrivacyControl:off},location:{hostname:'local.cloud',pathname:'/',href:'https://local.cloud/'},localStorage:{getItem:()=>null},
-      setTimeout(){},setInterval(){},addEventListener(){},
+      setTimeout(){},setInterval(){},addEventListener(){},matchMedia:()=>({matches:true,addEventListener(){}}),
       document:{title:'Home',readyState:'loading',body:{dataset:{}},querySelector:()=>null,addEventListener:(name,fn)=>events.set(name,fn)}};
     context.window=context;
     runInNewContext(inline.find(script=>script.includes('posthog.init(')),context);
@@ -384,11 +384,13 @@ test('Home startup preloads only the image for the selected view and viewport',(
   assert.doesNotMatch(home,/<link\b[^>]*rel="preload"[^>]*as="image"/,'Home images preload only through the view/viewport selector');
   for(const [query,wide,image] of [['',true,'desktop'],['?view=classic',true,'classic'],['',false,'classic']]){
     const h=viewHarness({query,wide});
-    h.context.homeImages={desktop:'/desktop.webp',classic:'/classic.svg'};
+    h.context.homeImages={desktop:{href:'/desktop.webp',imageSrcset:'/small.webp 480w, /desktop.webp 1800w',imageSizes:'56.16vw'},classic:{href:'/classic.svg'}};
     h.scripts.length=0;
     runInNewContext(bootstrap,h.context);
     const images=h.scripts.filter(item=>item.as==='image');
-    assert.equal(images.length,1);assert.equal(images[0].href,h.context.homeImages[image]);assert.equal(images[0].fetchPriority,'high');
+    assert.equal(images.length,1);assert.equal(images[0].href,h.context.homeImages[image].href);assert.equal(images[0].fetchPriority,'high');
+    assert.equal(images[0].imageSrcset,h.context.homeImages[image].imageSrcset);
+    assert.equal(images[0].imageSizes,h.context.homeImages[image].imageSizes);
   }
 });
 

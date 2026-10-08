@@ -7,7 +7,8 @@ import desktopScript from '../scripts/desktop-view.mjs?url';
 import desktopPageStyles from '../styles/desktop-pages.css?url';
 import keyboardScript from '../scripts/keyboard-shortcuts.mjs?url';
 import pageInteractions from '../scripts/site-interactions.mjs?url';
-import desktopHero from '../assets/desktop-home-desk.webp?url';
+import { getImage } from 'astro:assets';
+import { desktopHeroOptions } from '../utils/home-images';
 import SearchModal from '../components/SearchModal.astro';
 import { organizationSchema, type JsonLd } from '../data/productFacts';
 import { markdownTwinPath } from '../utils/markdown-twins.mjs';
@@ -40,7 +41,11 @@ const cloudflareAnalyticsToken = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOK
 const cloudflareAnalyticsEndpoint = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_ENDPOINT;
 const siteRelease = import.meta.env.PUBLIC_SITE_RELEASE;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
-const homeImages = Astro.url.pathname === base ? { desktop: desktopHero, classic: base + 'illustrations/hero-laptop-service-grid.svg' } : null;
+const hero = Astro.url.pathname === base ? await getImage(desktopHeroOptions) : null;
+const homeImages = hero ? {
+  desktop: { href: hero.src, imageSrcset: hero.srcSet.attribute, imageSizes: desktopHeroOptions.sizes },
+  classic: { href: base + 'illustrations/hero-laptop-service-grid.svg' },
+} : null;
 const {
   title,
   description = 'Run Google Cloud service workflows locally in one Docker container. Before use, review compatibility, privacy, and the proprietary license.',
@@ -123,7 +128,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 
     <title>{title}</title>
 
-    <script is:inline define:vars={{ desktopScript, desktopPageStyles, homeImages }}>
+    <script is:inline data-critical-bootstrap define:vars={{ desktopScript, desktopPageStyles, homeImages }}>
       (function () {
         var root = document.documentElement, query = new URLSearchParams(location.search).get('view');
         var view = query === 'classic' ? 'classic' : 'desktop';
@@ -133,7 +138,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         if (homeImages) {
           var hero = document.createElement('link');
           hero.rel = 'preload'; hero.as = 'image'; hero.fetchPriority = 'high';
-          hero.href = view === 'desktop' && wide.matches ? homeImages.desktop : homeImages.classic;
+          Object.assign(hero, homeImages[view === 'desktop' && wide.matches ? 'desktop' : 'classic']);
           document.head.appendChild(hero);
         }
         var loadDesktop = function () {
@@ -170,7 +175,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         load event, a 1.5-second delay and an idle callback. Neither loads when the visitor turned
         analytics off with the footer control or the browser sends Global Privacy Control or Do
         Not Track. The hashed bootstrap authorizes both scripts under strict-dynamic. */}
-    <script is:inline define:vars={{ posthogApiHost, cloudflareAnalyticsToken, cloudflareAnalyticsEndpoint, siteRelease }}>
+    <script is:inline data-critical-bootstrap define:vars={{ posthogApiHost, cloudflareAnalyticsToken, cloudflareAnalyticsEndpoint, siteRelease }}>
       var productionHost = /^(?:www\.)?local\.cloud$/.test(window.location.hostname);
       var privacySignal = navigator.globalPrivacyControl === true ? 'Global Privacy Control'
         : /^(?:1|yes)$/.test(String(navigator.doNotTrack || window.doNotTrack || '')) ? 'Do Not Track' : '';
@@ -179,8 +184,15 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       var analyticsReady = false;
       try { if (localStorage.getItem(choiceKey) === 'off') analyticsOn = false; } catch (e) {}
       var webVitalsSampled = Math.random() < 0.2;
+      var behaviorViewport = matchMedia('(min-width: 64rem)');
+      function behaviorCapture() {
+        return {
+          disable_session_recording: !behaviorViewport.matches,
+          capture_heatmaps: behaviorViewport.matches && /^\/(?:$|pricing\/?$|docs\/)/.test(location.pathname),
+        };
+      }
 
-      !function(t,e){var o,n;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture opt_out_capturing opt_in_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+      !function(t,e){var o,n;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture opt_out_capturing opt_in_capturing set_config".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 
       posthog.init('phc_o9nQDAQjEgsPcamE8pCnhv7ekA8CmA2VQXechLju9LA9', {
         loaded: function() { analyticsReady = true; },
@@ -221,7 +233,8 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 
         // Sample whole sessions consistently across pages. The project's replay settings
         // enforce a 15-second minimum; there is no client-side minimum-duration option.
-        disable_session_recording: false,
+        // Keep replay and heatmaps off below the desktop breakpoint.
+        ...behaviorCapture(),
         session_recording: {
           sampleRate: 0.1,
           strictMinimumDuration: true,
@@ -233,8 +246,6 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         },
         enable_recording_console_log: false,
         disable_surveys: true, // Marketing site has no surveys; avoid their extra bundle.
-        // Mirror the three Free-plan URL rules while server enforcement rolls out.
-        capture_heatmaps: /^\/(?:$|pricing\/?$|docs\/)/.test(window.location.pathname),
         capture_dead_clicks: true, // Only detected dead clicks consume analytics events.
         capture_performance: {
           web_vitals: true,
@@ -242,6 +253,8 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           network_timing: false,
         },
       });
+      // set_config stops active capture and removes heatmap listeners when narrowing.
+      behaviorViewport.addEventListener('change', function () { posthog.set_config(behaviorCapture()); });
       if (analyticsOn) posthog.capture('$pageview', { $current_url: location.href, $title: document.title });
 
       var posthogRequested = false;

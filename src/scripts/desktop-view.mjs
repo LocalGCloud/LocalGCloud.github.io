@@ -189,15 +189,6 @@ export async function initDesktop() {
   };
   syncTab();
   window.addEventListener('hashchange', () => syncURL(location.href));
-  const formatLinks = (scope) => {
-    scope.querySelectorAll('a[href]').forEach((link) => {
-      if (link.hasAttribute('data-view-choice') || link.hasAttribute('download')) return;
-      const url = desktopPageURL(link.href, location.href, base);
-      if (url) link.href = url;
-    });
-  };
-  const results = document.getElementById('search-results');
-  if (results) new MutationObserver(() => formatLinks(results)).observe(results, { childList: true });
 
   document.addEventListener('click', (event) => {
     if (!wide.matches || document.documentElement.dataset.siteView !== 'desktop' || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -245,7 +236,7 @@ export async function initDesktop() {
       let md=root.querySelector('.desktop-markdown');
       if(page.markdown&&!md){md=document.createElement('a');md.className='desktop-markdown';md.textContent='.md';md.target='_blank';md.rel='noopener noreferrer';md.setAttribute('aria-label','Read this page as Markdown');main.querySelector('[data-window-titlebar]').insertBefore(md,root.querySelector('.desktop-open-tab'));}
       if(md){md.hidden=!page.markdown;if(page.markdown)md.href=page.markdown;}
-      presentContent();formatLinks(main);renderHistory();syncURL(url);
+      presentContent();renderHistory();syncURL(url);
       main.querySelectorAll('.reveal').forEach(element=>element.classList.add('visible'));
       root.querySelectorAll('.desktop-menu[open]').forEach(menu=>{menu.open=false;});
     }

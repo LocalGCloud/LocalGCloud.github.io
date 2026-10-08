@@ -44,10 +44,19 @@ export async function finalizeCsp(html, readAsset, externalizeScript) {
       if (javascript && externalizeScript) {
         // Processed modules must remain Vite assets, preserving their original maps/imports.
         if (type === 'module') throw new Error('Inline module remains; disable Astro script inlining before finalizing CSP');
-        const { src, code } = await externalizeScript(match[2]);
-        const hash = scriptHash(code);
-        sources.add(`'${hash}'`);
-        replacement = `<script${match[1]} src="${src}" integrity="${hash}"></script>`;
+        const asset = await externalizeScript(match[2]);
+        if (/\bdata-critical-bootstrap\b/.test(match[1])) {
+          // Execute tiny startup work during parsing without another blocking request.
+          // Preserve the same generated coordinates and public map for error tracking.
+          const code = asset.code.replace(/\/\/# sourceMappingURL=[^\n]+\n?$/, '')
+            + `//# sourceURL=https://local.cloud${asset.src}\n//# sourceMappingURL=${asset.src}.map\n`;
+          sources.add(`'${scriptHash(code)}'`);
+          replacement = `<script${match[1]}>${code}</script>`;
+        } else {
+          const hash = scriptHash(asset.code);
+          sources.add(`'${hash}'`);
+          replacement = `<script${match[1]} src="${asset.src}" integrity="${hash}"></script>`;
+        }
       } else {
         const code = javascript ? (await transform(match[2], {
           loader: 'js', target: 'es2022', minify: true, legalComments: 'none', treeShaking: false,

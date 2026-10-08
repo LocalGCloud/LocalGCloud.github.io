@@ -1,5 +1,7 @@
 ---
-import desktopHero from '../assets/desktop-home-desk.webp?url';
+import { getImage } from 'astro:assets';
+import { desktopHeroOptions } from '../utils/home-images';
+const desktopHero = await getImage(desktopHeroOptions);
 import ServiceIcon from './ServiceIcon.astro';
 import ServiceFilterBootstrap from './ServiceFilterBootstrap.astro';
 import CopyButton from './CopyButton.astro';
@@ -177,7 +179,7 @@ for (const column of atlasColumns) {
       </figure>
       <template data-desktop-hero data-desktop-copy data-pagefind-ignore>
         <figure class="desktop-hero-art" data-desktop-copy data-pagefind-ignore>
-          <img src={desktopHero} width="1800" height="600" alt="A LocalCloud laptop on a desk, connected to local Google Cloud service icons, with notebooks, a mug, books and a plant." loading="eager" fetchpriority="high" decoding="async" />
+          <img src={desktopHero.src} srcset={desktopHero.srcSet.attribute} sizes={desktopHeroOptions.sizes} width="1800" height="600" alt="A LocalCloud laptop on a desk, connected to local Google Cloud service icons, with notebooks, a mug, books and a plant." loading="eager" fetchpriority="high" decoding="async" />
         </figure>
       </template>
       <div class="desktop-hero-summary" data-desktop-copy data-pagefind-ignore>
