@@ -8,7 +8,6 @@
   & .desktop-shortcut img{object-fit:contain;filter:drop-shadow(0 2px 2px #0002)}
   & img[data-desktop-icon*='ai-robot']{scale:1.12;translate:0 2px}
   & .desktop-shortcut img[data-desktop-icon*='terminal']{background:white;border-radius:.4rem}
-  & .desktop-shortcut{transition:background-color 150ms ease-out,border-color 150ms ease-out,color 150ms ease-out}
   & .desktop-shortcut:hover{border-color:#ffffffaa;background:#ffffff55}
   & .desktop-shortcut.is-active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong);font-weight:600}
   & .copy-btn__icon{transition:opacity .3s,scale .3s,filter .3s;transition-timing-function:cubic-bezier(0.2,0,0,1)}
