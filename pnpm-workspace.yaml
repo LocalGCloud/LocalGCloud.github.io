@@ -6,6 +6,10 @@ registries:
 
 packageImportMethod: hardlink
 
+overrides:
+  # Patch Miniflare's SVG decoder (GHSA-wq5f-xc86-pv6w).
+  'miniflare>sharp@0.35.4': '0.35.5'
+
 allowBuilds:
   esbuild: true
   sharp: true
