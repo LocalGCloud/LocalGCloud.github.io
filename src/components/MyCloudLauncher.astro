@@ -1,0 +1,45 @@
+---
+import appIcon from '../../public/brand/localcloud-app-icon.svg?url';
+import { docsContract } from '../data/docs-contract';
+import { consoleQuickStart } from '../utils/quickstart.mjs';
+import { myCloudURL } from '../scripts/my-cloud.mjs';
+import dialogStyles from '../styles/my-cloud.css?url';
+import dialogScript from '../scripts/my-cloud.mjs?url';
+import copyScript from '../scripts/copy-buttons.mjs?url';
+const setupCommand = consoleQuickStart(docsContract);
+---
+
+<a href={myCloudURL} target="_blank" rel="noopener noreferrer" class="desktop-shortcut desktop-my-cloud" data-my-cloud data-my-cloud-script={dialogScript} data-copy-script={copyScript} data-my-cloud-styles={dialogStyles} data-setup-command={setupCommand} data-setup-guide={import.meta.env.BASE_URL + 'docs/#install-the-cli'} aria-haspopup="dialog" aria-controls="my-cloud-dialog" aria-label="My cloud: check and open your local LocalCloud console">
+  <img src={appIcon} width="64" height="64" alt="" loading="lazy" decoding="async" />
+  <span>My cloud</span>
+  <small>localhost:5380 ↗</small>
+</a>
+<dialog id="my-cloud-dialog" class="my-cloud-dialog" aria-labelledby="my-cloud-title" aria-describedby="my-cloud-status" data-my-cloud-dialog data-pagefind-ignore></dialog>
+
+<script is:inline data-critical-bootstrap>
+  (() => {
+    const link = document.querySelector('[data-my-cloud]');
+    const dialog = document.querySelector('[data-my-cloud-dialog]');
+    let loaded;
+    const load = (source) => new Promise((resolve, reject) => {
+      const url = new URL(source, location.href);
+      const base = document.querySelector('[data-desktop-shell]')?.dataset.base || '/';
+      if (url.origin !== location.origin || !url.pathname.startsWith(base + '_astro/')) return reject(new Error('Invalid setup asset'));
+      const script = document.createElement('script');
+      script.type = 'module'; script.src = url.href;
+      const timer = setTimeout(() => { script.remove(); reject(new Error('Setup timed out')); }, 8000);
+      script.onload = () => { clearTimeout(timer); script.remove(); resolve(); };
+      script.onerror = () => { clearTimeout(timer); script.remove(); reject(new Error('Setup unavailable')); };
+      document.head.append(script);
+    });
+    link?.addEventListener('click', async (event) => {
+      if (!dialog?.showModal || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      try {
+        loaded ||= Promise.all([load(link.dataset.myCloudScript), load(link.dataset.copyScript)]);
+        await loaded;
+        dialog.dispatchEvent(new CustomEvent('lc:my-cloud-open'));
+      } catch { loaded = undefined; location.assign(link.href); }
+    });
+  })();
+</script>

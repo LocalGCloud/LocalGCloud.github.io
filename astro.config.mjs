@@ -34,7 +34,7 @@ export default defineConfig({
         "base-uri 'self'",
         "object-src 'none'",
         "worker-src 'self'",
-        ["connect-src 'self'", ...posthog.origins, ...cloudflareAnalytics.connectOrigins].join(' '),
+        ["connect-src 'self'", ...posthog.origins, ...cloudflareAnalytics.connectOrigins, 'http://localhost:5380'].join(' '),
         "img-src 'self' data:",
         "font-src 'self'",
       ],

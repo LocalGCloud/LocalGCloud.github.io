@@ -6,12 +6,14 @@ interface Props {
   // Accessible name that says what gets copied, for example "Copy install command".
   label?: string;
 }
+import copyScript from '../scripts/copy-buttons.mjs?url';
 const { text, class: className = '', analyticsLabel, label = 'Copy to clipboard' } = Astro.props;
 ---
 
 <button
   class:list={['copy-btn inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-[var(--radius-control)] border border-[var(--border)] text-[var(--text-2)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors cursor-pointer bg-transparent', className]}
   data-copy={text}
+  data-copy-script={copyScript}
   data-analytics-label={analyticsLabel}
   aria-label={label}
   title={label}
@@ -80,51 +82,3 @@ const { text, class: className = '', analyticsLabel, label = 'Copy to clipboard'
     }
   }
 </style>
-
-<script>
-  const resetTimers = new WeakMap<Element, number>();
-
-  function initCopyButtons() { document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((btn) => {
-    if (btn.dataset.copyReady === 'true') return;
-    btn.dataset.copyReady = 'true';
-
-    btn.addEventListener('click', async () => {
-      const text = btn.dataset.copy;
-      if (!text) return;
-      const idleTitle = btn.getAttribute('aria-label') || 'Copy to clipboard';
-
-      const label = btn.querySelector('.copy-label');
-      const activeTimer = resetTimers.get(btn);
-      if (activeTimer) window.clearTimeout(activeTimer);
-
-      let copied = false;
-      try {
-        if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable');
-        await navigator.clipboard.writeText(text);
-        copied = true;
-      } catch {
-        copied = false;
-      }
-      // BaseLayout records code_copied (with the closest data-analytics-label) only on success.
-      if (copied) btn.dispatchEvent(new CustomEvent('lc:copied', { bubbles: true }));
-
-      btn.classList.toggle('is-copied', copied);
-      // Keep the label short: it sits inline in a narrow command box.
-      // The long-form guidance goes in the tooltip.
-      if (label) label.textContent = copied ? 'Copied!' : 'Copy failed';
-      btn.title = copied
-        ? 'Copied to clipboard'
-        : 'Copy failed — select the command and copy it manually';
-
-      const timer = window.setTimeout(() => {
-        btn.classList.remove('is-copied');
-        if (label) label.textContent = 'Copy';
-        btn.title = idleTitle;
-        resetTimers.delete(btn);
-      }, copied ? 2000 : 5000);
-      resetTimers.set(btn, timer);
-    });
-  }); }
-  initCopyButtons();
-  document.addEventListener('astro:page-load', initCopyButtons);
-</script>

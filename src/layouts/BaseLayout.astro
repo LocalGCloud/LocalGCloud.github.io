@@ -377,6 +377,26 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       }
     </script>
 
+    <script is:inline data-critical-bootstrap>
+      (() => {
+        let loading = false;
+        const loadCopyButtons = () => {
+          const source = document.querySelector('.copy-btn[data-copy-script]')?.dataset.copyScript;
+          if (!source || loading) return;
+          const url = new URL(source, location.href);
+          const base = document.querySelector('[data-desktop-shell]')?.dataset.base || '/';
+          if (url.origin !== location.origin || !url.pathname.startsWith(base + '_astro/')) return;
+          loading = true;
+          const script = document.createElement('script');
+          script.type = 'module'; script.src = url.href;
+          script.onerror = () => { loading = false; script.remove(); };
+          document.head.append(script);
+        };
+        loadCopyButtons();
+        document.addEventListener('astro:page-load', loadCopyButtons);
+      })();
+    </script>
+
     {/* PostHog custom event tracking */}
     <script is:inline type="module" src={pageInteractions}></script>
   </body>

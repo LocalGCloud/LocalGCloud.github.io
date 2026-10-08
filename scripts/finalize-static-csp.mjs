@@ -84,7 +84,7 @@ async function finalize() {
   const viewAssets = new Map();
   // ?url modules bypass Vite's JS minifier. Reuse mapped assets before hashing HTML.
   for (const name of await readdir(resolve(root, '_astro'))) {
-    const match = name.match(/^(desktop-view|desktop-controller|mobile-view|desktop-navigation)\..*\.mjs$/);
+    const match = name.match(/^(desktop-view|desktop-controller|mobile-view|desktop-navigation|my-cloud|copy-buttons)\..*\.mjs$/);
     if (!match) continue;
     const source = await readFile(resolve(root, '_astro', name), 'utf8');
     const transformed = await transform(source, {

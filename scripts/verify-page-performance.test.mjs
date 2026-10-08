@@ -307,7 +307,8 @@ test('code_copied names the closest analytics label and fires only on a successf
   // A click on a copy button alone records nothing; the copy handler reports success.
   listeners.get('click')({ target: { closest: () => null } });
   assert.equal(captured.length, 2);
-  for (const source of ['../src/components/CopyButton.astro', '../src/layouts/DocsLayout.astro', '../src/pages/ai/index.astro']) {
+  assert.match(readFileSync(new URL('../src/components/CopyButton.astro', import.meta.url), 'utf8'), /import copyScript from '\.\.\/scripts\/copy-buttons\.mjs\?url'/);
+  for (const source of ['../src/scripts/copy-buttons.mjs', '../src/layouts/DocsLayout.astro', '../src/pages/ai/index.astro']) {
     const handler = readFileSync(new URL(source, import.meta.url), 'utf8');
     const write = handler.indexOf('await navigator.clipboard.writeText(');
     const dispatch = handler.indexOf("new CustomEvent('lc:copied'");
@@ -692,7 +693,7 @@ test('every page keeps its critical bootstraps inline with retained maps and exa
     const feedback = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap="(?:feedback|fab)"/g)].length;
     assert.ok(filters <= 1 && feedback <= 2, path);
     assert.equal(search, 1, path);
-    assert.equal(scripts.length, 2 + filters + search + feedback, path);
+    assert.equal(scripts.length, 4 + filters + search + feedback, path);
     for (const [, code] of scripts) {
       const src = code.match(/\/\/# sourceURL=https:\/\/local\.cloud(\/[^\n]+)/)?.[1];
       assert.ok(src, path);
@@ -712,7 +713,7 @@ test('built scripts retain matching public maps at distinct immutable release UR
   assert.ok(scripts.length > 5, 'compiled scripts are present');
   for (const file of scripts) {
     // Mapped view modules use the same code-and-map digest as inline/Pagefind assets.
-    const mapped = /\/(?:inline|pagefind-client|desktop-view|desktop-controller|mobile-view|desktop-navigation)\.[a-f0-9]{16}\.js$/.test(file);
+    const mapped = /\/(?:inline|pagefind-client|desktop-view|desktop-controller|mobile-view|desktop-navigation|my-cloud|my-cloud-launcher|copy-buttons)\.[a-f0-9]{16}\.js$/.test(file);
     if (!mapped) assert.ok(file.endsWith(`.${release}.js`), file);
     const code = readFileSync(join(distRoot, file), 'utf8');
     assert.ok(code.includes(`\n//# sourceMappingURL=${file.split('/').at(-1)}.map`), file);
@@ -838,6 +839,8 @@ test('built homepage has local font preload, immediate styles, sized hero and no
   const cspMeta = html.match(/<meta\b[^>]*http-equiv="(?:Content-Security-Policy|content-security-policy)"[^>]*>/)[0];
   const connectSources = cspMeta.match(/content="([^"]+)"/)[1].split(';').map((directive) => directive.trim().split(/\s+/))
     .find(([name]) => name === 'connect-src').slice(1);
+  assert.ok(connectSources.includes('http://localhost:5380'), 'My cloud can check only the configured local console origin');
+  assert.ok(!connectSources.includes('http:') && !connectSources.includes('*'), 'My cloud must not allow arbitrary HTTP origins');
   const cloudflare = resolveCloudflareAnalyticsConfig(loadEnv('production', process.cwd(), ''));
   for (const origin of cloudflare.connectOrigins) assert.ok(connectSources.includes(origin), `connect-src must allow ${origin}`);
   if (cloudflare.token) {

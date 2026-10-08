@@ -36,6 +36,11 @@ export function cliQuickStart(contract) {
 	return { install, homebrew, readiness, steps, lines, script: lines.join("\n") };
 }
 
+/** @param {QuickStartContract} contract */
+export function consoleQuickStart(contract) {
+	return [contract.cli.homebrewCommand, 'lc start --debug'].join('\n');
+}
+
 /**
  * Docker-only fallback: run the image, wait for readiness, then export the
  * environment from the runtime itself (no CLI on this path).
