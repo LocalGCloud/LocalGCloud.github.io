@@ -28,6 +28,8 @@ The commands use the pinned pnpm 12.9.1/Node 24.21.0 toolchain through its avail
 
 Regression coverage includes mode selection/overrides, URL/query/hash preservation, native view-choice links, automatic fallback, controller deadlines, cross-mode pending navigation/history/failure/prewarm cancellation, horizontal-only centering, numeric scroll restoration, fragment visibility, source maps/SRI/CSP, existing page content and every retained canonical/Markdown route.
 
+The exact mobile commit `625ea87` was also built from an isolated Git archive with the existing dependencies and pinned Node 24.21.0. Its full build, installer suite, 125 performance/regression checks and 26 analytics checks passed. This independently verifies the mobile feature without the concurrently edited My Cloud/brand/copy-button work. The archive was removed after verification.
+
 ## Browser evidence
 
 Tested in the Codex in-app browser against the existing local preview at `http://127.0.0.1:4325/`.
