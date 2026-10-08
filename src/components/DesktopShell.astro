@@ -2,6 +2,9 @@
 interface Props { title: string; }
 import desktopPageStyles from '../styles/desktop-pages.css?url';
 import { getImage } from 'astro:assets';
+import brandIcon from '../../public/brand/localcloud-icon.svg?url';
+import appIcon from '../../public/brand/localcloud-app-icon.svg?url';
+const desktopIconURLs = import.meta.glob<string>('../../public/icons/desktop/*.{webp,svg}', { eager: true, query: '?url', import: 'default' });
 import robotSource from '../../public/icons/desktop/ai-robot-v2.webp';
 import tagSource from '../../public/icons/desktop/tag.webp';
 const robotImage = await getImage({ src: robotSource, width: 64, widths: [64, 128, 160], format: 'webp', quality: 80 });
@@ -41,7 +44,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
   <div class="desktop-background desktop-chrome" aria-hidden="true" data-pagefind-ignore></div>
   <header class="desktop-toolbar desktop-chrome" data-pagefind-ignore>
     <a href={base} class="desktop-brand" data-desktop-home aria-label="LocalCloud home">
-      <img src={base + 'brand/localcloud-icon.svg'} width="32" height="32" alt="" loading="lazy" />
+      <img src={brandIcon} width="32" height="32" alt="" loading="lazy" />
       <strong>Local<span>Cloud</span></strong>
     </a>
     <nav class="desktop-navigation" aria-label="Desktop navigation">
@@ -79,7 +82,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
   <nav class="desktop-shortcuts desktop-shortcuts-left desktop-chrome" aria-label="Main desktop shortcuts" data-pagefind-ignore>
     {left.map((item) => (
       <a href={item.href} class:list={['desktop-shortcut', item.active && 'is-active']} data-desktop-shortcut data-window-label={item.label} aria-current={item.active ? 'page' : undefined}>
-        <img src={optimizedIcons[item.label]?.src ?? base + 'icons/desktop/' + desktopIcons[item.label]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '64px' : '56px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="56" height="56" alt="" loading="lazy" decoding="async" />
+        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '64px' : '56px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="56" height="56" alt="" loading="lazy" decoding="async" />
         <span>{item.label}</span>
       </a>
     ))}
@@ -87,12 +90,12 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
   <nav class="desktop-shortcuts desktop-shortcuts-right desktop-chrome" aria-label="Tools and local installation" data-pagefind-ignore>
     {right.map((item) => (
       <a href={item.href} class="desktop-shortcut" data-desktop-shortcut data-window-label={item.label}>
-        <img src={optimizedIcons[item.label]?.src ?? base + 'icons/desktop/' + desktopIcons[item.label]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '64px' : '56px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="56" height="56" alt="" loading="lazy" decoding="async" />
+        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '64px' : '56px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="56" height="56" alt="" loading="lazy" decoding="async" />
         <span>{item.label}</span>
       </a>
     ))}
     <a href="http://localhost:5380" target="_blank" rel="noopener noreferrer" class="desktop-shortcut desktop-my-cloud" aria-label="My cloud: open your local LocalCloud console in a new browser tab">
-      <img src={base + 'brand/localcloud-app-icon.svg'} width="64" height="64" alt="" loading="lazy" decoding="async" />
+      <img src={appIcon} width="64" height="64" alt="" loading="lazy" decoding="async" />
       <span>My cloud</span>
       <small>localhost:5380 ↗</small>
     </a>

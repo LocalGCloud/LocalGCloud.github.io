@@ -173,7 +173,9 @@ test('heatmaps are limited to the three production URL rules without disabling o
 test('production-only analytics samples vitals without losing conversion, error or replay events', () => {
   for (const [random, sampled] of [[0, true], [0.199, true], [0.2, false], [0.99, false]]) {
     const h = analyticsHarness('loading', { random });
-    const send = h.context.posthog._i[0][1].before_send;
+    const config = h.context.posthog._i[0][1];
+    assert.equal(config.capture_performance !== false, sampled, 'unsampled visits do not start performance capture');
+    const send = config.before_send;
     for (const name of ['$web_vitals', 'code_copied', '$exception', '$snapshot']) {
       const event = { event: name, properties: { landing_page: '/stale/', landing_referrer: 'old visitor context' } };
       const sent = send(event);
@@ -632,11 +634,65 @@ const walkHtml = (directory) => readdirSync(directory, { withFileTypes: true }).
   ? walkHtml(join(directory, entry.name))
   : entry.name.endsWith('.html') ? [join(directory, entry.name)] : []);
 
-test('every page includes only its two critical bootstraps inline with retained maps and exact CSP', () => {
+test('reveal setup completes all geometry reads before mutating classes', () => {
+  const source = [...layout.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).find(s => s.includes('IntersectionObserver'));
+  const calls = [], observed = [];
+  const nodes = [20, 900].map((top, i) => ({
+    getBoundingClientRect() { calls.push('read:' + i); return { top, bottom: top + 100 }; },
+    classList: { add() { calls.push('write:' + i); } },
+  }));
+  const context = {
+    innerHeight: 720,
+    document: { querySelectorAll: () => nodes, documentElement: { classList: { add() { calls.push('ready'); } } } },
+    IntersectionObserver: class { observe(el) { observed.push(el); } },
+  };
+  context.window = context;
+  runInNewContext(source, context);
+  assert.deepEqual(calls, ['read:0', 'read:1', 'write:0', 'ready']);
+  assert.deepEqual(observed, [nodes[1]], 'offscreen content keeps its reveal observer');
+});
+
+test('every page has no parser-blocking external scripts and loads interactions directly', () => {
+  for (const path of walkHtml(distRoot)) {
+    const html = readFileSync(path, 'utf8');
+    for (const [, attrs] of html.matchAll(/<script\b([^>]*\bsrc="[^"]+"[^>]*)>/g)) {
+      assert.ok(/\btype="module"|\b(?:async|defer)\b/.test(attrs), path + ': ' + attrs);
+    }
+    assert.match(html, /<script\b[^>]*type="module"[^>]*src="\/_astro\/site-interactions\.[^"]+\.mjs"/, path);
+  }
+});
+
+test('shared images use byte-identical versioned copies while original public URLs remain', () => {
+  const home = readFileSync(join(distRoot, 'index.html'), 'utf8');
+  for (const [name, original] of [
+    ['hero-laptop-service-grid', 'illustrations/hero-laptop-service-grid.svg'],
+    ['localcloud-mark', 'brand/localcloud-mark.svg'], ['localcloud-icon', 'brand/localcloud-icon.svg'],
+    ['localcloud-app-icon', 'brand/localcloud-app-icon.svg'],
+    ['code-block', 'icons/personas/code-block.svg'], ['gear-six', 'icons/personas/gear-six.svg'], ['robot', 'icons/personas/robot.svg'],
+  ]) {
+    // Vite can deduplicate identical SVGs under another source filename.
+    const originalBytes = readFileSync(resolve('public', original));
+    const src = [...home.matchAll(/src="(\/_astro\/[^"/]+\.svg)"/g)].map(m => m[1])
+      .find(path => readFileSync(join(distRoot, path)).equals(originalBytes));
+    assert.ok(src, name);
+    assert.ok(existsSync(join(distRoot, original)), original + ': retained public URL');
+  }
+  const service = readFileSync(join(distRoot, 'services/bigquery/index.html'), 'utf8');
+  const src = service.match(/src="(\/_astro\/bigquery\.[^"/]+\.svg)"/)?.[1];
+  assert.ok(src);
+  assert.deepEqual(readFileSync(join(distRoot, src)), readFileSync(resolve('public/icons/bigquery.svg')));
+});
+
+test('every page keeps its critical bootstraps inline with retained maps and exact CSP', () => {
   for (const path of walkHtml(distRoot)) {
     const html = readFileSync(path, 'utf8');
     const scripts = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap[^>]*>([\s\S]*?)<\/script>/g)];
-    assert.equal(scripts.length, 2, path);
+    const filters = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap="filter"/g)].length;
+    const search = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap="search"/g)].length;
+    const feedback = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap="(?:feedback|fab)"/g)].length;
+    assert.ok(filters <= 1 && feedback <= 2, path);
+    assert.equal(search, 1, path);
+    assert.equal(scripts.length, 2 + filters + search + feedback, path);
     for (const [, code] of scripts) {
       const src = code.match(/\/\/# sourceURL=https:\/\/local\.cloud(\/[^\n]+)/)?.[1];
       assert.ok(src, path);
@@ -747,7 +803,7 @@ test('docs, services and blog pages preload the body font and never lazy-load or
   }
   assert.deepEqual(failures, []);
   const service = readFileSync(join(distRoot, 'services/bigquery/index.html'), 'utf8');
-  assert.match(service, /<img\b[^>]*src="\/icons\/bigquery\.svg"[^>]*loading="eager"/, 'the service hero icon loads eagerly');
+  assert.match(service, /<img\b[^>]*src="\/_astro\/bigquery\.[^"/]+\.svg"[^>]*loading="eager"/, 'the versioned service hero icon loads eagerly');
 });
 
 test('built homepage has local font preload, immediate styles, sized hero and nonredundant brand marks', () => {

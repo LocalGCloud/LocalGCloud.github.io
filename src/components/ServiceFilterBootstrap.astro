@@ -3,7 +3,7 @@ import filterScript from '../scripts/service-filter.mjs?url';
 const { lazy = false } = Astro.props;
 ---
 {lazy && <template data-service-filter-script={filterScript}></template>}
-<script is:inline define:vars={{ filterScript, lazy }}>
+<script is:inline data-critical-bootstrap="filter" define:vars={{ filterScript, lazy }}>
   if (lazy) {
     if (!window.lcServiceFilter) {
       window.lcServiceFilter = function (event) {

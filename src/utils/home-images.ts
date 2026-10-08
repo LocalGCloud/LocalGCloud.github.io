@@ -1,4 +1,5 @@
 import desktopHeroSource from '../assets/desktop-home-desk.webp';
+export { default as classicHero } from '../../public/illustrations/hero-laptop-service-grid.svg?url';
 
 // Shared by the rendered image and its view-selected preload so only one candidate downloads.
 export const desktopHeroOptions = {

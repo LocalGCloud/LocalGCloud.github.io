@@ -11,9 +11,10 @@ import { gzipSync } from 'node:zlib';
 // the homepage (175,845 raw, 35,618 gzipped, 90,016 inline style bytes), which gained the footer
 // analytics toggle and speculation rules. scriptBytes: docs/ (16,164 bytes) carries the R5.4
 // privacy, search and copy logic.
-// 2026-10-07: the two existing critical bootstraps moved from blocking external requests
-// into HTML. Allow those same bytes here; compressed HTML and total startup ceilings stay fixed.
-const htmlBudget = { rawBytes: 190_000, gzipBytes: 37_400, styleBytes: 94_600, scriptBytes: 17_000 };
+// 2026-10-07: UI setup moved from blocking requests into HTML; interactions now have a
+// direct module tag, so scriptBytes includes a previously dynamic module. Account for those
+// existing bytes here; the aggregate startup ceiling below still counts and bounds all JS.
+const htmlBudget = { rawBytes: 196_000, gzipBytes: 40_000, styleBytes: 94_600, scriptBytes: 21_000 };
 // Desktop startup also fetches the controller, router, interactions and page filter modules.
 // Count each fetched file once, including files loaded by inline bootstraps rather than script tags.
 const startupScriptBytes = 45_000;

@@ -5,14 +5,13 @@ interface Props {
   class?: string;
 }
 
-const rawBase = import.meta.env.BASE_URL;
-const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+import brandMark from '../../public/brand/localcloud-mark.svg?url';
 const { size = 42, alt = '', class: className = '' } = Astro.props;
 const decorative = alt.length === 0;
 ---
 
 <img
-  src={`${base}brand/localcloud-mark.svg`}
+  src={brandMark}
   alt={alt}
   aria-hidden={decorative ? 'true' : undefined}
   class:list={['brand-mark', className]}

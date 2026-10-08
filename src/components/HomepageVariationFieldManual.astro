@@ -1,6 +1,9 @@
 ---
 import { getImage } from 'astro:assets';
-import { desktopHeroOptions } from '../utils/home-images';
+import { desktopHeroOptions, classicHero } from '../utils/home-images';
+import developerIcon from '../../public/icons/personas/code-block.svg?url';
+import ciIcon from '../../public/icons/personas/gear-six.svg?url';
+import agentIcon from '../../public/icons/personas/robot.svg?url';
 const desktopHero = await getImage(desktopHeroOptions);
 import ServiceIcon from './ServiceIcon.astro';
 import ServiceFilterBootstrap from './ServiceFilterBootstrap.astro';
@@ -84,7 +87,7 @@ const verifyCommands = [
 ];
 
 const heroIllustration = {
-  src: `${base}illustrations/hero-laptop-service-grid.svg`,
+  src: classicHero,
   alt: 'A laptop showing LocalCloud services running locally with readiness panels and Google Cloud service icons.',
 };
 
@@ -184,9 +187,9 @@ for (const column of atlasColumns) {
       </template>
       <div class="desktop-hero-summary" data-desktop-copy data-pagefind-ignore>
         <h2>A cloud that feels like yours.</h2>
-        <article><img src={base + 'icons/personas/code-block.svg'} width="40" height="40" alt="" loading="lazy" decoding="async" /><div><strong>For developers</strong><p>Build and experiment with Google Cloud services locally.</p></div></article>
-        <article><img src={base + 'icons/personas/gear-six.svg'} width="40" height="40" alt="" loading="lazy" decoding="async" /><div><strong>For CI</strong><p>Fast, repeatable environments in your pipelines.</p></div></article>
-        <article><img src={base + 'icons/personas/robot.svg'} width="40" height="40" alt="" loading="lazy" decoding="async" /><div><strong>For AI agents</strong><p>Give your coding agents a local cloud to work with.</p></div></article>
+        <article><img src={developerIcon} width="40" height="40" alt="" loading="lazy" decoding="async" /><div><strong>For developers</strong><p>Build and experiment with Google Cloud services locally.</p></div></article>
+        <article><img src={ciIcon} width="40" height="40" alt="" loading="lazy" decoding="async" /><div><strong>For CI</strong><p>Fast, repeatable environments in your pipelines.</p></div></article>
+        <article><img src={agentIcon} width="40" height="40" alt="" loading="lazy" decoding="async" /><div><strong>For AI agents</strong><p>Give your coding agents a local cloud to work with.</p></div></article>
       </div>
     </section>
 

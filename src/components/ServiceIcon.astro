@@ -20,7 +20,8 @@ const {
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
-const src = `${base}icons/${iconId}.svg`;
+const icons = import.meta.glob<string>('../../public/icons/*.svg', { eager: true, query: '?url', import: 'default' });
+const src = icons[`../../public/icons/${iconId}.svg`] ?? `${base}icons/${iconId}.svg`;
 ---
 
 <img

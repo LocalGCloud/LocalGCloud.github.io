@@ -8,7 +8,7 @@ import desktopPageStyles from '../styles/desktop-pages.css?url';
 import keyboardScript from '../scripts/keyboard-shortcuts.mjs?url';
 import pageInteractions from '../scripts/site-interactions.mjs?url';
 import { getImage } from 'astro:assets';
-import { desktopHeroOptions } from '../utils/home-images';
+import { desktopHeroOptions, classicHero } from '../utils/home-images';
 import SearchModal from '../components/SearchModal.astro';
 import { organizationSchema, type JsonLd } from '../data/productFacts';
 import { markdownTwinPath } from '../utils/markdown-twins.mjs';
@@ -44,7 +44,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const hero = Astro.url.pathname === base ? await getImage(desktopHeroOptions) : null;
 const homeImages = hero ? {
   desktop: { href: hero.src, imageSrcset: hero.srcSet.attribute, imageSizes: desktopHeroOptions.sizes },
-  classic: { href: base + 'illustrations/hero-laptop-service-grid.svg' },
+  classic: { href: classicHero },
 } : null;
 const {
   title,
@@ -247,11 +247,12 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         enable_recording_console_log: false,
         disable_surveys: true, // Marketing site has no surveys; avoid their extra bundle.
         capture_dead_clicks: true, // Only detected dead clicks consume analytics events.
-        capture_performance: {
+        // Avoid starting performance capture for the 80% of visits outside the sample.
+        capture_performance: webVitalsSampled ? {
           web_vitals: true,
           web_vitals_attribution: false,
           network_timing: false,
-        },
+        } : false,
       });
       // set_config stops active capture and removes heatmap listeners when narrowing.
       behaviorViewport.addEventListener('change', function () { posthog.set_config(behaviorCapture()); });
@@ -343,14 +344,15 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       // without them .reveal content renders visible by default. Content already on screen
       // is marked visible before reveal-ready applies, so it never flashes out and back in.
       if ('IntersectionObserver' in window) {
-        const offscreen = [...document.querySelectorAll('.reveal')].filter((el) => {
-          const { top, bottom } = el.getBoundingClientRect();
+        // Measure every element before changing classes, avoiding interleaved layout reads/writes.
+        const measured = [...document.querySelectorAll('.reveal')].map((el) => ({ el, rect: el.getBoundingClientRect() }));
+        const offscreen = measured.filter(({ el, rect: { top, bottom } }) => {
           if (top < window.innerHeight && bottom > 0) {
             el.classList.add('visible');
             return false;
           }
           return true;
-        });
+        }).map(({ el }) => el);
         document.documentElement.classList.add('reveal-ready');
         const observer = new IntersectionObserver(
           (entries) => {
@@ -370,11 +372,6 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     </script>
 
     {/* PostHog custom event tracking */}
-<script is:inline define:vars={{ pageInteractions }}>
-      var interactions = document.createElement('script');
-      interactions.type = 'module';
-      interactions.src = pageInteractions;
-      document.head.appendChild(interactions);
-    </script>
+    <script is:inline type="module" src={pageInteractions}></script>
   </body>
 </html>
