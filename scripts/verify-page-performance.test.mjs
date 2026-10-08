@@ -507,7 +507,7 @@ test('a search client removed by a deploy reloads the page once per session, nev
 function searchHarness(searchResults) {
   const source = readFileSync(new URL('../src/components/SearchModal.astro', import.meta.url), 'utf8');
   const escaping = source.slice(source.indexOf('  function escapeHtml('), source.indexOf('  async function loadPagefind('));
-  const handler = source.slice(source.indexOf('  // Search analytics'), source.indexOf('  // Close on result click'));
+  const handler = source.slice(source.indexOf('  // Search analytics'), source.indexOf('  // Close when choosing'));
   const listeners = {};
   const timers = [];
   const captured = [];
@@ -551,6 +551,33 @@ function searchHarness(searchResults) {
 }
 
 const bigQueryResult = (excerpt = '<mark>BigQuery</mark>') => ({ data: async () => ({ url: '/services/bigquery/', meta: { title: 'BigQuery' }, excerpt }) });
+
+test('privacy and result links close search and release its scroll lock', () => {
+  const source = readFileSync(new URL('../src/components/SearchModal.astro', import.meta.url), 'utf8').match(/<script[^>]*>([\s\S]*?)<\/script>/)[1];
+  const listeners = new Map();
+  const modal = { hidden: true, querySelector: () => null, addEventListener: (event, handler) => listeners.set(event, handler) };
+  const input = { value: '', addEventListener() {} };
+  const results = { innerHTML: '', addEventListener() {} };
+  const context = { window: {}, setTimeout: () => 1, clearTimeout() {}, document: {
+    getElementById: id => ({ 'search-modal': modal, 'search-input': input, 'search-results': results })[id],
+    body: { style: { overflow: '' } }, addEventListener() {},
+  } };
+  runInNewContext(source, context);
+  for (const link of [{ href: '/docs/privacy/' }, { href: '/services/bigquery/' }]) {
+    context.window.__lcSearch.open();
+    assert.equal(modal.hidden, false);assert.equal(context.document.body.style.overflow, 'hidden');
+    input.value = 'private query';
+    listeners.get('click')({ target: { closest: selector => selector === 'a[href]' ? link : null } });
+    assert.equal(modal.hidden, true);assert.equal(context.document.body.style.overflow, '');
+    assert.equal(input.value, '');assert.match(results.innerHTML, /Type to search/);
+  }
+  context.window.__lcSearch.open();
+  listeners.get('click')({ target: { closest: () => null } });
+  assert.equal(modal.hidden, false, 'interacting with search itself keeps it open');
+  context.window.__lcSearch.close();context.document.body.style.overflow = 'hidden';
+  context.window.__lcSearch.close();
+  assert.equal(context.document.body.style.overflow, 'hidden', 'closed search leaves other scroll locks alone');
+});
 
 test('Enter activates the first search result through the same clickable link path', async () => {
   const h = searchHarness(() => [bigQueryResult()]);

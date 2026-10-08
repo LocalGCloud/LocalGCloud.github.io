@@ -17,5 +17,5 @@ export const mobileHeroOptions = {
   width: 800,
   height: 267,
   widths: [320, 480, 640, 800],
-  sizes: '(min-width: 768px) 680px, calc(100vw - 64px)',
+  sizes: '(min-width: 768px) 704px, calc(100vw - 16px)',
 };

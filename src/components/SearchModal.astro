@@ -115,7 +115,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   }
 
   function closeSearch() {
-    if (!modal) return;
+    if (!modal || modal.hidden) return;
     reportSearch();
     searchVersion++;
     clearTimeout(debounceTimer);
@@ -238,9 +238,9 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     }
   });
 
-  // Close on result click
-  results?.addEventListener('click', function(e) {
-    if (e.target.closest('.search-modal__result')) {
+  // Close when choosing any link in search.
+  modal?.addEventListener('click', function(e) {
+    if (e.target.closest('a[href]')) {
       closeSearch();
     }
   });

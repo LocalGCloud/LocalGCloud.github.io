@@ -170,7 +170,7 @@ test('shared copy behavior binds once and reports a copy only after clipboard su
     addEventListener(_, callback) { handler = callback; bindings++; },
     dispatchEvent() { copiedEvents++; }, classList: { toggle(_, value) { this.copied = value; }, remove() {} },
   };
-  const scope = { querySelectorAll() { return [button]; } };
+  const scope = { querySelectorAll(selector) { return selector === '.copy-btn' ? [button] : []; } };
   const context = { scope, resetTimers: new WeakMap(), CustomEvent: class {},
     window: { clearTimeout() {}, setTimeout() { return 1; } },
     navigator: { clipboard: { async writeText(text) { assert.equal(text, button.dataset.copy); if (blocked) throw Error('denied'); } } },

@@ -33,6 +33,24 @@ test('a stalled optional view controller has a bounded failure', async t => {
   await rejected;
 });
 
+test('a Mobile navigation queued before router initialization cancels cleanly when the view changes',async()=>{
+  const source=readFileSync(new URL('../src/scripts/desktop-view.mjs',import.meta.url),'utf8').replace(/export /g,'');
+  const documentListeners=new Map(),windowListeners=new Map(),attrs=new Map(),assigned=[];let release;
+  const pane={setAttribute:(key,value)=>attrs.set(key,value),removeAttribute:key=>attrs.delete(key)};
+  const root={dataset:{base:'/'},querySelector:()=>pane};
+  const context={URL,console,location:{href:'https://local.cloud/?view=mobile',assign:href=>assigned.push(href)},
+    document:{readyState:'loading',documentElement:{dataset:{siteView:'mobile'}},querySelector:selector=>selector==='[data-desktop-shell]'?root:pane,
+      addEventListener:(event,fn)=>documentListeners.set(event,fn)},window:{addEventListener:(event,fn)=>windowListeners.set(event,[...(windowListeners.get(event)||[]),fn])}};
+  runInNewContext(source,context);
+  context.navigation=new Promise(resolve=>{release=resolve;});
+  runInNewContext('getNavigation=()=>navigation',context);
+  const click={target:{closest:selector=>selector==='a'?{href:'/services/bigquery/',hasAttribute:()=>false}:null},preventDefault(){this.defaultPrevented=true;}};
+  documentListeners.get('click')(click);assert.equal(click.defaultPrevented,true);assert.equal(attrs.get('aria-busy'),'true');
+  context.document.documentElement.dataset.siteView='desktop';for(const listener of windowListeners.get('lc:view-change'))listener();
+  release(null);await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(attrs.has('aria-busy'),false);assert.deepEqual(assigned,[]);
+});
+
 test('release performance checks include both Desktop suites',()=>{
   const pkg=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8'));
   for(const file of ['verify-desktop-view.test.mjs','verify-desktop-navigation.test.mjs'])assert.ok(pkg.scripts['test:performance'].includes(file),file);
@@ -259,6 +277,16 @@ test('native Mobile history restores a valid horizontal offset and ignores corru
   }
 });
 
+test('content-only Mobile Back restores strip and overview even though the document navigation type stays navigate',()=>{
+  const strip={dataset:{},scrollLeft:0,clientWidth:320,querySelector:()=>({offsetLeft:600,offsetWidth:80})};
+  const overview={dataset:{},open:false,contains:()=>false};
+  const context={URL,initViewLinks(){},desktopSection,location:{href:'https://local.cloud/services/bigquery/',pathname:'/services/bigquery/'},
+    performance:{getEntriesByType:()=>[{type:'navigate'}]},sessionStorage:{getItem:key=>key.includes('overview')?'true':'1200'},
+    document:{querySelector:()=>null,querySelectorAll:selector=>selector==='.mobile-service-strip'?[strip]:selector==='.mobile-service-context'?[overview]:[]}};
+  runInNewContext('('+initMobile.toString()+')({initViewLinks,desktopSection,historyTraversal:true})',context);
+  assert.equal(strip.scrollLeft,1200);assert.equal(overview.open,true);
+});
+
 test('explicit Mobile survives service links and dynamic search, preserving the content anchor', () => {
   const link = { href: '/services/spanner/#main-content', hasAttribute: () => false };
   const search = { href: '/docs/#install-the-cli', hasAttribute: () => false };
@@ -481,7 +509,7 @@ test('deep links retain their desktop shortcut category', () => {
 test('deferred desktop, keyboard and page-style assets stay small without changing the initial page ceilings', () => {
   const directory = new URL('../dist/_astro/', import.meta.url);
   // View modules now have content-addressed minified assets and public source maps.
-  for (const [prefix, limit] of [['desktop-view.', 6500], ['desktop-controller.', 10000], ['mobile-view.', 2500], ['desktop-navigation.', 12000], ['site-interactions.', 5500], ['keyboard-shortcuts.', 5500], ['desktop-pages.', 9000], ['service-filter.', 2000]]) {
+  for (const [prefix, limit] of [['desktop-view.', 7500], ['desktop-controller.', 10000], ['mobile-view.', 2500], ['desktop-navigation.', 12000], ['site-interactions.', 5500], ['keyboard-shortcuts.', 5500], ['desktop-pages.', 9000], ['service-filter.', 2000]]) {
     const files = readdirSync(directory).filter(name => name.startsWith(prefix) && !name.endsWith('.map'));
     const file = files.find(name => name.endsWith('.js')) ?? files[0];
     assert.ok(file, 'missing deferred asset: ' + prefix);

@@ -27,13 +27,109 @@ async function harness(delayB=false,pageScripts={}, options={}){
   const page=path=>({path,title:path,label:path,content:path,style:{key:empty},scripts:pageScripts[path]||[],metadata:[],schemas:[],canonical:null,...options.pages?.[path]});
   let release;
   const documentListeners=new Map(),windowListeners=new Map(),requests=[];
-  const context={URL,Event,TextEncoder,Promise,Map,Set,root,safeDesktopAsset,sha:async()=>empty,location,history,matchMedia:()=>({matches:true}),window:{addEventListener:(name,fn)=>windowListeners.set(name,fn)},document:{documentElement:{dataset:{siteView:options.siteView||'desktop'}},scripts:options.initialScripts||[],querySelectorAll:()=>[],querySelector:()=>null,getElementById:()=>({scrollIntoView(){pane.scrollTop=433;}}),head:{append(){},insertBefore(){}},createElement:()=>({remove(){}}),dispatchEvent:event=>events.push(event.type),addEventListener:(name,fn)=>documentListeners.set(name,fn),title:'A'},fetch:async url=>{requests.push(url);return {ok:true,headers:{get:()=> 'application/json'},json:async()=>url.includes('/desktop-manifest.')?{routes:Object.fromEntries(['b','c','d','e'].map(name=>['/'+name+'/','/_desktop/'+name+'.json']))}:delayB&&url.endsWith('b.json')?new Promise(resolve=>{release=()=>resolve(page('/b/'));}):page('/'+url.match(/([^/]+)\.json$/)[1]+'/')};}};
+  const context={URL,Event,TextEncoder,Promise,Map,Set,root,safeDesktopAsset,sha:async()=>empty,location,history,matchMedia:()=>({matches:options.wide??true}),window:{addEventListener:(name,fn)=>windowListeners.set(name,fn)},document:{documentElement:{dataset:{siteView:options.siteView||'desktop'}},scripts:options.initialScripts||[],querySelectorAll:()=>[],querySelector:()=>null,getElementById:()=>({scrollIntoView(){pane.scrollTop=433;}}),head:{append(){},insertBefore(){}},createElement:()=>({remove(){}}),dispatchEvent:event=>events.push(event.type),addEventListener:(name,fn)=>documentListeners.set(name,fn),title:'A'},fetch:async url=>{requests.push(url);return {ok:true,headers:{get:()=> 'application/json'},json:async()=>url.includes('/desktop-manifest.')?{routes:Object.fromEntries(['b','c','d','e'].map(name=>['/'+name+'/','/_desktop/'+name+'.json']))}:delayB&&url.endsWith('b.json')?new Promise(resolve=>{release=()=>resolve(page('/b/'));}):page('/'+url.match(/([^/]+)\.json$/)[1]+'/')};}};
   const timers=new Map();let timerID=0;
   Object.assign(context,{crypto:{randomUUID:()=> 'fresh-install'},AbortController,setTimeout:(fn)=>{timers.set(++timerID,fn);return timerID;},clearTimeout:id=>timers.delete(id),navigator:{},...options.context});
-  const navigate=await runInNewContext('('+installDesktopNavigation.toString()+')({root,validate:href=>new URL(href,location.href).href,before(){},mounted(){}})',context);
+  context.document.scrollingElement={scrollTop:options.documentScroll||0};
+  context.CustomEvent=class extends Event {constructor(type,options){super(type);this.detail=options?.detail;}};
+  context.views=options.views;context.mounted=options.mounted||(()=>{});context.synchronized=options.synchronized||(()=>{});
+  const navigate=await runInNewContext('('+installDesktopNavigation.toString()+')({root,validate:href=>new URL(href,location.href).href,before(){},mounted,views,synchronized})',context);
   context.document.getElementById=()=>({scrollIntoView(){pane.scrollTop=433;},hasAttribute:()=>false,setAttribute(){},focus(options){focused.push(options);}});
   return {pane,attrs,listeners,writes,context,navigate,setURL,events,focused,replacements,timers,documentListeners,windowListeners,requests,root,entries,async back(){const previous=entries[--entryIndex];history.state=previous.state;setURL(previous.href);return navigate(location.href,true);},get release(){return release;}};
 }
+
+test('Mobile and Desktop synchronize the persistent skip link on page changes and Back',async()=>{
+  for(const siteView of ['mobile','desktop']){
+    const skip={href:'https://local.cloud/a/#main-content'};
+    const h=await harness(false,{}, {siteView,views:['mobile','desktop'],synchronized:url=>{skip.href=new URL('#main-content',url).href;}});
+    await h.navigate('/b/');assert.equal(skip.href,'https://local.cloud/b/#main-content');
+    await h.navigate('/c/#section');assert.equal(skip.href,'https://local.cloud/c/#main-content');
+    await h.back();assert.equal(skip.href,'https://local.cloud/b/#main-content');
+  }
+});
+
+test('managed Mobile Back closes open search without disturbing other scroll locks',async()=>{
+  const h=await harness(false,{}, {siteView:'mobile',views:['mobile']});
+  await h.navigate('/b/');
+  await h.navigate('/c/');
+  const modal={hidden:true,querySelector:()=>null,addEventListener(){}},input={value:'',addEventListener(){}},results={addEventListener(){}};
+  h.context.document.getElementById=id=>({'search-modal':modal,'search-input':input,'search-results':results})[id];
+  h.context.document.body={style:{overflow:''}};
+  const source=readFileSync(new URL('../src/components/SearchModal.astro',import.meta.url),'utf8').match(/<script[^>]*>([\s\S]*?)<\/script>/)[1];
+  runInNewContext(source,h.context);
+  h.context.window.__lcSearch.open();assert.equal(modal.hidden,false);
+  await h.back();assert.equal(modal.hidden,true);assert.equal(h.context.document.body.style.overflow,'');
+  h.context.document.body.style.overflow='hidden';
+  await h.navigate('/d/');assert.equal(h.context.document.body.style.overflow,'hidden');
+});
+
+test('Mobile swaps content without a wide viewport, caches repeat visits and restores document reading on Back',async()=>{
+  const h=await harness(false,{}, {siteView:'mobile',wide:false,views:['desktop','mobile'],documentScroll:312,hash:'#section'});
+  assert.equal(h.context.document.scrollingElement.scrollTop,312,'late installation preserves initial native scrolling');
+  await h.navigate('/b/');
+  assert.deepEqual(h.writes,['/b/']);assert.equal(h.context.document.scrollingElement.scrollTop,0);
+  h.context.document.scrollingElement.scrollTop=777;h.windowListeners.get('scroll')();
+  await h.navigate('/c/');await h.back();
+  assert.equal(h.context.document.scrollingElement.scrollTop,777);
+  assert.equal(h.requests.filter(url=>url.endsWith('/b.json')).length,1,'Back uses the pinned cache');
+  assert.equal(h.events.filter(event=>event==='astro:page-load').length,3);
+  assert.equal(h.attrs.has('aria-busy'),false);
+});
+
+test('managed Mobile owns history restoration and positions incoming content before delayed widgets',async()=>{
+  const item={src:'/_astro/widget.js',key:'widget',integrity:'sha256-YWJj'};
+  const h=await harness(false,{'/b/':[item]}, {siteView:'mobile',views:['desktop','mobile'],documentScroll:900});let release;
+  h.context.document.head.append=tag=>{if(tag.src)release=()=>tag.onload();};
+  assert.equal(h.context.history.scrollRestoration,'manual');
+  const pending=h.navigate('/b/');while(!release)await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.context.document.scrollingElement.scrollTop,0,'incoming page starts at top before widgets complete');
+  h.context.document.scrollingElement.scrollTop=210;h.windowListeners.get('scroll')();release();await pending;
+  assert.equal(h.context.document.scrollingElement.scrollTop,210,'reading during widget loading is retained');
+  h.windowListeners.get('pagehide')();assert.equal(h.context.history.scrollRestoration,'auto');
+  h.windowListeners.get('pageshow')();assert.equal(h.context.history.scrollRestoration,'manual');
+  h.context.document.documentElement.dataset.siteView='classic';h.windowListeners.get('lc:view-change')();
+  assert.equal(h.context.history.scrollRestoration,'auto');
+});
+
+test('Mobile Back ignores layout clamping until async mounting has restored the intended reading position',async()=>{
+  let release;
+  const h=await harness(false,{}, {siteView:'mobile',views:['mobile'],mounted:()=>new Promise(resolve=>{release=resolve;})});
+  h.context.history.state={lcEntry:'prior:B',lcScroll:900};h.setURL('/b/');
+  const pending=h.navigate('/b/',true);while(!release)await new Promise(resolve=>setImmediate(resolve));
+  h.context.document.scrollingElement.scrollTop=400;h.windowListeners.get('scroll')();
+  release();await pending;assert.equal(h.context.document.scrollingElement.scrollTop,900);
+});
+
+test('Mobile background warming waits for load, stops at three routes and skips data-saving connections',async()=>{
+  const links=['b','c','d','e'].map(path=>({href:'/'+path+'/',hasAttribute:()=>false,closest(){return this;}}));
+  for(const connection of [{},{saveData:true},{effectiveType:'2g'}]){
+    const h=await harness(false,{}, {siteView:'mobile',views:['mobile'],context:{navigator:{connection}}});
+    h.pane.querySelectorAll=()=>links;
+    assert.deepEqual(h.requests,[],'initial render has no speculative requests');
+    h.windowListeners.get('load')();
+    for(const timeout of [...h.timers.values()])timeout();
+    await new Promise(resolve=>setImmediate(resolve));
+    const routes=h.requests.filter(url=>!url.includes('/desktop-manifest.'));
+    assert.equal(routes.length,connection.saveData||connection.effectiveType==='2g'?0:3);
+  }
+});
+
+test('switching between managed Mobile and Desktop cancels pending work rather than applying stale content',async()=>{
+  const h=await harness(true,{}, {siteView:'mobile',wide:false,views:['desktop','mobile']});
+  const pending=h.navigate('/b/');while(!h.release)await new Promise(resolve=>setImmediate(resolve));
+  h.context.document.documentElement.dataset.siteView='desktop';h.windowListeners.get('lc:view-change')();
+  h.context.matchMedia=()=>({matches:true});h.release();
+  assert.equal(await pending,false);assert.deepEqual(h.writes,[]);assert.equal(h.attrs.has('aria-busy'),false);
+});
+
+test('Mobile touch warming respects reduced data and reuses the tapped route',async()=>{
+  const touch=(h)=>h.documentListeners.get('pointerdown')({target:{closest:()=>({href:'/b/',hasAttribute:()=>false})}});
+  const reduced=await harness(false,{}, {siteView:'mobile',views:['mobile'],context:{navigator:{connection:{saveData:true}}}});
+  touch(reduced);await new Promise(resolve=>setImmediate(resolve));assert.deepEqual(reduced.requests,[]);
+  const h=await harness(false,{}, {siteView:'mobile',views:['mobile']});
+  touch(h);await new Promise(resolve=>setImmediate(resolve));await h.navigate('/b/');
+  assert.equal(h.requests.filter(url=>url.endsWith('/b.json')).length,1);
+});
 
 test('rapid scrolling coalesces history writes and navigation flushes the final reading position',async()=>{
   const h=await harness();

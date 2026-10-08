@@ -12,6 +12,7 @@ const contents = [
   { id: 'why-local', label: 'Why run locally' },
   { id: 'component-stack', label: 'Component stack' },
   { id: 'single-container', label: 'Single-container jobs' },
+  { id: 'python-packages', label: 'Install Python packages' },
   { id: 'cluster', label: 'Docker Compose cluster' },
   { id: 'storage', label: 'Storage integration' },
   { id: 'ci', label: 'CI automation' },
@@ -51,6 +52,12 @@ docker run -it --rm agentcloud/dataproc:3.0.0-debian13 hive -e "SHOW DATABASES;"
 
 # Drop into a raw bash prompt with all paths and Java environment configured
 docker run -it --rm --entrypoint /bin/bash agentcloud/dataproc:3.0.0-debian13`;
+
+const installPackagesCommand = String.raw`docker run -it --rm \
+  -e PYTHONPATH=/localcloud/tmp/python \
+  --entrypoint /bin/sh \
+  agentcloud/dataproc:3.0.0-debian13 \
+  -c 'python3 -m pip install --target /localcloud/tmp/python google-cloud-dataproc==5.31.0 && exec localcloud-runtime pyspark'`;
 
 const clusterCommands = `# 1. Start cluster in background
 docker-compose up -d
@@ -387,6 +394,30 @@ const structuredData = [
             <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{hiveCommand}</code></pre>
           </div>
         </div>
+      </section>
+
+      <section class="reveal">
+        <span class="site-kicker">Python dependencies</span>
+        <h2 class="mt-3" id="python-packages">Install Python packages with pip</h2>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          Add packages your PySpark code needs before launching the interactive shell. This example installs <code>google-cloud-dataproc</code> and then starts PySpark in the same container:
+        </p>
+        <div class="site-panel mt-6 p-5">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-[var(--text)]">Install a package and launch PySpark</span>
+            <CopyButton text={installPackagesCommand} analyticsLabel="copy-dataproc-python-packages" />
+          </div>
+          <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>{installPackagesCommand}</code></pre>
+        </div>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          The <a href="https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-t" target="_blank" rel="noopener noreferrer"><code>--target</code> option</a> installs packages into <code>/localcloud/tmp/python</code>, a directory writable by the image's non-root user. <code>PYTHONPATH</code> makes those packages available to Python without changing the image's system packages.
+        </p>
+        <p class="mt-4 leading-8 text-[var(--text-2)]">
+          Replace <code>google-cloud-dataproc==5.31.0</code> with the package you need, or add more package names to the same pip command. For <code>from google.cloud import storage</code>, install <code>google-cloud-storage</code>.
+        </p>
+        <p class="mt-4 text-sm text-[var(--text-2)]">
+          Installing from PyPI requires internet access. Packages installed this way are temporary: <code>--rm</code> removes the container and its installed packages when you exit, so rerun the installation for each new container.
+        </p>
       </section>
 
       {/* Step 2: Multi-Node Cluster */}

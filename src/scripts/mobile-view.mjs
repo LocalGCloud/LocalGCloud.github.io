@@ -1,14 +1,18 @@
 // Mobile presentation loads only when selected; URL helpers stay shared.
-export function initMobile({ initViewLinks, desktopSection }) {
+export function initMobile({ initViewLinks, desktopSection, historyTraversal }) {
   initViewLinks(new URL(location.href).searchParams.get('view'));
   let target;
   const fragment = new URL(location.href).hash.slice(1);
+  const traversal = historyTraversal ?? (typeof performance !== 'undefined' && ['back_forward', 'reload'].includes(performance.getEntriesByType('navigation')[0]?.type));
   if (fragment) { try { target = document.getElementById(decodeURIComponent(fragment)); } catch {} }
   for (const context of document.querySelectorAll('.mobile-service-context')) {
     context.open = context.dataset.mobileOpen === 'true' || !!target && context.contains(target);
+    if (traversal) { try {
+      const saved = sessionStorage.getItem('lc-mobile-overview:' + location.pathname);
+      if (saved !== null) context.open = saved === 'true';
+    } catch {} }
     context.dataset.mobileReady = 'true';
   }
-  const traversal = typeof performance !== 'undefined' && ['back_forward', 'reload'].includes(performance.getEntriesByType('navigation')[0]?.type);
   for (const strip of document.querySelectorAll('.mobile-service-strip')) {
     if (strip.dataset.mobileReady) continue;
     strip.dataset.mobileReady = 'true';
@@ -31,8 +35,15 @@ export function initMobile({ initViewLinks, desktopSection }) {
 }
 
 // Native Back may restore document scroll without restoring a nested horizontal scroller.
-if (typeof window !== 'undefined') window.addEventListener('pagehide', () => {
+const saveStrip = event => {
   if (document.documentElement.dataset.siteView !== 'mobile') return;
   const strip = document.querySelector('.mobile-service-strip');
-  if (strip) { try { sessionStorage.setItem('lc-mobile-strip:' + location.pathname, String(strip.scrollLeft)); } catch {} }
-});
+  const path = event?.detail?.path || location.pathname;
+  if (strip) { try { sessionStorage.setItem('lc-mobile-strip:' + path, String(strip.scrollLeft)); } catch {} }
+  const overview = document.querySelector('.mobile-service-context');
+  if (overview) { try { sessionStorage.setItem('lc-mobile-overview:' + path, String(overview.open)); } catch {} }
+};
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', saveStrip);
+  document.addEventListener('lc:before-navigation', saveStrip);
+}

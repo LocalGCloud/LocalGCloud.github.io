@@ -585,7 +585,7 @@ if (reviewAgeDays > 120) console.warn(`::warning::The alternatives comparison wa
 if (!llms.includes('\n## How LocalCloud compares\n') || !comparisonSummary.every((line) => llms.includes(line))) errors.push('llms.txt must include the "How LocalCloud compares" section from src/data/alternatives.ts');
 
 // Homepage first screen: a search-sized title and description, an H1 that names the
-// audience, a definition, a real "Start free" link to the install section of the docs, the
+// audience, a definition, a real "Quick Start" link to the install section of the docs, the
 // install command, and the trust strip with its evidence links and verification commands.
 const homepage = htmlPages.get('index.html') ?? '';
 const homepageMain = homepage.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? '';
@@ -599,18 +599,19 @@ const homepageDefinition = visibleText(homepageMain.match(/<\/h1>\s*<p\b[^>]*>([
 if (!homepageDefinition.startsWith(`LocalCloud is a local Google Cloud emulator: one Docker container that serves ${availableServiceCount} Google Cloud services on localhost`)) {
   errors.push(`the paragraph under the homepage H1 must define LocalCloud with the service count: "${homepageDefinition.slice(0, 120)}"`);
 }
-const startFree = [...homepageMain.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(([, , text]) => /Start free/.test(visibleText(text)));
-if (!startFree) errors.push('homepage needs an <a> whose text contains "Start free"');
+const quickStartLink = [...homepageMain.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(([, , text]) => /Quick Start/.test(visibleText(text)));
+if (!quickStartLink) errors.push('homepage needs an <a> whose text contains "Quick Start"');
 else {
-  const href = decodeEntities(startFree[1].match(/\bhref="([^"]+)"/)?.[1] ?? '');
+  const href = decodeEntities(quickStartLink[1].match(/\bhref="([^"]+)"/)?.[1] ?? '');
   const target = new URL(href, productFacts.siteUrl);
   const targetFile = `${target.pathname.replace(/^\//, '')}${target.pathname.endsWith('/') ? 'index.html' : ''}`;
-  if (target.origin !== siteOrigin || !htmlPages.has(targetFile)) errors.push(`homepage "Start free" link ${href} must resolve to a built page`);
-  else if (target.hash !== '#install-the-cli' || !htmlPages.get(targetFile).includes('id="install-the-cli"')) errors.push(`homepage "Start free" link ${href} must open the docs section with id="install-the-cli"`);
+  if (target.origin !== siteOrigin || !htmlPages.has(targetFile)) errors.push(`homepage "Quick Start" link ${href} must resolve to a built page`);
+  else if (target.hash !== '#install-the-cli' || !htmlPages.get(targetFile).includes('id="install-the-cli"')) errors.push(`homepage "Quick Start" link ${href} must open the docs section with id="install-the-cli"`);
 }
 const homepageHero = homepageMain.match(/<section\b[^>]*class="field-hero"[\s\S]*?<\/section>/)?.[0] ?? '';
-const installCode = new RegExp(`<code\\b[^>]*>${productFacts.installScriptCommand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</code>`);
-if (!installCode.test(homepageHero) || !homepageHero.includes('aria-label="Copy install command"')) errors.push('the homepage hero must show the install command with a "Copy install command" button');
+const installCode = new RegExp(`<code\\b[^>]*>${productFacts.homebrewInstallCommand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</code>`);
+if (!installCode.test(homepageHero) || !homepageHero.includes(`data-copy="${productFacts.homebrewInstallCommand}"`) || !homepageHero.includes('aria-label="Copy install command"')) errors.push('the homepage hero must show and copy the Homebrew install command by default');
+if (!homepageHero.includes(`data-install-curl="${productFacts.installScriptCommand}"`) || !homepageHero.includes('data-install-toggle')) errors.push('the homepage hero must offer a toggle to the curl install command');
 const trustStrip = homepageMain.match(/<section\b[^>]*class="field-trust"[\s\S]*?<\/section>/)?.[0] ?? '';
 for (const href of ['/changelog/', '/security/', '/contact/', '/license/', '/docs/privacy/', '/compatibility/', productFacts.cliReleasesUrl]) {
   if (!trustStrip.includes(`href="${href}`)) errors.push(`homepage trust strip must link ${href}`);

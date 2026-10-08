@@ -1,5 +1,5 @@
-// Keep window controls and routing out of a phone visit.
-export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic }) {
+// Desktop window controls load only when the desktop presentation is selected.
+export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic, getNavigation }) {
   const root = document.querySelector('[data-desktop-shell]');
   const main = root?.querySelector('[data-desktop-main]');
   const deck = root?.querySelector('[data-desktop-history]');
@@ -154,10 +154,10 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
   });
   document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && main.hidden) show(); });
   wide.addEventListener('change', () => { ++navigationRevision; if (!wide.matches) show(); });
-  if(root.dataset.navigationScript) navigationReady=import(root.dataset.navigationScript).then(module=>module.installDesktopNavigation({
-    root,validate:href=>desktopPageURL(href,location.href,base),before:remember,
-    synchronized:syncURL,
-    mounted:(page,url)=>{
+  document.addEventListener('astro:before-swap',()=>{if(document.documentElement.dataset.siteView==='desktop')remember();});
+  document.addEventListener('lc:page-synchronized',event=>syncURL(event.detail));
+  document.addEventListener('lc:page-mounted',event=>{
+    const {page,url}=event.detail;
       pageURL=url;title=page.label;root.dataset.pageLabel=title;
       main.querySelector('[data-window-titlebar]>span').textContent='local.cloud — '+title;
       root.querySelector('[data-desktop-current]').textContent=title;
@@ -168,11 +168,12 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
       let md=root.querySelector('.desktop-markdown');
       if(page.markdown&&!md){md=document.createElement('a');md.className='desktop-markdown';md.textContent='.md';md.target='_blank';md.rel='noopener noreferrer';md.setAttribute('aria-label','Read this page as Markdown');main.querySelector('[data-window-titlebar]').insertBefore(md,root.querySelector('.desktop-open-tab'));}
       if(md){md.hidden=!page.markdown;if(page.markdown)md.href=page.markdown;}
-      presentContent();renderHistory();syncURL(url);
-      main.querySelectorAll('.reveal').forEach(element=>element.classList.add('visible'));
+      if(document.documentElement.dataset.siteView==='desktop')presentContent();
+      renderHistory();syncURL(url);
       root.querySelectorAll('.desktop-menu[open]').forEach(menu=>{menu.open=false;});
-    }
-  })).catch(error=>{console.warn('Desktop content navigation unavailable',error);return null;});
+  });
+  if(getNavigation)navigationReady=getNavigation();
+
   // Bind controls before the optional presentation finishes downloading.
   if (await loaded) document.documentElement.classList.add('desktop-ready');
   else {

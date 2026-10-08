@@ -9,9 +9,11 @@ export function safeDesktopAsset(href, origin, base = '/') {
 
 const sha = async (text) => [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)))].map(byte => byte.toString(16).padStart(2,'0')).join('');
 
-export async function installDesktopNavigation({root, validate, before, mounted, synchronized = () => {}}) {
+export async function installDesktopNavigation({root, validate, before, mounted, synchronized = () => {}, views = ['desktop']}) {
   const pane = root.querySelector('[data-desktop-content]'), base = root.dataset.base || '/';
-  const active=()=>document.documentElement.dataset.siteView==='desktop'&&matchMedia('(min-width:64rem)').matches;
+  const mobile=()=>document.documentElement.dataset.siteView==='mobile';
+  const active=()=>views.includes(document.documentElement.dataset.siteView)&&(mobile()||matchMedia('(min-width:64rem)').matches);
+  const scrolling=()=>mobile()?document.scrollingElement:pane;
   const originalStyle = await sha([...document.querySelectorAll('style')].map(el => el.textContent).join('\n'));
   const ran = new Set(await Promise.all([...document.scripts].map(async script => script.src ? 'url:' + new URL(script.src).pathname : 'inline:' + await sha(script.textContent))));
   const cache = new Map();
@@ -104,14 +106,20 @@ export async function installDesktopNavigation({root, validate, before, mounted,
       const section=target?.closest?.('.field-home__shell > :not(.field-hero)');
       section?.setAttribute('data-desktop-fragment','');
       section?.dispatchEvent(new Event('lc:fragment-show',{bubbles:true}));
-      if(target&&!traversal){target.scrollIntoView();focus(target);}
+      if(target&&!traversal){for(let parent=target.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;target.scrollIntoView();focus(target);}
     } catch {} }
-    if(traversal||!url.hash)pane.scrollTop=scroll||0;
+    if(traversal||!url.hash)scrolling().scrollTop=scroll||0;
   };
   const positions=new Map(),session=crypto.randomUUID();let entry=0,renderedEntry=session+':0';
+  let mode=document.documentElement.dataset.siteView;
+  const restoreMode=()=>{history.scrollRestoration=mobile()&&active()?'manual':'auto';};
+  restoreMode();
+  window.addEventListener('pageshow',restoreMode);
   window.addEventListener('lc:view-change',()=>{
-    if(active())return;
-    ++sequence;changing=false;pane.removeAttribute('aria-busy');
+    restoreMode();
+    if(mode===document.documentElement.dataset.siteView&&active())return;
+    mode=document.documentElement.dataset.siteView;
+    ++sequence;changing=false;swapping=false;pane.removeAttribute('aria-busy');
     const current=new URL(location.href);
     // A pending Back already changed the URL; use its real document when leaving Desktop.
     if(current.pathname!==rendered.pathname||current.search!==rendered.search)location.reload();
@@ -119,22 +127,26 @@ export async function installDesktopNavigation({root, validate, before, mounted,
   const saveScroll=()=>{
     clearTimeout(scrollTimer);scrollTimer=undefined;
     if(swapping||!active())return;
-    positions.set(renderedEntry,pane.scrollTop);
+    positions.set(renderedEntry,scrolling().scrollTop);
     if(positions.size>50)positions.delete(positions.keys().next().value);
-    if(rendered.pathname===location.pathname&&rendered.search===location.search)history.replaceState({...history.state,lcDesktop:true,lcEntry:renderedEntry,lcScroll:pane.scrollTop},'',location.href);
+    if(rendered.pathname===location.pathname&&rendered.search===location.search)history.replaceState({...history.state,lcDesktop:true,lcEntry:renderedEntry,lcScroll:scrolling().scrollTop},'',location.href);
   };
-  saveScroll();if(rendered.hash&&active())scrollToContent(rendered);
-  pane.addEventListener('scroll',()=>{
-    if(swapping)return;
-    positions.set(renderedEntry,pane.scrollTop);if(positions.size>50)positions.delete(positions.keys().next().value);
+  saveScroll();if(rendered.hash&&active()&&!mobile())scrollToContent(rendered);
+  const scrolled=()=>{
+    if(swapping||!active())return;
+    positions.set(renderedEntry,scrolling().scrollTop);if(positions.size>50)positions.delete(positions.keys().next().value);
     if(!scrollTimer)scrollTimer=setTimeout(saveScroll,500);
-  },{passive:true});
-  window.addEventListener('pagehide',saveScroll);
+  };
+  pane.addEventListener('scroll',scrolled,{passive:true});
+  window.addEventListener('scroll',()=>{if(mobile())scrolled();},{passive:true});
+  window.addEventListener('pagehide',()=>{saveScroll();history.scrollRestoration='auto';});
   const navigate = async (href, traversal = false) => {
     if (!active()) return false;
     const target = validate(href);
     if (!target) return false;
+    window.__lcSearch?.close();
     if(!root.dataset.desktopManifest){location.assign(target);return false;}
+    if(mobile())document.dispatchEvent(new CustomEvent('lc:before-navigation',{detail:{path:rendered.pathname}}));
     if(!traversal)saveScroll();
     const url = new URL(target), version = ++sequence, savedScroll = traversal ? positions.get(history.state?.lcEntry) ?? history.state?.lcScroll : undefined;
     if (url.pathname===rendered.pathname && url.search===rendered.search) {
@@ -160,19 +172,25 @@ export async function installDesktopNavigation({root, validate, before, mounted,
       mountedVersion=++contentVersion;
       if(!traversal)history.pushState({lcDesktop:true,lcEntry:session+':'+ ++entry,lcScroll:0},'',url);
       renderedEntry=history.state?.lcEntry;
-      rendered = url;swapping=false;
+      rendered = url;
+      if(mobile()&&!traversal&&!url.hash)scrolling().scrollTop=0;
+      if(!mobile())swapping=false;
       if(activeStyle!==nextStyle)activeStyle?.remove();activeStyle=nextStyle;
       metadata(page);
-      mounted(page,url.href);
+      synchronized(url.href);
+      await mounted(page,url.href,traversal);
+      if(mountedVersion!==contentVersion)return false;
+      if(mobile()&&version===sequence&&(traversal||url.hash))scrollToContent(url,savedScroll,traversal);
+      swapping=false;
       for(const item of page.scripts){if(mountedVersion!==contentVersion)return false;await script(item);}
       if(mountedVersion!==contentVersion)return false;
       document.dispatchEvent(new Event('astro:page-load'));
-      if(version===sequence&&active()){scrollToContent(url,positions.get(renderedEntry)??savedScroll,traversal);if(!url.hash&&!traversal)focus(pane.querySelector?.('main h1, main'));}
+      if(version===sequence&&active()){if(!mobile()||traversal||!url.hash)scrollToContent(url,positions.get(renderedEntry)??savedScroll,traversal);if(!url.hash&&!traversal)focus(pane.querySelector?.('main h1, main'));}
       return true;
     } catch(error) {
       if(active()&&(version===sequence||mountedVersion===contentVersion&&!changing)){if(nextStyle!==activeStyle)nextStyle?.remove();location.assign(mountedVersion===contentVersion?rendered:url);}
       return false;
-    } finally { if(version===sequence){changing=false;pane.removeAttribute('aria-busy');} }
+    } finally {if(mountedVersion===contentVersion)swapping=false;if(version===sequence){changing=false;pane.removeAttribute('aria-busy');} }
   };
   window.addEventListener('popstate',()=>{
     if (!active()) { if (history.state?.lcDesktop) location.reload(); return; }
@@ -188,5 +206,16 @@ export async function installDesktopNavigation({root, validate, before, mounted,
     warmed.add(path);content(url).then(warmAssets).catch(()=>{});
   };
   document.addEventListener('pointerover',warm,{passive:true});document.addEventListener('focusin',warm);
+  document.addEventListener('pointerdown',event=>{if(mobile())warm(event);},{passive:true});
+  const warmMobile=()=>{
+    if(!mobile())return;
+    for(const link of pane.querySelectorAll?.('.mobile-service-strip a')||[])warm({target:link});
+  };
+  const idleWarm=()=>{
+    if('requestIdleCallback' in window)window.requestIdleCallback(warmMobile,{timeout:2000});
+    else setTimeout(warmMobile,0);
+  };
+  if(document.readyState==='complete')idleWarm();
+  else window.addEventListener('load',idleWarm,{once:true});
   return navigate;
 }

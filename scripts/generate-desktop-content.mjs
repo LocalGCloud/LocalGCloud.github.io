@@ -28,6 +28,7 @@ for (const file of htmlFiles) {
   const content = html.slice(panelStart,end.index).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'');
   const scripts = [];
   for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    if (match.index < html.indexOf('</head>') && /\bdata-critical-bootstrap\b/.test(match[1])) continue;
     const type = attribute(match[1],'type') || '';
     if (!['','module','text/javascript','application/javascript'].includes(type)) continue;
     let src = attribute(match[1],'src'), sri = attribute(match[1],'integrity'), key;

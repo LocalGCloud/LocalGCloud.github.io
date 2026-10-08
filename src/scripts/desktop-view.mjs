@@ -105,39 +105,93 @@ export async function loadViewModule(src) {
   } finally { clearTimeout(timer); }
 }
 
-export async function initMobile() {
-  for (const template of document.querySelectorAll('[data-mobile-headline]')) {
-    if (!template.dataset.headlineReady) {
-      template.closest('.field-hero').querySelector('h1').append(template.content.cloneNode(true));
-      template.dataset.headlineReady = 'true';
-    }
-  }
-  for (const template of document.querySelectorAll('[data-mobile-hero]')) {
-    if (!template.dataset.heroReady) {
-      template.after(template.content.cloneNode(true));
-      template.dataset.heroReady = 'true';
-    }
-  }
+export async function initMobile(historyTraversal) {
   const root = document.querySelector('[data-desktop-shell]');
   const { initMobile: initialize } = await loadViewModule(root.dataset.mobileScript);
-  if (document.documentElement.dataset.siteView === 'mobile') initialize({ initViewLinks, desktopSection });
+  if (document.documentElement.dataset.siteView === 'mobile') initialize({ initViewLinks, desktopSection, historyTraversal });
+}
+
+// Both presentations use the same pinned content cache and history owner.
+function contentPageURL(href) {
+  const base = document.querySelector('[data-desktop-shell]').dataset.base || '/';
+  const page = pageWindowURL(href, location.href, base);
+  if (!page) return null;
+  const url = new URL(page);
+  if (new URL(location.href).searchParams.get('view') === 'mobile') url.searchParams.set('view', 'mobile');
+  return url.href;
+}
+
+export function getNavigation() {
+  const root = document.querySelector('[data-desktop-shell]');
+  if (!root.navigationReady) root.navigationReady = loadViewModule(root.dataset.navigationScript).then(module => module.installDesktopNavigation({
+    root, views: ['desktop', 'mobile'], before() {},
+    validate: contentPageURL,
+    synchronized: url => {
+      initViewLinks(new URL(url).searchParams.get('view'));
+      const skip = document.querySelector('.skip-link');
+      if (skip) skip.href = new URL('#main-content', url).href;
+      document.dispatchEvent(new CustomEvent('lc:page-synchronized', { detail: url }));
+    },
+    mounted: async (page, url, traversal) => {
+      root.dataset.pageLabel = page.label;
+      root.currentPage = page;
+      document.dispatchEvent(new CustomEvent('lc:page-mounted', { detail: { page, url } }));
+      root.querySelectorAll('.reveal').forEach(element => element.classList.add('visible'));
+      if (document.documentElement.dataset.siteView === 'mobile') await initMobile(traversal);
+    },
+  })).catch(error => { console.warn('Content navigation unavailable', error); return null; });
+  return root.navigationReady;
 }
 
 export async function initDesktop() {
   const root = document.querySelector('[data-desktop-shell]');
   const { initDesktop: initialize } = await loadViewModule(root.dataset.controllerScript);
-  if (document.documentElement.dataset.siteView === 'desktop') return initialize({ pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic });
+  if (document.documentElement.dataset.siteView === 'desktop') {
+    await initialize({ pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic, getNavigation });
+    if (root.currentPage && document.documentElement.dataset.siteView === 'desktop') document.dispatchEvent(new CustomEvent('lc:page-mounted', { detail: { page: root.currentPage, url: location.href } }));
+  }
 }
 
 if (typeof document !== 'undefined') {
   document.addEventListener('click', switchView);
+  let clickVersion = 0;
+  window.addEventListener('lc:view-change', () => {
+    ++clickVersion;
+    document.querySelector('[data-desktop-content]')?.removeAttribute('aria-busy');
+  });
+  const goMobile = href => {
+    const root = document.querySelector('[data-desktop-shell]');
+    const url = contentPageURL(href);
+    if (!url) return false;
+    const version = ++clickVersion;
+    root.querySelector('[data-desktop-content]').setAttribute('aria-busy', 'true');
+    getNavigation().then(navigate => {
+      if (version !== clickVersion || document.documentElement.dataset.siteView !== 'mobile') return;
+      if (navigate) return navigate(url);
+      location.assign(url);
+    });
+    return true;
+  };
+  document.addEventListener('click', event => {
+    if (document.documentElement.dataset.siteView !== 'mobile' || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a');
+    if (!link || link.hasAttribute('data-view-choice') || link.hasAttribute('download') || link.target && link.target !== '_self') return;
+    if (goMobile(link.href)) event.preventDefault();
+  }, { capture: true });
+  document.addEventListener('lc:navigate', event => {
+    if (document.documentElement.dataset.siteView === 'mobile' && goMobile(event.detail?.href)) event.preventDefault();
+  });
   window.addEventListener('hashchange', () => initViewLinks(new URL(location.href).searchParams.get('view')));
   const start = () => {
     if (document.documentElement.dataset.siteView === 'classic') return initClassic();
     if (document.documentElement.dataset.siteView === 'mobile') {
       const main = document.querySelector('[data-desktop-main]');
       if (main) main.hidden = false;
-      return initMobile().catch(error => {
+      document.querySelectorAll('script[type="speculationrules"]').forEach(script => script.remove());
+      return initMobile().then(() => {
+        if ('requestIdleCallback' in window) window.requestIdleCallback(getNavigation, { timeout: 1200 });
+        else setTimeout(getNavigation, 0);
+      }).catch(error => {
         if (document.documentElement.dataset.siteView === 'mobile') {
           document.documentElement.classList.remove('mobile-view');
           document.documentElement.dataset.siteView = 'classic';

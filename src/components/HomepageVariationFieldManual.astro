@@ -131,31 +131,33 @@ for (const column of atlasColumns) {
         </h1>
         <p class="field-intro" data-classic-copy>{definition}</p>
         <p class="mobile-intro" data-mobile-only data-pagefind-ignore>Build, test and experiment with Google Cloud on your computer—for you and your AI agents.</p>
-        <div class="mobile-hero-actions" data-mobile-only data-pagefind-ignore><a class="site-button site-button--primary" href={base + 'services/'} data-analytics-label="hero-explore-services">Explore services <span aria-hidden="true">→</span></a></div>
-        <p class="mobile-audience" data-mobile-only data-pagefind-ignore>Development · CI · AI agents</p>
-        <template data-mobile-hero><figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="eager" fetchpriority="high" decoding="async" /><figcaption class="hero-benefits">{heroBenefits.map((benefit) => <span>{benefit}</span>)}</figcaption></figure></template>
+        <figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="lazy" fetchpriority="high" decoding="async" /><figcaption class="hero-benefits">{heroBenefits.map((benefit) => <span>{benefit}</span>)}</figcaption></figure>
         <template data-desktop-headline data-desktop-copy data-pagefind-ignore>
           <span data-desktop-copy data-pagefind-ignore>Give Your Agents <span class="field-hero__desktop-accent">a Local Cloud.</span></span>
         </template>
-        <template data-mobile-headline><span data-mobile-only data-pagefind-ignore>Give Your Agents <span class="field-hero__mobile-accent">a Local Cloud.</span></span></template>
         <p class="field-intro" data-desktop-copy data-pagefind-ignore>Build, test and experiment with Google Cloud on your computer—for you and your AI agents.</p>
 
         <div class="field-actions">
-          <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-classic-copy data-analytics-label="hero-start-free"><span data-classic-copy>Start free — install the CLI</span></a>
+          <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-classic-copy data-analytics-label="hero-start-free"><span data-classic-copy>Quick Start — install the CLI</span></a>
           <a href={`${base}compare/`} class="site-button site-button--secondary" data-classic-copy data-analytics-label="hero-compare">Compare with LocalStack and Google emulators</a>
         </div>
 
         <div class="desktop-install-heading" data-desktop-copy data-pagefind-ignore>
-          <span>Start free</span>
+          <span>Quick Start</span>
           <a href={base + 'services/'} data-analytics-label="hero-explore-services">Explore the services →</a>
         </div>
-        <div class="field-install">
-          <pre tabindex="0" aria-label="Install the LocalCloud CLI"><code>{productFacts.installScriptCommand}</code></pre>
+        <div class="field-install" data-install-homebrew={productFacts.homebrewInstallCommand} data-install-curl={productFacts.installScriptCommand}>
+          <span class="field-install__prompt" aria-hidden="true">$</span>
+          <pre tabindex="0" aria-label="Install the LocalCloud CLI" aria-live="polite"><code>{productFacts.homebrewInstallCommand}</code></pre>
+          <button type="button" class="field-install__toggle" data-install-toggle aria-label="Use curl install command" title="Use curl install command" hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4" /></svg>
+            <span data-install-toggle-label>curl</span>
+          </button>
           <CopyButton
-            text={productFacts.installScriptCommand}
+            text={productFacts.homebrewInstallCommand}
             class="field-install__copy"
             label="Copy install command"
-            analyticsLabel="hero-install-script"
+            analyticsLabel="hero-install-homebrew"
           />
         </div>
 
@@ -539,13 +541,22 @@ for (const column of atlasColumns) {
 
   .field-install {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
     align-items: center;
+    gap: 0.25rem;
     max-width: 34rem;
     margin-top: 1rem;
-    border: 1px solid var(--line);
+    padding: 0.25rem;
+    border: 1px solid var(--brand-sky);
     border-radius: 0.75rem;
-    background: var(--surface-2);
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .field-install__prompt {
+    padding-left: 0.6rem;
+    color: var(--accent-strong);
+    font-family: var(--font-mono);
   }
 
   .field-install pre {
@@ -559,7 +570,7 @@ for (const column of atlasColumns) {
 
   .field-install pre > code {
     display: block;
-    padding: 0.7rem 0.85rem;
+    padding: 0.7rem 0.4rem;
     color: var(--text);
     font-size: var(--fs-small);
     line-height: 1.6;
@@ -567,12 +578,42 @@ for (const column of atlasColumns) {
     overflow-wrap: anywhere;
   }
 
+  .field-install__toggle,
   .field-install :global(.field-install__copy) {
-    margin: 0.25rem;
-    border-color: var(--line);
-    border-radius: 0.75rem;
-    background: var(--surface);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--brand-sky);
+    border-radius: 0.5rem;
+    background: var(--accent-soft);
     color: var(--accent-strong);
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .field-install__toggle[hidden] {
+    display: none;
+  }
+
+  .field-install :global(.field-install__copy) {
+    min-width: 6.5rem;
+  }
+
+  .field-install__toggle:hover,
+  .field-install :global(.field-install__copy:hover) {
+    background: var(--brand-sky);
+    color: var(--text);
+  }
+
+  .field-install__toggle:focus-visible,
+  .field-install :global(.field-install__copy:focus-visible) {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: 2px;
   }
 
   .field-proof {
