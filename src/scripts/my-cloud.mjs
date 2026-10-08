@@ -1,6 +1,13 @@
 export const myCloudURL = 'http://localhost:5380/';
 
+async function localAccessPermission() {
+  for (const name of ['loopback-network', 'local-network-access']) {
+    try { return (await navigator.permissions.query({ name })).state; } catch {}
+  }
+}
+
 export async function probeMyCloud(signal) {
+  if (await localAccessPermission() === 'denied') return null;
   try {
     // shortcut: no-cors hides HTTP status; check response.ok when the console exposes CORS.
     const response = await fetch(myCloudURL, {
@@ -8,7 +15,10 @@ export async function probeMyCloud(signal) {
       referrerPolicy: 'no-referrer', targetAddressSpace: 'loopback', signal,
     });
     return response.type === 'opaque' || response.ok;
-  } catch { return false; }
+  } catch {
+    // Browser restrictions and network failures both reject fetch; only granted access proves a failed check.
+    return await localAccessPermission() === 'granted' ? false : null;
+  }
 }
 
 export function initMyCloud(bindCopyButtons) {
@@ -53,11 +63,13 @@ export function initMyCloud(bindCopyButtons) {
     clearTimeout(timer);
     if (pending !== controller) return;
     pending = undefined;
-    status.textContent = responding
+    status.textContent = responding === null
+      ? 'Your browser couldn’t check localhost. Open the console directly, or allow local network access for local.cloud and check again.'
+      : responding
       ? 'Your cloud is responding at localhost:5380. You can open it now.'
       : 'Looks like your local LocalCloud container isn’t running, or your browser couldn’t reach it.';
-    setup.hidden = responding;
-    openLink.classList.toggle('is-running', responding);
+    setup.hidden = responding !== false;
+    openLink.classList.toggle('is-running', responding === true);
     openLink.textContent = responding ? '✓ Working now · Open console ↗' : 'Open console ↗';
     retry.disabled = false;
     retry.textContent = 'Check again';
@@ -70,7 +82,7 @@ export function initMyCloud(bindCopyButtons) {
   return async (event) => {
     const tab = event?.detail?.tab;
     const responding = await check();
-    if (responding && tab && !tab.closed) { tab.location.replace(myCloudURL); return; }
+    if (responding !== false && responding !== undefined && tab && !tab.closed) { tab.location.replace(myCloudURL); return; }
     tab?.close();
     if (responding === undefined) return;
     bindCopyButtons(dialog);

@@ -11,7 +11,18 @@ import { initCopyButtons } from '../src/scripts/copy-buttons.mjs';
 const contract = JSON.parse(readFileSync(new URL('../src/data/docs-contract.snapshot.json', import.meta.url), 'utf8'));
 const settle = () => new Promise(setImmediate);
 
-function dialogHarness(t) {
+function permissionHarness(t, state) {
+  const previous = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  const permission = { state };
+  Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { permissions: {
+    async query() { if (!permission.state) throw new TypeError('Unsupported permission'); return permission; },
+  } } });
+  t.after(() => { if (previous) Object.defineProperty(globalThis, 'navigator', previous); else delete globalThis.navigator; });
+  return permission;
+}
+
+function dialogHarness(t, permission = 'granted') {
+  permissionHarness(t, permission);
   const listeners = new Map();
   const element = (name) => ({ addEventListener(event, handler) { listeners.set(name + ':' + event, handler); } });
   const link = { ...element('link'), href: myCloudURL, dataset: { setupCommand: consoleQuickStart(contract), setupGuide: '/docs/#install-the-cli', myCloudStyles: '/my-cloud.css', myCloudScript: '/_astro/my-cloud.mjs', copyScript: '/_astro/copy-buttons.mjs' } };
@@ -47,10 +58,55 @@ test('My cloud probes the fixed console without cookies, cache, or referrer usin
 });
 
 test('network rejection, blocked access, and readable HTTP errors do not claim a running cloud', async (t) => {
+  permissionHarness(t, 'granted');
   const fetch = t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
   assert.equal(await probeMyCloud(), false);
   fetch.mock.mockImplementation(async () => ({ type: 'basic', ok: false }));
   assert.equal(await probeMyCloud(), false);
+});
+
+test('denied localhost permission skips the probe and retains direct console navigation', async (t) => {
+  const h = dialogHarness(t, 'denied');
+  const fetch = t.mock.method(globalThis, 'fetch', () => assert.fail('denied access must not be probed'));
+  let destination;
+  const tab = { location: { replace(url) { destination = url; } }, close() { assert.fail('keep the direct console tab'); } };
+  assert.equal(await probeMyCloud(), null);
+  await initMyCloud(() => assert.fail('no setup dialog'))({ detail: { tab } });
+  assert.equal(destination, myCloudURL);
+  assert.equal(h.dialog.open, false);
+  assert.equal(fetch.mock.callCount(), 0);
+});
+
+test('a first-use permission rejection is inconclusive, rather than an offline cloud', async (t) => {
+  const permission = permissionHarness(t, 'prompt');
+  t.mock.method(globalThis, 'fetch', async () => { permission.state = 'denied'; throw new TypeError('Failed to fetch'); });
+  assert.equal(await probeMyCloud(), null);
+});
+
+test('browsers without the permission API do not treat blocked probes as an offline cloud', async (t) => {
+  permissionHarness(t, undefined);
+  t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
+  assert.equal(await probeMyCloud(), null);
+});
+
+test('an older browser permission name still recognizes denied local access', async (t) => {
+  permissionHarness(t, 'denied');
+  navigator.permissions.query = async ({ name }) => {
+    if (name === 'loopback-network') throw new TypeError('Unsupported permission');
+    assert.equal(name, 'local-network-access');
+    return { state: 'denied' };
+  };
+  assert.equal(await probeMyCloud(), null);
+});
+
+test('blocked retries offer a direct console action without installation or a false green check', async (t) => {
+  const h = dialogHarness(t, 'denied');
+  await initMyCloud(() => {})({ detail: { tab: null } });
+  await h.listeners.get('retry:click')();
+  assert.equal(h.setup.hidden, true);
+  assert.match(h.status.textContent, /browser couldn’t check localhost/);
+  assert.equal(h.openLink.classList.running, false);
+  assert.equal(h.openLink.textContent, 'Open console ↗');
 });
 
 test('a responding console opens the reserved tab without showing setup', async (t) => {
@@ -119,6 +175,7 @@ test('a stalled local request times out and offers setup', async (t) => {
   }));
   const open = initMyCloud(() => {});
   open();
+  await settle();
   t.mock.timers.tick(8000);
   await settle();
   assert.equal(h.retry.disabled, false);
@@ -132,11 +189,13 @@ test('closing or canceling aborts the probe and a stale result cannot overwrite 
   t.mock.method(globalThis, 'fetch', (_, { signal }) => new Promise((resolve) => requests.push({ signal, resolve })));
   const open = initMyCloud(() => {});
   open();
+  await settle();
   h.listeners.get('dialog:cancel')();
   assert.equal(requests[0].signal.aborted, true);
   h.dialog.open = false;
   h.listeners.get('dialog:close')();
   open();
+  await settle();
   requests[1].resolve({ type: 'basic', ok: false });
   await settle();
   requests[0].resolve({ type: 'opaque' });
