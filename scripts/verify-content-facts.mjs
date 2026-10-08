@@ -594,7 +594,7 @@ const homepageDescription = decodeEntities(homepage.match(/<meta\b[^>]*name="des
 if (!homepageTitle || homepageTitle.length > 60) errors.push(`homepage title must be 1-60 characters (${homepageTitle.length}): ${homepageTitle}`);
 if (!homepageDescription || homepageDescription.length > 155) errors.push(`homepage description must be 1-155 characters (${homepageDescription.length}): ${homepageDescription}`);
 const homepageH1 = visibleText(homepageMain.match(/<h1\b[\s\S]*?<\/h1>/)?.[0] ?? '').replace(/\s+/g, ' ').trim();
-if (homepageH1 !== 'Google Cloud In-a-Box for developers, CI and AI agents.') errors.push(`homepage H1 reads "${homepageH1}"`);
+if (homepageH1 !== 'Give Your Agents a Local Cloud.') errors.push(`homepage H1 reads "${homepageH1}"`);
 const homepageDefinition = visibleText(homepageMain.match(/<\/h1>\s*<p\b[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '');
 if (!homepageDefinition.startsWith(`LocalCloud is a local Google Cloud emulator: one Docker container that serves ${availableServiceCount} Google Cloud services on localhost`)) {
   errors.push(`the paragraph under the homepage H1 must define LocalCloud with the service count: "${homepageDefinition.slice(0, 120)}"`);

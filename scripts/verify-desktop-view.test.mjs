@@ -466,6 +466,9 @@ test('history previews reject corrupt/external/raw state, exclude the current pa
 });
 
 test('deep links retain their desktop shortcut category', () => {
+  assert.equal(desktopSection('/'), 'Home');
+  assert.equal(desktopSection('/site/', '/site/'), 'Home');
+  assert.equal(desktopSection('/site/', '/'), '');
   assert.equal(desktopSection('/services/bigquery/'), 'Services');
   assert.equal(desktopSection('/compatibility/'), 'Services');
   assert.equal(desktopSection('/docs/sdk-examples/'), 'Docs');

@@ -24,6 +24,7 @@ const markdownPath = markdownTwinPath(path);
 const section = desktopSection(path, base);
 const pageLabel = path === base ? 'Home' : title.replace(/^LocalCloud\s*[|—–]\s*/, '').split(/[|—–]/)[0].replace(/^LocalCloud\s+/, '').trim();
 const left = [
+  { label: 'Home', href: base, icon: 'icons/desktop/home.svg', active: section === 'Home' },
   { label: 'Services', href: base + 'services/', icon: 'icons/gcs.svg', active: section === 'Services' },
   { label: 'AI Agents', href: base + 'local-cloud-for-ai-agents/', icon: 'icons/features/ci-pipeline.svg', active: section === 'AI Agents' },
   { label: 'Docs', href: base + 'docs/', icon: 'icons/features/real-sdks.svg', active: section === 'Docs' },
@@ -36,7 +37,7 @@ const right = [
   { label: 'Changelog', href: base + 'changelog/', icon: 'icons/features/instant-iteration.svg' },
 ];
 const desktopIcons: Record<string, string> = {
-  Services: 'folder.webp', 'AI Agents': 'ai-robot-v2.webp', Docs: 'docs-book.webp', Pricing: 'tag.webp',
+  Home: 'home.svg', Services: 'folder.webp', 'AI Agents': 'ai-robot-v2.webp', Docs: 'docs-book.webp', Pricing: 'tag.webp',
   'Console demo': 'terminal.svg', Examples: 'folder.webp', Quickstart: 'document.webp', Changelog: 'document.webp',
 };
 const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view=classic' : '');
@@ -84,7 +85,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
   <nav class="desktop-shortcuts desktop-shortcuts-left desktop-chrome" aria-label="Main desktop shortcuts" data-pagefind-ignore>
     {left.map((item) => (
       <a href={item.href} class:list={['desktop-shortcut', item.active && 'is-active']} data-desktop-shortcut data-window-label={item.label} aria-current={item.active ? 'page' : undefined}>
-        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '64px' : '56px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="56" height="56" alt="" loading="lazy" decoding="async" />
+        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '50px' : '44px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="44" height="44" alt="" loading="lazy" decoding="async" />
         <span>{item.label}</span>
       </a>
     ))}
@@ -92,7 +93,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
   <nav class="desktop-shortcuts desktop-shortcuts-right desktop-chrome" aria-label="Tools and local installation" data-pagefind-ignore>
     {right.map((item) => (
       <a href={item.href} class="desktop-shortcut" data-desktop-shortcut data-window-label={item.label}>
-        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '64px' : '56px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="56" height="56" alt="" loading="lazy" decoding="async" />
+        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '50px' : '44px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="44" height="44" alt="" loading="lazy" decoding="async" />
         <span>{item.label}</span>
       </a>
     ))}

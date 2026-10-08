@@ -68,8 +68,8 @@ export const organizationId = new URL("#org", productFacts.siteUrl).toString();
 export const productId = new URL("#localcloud", productFacts.siteUrl).toString();
 const organizationReference = { "@id": organizationId };
 const productReference = { "@id": productId };
-// The raster share card (public/brand/localcloud-social-card.png) doubles as the article image.
-export const socialCardUrl = new URL("/brand/localcloud-social-card.png", productFacts.siteUrl).toString();
+// Use a new filename when refreshing the raster share card to avoid cached previews.
+export const socialCardUrl = new URL("/brand/localcloud-social-card-agents-final.png", productFacts.siteUrl).toString();
 
 export const organizationSchema: JsonLd = {
 	"@context": "https://schema.org",

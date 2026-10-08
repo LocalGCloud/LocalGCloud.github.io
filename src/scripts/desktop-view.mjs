@@ -31,6 +31,7 @@ export function pageWindowURL(href, origin, basePath = '/') {
 }
 
 export function desktopSection(path, base = '/') {
+  if (path === base) return 'Home';
   const section = path.startsWith(base) ? path.slice(base.length).split('/')[0] : '';
   if (['services', 'compatibility', 'gcp-emulator'].includes(section)) return 'Services';
   if (['ai', 'agents', 'workflows', 'local-cloud-for-ai-agents'].includes(section)) return 'AI Agents';

@@ -46,16 +46,17 @@
  & .field-home .field-home__shell{overflow:visible}
  & .field-home .field-hero{display:block;padding:1.25rem;border:1px solid #eef1f7;border-radius:1.5rem;background:var(--surface);box-shadow:0 3px 12px #253d630d}
  & .field-home .field-hero [data-classic-copy],& .field-home .field-actions,& .field-home .field-install,& .field-home .field-signal-strip{display:none!important}
- & .field-home .field-hero h1{display:block;margin:.75rem 0 0;font-size:clamp(2.1rem,9.5vw,3.5rem);line-height:1.06;letter-spacing:-.05em;font-weight:750}
+ & .field-home .field-hero h1{display:block;margin:.75rem 0 0;font-size:clamp(1.9rem,8.5vw,3.5rem)!important;line-height:1.06!important;letter-spacing:-.05em;font-weight:750}
  & .field-hero__mobile-accent{color:var(--accent);display:block}
  & .mobile-eyebrow{font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.13em;color:var(--accent-strong);text-transform:uppercase;font-weight:700}
  & .field-home .field-hero .mobile-intro{margin:1rem 0;font-size:1rem;line-height:1.5;max-width:34rem}
  & .mobile-hero-actions .site-button{min-height:3rem;border-radius:.875rem;padding:.65rem 1rem;color:white;background:var(--accent);font-size:1rem}
  & .mobile-audience{margin-top:.75rem;font-size:.8125rem;color:var(--text-2)}
- & .mobile-hero-art{margin:1rem 0 0;overflow:hidden;border-radius:.75rem}
- & .mobile-hero-art img{display:block;width:100%;height:auto;aspect-ratio:3/1;object-fit:cover}
+ & .mobile-hero-art{position:relative;width:calc(100% + 2.5rem);margin:1rem -1.25rem 0;overflow:hidden}
+ & .mobile-hero-art img{display:block;width:100%;height:auto;aspect-ratio:2.5/1;object-fit:cover;object-position:center bottom}
+ & .mobile-hero-art .hero-benefits{position:absolute;inset:auto 0 .2rem;gap:.3rem;margin:0;font-size:.6875rem}
+ & .field-home .mobile-hero-art .hero-benefits span{padding:.1rem .3rem}
  & .mobile-personas{margin:.25rem 0 1.5rem;padding:1.25rem;background:var(--surface);border-radius:1.25rem}
- & .mobile-personas h2{font-size:1.35rem;margin-bottom:1rem}
  & .mobile-personas a{display:flex;align-items:flex-start;gap:.75rem;padding:.875rem 0;color:var(--text)}
  & .mobile-personas a+a{border-top:1px solid var(--line)}
  & .mobile-personas img{flex-shrink:0;margin-top:.1rem}

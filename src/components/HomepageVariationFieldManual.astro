@@ -29,6 +29,8 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 // The definition under the H1 mirrors the llms.txt opening sentence.
 const definition = `LocalCloud is a local Google Cloud emulator: one Docker container that serves ${availableServiceCount} Google Cloud services on localhost, so developers, CI jobs, and AI coding agents can run Google Cloud code without a GCP account, credentials, or billing.`;
 
+const heroBenefits = ['$0 cost', 'No setup', 'Fast development'];
+
 const heroSignals = [
   { value: String(availableServiceCount), label: 'Google Cloud services', note: 'each with documented compatibility limits' },
   { value: '1', label: 'Docker container', note: 'persistent data on localhost ports the CLI picks' },
@@ -124,20 +126,19 @@ for (const column of atlasColumns) {
         <p class="mobile-eyebrow" data-mobile-only data-pagefind-ignore>Google Cloud in-a-box</p>
         <p class="desktop-hero-eyebrow" data-desktop-copy data-pagefind-ignore>Google Cloud in-a-box</p>
         <h1 class="field-hero__headline">
-          <span class="field-hero__headline-main" data-classic-copy>Google Cloud</span>{' '}
-          <span class="field-hero__headline-tag" data-classic-copy>In-a-Box</span>{' '}
-          <span class="field-hero__headline-audience" data-classic-copy>for developers, CI and AI agents.</span>
+          <span class="field-hero__headline-main" data-classic-copy>Give Your Agents</span>{' '}
+          <span class="field-hero__headline-tag" data-classic-copy>a Local Cloud.</span>
         </h1>
         <p class="field-intro" data-classic-copy>{definition}</p>
-        <p class="mobile-intro" data-mobile-only data-pagefind-ignore>Build, test and give your AI agents a local Google Cloud.</p>
+        <p class="mobile-intro" data-mobile-only data-pagefind-ignore>Build, test and experiment with Google Cloud on your computer—for you and your AI agents.</p>
         <div class="mobile-hero-actions" data-mobile-only data-pagefind-ignore><a class="site-button site-button--primary" href={base + 'services/'} data-analytics-label="hero-explore-services">Explore services <span aria-hidden="true">→</span></a></div>
         <p class="mobile-audience" data-mobile-only data-pagefind-ignore>Development · CI · AI agents</p>
-        <template data-mobile-hero><figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="eager" fetchpriority="high" decoding="async" /></figure></template>
+        <template data-mobile-hero><figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="eager" fetchpriority="high" decoding="async" /><figcaption class="hero-benefits">{heroBenefits.map((benefit) => <span>{benefit}</span>)}</figcaption></figure></template>
         <template data-desktop-headline data-desktop-copy data-pagefind-ignore>
-          <span data-desktop-copy data-pagefind-ignore>Your cloud. <span class="field-hero__desktop-accent">On your computer.</span></span>
+          <span data-desktop-copy data-pagefind-ignore>Give Your Agents <span class="field-hero__desktop-accent">a Local Cloud.</span></span>
         </template>
-        <template data-mobile-headline><span data-mobile-only data-pagefind-ignore>Your cloud. <span class="field-hero__mobile-accent">On your computer.</span></span></template>
-        <p class="field-intro" data-desktop-copy data-pagefind-ignore>Build, test and give your AI agents a local Google Cloud.</p>
+        <template data-mobile-headline><span data-mobile-only data-pagefind-ignore>Give Your Agents <span class="field-hero__mobile-accent">a Local Cloud.</span></span></template>
+        <p class="field-intro" data-desktop-copy data-pagefind-ignore>Build, test and experiment with Google Cloud on your computer—for you and your AI agents.</p>
 
         <div class="field-actions">
           <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-classic-copy data-analytics-label="hero-start-free"><span data-classic-copy>Start free — install the CLI</span></a>
@@ -187,26 +188,26 @@ for (const column of atlasColumns) {
             fetchpriority="high"
             decoding="async"
         />
+        <figcaption class="hero-benefits">{heroBenefits.map((benefit) => <span>{benefit}</span>)}</figcaption>
       </figure>
       <template data-desktop-hero data-desktop-copy data-pagefind-ignore>
         <figure class="desktop-hero-art" data-desktop-copy data-pagefind-ignore>
           <img src={desktopHero.src} srcset={desktopHero.srcSet.attribute} sizes={desktopHeroOptions.sizes} width="1800" height="600" alt="A LocalCloud laptop on a desk, connected to local Google Cloud service icons, with notebooks, a mug, books and a plant." loading="eager" fetchpriority="high" decoding="async" />
+          <figcaption class="hero-benefits">{heroBenefits.map((benefit) => <span>{benefit}</span>)}</figcaption>
         </figure>
       </template>
       <div class="desktop-hero-summary" data-desktop-copy data-pagefind-ignore>
-        <h2>A cloud that feels like yours.</h2>
-        <article><img src={developerIcon} width="40" height="40" alt="" loading="lazy" decoding="async" /><div><strong>For developers</strong><p>Build and experiment with Google Cloud services locally.</p></div></article>
-        <article><img src={ciIcon} width="40" height="40" alt="" loading="lazy" decoding="async" /><div><strong>For CI</strong><p>Fast, repeatable environments in your pipelines.</p></div></article>
-        <article><img src={agentIcon} width="40" height="40" alt="" loading="lazy" decoding="async" /><div><strong>For AI agents</strong><p>Give your coding agents a local cloud to work with.</p></div></article>
+        <article><img src={developerIcon} width="48" height="48" alt="" loading="lazy" decoding="async" /><div><strong>For developers</strong><p>Build and experiment with Google Cloud services locally.</p></div></article>
+        <article><img src={ciIcon} width="48" height="48" alt="" loading="lazy" decoding="async" /><div><strong>For CI</strong><p>Fast, repeatable environments in your pipelines.</p></div></article>
+        <article><img src={agentIcon} width="48" height="48" alt="" loading="lazy" decoding="async" /><div><strong>For AI agents</strong><p>Give your coding agents a local cloud to work with.</p></div></article>
       </div>
     </section>
 
     <MobileServiceLauncher />
-    <section class="mobile-personas" data-mobile-only data-pagefind-ignore aria-labelledby="mobile-personas-title">
-      <h2 id="mobile-personas-title">A cloud that feels like yours.</h2>
-      <a href={base + 'docs/sdk-examples/'}><img src={developerIcon} width="32" height="32" alt="" loading="lazy" /><div><strong>For developers</strong><p>Build and experiment with Google Cloud services locally.</p></div></a>
-      <a href={base + 'gcp-integration-testing/'}><img src={ciIcon} width="32" height="32" alt="" loading="lazy" /><div><strong>For CI</strong><p>Fast, repeatable environments in your pipelines.</p></div></a>
-      <a href={base + 'local-cloud-for-ai-agents/'}><img src={agentIcon} width="32" height="32" alt="" loading="lazy" /><div><strong>For AI agents</strong><p>Give your coding agents a local cloud to work with.</p></div></a>
+    <section class="mobile-personas" data-mobile-only data-pagefind-ignore aria-label="For developers, CI and AI agents">
+      <a href={base + 'docs/sdk-examples/'}><img src={developerIcon} width="40" height="40" alt="" loading="lazy" /><div><strong>For developers</strong><p>Build and experiment with Google Cloud services locally.</p></div></a>
+      <a href={base + 'gcp-integration-testing/'}><img src={ciIcon} width="40" height="40" alt="" loading="lazy" /><div><strong>For CI</strong><p>Fast, repeatable environments in your pipelines.</p></div></a>
+      <a href={base + 'local-cloud-for-ai-agents/'}><img src={agentIcon} width="40" height="40" alt="" loading="lazy" /><div><strong>For AI agents</strong><p>Give your coding agents a local cloud to work with.</p></div></a>
     </section>
     <p class="mobile-computer-note" data-mobile-only data-pagefind-ignore>Ready to try it? Set up LocalCloud on your computer using the steps below.</p>
     <InstallationMethods />
@@ -498,8 +499,7 @@ for (const column of atlasColumns) {
   }
 
   .field-hero__headline-main {
-    white-space: nowrap;
-    line-height: 0.95;
+    line-height: 1.05;
   }
 
   /* Sized relative to the display token so the stagger keeps its proportion. */
@@ -507,17 +507,28 @@ for (const column of atlasColumns) {
     justify-self: end;
     padding-right: 0.04em;
     font-size: 0.92em;
-    line-height: 0.9;
+    line-height: 1.05;
+    color: var(--accent);
   }
 
-  /* The audience line reads as a subtitle inside the H1: smaller, body weight, muted. */
-  .field-hero__headline-audience {
-    margin-top: 0.4em;
-    color: var(--text-2);
-    font-size: 0.36em;
-    font-weight: 500;
-    letter-spacing: -0.025em;
-    line-height: 1.15;
+  .hero-benefits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0.4rem 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--accent-strong);
+  }
+
+  .hero-benefits span {
+    padding: 0.2rem 0.65rem;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    white-space: nowrap;
   }
 
   .field-hero .field-intro {

@@ -11,7 +11,7 @@ import pageInteractions from '../scripts/site-interactions.mjs?url';
 import { getImage } from 'astro:assets';
 import { desktopHeroOptions, mobileHeroOptions, classicHero } from '../utils/home-images';
 import SearchModal from '../components/SearchModal.astro';
-import { organizationSchema, type JsonLd } from '../data/productFacts';
+import { organizationSchema, socialCardUrl, type JsonLd } from '../data/productFacts';
 import { markdownTwinPath } from '../utils/markdown-twins.mjs';
 
 interface Props {
@@ -30,10 +30,10 @@ interface Props {
 
 // Social networks and chat apps do not render SVG share images.
 const defaultSocialCard = {
-  path: '/brand/localcloud-social-card.png',
+  path: socialCardUrl,
   width: 1200,
   height: 630,
-  alt: 'LocalCloud: run major Google Cloud services locally in one Docker container for development, CI and AI agents.',
+  alt: 'Give Your Agents a Local Cloud. A LocalCloud laptop connected to Google Cloud service icons, with tags: $0 cost, No setup, Fast development.',
 };
 
 const rawBase = import.meta.env.BASE_URL;

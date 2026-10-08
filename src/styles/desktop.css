@@ -26,7 +26,7 @@
     & .desktop-shortcuts{position:fixed;top:4rem;bottom:3rem;z-index:1;width:10%;align-items:center;flex-direction:column;gap:.6rem;overflow:auto}
     & .desktop-shortcuts-left{left:0}
     & .desktop-shortcuts-right{right:0}
-    & .desktop-shortcut{transition:none;display:flex;align-items:center;flex-direction:column;gap:.35rem;width:6.7rem;padding:.6rem .3rem;border:1px solid transparent;border-radius:.7rem;color:#202124;text-align:center;font-size:.875rem;line-height:1.3}
+    & .desktop-shortcut{transition:none;display:flex;align-items:center;flex-direction:column;gap:.25rem;width:6rem;padding:.45rem .25rem;border:1px solid transparent;border-radius:.6rem;color:#202124;text-align:center;font-size:.8125rem;line-height:1.3}
     & .desktop-stage{display:block;position:fixed;inset:3rem 0 2.5rem;pointer-events:none;z-index:2}
     & .desktop-window{display:flex;position:absolute;left:11%;top:2.2rem;width:78%;height:calc(100% - 2.2rem);min-width:26rem;min-height:18rem;flex-direction:column;overflow:hidden;border:1px solid #c5c1b6;border-radius:.9rem;background:var(--bg);box-shadow:0 12px 32px #253d6326;pointer-events:auto;z-index:5}
     & .desktop-window[hidden]{display:none}
@@ -46,7 +46,7 @@
     & .desktop-content{display:block;min-height:0;overflow:auto;flex:1}
     /* Reveal the final layout together, without painting the Classic layout first. */
     &:not(.desktop-ready) .desktop-content{visibility:hidden}
-    & .desktop-shortcut img{aspect-ratio:1}
+    & .desktop-shortcut img{width:44px;height:44px;aspect-ratio:1}
     & .desktop-taskbar{display:flex;position:fixed;inset:auto 0 0;min-height:2.5rem;align-items:center;gap:1rem;padding:.3rem 1rem;background:#f7f5ee;border-top:1px solid var(--line);font-size:.75rem;z-index:80}
     & .desktop-taskbar>div{display:flex;gap:.35rem;flex:1;overflow:auto}
     & .desktop-content .site-header{display:none}
