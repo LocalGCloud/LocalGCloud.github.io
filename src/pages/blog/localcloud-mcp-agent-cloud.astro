@@ -36,6 +36,7 @@ PASS MCP: localcloud_check_readiness
 PASS MCP: localcloud_check_compatibility
 PASS MCP: localcloud_get_diagnostics
 PASS MCP: SDK configuration validates against its output schema
+PASS MCP: BigQuery query returns the expected row
 PASS Cloud Storage: upload and read back the exact content
 PASS Pub/Sub: publish, pull, verify, and acknowledge
 PASS BigQuery: SELECT 1 returns the expected row
@@ -106,6 +107,10 @@ const structuredData = [createBreadcrumbSchema([
       <pre><code>{runExample}</code></pre>
     </div>
     <p>The demonstrated result through CLI 0.1.9 and the full packaged runtime 0.1.5 candidate was:</p>
+    <video controls preload="metadata" width="1280" height="800" poster="/brand/localcloud-mcp-demo-poster.png" aria-label="Recorded LocalCloud MCP and SDK workflow verification">
+      <source src="/brand/localcloud-mcp-demo.mp4" type="video/mp4" />
+      <p><a href="/brand/localcloud-mcp-demo.mp4">Download the recorded verification run</a>. The complete text transcript follows.</p>
+    </video>
     <pre><code>{result}</code></pre>
     <p>When finished, use <code>lc stop --data-volume localcloud-mcp-demo</code> to stop the example runtime. Its named volume remains available for reuse.</p>
   </section>

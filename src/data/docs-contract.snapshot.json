@@ -2,8 +2,8 @@
   "schemaVersion": 4,
   "reviewedAt": "2026-10-09",
   "provenance": {
-    "runtimeRevision": "6d88062ac4c18564245b255140e787db10113319",
-    "cliRevision": "e11d128ee94927a4e98022ff0fbf6ba29414a7d4",
+    "runtimeRevision": "c7872eaf1639ac6d85b0bce0df507a4367eff210",
+    "cliRevision": "7e5a3f7ab4ac01f5f3f13c4df5e7a797c6de7cc3",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -74,7 +74,7 @@
       "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:c27dd31388a174abd56da53f55f917962589d2a0b7980cdd7f7dc5eb080f98be",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:4978775941c8725a7fdfe1bab479ba7ceb76f30b0636d874fdc800164f3277b3",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:4cf196417fa1f1e9f88db0a812a9e9ac7b2c0952e296d4e9a1e6a326e2941503",
-      "../localcloud-cli/README.md": "sha256:7ef19d41fb7d7ebf8bdd4d6519fcc3889f713c60291e6eb484075625c092eeb9",
+      "../localcloud-cli/README.md": "sha256:ea524048b853f031e416ed7cf3499fad3d69aa4fce25d0b71b7822b895849208",
       "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c90f50fea0b2f4941bd38f4228204492f2c7c021fb3aaa8acda233fe41c746b5",
       "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:dffdf53111ce8f4b3ef99d22f94c2f47125efe6a09c1ae96d2bc8c6fc374349b",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:875e1beed8476f64e92aa0e9def5be89bdf7d8e27ad4b0c7d7c6d7dd040d8c9c",
@@ -179,7 +179,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.9 from revision e11d128ee94927a4e98022ff0fbf6ba29414a7d4. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.9 from revision 7e5a3f7ab4ac01f5f3f13c4df5e7a797c6de7cc3. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
