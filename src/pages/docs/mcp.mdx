@@ -41,7 +41,7 @@ Reload Cursor, enable the `localcloud` MCP server, and let it connect. The bridg
 lc start --local-only
 ```
 
-The [signed CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases) include macOS ARM64/x86_64 and Linux ARM64/x86_64 binaries. Linux binaries require glibc 2.35 or newer. Native Windows binaries are not shipped; Windows users need a suitable Linux/WSL environment and matching client configuration.
+The [signed CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases) include macOS ARM64/x86_64 and Linux ARM64/x86_64 binaries. macOS binaries require macOS 13 or newer; Linux binaries require glibc 2.35 or newer. Native Windows binaries are not shipped; Windows users need a suitable Linux/WSL environment and matching client configuration.
 
 ## Choose your coding client
 
@@ -97,6 +97,8 @@ VS Code uses `servers` in `.vscode/mcp.json`:
 Run **MCP: List Servers** in the Command Palette, then start `localcloud`.
 
 ## Give your agent its first task
+
+<img src="/brand/localcloud-mcp-flow.svg" width="1120" height="540" alt="A coding agent connects through LocalCloud MCP, while its integration tests use standard SDKs with discovered local endpoints." />
 
 Copy this prompt into your coding client:
 

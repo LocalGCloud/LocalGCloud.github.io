@@ -2,8 +2,8 @@
   "schemaVersion": 4,
   "reviewedAt": "2026-10-09",
   "provenance": {
-    "runtimeRevision": "1d05db95fd1c7f35b6c8e47bac3cc35de0af1838",
-    "cliRevision": "5c3869f14aa6cb54cb9b7321d264ffa39ea4986e",
+    "runtimeRevision": "d79e44c9c1519922bf22b9be5482130df7fcb1ff",
+    "cliRevision": "4c41c007ccc905eb97d36617c378952e385a2185",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -61,11 +61,11 @@
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
       "../localcloud/localcloud.defaults.yaml": "sha256:1296cf0c2869e3978e558c6980c21896f76b77c90ae23434181ebd7a67169dd2",
-      "../localcloud/documentation.yaml": "sha256:0bf584efdb1d1c1492c3a42821c153aa71468d517c052a5a95beaadff0dac25b",
+      "../localcloud/documentation.yaml": "sha256:286045575db436e7fb5af31828c3beedc54fc100e44c8ea9e813ca2c8a980745",
       "../localcloud/docs/status/service-status.md": "sha256:ddad5257b8ba3b5fb4f12bfee0364fa7710e24a3afec22cae2255db33923538f",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:71d43c01c3bd8019587f19914e3c668acf2f20a090c798f7ab06ac5935cc6cce",
-      "../localcloud/docs/guides/mcp-integration.md": "sha256:1a674b42c9b5d54ad0dc1b74e821d4a525d1db25cb72ffdebad5c7ad4c3c320a",
-      "../localcloud/specs/api/catalog.json": "sha256:e84368f0f8de596aff128f899ece75fe910f50eeb37140d21d849d70346fdd10",
+      "../localcloud/docs/guides/mcp-integration.md": "sha256:48e0503c0f46940c15885a603a543a850910670666b20278e78c6c16d43f136e",
+      "../localcloud/specs/api/catalog.json": "sha256:b46423b5dbe300441e2ab2fa0d596436861e7ae9cd63c1c2bbc7efb9cbc391c6",
       "../localcloud/Dockerfile": "sha256:90d45e25b5a3a07aad95ab7b50d41dbdff350d51c67f10b1c08ea7778927d829",
       "../localcloud/LICENSE": "sha256:007c741ba18ddbea4cbd92b4f4b93135381b39e5a4af01ae5128f14b1d19c041",
       "../localcloud/docker/bigquery-start.sh": "sha256:987e13b3a9cc853f8590259cd32b0131df141b900c4c0fec0cfa9e3562973f9e",
@@ -179,7 +179,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.9 from revision 5c3869f14aa6cb54cb9b7321d264ffa39ea4986e. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.9 from revision 4c41c007ccc905eb97d36617c378952e385a2185. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",

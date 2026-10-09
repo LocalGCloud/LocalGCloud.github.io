@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="540" viewBox="0 0 1120 540" role="img" aria-labelledby="title description">
+  <title id="title">LocalCloud MCP agent development workflow</title>
+  <desc id="description">A coding agent uses the LocalCloud CLI over MCP stdio. The bridge sends project and caller context to the local runtime over HTTP JSON-RPC. Application integration tests use standard Google Cloud SDKs with the discovered local endpoints.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#1a73e8"/></marker></defs>
+  <rect width="1120" height="540" rx="24" fill="#f8faff"/>
+  <g font-family="Arial, sans-serif">
+    <text x="48" y="58" font-size="27" font-weight="700" fill="#172b4d">A local cloud environment for your coding agent</text>
+    <text x="48" y="89" font-size="17" fill="#536479">Discover services. Configure SDKs. Build, test, and debug locally.</text>
+    <g fill="#fff" stroke="#d3dfef" stroke-width="2">
+      <rect x="48" y="150" width="264" height="156" rx="18"/>
+      <rect x="428" y="150" width="264" height="156" rx="18"/>
+      <rect x="808" y="150" width="264" height="156" rx="18"/>
+      <rect x="48" y="383" width="644" height="110" rx="18"/>
+    </g>
+    <g font-size="23" font-weight="700" fill="#1a73e8">
+      <text x="73" y="190">Coding agent</text>
+      <text x="453" y="190">LocalCloud MCP</text>
+      <text x="833" y="190">Local runtime</text>
+      <text x="73" y="424">Application integration tests</text>
+    </g>
+    <g font-size="17" fill="#536479">
+      <text x="73" y="226">Discover and inspect</text><text x="73" y="254">Write code and diagnose</text><text x="73" y="282">Use local endpoint values</text>
+      <text x="453" y="226">Included in the CLI</text><text x="453" y="254">Starts or reuses the runtime</text><text x="453" y="282">Project and caller context</text>
+      <text x="833" y="226">Cloud-compatible APIs</text><text x="833" y="254">Storage, messaging, data</text><text x="833" y="282">Persistent local state</text>
+      <text x="73" y="455">Standard Google Cloud SDKs pointed at discovered local endpoints</text>
+    </g>
+    <g fill="none" stroke="#1a73e8" stroke-width="3" marker-end="url(#arrow)">
+      <path d="M312 228H428"/><path d="M692 228H808"/>
+      <path d="M180 306V383"/><path d="M692 438H940V306"/>
+    </g>
+    <g font-size="15" fill="#536479" text-anchor="middle">
+      <text x="370" y="210">MCP stdio</text><text x="750" y="190">HTTP</text><text x="750" y="210">JSON-RPC</text>
+      <text x="833" y="420">SDK / API calls</text>
+    </g>
+  </g>
+</svg>
