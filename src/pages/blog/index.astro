@@ -12,13 +12,20 @@ const posts = blogDemoPages.map((page) => ({
   ...getBlogMetadata(page),
 }));
 const openSource = authoredBlogMetadata['localcloud-for-open-source'];
+const mcp = authoredBlogMetadata['localcloud-mcp-agent-cloud'];
+posts.push({
+  slug: 'localcloud-mcp-agent-cloud', path: '/blog/localcloud-mcp-agent-cloud/',
+  title: 'A local cloud environment for coding agents',
+  description: 'Connect LocalCloud MCP to your coding agent, then test Cloud Storage, Pub/Sub, and BigQuery locally with standard Google Cloud SDKs.',
+  topic: mcp.topic, minutes: mcp.minutes, date: mcp.publishedAt, dateLabel: 'Published',
+});
 posts.push({
   slug: 'localcloud-for-open-source', path: '/blog/localcloud-for-open-source/',
   title: 'Bring No-Cost Cloud Integration Testing Into Your Repository: Low Setup, Easy Contributions',
   description: 'Run Google Cloud tests locally with zero cloud-resource costs and an easier contribution workflow. Free for open-source development and CI under the Free for open-source projects policy.',
   topic: openSource.topic, minutes: openSource.minutes, date: openSource.publishedAt, dateLabel: 'Published',
 });
-const featured = posts.find((post) => post.slug === 'run-dataproc-locally-docker') ?? posts[0];
+const featured = posts.find((post) => post.slug === 'localcloud-mcp-agent-cloud') ?? posts[0];
 const remaining = posts.filter((post) => post.slug !== featured.slug);
 const structuredData = [createBreadcrumbSchema([
   { name: 'Home', url: productFacts.siteUrl },

@@ -43,6 +43,20 @@ lc start --local-only
 
 The [signed CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases) include macOS ARM64/x86_64 and Linux ARM64/x86_64 binaries. macOS binaries require macOS 13 or newer; Linux binaries require glibc 2.35 or newer. Native Windows binaries are not shipped; Windows users need a suitable Linux/WSL environment and matching client configuration.
 
+### Runtime version and existing environments
+
+Use **runtime 0.1.5 or newer** for validated strict-client tool input and output schemas. CLI and runtime versions are independent; connecting MCP or updating the CLI reuses an existing container.
+
+Inspect `lc status`. To deliberately upgrade the selected runtime while retaining its named data volume:
+
+```sh
+lc restart --image agentcloud/localcloud:0.1.5 --pull
+```
+
+Use the same `--data-volume` and configuration file if you normally target a custom environment. The restart briefly interrupts clients; reconnect afterward.
+
+Clients supporting desktop extensions can also install the [LocalCloud MCP 0.1.9 bundle](https://github.com/LocalGCloud/localcloud-cli/releases/download/v0.1.9/localcloud-mcp-0.1.9.mcpb). The bundle includes the supported-platform CLI; Docker and runtime 0.1.5+ are still required.
+
 ## Choose your coding client
 
 | Client | Setup |
@@ -113,7 +127,7 @@ The first calls are `localcloud_list_services` with `{}`, followed by readiness 
 | Write an integration test | Read compatibility, create only test-owned resources, assert results, and clean up through the SDK |
 | Debug a failure | Inspect readiness, logs, recent requests, endpoint configuration, and API schemas, then rerun the failing test |
 
-Use the [SDK examples](/docs/sdk-examples/) and [Terraform guide](/docs/terraform/) for executable application examples. Agents can also read the [agent entry point](/ai/agents.md) and the [machine-readable installation guide](https://github.com/LocalGCloud/localcloud-cli/blob/main/llms-install.md).
+Run the [MCP walkthrough and three cloud workflows](/blog/localcloud-mcp-agent-cloud/), or use the [SDK examples](/docs/sdk-examples/) and [Terraform guide](/docs/terraform/). Agents can also read the [agent entry point](/ai/agents.md) and the [machine-readable installation guide](https://github.com/LocalGCloud/localcloud-cli/blob/main/llms-install.md).
 
 ## Services, tools, resources, and prompts
 
@@ -130,6 +144,7 @@ Write and destructive MCP management operations depend on the runtime settings `
 | Symptom | Next step |
 | --- | --- |
 | `mcp install` is unavailable | Update to CLI 0.1.9+ and confirm the client launches the updated executable |
+| Client rejects a tool schema or structured result | Check the running runtime version; use 0.1.5+ and reconnect after an explicit upgrade |
 | Docker is unavailable | Run `lc doctor`, start Docker, and reconnect |
 | Client cannot find the command | Use the absolute path reported by `command -v localcloud` |
 | First connection times out | Run `lc start --local-only` once, then reconnect; increase the client's startup timeout if needed |

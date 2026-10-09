@@ -77,10 +77,21 @@ const retiredMcpPatterns = [
 	/\b(?:MCPB|Docker MCP Catalog|PulseMCP|Smithery)\b/i,
 	/\bnpm\b[^\n]{0,80}\bMCP\b|\bMCP\b[^\n]{0,80}\bnpm\b/i,
 ];
+// The qualified CLI release bundle is owned by the CLI repository.
+const cliBundleUrl = "https://github.com/LocalGCloud/localcloud-cli/releases/download/v0.1.9/localcloud-mcp-0.1.9.mcpb";
+const withoutCliBundleLink = (content) => content.replace(
+	/https:\/\/github\.com\/LocalGCloud\/localcloud-cli\/releases\/download\/v0\.1\.9\/localcloud-mcp-0\.1\.9\.mcpb(?=[\s)"']|$)/g,
+	"verified-cli-release-bundle",
+);
+assert(!/\bMCPB\b/i.test(withoutCliBundleLink(`Download (${cliBundleUrl})`)), "CLI release bundle link is allowed");
+for (const retired of ["https://local.cloud/mcp/server.mcpb", cliBundleUrl.replace("LocalGCloud", "another-owner"), `${cliBundleUrl}.unexpected`]) {
+	assert(/\bMCPB\b/i.test(withoutCliBundleLink(retired)), "Unqualified bundle references remain blocked");
+}
 for (const [path, content] of referenceEntries) {
+	const inspected = withoutCliBundleLink(content);
 	for (const pattern of retiredMcpPatterns) {
 		assert(
-			!pattern.test(content),
+			!pattern.test(inspected),
 			`${path} retains a retired site-local MCP package reference: ${pattern}`,
 		);
 	}

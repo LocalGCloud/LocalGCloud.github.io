@@ -1,4 +1,5 @@
 {
+  "localcloud-mcp-agent-cloud": { "publishedAt": "2026-10-09", "minutes": 6, "topic": "AI coding agents" },
   "localcloud-for-open-source": { "publishedAt": "2026-10-04", "minutes": 7, "topic": "Open source" },
   "run-dataproc-locally-docker": { "publishedAt": "2026-10-01", "updatedAt": "2026-10-08", "minutes": 6, "topic": "Data engineering" }
 }

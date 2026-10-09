@@ -2,8 +2,8 @@
   "schemaVersion": 4,
   "reviewedAt": "2026-10-09",
   "provenance": {
-    "runtimeRevision": "d79e44c9c1519922bf22b9be5482130df7fcb1ff",
-    "cliRevision": "4c41c007ccc905eb97d36617c378952e385a2185",
+    "runtimeRevision": "6d88062ac4c18564245b255140e787db10113319",
+    "cliRevision": "e11d128ee94927a4e98022ff0fbf6ba29414a7d4",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -61,11 +61,11 @@
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
       "../localcloud/localcloud.defaults.yaml": "sha256:1296cf0c2869e3978e558c6980c21896f76b77c90ae23434181ebd7a67169dd2",
-      "../localcloud/documentation.yaml": "sha256:286045575db436e7fb5af31828c3beedc54fc100e44c8ea9e813ca2c8a980745",
+      "../localcloud/documentation.yaml": "sha256:d4446bdba907b956681c80a7bbd5251551c6e48687452113544f31bae9160848",
       "../localcloud/docs/status/service-status.md": "sha256:ddad5257b8ba3b5fb4f12bfee0364fa7710e24a3afec22cae2255db33923538f",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:71d43c01c3bd8019587f19914e3c668acf2f20a090c798f7ab06ac5935cc6cce",
-      "../localcloud/docs/guides/mcp-integration.md": "sha256:48e0503c0f46940c15885a603a543a850910670666b20278e78c6c16d43f136e",
-      "../localcloud/specs/api/catalog.json": "sha256:b46423b5dbe300441e2ab2fa0d596436861e7ae9cd63c1c2bbc7efb9cbc391c6",
+      "../localcloud/docs/guides/mcp-integration.md": "sha256:efba8366f8a625010982d9e10559722f998dfa5ff7c24cde053e8c745e1fa31c",
+      "../localcloud/specs/api/catalog.json": "sha256:aeb34579d2a98ca11d4d53a9d1c935686b65726a9013af0ef46c5898b9ec1d74",
       "../localcloud/Dockerfile": "sha256:90d45e25b5a3a07aad95ab7b50d41dbdff350d51c67f10b1c08ea7778927d829",
       "../localcloud/LICENSE": "sha256:007c741ba18ddbea4cbd92b4f4b93135381b39e5a4af01ae5128f14b1d19c041",
       "../localcloud/docker/bigquery-start.sh": "sha256:987e13b3a9cc853f8590259cd32b0131df141b900c4c0fec0cfa9e3562973f9e",
@@ -74,7 +74,7 @@
       "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:c27dd31388a174abd56da53f55f917962589d2a0b7980cdd7f7dc5eb080f98be",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:4978775941c8725a7fdfe1bab479ba7ceb76f30b0636d874fdc800164f3277b3",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:4cf196417fa1f1e9f88db0a812a9e9ac7b2c0952e296d4e9a1e6a326e2941503",
-      "../localcloud-cli/README.md": "sha256:8fdd1954f40b314a3d9dd27cc4b3ac276898a0d181b48f411e0f2e3c3d6120d5",
+      "../localcloud-cli/README.md": "sha256:7ef19d41fb7d7ebf8bdd4d6519fcc3889f713c60291e6eb484075625c092eeb9",
       "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c90f50fea0b2f4941bd38f4228204492f2c7c021fb3aaa8acda233fe41c746b5",
       "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:dffdf53111ce8f4b3ef99d22f94c2f47125efe6a09c1ae96d2bc8c6fc374349b",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:875e1beed8476f64e92aa0e9def5be89bdf7d8e27ad4b0c7d7c6d7dd040d8c9c",
@@ -179,7 +179,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.9 from revision 4c41c007ccc905eb97d36617c378952e385a2185. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.9 from revision e11d128ee94927a4e98022ff0fbf6ba29414a7d4. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",

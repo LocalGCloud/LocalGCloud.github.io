@@ -1,0 +1,123 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const metadata = authoredBlogMetadata['localcloud-mcp-agent-cloud'];
+const pageUrl = new URL('blog/localcloud-mcp-agent-cloud/', productFacts.siteUrl).toString();
+const contents = [
+  { id: 'connect', label: 'Install and connect' },
+  { id: 'agent-task', label: 'Give the agent a task' },
+  { id: 'workflows', label: 'Three cloud workflows' },
+  { id: 'run-example', label: 'Run the example' },
+  { id: 'debug', label: 'Diagnose a failure' },
+  { id: 'boundaries', label: 'Local data and verification' },
+];
+const connect = `brew install LocalGCloud/tap/localcloud
+lc --version
+lc doctor
+lc mcp install --client cursor`;
+const prompt = `Use LocalCloud MCP to list local services, check readiness, and obtain SDK settings.
+Check compatibility before writing a small Cloud Storage, Pub/Sub, and BigQuery integration test.
+Use only the returned local endpoints and uniquely named test resources.
+Assert the actual results and clean up only resources created by the test.
+Stop if a required operation is unavailable; do not fall back to real Google Cloud.`;
+const startExample = String.raw`lc start --image agentcloud/localcloud:0.1.5 \
+  --data-volume localcloud-mcp-demo \
+  --services gcs,pubsub,bigquery --local-only --accept-dynamic-ports`;
+const runExample = String.raw`git clone https://github.com/LocalGCloud/localcloud-cli.git
+cd localcloud-cli
+uv run --with mcp==2.0.0 --with google-cloud-storage \
+  --with google-cloud-pubsub --with google-cloud-bigquery \
+  examples/mcp_workflows.py --data-volume localcloud-mcp-demo`;
+const result = `PASS MCP: localcloud_list_services
+PASS MCP: localcloud_check_readiness
+PASS MCP: localcloud_check_compatibility
+PASS MCP: localcloud_get_diagnostics
+PASS MCP: SDK configuration validates against its output schema
+PASS Cloud Storage: upload and read back the exact content
+PASS Pub/Sub: publish, pull, verify, and acknowledge
+PASS BigQuery: SELECT 1 returns the expected row
+Cleanup complete: only uniquely named example resources were removed`;
+const structuredData = [createBreadcrumbSchema([
+  { name: 'Home', url: productFacts.siteUrl },
+  { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+  { name: 'A local cloud environment for coding agents', url: pageUrl },
+])];
+---
+
+<BlogLayout title="A Local Cloud Environment for Coding Agents"
+  description="Connect LocalCloud MCP to your coding agent, then test Cloud Storage, Pub/Sub, and BigQuery locally with standard Google Cloud SDKs."
+  {structuredData} {contents}
+  article={{ publishedAt: metadata.publishedAt, headline: 'A local cloud environment for coding agents' }}>
+  <Fragment slot="hero">
+    <section class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <span class="site-eyebrow">MCP guide and walkthrough</span>
+        <h1 class="mt-4">A local cloud environment for coding agents</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Give your coding agent a free local cloud environment to build, test, and debug Google Cloud applications. MCP supplies the services, SDK settings, and diagnostics; your application runs its integration tests against the local runtime.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/docs/mcp/">Connect your agent</a>
+          <a href="https://github.com/LocalGCloud/localcloud-cli/blob/main/examples/mcp_workflows.py">Get the runnable example</a>
+        </div>
+      </div>
+    </section>
+  </Fragment>
+  <section class="site-section">
+    <h2 id="connect">Install and connect</h2>
+    <p>Install <strong>LocalCloud CLI 0.1.9 or newer</strong> and have Docker running. Use runtime <strong>0.1.5 or newer</strong> for validated strict-client tool schemas. On macOS, or Linux with Homebrew:</p>
+    <div class="site-panel mt-4">
+      <CopyButton text={connect} analyticsLabel="mcp-blog-copy-install" />
+      <pre><code>{connect}</code></pre>
+    </div>
+    <p>Reload Cursor and enable <code>localcloud</code>. The bridge starts or reuses your local runtime automatically. The <a href="/docs/mcp/">client guide</a> also covers Claude Code/Desktop, Codex, VS Code, Cline, Gemini CLI, Antigravity, and Windsurf, plus installation without Homebrew.</p>
+    <img src="/brand/localcloud-mcp-flow.svg" width="1120" height="540" alt="A coding agent connects through MCP to LocalCloud; application tests use standard SDKs with discovered local endpoints." loading="lazy" />
+  </section>
+  <section class="site-section">
+    <h2 id="agent-task">Give the agent a task</h2>
+    <p>Ask for a small test with observable results:</p>
+    <div class="site-panel mt-4">
+      <CopyButton text={prompt} analyticsLabel="mcp-blog-copy-agent-prompt" />
+      <pre class="blog-prompt"><code>{prompt}</code></pre>
+    </div>
+    <p>The agent starts with <code>localcloud_list_services</code>, <code>localcloud_check_readiness</code>, and <code>localcloud_get_env</code>. Returned SDK settings account for the runtime's actual port mappings, so the test does not guess endpoints or request real cloud credentials.</p>
+  </section>
+  <section class="site-section">
+    <h2 id="workflows">Three cloud workflows</h2>
+    <ol class="site-list">
+      <li><strong>Cloud Storage:</strong> create a uniquely named bucket, upload a known string, read it back, and check the exact content.</li>
+      <li><strong>Pub/Sub:</strong> create a topic and subscription, publish a known message, pull and verify its bytes, then acknowledge it.</li>
+      <li><strong>BigQuery:</strong> run <code>SELECT 1 AS mcp_smoke</code> and check that the result contains exactly one row with value 1.</li>
+    </ol>
+    <p>These assertions exercise application behavior through standard Google Cloud SDKs. The example removes its own bucket, topic, and subscription in cleanup. <a href="https://github.com/LocalGCloud/localcloud-cli/blob/main/docs/mcp-workflows.md">Read the workflow guide</a> for individual agent prompts.</p>
+  </section>
+  <section class="site-section">
+    <h2 id="run-example">Run the example</h2>
+    <p>Start an independent runtime for the three services. Dynamic ports allow it to run beside your everyday environment:</p>
+    <div class="site-panel mt-4">
+      <CopyButton text={startExample} analyticsLabel="mcp-blog-copy-example-start" />
+      <pre><code>{startExample}</code></pre>
+    </div>
+    <p>From the public CLI repository, run the example with its optional Python SDK dependencies using <a href="https://docs.astral.sh/uv/">uv</a>:</p>
+    <div class="site-panel mt-4">
+      <CopyButton text={runExample} analyticsLabel="mcp-blog-copy-example-run" />
+      <pre><code>{runExample}</code></pre>
+    </div>
+    <p>The demonstrated result through CLI 0.1.9 and the full packaged runtime 0.1.5 candidate was:</p>
+    <pre><code>{result}</code></pre>
+    <p>When finished, use <code>lc stop --data-volume localcloud-mcp-demo</code> to stop the example runtime. Its named volume remains available for reuse.</p>
+  </section>
+  <section class="site-section">
+    <h2 id="debug">Diagnose a failure</h2>
+    <p>Give the agent the failing assertion and ask it to inspect readiness, diagnostics, and recent requests before changing the test. A service can be present in the catalog while disabled in the running environment; use its current readiness and compatibility records.</p>
+    <p>If an existing runtime predates 0.1.5, follow the <a href="/docs/mcp/">runtime upgrade and troubleshooting instructions</a>. Updating the CLI or installing another client configuration does not replace an existing container.</p>
+  </section>
+  <section class="site-section">
+    <h2 id="boundaries">Local data and verification</h2>
+    <p>The SDK workflows above passed through a published macOS ARM64 CLI and a full Linux ARM64 runtime image, without mounted source or JAR overlays. This local evidence is separate from Google Cloud production parity and verification on every platform.</p>
+    <p>Use test-owned resources and explicit cleanup. The default data volume is shared; a logical project is not a security boundary between agents. Choose a separate named volume when you need an independent runtime. MCP management writes and destructive actions require explicit runtime permission settings.</p>
+    <p><a href="/docs/mcp/">MCP setup guide</a> · <a href="/docs/sdk-examples/">More SDK examples</a> · <a href="https://github.com/LocalGCloud/localcloud-cli">CLI source and releases</a></p>
+  </section>
+</BlogLayout>
