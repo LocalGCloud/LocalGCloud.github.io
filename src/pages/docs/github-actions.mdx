@@ -1,0 +1,310 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: GitHub Actions
+description: Run Google Cloud integration tests and AI-agent checks in GitHub workflows using the LocalCloud Docker image, with or without the setup action.
+author: LocalCloud
+updated: 2026-10-09
+reviewed: 2026-10-09
+---
+
+import { services, inCatalogOrder } from '../../data/services';
+
+export const workflowServices = inCatalogOrder(services).filter((service) => service.id !== 'firestore');
+
+# LocalCloud in GitHub Actions
+
+Run your Google Cloud application tests against a LocalCloud Docker environment in a GitHub Actions job. Your application uses standard Google Cloud SDKs with local endpoint settings. Use this for pull-request checks, continuous integration, staging-like application tests, or an AI coding agent that needs a cloud environment while it works.
+
+LocalCloud runs independently as a Docker image. The [Setup LocalCloud action](https://github.com/marketplace/actions/setup-localcloud) is a convenience that starts the image, waits for selected services, creates a local project, exports SDK settings, and cleans up its own container. The CLI is optional.
+
+## Choose a workflow
+
+| Route | Who starts the image? | Who configures SDKs? | Who removes the container? |
+| --- | --- | --- | --- |
+| Setup action | The action | The action exports runtime settings | The action's post-job hook |
+| GitHub service container plus setup action | GitHub | The action connects to your service | GitHub |
+| GitHub service container without setup action | GitHub | Your workflow reads the runtime settings | GitHub |
+
+All examples below run application code on an Ubuntu VM runner. The image has a 4 GiB memory limit; allow additional memory and disk for your application. Automatic setup currently targets Linux Docker runners. A job with `container:` uses different networking and needs separate workflow tests; see [container jobs](#container-jobs-and-running-code-inside-the-image).
+
+## Quick start: run a pull-request test
+
+Save this complete workflow as `.github/workflows/localcloud.yml`. It starts Storage, Pub/Sub, and BigQuery, then verifies a query with Google's Python BigQuery SDK. No Google Cloud account, service-account key, or billing project is required for this check.
+
+```yaml
+name: LocalCloud integration test
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Start LocalCloud
+        id: localcloud
+        uses: cloud-orbitor/setup-localcloud@v0.1.0
+        with:
+          services: gcs,pubsub,bigquery
+          project-id: localcloud-ci
+      - name: Install the SDK
+        run: python -m pip install google-cloud-bigquery==3.46.1
+      - name: Verify a local query
+        run: |
+          python - <<'PY'
+          import os
+          from google.auth.credentials import AnonymousCredentials
+          from google.cloud import bigquery
+
+          client = bigquery.Client(
+              project=os.environ['GOOGLE_CLOUD_PROJECT'],
+              credentials=AnonymousCredentials(),
+              client_options={'api_endpoint': os.environ['BIGQUERY_EMULATOR_HOST']},
+          )
+          try:
+              rows = list(client.query('SELECT 1 AS ok', timeout=30).result(timeout=30))
+              assert rows[0].ok == 1
+              print('LocalCloud BigQuery query passed')
+          finally:
+              client.close()
+          PY
+```
+
+To run your application's suite, replace the last two steps with your dependency installation and test commands, such as `python -m pip install -r requirements.txt` and `python -m pytest`. Keep setup before the test process. The exported variables apply to subsequent steps in the same job, not other jobs.
+
+The action dynamically publishes the image's TCP ports on loopback and rewrites generated endpoints to match. Read the `runtime-url`, `container-id`, and `project-id` outputs when later steps need them. Its post-job hook removes its own container and anonymous volume after success or failure. It leaves an attached runtime with its owner.
+
+## Select the services your application needs
+
+`services` is the exact comma-separated set to start. It replaces the default selection; include every service your test needs. It accepts LocalCloud service IDs, not Google API domain names or display names.
+
+```yaml
+- uses: cloud-orbitor/setup-localcloud@v0.1.0
+  with:
+    services: gcs,pubsub,bigquery,bigtable,spanner,kms,secretmanager
+    project-id: localcloud-ci
+    timeout: '180'
+```
+
+Changing this list does **not** require an action release. The three-service quick start is an example, not the action's complete capability list. Always set `services` explicitly: the published v0.1.0 default includes Firestore, which is excluded from the examples in this guide.
+
+The reference below uses the site's service catalog. Follow each guide for SDK connection details, supported operations, and runtime requirements. The catalog describes LocalCloud; it does not mean every service workflow has been tested through this action.
+
+<table>
+  <thead><tr><th>Service guide</th><th>ID for services</th><th>Workflow notes</th></tr></thead>
+  <tbody>
+    {workflowServices.map((service) => (
+      <tr>
+        <td><a href={`/services/${service.slug}/`}>{service.name}</a></td>
+        <td><code>{service.id}</code></td>
+        <td>{service.marketingStatus === 'unsupported' ? 'Unsupported locally; do not select for local tests.' :
+          ['cloudrun', 'dataproc'].includes(service.id) ? 'Execution requires Docker runtime access; use a configured runtime.' :
+          service.id === 'gke' ? 'Cluster execution requires k3d and Docker; use a configured runtime.' :
+          service.id === 'cloudfunctions' ? 'Function execution requires your own execution target.' :
+          service.id === 'sheets' ? 'Read-only auxiliary fixture API.' :
+          'See the service guide for SDK setup and operations.'}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+Firestore remains in the product's [complete catalog](/services/) but is intentionally outside this GitHub workflow guide's examples and tested profile. See the [compatibility matrix](/compatibility/) and [service configuration reference](/docs/configuration/#select-services) for the complete product reference.
+
+### Docker-backed execution
+
+The automatic setup action currently sets `LOCALCLOUD_DOCKER_ACCESS=false` and does not mount a Docker socket. Selecting `cloudrun`, `dataproc`, or `gke` alone does not configure their execution dependencies. Provision an appropriate runtime using the relevant service guide, then connect with `runtime-url` if it exposes canonical ports. Automatic provisioning of these dependencies is tracked in the [action issues](https://github.com/cloud-orbitor/setup-localcloud/issues).
+
+## Pin the action and runtime independently
+
+The examples use the published `v0.1.0` action. For immutable action pinning, replace the version tag with the full commit shown on the [release page](https://github.com/cloud-orbitor/setup-localcloud/releases/tag/v0.1.0). Pin checkout and language-setup actions the same way when your workflow requires immutable references. A version tag is easier to read but can be moved by its publisher.
+
+The action's default image is LocalCloud 0.1.5, pinned to the multi-architecture digest used below. To choose another runtime, pass `image: agentcloud/localcloud@sha256:<your-verified-digest>` under `with`. Replace the placeholder with a real digest; the action rejects mutable image tags.
+
+Service selection is configuration. A service added to a newer runtime can be selected with the existing action when that runtime retains compatible readiness, project, environment, and port contracts. Updating the action's bundled defaults or handling a changed runtime contract is a separate action change.
+
+| Action input | How to use it |
+| --- | --- |
+| `services` | Set the complete comma-separated ID list explicitly. |
+| `project-id` | Local project to create or select; default `localcloud-ci`. |
+| `image` | Immutable LocalCloud image digest; used when starting Docker. |
+| `timeout` | Selected-service readiness wait in seconds; default `120`, range `1`–`1800`. |
+| `runtime-url` | Leave empty for automatic startup, or supply an existing `http://host:5380` runtime with canonical ports. |
+
+## Use a native GitHub service container
+
+If you want GitHub to start and stop the image, declare it under `jobs.<job>.services`. The setup action can configure that existing runtime without taking ownership of it. Save this as a separate workflow:
+
+```yaml
+name: LocalCloud service container
+on: [pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      localcloud:
+        image: agentcloud/localcloud@sha256:88e85b86b294e1e4f71b8c63ec43de79d170946ff39556f0e2709f66aa0d368c
+        env:
+          LOCALCLOUD_SERVICES: gcs,pubsub,bigquery
+          LOCALCLOUD_PROJECT: localcloud-ci
+          LOCALCLOUD_TELEMETRY: 'false'
+          LOCALCLOUD_DOCKER_ACCESS: 'false'
+        ports:
+          - 5380:5380
+          - 5382:5382
+          - 5383:5383
+          - 5388:5388
+        options: --memory 4g
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Configure the existing runtime
+        uses: cloud-orbitor/setup-localcloud@v0.1.0
+        with:
+          runtime-url: http://127.0.0.1:5380
+          services: gcs,pubsub,bigquery
+          project-id: localcloud-ci
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pytest
+```
+
+This workflow assumes your repository contains `requirements.txt` and pytest tests configured as described below. You can instead use the BigQuery install/query steps from the quick start. Keep the container's service selection and the action's selection aligned. Publish any additional listeners your tests need; BigQuery Storage gRPC, for example, also needs port 5389.
+
+Existing-runtime mode currently accepts `http://<host>:5380` with canonical service ports. It does not discover custom external port mappings. GitHub removes its service containers at the end of the job. See GitHub's [service container documentation](https://docs.github.com/en/actions/tutorials/use-containerized-services/use-docker-service-containers).
+
+## Use the image without the action or CLI
+
+Keep the native service declaration above and replace its "Configure the existing runtime" step with this bootstrap step. It waits for the exact selected services, creates the local project if missing, and reads the four environment values needed by this example directly from the runtime. No LocalCloud CLI or setup action is used.
+
+```yaml
+- name: Prepare LocalCloud directly
+  run: |
+    python - <<'PY'
+    import json
+    import os
+    import time
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+
+    gateway = 'http://127.0.0.1:5380'
+    project = 'localcloud-ci'
+    selected = {'gcs', 'pubsub', 'bigquery'}
+    deadline = time.monotonic() + 120
+
+    def request(path, body=None):
+        data = json.dumps(body).encode() if body is not None else None
+        req = urllib.request.Request(gateway + path, data=data,
+                                     headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=5) as response:
+            return json.load(response)
+
+    while True:
+        try:
+            ready = request('/readiness?services=' + ','.join(sorted(selected)))
+            available = {s['service_id'] for s in ready.get('services', []) if s.get('ready') is True}
+            if ready.get('ready') is True and selected <= available:
+                break
+        except urllib.error.HTTPError as error:
+            if error.code != 503:
+                raise
+        except (urllib.error.URLError, TimeoutError):
+            pass
+        if time.monotonic() >= deadline:
+            raise SystemExit('Selected LocalCloud services did not become ready')
+        time.sleep(1)
+
+    if not any(p['project_id'] == project for p in request('/projects')):
+        request('/projects', {'project_id': project, 'display_name': project})
+    values = request('/env?format=json&project=' + project)
+    ports = {'STORAGE_EMULATOR_HOST': 5382, 'PUBSUB_EMULATOR_HOST': 5383,
+             'BIGQUERY_EMULATOR_HOST': 5388}
+    assert values['GOOGLE_CLOUD_PROJECT'] == project
+    with open(os.environ['GITHUB_ENV'], 'a') as output:
+        for key in ['GOOGLE_CLOUD_PROJECT', *ports]:
+            value = values[key]
+            assert isinstance(value, str) and not any(c in value for c in '\r\n\0')
+            if key in ports:
+                target = urllib.parse.urlsplit(value if '://' in value else 'http://' + value)
+                assert target.scheme == 'http' and target.hostname in {'localhost', '127.0.0.1'}
+                assert not target.username and not target.password and target.port == ports[key]
+            output.write(f'{key}={value}\n')
+    PY
+```
+
+This bootstrap deliberately covers the three-service example. When selecting other services, also publish their listeners and load their required local settings. The setup action performs general environment export and automatic port mapping for you. Keep the same immutable image and use the [runtime API](/docs/architecture/) for custom integrations.
+
+## Configure your application's SDKs
+
+The setup action exports values returned by `/env?format=json` into `GITHUB_ENV`. They are available to subsequent steps, including your test process or agent process. Do not hard-code ports in automatic mode.
+
+| Client | Configuration |
+| --- | --- |
+| Python Cloud Storage | Reads `STORAGE_EMULATOR_HOST`; pass the local project to `storage.Client`. |
+| Python Pub/Sub | Reads `PUBSUB_EMULATOR_HOST`; construct the usual publisher/subscriber clients. |
+| Python BigQuery | Pass `BIGQUERY_EMULATOR_HOST` explicitly as `client_options.api_endpoint` and use `AnonymousCredentials`, as above. |
+| Other languages and services | Use the service guide and SDK examples; some need an explicit endpoint, plaintext transport, or local credentials. |
+
+See [copyable SDK examples](/docs/sdk-examples/) for resource creation, readback, and cleanup. Environment-variable export does not guarantee every Google SDK automatically consumes every setting. Keep missing endpoint variables as errors instead of silently choosing Google defaults. Local tests do not need production Google credentials.
+
+## Run an AI coding agent in the job
+
+Place the action before the step that runs your agent. Install and authenticate your chosen agent according to its own instructions, then launch it in a subsequent step on the same runner. It inherits LocalCloud's project and SDK variables just as pytest does. Authentication for the AI provider is separate from Google Cloud authentication.
+
+Give the agent these repository instructions:
+
+```text
+This GitHub job has already started LocalCloud. Use the exported
+GOOGLE_CLOUD_PROJECT and local SDK endpoint variables. Do not start another
+runtime or request Google Cloud credentials. Use the LocalCloud service
+guides to configure each SDK, run the application's tests, and report
+unsupported operations without falling back to real Google Cloud.
+```
+
+Keep the agent and tests in the same job. If you launch them in another container, explicitly forward the required variables and make the LocalCloud endpoints reachable from that container; host loopback addresses refer to that container itself. Use the [agent guide](/ai/agents.md) and [service reference for agents](/ai/services.md) as additional context.
+
+### Optional MCP
+
+SDK testing does not require MCP. Agents that use MCP for discovery, resource inspection, queries, or diagnostics can follow the [LocalCloud MCP guide](/docs/mcp/). The CLI provides the stdio bridge when that transport is required; it does not have to own every Docker runtime.
+
+The current setup action does not install the CLI, configure an agent's MCP client, or automatically attach the CLI bridge to its anonymous CI runtime. Treat that attachment as a separate integration, not a working default; do not launch the default bridge and assume it targets the action's container. MCP write/destructive permissions are separate runtime settings. Automatic MCP attachment is tracked in the [action backlog](https://github.com/cloud-orbitor/setup-localcloud/issues).
+
+## Container jobs and running code inside the image
+
+In a GitHub job with `container:`, native service containers are reached by their service name, such as `http://localcloud:5380`, with internal ports. The VM-runner examples above use published host ports instead. Container jobs need their own connectivity and SDK tests.
+
+Running your application directly inside the LocalCloud image is another Docker route. Preserve the image's startup entrypoint, wait for readiness, and add a compatible application toolchain or use `docker exec` after startup. LocalCloud is a container environment, not a general-purpose virtual machine or an assurance that every language/build tool is installed. See the [manual Docker guide](/docs/#manual-docker-path). Same-container application toolchains are outside the current tested action workflows.
+
+## Troubleshooting and cleanup
+
+| Symptom | Next check |
+| --- | --- |
+| Readiness times out | Check the selected IDs, runtime logs, image version, memory, and the service's execution dependencies. A container being up does not prove readiness. |
+| Unknown service | Use an exact ID from the table; a catalog entry marked Unsupported does not run locally. |
+| SDK asks for Google credentials | Verify local endpoint variables and the client-specific constructor; Python BigQuery requires explicit anonymous credentials. |
+| Application calls a Google endpoint | Check hard-coded URLs and client configuration. The action configures endpoints; it is not an egress firewall. |
+| Native service connects but SDK calls fail | Publish the selected service ports and keep canonical ports when using `runtime-url`. |
+| Agent runs in another job or container | Export settings again for that environment and verify its network route; `GITHUB_ENV` is job-scoped. |
+| Self-hosted runner loses a job | Inspect action-owned containers and volumes. Normal post cleanup is best effort when a runner disappears; do not delete unrelated developer resources. |
+
+Automatic mode creates an isolated container and anonymous data volume. Logical project names in a shared existing runtime are not a hard isolation boundary. Parallel jobs should use independent runtimes unless shared state is intentional.
+
+## Tested workflows and support
+
+The action's [evidence ledger](https://github.com/cloud-orbitor/setup-localcloud/blob/main/docs/release-evidence.md) records exact action/image identities, SDK versions, tested workflows, and automatic cleanup checks. The Storage/Pub/Sub/BigQuery examples demonstrate a small application profile. Other service workflows need checks for the operations your application uses; the full catalog remains available for service selection.
+
+The action adapter is MIT-licensed. The separately distributed runtime is governed by the [LocalCloud license](/license/). Automatic mode disables runtime telemetry; existing-runtime preferences remain with its owner. See [privacy and outbound behavior](/docs/privacy/). Validate production-sensitive behavior against real Google Cloud before deployment.
+
+Report integration issues in [cloud-orbitor/setup-localcloud](https://github.com/cloud-orbitor/setup-localcloud/issues), including the workflow, action commit, image digest, selected services, SDK versions, and sanitized error output. Do not include credentials.

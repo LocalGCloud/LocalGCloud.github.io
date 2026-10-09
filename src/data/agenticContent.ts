@@ -397,6 +397,11 @@ export const workflowPages: AgenticContentPage[] = withRelatedLinks([
 		limitations: [],
 		internalLinks: [
 			{
+				label: "Complete GitHub Actions guide",
+				href: "/docs/github-actions/",
+				note: "Setup action, direct Docker, service IDs, SDK settings, and AI-agent jobs.",
+			},
+			{
 				label: "Terraform docs",
 				href: "/docs/terraform/",
 				note: "Endpoint override patterns for IaC.",

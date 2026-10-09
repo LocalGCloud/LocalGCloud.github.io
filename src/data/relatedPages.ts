@@ -25,6 +25,10 @@ export interface RelatedLink {
 }
 
 const pages: Record<string, RelatedPage> = {
+	"/docs/github-actions/": {
+		anchor: "GitHub Actions user guide",
+		note: "Setup action, direct Docker, service IDs, SDK settings, and AI-agent jobs.",
+	},
 	"/docs/bigquery-emulator-features/": {
 		anchor: "BigQuery emulator feature reference",
 		note: "Endpoints, documented operations and runtime limits.",
