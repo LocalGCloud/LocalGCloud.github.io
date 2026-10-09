@@ -1,9 +1,9 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-10-07",
+  "reviewedAt": "2026-10-09",
   "provenance": {
-    "runtimeRevision": "8da58755226ded8d2185789c87ccf0f93bc0ec1f",
-    "cliRevision": "85b39cf4708ca1359bb45e5999de10f45e382439",
+    "runtimeRevision": "1d05db95fd1c7f35b6c8e47bac3cc35de0af1838",
+    "cliRevision": "5c3869f14aa6cb54cb9b7321d264ffa39ea4986e",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -61,24 +61,24 @@
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:2d422c68acbdea2d9507f7005df23901ad23c941c95959ac9ef0ceaa39985788",
       "../localcloud/localcloud.defaults.yaml": "sha256:1296cf0c2869e3978e558c6980c21896f76b77c90ae23434181ebd7a67169dd2",
-      "../localcloud/documentation.yaml": "sha256:318c91469c13850bc80d64169926fb35cc6c7a33886e381f9f2dc192c2ab94ae",
+      "../localcloud/documentation.yaml": "sha256:0bf584efdb1d1c1492c3a42821c153aa71468d517c052a5a95beaadff0dac25b",
       "../localcloud/docs/status/service-status.md": "sha256:ddad5257b8ba3b5fb4f12bfee0364fa7710e24a3afec22cae2255db33923538f",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:71d43c01c3bd8019587f19914e3c668acf2f20a090c798f7ab06ac5935cc6cce",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:1a674b42c9b5d54ad0dc1b74e821d4a525d1db25cb72ffdebad5c7ad4c3c320a",
-      "../localcloud/specs/api/catalog.json": "sha256:6e359c154012af2f989749342403ff31e0f4a8f0b0d417a77b7ed43095e4cd43",
-      "../localcloud/Dockerfile": "sha256:16b2fd184a7edd7cda1bf741337bc38f4ca0ba04ad050940225e1efb043ae721",
+      "../localcloud/specs/api/catalog.json": "sha256:e84368f0f8de596aff128f899ece75fe910f50eeb37140d21d849d70346fdd10",
+      "../localcloud/Dockerfile": "sha256:90d45e25b5a3a07aad95ab7b50d41dbdff350d51c67f10b1c08ea7778927d829",
       "../localcloud/LICENSE": "sha256:007c741ba18ddbea4cbd92b4f4b93135381b39e5a4af01ae5128f14b1d19c041",
       "../localcloud/docker/bigquery-start.sh": "sha256:987e13b3a9cc853f8590259cd32b0131df141b900c4c0fec0cfa9e3562973f9e",
       "../localcloud/docker/docker-entrypoint.sh": "sha256:cecd14c3326147f002713e4062915a2144258e1effd3b3c1138420b2f24f58eb",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java": "sha256:20a822c2f1478fc2b5746dfac025c5d50e8aa21acbe4e22cabda2ce4c1e0c97f",
-      "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:0ef1a44d3d4f4245fb7a214483ac21f8ef4353a36f4da55fad1537f79e074602",
+      "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:c27dd31388a174abd56da53f55f917962589d2a0b7980cdd7f7dc5eb080f98be",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:4978775941c8725a7fdfe1bab479ba7ceb76f30b0636d874fdc800164f3277b3",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:4cf196417fa1f1e9f88db0a812a9e9ac7b2c0952e296d4e9a1e6a326e2941503",
-      "../localcloud-cli/README.md": "sha256:aa80710ee32cf0260ab73853fd5cd35c868a4d662b14382e4855171a5d314723",
-      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:e0c9cffd3788051576a8645844641352e6f1efa794808529969fd556c8ed623e",
-      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:45117d1c983fb78ce950acd1d266cd6547a01e98d86e3ca44931db5a555fe494",
+      "../localcloud-cli/README.md": "sha256:8fdd1954f40b314a3d9dd27cc4b3ac276898a0d181b48f411e0f2e3c3d6120d5",
+      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c90f50fea0b2f4941bd38f4228204492f2c7c021fb3aaa8acda233fe41c746b5",
+      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:dffdf53111ce8f4b3ef99d22f94c2f47125efe6a09c1ae96d2bc8c6fc374349b",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:875e1beed8476f64e92aa0e9def5be89bdf7d8e27ad4b0c7d7c6d7dd040d8c9c",
-      "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:33d7c279b0ec012312f102a85662e5e5d51a08a5c240aba2c8bda9523966592e",
+      "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:0f14b9d70dcca8150a2a8deb03906365c539c94dd2fcc621b1d91aea40c427ba",
       "public/install.sh": "sha256:2c660fac584a1db052ef80956c0001fa6d71034fceb1e6617f81965741bcc796"
     },
     "worktreeSources": []
@@ -179,7 +179,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.8 from revision 85b39cf4708ca1359bb45e5999de10f45e382439. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.9 from revision 5c3869f14aa6cb54cb9b7321d264ffa39ea4986e. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
@@ -1886,7 +1886,7 @@
           "label": "serviceAccounts.patch/keys.enable/keys.disable/queryTestablePermissions",
           "status": "verified",
           "limitations": [
-            "Service account display name/description patching, key enable/disable toggling, and queryTestablePermissions."
+            "Service account display name/description patching, key enable/disable toggling, and queryTestablePermissions. In strict and gcp-live every IAM v1 service-account and key method needs the permission Google's REST reference names for it in the stored allow policies, through the shared policy evaluator, for the resolved caller (iam.serviceAccounts.create and list on the project; get, update, delete, enable, disable, undelete, getIamPolicy, setIamPolicy, signBlob and signJwt on the account; iam.serviceAccountKeys.create (also keys.upload) and list on the account; keys get, enable, disable and delete on the key). Account and key grants are inherited from the project. A caller without the permission gets 403 PERMISSION_DENIED with an ErrorInfo naming it, also for a missing account; one holding it gets 404. Open skips the check and permissive logs it. The predefined roles roles/iam.serviceAccountAdmin, serviceAccountKeyAdmin, serviceAccountViewer, serviceAccountCreator and serviceAccountDeleter, and the basic roles, carry Google's service-account permissions; roles/iam.securityAdmin reads and sets service-account policies only."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2436,7 +2436,8 @@
       "limitations": [
         "Service create/update executes Docker containers when available; job create/run explicitly reject, and full revision traffic-splitting semantics are not implemented.",
         "Local domain mappings and host/revision routing are software gaps. Google Front End and production managed routing/TLS guarantees are production-only.",
-        "Secret Manager-backed environment variables (v2 env[].valueSource.secretKeyRef, Knative v1 env[].valueFrom.secretKeyRef) are not resolved and are rejected with UNIMPLEMENTED (HTTP 501 on v1) instead of being dropped; set literal values."
+        "Secret Manager-backed environment variables (v2 env[].valueSource.secretKeyRef, Knative v1 env[].valueFrom.secretKeyRef) are not resolved and are rejected with UNIMPLEMENTED (HTTP 501 on v1) instead of being dropped; set literal values.",
+        "v2 Service.template reports the serving (latest ready) revision's template, so after a failed update it is not the failed desired template, and a v2 request's traffic is not applied (Knative v1 refuses other targets). A deployment reports CONDITION_RECONCILING from admission, never CONDITION_PENDING. A failed create releases the service instead of keeping a failed Service. Revisions report only the Ready condition; uid and etag are not reported."
       ],
       "evidence": [
         "../localcloud/localcloud.defaults.yaml",
@@ -2458,7 +2459,7 @@
           "label": "services/revisions",
           "status": "partial",
           "limitations": [
-            "Service/revision metadata and Docker create/update execution exist, with launch-failure rollback tests; broader serving/routing semantics remain partial. CreateService and UpdateService return a pending long-running operation, polled through google.longrunning.Operations or REST GET /v2/projects/{project}/locations/{location}/operations/{operation}. A create reserves the service name (a duplicate gets ALREADY_EXISTS), one deployment runs per service at a time, and a failed first launch releases the name instead of keeping a failed Service resource. With local workload identity, each revision runs behind a localcloud-relay container; its metadata server serves template.serviceAccount (default@{project} when unset, kept when a replacement omits it), and uri is the relay's protected ingress, so the container port is never published (a C24 breaking change in enforcing modes). Ingress follows the IAM mode - open admits anonymous calls, permissive verifies and logs, strict and gcp-live require a local ID token whose aud is the uri or a customAudiences entry (401 otherwise, including access tokens) and run.routes.invoke on the service (403). X-Serverless-Authorization, when present, is the only checked credential and reaches the container without its signature. A Cloud Functions invocation of a function backed by the service is checked at the gateway (cloudfunctions functions.metadata) and reaches the relay with a one-time gateway grant, so the caller's own token reaches the container unchanged. Container.env literal values (v2 env[].value, Knative v1 env[].value) reach the revision container on the direct and relay launch paths, beside the runtime contract's PORT, K_SERVICE, K_REVISION and K_CONFIGURATION, and are stored with the service and each revision, so GET and List Service and Revision return them in the v2 and v1 shapes. UpdateService and Knative replace take the container's env as a whole (a container without env clears it; an update naming no container keeps the serving revision's env, as for its image and port). As in Cloud Run, the four contract names, empty names, names containing '=' or starting with X_GOOGLE_, names or values over 32768 characters or bytes and more than 1000 variables get INVALID_ARGUMENT (HTTP 400 on v1) before anything is reserved. With a workload identity relay, GCE_METADATA_HOST, GCE_METADATA_IP and LOCALCLOUD_RELAY_CAPABILITY are also refused because the relay supplies them (a LocalCloud restriction; Cloud Run does not reserve them). Each revision declares one ADC source on its workload binding - the relay's local metadata (the default), the operator's real credential bridge (gcp_credentials.source adc or service-account, its file mounted read-only at /credentials/gcp.json with GOOGLE_APPLICATION_CREDENTIALS, and GOOGLE_CLOUD_PROJECT set to its project), or the template's own GOOGLE_APPLICATION_CREDENTIALS, kept unchanged. A template GOOGLE_APPLICATION_CREDENTIALS while the bridge is selected is a conflict, and create and update (v2 and Knative v1) get INVALID_ARGUMENT before anything is reserved or launched. GET /browse/cloudrun reports each service's identity.serviceAccount and identity.credentialSource (local, bridge or user)."
+            "Service/revision metadata and Docker create/update execution exist, with launch-failure rollback tests; broader serving/routing semantics remain partial. CreateService and UpdateService return a pending long-running operation, polled through google.longrunning.Operations or REST GET /v2/projects/{project}/locations/{location}/operations/{operation}. A create reserves the service name (a duplicate gets ALREADY_EXISTS), one deployment runs per service at a time, and a failed first launch releases the name instead of keeping a failed Service resource. With local workload identity, each revision runs behind a localcloud-relay container; its metadata server serves template.serviceAccount (default@{project} when unset, kept when a replacement omits it), and uri is the relay's protected ingress, so the container port is never published (a C24 breaking change in enforcing modes). Ingress follows the IAM mode - open admits anonymous calls, permissive verifies and logs, strict and gcp-live require a local ID token whose aud is the uri or a customAudiences entry (401 otherwise, including access tokens) and run.routes.invoke on the service (403). X-Serverless-Authorization, when present, is the only checked credential and reaches the container without its signature. A Cloud Functions invocation of a function backed by the service is checked at the gateway (cloudfunctions functions.metadata) and reaches the relay with a one-time gateway grant, so the caller's own token reaches the container unchanged. Container.env literal values (v2 env[].value, Knative v1 env[].value) reach the revision container on the direct and relay launch paths, beside the runtime contract's PORT, K_SERVICE, K_REVISION and K_CONFIGURATION, and are stored with the service and each revision, so GET and List Service and Revision return them in the v2 and v1 shapes. UpdateService and Knative replace take the container's env as a whole (a container without env clears it; an update naming no container keeps the serving revision's env, as for its image and port). As in Cloud Run, the four contract names, empty names, names containing '=' or starting with X_GOOGLE_, names or values over 32768 characters or bytes and more than 1000 variables get INVALID_ARGUMENT (HTTP 400 on v1) before anything is reserved. With a workload identity relay, GCE_METADATA_HOST, GCE_METADATA_IP and LOCALCLOUD_RELAY_CAPABILITY are also refused because the relay supplies them (a LocalCloud restriction; Cloud Run does not reserve them). Each revision declares one ADC source on its workload binding - the relay's local metadata (the default), the operator's real credential bridge (gcp_credentials.source adc or service-account, its file mounted read-only at /credentials/gcp.json with GOOGLE_APPLICATION_CREDENTIALS, and GOOGLE_CLOUD_PROJECT set to its project), or the template's own GOOGLE_APPLICATION_CREDENTIALS, kept unchanged. A template GOOGLE_APPLICATION_CREDENTIALS while the bridge is selected is a conflict, and create and update (v2 and Knative v1) get INVALID_ARGUMENT before anything is reserved or launched. GET /browse/cloudrun reports each service's identity.serviceAccount and identity.credentialSource (local, bridge or user). Service and Revision report deployment status from stored revisions, identically over gRPC and REST. A create or update records its revision when admitted and advances generation; each revision settles READY once it serves or FAILED when its launch fails or a restart interrupts it. latestCreatedRevision and latestReadyRevision are full revision names, observedGeneration is the serving revision's generation, and reconciling is true while the latest revision deploys. The Ready terminalCondition and ConfigurationsReady are CONDITION_RECONCILING meanwhile, then CONDITION_SUCCEEDED, or CONDITION_FAILED with reason REVISION_FAILED and the launch error, while the last ready revision keeps serving (RoutesReady). traffic and trafficStatuses report 100 percent TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST once a revision serves. A failed revision's number is not reused. Each Revision reports service, generation 1, observedGeneration 1 once settled, reconciling, a Ready condition and its container port. Knative v1 status (latestCreatedRevisionName, latestReadyRevisionName, observedGeneration, Ready/ConfigurationsReady/RoutesReady with RevisionFailed, traffic) and /browse/cloudrun (latestReadyRevision, latestCreatedRevision, latestCreatedState, reconciling; per revision state and serving) report the same status."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
