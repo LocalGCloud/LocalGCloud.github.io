@@ -457,7 +457,7 @@ test('desktop payloads retain canonical metadata, Markdown discovery and every s
     assert.equal(page.markdown,md,path+' Markdown discovery');if(md)markdownPages++;
     if(path==='/404.html')assert.ok(page.metadata.some(meta=>meta.name==='robots'&&meta.content==='noindex, nofollow'));
   }
-  assert.equal(markdownPages,85);
+  assert.equal(markdownPages,Object.keys(manifest.routes).filter(path=>path!=='/404.html').length);
   const headers=readFileSync(new URL('../public/_headers',import.meta.url),'utf8');
   assert.match(headers, /\/_desktop\/\*\s+X-Robots-Tag: noindex/);
 });
