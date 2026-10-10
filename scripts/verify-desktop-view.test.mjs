@@ -388,7 +388,7 @@ test('Classic keeps explicit view URLs for page links and dynamic search results
 });
 
 test('pending styles keep controls responsive, cancel stale clicks, and preserve native navigation on failure', async () => {
-  for (const [outcome, cancel] of ['load', 'error', 'timeout'].flatMap(outcome => [true, false].map(cancel => [outcome, cancel]))) {
+  for (const [outcome, cancel] of ['load', 'frame-timeout', 'error', 'timeout'].flatMap(outcome => [true, false].map(cancel => [outcome, cancel]))) {
   const listeners = new Map(), frames = [];
   const button = (action) => ({ dataset: { windowAction: action }, setAttribute() {}, addEventListener: (_, handler) => listeners.set(action, handler) });
   let styles, focused = false, assigned = false, routed;
@@ -402,14 +402,20 @@ test('pending styles keep controls responsive, cancel stale clicks, and preserve
   const root = { dataset: { pageStyles: '/desktop.css', pageLabel: 'Home' }, querySelector: (selector) => elements[selector], querySelectorAll: () => [] };
   const classes = new Set(['desktop-view']);
   const html = { dataset: { siteView: 'desktop' }, classList: { add: name => classes.add(name), remove: name => classes.delete(name) } };
-  let timeout, cleared = false, classic = false;
+  let timeout, frameTimeout, cleared = false, frameCleared = false, classic = false;
   let resized;
   const wide = { matches: true, addEventListener: (_, fn) => { resized = fn; } };
   const context = {
     requestAnimationFrame: callback => frames.push(callback),
     getNavigation() { routerLoads++; assert.ok(classes.has('desktop-ready')); return Promise.resolve(url => { routed = url; return true; }); },
-    setTimeout(callback, delay) { assert.equal(delay, 8000); timeout = callback; return 1; },
-    clearTimeout(id) { assert.equal(id, 1); cleared = true; }, initClassic() { classic = true; },
+    setTimeout(callback, delay) {
+      if (delay === 250) { frameTimeout = callback; return 2; }
+      assert.equal(delay, 8000); timeout = callback; return 1;
+    },
+    clearTimeout(id) {
+      if (id === 2) { frameCleared = true; return; }
+      assert.equal(id, 1); cleared = true;
+    }, initClassic() { classic = true; },
     URL, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, location: { href: 'https://local.cloud/', assign(url) { assigned = url; } },
     sessionStorage: { getItem: () => null }, history: { replaceState() {} },
     matchMedia: () => wide, window: { addEventListener() {} },
@@ -434,19 +440,28 @@ test('pending styles keep controls responsive, cancel stale clicks, and preserve
   assert.equal(focused, true);
   assert.equal(assigned, false);
   if (outcome === 'timeout') timeout();
-  else styles['on' + outcome]();
+  else styles[outcome === 'frame-timeout' ? 'onload' : 'on' + outcome]();
   await pending;
   assert.equal(cleared, true);
-  if (outcome === 'load') {
+  if (outcome === 'load' || outcome === 'frame-timeout') {
     assert.ok(classes.has('desktop-ready'), 'ready layout can be painted');
     assert.equal(classic, false);
     assert.equal(routerLoads, 0, 'initial scroll capture waits for presentation layout');
-    frames.shift()();
-    assert.equal(routerLoads, 0);
-    frames.shift()();
+    if (outcome === 'frame-timeout') frameTimeout();
+    else {
+      frames.shift()();
+      assert.equal(routerLoads, 0);
+      frames.shift()();
+    }
     await new Promise(resolve => setImmediate(resolve));
-    assert.equal(routerLoads, 1);
+    assert.equal(routerLoads, 1, 'paused frames do not block queued navigation');
     assert.equal(routed, cancel ? undefined : 'https://local.cloud/docs/');
+    assert.equal(frameCleared, outcome === 'load', 'painting clears its fallback timer');
+    if (outcome === 'frame-timeout') {
+      frames.shift()(); frames.shift()();
+      await new Promise(resolve => setImmediate(resolve));
+      assert.equal(routerLoads, 1, 'resumed frames do not initialize the router twice');
+    }
   } else {
     await new Promise(resolve => setImmediate(resolve));
     assert.equal(assigned, cancel ? false : 'https://local.cloud/docs/', 'presentation failure keeps an uncanceled destination');

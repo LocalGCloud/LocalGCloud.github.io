@@ -40,7 +40,7 @@ for (const file of htmlFiles) {
       if (!source.trim()) continue;
       key = 'inline:' + digest(source);
       if (!inlineAssets.has(source)) {
-        const output = await transform(source,{loader:'js',target:'es2022',minify:true,legalComments:'none',treeShaking:false,sourcemap:'external',sourcesContent:true,sourcefile:'rendered-inline.js'});
+        const output = await transform(source,{loader:'js',target:'es2022',minify:true,legalComments:'none',treeShaking:false,sourcemap:'external',sourcesContent:true,sourcefile:`rendered-inline.${digest(source).slice(0,16)}.js`});
         const asset = createMappedScript(output.code,output.map,'inline');
         await writeFile(resolve(root,asset.src.slice(1)),asset.code);
         await writeFile(resolve(root,asset.src.slice(1)+'.map'),asset.map);

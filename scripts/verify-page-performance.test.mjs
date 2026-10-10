@@ -751,10 +751,16 @@ test('every page keeps its critical bootstraps inline with retained maps and exa
   }
 });
 
-test('distinct rendered scripts retain distinct source map identities', () => {
+test('distinct rendered scripts retain distinct source map identities in HTML and routed payloads', () => {
   const sources = new Map();
-  const active = new Set(walkHtml(distRoot).flatMap(path =>
-    [...readFileSync(path, 'utf8').matchAll(/\/_astro\/inline\.[a-f0-9]+\.js(?!\.map)/g)].map(match => match[0])));
+  const manifest = readFileSync(join(distRoot, 'index.html'), 'utf8').match(/data-desktop-manifest="([^"]+)"/);
+  assert.ok(manifest, 'current route manifest is present');
+  const { routes } = JSON.parse(readFileSync(join(distRoot, manifest[1]), 'utf8'));
+  const routed = new Set(Object.values(routes).flatMap(path =>
+    JSON.parse(readFileSync(join(distRoot, path), 'utf8')).scripts.filter(script => script.key.startsWith('inline:')).map(script => script.src)));
+  assert.ok(routed.size > 0, 'routed inline widgets are included');
+  const active = new Set([...routed, ...walkHtml(distRoot).flatMap(path =>
+    [...readFileSync(path, 'utf8').matchAll(/\/_astro\/inline\.[a-f0-9]+\.js(?!\.map)/g)].map(match => match[0]))]);
   for (const path of active) {
     const map = JSON.parse(readFileSync(join(distRoot, path + '.map'), 'utf8'));
     map.sources.forEach((source, index) => {

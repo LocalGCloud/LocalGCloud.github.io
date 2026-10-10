@@ -181,8 +181,11 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
   });
   if(getNavigation)navigationReady=loaded.then(async ready=>{
     if(!ready)return null;
-    // Let presentation writes paint before the router captures the initial scroll position.
-    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    // Let presentation writes paint; the timer keeps background tabs navigating.
+    await new Promise(resolve=>{
+      const timer=setTimeout(resolve,250);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{clearTimeout(timer);resolve();}));
+    });
     return getNavigation();
   });
 
