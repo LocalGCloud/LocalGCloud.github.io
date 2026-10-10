@@ -188,10 +188,7 @@ if (typeof document !== 'undefined') {
       const main = document.querySelector('[data-desktop-main]');
       if (main) main.hidden = false;
       document.querySelectorAll('script[type="speculationrules"]').forEach(script => script.remove());
-      return initMobile().then(() => {
-        if ('requestIdleCallback' in window) window.requestIdleCallback(getNavigation, { timeout: 1200 });
-        else setTimeout(getNavigation, 0);
-      }).catch(error => {
+      return initMobile().catch(error => {
         if (document.documentElement.dataset.siteView === 'mobile') {
           document.documentElement.classList.remove('mobile-view');
           document.documentElement.dataset.siteView = 'classic';

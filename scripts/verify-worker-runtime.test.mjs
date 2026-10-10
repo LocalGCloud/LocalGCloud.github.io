@@ -66,15 +66,15 @@ test('_headers apply: no-transform only on HTML, immutable bundles, security hea
   const html = await (await get('/', { 'Accept-Encoding': 'identity' })).text();
   const bundle = html.match(/\/_astro\/[^"']+\.(?:js|woff2|css)/)[0];
   assert.equal((await get(bundle)).headers.get('Cache-Control'), 'public, max-age=31536000, immutable');
-  for (const prefix of ['desktop-view.', 'desktop-navigation.', 'site-interactions.', 'keyboard-shortcuts.', 'desktop-pages.', 'service-filter.', 'desktop-home-desk.']) {
+  for (const prefix of ['desktop-view.', 'desktop-navigation.', 'site-interactions.', 'keyboard-shortcuts.', 'desktop-pages.', 'service-filter.', 'desktop-home-desk.', 'localcloud-icon.']) {
     const file = readdirSync(new URL('../dist/_astro/', import.meta.url)).find((name) => name.startsWith(prefix) && !name.endsWith('.map'));
     assert.ok(file, prefix);
     const response = await get('/_astro/' + file);
     assert.equal(response.status, 200, file);
-    const type = file.endsWith('.css') ? /^text\/css\b/ : file.endsWith('.webp') ? /^image\/webp\b/ : /^(?:text|application)\/javascript\b/;
+    const type = file.endsWith('.css') ? /^text\/css\b/ : file.endsWith('.webp') ? /^image\/webp\b/ : file.endsWith('.svg') ? /^image\/svg\+xml\b/ : /^(?:text|application)\/javascript\b/;
     assert.match(response.headers.get('Content-Type'), type, file);
     assert.equal(response.headers.get('Cache-Control'), 'public, max-age=31536000, immutable');
-    assert.equal(response.headers.get('X-Robots-Tag'),file.endsWith('.webp')?null:'noindex',file+' image/code indexing');
+    assert.equal(response.headers.get('X-Robots-Tag'),/\.(webp|svg)$/.test(file)?null:'noindex',file+' image/code indexing');
   }
   assert.equal((await get('/brand/localcloud-mark.svg')).headers.get('Cache-Control'), 'public, max-age=604800');
   assert.match((await get('/brand/icons/')).headers.get('Cache-Control'), /max-age=0/);

@@ -68,7 +68,7 @@ test('the actual analytics bootstrap uses the selected host for SDK loading and 
   for (const env of [{}, { SITE_DEPLOYMENT_TARGET: 'static' }, { PUBLIC_POSTHOG_HOST: 'https://e.local.cloud' }]) {
     const config = resolvePosthogConfig(env);
     const { inserted, context } = executeBootstrap(bootstrap, config.apiHost);
-    assert.equal(inserted[0].src, `${config.assetHost}/static/array.js`);
+    assert.equal(inserted[0].src, `${config.assetHost}/static/1.438.7/array.js`);
     assert.equal(context.posthog._i[0][1].api_host, config.apiHost);
     assert.equal(context.posthog._i[0][1].ui_host, 'https://us.posthog.com');
   }
@@ -84,7 +84,7 @@ test('the emitted HTML serializes the hosting configuration into the real bootst
   const expected = resolvePosthogConfig(loadEnv('production', process.cwd(), ''));
   const { inserted, context } = executeBootstrap(bootstrap);
   assert.equal(context.posthog._i[0][1].api_host, expected.apiHost);
-  assert.equal(inserted[0].src, `${expected.assetHost}/static/array.js`);
+  assert.equal(inserted[0].src, `${expected.assetHost}/static/1.438.7/array.js`);
 });
 
 test('the Worker entry point preserves static routing and genuine 404s outside the proxy', async () => {
@@ -100,7 +100,7 @@ test('the Worker entry point preserves static routing and genuine 404s outside t
 });
 
 test('SDK bundles and remote configuration reach the asset origin with query strings intact', async () => {
-  for (const path of ['/static/array.js', '/static/recorder.js', '/array/phc_example/config']) {
+  for (const path of ['/static/array.js', '/static/1.438.7/array.js', '/static/recorder.js', '/array/phc_example/config']) {
     let forwarded;
     const response = await handleRequest(new Request(`${origin}/ingest${path}?v=1&x=a%2Bb&x=c`), noAssets,
       async (request) => {

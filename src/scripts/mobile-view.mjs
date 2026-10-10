@@ -17,7 +17,15 @@ export function initMobile({ initViewLinks, desktopSection, historyTraversal }) 
     if (strip.dataset.mobileReady) continue;
     strip.dataset.mobileReady = 'true';
     const selected = strip.querySelector('[aria-current="page"]');
-    if (selected && !traversal) strip.scrollLeft = Math.max(0, selected.offsetLeft - (strip.clientWidth - selected.offsetWidth) / 2);
+    if (selected && !traversal && typeof IntersectionObserver !== 'undefined') {
+      // Use the browser's post-layout snapshot to center only the horizontal scroller.
+      const observer = new IntersectionObserver(([entry]) => {
+        observer.disconnect();
+        if (!entry?.rootBounds?.width) { delete strip.dataset.mobileReady; return; }
+        strip.scrollBy({ left: entry.boundingClientRect.left - entry.rootBounds.left - (entry.rootBounds.width - entry.boundingClientRect.width) / 2, behavior: 'instant' });
+      }, { root: strip });
+      observer.observe(selected);
+    }
     if (traversal) { try {
       const saved = sessionStorage.getItem('lc-mobile-strip:' + new URL(location.href).pathname);
       if (saved !== null && Number.isFinite(Number(saved)) && Number(saved) >= 0) strip.scrollLeft = Number(saved);

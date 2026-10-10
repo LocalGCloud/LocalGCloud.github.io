@@ -207,15 +207,5 @@ export async function installDesktopNavigation({root, validate, before, mounted,
   };
   document.addEventListener('pointerover',warm,{passive:true});document.addEventListener('focusin',warm);
   document.addEventListener('pointerdown',event=>{if(mobile())warm(event);},{passive:true});
-  const warmMobile=()=>{
-    if(!mobile())return;
-    for(const link of pane.querySelectorAll?.('.mobile-service-strip a')||[])warm({target:link});
-  };
-  const idleWarm=()=>{
-    if('requestIdleCallback' in window)window.requestIdleCallback(warmMobile,{timeout:2000});
-    else setTimeout(warmMobile,0);
-  };
-  if(document.readyState==='complete')idleWarm();
-  else window.addEventListener('load',idleWarm,{once:true});
   return navigate;
 }

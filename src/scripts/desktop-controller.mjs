@@ -32,6 +32,11 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
     }
     const hero = main.querySelector('[data-desktop-hero]');
     if(hero && !hero.dataset.heroReady){hero.after(hero.content.cloneNode(true));hero.dataset.heroReady='true';}
+    const image = main.querySelector('.desktop-hero-art img');
+    if (image) {
+      image.dataset.desktopSizes ||= image.sizes;
+      image.sizes = main.hasAttribute('data-expanded') ? 'calc(100vw - 2px)' : image.dataset.desktopSizes;
+    }
   };
   presentContent();
 
@@ -60,7 +65,8 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
     if (!url) return false;
     if(main.hidden)show();
     const revision = navigationRevision;
-    const active = () => revision === navigationRevision && wide.matches && document.documentElement.dataset.siteView === 'desktop';
+    const active = () => revision === navigationRevision && wide.matches &&
+      (document.documentElement.dataset.siteView === 'desktop' || root.dataset.ready === 'failed' && document.documentElement.dataset.siteView === 'classic');
     navigationReady.then(navigate => { if (active()) return navigate ? navigate(url) : (remember(),location.assign(url)); })
       .catch(() => { if (active()) location.assign(url); });
     return true;
@@ -149,6 +155,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
         const expanded = main.toggleAttribute('data-expanded');
         button.setAttribute('aria-pressed', String(expanded));
         button.setAttribute('aria-label', expanded ? 'Restore window size' : 'Expand window');
+        presentContent();
       }
     });
   });
@@ -172,7 +179,12 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
       renderHistory();syncURL(url);
       root.querySelectorAll('.desktop-menu[open]').forEach(menu=>{menu.open=false;});
   });
-  if(getNavigation)navigationReady=getNavigation();
+  if(getNavigation)navigationReady=loaded.then(async ready=>{
+    if(!ready)return null;
+    // Let presentation writes paint before the router captures the initial scroll position.
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    return getNavigation();
+  });
 
   // Bind controls before the optional presentation finishes downloading.
   if (await loaded) document.documentElement.classList.add('desktop-ready');

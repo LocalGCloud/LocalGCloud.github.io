@@ -4,7 +4,7 @@ Verified locally on October 8, 2026. This change is not deployed.
 
 Mobile HTML links now use the existing pinned content router instead of loading another document. Six route payloads are cached, shared scripts run once, and page metadata and widgets update on navigation. Browser Back and Forward use document scroll on Mobile and the content pane on Desktop. Mobile history also restores the service strip and overview disclosure.
 
-After the initial page finishes, idle loading warms up to three service destinations and their assets. This costs roughly 48 KB in the local audit and avoids repeated manifest, content, and stylesheet round trips on those service taps. SaveData and 2G connections skip warming. External links, downloads, view changes, and unavailable routed resources retain native navigation.
+The mobile controller preloads directly from the initial HTML. The shared router loads on the first internal navigation; page load no longer warms three speculative service destinations. Once the router is installed, link hover, keyboard focus, and touch can warm up to three destinations. SaveData and 2G connections skip warming. External links, downloads, view changes, and unavailable routed resources retain native navigation. This loading change was made locally on October 10, 2026; the measurements below describe the October 8 layout.
 
 The homepage heading and mobile image area are rendered in the initial HTML. A reserved image surface provides a placeholder while the selected WebP downloads. Hidden mobile artwork stays lazy in other presentations. The updated layout removes the duplicate blue service button and audience line, uses 8-pixel outer margins, and crops a larger image flush with the card edges.
 

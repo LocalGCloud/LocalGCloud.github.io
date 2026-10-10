@@ -84,7 +84,7 @@ async function finalize() {
   const viewAssets = new Map();
   // ?url modules bypass Vite's JS minifier. Reuse mapped assets before hashing HTML.
   for (const name of await readdir(resolve(root, '_astro'))) {
-    const match = name.match(/^(desktop-view|desktop-controller|mobile-view|desktop-navigation|my-cloud|copy-buttons)\..*\.mjs$/);
+    const match = name.match(/^(desktop-view|desktop-controller|mobile-view|desktop-navigation|site-interactions|my-cloud|copy-buttons)\..*\.mjs$/);
     if (!match) continue;
     const source = await readFile(resolve(root, '_astro', name), 'utf8');
     const transformed = await transform(source, {
@@ -102,7 +102,8 @@ async function finalize() {
     // The repository and all of this browser code are public; no upload credential is needed.
     const transformed = await transform(source, {
       loader: 'js', target: 'es2022', minify: true, legalComments: 'none', treeShaking: false,
-      sourcemap: 'external', sourcesContent: true, sourcefile: 'rendered-inline.js',
+      sourcemap: 'external', sourcesContent: true,
+      sourcefile: `rendered-inline.${createHash('sha256').update(source).digest('hex').slice(0, 16)}.js`,
     });
     const asset = createMappedScript(transformed.code, transformed.map, 'inline');
     await writeFile(resolve(root, asset.src.slice(1)), asset.code);

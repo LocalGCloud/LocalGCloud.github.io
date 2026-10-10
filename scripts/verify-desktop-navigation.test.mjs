@@ -100,14 +100,17 @@ test('Mobile Back ignores layout clamping until async mounting has restored the 
   release();await pending;assert.equal(h.context.document.scrollingElement.scrollTop,900);
 });
 
-test('Mobile background warming waits for load, stops at three routes and skips data-saving connections',async()=>{
+test('Mobile warming waits for link intent, stops at three routes and skips data-saving connections',async()=>{
   const links=['b','c','d','e'].map(path=>({href:'/'+path+'/',hasAttribute:()=>false,closest(){return this;}}));
   for(const connection of [{},{saveData:true},{effectiveType:'2g'}]){
     const h=await harness(false,{}, {siteView:'mobile',views:['mobile'],context:{navigator:{connection}}});
     h.pane.querySelectorAll=()=>links;
     assert.deepEqual(h.requests,[],'initial render has no speculative requests');
-    h.windowListeners.get('load')();
+    h.windowListeners.get('load')?.();
     for(const timeout of [...h.timers.values()])timeout();
+    await new Promise(resolve=>setImmediate(resolve));
+    assert.deepEqual(h.requests,[],'page load never speculates on three unrelated destinations');
+    for(const target of links)h.documentListeners.get('pointerdown')({target});
     await new Promise(resolve=>setImmediate(resolve));
     const routes=h.requests.filter(url=>!url.includes('/desktop-manifest.'));
     assert.equal(routes.length,connection.saveData||connection.effectiveType==='2g'?0:3);

@@ -1,10 +1,14 @@
 ---
 import robotoFont from '@fontsource-variable/roboto/files/roboto-latin-wght-normal.woff2?url';
+import monoFont from '@fontsource-variable/roboto-mono/files/roboto-mono-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import '../styles/desktop.css';
 import '../styles/mobile.css';
 import DesktopShell from '../components/DesktopShell.astro';
 import desktopScript from '../scripts/desktop-view.mjs?url';
+import mobileScript from '../scripts/mobile-view.mjs?url';
+import desktopControllerScript from '../scripts/desktop-controller.mjs?url';
+import navigationScript from '../scripts/desktop-navigation.mjs?url';
 import desktopPageStyles from '../styles/desktop-pages.css?url';
 import keyboardScript from '../scripts/keyboard-shortcuts.mjs?url';
 import pageInteractions from '../scripts/site-interactions.mjs?url';
@@ -49,6 +53,7 @@ const homeImages = hero ? {
   mobile: { href: mobileHero!.src, imageSrcset: mobileHero!.srcSet.attribute, imageSizes: mobileHeroOptions.sizes },
   classic: { href: classicHero },
 } : null;
+const viewPreloads = { desktop: [desktopControllerScript, navigationScript], mobile: [mobileScript] };
 const {
   title,
   description = 'Run Google Cloud service workflows locally in one Docker container. Before use, review compatibility, privacy, and the proprietary license.',
@@ -127,11 +132,12 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
 
     {/* One local variable body font covers all headline/body weights. */}
     <link rel="preload" href={robotoFont} as="font" type="font/woff2" crossorigin />
+    {hero && <link rel="preload" href={monoFont} as="font" type="font/woff2" crossorigin />}
     <link rel="modulepreload" href={pageInteractions} />
 
     <title>{title}</title>
 
-    <script is:inline data-critical-bootstrap define:vars={{ desktopScript, desktopPageStyles, homeImages }}>
+    <script is:inline data-critical-bootstrap define:vars={{ desktopScript, viewPreloads, desktopPageStyles, homeImages }}>
       (function () {
         var root = document.documentElement, query = new URLSearchParams(location.search).get('view');
         var wide = matchMedia('(min-width: 64rem)'), loaded = false, preloaded = false, failed = false;
@@ -150,6 +156,11 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           if (loaded) window.dispatchEvent(new Event('lc:view-change'));
         };
         applyView();
+        for (var src of viewPreloads[root.dataset.siteView] || []) {
+          var module = document.createElement('link');
+          module.rel = 'modulepreload'; module.href = src;
+          document.head.appendChild(module);
+        }
         if (homeImages) {
           var hero = document.createElement('link');
           hero.rel = 'preload'; hero.as = 'image'; hero.fetchPriority = 'high';
@@ -272,7 +283,8 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           posthogRequested = true;
           var sdk = document.createElement('script');
           sdk.async = true;
-          sdk.src = posthogApiHost.replace('.i.posthog.com', '-assets.i.posthog.com') + '/static/array.js';
+          // Versioned SDK URLs retain the vendor's one-year immutable cache policy.
+          sdk.src = posthogApiHost.replace('.i.posthog.com', '-assets.i.posthog.com') + '/static/1.438.7/array.js';
           document.head.appendChild(sdk);
         }
         if (!beaconRequested && cloudflareAnalyticsToken) {
@@ -346,34 +358,27 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <SearchModal />
     <script is:inline type="speculationrules" set:html={JSON.stringify(speculationRules)} />
     <script>
-      // Enable reveal animations only when JS and IntersectionObserver are available;
-      // without them .reveal content renders visible by default. Content already on screen
-      // is marked visible before reveal-ready applies, so it never flashes out and back in.
+      // Observer snapshots avoid forcing layout; keep content visible until the initial
+      // snapshot marks on-screen elements visible, then enable offscreen reveal animations.
       if ('IntersectionObserver' in window) {
-        // Measure every element before changing classes, avoiding interleaved layout reads/writes.
-        const measured = [...document.querySelectorAll('.reveal')].map((el) => ({ el, rect: el.getBoundingClientRect() }));
-        const offscreen = measured.filter(({ el, rect: { top, bottom } }) => {
-          if (top < window.innerHeight && bottom > 0) {
-            el.classList.add('visible');
-            return false;
-          }
-          return true;
-        }).map(({ el }) => el);
-        document.documentElement.classList.add('reveal-ready');
+        let ready = false;
         const observer = new IntersectionObserver(
-          (entries) => {
+          (entries) => requestAnimationFrame(() => {
             entries.forEach((entry) => {
-              if (entry.isIntersecting) {
+              const rect = entry.boundingClientRect, viewport = entry.rootBounds;
+              const initiallyVisible = !ready && viewport && rect.top < viewport.bottom + 50 && rect.bottom > viewport.top;
+              if (entry.isIntersecting || initiallyVisible) {
                 entry.target.classList.add('visible');
-                // Stop observing once visible to prevent re-triggering
                 observer.unobserve(entry.target);
               }
             });
-          },
+            document.documentElement.classList.add('reveal-ready');
+            ready = true;
+          }),
           // threshold 0 so elements taller than the viewport (long articles) still reveal
           { threshold: 0, rootMargin: '0px 0px -50px 0px' }
         );
-        offscreen.forEach((el) => observer.observe(el));
+        document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
       }
     </script>
 

@@ -1,6 +1,6 @@
 # PostHog proxy
 
-The Astro build remains static. The Cloudflare profile uses `worker/index.mjs` to handle analytics requests under `/ingest` on the same origin and forward them to PostHog US. The browser loads the SDK from `/ingest/static/array.js`. The public project token, capture settings and `ui_host: 'https://us.posthog.com'` stay unchanged.
+The Astro build remains static. The Cloudflare profile uses `worker/index.mjs` to handle analytics requests under `/ingest` on the same origin and forward them to PostHog US. The browser loads the pinned SDK from `/ingest/static/1.438.7/array.js`, which retains PostHog's one-year immutable cache policy. Upgrade the pinned version when updating the SDK. The public project token, capture settings and `ui_host: 'https://us.posthog.com'` stay unchanged.
 
 ## Build-time hosting configuration
 
@@ -39,7 +39,7 @@ pnpm run test:analytics
 pnpm exec wrangler dev --port 8875
 ```
 
-Use Wrangler for this check: Astro dev and preview do not execute the Worker. In browser developer tools, verify that `/ingest/static/array.js`, remote configuration, and event requests succeed on the local origin, with no CSP errors. Confirm ordinary pages and unknown paths still return their expected content/status. The unit tests use a fake upstream; they do not send events to PostHog.
+Use Wrangler for this check: Astro dev and preview do not execute the Worker. In browser developer tools, verify that `/ingest/static/1.438.7/array.js`, remote configuration, and event requests succeed on the local origin, with no CSP errors. Confirm ordinary pages and unknown paths still return their expected content/status. The unit tests use a fake upstream; they do not send events to PostHog.
 
 Production deployment requires an authenticated Cloudflare account (`pnpm exec wrangler login`) or account-scoped `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` values in the process environment. Run `pnpm run deploy:cloudflare`, then inspect the deployed SDK/event requests and confirm a tagged test event appears in the correct PostHog project. HTTP acceptance alone does not prove visibility in PostHog. See [Cloudflare deployment](cloudflare-deployment.md) for the existing GitHub Actions route.
 

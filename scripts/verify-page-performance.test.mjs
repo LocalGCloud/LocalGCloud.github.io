@@ -16,7 +16,7 @@ const inlineScripts = [...layout.matchAll(/<script is:inline[^>]*>([\s\S]*?)<\/s
 const bootstrap = inlineScripts.find((script) => script.includes('posthog.init('));
 const eventTracking = readFileSync(new URL('../src/scripts/site-interactions.mjs', import.meta.url), 'utf8');
 const cloudflareToken = resolveCloudflareAnalyticsConfig().token;
-const sdkSrc = '/ingest/static/array.js';
+const sdkSrc = '/ingest/static/1.438.7/array.js';
 const beaconSrc = 'https://static.cloudflareinsights.com/beacon.min.js';
 
 // Runs the head bootstrap the way the browser would, with the visitor's privacy signals and
@@ -662,22 +662,40 @@ const walkHtml = (directory) => readdirSync(directory, { withFileTypes: true }).
   ? walkHtml(join(directory, entry.name))
   : entry.name.endsWith('.html') ? [join(directory, entry.name)] : []);
 
-test('reveal setup completes all geometry reads before mutating classes', () => {
+test('reveal setup uses observer snapshots and never hides initial viewport content', () => {
   const source = [...layout.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).find(s => s.includes('IntersectionObserver'));
-  const calls = [], observed = [];
-  const nodes = [20, 900].map((top, i) => ({
-    getBoundingClientRect() { calls.push('read:' + i); return { top, bottom: top + 100 }; },
-    classList: { add() { calls.push('write:' + i); } },
+  const calls = [], observed = [], unobserved = [], frames = [];
+  const tops = [20, 700, 900];
+  const nodes = tops.map((top, i) => ({
+    getBoundingClientRect() { assert.fail('reveal setup must not force layout'); },
+    classList: { add() { calls.push('visible:' + i); } },
   }));
+  let notify;
   const context = {
-    innerHeight: 720,
+    requestAnimationFrame: callback => frames.push(callback),
     document: { querySelectorAll: () => nodes, documentElement: { classList: { add() { calls.push('ready'); } } } },
-    IntersectionObserver: class { observe(el) { observed.push(el); } },
+    IntersectionObserver: class {
+      constructor(callback, options) { notify = callback; assert.equal(options.threshold, 0); }
+      observe(el) { observed.push(el); }
+      unobserve(el) { unobserved.push(el); }
+    },
   };
   context.window = context;
   runInNewContext(source, context);
-  assert.deepEqual(calls, ['read:0', 'read:1', 'write:0', 'ready']);
-  assert.deepEqual(observed, [nodes[1]], 'offscreen content keeps its reveal observer');
+  assert.deepEqual(calls, [], 'content stays visible before the first observer delivery');
+  assert.deepEqual(observed, nodes);
+  const entries = nodes.map((target, i) => ({ target, isIntersecting: i === 0,
+    boundingClientRect: { top: tops[i], bottom: tops[i] + 100 }, rootBounds: { top: 0, bottom: 670 } }));
+  notify(entries);
+  assert.deepEqual(calls, [], 'observer delivery leaves layout clean for other observers');
+  frames.shift()();
+  assert.deepEqual(calls, ['visible:0', 'visible:1', 'ready'], 'the bottom 50px of the viewport stays visible too');
+  assert.deepEqual(unobserved, [nodes[0], nodes[1]]);
+  calls.length = 0;
+  notify([{ ...entries[2], isIntersecting: true }]);
+  frames.shift()();
+  assert.equal(calls[0], 'visible:2');
+  assert.deepEqual(unobserved, nodes, 'offscreen content reveals and stops observing when scrolled into view');
 });
 
 test('every page has no parser-blocking external scripts and loads interactions directly', () => {
@@ -686,7 +704,7 @@ test('every page has no parser-blocking external scripts and loads interactions 
     for (const [, attrs] of html.matchAll(/<script\b([^>]*\bsrc="[^"]+"[^>]*)>/g)) {
       assert.ok(/\btype="module"|\b(?:async|defer)\b/.test(attrs), path + ': ' + attrs);
     }
-    assert.match(html, /<script\b[^>]*type="module"[^>]*src="\/_astro\/site-interactions\.[^"]+\.mjs"/, path);
+    assert.match(html, /<script\b[^>]*type="module"[^>]*src="\/_astro\/site-interactions\.[^"]+\.js"/, path);
   }
 });
 
@@ -733,6 +751,21 @@ test('every page keeps its critical bootstraps inline with retained maps and exa
   }
 });
 
+test('distinct rendered scripts retain distinct source map identities', () => {
+  const sources = new Map();
+  const active = new Set(walkHtml(distRoot).flatMap(path =>
+    [...readFileSync(path, 'utf8').matchAll(/\/_astro\/inline\.[a-f0-9]+\.js(?!\.map)/g)].map(match => match[0])));
+  for (const path of active) {
+    const map = JSON.parse(readFileSync(join(distRoot, path + '.map'), 'utf8'));
+    map.sources.forEach((source, index) => {
+      const content = map.sourcesContent[index];
+      if (sources.has(source)) assert.equal(sources.get(source), content, source + ': unrelated scripts must not share a source identity');
+      sources.set(source, content);
+    });
+  }
+  assert.ok(sources.size > 1);
+});
+
 test('built scripts retain matching public maps at distinct immutable release URLs', () => {
   const release = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim().slice(0, 12);
   const files = JSON.parse(readFileSync(join(distRoot, 'asset-manifest.json'), 'utf8')).files;
@@ -740,7 +773,7 @@ test('built scripts retain matching public maps at distinct immutable release UR
   assert.ok(scripts.length > 5, 'compiled scripts are present');
   for (const file of scripts) {
     // Mapped view modules use the same code-and-map digest as inline/Pagefind assets.
-    const mapped = /\/(?:inline|pagefind-client|desktop-view|desktop-controller|mobile-view|desktop-navigation|my-cloud|my-cloud-launcher|copy-buttons)\.[a-f0-9]{16}\.js$/.test(file);
+    const mapped = /\/(?:inline|pagefind-client|desktop-view|desktop-controller|mobile-view|desktop-navigation|site-interactions|my-cloud|my-cloud-launcher|copy-buttons)\.[a-f0-9]{16}\.js$/.test(file);
     if (!mapped) assert.ok(file.endsWith(`.${release}.js`), file);
     const code = readFileSync(join(distRoot, file), 'utf8');
     assert.ok(code.includes(`\n//# sourceMappingURL=${file.split('/').at(-1)}.map`), file);

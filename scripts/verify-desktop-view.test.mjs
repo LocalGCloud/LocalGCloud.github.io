@@ -168,7 +168,7 @@ function viewHarness({ query = '', saved, wide = true, blockedStorage = false } 
   } };
   const breakpoint = { matches: wide, addEventListener: (_, callback) => listeners.set('breakpoint', callback) };
   const context = {
-    desktopScript: '/_astro/desktop-view.mjs', desktopPageStyles: '/_astro/desktop-pages.css', homeImages:null, URL, URLSearchParams, Event, console,
+    desktopScript: '/_astro/desktop-view.mjs', viewPreloads: { mobile: ['/_astro/mobile-view.mjs'], desktop: ['/_astro/desktop-controller.mjs', '/_astro/desktop-navigation.mjs'] }, desktopPageStyles: '/_astro/desktop-pages.css', homeImages:null, URL, URLSearchParams, Event, console,
     addEventListener: (type, callback) => listeners.set(type, callback), dispatchEvent: event => listeners.get(event.type)?.(event),
     setTimeout(callback, delay) { timers.push({callback, delay}); return timers.length; }, clearTimeout(id) { cleared.push(id); },
     location: { search: query, href: 'https://local.cloud/docs/#install-the-cli', origin: 'https://local.cloud' },
@@ -187,22 +187,26 @@ function viewHarness({ query = '', saved, wide = true, blockedStorage = false } 
 test('desktop bootstrap uses a trusted module script, loads once on widening, and falls back on failure', () => {
   const h = viewHarness({ query: '?view=desktop', wide: false, blockedStorage: true });
   assert.equal(h.root.dataset.siteView, 'mobile');
-  assert.equal(h.scripts.length, 1, 'Mobile loads URL helpers, without Desktop styles or router');
-  assert.equal(h.scripts[0].type, 'module');
-  assert.equal(h.scripts[0].src, '/_astro/desktop-view.mjs');
+  assert.equal(h.scripts.length, 2, 'Mobile preloads its controller directly without Desktop styles or router');
+  assert.equal(h.scripts[0].rel, 'modulepreload');
+  assert.equal(h.scripts[0].href, '/_astro/mobile-view.mjs');
+  assert.equal(h.scripts[1].type, 'module');
+  assert.equal(h.scripts[1].src, '/_astro/desktop-view.mjs');
   h.breakpoint.matches = true;
   h.listeners.get('breakpoint')();
-  assert.equal(h.scripts.length, 2);
+  assert.equal(h.scripts.length, 3);
   assert.equal(h.root.dataset.siteView, 'desktop');
-  assert.equal(h.scripts[1].rel, 'preload', 'Desktop styles download only when Desktop is selected');
-  assert.equal(h.scripts[1].href, '/_astro/desktop-pages.css');
+  assert.equal(h.scripts[2].rel, 'preload', 'Desktop styles download only when Desktop is selected');
+  assert.equal(h.scripts[2].href, '/_astro/desktop-pages.css');
   h.listeners.get('breakpoint')();
-  assert.equal(h.scripts.length, 2, 'resizing does not load a second controller');
-  h.scripts[0].onerror();
+  assert.equal(h.scripts.length, 3, 'resizing does not load a second controller');
+  h.scripts[1].onerror();
   assert.equal(h.root.dataset.siteView, 'classic');
   assert.equal(h.classes.has('desktop-view'), false);
   assert.equal(viewHarness({ query: '?view=classic' }).scripts.length, 1, 'Classic loads only the shared URL controller, no Desktop styles');
   assert.equal(viewHarness({ saved: 'classic' }).root.dataset.siteView, 'desktop', 'plain URLs always default to Desktop');
+  const desktop = viewHarness();
+  assert.deepEqual(desktop.scripts.filter(link => link.rel === 'modulepreload').map(link => link.href), ['/_astro/desktop-controller.mjs', '/_astro/desktop-navigation.mjs']);
 });
 
 test('a stalled Desktop controller restores readable Classic content and a late arrival keeps Classic', () => {
@@ -219,9 +223,25 @@ test('a stalled Desktop controller restores readable Classic content and a late 
   h.context.switchView = () => {};
   const source = readFileSync(new URL('../src/scripts/desktop-view.mjs', import.meta.url), 'utf8');
   runInNewContext(source.slice(source.indexOf("if (typeof document !== 'undefined')")), h.context);
-  h.scripts[1].onload();
+  h.scripts.find(script => script.type === 'module').onload();
   assert.equal(classic, true);
   assert.equal(h.classes.has('desktop-view'), false);
+});
+
+test('Mobile startup initializes presentation without scheduling the router', async () => {
+  const h = viewHarness({ wide: false });
+  const main = { hidden: true }, timers = h.timers.length;
+  h.context.document.readyState = 'complete';
+  h.context.document.querySelector = () => main;
+  h.context.document.querySelectorAll = () => [];
+  h.context.initMobile = async () => {};
+  h.context.getNavigation = () => assert.fail('router must wait for navigation');
+  h.context.switchView = () => {};
+  const source = readFileSync(new URL('../src/scripts/desktop-view.mjs', import.meta.url), 'utf8');
+  runInNewContext(source.slice(source.indexOf("if (typeof document !== 'undefined')")), h.context);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(main.hidden, false);
+  assert.equal(h.timers.length, timers, 'no idle router load is scheduled');
 });
 
 test('automatic resizing updates the view, while explicit Mobile and Classic stay stable', () => {
@@ -235,18 +255,35 @@ test('automatic resizing updates the view, while explicit Mobile and Classic sta
     const explicit = viewHarness({ query: '?view=' + choice });
     assert.equal(explicit.root.dataset.siteView, choice);
     assert.ok(!explicit.listeners.has('breakpoint'));
-    assert.equal(explicit.scripts.length, 1);
+    assert.equal(explicit.scripts.length, choice === 'mobile' ? 2 : 1);
   }
 });
 
-test('Mobile centers only the strip once, preserves traversal and never scrolls the document', () => {
+test('Mobile centers the strip from an observer snapshot once without geometry reads or document scrolling', () => {
   for (const traversal of [false, true]) {
-    const strip = { dataset: {}, scrollLeft: 17, clientWidth: 320, querySelector: () => ({ offsetLeft: 600, offsetWidth: 80 }) };
+    const selected = { get offsetLeft() { assert.fail('no synchronous position read'); }, get offsetWidth() { assert.fail('no synchronous width read'); } };
+    const strip = { dataset: {}, scrollLeft: 17, get clientWidth() { assert.fail('no synchronous width read'); }, querySelector: () => selected,
+      scrollBy({ left, behavior }) { assert.equal(behavior, 'instant'); this.scrollLeft = Math.max(0, this.scrollLeft + left); } };
+    let notify, disconnected = false;
     const context = { URL, location: { href: 'https://local.cloud/services/cloud-run/' },
       performance: { getEntriesByType: () => [{ type: traversal ? 'back_forward' : 'navigate' }] },
       initViewLinks() {}, desktopSection,
+      IntersectionObserver: class {
+        constructor(callback, options) { notify = callback; assert.equal(options.root, strip); }
+        observe(target) { assert.equal(target, selected); }
+        disconnect() { disconnected = true; }
+      },
       document: { querySelector: () => null, querySelectorAll: selector => selector === '.mobile-service-strip' ? [strip] : [], scrollTo: () => assert.fail('document must not scroll') } };
     runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
+    assert.equal(strip.scrollLeft, 17, 'centering waits for the browser to finish layout');
+    if (traversal) assert.equal(notify, undefined, 'history does not recenter the strip');
+    else {
+      notify([{ rootBounds: { width: 0 } }]);
+      assert.equal(strip.dataset.mobileReady, undefined, 'a hidden strip can retry when Mobile returns');
+      runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
+      notify([{ boundingClientRect: { left: 600 - strip.scrollLeft, width: 80 }, rootBounds: { left: 0, width: 320 } }]);
+      assert.equal(disconnected, true);
+    }
     assert.equal(strip.scrollLeft, traversal ? 17 : 480);
     strip.scrollLeft = 100;
     runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
@@ -350,13 +387,16 @@ test('Classic keeps explicit view URLs for page links and dynamic search results
   assert.equal(searchLink.href, 'https://local.cloud/services/bigquery/?view=classic');
 });
 
-test('pending styles keep controls responsive and a failed or stalled download restores usable Classic content', async () => {
-  for (const outcome of ['load', 'error', 'timeout']) {
-  const listeners = new Map();
-  const button = (action) => ({ dataset: { windowAction: action }, addEventListener: (_, handler) => listeners.set(action, handler) });
-  let styles, focused = false, assigned = false;
+test('pending styles keep controls responsive, cancel stale clicks, and preserve native navigation on failure', async () => {
+  for (const [outcome, cancel] of ['load', 'error', 'timeout'].flatMap(outcome => [true, false].map(cancel => [outcome, cancel]))) {
+  const listeners = new Map(), frames = [];
+  const button = (action) => ({ dataset: { windowAction: action }, setAttribute() {}, addEventListener: (_, handler) => listeners.set(action, handler) });
+  let styles, focused = false, assigned = false, routed;
   const restore = { hidden: true, focus() { focused = true; }, addEventListener() {} };
-  const main = { hidden: false, querySelector: () => null, querySelectorAll: () => [button('close')] };
+  const image = { dataset: {}, sizes: 'calc(78vw - 2px)' };
+  let expanded = false, routerLoads = 0;
+  const main = { hidden: false, querySelector: selector => selector === '.desktop-hero-art img' ? image : null,
+    querySelectorAll: () => [button('close'), button('expand')], hasAttribute: () => expanded, toggleAttribute: () => expanded = !expanded };
   const deck = { replaceChildren() {} }, tasks = { replaceChildren() {} }, back = { addEventListener() {} }, openTab = {};
   const elements = { '[data-desktop-main]': main, '[data-desktop-history]': deck, '[data-desktop-tasks]': tasks, '[data-desktop-restore]': restore, '[data-desktop-back]': back, '.desktop-open-tab': openTab };
   const root = { dataset: { pageStyles: '/desktop.css', pageLabel: 'Home' }, querySelector: (selector) => elements[selector], querySelectorAll: () => [] };
@@ -366,18 +406,26 @@ test('pending styles keep controls responsive and a failed or stalled download r
   let resized;
   const wide = { matches: true, addEventListener: (_, fn) => { resized = fn; } };
   const context = {
+    requestAnimationFrame: callback => frames.push(callback),
+    getNavigation() { routerLoads++; assert.ok(classes.has('desktop-ready')); return Promise.resolve(url => { routed = url; return true; }); },
     setTimeout(callback, delay) { assert.equal(delay, 8000); timeout = callback; return 1; },
     clearTimeout(id) { assert.equal(id, 1); cleared = true; }, initClassic() { classic = true; },
-    URL, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, location: { href: 'https://local.cloud/', assign() { assigned = true; } },
+    URL, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, location: { href: 'https://local.cloud/', assign(url) { assigned = url; } },
     sessionStorage: { getItem: () => null }, history: { replaceState() {} },
     matchMedia: () => wide, window: { addEventListener() {} },
     document: { documentElement: html, createElement: () => ({}), head: { append: (link) => { styles = link; } }, querySelector: (selector) => selector === '[data-desktop-shell]' ? root : null, querySelectorAll: () => [], getElementById: () => null, addEventListener: (name, fn) => listeners.set(name, fn) },
   };
-  const pending = runInNewContext('(' + initDesktop.toString() + ')({pageWindowURL,desktopPageURL,readPageHistory,desktopSection,initClassic})', context);
+  const pending = runInNewContext('(' + initDesktop.toString() + ')({pageWindowURL,desktopPageURL,readPageHistory,desktopSection,initClassic,getNavigation})', context);
   assert.ok(listeners.has('close'), 'control must not wait for the stylesheet');
+  listeners.get('expand')();
+  assert.equal(image.sizes, 'calc(100vw - 2px)', 'expanded windows request a full-width image');
+  listeners.get('expand')();
+  assert.equal(image.sizes, 'calc(78vw - 2px)', 'restoring the window restores its responsive size');
   listeners.get('lc:navigate')({ detail: { href: '/docs/' }, preventDefault() {} });
-  html.dataset.siteView = 'mobile'; wide.matches = false; resized();
-  html.dataset.siteView = 'desktop'; wide.matches = true; resized();
+  if (cancel) {
+    html.dataset.siteView = 'mobile'; wide.matches = false; resized();
+    html.dataset.siteView = 'desktop'; wide.matches = true; resized();
+  }
   await Promise.resolve();
   assert.equal(assigned, false, 'a queued native fallback is canceled across Mobile and back');
   listeners.get('close')();
@@ -392,7 +440,17 @@ test('pending styles keep controls responsive and a failed or stalled download r
   if (outcome === 'load') {
     assert.ok(classes.has('desktop-ready'), 'ready layout can be painted');
     assert.equal(classic, false);
+    assert.equal(routerLoads, 0, 'initial scroll capture waits for presentation layout');
+    frames.shift()();
+    assert.equal(routerLoads, 0);
+    frames.shift()();
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(routerLoads, 1);
+    assert.equal(routed, cancel ? undefined : 'https://local.cloud/docs/');
   } else {
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(assigned, cancel ? false : 'https://local.cloud/docs/', 'presentation failure keeps an uncanceled destination');
+    assert.equal(routerLoads, 0, 'failed presentation does not start the router');
     assert.equal(html.dataset.siteView, 'classic');
     assert.equal(classes.has('desktop-view'), false, 'pending visibility guard no longer applies');
     assert.equal(main.hidden, false, 'fallback content remains visible even after closing a pending window');

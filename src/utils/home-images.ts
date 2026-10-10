@@ -7,7 +7,7 @@ export const desktopHeroOptions = {
   width: 1800,
   height: 600,
   widths: [480, 800, 1200, 1600, 1800],
-  sizes: '100vw',
+  sizes: 'calc(78vw - 2px)',
   format: 'webp' as const,
   quality: 80,
 };
