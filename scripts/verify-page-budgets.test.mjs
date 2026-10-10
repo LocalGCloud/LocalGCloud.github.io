@@ -31,7 +31,11 @@ const rawDocumentBytes = 21_800;
 // have their own ceilings: the largest twin measured on 2026-10-05, plus 10%, and the bundle
 // measured on 2026-10-06 after the R7 service merges (256,444 bytes), plus 5%.
 const markdownTwinBytes = 15_400;
-const llmsFullBytes = 269_300;
+// 2026-10-09: complete CI and MCP setup guides need their measured sizes plus 5%;
+// keep the default twin/HTML/JS limits for other pages and bound the expanded corpus.
+const guideDocumentBytes = { 'docs/github-actions.md': 31_300, 'docs/mcp.md': 17_200 };
+const githubActionsGzipBytes = 44_300;
+const llmsFullBytes = 308_100;
 const isMarkdownTwin = (file) => /^(?:docs|services|compare)\/[^/]+\.md$/.test(file);
 
 const dist = new URL('../dist/', import.meta.url).pathname;
@@ -68,6 +72,7 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     const limits = {...htmlBudget, styleBytes:htmlBudget.styleBytes+mobileStyleBytes, startupScriptBytes};
     if (isHome) for (const [metric, extra] of Object.entries(mobileHomeBytes)) limits[metric] += extra;
     if (html.includes('id="my-cloud-dialog"')) for (const [metric, extra] of Object.entries(consoleDialogBytes)) limits[metric] += extra;
+    if (file === join(dist, 'docs/github-actions/index.html')) limits.gzipBytes = githubActionsGzipBytes;
     for (const [metric, limit] of Object.entries(limits)) {
       if (measured[metric] > limit) failures.push(`${file.slice(dist.length)}: ${metric} ${measured[metric]} > ${limit}`);
     }
@@ -78,7 +83,7 @@ test('every built page stays within static byte budgets and the aggregate Deskto
 test('raw agent documents stay within their byte budget', () => {
   const documents = files.filter((file) => /\.(?:md|txt)$/.test(file) && !file.includes('/pagefind/'));
   assert.ok(documents.length > 0, 'no raw agent documents found');
-  const limit = (path) => path === 'llms-full.txt' ? llmsFullBytes : isMarkdownTwin(path) ? markdownTwinBytes : rawDocumentBytes;
+  const limit = (path) => guideDocumentBytes[path] ?? (path === 'llms-full.txt' ? llmsFullBytes : isMarkdownTwin(path) ? markdownTwinBytes : rawDocumentBytes);
   const failures = documents
     .map((file) => ({ path: file.slice(dist.length), size: statSync(file).size }))
     .filter(({ path, size }) => size > limit(path))

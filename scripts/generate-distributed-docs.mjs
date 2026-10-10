@@ -166,6 +166,7 @@ Every docs page, service guide and comparison also has a Markdown version: repla
 - [Getting started](${site}docs/): install, start, and make a first request
 - [Configuration](${site}docs/configuration/): services, projects, persistence, and networking
 - [SDK examples](${site}docs/sdk-examples/): Google Cloud client libraries against localhost
+- [GitHub Actions](${site}docs/github-actions/): Docker-backed CI, PR tests, and AI-agent jobs with exact service IDs
 - [LocalCloud MCP](${site}docs/mcp/): CLI 0.1.9+ setup, coding clients, agent workflows, tools, and troubleshooting
 - [Terraform](${site}docs/terraform/): provider endpoint overrides
 - [Seed data](${site}docs/seed-data/): repeatable local fixtures

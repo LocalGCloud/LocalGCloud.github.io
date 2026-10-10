@@ -215,6 +215,7 @@ ${dockerFallback}
 - https://local.cloud/docs/ — getting started.
 - https://local.cloud/docs/configuration/ — services, projects, persistence, and networking.
 - https://local.cloud/docs/sdk-examples/ — standard Google Cloud SDK examples configured for localhost.
+- https://local.cloud/docs/github-actions/ — Docker-backed GitHub workflows for application tests and AI agents, with exact service IDs.
 - https://local.cloud/docs/terraform/ — Terraform endpoint overrides and local validation.
 - https://local.cloud/docs/seed-data/ — repeatable local data setup.
 - https://local.cloud/docs/console/ — web console for local health and data inspection.
