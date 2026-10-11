@@ -16,6 +16,7 @@
  & .site-brand{gap:.5rem}
  & .site-brand__mark{width:2rem;height:2rem;filter:none}
  & .site-brand__word{font-size:1.2rem}
+ & .site-header .site-brand__word-accent{color:var(--accent-strong)}
  & .site-brand__descriptor,& .site-nav{display:none}
  & .site-nav__toggle,& .mobile-search{display:flex!important;align-items:center;justify-content:center;width:3rem;height:3rem;padding:0;border:0;background:transparent;color:var(--text)}
  & .site-nav__mobile{max-height:calc(100dvh - 11rem);overflow:auto}
