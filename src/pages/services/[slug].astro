@@ -293,6 +293,7 @@ const structuredData = [
   .service-title-row h1 { font-size: clamp(2rem, 4vw, 3.75rem); line-height: 1.06; letter-spacing: -0.035em; overflow-wrap: anywhere; }
   .service-hero-icon { flex: 0 0 clamp(6rem, 12vw, 9rem); }
   .service-hero-icon :global(img) { display: block; width: 100%; height: auto; }
+  :global(html[data-site-view="classic"]) [data-service-capabilities] li { overflow-wrap: anywhere; }
   [data-service-typical-uses] .site-chip { max-width: 100%; white-space: normal; }
   .service-example-card { transition: border-color 160ms ease, box-shadow 160ms ease; }
   .service-example-card:hover { border-color: var(--accent-strong); box-shadow: var(--shadow-md); }

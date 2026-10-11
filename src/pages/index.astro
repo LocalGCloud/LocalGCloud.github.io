@@ -7,10 +7,8 @@ import { localCloudProductSchema } from '../data/productFacts';
 import { homepageFaqSchema } from '../data/homepageFaq';
 import { availableServiceCount } from '../data/services';
 
-// Four services are named, so the count of the rest comes from the services data.
-const namedServices = ['BigQuery', 'Pub/Sub', 'Spanner', 'Cloud Storage'];
-const title = 'LocalCloud – Google Cloud Emulator for Dev, CI and AI Agents';
-const description = `Run ${namedServices.slice(0, -1).join(', ')}, ${namedServices.at(-1)} and ${availableServiceCount - namedServices.length} more Google Cloud services on localhost in one container. For developers, CI and AI agents. Free.`;
+const title = 'localcloud — cloud for agents';
+const description = `Cloud for agents: run ${availableServiceCount} Google Cloud services locally for development, CI and AI coding workflows. Free during the public preview.`;
 ---
 
 <BaseLayout {title} {description} structuredData={[localCloudProductSchema, homepageFaqSchema]}>

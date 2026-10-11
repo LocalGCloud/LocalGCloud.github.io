@@ -14,7 +14,7 @@ import { publishedServiceCount } from '../../data/services';
 
 # Get started with LocalCloud
 
-For pull-request tests and AI-agent jobs, use the [GitHub Actions guide](/docs/github-actions/). It covers the LocalCloud image directly and the optional setup action, without requiring the CLI.
+For pull-request tests, [staging validation](/docs/github-actions/#validate-a-staging-build), and AI-agent jobs, use the [GitHub Actions guide](/docs/github-actions/). It covers the setup action, Docker workflows, and project integrations such as Feast. The [integration directory](#integrations) also links SDK, Terraform, and MCP setup.
 
 This tutorial installs the LocalCloud CLI, starts a persistent local runtime, configures this shell, and verifies a Cloud Storage request. LocalCloud runs local versions of Google Cloud services for development and testing. Before you deploy to production, run final validation against real Google Cloud.
 
@@ -166,6 +166,19 @@ eval "$(curl -fsS 'http://localhost:5380/env?format=shell')"
 ```
 
 The default command does not mount `/var/run/docker.sock` and does not expose ports on every host interface. Docker-backed service execution and custom companion images can require Docker-socket access; transparent DNS/HTTPS routing is also opt-in. Configure those capabilities only after reviewing their security implications.
+
+## Integrations
+
+| Integration | Documentation |
+| --- | --- |
+| GitHub Actions and staging validation | [GitHub Actions guide](/docs/github-actions/) for setup-localcloud, Docker workflows, test results, and cleanup. |
+| Google Cloud client libraries | [SDK examples](/docs/sdk-examples/) and [service guides](/services/) for endpoints, credentials, and operations. |
+| Local development and persistent test environments | [Configuration](/docs/configuration/) for CLI lifecycle, projects, persistence, and service selection. |
+| Terraform | [Terraform guide](/docs/terraform/) for provider setup and runtime readiness. |
+| AI agents and MCP | [MCP guide](/docs/mcp/) for stdio clients and permissions; [agent instructions](/ai/agents.md) for application testing. |
+| Test fixtures | [Seed data](/docs/seed-data/) for repeatable supported resource setup. |
+
+For project-specific wiring, see the [Feast integration example](/docs/github-actions/#integrate-an-existing-project-feast). Other CI platforms can adapt the [Docker-only workflow](/docs/github-actions/#use-the-image-without-the-action-or-cli) using their own environment export and cleanup mechanisms.
 
 ## Next steps
 

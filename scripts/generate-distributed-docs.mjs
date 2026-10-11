@@ -1,6 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { alternativesReviewedAt, comparisonSummary } from "../src/data/alternatives.ts";
 import { proTierServiceNames } from "../src/data/pricingFaq.ts";
+import { productFacts } from "../src/data/productFacts.ts";
 import { inCatalogOrder, proTierLabel } from "../src/data/services.ts";
 import { presentContract } from "../src/utils/contract-presentation.mjs";
 import { cliQuickStart } from "../src/utils/quickstart.mjs";
@@ -115,10 +116,10 @@ const serviceRows = localServices
 	.map((row) => `| ${row} |`)
 	.join("\n");
 
-// llmstxt.org layout: H1, a one-sentence definition, details, then link sections.
+// llmstxt.org layout: H1, a definition, details, then link sections.
 const llms = `# LocalCloud
 
-> LocalCloud is a local Google Cloud emulator: one Docker container that serves ${localServices.length} Google Cloud services on localhost, so developers, CI jobs, and AI coding agents can run Google Cloud code without a GCP account, credentials, or billing.
+> ${productFacts.description}
 
 - Runs ${listNames([...highlighted, "more"])} in one container.
 - Standard Google Cloud SDKs and Terraform connect through generated emulator environment variables.

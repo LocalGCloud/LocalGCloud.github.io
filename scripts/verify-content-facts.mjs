@@ -585,7 +585,7 @@ if (reviewAgeDays > 120) console.warn(`::warning::The alternatives comparison wa
 if (!llms.includes('\n## How LocalCloud compares\n') || !comparisonSummary.every((line) => llms.includes(line))) errors.push('llms.txt must include the "How LocalCloud compares" section from src/data/alternatives.ts');
 
 // Homepage first screen: a search-sized title and description, an H1 that names the
-// audience, a definition, a real "Quick Start" link to the install section of the docs, the
+// product category, an audience definition, a real "Quick Start" link to the install section of the docs, the
 // install command, and the trust strip with its evidence links and verification commands.
 const homepage = htmlPages.get('index.html') ?? '';
 const homepageMain = homepage.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? '';
@@ -594,10 +594,14 @@ const homepageDescription = decodeEntities(homepage.match(/<meta\b[^>]*name="des
 if (!homepageTitle || homepageTitle.length > 60) errors.push(`homepage title must be 1-60 characters (${homepageTitle.length}): ${homepageTitle}`);
 if (!homepageDescription || homepageDescription.length > 155) errors.push(`homepage description must be 1-155 characters (${homepageDescription.length}): ${homepageDescription}`);
 const homepageH1 = visibleText(homepageMain.match(/<h1\b[\s\S]*?<\/h1>/)?.[0] ?? '').replace(/\s+/g, ' ').trim();
-if (homepageH1 !== 'Give Your Agents a Local Cloud.') errors.push(`homepage H1 reads "${homepageH1}"`);
+if (homepageH1 !== 'localcloud is cloud for agents.') errors.push(`homepage H1 reads "${homepageH1}"`);
+if (![homepageTitle, homepageDescription].every((text) => /cloud for agents/i.test(text))) errors.push('homepage title and description must name cloud for agents');
 const homepageDefinition = visibleText(homepageMain.match(/<\/h1>\s*<p\b[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '');
-if (!homepageDefinition.startsWith(`LocalCloud is a local Google Cloud emulator: one Docker container that serves ${availableServiceCount} Google Cloud services on localhost`)) {
-  errors.push(`the paragraph under the homepage H1 must define LocalCloud with the service count: "${homepageDefinition.slice(0, 120)}"`);
+if (!homepageDefinition.startsWith('localcloud is cloud for agents for developers, platform/DevOps engineers and teams running CI, plus AI coding agent users.') ||
+    !homepageDefinition.includes('Individuals, teams, nonprofits, and companies') ||
+    !homepageDefinition.includes(`${availableServiceCount} Google Cloud services on localhost in one Docker container`) ||
+    !homepageDefinition.includes('Free during the public preview.')) {
+  errors.push(`the paragraph under the homepage H1 must define cloud for agents, its audience, local service count and preview pricing: "${homepageDefinition.slice(0, 160)}"`);
 }
 const quickStartLink = [...homepageMain.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(([, , text]) => /Quick Start/.test(visibleText(text)));
 if (!quickStartLink) errors.push('homepage needs an <a> whose text contains "Quick Start"');

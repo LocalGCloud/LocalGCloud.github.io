@@ -172,8 +172,9 @@ const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 for (const path of ["public/llms.txt"]) {
 	const value = await read(path);
 	assert(
-		value.startsWith(`# LocalCloud\n\n> LocalCloud is a local Google Cloud emulator: one Docker container that serves ${availableCount} Google Cloud services on localhost`),
-		`${path} must open with the one-sentence definition and the local service count`,
+		value.startsWith("# LocalCloud\n\n> localcloud is cloud for agents") &&
+		value.split("\n")[2].includes(`${availableCount} Google Cloud services on localhost in one Docker container`),
+		`${path} must open with the cloud for agents definition and the local service count`,
 	);
 	assert(
 		/^\| Firestore \| `firestore` \| opt-in \|/m.test(value) && value.includes("are opt-in: `--services` sets the exact list"),

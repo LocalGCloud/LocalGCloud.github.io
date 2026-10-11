@@ -49,9 +49,9 @@ export const productFacts = {
 	// The governing license text, published from src/data/legal/public-preview-license.txt.
 	licensePath: "/license/",
 	pricingPath: "/pricing/",
-	category: "Local Google Cloud emulator",
+	category: "Cloud for agents",
 	description:
-		"LocalCloud provides documented Google Cloud service workflows in one local Docker container. Use is governed by the proprietary license, and compatibility depends on the service, client, and endpoint configuration.",
+		`localcloud is cloud for agents for developers, platform/DevOps engineers and teams running CI, plus AI coding agent users. Individuals, teams, nonprofits, and companies can build and test with ${availableServiceCount} Google Cloud services on localhost in one Docker container, without a GCP account, credentials or billing. Free during the public preview.`,
 	productionBoundary: docsContract.product.productionBoundary,
 	evidence: {
 		source: `Versioned documentation contract from runtime ${docsContract.provenance.runtimeRevision} and CLI ${docsContract.provenance.cliRevision}`,
@@ -192,7 +192,7 @@ export const localCloudProductSchema: JsonLd = {
 	"@id": productId,
 	name: productFacts.name,
 	url: productFacts.siteUrl,
-	description: `LocalCloud is a local Google Cloud emulator for developers, CI pipelines and AI coding agents: one Docker container that serves ${productFacts.serviceCountLabel} Google Cloud services on localhost for development, testing, CI, evaluation, and internal pilots.`,
+	description: productFacts.description,
 	applicationCategory: "DeveloperApplication",
 	applicationSubCategory: productFacts.category,
 	operatingSystem: "Docker",

@@ -1,6 +1,6 @@
 # LocalCloud
 
-> LocalCloud is a local Google Cloud emulator: one Docker container that serves 25 Google Cloud services on localhost, so developers, CI jobs, and AI coding agents can run Google Cloud code without a GCP account, credentials, or billing.
+> localcloud is cloud for agents for developers, platform/DevOps engineers and teams running CI, plus AI coding agent users. Individuals, teams, nonprofits, and companies can build and test with 25 Google Cloud services on localhost in one Docker container, without a GCP account, credentials or billing. Free during the public preview.
 
 - Runs BigQuery, Cloud Storage, Pub/Sub, Spanner, Bigtable, Firestore, Cloud SQL, Memorystore (Redis/Valkey), Dataproc, Cloud Run, and more in one container.
 - Standard Google Cloud SDKs and Terraform connect through generated emulator environment variables.

@@ -46,7 +46,7 @@ export interface AgentPrompt {
 
 export const agenticFacts = {
 	positioning:
-		"LocalCloud is a local Google Cloud emulator: one Docker container that answers Google Cloud SDK calls on localhost, so code and tests run without a GCP account, credentials, or billing. Validate against real Google Cloud before production.",
+		`${productFacts.description} Validate against real Google Cloud before production.`,
 	dockerImage: productFacts.dockerImage,
 	containerName: "localcloud",
 	defaultProject: docsContract.product.defaultProject,

@@ -20,6 +20,9 @@ const htmlBudget = { rawBytes: 196_000, gzipBytes: 40_000, styleBytes: 94_600, s
 // ceilings and the 45KB Desktop startup ceiling stay unchanged.
 const mobileStyleBytes = 8_500;
 const mobileHomeBytes = { rawBytes: 20_000, gzipBytes: 3_000 };
+// 2026-10-11: classic setup controls/ribbon styles and the full static agent audience
+// add ~3.7KB raw, ~0.5KB gzip and ~1.6KB CSS to the homepage; bound that UI here.
+const classicHomeBytes = { rawBytes: 4_500, gzipBytes: 700, styleBytes: 2_000 };
 // The separately added My Cloud dialog contributes ~5.7KB HTML, ~1KB CSS and
 // ~1.8KB processed JS. Keep its fixed allowance conditional on that widget.
 const consoleDialogBytes = { rawBytes: 6_000, gzipBytes: 1_000, styleBytes: 1_500, scriptBytes: 2_500 };
@@ -71,6 +74,7 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     const isHome = file === join(dist, 'index.html');
     const limits = {...htmlBudget, styleBytes:htmlBudget.styleBytes+mobileStyleBytes, startupScriptBytes};
     if (isHome) for (const [metric, extra] of Object.entries(mobileHomeBytes)) limits[metric] += extra;
+    if (isHome) for (const [metric, extra] of Object.entries(classicHomeBytes)) limits[metric] += extra;
     if (html.includes('id="my-cloud-dialog"')) for (const [metric, extra] of Object.entries(consoleDialogBytes)) limits[metric] += extra;
     if (file === join(dist, 'docs/github-actions/index.html')) limits.gzipBytes = githubActionsGzipBytes;
     for (const [metric, limit] of Object.entries(limits)) {
