@@ -238,7 +238,11 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         // events or exceptions. Mark the stream so reports can separate it from runtime data.
         before_send: function (event) {
           if (!analyticsOn) return null;
-          if (event.event === '$web_vitals' && !webVitalsSampled) return null;
+          if (event.event === '$web_vitals') {
+            if (!webVitalsSampled) return null;
+            // Buffered vitals retain the measured URL after client-side navigation.
+            try { event.properties.$pathname = new URL(event.properties.$current_url).pathname; } catch (e) {}
+          }
           event.properties.telemetry_source = 'website';
           event.properties.site_release = siteRelease;
           // Retire the old visitor-scoped landing values; PostHog's sessions supply

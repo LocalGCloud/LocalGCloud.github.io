@@ -35,6 +35,7 @@ function analyticsHarness(readyState, { supportsIdle = true, navigator = {}, sto
     siteRelease: 'fixture-release',
     location: { hostname, pathname, href:'https://'+hostname+pathname },
     Math: { random: () => random },
+    URL,
     matchMedia: () => viewport,
     navigator,
     CustomEvent: class { constructor(type) { this.type = type; } },
@@ -195,6 +196,40 @@ test('production-only analytics samples vitals without losing conversion, error 
     h.runSchedule();
     assert.deepEqual(h.srcs(), []);
     assert.equal(h.context.lcAnalytics.setOn(true), false);
+  }
+});
+
+test('buffered web vitals keep the measured page after client-side navigation', () => {
+  const h = analyticsHarness('loading');
+  const send = h.context.posthog._i[0][1].before_send;
+  for (const [measuredURL, currentPath, measuredPath] of [
+    ['https://local.cloud/', '/pricing/', '/'],
+    ['https://local.cloud/pricing/?plan=pro#compare', '/', '/pricing/'],
+  ]) {
+    h.context.location.pathname = currentPath;
+    h.context.location.href = 'https://local.cloud' + currentPath;
+    for (const name of ['LCP', 'FCP', 'INP', 'CLS']) {
+      const measurement = { name, value: 236, navigationURL: measuredURL };
+      const event = { event: '$web_vitals', properties: {
+        $current_url: measuredURL, $pathname: currentPath,
+        ['$web_vitals_' + name + '_event']: measurement,
+      } };
+      const sent = send(event);
+      assert.equal(sent.properties.$pathname, measuredPath, name);
+      assert.equal(sent.properties.$current_url, measuredURL);
+      assert.equal(sent.properties['$web_vitals_' + name + '_event'], measurement);
+    }
+    const pageview = { event: '$pageview', properties: { $current_url: h.context.location.href, $pathname: currentPath } };
+    assert.equal(send(pageview).properties.$pathname, currentPath, 'pageviews keep the visited page');
+  }
+});
+
+test('web vitals with an unavailable measured URL preserve the event', () => {
+  const send = analyticsHarness('loading').context.posthog._i[0][1].before_send;
+  for (const measuredURL of [undefined, null, '', '/pricing/', 'not a URL']) {
+    const event = { event: '$web_vitals', properties: { $current_url: measuredURL, $pathname: '/pricing/' } };
+    assert.equal(send(event), event);
+    assert.equal(event.properties.$pathname, '/pricing/');
   }
 });
 
