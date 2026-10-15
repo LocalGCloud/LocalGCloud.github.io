@@ -91,7 +91,8 @@ const digestOf = (bytes) => `sha256:${createHash("sha256").update(bytes).digest(
 const upstreamPath = (path) =>
 	path.startsWith("../localcloud-cli/") ? [cliRoot, cliRevision, path.slice("../localcloud-cli/".length)]
 		: path.startsWith("../localcloud/") ? [runtimeRoot, runtimeRevision, path.slice("../localcloud/".length)]
-			: null;
+			: path.startsWith("../local_cloud_dependencies/bigquery-emulator-on-duckdb/") ? [bigqueryRoot, contract.bigqueryCoverage.revision, path.slice("../local_cloud_dependencies/bigquery-emulator-on-duckdb/".length)]
+				: null;
 
 const upstreamSources = new Map([
 	["../localcloud/localcloud.defaults.yaml", new URL("localcloud.defaults.yaml", runtimeRoot)],
