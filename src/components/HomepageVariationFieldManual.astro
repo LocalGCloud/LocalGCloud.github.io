@@ -1375,16 +1375,16 @@ html[data-audience="agents"] .field-home .agent-readme__facts dd{margin:0;color:
 html[data-audience="agents"] .field-home .field-hero__visual--agent{display:block!important}
 html[data-audience="agents"] .field-home .field-hero__visual-area{width:100%;max-width:68rem;min-width:0;margin-inline:auto;padding:0 2rem 2rem}
 html[data-audience="agents"] .field-home .field-hero__agent-stack{display:grid;grid-template-columns:minmax(0,1fr) 15rem;align-items:start;gap:1.75rem 2rem;width:100%}
-html[data-audience="agents"] .field-home .lc-agent-start{grid-column:1/-1;padding-block:1.25rem;border-block:1px dashed var(--line)}
-html[data-audience="agents"] .field-home .agent-terminal{grid-column:1;grid-row:2;min-width:0}
-html[data-audience="agents"] .field-home .lc-agent-captcha{grid-column:2;grid-row:2;max-width:100%;padding:0 0 0 1.25rem;border-left:1px dashed var(--line)}
+html[data-audience="agents"] .field-home .lc-agent-start{grid-column:1;grid-row:1;align-self:center;padding-block:1.25rem;border-block:1px dashed var(--line)}
+html[data-audience="agents"] .field-home .agent-terminal{grid-column:1/-1;grid-row:2;min-width:0}
+html[data-audience="agents"] .field-home .lc-agent-captcha{grid-column:2;grid-row:1;align-self:center;max-width:100%;padding:0 0 0 1.25rem;border-left:1px dashed var(--line)}
 html[data-audience="agents"] .field-home .field-ribbon__agent{display:block}
 html[data-audience="agents"] .field-home .field-atlas__agent-bar{display:flex;gap:.6rem;padding:.75rem 0;border-block:1px solid var(--line);font:.8125rem/1.5 var(--font-mono);color:var(--accent);margin-bottom:1rem}
 html[data-audience="agents"] .field-home .field-atlas__agent-dot{color:var(--accent)}
 html[data-audience="agents"] .field-home .field-service strong{font-family:var(--font-mono)}
 @media(max-width:64rem){
   html[data-audience="agents"] .field-home .field-hero__agent-stack{grid-template-columns:minmax(0,1fr)}
-  html[data-audience="agents"] .field-home :is(.agent-terminal,.lc-agent-captcha){grid-column:auto;grid-row:auto}
+  html[data-audience="agents"] .field-home :is(.lc-agent-start,.agent-terminal,.lc-agent-captcha){grid-column:auto;grid-row:auto}
   html[data-audience="agents"] .field-home .lc-agent-captcha{max-width:22rem;padding:1.25rem 0 0;border-left:0;border-top:1px solid var(--line)}
 }
 @media(max-width:48rem){

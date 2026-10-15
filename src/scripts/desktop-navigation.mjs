@@ -194,6 +194,7 @@ export async function installDesktopNavigation({root, validate, before, mounted,
       if(mountedVersion!==contentVersion)return false;
       document.dispatchEvent(new Event('astro:page-load'));
       if(version===sequence&&active()){if(!mobile()||traversal||!url.hash)scrollToContent(url,positions.get(renderedEntry)??savedScroll,traversal);if(!url.hash&&!traversal)focus(pane.querySelector?.('main h1, main'));}
+      if(version===sequence&&active()){warmed.clear();warmAfterLoad();}
       return true;
     } catch(error) {
       if(active()&&(version===sequence||mountedVersion===contentVersion&&!changing)){if(nextStyle!==activeStyle)nextStyle?.remove();const fallback=mountedVersion===contentVersion?rendered:url;audienceURL(fallback);location.assign(fallback);}
@@ -215,5 +216,21 @@ export async function installDesktopNavigation({root, validate, before, mounted,
   };
   document.addEventListener('pointerover',warm,{passive:true});document.addEventListener('focusin',warm);
   document.addEventListener('pointerdown',event=>{if(mobile())warm(event);},{passive:true});
+  // Warm only three desktop shortcuts after load/idle. The browser can reuse
+  // their pinned content and assets on the first click, without executing them.
+  const warmShortcuts=()=>{
+    if(!active()||mobile())return;
+    for(const link of root.querySelectorAll('[data-desktop-shortcut]')){
+      if(warmed.size===3)break;
+      warm({target:link});
+    }
+  };
+  const warmAfterLoad=()=>{
+    if(mobile())return;
+    if(document.readyState!=='complete'){window.addEventListener('load',warmAfterLoad,{once:true});return;}
+    if(window.requestIdleCallback)window.requestIdleCallback(warmShortcuts,{timeout:2000});
+    else setTimeout(warmShortcuts,500);
+  };
+  warmAfterLoad();
   return navigate;
 }

@@ -18,7 +18,7 @@ test('desktop assets stay in same-origin build namespaces without redirects cred
 async function harness(delayB=false,pageScripts={}, options={}){
   const attrs=new Map(),listeners=new Map(),writes=[];
   const pane={scrollTop:options.initialScroll||0,setAttribute:(k,v)=>attrs.set(k,v),removeAttribute:k=>attrs.delete(k),addEventListener:(k,fn)=>listeners.set(k,fn),set innerHTML(value){writes.push(value);this.scrollTop=0;listeners.get('scroll')?.();}};
-  const root={dataset:{base:'/',pageStyles:'/_astro/refinements.css',desktopManifest:options.unpinned?undefined:'/_astro/desktop-manifest.0000000000000000.json'},querySelector:()=>pane};
+  const root={dataset:{base:'/',pageStyles:'/_astro/refinements.css',desktopManifest:options.unpinned?undefined:'/_astro/desktop-manifest.0000000000000000.json'},querySelector:()=>pane,querySelectorAll:()=>options.shortcuts||[]};
   const location={href:'https://local.cloud/a/'+(options.hash||''),pathname:'/a/',search:'',assign(){throw Error('unexpected native fallback');}};
   const setURL=value=>{const url=new URL(value,location.href);location.href=url.href;location.pathname=url.pathname;location.search=url.search;};
   const replacements=[],entries=[{href:location.href,state:null}];let entryIndex=0;
@@ -37,6 +37,41 @@ async function harness(delayB=false,pageScripts={}, options={}){
   context.document.getElementById=()=>({scrollIntoView(){pane.scrollTop=433;},hasAttribute:()=>false,setAttribute(){},focus(options){focused.push(options);}});
   return {pane,attrs,listeners,writes,context,navigate,setURL,events,focused,replacements,timers,documentListeners,windowListeners,requests,root,entries,async back(){const previous=entries[--entryIndex];history.state=previous.state;setURL(previous.href);return navigate(location.href,true);},get release(){return release;}};
 }
+
+test('desktop shortcuts warm only after load and idle, then the first click reuses content',async()=>{
+  const shortcuts=['a','b','c','d','e'].map(path=>({href:'/'+path+'/',hasAttribute:()=>false,closest(){return this;}}));
+  const h=await harness(false,{}, {shortcuts}),idle=[];
+  h.context.window.requestIdleCallback=callback=>idle.push(callback);
+  assert.deepEqual(h.requests,[],'initial rendering must not compete with speculative requests');
+  h.context.document.readyState='complete';h.windowListeners.get('load')();
+  assert.deepEqual(h.requests,[],'load alone does not start requests');
+  idle.shift()();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(h.requests.filter(url=>url.includes('/desktop-manifest.')).length,1);
+  assert.deepEqual(h.requests.filter(url=>url.includes('/_desktop/')).map(url=>new URL(url).pathname),['/_desktop/b.json','/_desktop/c.json','/_desktop/d.json']);
+  assert.deepEqual(h.writes,[],'warming must preserve the current document');
+  await h.navigate('/b/');
+  assert.deepEqual(h.writes,['/b/']);
+  assert.equal(h.requests.filter(url=>url.endsWith('/b.json')).length,1,'the click must reuse the warmed request');
+});
+
+test('idle desktop warming skips data-saving connections and inactive or mobile presentations',async()=>{
+  const shortcut={href:'/b/',hasAttribute:()=>false,closest(){return this;}};
+  for(const options of [
+    {context:{navigator:{connection:{saveData:true}}}},
+    {context:{navigator:{connection:{effectiveType:'2g'}}}},
+    {context:{navigator:{connection:{effectiveType:'slow-2g'}}}},
+    {wide:false},
+    {siteView:'classic'},
+  ]){
+    const h=await harness(false,{}, {...options,shortcuts:[shortcut]}),idle=[];
+    h.context.window.requestIdleCallback=callback=>idle.push(callback);
+    h.context.document.readyState='complete';h.windowListeners.get('load')();
+    idle.shift()();await new Promise(resolve=>setImmediate(resolve));
+    assert.deepEqual(h.requests,[]);
+  }
+  const mobile=await harness(false,{}, {siteView:'mobile',views:['desktop','mobile'],shortcuts:[shortcut]});
+  assert.equal(mobile.windowListeners.has('load'),false,'mobile keeps its existing intent-based warming');
+});
 
 test('Mobile and Desktop synchronize the persistent skip link on page changes and Back',async()=>{
   for(const siteView of ['mobile','desktop']){

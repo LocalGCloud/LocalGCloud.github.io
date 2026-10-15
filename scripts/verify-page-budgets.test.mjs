@@ -41,6 +41,9 @@ const consoleDialogBytes = { rawBytes: 6_000, gzipBytes: 1_000, styleBytes: 1_50
 // Desktop startup also fetches the controller, router, interactions and page filter modules.
 // Count each fetched file once, including files loaded by inline bootstraps rather than script tags.
 const startupScriptBytes = 45_000;
+// 2026-10-15: load/idle warming for three desktop destinations adds 358 minified
+// bytes to the shared router and removes their network wait from the first click.
+const desktopPrefetchBytes = 400;
 const rawDocumentBytes = 21_800;
 // The Markdown twins of docs and service pages and the llms-full.txt bundle built from them
 // have their own ceilings: the largest twin measured on 2026-10-05, plus 10%, and the bundle
@@ -85,6 +88,7 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     };
     const isHome = file === join(dist, 'index.html');
     const limits = {...htmlBudget, styleBytes:htmlBudget.styleBytes+mobileStyleBytes, startupScriptBytes};
+    if (html.includes('data-desktop-manifest=')) limits.startupScriptBytes += desktopPrefetchBytes;
     if (isHome) for (const [metric, extra] of Object.entries(mobileHomeBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(classicHomeBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(agentHomeBytes)) limits[metric] += extra;
