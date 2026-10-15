@@ -59,7 +59,7 @@ try {
       const failures=[];
       page.on('pageerror',error=>failures.push(error.message));
       page.on('response',response=>{if(response.status()>=400)failures.push(`${response.status()} ${new URL(response.url()).pathname}`);});
-      await page.goto(`${origin}${scenario.path}?audience=${scenario.audience}`,{waitUntil:'load',timeout:60000});
+      await page.goto(`${origin}${scenario.path}${scenario.audience==='agents'?'?audience=agents':''}`,{waitUntil:'load',timeout:60000});
       await page.waitForFunction(()=>document.documentElement.dataset.siteView!=='desktop'||document.documentElement.classList.contains('desktop-ready'),{timeout:15000});
       await page.evaluate(()=>new Promise(resolve=>setTimeout(resolve,1100)));
       const loading=await page.evaluate(()=>{

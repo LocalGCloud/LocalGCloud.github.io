@@ -103,6 +103,9 @@
   if (!root) return;
   var sync = function() {
     var agent = root.dataset.audience === 'agents';
+    var url = new URL(location.href);
+    agent ? url.searchParams.set('audience', 'agents') : url.searchParams.delete('audience');
+    if (url.href !== location.href) history.replaceState(history.state, '', url.href);
     var control = d.getElementById('lc-audience-switch');
     if (control) control.setAttribute('aria-checked', String(agent));
     d.querySelectorAll('[data-target-audience]').forEach(function(label) {
@@ -127,18 +130,13 @@
     var audience = target.dataset.targetAudience || (root.dataset.audience === 'agents' ? 'humans' : 'agents');
     root.dataset.audience = audience;
     try { localStorage.setItem('lc-audience', audience); } catch (e) {}
-    var url = new URL(location.href);
-    // Explicit human intent must override an agent URL even with storage disabled.
-    url.searchParams.set('audience', audience);
-    history.replaceState(history.state, '', url.href);
-    window.dispatchEvent(new Event('lc:audience-change'));
     sync();
+    window.dispatchEvent(new Event('lc:audience-change'));
   });
   sync();
   d.addEventListener('astro:page-load', sync);
   window.addEventListener('popstate', function() {
-    var audience = new URL(location.href).searchParams.get('audience');
-    if (audience === 'agents' || audience === 'humans') root.dataset.audience = audience;
+    root.dataset.audience = new URL(location.href).searchParams.get('audience') === 'agents' ? 'agents' : 'humans';
     sync();
   });
 })();

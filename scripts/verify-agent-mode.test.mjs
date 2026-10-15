@@ -8,9 +8,9 @@ import { renderMarkdownTwin } from '../src/utils/render-markdown-twin.mjs';
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const interactions = read('../src/scripts/site-interactions.mjs');
 
-function audiencePage({ audience = 'agents', storageBlocked = false } = {}) {
+function audiencePage({ audience = 'agents', storageBlocked = false, query = '?view=classic&audience=' + audience } = {}) {
   const events = new Map(), windowEvents = new Map(), stored = new Map();
-  const location = new URL('https://local.cloud/?view=classic&audience=' + audience);
+  const location = new URL('https://local.cloud/' + query);
   const state = { lcDesktop: true, lcEntry: 'entry:4', lcScroll: 240 };
   const switchButton = { dataset: {}, setAttribute(name, value) { this[name] = value; } };
   const link = href => ({ href, writes:0, getAttribute() { return this.href; }, hasAttribute() { return false; },
@@ -44,13 +44,25 @@ test('switching back to humans cleans agent links and preserves desktop navigati
   const page = audiencePage({ storageBlocked: true });
   page.choose('humans');
   assert.equal(page.context.history.state, page.state);
-  assert.equal(page.context.location.searchParams.get('audience'), 'humans');
+  assert.equal(page.context.location.searchParams.has('audience'), false);
   assert.equal(page.context.location.searchParams.get('view'), 'classic');
   assert.equal(page.context.document.documentElement.dataset.audience, 'humans');
   assert.ok(page.links.every(link => !link.href.includes('audience=agents')));
   assert.equal(page.switchButton['aria-checked'], 'false');
   page.choose('agents');
   assert.equal(page.context.document.documentElement.dataset.audience, 'agents');
+  assert.equal(page.context.location.searchParams.get('audience'), 'agents');
+});
+
+test('human URLs normalize without changing unrelated parameters, fragments, or navigation state', () => {
+  const page = audiencePage({ audience: 'humans', query: '?audience=humans&view=mobile&topic=sdk#example' });
+  assert.equal(page.context.location.href, 'https://local.cloud/?view=mobile&topic=sdk#example');
+  assert.equal(page.context.history.state, page.state);
+});
+
+test('a remembered agent view always has an explicit agent URL', () => {
+  const page = audiencePage({ query: '?view=classic#example' });
+  assert.equal(page.context.location.href, 'https://local.cloud/?view=classic&audience=agents#example');
 });
 
 test('new content mounts and history traversal synchronize audience controls and links', () => {
@@ -58,9 +70,11 @@ test('new content mounts and history traversal synchronize audience controls and
   page.links.push(page.link('/pricing/'));
   page.events.get('astro:page-load')();
   assert.match(page.links.at(-1).href, /audience=agents/);
-  page.context.location.href = 'https://local.cloud/docs/?audience=humans';
+  page.context.location.href = 'https://local.cloud/docs/';
   page.windowEvents.get('popstate')();
   assert.equal(page.switchButton['aria-checked'], 'false');
+  assert.equal(page.context.document.documentElement.dataset.audience, 'humans');
+  assert.equal(page.context.location.href, 'https://local.cloud/docs/');
 });
 
 test('audience synchronization avoids rewriting URLs whose preference is already correct', () => {

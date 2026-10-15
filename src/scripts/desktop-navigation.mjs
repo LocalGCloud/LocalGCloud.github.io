@@ -21,8 +21,8 @@ export async function installDesktopNavigation({root, validate, before, mounted,
   // Audience changes restyle the current document without replacing its content.
   // Rebase a pending navigation too, so its completion retains the latest choice.
   const audienceURL = url => {
-    const audience = new URL(location.href).searchParams.get('audience');
-    if (audience === 'agents' || audience === 'humans') url.searchParams.set('audience', audience);
+    if (new URL(location.href).searchParams.get('audience') === 'agents') url.searchParams.set('audience', 'agents');
+    else url.searchParams.delete('audience');
   };
   window.addEventListener('lc:audience-change', () => audienceURL(rendered));
   const json = async (url) => {

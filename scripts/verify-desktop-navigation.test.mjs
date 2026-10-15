@@ -118,11 +118,23 @@ test('a pending request failure retains the latest audience in its native fallba
   h.context.location.assign = url => { assigned = url.href; };
   const pending = h.navigate('/b/?audience=agents');
   while (!h.release) await new Promise(resolve => setImmediate(resolve));
-  h.setURL('/a/?audience=humans');
+  h.setURL('/a/');
   h.windowListeners.get('lc:audience-change')();
   for (const timeout of [...h.timers.values()]) timeout();
   assert.equal(await pending, false);
-  assert.equal(assigned, 'https://local.cloud/b/?audience=humans');
+  assert.equal(assigned, 'https://local.cloud/b/');
+});
+
+test('returning to the default human view removes stale agent intent from pending navigation', async () => {
+  const h = await harness(true);
+  h.setURL('/a/?audience=agents');
+  const pending = h.navigate('/b/?audience=agents#section');
+  while (!h.release) await new Promise(resolve => setImmediate(resolve));
+  h.setURL('/a/');
+  h.windowListeners.get('lc:audience-change')();
+  h.release();
+  assert.equal(await pending, true);
+  assert.equal(h.context.location.href, 'https://local.cloud/b/#section');
 });
 
 test('managed Mobile Back closes open search without disturbing other scroll locks',async()=>{
