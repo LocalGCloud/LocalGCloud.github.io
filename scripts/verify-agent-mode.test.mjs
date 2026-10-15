@@ -116,11 +116,37 @@ test('repeated page lifecycle events do not double-bind the agent puzzle', () =>
   const controls = Object.fromEntries(['lc-captcha-verify', 'lc-captcha-reset', 'lc-captcha-about', 'lc-captcha-feedback'].map(id => [id, node()]));
   const events = new Map();
   const document = { querySelector: () => card, getElementById: id => id === 'lc-captcha-grid' ? grid : controls[id], addEventListener: (name, fn) => events.set(name, fn) };
-  const source = read('../src/components/AgentCaptcha.astro').match(/<script>([\s\S]*?)<\/script>/)[1];
-  runInNewContext(transformSync(source, { loader: 'ts' }).code, { document, window: {} });
-  events.get('astro:page-load')(); events.get('lc:page-mounted')();
+  const source = read('../src/scripts/agent-widgets.mjs').split('function setupAgentWidgets()')[0].replaceAll('export function ', 'function ');
+  const context = { document, window: {} };
+  runInNewContext(transformSync(source, { loader: 'ts' }).code, context);
+  context.setupAgentCaptcha(); context.setupAgentCaptcha();
   for (const tile of tiles) assert.equal(listeners.get(tile).length, 1);
   assert.equal(listeners.get(controls['lc-captcha-verify']).length, 1);
+});
+
+test('agent widgets load only on demand and retry failed downloads', () => {
+  const source = read('../src/components/AgentCaptcha.astro').match(/<script>([\s\S]*?)<\/script>/)[1].replace(/import agentWidgetsScript[^;]*;/, '');
+  const events = new Map(), root = { dataset: { audience: 'humans' } }, scripts = [];
+  let hasWidgets = true;
+  const context = {
+    agentWidgetsScript: '/_astro/agent-widgets.js',
+    document: { documentElement: root, querySelector: () => hasWidgets,
+      createElement: () => ({ remove() {} }), head: { append: script => scripts.push(script) },
+      addEventListener: (name, fn) => events.set(name, fn) },
+    window: { addEventListener: (name, fn) => events.set(name, fn) },
+  };
+  runInNewContext(source, context);
+  assert.equal(scripts.length, 0, 'human visits fetch no agent controller');
+  root.dataset.audience = 'agents'; hasWidgets = false;
+  events.get('lc:audience-change')();
+  assert.equal(scripts.length, 0, 'agent pages without widgets fetch no controller');
+  hasWidgets = true;
+  events.get('lc:page-mounted')(); events.get('astro:page-load')();
+  assert.equal(scripts.length, 1, 'concurrent page events share one download');
+  assert.equal(scripts[0].src, context.agentWidgetsScript);
+  assert.equal(scripts[0].type, 'module');
+  scripts[0].onerror(); events.get('lc:audience-change')();
+  assert.equal(scripts.length, 2, 'a failed download can retry on the next view change');
 });
 
 test('the copy loader accepts the exact local dev module only in development', () => {
@@ -141,9 +167,10 @@ test('example tabs bind once and support arrow, Home, and End keyboard navigatio
   const term = { dataset: {}, querySelectorAll: selector => selector === '[role="tab"]' ? tabs : panes };
   const events = new Map();
   const document = { querySelectorAll: () => [term], addEventListener: (name, fn) => events.set(name, fn) };
-  const source = read('../src/components/AgentTerminalDaemon.astro').match(/<script>([\s\S]*?)<\/script>/)[1];
-  runInNewContext(transformSync(source, { loader: 'ts' }).code, { document });
-  events.get('astro:page-load')(); events.get('lc:page-mounted')();
+  const source = read('../src/scripts/agent-widgets.mjs').split('function setupAgentWidgets()')[0].replaceAll('export function ', 'function ');
+  const context = { document };
+  runInNewContext(transformSync(source, { loader: 'ts' }).code, context);
+  context.setupTerminalTabs(); context.setupTerminalTabs();
   function key(index, key, expected) {
     let prevented = false;
     tabs[index].events.get('keydown')({ key, preventDefault() { prevented = true; } });

@@ -29,32 +29,3 @@ import CopyButton from './CopyButton.astro';
   code{font:inherit;color:inherit;background:transparent;border:0;padding:0}
   .agent-terminal__note{margin:.75rem 0 0;font-size:.75rem;color:var(--text-2)}
 </style>
-
-<script>
-  function setupTerminalTabs() {
-    document.querySelectorAll<HTMLElement>('.agent-terminal').forEach((term) => {
-      if (term.dataset.tabsReady) return;
-      term.dataset.tabsReady = 'true';
-      const tabs = [...term.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
-      const panes = term.querySelectorAll<HTMLElement>('[role="tabpanel"]');
-      function activate(tab: HTMLButtonElement) {
-        tabs.forEach((item) => {
-          item.setAttribute('aria-selected', String(item === tab));
-          item.tabIndex = item === tab ? 0 : -1;
-        });
-        panes.forEach((pane) => { pane.hidden = pane.id !== tab.getAttribute('aria-controls'); });
-      }
-      tabs.forEach((tab, index) => {
-        tab.addEventListener('click', () => activate(tab));
-        tab.addEventListener('keydown', (event) => {
-          const next = event.key === 'ArrowRight' ? (index + 1) % tabs.length : event.key === 'ArrowLeft' ? (index + tabs.length - 1) % tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : -1;
-          if (next < 0) return;
-          event.preventDefault(); activate(tabs[next]); tabs[next].focus();
-        });
-      });
-    });
-  }
-  setupTerminalTabs();
-  document.addEventListener('astro:page-load', setupTerminalTabs);
-  document.addEventListener('lc:page-mounted', setupTerminalTabs);
-</script>

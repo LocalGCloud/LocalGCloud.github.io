@@ -110,107 +110,22 @@ const { class: className = '' } = Astro.props;
 </style>
 
 <script>
-  function setupAgentCaptcha() {
-    const card = document.querySelector<HTMLElement>('.lc-agent-captcha');
-    const grid = document.getElementById('lc-captcha-grid');
-    const verifyBtn = document.getElementById('lc-captcha-verify');
-    const resetBtn = document.getElementById('lc-captcha-reset');
-    const aboutBtn = document.getElementById('lc-captcha-about');
-    const feedback = document.getElementById('lc-captcha-feedback');
-
-    if (!card || !grid || !verifyBtn || !feedback || card.dataset.captchaReady) return;
-    card.dataset.captchaReady = 'true';
-
-    // Cycle ordering for neighboring flips:
-    // [0, 1, 2, 5, 8, 7, 6, 3, 4]
-    const CYCLE = [0, 1, 2, 5, 8, 7, 6, 3, 4];
-    function neighbor(index: number): number {
-      const pos = CYCLE.indexOf(index);
-      return CYCLE[(pos + 1) % CYCLE.length];
-    }
-
-    // Initial state: 238 (0b011101110 -> 6 green, 3 unlit)
-    const INITIAL_STATE = 238;
-    let state = INITIAL_STATE;
-    let verifyClicks = 0;
-
-    const tiles = grid.querySelectorAll<HTMLButtonElement>('.lc-agent-captcha__tile');
-
-    function render() {
-      let greenCount = 0;
-      tiles.forEach((tile, i) => {
-        const isLit = Boolean(state & (1 << i));
-        if (isLit) greenCount++;
-        tile.setAttribute('data-on', String(isLit));
-        tile.setAttribute('aria-pressed', String(isLit));
-        tile.setAttribute('aria-label', `Tile ${i + 1}, ${isLit ? 'green' : 'unlit'}`);
-      });
-
-      if (state === 511) {
-        card!.classList.add('is-verified');
-        feedback!.className = 'lc-agent-captcha__feedback is-verified';
-        feedback!.textContent = 'Agent puzzle solved.';
-      } else {
-        card!.classList.remove('is-verified');
-        if (feedback!.classList.contains('is-verified') || feedback!.classList.contains('is-error')) {
-          feedback!.className = 'lc-agent-captcha__feedback';
-        }
-        feedback!.innerHTML = `<span>${greenCount}</span><span aria-hidden="true"> / 9</span><span class="sr-only"> of 9 green</span>`;
-      }
-    }
-
-    function toggleTile(index: number) {
-      if (state === 511) return; // already solved
-      const next = neighbor(index);
-      state = state ^ (1 << index) ^ (1 << next);
-      render();
-    }
-
-    tiles.forEach((tile) => {
-      tile.addEventListener('click', () => {
-        const index = Number(tile.dataset.tileIndex);
-        toggleTile(index);
-      });
-    });
-
-    verifyBtn.addEventListener('click', () => {
-      if (state === 511) {
-        card.classList.add('is-verified');
-        feedback.className = 'lc-agent-captcha__feedback is-verified';
-        feedback.textContent = 'Agent puzzle solved.';
-        return;
-      }
-
-      feedback.className = 'lc-agent-captcha__feedback is-error';
-      feedback.textContent = verifyClicks === 0 ? 'Human detected.' : 'Still human.';
-      verifyClicks++;
-    });
-
-    resetBtn?.addEventListener('click', () => {
-      state = INITIAL_STATE;
-      verifyClicks = 0;
-      feedback.className = 'lc-agent-captcha__feedback';
-      render();
-    });
-
-    aboutBtn?.addEventListener('click', () => {
-      feedback.className = 'lc-agent-captcha__feedback';
-      feedback.textContent = 'Every move flips two tiles. Nine green is impossible.';
-    });
-
-    function solve() {
-      state = 511;
-      render();
-    }
-
-
-    // Expose programmatic API for agents/console
-    (window as unknown as { __lcAgentSolve: () => void }).__lcAgentSolve = solve;
-
-    render();
-  }
-
-  setupAgentCaptcha();
-  document.addEventListener('astro:page-load', setupAgentCaptcha);
-  document.addEventListener('lc:page-mounted', setupAgentCaptcha);
+  import agentWidgetsScript from '../scripts/agent-widgets.mjs?url';
+  // Keep the optional puzzle and runbook controllers out of human visits.
+  (() => {
+    let loading = false;
+    const loadAgentWidgets = () => {
+      if (loading || document.documentElement.dataset.audience !== 'agents' ||
+          !document.querySelector('.lc-agent-captcha, .agent-terminal')) return;
+      loading = true;
+      const script = document.createElement('script');
+      script.type = 'module'; script.src = agentWidgetsScript;
+      script.onerror = () => { loading = false; script.remove(); };
+      document.head.append(script);
+    };
+    loadAgentWidgets();
+    window.addEventListener('lc:audience-change', loadAgentWidgets);
+    document.addEventListener('astro:page-load', loadAgentWidgets);
+    document.addEventListener('lc:page-mounted', loadAgentWidgets);
+  })();
 </script>
