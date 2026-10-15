@@ -91,3 +91,12 @@
  & pre{max-width:100%;overflow-x:auto}
  & .site-view-choices a{font-size:.875rem}
 }
+
+html:root.mobile-view[data-audience="agents"]{
+ & :is(.field-home .field-hero,.mobile-personas,.site-page .service-hero-intro,.site-page .service-hero-icon,.mobile-service-tile){border-radius:0;background:var(--surface);border-color:var(--line);box-shadow:none}
+ & .mobile-dock svg{display:none}
+ & .mobile-dock a::before{content:'';display:block;width:24px;height:24px;background:url('../assets/agent-pixels.svg') 0 var(--pixel-offset,0)/24px 216px no-repeat;image-rendering:pixelated}
+ & [data-mobile-section="Services"]{--pixel-offset:-24px}
+ & [data-mobile-section="Docs"]{--pixel-offset:-72px}
+ & [data-mobile-section="About"]{--pixel-offset:-192px}
+}

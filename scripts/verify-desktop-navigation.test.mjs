@@ -48,6 +48,48 @@ test('Mobile and Desktop synchronize the persistent skip link on page changes an
   }
 });
 
+test('audience-only URL changes keep the mounted page and scroll state across fragments and resizing', async () => {
+  const h = await harness(false, {}, { views:['desktop','mobile'] });
+  await h.navigate('/b/');
+  h.pane.scrollTop = 321;
+  h.setURL('/b/?audience=agents');
+  h.windowListeners.get('lc:audience-change')();
+  h.windowListeners.get('pagehide')();
+  assert.equal(h.replacements.at(-1).lcScroll, 321);
+  const writes = h.writes.length;
+  await h.navigate('/b/?audience=agents#section');
+  assert.equal(h.writes.length, writes, 'an audience change must not turn a fragment into a content replacement');
+  let reloads = 0;
+  h.context.location.reload = () => reloads++;
+  h.context.document.documentElement.dataset.siteView = 'mobile';
+  h.windowListeners.get('lc:view-change')();
+  assert.equal(reloads, 0);
+});
+
+test('an audience change during a pending page request survives its completion', async () => {
+  const h = await harness(true);
+  const pending = h.navigate('/b/');
+  while (!h.release) await new Promise(resolve => setImmediate(resolve));
+  h.setURL('/a/?audience=agents');
+  h.windowListeners.get('lc:audience-change')();
+  h.release();
+  assert.equal(await pending, true);
+  assert.equal(h.context.location.href, 'https://local.cloud/b/?audience=agents');
+});
+
+test('a pending request failure retains the latest audience in its native fallback', async () => {
+  const h = await harness(true);
+  let assigned;
+  h.context.location.assign = url => { assigned = url.href; };
+  const pending = h.navigate('/b/?audience=agents');
+  while (!h.release) await new Promise(resolve => setImmediate(resolve));
+  h.setURL('/a/?audience=humans');
+  h.windowListeners.get('lc:audience-change')();
+  for (const timeout of [...h.timers.values()]) timeout();
+  assert.equal(await pending, false);
+  assert.equal(assigned, 'https://local.cloud/b/?audience=humans');
+});
+
 test('managed Mobile Back closes open search without disturbing other scroll locks',async()=>{
   const h=await harness(false,{}, {siteView:'mobile',views:['mobile']});
   await h.navigate('/b/');

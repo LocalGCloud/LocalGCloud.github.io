@@ -96,3 +96,49 @@
       }
     });
 })();
+
+// Keep the audience preference independent of analytics and page navigation.
+(function() {
+  var d = document, root = d.documentElement;
+  if (!root) return;
+  var sync = function() {
+    var agent = root.dataset.audience === 'agents';
+    var control = d.getElementById('lc-audience-switch');
+    if (control) control.setAttribute('aria-checked', String(agent));
+    d.querySelectorAll('[data-target-audience]').forEach(function(label) {
+      var active = (label.dataset.targetAudience === 'agents') === agent;
+      label.dataset.active = String(active); label.setAttribute('aria-pressed', String(active));
+    });
+    d.querySelectorAll('a[href]').forEach(function(link) {
+      var href = link.getAttribute('href');
+      if (!href || href[0] === '#' || link.hasAttribute('download')) return;
+      try {
+        if (link.origin !== location.origin || /\.[^/]+$/.test(link.pathname)) return;
+        var search = new URLSearchParams(link.search);
+        agent ? search.set('audience', 'agents') : search.delete('audience');
+        var next = search.toString();
+        if (link.search !== (next ? '?' + next : '')) link.search = next;
+      } catch (e) {}
+    });
+  };
+  d.addEventListener('click', function(event) {
+    var target = event.target.closest && event.target.closest('#lc-audience-switch,[data-target-audience]');
+    if (!target) return;
+    var audience = target.dataset.targetAudience || (root.dataset.audience === 'agents' ? 'humans' : 'agents');
+    root.dataset.audience = audience;
+    try { localStorage.setItem('lc-audience', audience); } catch (e) {}
+    var url = new URL(location.href);
+    // Explicit human intent must override an agent URL even with storage disabled.
+    url.searchParams.set('audience', audience);
+    history.replaceState(history.state, '', url.href);
+    window.dispatchEvent(new Event('lc:audience-change'));
+    sync();
+  });
+  sync();
+  d.addEventListener('astro:page-load', sync);
+  window.addEventListener('popstate', function() {
+    var audience = new URL(location.href).searchParams.get('audience');
+    if (audience === 'agents' || audience === 'humans') root.dataset.audience = audience;
+    sync();
+  });
+})();

@@ -11,6 +11,10 @@ import ServiceIcon from './ServiceIcon.astro';
 import ServiceFilterBootstrap from './ServiceFilterBootstrap.astro';
 import CopyButton from './CopyButton.astro';
 import AlternativesTable from './AlternativesTable.astro';
+import AgentPromptHero from './AgentPromptHero.astro';
+import AgentCaptcha from './AgentCaptcha.astro';
+import AgentTerminalDaemon from './AgentTerminalDaemon.astro';
+import AgentRibbonSpecs from './AgentRibbonSpecs.astro';
 import { availableServiceCount, serviceCatalogGroups } from '../data/services';
 import InstallationMethods from './InstallationMethods.astro';
 import { docsContract } from '../data/docs-contract';
@@ -125,11 +129,26 @@ for (const column of atlasColumns) {
       <div class="field-hero__copy">
         <p class="mobile-eyebrow" data-mobile-only data-pagefind-ignore>Cloud for agents</p>
         <p class="desktop-hero-eyebrow" data-desktop-copy data-pagefind-ignore>Cloud for agents</p>
-        <h1 class="field-hero__headline">
-          <span class="field-hero__headline-main" data-classic-copy>localcloud is</span>{' '}
-          <span class="field-hero__headline-tag" data-classic-copy>cloud for agents.</span>
-        </h1>
-        <p class="field-intro" data-classic-copy>{definition}</p>
+        <div class="field-hero__headline-wrapper">
+          <div class="field-hero__headline--agent" data-agent-only aria-hidden="true">
+            <pre class="agent-readme__cloud">{'       .--.\n    .-(    ).\n   (___.__)__)'}</pre>
+            <div><span class="agent-readme__path">local.cloud / agent mode</span><br />Google Cloud APIs. Local endpoints. Your SDKs.</div>
+          </div>
+          <h1 class="field-hero__headline">
+            <span class="field-hero__headline-main" data-classic-copy>localcloud is</span>{' '}
+            <span class="field-hero__headline-tag" data-classic-copy>cloud for agents.</span>
+          </h1>
+          <p class="field-intro" data-classic-copy>{definition}</p>
+          <p class="field-intro--agent" data-agent-only>
+            &gt; @agents: provision, query, test, repeat. Your local cloud is the sandbox.
+          </p>
+          <dl class="agent-readme__facts" data-agent-only aria-label="Local development environment">
+            <div><dt>runtime</dt><dd>one Docker container</dd></div>
+            <div><dt>services</dt><dd>{availableServiceCount} local service APIs</dd></div>
+            <div><dt>connect</dt><dd>Google Cloud SDKs / stdio MCP</dd></div>
+            <div><dt>scope</dt><dd>development / tests / CI</dd></div>
+          </dl>
+        </div>
         <p class="mobile-intro" data-mobile-only data-pagefind-ignore>{definition}</p>
         <figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="lazy" fetchpriority="high" decoding="async" /><figcaption class="hero-benefits">{heroBenefits.map((benefit) => <span>{benefit}</span>)}</figcaption></figure>
         <template data-desktop-headline data-desktop-copy data-pagefind-ignore>
@@ -172,31 +191,41 @@ for (const column of atlasColumns) {
 
       </div>
 
-      <div class="field-hero__visual" data-classic-copy>
-        <figure class="field-board__figure">
-          <img
-              src={heroIllustration.src}
-              alt={heroIllustration.alt}
-              class="field-board__image"
-              width="1200"
-              height="760"
-              loading="lazy"
-              fetchpriority="high"
-              decoding="async"
-          />
-          <figcaption class="hero-benefits">{['No cloud account', 'No GCP billing', 'Build and test locally'].map((benefit) => <span>{benefit}</span>)}</figcaption>
-        </figure>
-        <ul class="field-signal-strip">
-          {heroSignals.map((signal) => (
-            <li class="field-signal">
-              <div class="field-signal__value">{signal.value}</div>
-              <div class="field-signal__meta">
-                <div class="field-signal__label">{signal.label}</div>
-                <div class="field-signal__note">{signal.note}</div>
-              </div>
-            </li>
-          ))}
-        </ul>
+      <div class="field-hero__visual-area">
+        <div class="field-hero__visual field-hero__visual--human" data-classic-copy>
+          <figure class="field-board__figure">
+            <img
+                src={heroIllustration.src}
+                alt={heroIllustration.alt}
+                class="field-board__image"
+                width="1200"
+                height="760"
+                loading="lazy"
+                fetchpriority="high"
+                decoding="async"
+            />
+            <figcaption class="hero-benefits">{['No cloud account', 'No GCP billing', 'Build and test locally'].map((benefit) => <span>{benefit}</span>)}</figcaption>
+          </figure>
+          <ul class="field-signal-strip">
+            {heroSignals.map((signal) => (
+              <li class="field-signal">
+                <div class="field-signal__value">{signal.value}</div>
+                <div class="field-signal__meta">
+                  <div class="field-signal__label">{signal.label}</div>
+                  <div class="field-signal__note">{signal.note}</div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="field-hero__visual field-hero__visual--agent" data-agent-visual>
+          <div class="field-hero__agent-stack">
+            <AgentPromptHero />
+            <AgentCaptcha />
+            <AgentTerminalDaemon />
+          </div>
+        </div>
       </div>
       <template data-desktop-hero data-desktop-copy data-pagefind-ignore>
         <figure class="desktop-hero-art" data-desktop-copy data-pagefind-ignore>
@@ -220,25 +249,30 @@ for (const column of atlasColumns) {
     <p class="mobile-computer-note" data-mobile-only data-pagefind-ignore>Ready to try it? Set up LocalCloud on your computer using the steps below.</p>
     <InstallationMethods />
     <section class="field-ribbon">
-      <div class="field-ribbon__grid stagger">
-        <article class="field-ribbon__item reveal">
-          <span class="field-stamp" data-classic-copy>No code rewrites</span>
-          <div data-classic-copy>Use familiar Google Cloud SDKs and client libraries. Point supported clients at local endpoints—your application logic stays the same.</div>
-          <span class="field-stamp" data-ribbon-original>Standard SDK workflows</span>
-          <div data-ribbon-original>Use supported Google Cloud clients with the local endpoints returned by <code>localcloud env</code>.</div>
-        </article>
-        <article class="field-ribbon__item reveal">
-          <span class="field-stamp" data-classic-copy>Skip the cloud wait</span>
-          <div data-classic-copy>Create resources locally with zero Google Cloud costs. Give your tests and AI agents fast feedback without waiting for cloud provisioning.</div>
-          <span class="field-stamp" data-ribbon-original>Faster inner loop</span>
-          <div data-ribbon-original>Stay local while you build and test. Switch to shared cloud environments when ready.</div>
-        </article>
-        <article class="field-ribbon__item reveal">
-          <span class="field-stamp" data-classic-copy>Inspect. Save. Replay.</span>
-          <div data-classic-copy>Inspect your local cloud with the built-in console and health endpoints. Test versioned secrets, database backups, and Pub/Sub snapshots.</div>
-          <span class="field-stamp" data-ribbon-original>Fully inspectable</span>
-          <div data-ribbon-original>Built-in console, health endpoints, env export, and seeded sample data make the runtime transparent.</div>
-        </article>
+      <div class="field-ribbon__human">
+        <div class="field-ribbon__grid stagger">
+          <article class="field-ribbon__item reveal">
+            <span class="field-stamp" data-classic-copy>No code rewrites</span>
+            <div data-classic-copy>Use familiar Google Cloud SDKs and client libraries. Point supported clients at local endpoints—your application logic stays the same.</div>
+            <span class="field-stamp" data-ribbon-original>Standard SDK workflows</span>
+            <div data-ribbon-original>Use supported Google Cloud clients with the local endpoints returned by <code>localcloud env</code>.</div>
+          </article>
+          <article class="field-ribbon__item reveal">
+            <span class="field-stamp" data-classic-copy>Skip the cloud wait</span>
+            <div data-classic-copy>Create resources locally with zero Google Cloud costs. Give your tests and AI agents fast feedback without waiting for cloud provisioning.</div>
+            <span class="field-stamp" data-ribbon-original>Faster inner loop</span>
+            <div data-ribbon-original>Stay local while you build and test. Switch to shared cloud environments when ready.</div>
+          </article>
+          <article class="field-ribbon__item reveal">
+            <span class="field-stamp" data-classic-copy>Inspect. Save. Replay.</span>
+            <div data-classic-copy>Inspect your local cloud with the built-in console and health endpoints. Test versioned secrets, database backups, and Pub/Sub snapshots.</div>
+            <span class="field-stamp" data-ribbon-original>Fully inspectable</span>
+            <div data-ribbon-original>Built-in console, health endpoints, env export, and seeded sample data make the runtime transparent.</div>
+          </article>
+        </div>
+      </div>
+      <div class="field-ribbon__agent">
+        <AgentRibbonSpecs />
       </div>
     </section>
 
@@ -250,48 +284,53 @@ for (const column of atlasColumns) {
         <h2>{availableServiceCount} services, running locally</h2>
       </div>
 
+      <div class="field-atlas__agent-bar" aria-hidden="true">
+        <span class="field-atlas__agent-dot">●</span>
+        <span>SERVICE CATALOG &middot; {availableServiceCount} LOCAL SERVICES</span>
+      </div>
+
       <div class="desktop-catalog-tools" data-desktop-copy data-pagefind-ignore>
         <div class="desktop-catalog-search"><label class="sr-only" for="home-service-search">Search local services</label><input id="home-service-search" type="search" placeholder={`Search ${availableServiceCount} local services…`} autocomplete="off" data-filter-input /><a href={base + 'compatibility/'}>Compatibility</a></div>
-        <nav class="desktop-catalog-categories" aria-label="Local service categories">{atlasColumns.map((column) => <a href={'#home-service-' + column.category}>{column.title}</a>)}</nav>
-        <p class="catalog-empty" data-service-empty hidden>No matching services. Try another service name.</p>
-      </div>
-      <div class="field-atlas__grid">
-        {atlasSlots.map((slot) => (
-          <div class:list={['field-atlas__slot', slot.length > 1 && 'field-atlas__slot--split']}>
-            {slot.map((column) => (
-              <article class="field-column reveal" id={'home-service-' + column.category} data-service-section>
-                <div class="field-column__head">
-                  <span class="field-kicker" data-classic-copy>{column.title}</span>
-                  <h3 data-desktop-copy data-pagefind-ignore>{column.title}</h3>
-                  <p>{column.note}</p>
-                </div>
+          <nav class="desktop-catalog-categories" aria-label="Local service categories">{atlasColumns.map((column) => <a href={'#home-service-' + column.category}>{column.title}</a>)}</nav>
+          <p class="catalog-empty" data-service-empty hidden>No matching services. Try another service name.</p>
+        </div>
+        <div class="field-atlas__grid">
+          {atlasSlots.map((slot) => (
+            <div class:list={['field-atlas__slot', slot.length > 1 && 'field-atlas__slot--split']}>
+              {slot.map((column) => (
+                <article class="field-column reveal" id={'home-service-' + column.category} data-service-section>
+                  <div class="field-column__head">
+                    <span class="field-kicker" data-classic-copy>{column.title}</span>
+                    <h3 data-desktop-copy data-pagefind-ignore>{column.title}</h3>
+                    <p>{column.note}</p>
+                  </div>
 
-                <div class="field-column__list">
-                  {column.items.map((service) => (
-                    <a href={`${base}services/${service.slug}/`} class="field-service" data-service-name={service.name.toLowerCase()}>
-                      <div class="field-service__main">
-                        <span class="field-service__icon">
-                          <ServiceIcon iconId={service.iconId} name={service.name} size={34} />
-                        </span>
-                        <div>
-                          <strong>{service.name}</strong>
-                          <p>{service.description}</p>
+                  <div class="field-column__list">
+                    {column.items.map((service) => (
+                      <a href={`${base}services/${service.slug}/`} class="field-service" data-service-name={service.name.toLowerCase()}>
+                        <div class="field-service__main">
+                          <span class="field-service__icon">
+                            <ServiceIcon iconId={service.iconId} name={service.name} size={34} />
+                          </span>
+                          <div>
+                            <strong>{service.name}</strong>
+                            <p>{service.description}</p>
+                          </div>
                         </div>
-                      </div>
 
-                      <div class="field-service__tags">
-                        <span>{service.endpointLabel}</span>
-                      </div>
-                      <span class="desktop-service-guide" data-desktop-copy data-pagefind-ignore>View guide</span>
-                    </a>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-        ))}
-      </div>
-    </section>
+                        <div class="field-service__tags">
+                          <span>{service.endpointLabel}</span>
+                        </div>
+                        <span class="desktop-service-guide" data-desktop-copy data-pagefind-ignore>View guide</span>
+                      </a>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
 
     <section class="field-blog">
       <div class="field-section-heading reveal">
@@ -883,9 +922,25 @@ for (const column of atlasColumns) {
     }
   }
 
-  .field-hero__visual {
+  .field-hero__audience-row {
+    margin-bottom: 0.85rem;
+  }
+
+  .field-hero__visual-area {
+    position: relative;
     width: min(100%, 38rem);
     justify-self: center;
+  }
+
+  .field-hero__visual {
+    width: 100%;
+    justify-self: center;
+  }
+
+  .field-hero__visual--agent {
+    display: none;
+    width: 100%;
+    margin: 0 auto;
   }
 
   .field-board__figure {
@@ -1297,4 +1352,47 @@ for (const column of atlasColumns) {
       padding-right: 0;
     }
   }
+</style>
+
+<style is:global>
+.field-hero__headline--agent,.field-intro--agent,.agent-readme__facts,.field-hero__visual--agent,.field-ribbon__agent,.field-atlas__agent-bar{display:none}
+html[data-audience="agents"] .field-home :is(.field-hero__visual--human,.field-ribbon__human,.desktop-hero-art,.desktop-hero-summary,.mobile-hero-art,.mobile-intro,.mobile-eyebrow,.desktop-hero-eyebrow,.desktop-install-heading,.desktop-hero-proof,.field-install,.field-actions,.field-proof){display:none!important}
+html[data-audience="agents"] .field-home .field-hero{display:block!important;background:var(--bg);color:var(--text);text-align:left;padding:0!important}
+html[data-audience="agents"] .field-home .field-hero__copy{width:100%;max-width:68rem;margin-inline:auto;padding:1.75rem 2rem 0}
+html[data-audience="agents"] .field-home .field-hero__headline--agent{display:flex!important;align-items:center;gap:1.5rem;margin:0 0 1.5rem;font:.75rem/1.65 var(--font-mono);color:var(--text-2)}
+html[data-audience="agents"] .field-home .agent-readme__cloud{flex-shrink:0;margin:0;padding:0;border:0;background:transparent;color:var(--accent);font:.8125rem/1.15 var(--font-mono);white-space:pre;overflow:visible}
+html[data-audience="agents"] .field-home .agent-readme__path{color:var(--accent);text-transform:uppercase;letter-spacing:.12em}
+html[data-audience="agents"] .field-home .field-hero__headline{display:block!important;width:auto!important;margin:0!important;font:700 clamp(1.25rem,2.1vw,1.75rem)/1.45 var(--font-mono)!important;letter-spacing:.015em!important;text-transform:uppercase;color:var(--accent);text-align:left}
+html[data-audience="agents"] .field-home .field-hero__headline::before{content:'# ';color:var(--text-2)}
+html[data-audience="agents"] .field-home .field-hero__headline [data-classic-copy]{display:inline!important;white-space:normal;line-height:inherit;font-size:inherit;color:inherit}
+html[data-audience="agents"] .field-home .field-hero__headline [data-desktop-copy]{display:none!important}
+html[data-audience="agents"] .field-home .field-intro--agent{display:block!important;margin:.5rem 0 1rem;font:.8125rem/1.7 var(--font-mono);color:var(--text-2);text-align:left}
+html[data-audience="agents"] .field-home .field-hero .field-intro{display:none!important}
+html[data-audience="agents"] .field-home .agent-readme__facts{display:grid;gap:.2rem;margin:0 0 1.5rem;font:.8125rem/1.7 var(--font-mono)}
+html[data-audience="agents"] .field-home .agent-readme__facts>div{display:grid;grid-template-columns:7rem minmax(0,1fr);gap:1rem}
+html[data-audience="agents"] .field-home .agent-readme__facts dt{color:var(--text-2)}
+html[data-audience="agents"] .field-home .agent-readme__facts dd{margin:0;color:var(--text);overflow-wrap:anywhere}
+html[data-audience="agents"] .field-home .field-hero__visual--agent{display:block!important}
+html[data-audience="agents"] .field-home .field-hero__visual-area{width:100%;max-width:68rem;min-width:0;margin-inline:auto;padding:0 2rem 2rem}
+html[data-audience="agents"] .field-home .field-hero__agent-stack{display:grid;grid-template-columns:minmax(0,1fr) 15rem;align-items:start;gap:1.75rem 2rem;width:100%}
+html[data-audience="agents"] .field-home .lc-agent-start{grid-column:1/-1;padding-block:1.25rem;border-block:1px dashed var(--line)}
+html[data-audience="agents"] .field-home .agent-terminal{grid-column:1;grid-row:2;min-width:0}
+html[data-audience="agents"] .field-home .lc-agent-captcha{grid-column:2;grid-row:2;max-width:100%;padding:0 0 0 1.25rem;border-left:1px dashed var(--line)}
+html[data-audience="agents"] .field-home .field-ribbon__agent{display:block}
+html[data-audience="agents"] .field-home .field-atlas__agent-bar{display:flex;gap:.6rem;padding:.75rem 0;border-block:1px solid var(--line);font:.8125rem/1.5 var(--font-mono);color:var(--accent);margin-bottom:1rem}
+html[data-audience="agents"] .field-home .field-atlas__agent-dot{color:var(--accent)}
+html[data-audience="agents"] .field-home .field-service strong{font-family:var(--font-mono)}
+@media(max-width:64rem){
+  html[data-audience="agents"] .field-home .field-hero__agent-stack{grid-template-columns:minmax(0,1fr)}
+  html[data-audience="agents"] .field-home :is(.agent-terminal,.lc-agent-captcha){grid-column:auto;grid-row:auto}
+  html[data-audience="agents"] .field-home .lc-agent-captcha{max-width:22rem;padding:1.25rem 0 0;border-left:0;border-top:1px solid var(--line)}
+}
+@media(max-width:48rem){
+  html[data-audience="agents"] .field-home .field-hero{border-color:var(--line)}
+  html[data-audience="agents"] .field-home .field-hero__copy{padding:1.25rem 1.25rem 0}
+  html[data-audience="agents"] .field-home .field-hero__visual-area{padding:0 1.25rem 1.25rem}
+  html[data-audience="agents"] .field-home .field-hero__headline--agent{gap:1rem;align-items:flex-start;font-size:.75rem}
+  html[data-audience="agents"] .field-home .agent-readme__cloud{font-size:.6875rem}
+  html[data-audience="agents"] .field-home .agent-readme__facts>div{grid-template-columns:5rem minmax(0,1fr);gap:.5rem}
+}
 </style>

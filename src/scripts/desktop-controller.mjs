@@ -31,7 +31,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
       headline.append(desktopHeadline.cloneNode(true));headline.dataset.desktopHeadlineReady='true';
     }
     const hero = main.querySelector('[data-desktop-hero]');
-    if(hero && !hero.dataset.heroReady){hero.after(hero.content.cloneNode(true));hero.dataset.heroReady='true';}
+    if(hero && !hero.dataset.heroReady && document.documentElement.dataset.audience !== 'agents'){hero.after(hero.content.cloneNode(true));hero.dataset.heroReady='true';}
     const image = main.querySelector('.desktop-hero-art img');
     if (image) {
       image.dataset.desktopSizes ||= image.sizes;
@@ -39,6 +39,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
     }
   };
   presentContent();
+  window.addEventListener('lc:audience-change', presentContent);
 
   const wide = matchMedia('(min-width: 64rem)');
   const base = root.dataset.base || '/';

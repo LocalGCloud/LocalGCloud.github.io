@@ -54,7 +54,6 @@
   & .desktop-hero-proof a{margin-left:.75rem;color:var(--accent);text-decoration:underline}
   &.desktop-ready .desktop-hero-art{display:block!important;position:relative;width:100%;flex:0 0 auto;min-height:0;margin:0;overflow:hidden}
   & .desktop-hero-art img{display:block;width:100%;height:auto;aspect-ratio:3/1;object-fit:cover}
-  & .desktop-hero-art .hero-benefits{position:absolute;inset:auto 0 clamp(.5rem,1.2vw,1rem);margin:0}
   &.desktop-ready .desktop-hero-summary{display:grid!important;width:94%;flex-shrink:0;margin:0 auto;grid-template-columns:repeat(3,1fr);gap:.6rem 1.2rem;padding:.4rem 0 clamp(.65rem,2vh,1.4rem);border-top:1px solid var(--line);background:#faf8f0;text-align:left;line-height:1.25}
   & .desktop-hero-summary article{display:flex;align-items:flex-start;gap:.8rem}
   & .desktop-hero-summary article+article{border-left:1px solid var(--line);padding-left:1.2rem}
@@ -84,3 +83,40 @@
  }
 }
 @media(prefers-reduced-motion:reduce){.desktop-view .copy-btn__icon{transition:none!important}}
+
+/* Retro is scoped to Agent mode; normal desktop keeps its original skin. */
+@media(min-width:64rem){
+  html:root.desktop-view[data-audience="agents"]{
+    & .desktop-background{inset:0;animation:none;background:radial-gradient(#507d4b26 1px,transparent 1px) 0 0/5px 5px,var(--bg)}
+    & .desktop-window{background:var(--bg);border:2px solid var(--line);border-radius:0;outline:1px solid var(--line);outline-offset:4px;box-shadow:7px 7px 0 #0009}
+    /* A static, low opacity texture; no animation, canvas, filter or repaint loop. */
+    & .desktop-window::after{content:'';position:absolute;inset:0;z-index:10;pointer-events:none;opacity:.08;background:repeating-linear-gradient(0deg,#000 0,#000 1px,transparent 1px,transparent 3px)}
+    & :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar){text-transform:uppercase;letter-spacing:.04em;border-width:2px;font-size:.75rem}
+    & :is(.desktop-toolbar-actions button,.desktop-start,.desktop-taskbar button,.desktop-menu nav,.desktop-history-window,.desktop-history-title){border-radius:0;box-shadow:none;background:var(--surface);color:var(--text);border-color:var(--line)}
+    & .desktop-start{background:var(--accent);color:var(--bg)}
+    & .desktop-controls{gap:.4rem}
+    & .desktop-controls button{border:1px solid var(--line);border-radius:0;width:1.6rem;height:1.6rem;background:var(--surface);color:var(--accent)}
+    & .desktop-controls button::before{display:block;width:auto;height:auto;margin:0;border:0;border-radius:0;background:transparent;font:700 1rem/1 var(--font-mono)}
+    & .desktop-close::before{content:'×'}
+    & .desktop-minimize::before{content:'−'}
+    & .desktop-expand::before{content:'□'}
+    & .desktop-shortcut{border-radius:0;color:var(--text-2);text-transform:uppercase;font-size:.6875rem;gap:.6rem;padding:.65rem .25rem}
+    & .desktop-shortcut.is-active{background:var(--accent-soft);color:var(--accent);border:1px dotted var(--line)}
+    & .desktop-shortcut:hover{border-color:var(--accent);background:var(--surface-2);color:var(--accent)}
+    & :is(.desktop-shortcut img,.desktop-brand img){display:none}
+    & :is(.desktop-shortcut,.desktop-brand)::before{content:'';display:block;flex-shrink:0;width:32px;height:32px;background:url('../assets/agent-pixels.svg') 0 var(--pixel-offset,0)/32px 288px no-repeat;image-rendering:pixelated}
+    & [data-window-label="Services"],& [data-window-label="Examples"]{--pixel-offset:-32px}
+    & [data-window-label="AI Agents"]{--pixel-offset:-64px}
+    & [data-window-label="Docs"]{--pixel-offset:-96px}
+    & [data-window-label="Pricing"]{--pixel-offset:-128px}
+    & [data-window-label="Console demo"]{--pixel-offset:-160px}
+    & [data-window-label="Quickstart"],& [data-window-label="Changelog"]{--pixel-offset:-192px}
+    & .desktop-my-cloud,& .desktop-brand{--pixel-offset:-224px}
+    & .desktop-brand{font:600 .875rem/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+    & .desktop-brand span{color:inherit}
+    & .desktop-taskbar :is(a,button){color:var(--text);border-color:var(--line)}
+    & :is(.service-filter__search,.desktop-catalog-search input,[data-service-name]){border-radius:0}
+    & :is(.service-filter__search,.desktop-catalog-search input,[aria-label="LocalCloud service compatibility table"]){background:var(--surface);color:var(--text);border-color:var(--line)}
+    & .desktop-catalog-breadcrumb{color:var(--text-2)}
+  }
+}

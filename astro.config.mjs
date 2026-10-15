@@ -10,10 +10,43 @@ import { resolvePosthogConfig } from './src/utils/posthog-config.mjs';
 import { resolveCloudflareAnalyticsConfig } from './src/utils/cloudflare-analytics-config.mjs';
 import { lastModifiedForUrl } from './src/utils/page-dates.mjs';
 
+import { renderMarkdownTwin } from './src/utils/render-markdown-twin.mjs';
+import { twinSourcePath } from './src/utils/markdown-twins.mjs';
+
 const env = loadEnv(process.env.NODE_ENV || 'production', process.cwd(), '');
 const posthog = resolvePosthogConfig(env);
 const cloudflareAnalytics = resolveCloudflareAnalyticsConfig(env);
 const siteRelease = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+
+function markdownTwinDevPlugin() {
+  return {
+    name: 'markdown-twin-dev-server',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        if (!req.url) return next();
+        const address = server.httpServer?.address();
+        if (!address || typeof address === 'string') return next();
+        const origin = `http://127.0.0.1:${address.port}`;
+        const url = new URL(req.url, origin);
+        const route = twinSourcePath(url.pathname);
+        if (!route || !['GET', 'HEAD'].includes(req.method)) return next();
+        try {
+          // Always render current source in dev; dist may belong to an older build.
+          const response = await fetch(new URL(route, origin));
+          if (response.ok) {
+            const markdown = renderMarkdownTwin(await response.text(), { route, twin: url.pathname, file: route });
+            res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+            res.setHeader('X-Content-Type-Options', 'nosniff');
+            return res.end(req.method === 'HEAD' ? undefined : markdown);
+          }
+        } catch (error) {
+          server.config.logger.warn(`Markdown twin ${url.pathname}: ${error.message}`);
+        }
+        next();
+      });
+    },
+  };
+}
 
 // Noindex pages stay out of the sitemap. The raw Markdown and text routes are not listed
 // either: llms.txt links them, and they would compete with their HTML pages.
@@ -75,7 +108,7 @@ export default defineConfig({
       'import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_ENDPOINT': JSON.stringify(cloudflareAnalytics.endpoint),
       'import.meta.env.PUBLIC_SITE_RELEASE': JSON.stringify(siteRelease),
     },
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), markdownTwinDevPlugin()],
   },
   markdown: {
     processor: unified({ gfm: true, rehypePlugins: [rehypeTableRegions] }),

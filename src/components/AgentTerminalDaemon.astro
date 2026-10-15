@@ -1,0 +1,60 @@
+---
+import { agentModeExamples } from '../data/agentModeExamples';
+import CopyButton from './CopyButton.astro';
+---
+
+<section class="agent-terminal" aria-label="LocalCloud workflow examples">
+  <h2 class="agent-terminal__header">## runbook</h2>
+  <div class="agent-terminal__tabs" role="tablist" aria-label="Workflow example">
+    {agentModeExamples.map((example, i) => <button type="button" id={`agent-tab-${example.id}`} class="agent-terminal__tab" role="tab" aria-controls={`agent-pane-${example.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{example.label}</button>)}
+  </div>
+  {agentModeExamples.map((example, i) => <div class="agent-terminal__pane" id={`agent-pane-${example.id}`} role="tabpanel" aria-labelledby={`agent-tab-${example.id}`} tabindex="0" hidden={i !== 0}>
+    <div class="agent-terminal__copy"><span>{example.language}</span><CopyButton text={example.code} label={`Copy ${example.label}`} /></div>
+    <pre><code>{example.code}</code></pre>
+  </div>)}
+  <p class="agent-terminal__note">Examples to run locally. Export runtime endpoints before using SDKs.</p>
+</section>
+
+<style>
+  .agent-terminal{min-width:0;text-align:left;font:.8125rem/1.7 var(--font-mono)}
+  .agent-terminal__header{margin:0 0 .5rem;color:var(--text);font:600 .9375rem/1.5 var(--font-mono);letter-spacing:0}
+  .agent-terminal__tabs{display:flex;flex-wrap:wrap;gap:0 1rem;border-bottom:1px solid var(--line)}
+  .agent-terminal__tab{white-space:nowrap;min-height:2.75rem;padding:.4rem 0;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--text-2);font:inherit;cursor:pointer}
+  .agent-terminal__tab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+  .agent-terminal__pane{min-width:0;padding:.5rem 0}
+  .agent-terminal__pane[hidden]{display:none}
+  .agent-terminal__copy{display:flex;align-items:center;justify-content:space-between;color:var(--text-2);font-size:.75rem}
+  .agent-terminal__copy :global(.copy-btn){border-radius:2px!important}
+  pre{margin:0;max-width:100%;overflow-x:auto;background:transparent;border:0;border-left:1px solid var(--line);border-radius:0;padding:.25rem 0 .25rem 1rem;color:var(--text);font:inherit;white-space:pre}
+  code{font:inherit;color:inherit;background:transparent;border:0;padding:0}
+  .agent-terminal__note{margin:.75rem 0 0;font-size:.75rem;color:var(--text-2)}
+</style>
+
+<script>
+  function setupTerminalTabs() {
+    document.querySelectorAll<HTMLElement>('.agent-terminal').forEach((term) => {
+      if (term.dataset.tabsReady) return;
+      term.dataset.tabsReady = 'true';
+      const tabs = [...term.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+      const panes = term.querySelectorAll<HTMLElement>('[role="tabpanel"]');
+      function activate(tab: HTMLButtonElement) {
+        tabs.forEach((item) => {
+          item.setAttribute('aria-selected', String(item === tab));
+          item.tabIndex = item === tab ? 0 : -1;
+        });
+        panes.forEach((pane) => { pane.hidden = pane.id !== tab.getAttribute('aria-controls'); });
+      }
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => activate(tab));
+        tab.addEventListener('keydown', (event) => {
+          const next = event.key === 'ArrowRight' ? (index + 1) % tabs.length : event.key === 'ArrowLeft' ? (index + tabs.length - 1) % tabs.length : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : -1;
+          if (next < 0) return;
+          event.preventDefault(); activate(tabs[next]); tabs[next].focus();
+        });
+      });
+    });
+  }
+  setupTerminalTabs();
+  document.addEventListener('astro:page-load', setupTerminalTabs);
+  document.addEventListener('lc:page-mounted', setupTerminalTabs);
+</script>

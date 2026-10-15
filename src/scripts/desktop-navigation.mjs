@@ -18,6 +18,13 @@ export async function installDesktopNavigation({root, validate, before, mounted,
   const ran = new Set(await Promise.all([...document.scripts].map(async script => script.src ? 'url:' + new URL(script.src).pathname : 'inline:' + await sha(script.textContent))));
   const cache = new Map();
   let manifest, sequence = 0, contentVersion = 0, rendered = new URL(location.href), activeStyle, changing = false, swapping = false, scrollTimer;
+  // Audience changes restyle the current document without replacing its content.
+  // Rebase a pending navigation too, so its completion retains the latest choice.
+  const audienceURL = url => {
+    const audience = new URL(location.href).searchParams.get('audience');
+    if (audience === 'agents' || audience === 'humans') url.searchParams.set('audience', audience);
+  };
+  window.addEventListener('lc:audience-change', () => audienceURL(rendered));
   const json = async (url) => {
     const safe = safeDesktopAsset(url,location.href,base);
     if (!safe) throw Error('Invalid desktop content URL');
@@ -170,6 +177,7 @@ export async function installDesktopNavigation({root, validate, before, mounted,
       saveScroll();swapping=true;
       pane.innerHTML = page.content;
       mountedVersion=++contentVersion;
+      audienceURL(url);
       if(!traversal)history.pushState({lcDesktop:true,lcEntry:session+':'+ ++entry,lcScroll:0},'',url);
       renderedEntry=history.state?.lcEntry;
       rendered = url;
@@ -188,7 +196,7 @@ export async function installDesktopNavigation({root, validate, before, mounted,
       if(version===sequence&&active()){if(!mobile()||traversal||!url.hash)scrollToContent(url,positions.get(renderedEntry)??savedScroll,traversal);if(!url.hash&&!traversal)focus(pane.querySelector?.('main h1, main'));}
       return true;
     } catch(error) {
-      if(active()&&(version===sequence||mountedVersion===contentVersion&&!changing)){if(nextStyle!==activeStyle)nextStyle?.remove();location.assign(mountedVersion===contentVersion?rendered:url);}
+      if(active()&&(version===sequence||mountedVersion===contentVersion&&!changing)){if(nextStyle!==activeStyle)nextStyle?.remove();const fallback=mountedVersion===contentVersion?rendered:url;audienceURL(fallback);location.assign(fallback);}
       return false;
     } finally {if(mountedVersion===contentVersion)swapping=false;if(version===sequence){changing=false;pane.removeAttribute('aria-busy');} }
   };

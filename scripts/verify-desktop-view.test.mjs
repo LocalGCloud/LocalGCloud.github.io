@@ -114,8 +114,8 @@ test('Blog outlines initialize each mounted article with one listener querying c
 });
 
 test('Home service Markdown cards form separate list items without changing technical content',()=>{
-  const source=readFileSync(new URL('./generate-markdown-twins.mjs',import.meta.url),'utf8');
-  const converter=(code)=>runInNewContext(code.slice(code.indexOf('const classes ='),code.indexOf('// Apply a text transform'))+'\nconverter("https://local.cloud/")',{TurndownService,URL});
+  const source=readFileSync(new URL('../src/utils/render-markdown-twin.mjs',import.meta.url),'utf8');
+  const converter=(code)=>runInNewContext(code.slice(code.indexOf('const classes ='),code.indexOf('// Apply a text transform')).replace('export function converter', 'function converter')+'\nconverter("https://local.cloud/")',{TurndownService,URL});
   const html='<a class="field-service" href="/services/bigquery/"><strong>BigQuery</strong><p>SQL workflows</p><span>HTTP :5388</span></a><a class="field-service" href="/services/spanner/"><strong>Spanner</strong><p>Relational workflows</p><span>gRPC :5385</span></a>';
   const markdown=converter(source).turndown(html);
   assert.equal((markdown.match(/^- /gm)||[]).length,2);assert.ok(!markdown.includes(')['));
@@ -168,7 +168,7 @@ function viewHarness({ query = '', saved, wide = true, blockedStorage = false } 
   } };
   const breakpoint = { matches: wide, addEventListener: (_, callback) => listeners.set('breakpoint', callback) };
   const context = {
-    desktopScript: '/_astro/desktop-view.mjs', viewPreloads: { mobile: ['/_astro/mobile-view.mjs'], desktop: ['/_astro/desktop-controller.mjs', '/_astro/desktop-navigation.mjs'] }, desktopPageStyles: '/_astro/desktop-pages.css', homeImages:null, URL, URLSearchParams, Event, console,
+    desktopScript: '/_astro/desktop-view.mjs', viewPreloads: { mobile: ['/_astro/mobile-view.mjs'], desktop: ['/_astro/desktop-controller.mjs', '/_astro/desktop-navigation.mjs'] }, desktopPageStyles: '/_astro/desktop-pages.css', homeImages:null, monoFont:'/_astro/mono.woff2', URL, URLSearchParams, Event, console,
     addEventListener: (type, callback) => listeners.set(type, callback), dispatchEvent: event => listeners.get(event.type)?.(event),
     setTimeout(callback, delay) { timers.push({callback, delay}); return timers.length; }, clearTimeout(id) { cleared.push(id); },
     location: { search: query, href: 'https://local.cloud/docs/#install-the-cli', origin: 'https://local.cloud' },
@@ -177,7 +177,7 @@ function viewHarness({ query = '', saved, wide = true, blockedStorage = false } 
       setItem() { if (blockedStorage) throw Error('blocked'); },
     },
     matchMedia: () => breakpoint,
-    document: { documentElement: root, createElement: () => ({}), head: { appendChild: (script) => scripts.push(script) }, addEventListener: (type, callback) => listeners.set(type, callback) },
+    document: { documentElement: root, getElementById: () => null, createElement: () => ({}), head: { appendChild: (script) => scripts.push(script) }, addEventListener: (type, callback) => listeners.set(type, callback) },
   };
   context.window = context;
   runInNewContext(bootstrap, context);
@@ -582,7 +582,9 @@ test('deep links retain their desktop shortcut category', () => {
 test('deferred desktop, keyboard and page-style assets stay small without changing the initial page ceilings', () => {
   const directory = new URL('../dist/_astro/', import.meta.url);
   // View modules now have content-addressed minified assets and public source maps.
-  for (const [prefix, limit] of [['desktop-view.', 7500], ['desktop-controller.', 10000], ['mobile-view.', 2500], ['desktop-navigation.', 12000], ['site-interactions.', 5500], ['keyboard-shortcuts.', 5500], ['desktop-pages.', 9000], ['service-filter.', 2000]]) {
+  // Retro adds ~3KB to the existing deferred desktop stylesheet, without another request.
+  // Keep initial HTML/CSS/JS ceilings intact; bound both desktop skins at 12KB.
+  for (const [prefix, limit] of [['desktop-view.', 7500], ['desktop-controller.', 10000], ['mobile-view.', 2500], ['desktop-navigation.', 12000], ['site-interactions.', 5500], ['keyboard-shortcuts.', 5500], ['desktop-pages.', 12000], ['service-filter.', 2000]]) {
     const files = readdirSync(directory).filter(name => name.startsWith(prefix) && !name.endsWith('.map'));
     const file = files.find(name => name.endsWith('.js')) ?? files[0];
     assert.ok(file, 'missing deferred asset: ' + prefix);
@@ -608,6 +610,57 @@ test('Home startup preloads only the image for the selected view and viewport',(
     assert.equal(images[0].imageSrcset,h.context.homeImages[image].imageSrcset);
     assert.equal(images[0].imageSizes,h.context.homeImages[image].imageSizes);
   }
+});
+
+test('Agent startup does not preload the hidden normal-mode hero in any view', () => {
+  for (const query of ['?audience=agents', '?audience=agents&view=classic', '?audience=agents&view=mobile']) {
+    for (const wide of [true, false]) {
+      const h = viewHarness({ query, wide });
+      h.context.homeImages = { desktop: { href: '/desktop.webp' }, mobile: { href: '/mobile.webp' }, classic: { href: '/classic.svg' } };
+      h.scripts.length = 0;
+      runInNewContext(bootstrap, h.context);
+      assert.equal(h.scripts.filter(item => item.as === 'image').length, 0);
+    }
+  }
+});
+
+test('the initial body-font preload selects the audience font before being enabled', () => {
+  for (const audience of ['agents','humans']) {
+    const h = viewHarness({ query:'?audience=' + audience });
+    const preload = { href:'/_astro/roboto.woff2', media:'not all' };
+    h.context.document.getElementById = () => preload;
+    runInNewContext(bootstrap, h.context);
+    assert.equal(preload.media, 'all');
+    assert.equal(preload.href, audience === 'agents' ? '/_astro/mono.woff2' : '/_astro/roboto.woff2');
+  }
+});
+
+test('normal hero artwork mounts once, when the human audience first needs it', () => {
+  const source = initDesktop.toString().match(/const presentContent = \(\) => \{[\s\S]*?\n  \};/)[0];
+  let clones = 0;
+  const hero = { dataset:{}, content:{ cloneNode:() => ({}) }, after:() => clones++ };
+  const document = { documentElement:{ dataset:{ audience:'agents' } } };
+  const main = { querySelector:selector => selector === '[data-desktop-hero]' ? hero : null };
+  const present = runInNewContext(source + '\npresentContent;', { document, main });
+  present(); assert.equal(clones, 0);
+  document.documentElement.dataset.audience = 'humans';
+  present(); present(); assert.equal(clones, 1);
+});
+
+test('dynamic search results use the current audience after switching modes', () => {
+  const result = { href: '/docs/#install-the-cli', hasAttribute: () => false };
+  let observed;
+  const root = { dataset: { audience: 'agents' } };
+  const results = { dataset: {}, querySelectorAll: () => [result] };
+  const context = { URL, pageWindowURL, location: { href: 'https://local.cloud/?view=mobile' },
+    MutationObserver: class { constructor(fn) { observed = fn; } observe() {} },
+    document: { documentElement: root, querySelector: () => null, querySelectorAll: () => [], getElementById: () => results } };
+  runInNewContext('(' + initViewLinks.toString() + ')("mobile")', context);
+  observed();
+  assert.equal(result.href, 'https://local.cloud/docs/?view=mobile&audience=agents#install-the-cli');
+  root.dataset.audience = 'humans';
+  observed();
+  assert.equal(result.href, 'https://local.cloud/docs/?view=mobile#install-the-cli');
 });
 
 test('homepage and catalog filtering matches rendered facts, restores all cards, and exposes empty results', () => {

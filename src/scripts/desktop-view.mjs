@@ -81,6 +81,8 @@ export function initViewLinks(view) {
       if (!page) return;
       const url = new URL(page);
       if (view === 'classic' || view === 'mobile') url.searchParams.set('view', view);
+      const agent = document.documentElement?.dataset?.audience === 'agents';
+      url.searchParams[agent ? 'set' : 'delete']('audience', agent ? 'agents' : undefined);
       link.href = url.href;
     });
   };

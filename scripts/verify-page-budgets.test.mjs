@@ -23,6 +23,18 @@ const mobileHomeBytes = { rawBytes: 20_000, gzipBytes: 3_000 };
 // 2026-10-11: classic setup controls/ribbon styles and the full static agent audience
 // add ~3.7KB raw, ~0.5KB gzip and ~1.6KB CSS to the homepage; bound that UI here.
 const classicHomeBytes = { rawBytes: 4_500, gzipBytes: 700, styleBytes: 2_000 };
+// 2026-10-14: the bottom Audience switch and controller ship on every page.
+// Bound their allowance above the existing shared page/startup ceilings here.
+// 2026-10-15: search results, in-place history updates, and pending navigation/failure
+// fallbacks preserve audience intent. The initial font selector and deferred hero also
+// avoid loading normal-mode assets for agents. Bound these controller additions at 700B.
+const audienceSwitchBytes = { rawBytes: 700, startupScriptBytes: 1_200 };
+// 2026-10-14: Home also carries the statically rendered agent view (setup prompt, agent
+// verification puzzle, daemon terminal and spec cards) so agents reading the HTML see it.
+// 2026-10-14 review: remove fabricated logs and duplicate specs; keep Home-only CSS
+// on Home. The reviewed Home measures about 264.3KB raw / 50.6KB gzip / 124.6KB inline CSS.
+// These allowances leave the shared ceilings intact and bound the added static UI.
+const agentHomeBytes = { rawBytes: 40_000, gzipBytes: 6_500, styleBytes: 18_500, startupScriptBytes: 2_000 };
 // The separately added My Cloud dialog contributes ~5.7KB HTML, ~1KB CSS and
 // ~1.8KB processed JS. Keep its fixed allowance conditional on that widget.
 const consoleDialogBytes = { rawBytes: 6_000, gzipBytes: 1_000, styleBytes: 1_500, scriptBytes: 2_500 };
@@ -75,6 +87,8 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     const limits = {...htmlBudget, styleBytes:htmlBudget.styleBytes+mobileStyleBytes, startupScriptBytes};
     if (isHome) for (const [metric, extra] of Object.entries(mobileHomeBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(classicHomeBytes)) limits[metric] += extra;
+    if (isHome) for (const [metric, extra] of Object.entries(agentHomeBytes)) limits[metric] += extra;
+    for (const [metric, extra] of Object.entries(audienceSwitchBytes)) limits[metric] += extra;
     if (html.includes('id="my-cloud-dialog"')) for (const [metric, extra] of Object.entries(consoleDialogBytes)) limits[metric] += extra;
     if (file === join(dist, 'docs/github-actions/index.html')) limits.gzipBytes = githubActionsGzipBytes;
     for (const [metric, limit] of Object.entries(limits)) {

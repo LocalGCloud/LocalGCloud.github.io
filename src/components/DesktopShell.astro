@@ -15,6 +15,7 @@ import desktopController from '../scripts/desktop-controller.mjs?url';
 import mobileScript from '../scripts/mobile-view.mjs?url';
 import { desktopSection } from '../scripts/desktop-view.mjs';
 import { markdownTwinPath } from '../utils/markdown-twins.mjs';
+import AgentAudienceSwitch from './AgentAudienceSwitch.astro';
 const { title } = Astro.props;
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
@@ -141,5 +142,8 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z" /></svg><span>About</span>
     </a>
   </nav>
+  <div class="lc-audience-dock" data-pagefind-ignore>
+    <AgentAudienceSwitch />
+  </div>
 </div>
 <a href={currentViewURL('desktop')} class="site-view-switch" data-view-choice="desktop" data-pagefind-ignore>Desktop view</a>

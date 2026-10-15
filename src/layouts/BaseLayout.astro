@@ -4,6 +4,7 @@ import monoFont from '@fontsource-variable/roboto-mono/files/roboto-mono-latin-w
 import '../styles/global.css';
 import '../styles/desktop.css';
 import '../styles/mobile.css';
+import '../styles/agent-mode.css';
 import DesktopShell from '../components/DesktopShell.astro';
 import desktopScript from '../scripts/desktop-view.mjs?url';
 import mobileScript from '../scripts/mobile-view.mjs?url';
@@ -131,16 +132,26 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <meta name="twitter:image:alt" content={ogImageAltText} />
 
     {/* One local variable body font covers all headline/body weights. */}
-    <link rel="preload" href={robotoFont} as="font" type="font/woff2" crossorigin />
+    <link id="lc-body-font" rel="preload" href={robotoFont} media="not all" as="font" type="font/woff2" crossorigin />
     {hero && <link rel="preload" href={monoFont} as="font" type="font/woff2" crossorigin />}
     <link rel="modulepreload" href={pageInteractions} />
 
     <title>{title}</title>
 
-    <script is:inline data-critical-bootstrap define:vars={{ desktopScript, viewPreloads, desktopPageStyles, homeImages }}>
+    <script is:inline data-critical-bootstrap define:vars={{ desktopScript, viewPreloads, desktopPageStyles, homeImages, monoFont }}>
       (function () {
         var root = document.documentElement, query = new URLSearchParams(location.search).get('view');
+        var audienceQuery = new URLSearchParams(location.search).get('audience');
+        var audienceStored;
+        try { audienceStored = localStorage.getItem('lc-audience'); } catch (e) {}
+        var audience = audienceQuery === 'agents' || audienceQuery === 'humans' ? audienceQuery : (audienceStored === 'agents' ? 'agents' : 'humans');
+        root.dataset.audience = audience;
+        if (audienceQuery === 'agents' || audienceQuery === 'humans') {
+          try { localStorage.setItem('lc-audience', audience); } catch (e) {}
+        }
         var wide = matchMedia('(min-width: 64rem)'), loaded = false, preloaded = false, failed = false;
+        var font = document.getElementById('lc-body-font');
+        if (font) { if (audience === 'agents') font.href = monoFont; font.media = 'all'; }
         var applyView = function () {
           if (failed) return;
           var view = query === 'classic' || query === 'mobile' ? query : wide.matches ? 'desktop' : 'mobile';
@@ -161,7 +172,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           module.rel = 'modulepreload'; module.href = src;
           document.head.appendChild(module);
         }
-        if (homeImages) {
+        if (homeImages && audience !== 'agents') {
           var hero = document.createElement('link');
           hero.rel = 'preload'; hero.as = 'image'; hero.fetchPriority = 'high';
           Object.assign(hero, homeImages[root.dataset.siteView]);
@@ -386,7 +397,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       }
     </script>
 
-    <script is:inline data-critical-bootstrap>
+    <script is:inline data-critical-bootstrap define:vars={{ copyDevelopment: import.meta.env.DEV }}>
       (() => {
         let loading = false;
         const loadCopyButtons = () => {
@@ -394,7 +405,8 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           if (!source || loading) return;
           const url = new URL(source, location.href);
           const base = document.querySelector('[data-desktop-shell]')?.dataset.base || '/';
-          if (url.origin !== location.origin || !url.pathname.startsWith(base + '_astro/')) return;
+          const devSource = typeof copyDevelopment !== 'undefined' && copyDevelopment && url.pathname === base + 'src/scripts/copy-buttons.mjs';
+          if (url.origin !== location.origin || !(url.pathname.startsWith(base + '_astro/') || devSource)) return;
           loading = true;
           const script = document.createElement('script');
           script.type = 'module'; script.src = url.href;

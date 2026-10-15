@@ -1,0 +1,19 @@
+---
+const resources = [
+  { file: 'context.md', code: 'GET /ai/agents.md\nGET /llms.txt\nGET /ai/services.md', href: '/ai/', label: 'Read agent context' },
+  { file: 'connect.sh', code: 'localcloud mcp\n# Local stdio MCP server\n# Configure in your coding agent', href: '/docs/mcp/', label: 'Connect with MCP' },
+  { file: 'verify.sh', code: 'localcloud status\neval "$(localcloud env)"\n# Run your SDK assertions', href: '/docs/sdk-examples/', label: 'Test with Google Cloud SDKs' },
+];
+---
+<div class="agent-ribbon-grid">
+  {resources.map((item) => <article><h3>{item.file}</h3><pre><code>{item.code}</code></pre><a href={item.href}>{item.label} →</a></article>)}
+</div>
+<style>
+  .agent-ribbon-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-block:1rem;font-family:var(--font-mono);text-align:left}
+  article{min-width:0;padding:1rem;border:1px solid var(--line);background:var(--surface)}
+  h3{font-size:.875rem;color:var(--accent)}
+  pre{overflow-x:auto;font-size:.8125rem;background:transparent;border:0;padding:1rem 0;color:var(--text)}
+  code{background:transparent;border:0;padding:0;color:inherit;font:inherit}
+  a{color:var(--accent);font-size:.8125rem;text-decoration:underline;text-underline-offset:.2em}
+  @media(max-width:48rem){.agent-ribbon-grid{grid-template-columns:1fr}}
+</style>

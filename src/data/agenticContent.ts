@@ -963,7 +963,7 @@ export const blogDemoPages: AgenticContentPage[] = withRelatedLinks([
 		sources: [
 			{
 				label: "Dataproc images on Docker Hub",
-				href: "https://hub.docker.com/repository/docker/agentcloud/dataproc",
+				href: "https://hub.docker.com/r/agentcloud/dataproc",
 				note: "Public multi-arch OCI images for Dataproc 3.0, 2.3, 2.2, 2.1, and 2.0.",
 			},
 		],

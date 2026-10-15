@@ -1,0 +1,9 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div class:list={['lc-audience-selector', className]} role="group" aria-label="Audience selector"><button type="button" class="lc-audience-selector__label" data-target-audience="humans" data-active="true" aria-pressed="true">For humans</button><button type="button" class="lc-audience-switch" role="switch" aria-label="Switch between human and agent view" aria-checked="false" id="lc-audience-switch"><span class="lc-audience-switch__track" aria-hidden="true"><span class="lc-audience-switch__thumb"></span></span></button><button type="button" class="lc-audience-selector__label lc-audience-selector__label--agent" data-target-audience="agents" data-active="false" aria-pressed="false"><span class="lc-agent-pulse-dot" aria-hidden="true"></span>For agents</button></div>
