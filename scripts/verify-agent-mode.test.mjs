@@ -125,7 +125,7 @@ test('repeated page lifecycle events do not double-bind the agent puzzle', () =>
 });
 
 test('agent widgets load only on demand and retry failed downloads', () => {
-  const source = read('../src/components/AgentCaptcha.astro').match(/<script>([\s\S]*?)<\/script>/)[1].replace(/import agentWidgetsScript[^;]*;/, '');
+  const source = read('../src/components/AgentCaptcha.astro').match(/<script\b[^>]*>([\s\S]*?)<\/script>/)[1];
   const events = new Map(), root = { dataset: { audience: 'humans' } }, scripts = [];
   let hasWidgets = true;
   const context = {
@@ -145,6 +145,8 @@ test('agent widgets load only on demand and retry failed downloads', () => {
   assert.equal(scripts.length, 1, 'concurrent page events share one download');
   assert.equal(scripts[0].src, context.agentWidgetsScript);
   assert.equal(scripts[0].type, 'module');
+  runInNewContext(source, context);
+  assert.equal(scripts.length, 1, 'returning through content navigation does not install another loader');
   scripts[0].onerror(); events.get('lc:audience-change')();
   assert.equal(scripts.length, 2, 'a failed download can retry on the next view change');
 });

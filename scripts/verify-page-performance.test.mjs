@@ -771,9 +771,11 @@ test('every page keeps its critical bootstraps inline with retained maps and exa
     const filters = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap="filter"/g)].length;
     const search = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap="search"/g)].length;
     const feedback = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap="(?:feedback|fab)"/g)].length;
+    const agentWidgets = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap="agent-widgets"/g)].length;
     assert.ok(filters <= 1 && feedback <= 2, path);
     assert.equal(search, 1, path);
-    assert.equal(scripts.length, 4 + filters + search + feedback, path);
+    assert.ok(agentWidgets <= 1, path);
+    assert.equal(scripts.length, 4 + filters + search + feedback + agentWidgets, path);
     for (const [, code] of scripts) {
       const src = code.match(/\/\/# sourceURL=https:\/\/local\.cloud(\/[^\n]+)/)?.[1];
       assert.ok(src, path);
@@ -814,7 +816,7 @@ test('built scripts retain matching public maps at distinct immutable release UR
   assert.ok(scripts.length > 5, 'compiled scripts are present');
   for (const file of scripts) {
     // Mapped view modules use the same code-and-map digest as inline/Pagefind assets.
-    const mapped = /\/(?:inline|pagefind-client|desktop-view|desktop-controller|mobile-view|desktop-navigation|site-interactions|my-cloud|my-cloud-launcher|copy-buttons)\.[a-f0-9]{16}\.js$/.test(file);
+    const mapped = /\/(?:inline|pagefind-client|desktop-view|desktop-controller|mobile-view|desktop-navigation|site-interactions|my-cloud|my-cloud-launcher|copy-buttons|agent-widgets)\.[a-f0-9]{16}\.js$/.test(file);
     if (!mapped) assert.ok(file.endsWith(`.${release}.js`), file);
     const code = readFileSync(join(distRoot, file), 'utf8');
     assert.ok(code.includes(`\n//# sourceMappingURL=${file.split('/').at(-1)}.map`), file);

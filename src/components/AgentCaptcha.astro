@@ -1,4 +1,6 @@
 ---
+import agentWidgetsScript from '../scripts/agent-widgets.mjs?url';
+
 interface Props {
   class?: string;
 }
@@ -109,10 +111,11 @@ const { class: className = '' } = Astro.props;
   .lc-agent-captcha__bypass-row code{display:block;margin-top:.5rem;padding:.4rem;background:var(--surface);color:var(--accent);font-size:.75rem}
 </style>
 
-<script>
-  import agentWidgetsScript from '../scripts/agent-widgets.mjs?url';
+<script is:inline data-critical-bootstrap="agent-widgets" define:vars={{ agentWidgetsScript }}>
   // Keep the optional puzzle and runbook controllers out of human visits.
   (() => {
+    if (window.__lcAgentWidgetsLoader) return;
+    window.__lcAgentWidgetsLoader = true;
     let loading = false;
     const loadAgentWidgets = () => {
       if (loading || document.documentElement.dataset.audience !== 'agents' ||
