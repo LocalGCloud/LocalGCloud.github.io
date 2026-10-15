@@ -10,6 +10,8 @@ html:root[data-audience="agents"]{
   --radius-inline:0;--radius-control:0;--radius-panel:0;--radius-feature:0;--radius-pill:0;
   & .desktop-background{inset:0;animation:none;background:var(--bg)}
   & :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar,.mobile-dock){background:var(--surface-2);color:var(--text);border-color:var(--line)}
+  @media(min-width:64rem){&.desktop-view :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar){text-transform:uppercase;letter-spacing:.04em;border-width:2px;font-size:.75rem}}
+  & :is(.desktop-chrome,.desktop-titlebar,.desktop-taskbar) :is(a,button){transition:none}
   & :is(.lc-audience-selector,.lc-audience-switch,.lc-audience-switch__track,.lc-audience-switch__thumb,.mobile-dock,.mobile-dock a,.site-nav__mobile,.search-panel){border-radius:0;box-shadow:none}
   & .lc-audience-selector{background:var(--surface);border-color:var(--line)}
   & .lc-audience-selector__label{color:var(--text-2)}

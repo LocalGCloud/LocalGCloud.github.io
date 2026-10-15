@@ -91,7 +91,6 @@
     & .desktop-window{background:var(--bg);border:2px solid var(--line);border-radius:0;outline:1px solid var(--line);outline-offset:4px;box-shadow:7px 7px 0 #0009}
     /* A static, low opacity texture; no animation, canvas, filter or repaint loop. */
     & .desktop-window::after{content:'';position:absolute;inset:0;z-index:10;pointer-events:none;opacity:.08;background:repeating-linear-gradient(0deg,#000 0,#000 1px,transparent 1px,transparent 3px)}
-    & :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar){text-transform:uppercase;letter-spacing:.04em;border-width:2px;font-size:.75rem}
     & :is(.desktop-toolbar-actions button,.desktop-start,.desktop-taskbar button,.desktop-menu nav,.desktop-history-window,.desktop-history-title){border-radius:0;box-shadow:none;background:var(--surface);color:var(--text);border-color:var(--line)}
     & .desktop-start{background:var(--accent);color:var(--bg)}
     & .desktop-controls{gap:.4rem}
