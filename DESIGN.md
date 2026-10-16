@@ -171,7 +171,7 @@ Components feel precise and immediately operable: quiet at rest, unmistakable on
 - **State:** Chips describe category or status. They are not default containers for body copy or navigation.
 
 ### Cards / Containers
-- **Corner Style:** Standard panels and feature surfaces use 0.5rem; code blocks and controls use 0.375rem. Agent mode retains square corners and monospace type with the same shared palette, using Deep Action Blue for small labels on tinted surfaces.
+- **Corner Style:** Standard panels and feature surfaces use 0.5rem; code blocks and controls use 0.375rem. Agent mode retains its independent dark Matrix palette, green monospace text, square corners, pixel icons and static scanlines. The human palette does not override agent mode.
 - **Background:** Canvas at the page level; Inset Surface for nested technical values.
 - **Shadow Strategy:** Flat by default; floating chrome and desktop windows receive a light shadow, while interactive cards lift only on hover.
 - **Border:** One-pixel Border; the Service Catalog boxes both categories and services, while documentation navigation uses grouped rules.

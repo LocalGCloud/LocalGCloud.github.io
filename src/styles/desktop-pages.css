@@ -86,8 +86,8 @@
 /* Retro is scoped to Agent mode; normal desktop keeps its original skin. */
 @media(min-width:64rem){
   html:root.desktop-view[data-audience="agents"]{
-    & .desktop-background{inset:0;animation:none;background:radial-gradient(#5f636814 1px,transparent 1px) 0 0/5px 5px,var(--desktop-bg)}
-    & .desktop-window{background:var(--bg);border:2px solid var(--line);border-radius:0;outline:1px solid var(--line);outline-offset:4px;box-shadow:4px 4px 0 #253d631c}
+    & .desktop-background{inset:0;animation:none;background:radial-gradient(#507d4b26 1px,transparent 1px) 0 0/5px 5px,var(--bg)}
+    & .desktop-window{background:var(--bg);border:2px solid var(--line);border-radius:0;outline:1px solid var(--line);outline-offset:4px;box-shadow:7px 7px 0 #0009}
     /* A static, low opacity texture; no animation, canvas, filter or repaint loop. */
     & .desktop-window::after{content:'';position:absolute;inset:0;z-index:10;pointer-events:none;opacity:.08;background:repeating-linear-gradient(0deg,#000 0,#000 1px,transparent 1px,transparent 3px)}
     & :is(.desktop-toolbar-actions button,.desktop-start,.desktop-taskbar button,.desktop-menu nav,.desktop-history-window,.desktop-history-title){border-radius:0;box-shadow:none;background:var(--surface);color:var(--text);border-color:var(--line)}

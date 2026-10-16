@@ -1,12 +1,17 @@
 /* Agent audience uses the same page and OS shell with a technical presentation. */
 html:root[data-audience="agents"]{
-  color-scheme:light;
-  --accent:var(--accent-strong);
-  --success-ink:var(--accent-strong);--success-soft:var(--accent-soft);
+  color-scheme:dark;
+  --code-bg:var(--surface);--code-text:var(--text);
+  --bg:#050d07;--bg-2:#09140c;--surface:#09140c;--surface-2:#152b18;--surface-3:#284e2a;
+  --line:#507d4b;--line-strong:#77ae79;--border:#507d4b;--border-hover:#a6f58b;
+  --text:#b7efad;--text-2:#91c695;--text-3:#91c695;--warn:#f1cf86;--warn-soft:#362b13;
+  --brand-blue:#a6f58b;--brand-blue-strong:#a6f58b;--brand-sky:#a6f58b;
+  --accent:#a6f58b;--accent-strong:#a6f58b;--accent-soft:#152b18;--focus-ring:var(--accent);--success-ink:#a6f58b;--success-soft:#244929;
   --font-display:var(--font-mono);--font-body:var(--font-mono);
   --radius-inline:0;--radius-control:0;--radius-panel:0;--radius-feature:0;--radius-pill:0;
-  & .desktop-background{inset:0;animation:none;background:var(--desktop-bg)}
-  & :is(.desktop-toolbar,.desktop-taskbar,.mobile-dock){background:var(--surface);color:var(--text);border-color:var(--line)}
+  & :is(.site-header,.site-section--hero){background:var(--bg)}
+  & :is(h1,h2){font-weight:600}
+  & :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar,.mobile-dock){background:var(--surface-2);color:var(--text);border-color:var(--line)}
   @media(min-width:64rem){&.desktop-view :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar){text-transform:uppercase;letter-spacing:.04em;border-width:2px;font-size:.75rem}}
   & :is(.desktop-chrome,.desktop-titlebar,.desktop-taskbar) :is(a,button){transition:none}
   & :is(.lc-audience-selector,.lc-audience-switch,.lc-audience-switch__track,.lc-audience-switch__thumb,.mobile-dock,.mobile-dock a,.site-nav__mobile,.search-panel){border-radius:0;box-shadow:none}
@@ -19,6 +24,7 @@ html:root[data-audience="agents"]{
   & .mobile-dock a:active{background:var(--accent-soft)}
   & .site-button--primary{color:var(--bg)}
   & [class*="rounded-"]{border-radius:0}
+  & .astro-code span{color:var(--text)!important}
   & :is(.docs-sidebar__link:hover,.docs-sidebar__link.is-active){background:var(--accent-soft);color:var(--accent)}
   & :is(.callout--info,.callout--note,.callout--tip){background:var(--accent-soft);border-color:var(--line)}
   & :is(.desktop-content,.site-header,.site-footer) :is(input,button,.site-button,[data-service-name],.site-panel){border-radius:0}
