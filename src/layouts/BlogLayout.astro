@@ -85,9 +85,10 @@ const articleProps = article
   .blog-page pre { max-width: 100%; overflow-x: auto; white-space: pre; font-size: var(--fs-small); line-height: 1.7; }
   .blog-page pre code { display: block; padding: 0; font-size: inherit; line-height: inherit; white-space: inherit; }
   .blog-page pre.blog-prompt { white-space: pre-wrap; overflow-wrap: anywhere; }
-  .blog-page :is(.site-panel, article[data-analytics-label]):has(> pre) { min-width: 0; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface); box-shadow: none; }
-  .blog-page :is(.site-panel, article[data-analytics-label]):has(> pre) > :not(pre) { margin: 0; padding: 1rem; }
-  .blog-page :is(.site-panel, article[data-analytics-label]):has(> pre) > pre { margin: 0; padding: 1rem; border: 0; border-radius: 0; background: var(--surface-2); }
+  .blog-page :is(.site-panel, article[data-analytics-label]):has(> pre, > .code-block) { min-width: 0; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface); box-shadow: none; }
+  .blog-page :is(.site-panel, article[data-analytics-label]):has(> pre, > .code-block) > :not(pre, .code-block) { margin: 0; padding: 1rem; }
+  .blog-page :is(.site-panel, article[data-analytics-label]):has(> pre, > .code-block) > :is(pre, .code-block) { margin: 0; padding: 0; border: 0; border-radius: 0; background: var(--surface-2); }
+  .blog-page :is(.site-panel, article[data-analytics-label]) > pre { padding: 1rem; }
   .blog-page .blog-sections { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
   .blog-page .blog-snippets { grid-template-columns: 1fr; }
   .blog-page .blog-sections > .site-panel { padding: 0; border: 0; background: transparent; box-shadow: none; }
