@@ -1,0 +1,29 @@
+---
+import { Code } from 'astro:components';
+
+interface Props {
+  code: string;
+  lang?: 'python' | 'javascript' | 'java' | 'bash' | 'text';
+  label: string;
+  marker?: string;
+}
+const { code, lang = 'bash', label, marker } = Astro.props;
+const transformers = marker ? [{
+  code(node: { properties: Record<string, unknown> }) { node.properties[marker] = true; },
+}] : [];
+---
+
+<Code {code} {lang} theme="dark-plus" class="service-code" tabindex="0" role="region" aria-label={label} data-code-language={lang} {transformers} />
+
+<style>
+  :global(pre.service-code) {
+    overflow-x: auto;
+    border: 1px solid #454545;
+    border-radius: var(--radius-control);
+    padding: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.75;
+  }
+  :global(pre.service-code > code) { padding: 0; border: 0; color: inherit; background: transparent; }
+  :global(pre.service-code:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+</style>

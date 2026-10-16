@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import CopyButton from '../../components/CopyButton.astro';
 import CodeTabs from '../../components/CodeTabs.astro';
 import ServiceCodeExample from '../../components/ServiceCodeExample.astro';
+import ServiceCodeBlock from '../../components/ServiceCodeBlock.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
 import MobileServiceLauncher from '../../components/MobileServiceLauncher.astro';
 import { getServiceCategoryLabel, getServiceImplementationLabel, isServiceDisabledByDefault, optInStartCommand, publishedServiceCount, services } from '../../data/services';
@@ -176,7 +177,7 @@ const structuredData = [
           <p class="mt-3 text-sm leading-6 text-[var(--text-2)]">With LocalCloud running, export its environment in the same terminal as your application. These values include the current project and remapped ports. <a class="font-medium text-[var(--accent-strong)]" href={`${base}docs/`}>First-time setup <span aria-hidden="true">→</span></a></p>
           <div class="mt-5">
             <div class="mb-2 flex items-center justify-between gap-3"><h3 class="font-semibold">Connect to LocalCloud</h3><CopyButton text={environmentSetup} label="Copy LocalCloud environment exports" /></div>
-            <pre class="overflow-x-auto rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-4 text-sm leading-7"><code class="border-0 bg-transparent p-0" data-example-environment>{environmentSetup}</code></pre>
+            <ServiceCodeBlock code={environmentSetup} label="LocalCloud environment exports" marker="data-example-environment" />
             <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">Run these commands before creating a client. Each tab includes any additional endpoint or credentials configuration it needs.</p>
           </div>
           {codeExamples.length > 0 && <div class="service-examples mt-6">
@@ -283,8 +284,6 @@ const structuredData = [
   .service-examples :global(.code-tabs) { border: 0; border-radius: 0; background: transparent; }
   .service-examples :global(.code-tabs__bar) { border-bottom: 1px solid var(--line); background: transparent; }
   .service-examples :global(.code-tabs__panel) { padding-top: 1.5rem; }
-  .service-examples :global(.code-tabs__panel pre) { border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface-2); }
-  .service-examples :global(.code-tabs__panel pre > code) { padding: 0; }
   .service-example-card { transition: border-color 160ms ease, box-shadow 160ms ease; }
   .service-example-card:hover { border-color: var(--accent-strong); box-shadow: var(--shadow-md); }
   .service-example-card:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 4px; }

@@ -262,6 +262,15 @@ export const officialSampleLinks: Readonly<Record<string, string>> = {
   kms: 'https://docs.cloud.google.com/kms/docs/samples',
 };
 
+const sdkExampleSummaries: Record<string, string> = {
+  "gcs": "Upload and download a text object; Cloud Storage stores application files in addressable buckets.",
+  "pubsub": "Send, receive, and acknowledge an event; Pub/Sub lets producers and consumers work independently.",
+  "firestore": "Create, read, update, and delete a document; Firestore stores flexible application records in collections.",
+  "bigtable": "Write a cell and read its bytes back; Bigtable organizes wide-column data around efficient row-key access.",
+  "spanner": "Create a schema, insert a row, and query it; Spanner combines relational SQL with transactional consistency.",
+  "bigquery": "Run a deterministic SQL query; BigQuery provides tabular results for analytical application workflows."
+};
+
 // Reuse the maintained SDK guide so the inline samples and linked guide stay identical.
 export function getServiceCodeExamples(serviceId: string, sdkSource: string): ServiceCodeExample[] {
   const maintainedExamples = (serviceGuides[serviceId].examples ?? []).filter((example) => example.install).map((example) => {
@@ -274,6 +283,7 @@ export function getServiceCodeExamples(serviceId: string, sdkSource: string): Se
     const isPython = snippet[1] === 'python';
     return {
       ...example,
+      summary: sdkExampleSummaries[serviceId],
       code: snippet[2],
       filename: isPython ? 'hello.py' : 'hello.cjs',
       setup: isPython

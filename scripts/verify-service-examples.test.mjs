@@ -17,6 +17,8 @@ test('every supported service has usable client examples; unsupported services h
     assert.equal(new Set(examples.map((example) => example.label)).size, examples.length, service.id);
     for (const example of examples) {
       assert.ok(example.title && example.code.trim() && example.description, `${service.id}: ${example.label}`);
+      assert.ok(example.summary?.trim(), `${service.id}: ${example.label} needs a purpose summary`);
+      assert.doesNotMatch(example.summary, /\n/, `${service.id}: keep the purpose summary to one sentence`);
       if (example.label === 'gcloud CLI') {
         assert.match(example.environment, /CLOUDSDK_API_ENDPOINT_OVERRIDES_/);
         assert.match(example.environment, /CLOUDSDK_AUTH_DISABLE_CREDENTIALS=true/);

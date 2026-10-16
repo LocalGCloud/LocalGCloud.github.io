@@ -391,7 +391,7 @@ const registryIds = [...registryTable.matchAll(/<td><code>([a-z0-9-]+)<\/code><\
 if (JSON.stringify(registryIds) !== JSON.stringify(servicesInCatalogOrder.map((service) => service.id))) errors.push(`docs/configuration/ must list the service registry in the shared catalog order; found ${registryIds.join(', ') || 'none'}`);
 
 // Keep every service page aligned with the compatibility table, including future updates.
-const plainText = (markup) => markup.replace(/<[^>]+>/g, '').replaceAll('&amp;', '&').replaceAll('&#39;', "'").replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replace(/\s+/g, ' ').trim();
+const plainText = (markup) => visibleText(markup).replace(/\s+/g, ' ').trim();
 const listItems = (markup) => [...markup.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((match) => plainText(match[1]));
 for (const service of services) {
   const guide = serviceGuides[service.id];
@@ -409,6 +409,10 @@ for (const service of services) {
   const codeExamples = getServiceCodeExamples(service.id, sdkExamplesSource);
   const renderedCodes = [...html.matchAll(/<code\b[^>]*data-example-code[^>]*>([\s\S]*?)<\/code>/g)].map((match) => plainText(match[1]));
   if (JSON.stringify(renderedCodes) !== JSON.stringify(codeExamples.map((example) => example.code.replace(/\s+/g, ' ').trim()))) errors.push(`Service ${service.id} inline code differs from the SDK guide`);
+  const summaries = [...html.matchAll(/<p\b[^>]*data-example-summary[^>]*>([\s\S]*?)<\/p>/g)].map((match) => plainText(match[1]));
+  if (JSON.stringify(summaries) !== JSON.stringify(codeExamples.map((example) => example.summary))) errors.push(`Service ${service.id} must explain the purpose of every example`);
+  const highlightedCodes = [...html.matchAll(/<code\b[^>]*data-example-code[^>]*>([\s\S]*?)<\/code>/g)];
+  if (highlightedCodes.some((match) => !/<span\b[^>]*style="[^"]*color:/.test(match[1]))) errors.push(`Service ${service.id} must syntax-highlight its examples`);
   for (const example of codeExamples) {
     for (const command of [example.setup, example.run, example.filename, example.environment].filter(Boolean)) {
       if (!text.includes(command.replace(/\s+/g, ' ').trim())) errors.push(`Service ${service.id} omits SDK setup or run instructions`);
