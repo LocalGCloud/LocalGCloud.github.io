@@ -18,24 +18,24 @@
 }
 
 :root {
-  --bg: #e6ecf3;
-  --bg-2: #eef0f3;
-  --surface: #fcfcfd;
+  --bg: #f8f9fa;
+  --bg-2: #f1f3f4;
+  --surface: #ffffff;
   --surface-2: #f1f3f4;
   --surface-3: #e8eaed;
   --code-bg: #f1f3f4;
   --code-text: #37474f;
-  --chrome: #eef0f3;
-  --desktop-bg: #c3cfdf;
-  --line: #d6dbe1;
-  --line-strong: #d6dbe1;
+  --chrome: #e8f0fe;
+  --desktop-bg: #dfe5ed;
+  --line: #dadce0;
+  --line-strong: #bdc5d0;
 
   --text: #202124;
   --text-2: #5f6368;
   --text-3: #5f6368;
 
   --brand-blue: #1a73e8;
-  --brand-blue-strong: #1557b0;
+  --brand-blue-strong: #185abc;
   --brand-sky: #8ab4f8;
   --brand-green: #188038;
   --brand-yellow: #fbbc04;
@@ -49,7 +49,7 @@
   --success-soft: rgba(24, 128, 56, 0.12);
   --warn: #866439;
   --warn-soft: rgba(134, 100, 57, 0.12);
-  --border: #d6dbe1;
+  --border: #dadce0;
   --border-hover: rgba(26, 115, 232, 0.45);
 
   --shadow-lg: 0 24px 60px -34px rgba(0, 0, 0, 0.12);
@@ -72,9 +72,9 @@
 
   /* Radius scale (DESIGN.md). --radius-inline is for tiny inline marks: inline code, kbd, highlights. */
   --radius-inline: 0.375rem;
-  --radius-control: 0.75rem;
-  --radius-panel: 1rem;
-  --radius-feature: 1.25rem;
+  --radius-control: 0.375rem;
+  --radius-panel: 0.5rem;
+  --radius-feature: 0.5rem;
   --radius-pill: 999px;
 
   --focus-ring: rgba(26, 115, 232, 0.55);
@@ -261,6 +261,17 @@
 
 .site-section--hero {
   padding-top: 4.5rem;
+  background: linear-gradient(110deg, var(--accent-soft), #edf5ee);
+  border-bottom: 1px solid var(--line);
+}
+
+.site-section--hero h1 {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-weight: 500;
 }
 
 .site-section--tight {
@@ -471,7 +482,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-panel);
   background: var(--surface);
-  box-shadow: var(--shadow-md);
+  box-shadow: none;
 }
 
 /* Panel children and grid items may shrink so unbreakable content scrolls locally, not the page. */
@@ -2159,10 +2170,10 @@
   border-bottom: 2px solid transparent;
   background: transparent;
   color: var(--text-2);
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  letter-spacing: 0;
   white-space: nowrap;
   cursor: pointer;
   transition: color 150ms ease, border-color 150ms ease, scale 150ms ease;
@@ -2179,6 +2190,8 @@
 .code-tabs__tab.is-active {
   color: var(--accent-strong);
   border-bottom-color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--radius-control) var(--radius-control) 0 0;
 }
 
 .code-tabs__panel {

@@ -1,7 +1,6 @@
 /* Deferred presentation for the selected Desktop view. Classic rules remain untouched. */
 @media(min-width:64rem){
  .desktop-view{
-  --accent-soft:#eef4ff;
   & .desktop-brand span{color:var(--accent)}
   & .desktop-menu nav{position:absolute;top:2rem;left:-.6rem;min-width:12rem;padding:.4rem;border:1px solid var(--line);border-radius:.6rem;background:white;box-shadow:var(--shadow-lg)}
   & .desktop-menu a{display:block;padding:.6rem}
@@ -14,7 +13,7 @@
   & .desktop-taskbar button{max-width:14rem;padding:.25rem .65rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:white;border:1px solid var(--line);border-radius:.35rem}
   & .desktop-taskbar button[aria-pressed=true]{background:var(--accent-soft);border-color:var(--brand-sky)}
   & .desktop-history{display:block;position:absolute;inset:0;pointer-events:none}
-  & .desktop-history-window{position:absolute;left:11%;top:2.2rem;width:78%;height:calc(100% - 2.2rem);overflow:hidden;pointer-events:auto;background:var(--bg);border:1px solid var(--line);border-radius:.9rem;box-shadow:0 8px 24px #253d6320;transform:translateY(calc(var(--history-depth)*-1.1rem)) scale(calc(1 - var(--history-depth)*.035));transform-origin:center top;z-index:calc(4 - var(--history-depth));color:var(--text);text-decoration:none}
+  & .desktop-history-window{position:absolute;left:11%;top:2.2rem;width:78%;height:calc(100% - 2.2rem);overflow:hidden;pointer-events:auto;background:var(--bg);border:1px solid var(--line-strong);border-radius:var(--radius-panel);box-shadow:0 4px 16px #253d631c;transform:translateY(calc(var(--history-depth)*-1.1rem)) scale(calc(1 - var(--history-depth)*.035));transform-origin:center top;z-index:calc(4 - var(--history-depth));color:var(--text);text-decoration:none}
   & .desktop-history-title{display:block;padding:.15rem .9rem;background:var(--chrome);border-bottom:1px solid var(--line);font-size:.75rem;line-height:1.25}
   & .desktop-history-preview{padding:2rem;opacity:.55}
   & .desktop-history-preview h2{font-size:2rem}
@@ -87,8 +86,8 @@
 /* Retro is scoped to Agent mode; normal desktop keeps its original skin. */
 @media(min-width:64rem){
   html:root.desktop-view[data-audience="agents"]{
-    & .desktop-background{inset:0;animation:none;background:radial-gradient(#507d4b26 1px,transparent 1px) 0 0/5px 5px,var(--bg)}
-    & .desktop-window{background:var(--bg);border:2px solid var(--line);border-radius:0;outline:1px solid var(--line);outline-offset:4px;box-shadow:7px 7px 0 #0009}
+    & .desktop-background{inset:0;animation:none;background:radial-gradient(#5f636814 1px,transparent 1px) 0 0/5px 5px,var(--desktop-bg)}
+    & .desktop-window{background:var(--bg);border:2px solid var(--line);border-radius:0;outline:1px solid var(--line);outline-offset:4px;box-shadow:4px 4px 0 #253d631c}
     /* A static, low opacity texture; no animation, canvas, filter or repaint loop. */
     & .desktop-window::after{content:'';position:absolute;inset:0;z-index:10;pointer-events:none;opacity:.08;background:repeating-linear-gradient(0deg,#000 0,#000 1px,transparent 1px,transparent 3px)}
     & :is(.desktop-toolbar-actions button,.desktop-start,.desktop-taskbar button,.desktop-menu nav,.desktop-history-window,.desktop-history-title){border-radius:0;box-shadow:none;background:var(--surface);color:var(--text);border-color:var(--line)}

@@ -1,16 +1,12 @@
 /* Agent audience uses the same page and OS shell with a technical presentation. */
 html:root[data-audience="agents"]{
   color-scheme:light;
-  --code-bg:var(--surface-2);--code-text:var(--text);
-  --bg:#f7f8fa;--bg-2:#fcfcfd;--surface:#fcfcfd;--surface-2:#f1f3f4;--surface-3:#e8eaed;
-  --line:#d6dbe1;--line-strong:#8795a4;--border:#d6dbe1;--border-hover:#315f9c;
-  --text:#37474f;--text-2:#5f6368;--text-3:#5f6368;--warn:#866439;--warn-soft:#f5eddf;
-  --brand-blue:#315f9c;--brand-blue-strong:#315f9c;--brand-sky:#315f9c;
-  --accent:#315f9c;--accent-strong:#315f9c;--accent-soft:#f1f3f4;--focus-ring:var(--accent);--success-ink:#315f9c;--success-soft:#e8f0fe;
+  --accent:var(--accent-strong);
+  --success-ink:var(--accent-strong);--success-soft:var(--accent-soft);
   --font-display:var(--font-mono);--font-body:var(--font-mono);
   --radius-inline:0;--radius-control:0;--radius-panel:0;--radius-feature:0;--radius-pill:0;
   & .desktop-background{inset:0;animation:none;background:var(--desktop-bg)}
-  & :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar,.mobile-dock){background:var(--surface-2);color:var(--text);border-color:var(--line)}
+  & :is(.desktop-toolbar,.desktop-taskbar,.mobile-dock){background:var(--surface);color:var(--text);border-color:var(--line)}
   @media(min-width:64rem){&.desktop-view :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar){text-transform:uppercase;letter-spacing:.04em;border-width:2px;font-size:.75rem}}
   & :is(.desktop-chrome,.desktop-titlebar,.desktop-taskbar) :is(a,button){transition:none}
   & :is(.lc-audience-selector,.lc-audience-switch,.lc-audience-switch__track,.lc-audience-switch__thumb,.mobile-dock,.mobile-dock a,.site-nav__mobile,.search-panel){border-radius:0;box-shadow:none}

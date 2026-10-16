@@ -4,15 +4,18 @@ name: LocalCloud
 description: Google Cloud in-a-box for fast, credible local development.
 colors:
   accent-blue: "#1a73e8"
-  accent-blue-strong: "#1557b0"
+  accent-blue-strong: "#185abc"
   brand-sky: "#8ab4f8"
   brand-green: "#188038"
   brand-yellow: "#fbbc04"
   brand-red: "#ea4335"
   ink: "#202124"
   secondary-ink: "#5f6368"
-  tertiary-ink: "#6a6f74"
+  tertiary-ink: "#5f6368"
   canvas: "#ffffff"
+  page-canvas: "#f8f9fa"
+  desktop-backdrop: "#dfe5ed"
+  navigation-tint: "#e8f0fe"
   inset-surface: "#f1f3f4"
   border: "#dadce0"
 typography:
@@ -41,9 +44,9 @@ typography:
     lineHeight: 1.35
     letterSpacing: "0.1em"
 rounded:
-  control: "0.75rem"
-  panel: "1rem"
-  feature: "1.25rem"
+  control: "0.375rem"
+  panel: "0.5rem"
+  feature: "0.5rem"
   pill: "999px"
 spacing:
   compact: "0.5rem"
@@ -113,11 +116,12 @@ A neutral daylight canvas carries one functional blue voice, with Google-derived
 - **Primary Ink:** Headlines, body copy that carries decisions, and high-value technical facts.
 - **Secondary Ink:** Supporting prose and metadata that remains comfortably readable.
 - **Tertiary Ink:** Large or nonessential labels only; never tiny body text.
-- **Canvas:** The dominant background and default panel surface.
+- **Canvas:** White content panels on a light gray Page Canvas. Desktop uses a slightly darker blue-gray backdrop to separate the content window.
+- **Navigation Tint:** Pale blue title bars and active tabs. Hero sections use a subtle blue-to-sage wash.
 - **Inset Surface:** Code, environment values, and nested technical facts.
 - **Border:** One-pixel dividers and quiet container outlines.
 
-**The One Blue Voice Rule.** Use blue for action, focus, and links—not as ambient decoration across every surface.
+**The One Blue Voice Rule.** Use strong blue for action, focus, and links. Pale blue is reserved for navigation and the hero wash; content and code remain neutral.
 
 **The Semantic Status Rule.** Green means verified success, yellow means caution, and red means failure. Never use them as arbitrary section accents.
 
@@ -131,7 +135,7 @@ A neutral daylight canvas carries one functional blue voice, with Google-derived
 
 ### Hierarchy
 - **Display** (650, fluid 2.75–6rem, 0.95): Homepage promise only; short lines and deliberate wrapping.
-- **Headline** (650, fluid 2–3.8rem, 1.05): Page and major section titles.
+- **Headline** (500, fluid 2–3.8rem): Page hero and major section titles; the homepage keeps its distinct display treatment.
 - **Title** (600, approximately 1–1.25rem, 1.3): Cards, documentation rows, and compact content groups.
 - **Body** (400, 1rem, 1.65): Explanations and instructions; keep long-form measure near 74ch.
 - **Label** (600, 0.75rem, 0.1em, uppercase): Short kickers, metadata keys, and categories only.
@@ -142,10 +146,11 @@ A neutral daylight canvas carries one functional blue voice, with Google-derived
 
 ## Elevation
 
-The system is flat by default. Depth comes from canvas-to-inset tonal changes, one-pixel rules, and spacing. Ambient shadows are reserved for floating chrome, major elevated panels, and service-category containers; individual service cards use borders and a restrained hover shadow.
+The system is flat by default. Depth comes from canvas-to-inset tonal changes, one-pixel rules, and spacing. Ambient shadows are reserved for floating chrome and the desktop window; content panels use borders, with a restrained hover shadow for interactive cards.
 
 ### Shadow Vocabulary
-- **Ambient panel** (`0 18px 36px -24px rgba(0, 0, 0, 0.09)`): Major callouts and elevated connection panels.
+- **Desktop window** (`0 4px 16px #253d631c`): Light separation from the desktop backdrop.
+- **Hover** (`0 18px 36px -24px rgba(0, 0, 0, 0.09)`): Interactive cards only.
 - **Floating chrome** (`0 24px 60px -34px rgba(0, 0, 0, 0.12)`): Search overlays and persistent floating controls.
 - **Focus ring** (`0 0 0 2px rgba(26, 115, 232, 0.55)`): Keyboard focus only.
 
@@ -156,7 +161,7 @@ The system is flat by default. Depth comes from canvas-to-inset tonal changes, o
 Components feel precise and immediately operable: quiet at rest, unmistakable on hover and focus, and never smaller than a comfortable touch target.
 
 ### Buttons
-- **Shape:** Gently rounded controls (0.75rem) with a minimum 44px target.
+- **Shape:** Gently rounded controls (0.375rem) with a minimum 44px target.
 - **Primary:** Workbench Blue with white text; reserved for the single highest-value action in a region.
 - **Hover / Focus:** One-pixel lift on hover and a visible blue focus ring; reduced-motion users receive state changes without movement.
 - **Secondary:** White canvas, Primary Ink, and a one-pixel Border outline.
@@ -166,14 +171,14 @@ Components feel precise and immediately operable: quiet at rest, unmistakable on
 - **State:** Chips describe category or status. They are not default containers for body copy or navigation.
 
 ### Cards / Containers
-- **Corner Style:** Standard panels use 1rem; feature surfaces may use 1.25rem.
+- **Corner Style:** Standard panels and feature surfaces use 0.5rem; code blocks and controls use 0.375rem. Agent mode retains square corners and monospace type with the same shared palette, using Deep Action Blue for small labels on tinted surfaces.
 - **Background:** Canvas at the page level; Inset Surface for nested technical values.
-- **Shadow Strategy:** Flat by default; service-category containers and major elevated panels may receive an ambient shadow, while individual service cards lift only on hover.
+- **Shadow Strategy:** Flat by default; floating chrome and desktop windows receive a light shadow, while interactive cards lift only on hover.
 - **Border:** One-pixel Border; the Service Catalog boxes both categories and services, while documentation navigation uses grouped rules.
 - **Internal Padding:** 1–1.5rem, reduced carefully on small phones without compromising targets.
 
 ### Inputs / Fields
-- **Style:** White or inset surface, one-pixel border, 0.75rem radius, and an explicit visible label.
+- **Style:** White or inset surface, one-pixel border, 0.375rem radius, and an explicit visible label.
 - **Focus:** Deep Action Blue border plus the shared focus ring.
 - **Error / Disabled:** Error Red plus plain-language recovery; disabled state lowers emphasis but retains readable contrast.
 
@@ -181,7 +186,9 @@ Components feel precise and immediately operable: quiet at rest, unmistakable on
 - Desktop navigation is quiet text with a tonal active state. Mobile navigation uses a 44px disclosure control with `aria-expanded`, closes on Escape, returns focus to the trigger, and hides inactive content from assistive technology. Documentation navigation becomes an in-flow native disclosure below 980px; it never overlays the article.
 
 ### Technical Evidence
-- Commands use dark terminal surfaces or quiet inset code blocks with a 44px copy target.
+- Commands use soft gray inset code blocks with syntax colors that meet at least 4.5:1 contrast.
+- Copy controls overlay the top-right corner with a 44px target and horizontal clearance; they reserve no header lines.
+- Client tabs use body type, a pale blue selected state and a blue underline.
 - Copy actions announce both success and failure. Failure text tells the user to select and copy manually.
 - Comparison tables render as semantic tables inside labeled, focusable horizontal scroll regions. Never serialize a table into wrapped pipe characters.
 
