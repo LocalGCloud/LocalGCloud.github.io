@@ -53,7 +53,9 @@ const markdownTwinBytes = 15_400;
 // keep the default twin/HTML/JS limits for other pages and bound the expanded corpus.
 const guideDocumentBytes = { 'docs/github-actions.md': 31_300, 'docs/mcp.md': 17_200 };
 const githubActionsGzipBytes = 44_300;
-const llmsFullBytes = 308_100;
+// 2026-10-16: client examples and connection exports across all 25 supported service
+// guides bring the measured technical corpus to 342,155 bytes; allow the usual 5% margin.
+const llmsFullBytes = 359_300;
 const isMarkdownTwin = (file) => /^(?:docs|services|compare)\/[^/]+\.md$/.test(file);
 
 const dist = new URL('../dist/', import.meta.url).pathname;

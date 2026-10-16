@@ -6,7 +6,7 @@ import { alternatives, alternativesReviewedAt, comparisonSummary } from '../src/
 import { docsContract } from '../src/data/docs-contract.ts';
 import { productFacts } from '../src/data/productFacts.ts';
 import { cliQuickStart } from '../src/utils/quickstart.mjs';
-import { headingsWithinClass } from './html-structure.mjs';
+import { headingsWithinClass, walkElements } from './html-structure.mjs';
 import { availableServiceCount, services, servicesInCatalogOrder, isServiceDisabledByDefault, proTierLabel } from '../src/data/services.ts';
 import { pricingFaq, proTierServiceNames } from '../src/data/pricingFaq.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
@@ -410,12 +410,21 @@ for (const service of services) {
   const renderedCodes = [...html.matchAll(/<code\b[^>]*data-example-code[^>]*>([\s\S]*?)<\/code>/g)].map((match) => plainText(match[1]));
   if (JSON.stringify(renderedCodes) !== JSON.stringify(codeExamples.map((example) => example.code.replace(/\s+/g, ' ').trim()))) errors.push(`Service ${service.id} inline code differs from the SDK guide`);
   for (const example of codeExamples) {
-    for (const command of [example.setup, example.run, example.filename]) {
+    for (const command of [example.setup, example.run, example.filename, example.environment].filter(Boolean)) {
       if (!text.includes(command.replace(/\s+/g, ' ').trim())) errors.push(`Service ${service.id} omits SDK setup or run instructions`);
     }
   }
+  const categoryUrl = `/services/#catalog-${service.category}`;
+  const breadcrumb = html.match(/<nav\b[^>]*aria-label="Breadcrumb"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
+  if (!breadcrumb.includes(`href="${categoryUrl}"`) || !breadcrumb.includes('data-service-category')) errors.push(`Service ${service.id} omits its category breadcrumb`);
+  walkElements(html, (name, attributes, ancestors) => {
+    if (/^h[1-6]$/.test(name) && ancestors.some((ancestor) => ancestor.name === 'pre' || ancestor.name === 'code')) errors.push(`Service ${service.id} nests a heading inside a code block`);
+  });
   if (html.includes('id="performance"') || text.includes('Measure your workload') || text.includes('Performance considerations')) errors.push(`Service ${service.id} still renders the removed performance section`);
   const planned = service.catalogState === 'coming-soon' || service.marketingStatus === 'unsupported';
+  const usageSection = html.match(/<section\b[^>]*\bid="usage"[\s\S]*?<\/section>/)?.[0] ?? '';
+  if (!planned && (!codeExamples.length || usageSection.includes('localcloud start') || usageSection.includes('Install and start'))) errors.push(`Service ${service.id} must provide client examples without repeating LocalCloud installation`);
+  if (!planned && [...usageSection.matchAll(/role="tab"/g)].length !== codeExamples.length) errors.push(`Service ${service.id} omits client language tabs`);
   // An unsupported service page is condensed: status, what to use instead, and the official docs.
   const requiredGuideContent = planned
     ? [guide.intro, 'Related guides']

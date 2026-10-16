@@ -1,3 +1,5 @@
+import { getServiceClientExamples, type ServiceCodeExample } from './serviceClientExamples.ts';
+
 export interface ServiceExampleLink {
   title: string;
   href: string;
@@ -261,8 +263,8 @@ export const officialSampleLinks: Readonly<Record<string, string>> = {
 };
 
 // Reuse the maintained SDK guide so the inline samples and linked guide stay identical.
-export function getServiceCodeExamples(serviceId: string, sdkSource: string) {
-  return (serviceGuides[serviceId].examples ?? []).filter((example) => example.install).map((example) => {
+export function getServiceCodeExamples(serviceId: string, sdkSource: string): ServiceCodeExample[] {
+  const maintainedExamples = (serviceGuides[serviceId].examples ?? []).filter((example) => example.install).map((example) => {
     const anchor = example.href.split('#')[1];
     const section = sdkSource.split(/^## /m).find((section) =>
       section.split('\n')[0].toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ +/g, '-') === anchor,
@@ -280,6 +282,7 @@ export function getServiceCodeExamples(serviceId: string, sdkSource: string) {
       run: isPython ? 'python hello.py' : 'node hello.cjs',
     };
   });
+  return [...maintainedExamples, ...getServiceClientExamples(serviceId)];
 }
 
 // These are the services explicitly listed in the maintained Terraform guide.

@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import CopyButton from '../../components/CopyButton.astro';
+import CodeTabs from '../../components/CodeTabs.astro';
+import ServiceCodeExample from '../../components/ServiceCodeExample.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
 import MobileServiceLauncher from '../../components/MobileServiceLauncher.astro';
 import { getServiceCategoryLabel, getServiceImplementationLabel, isServiceDisabledByDefault, optInStartCommand, publishedServiceCount, services } from '../../data/services';
@@ -32,7 +34,7 @@ const compatibility = serviceCompatibilityEditorial[service.id];
 const guide = serviceGuides[service.id];
 if (!compatibility || !guide) throw new Error(`Missing service guide for ${service.id}`);
 const codeExamples = isPlanned ? [] : getServiceCodeExamples(service.id, sdkExamplesSource);
-const environmentSetup = `${productFacts.installScriptCommand}\nlocalcloud start --local-only${isServiceDisabledByDefault(service) ? ` --services ${service.id}` : ''}\n# Export GOOGLE_CLOUD_PROJECT and ${service.envVar.split('=')[0]}\neval "$(localcloud env)"`;
+const environmentSetup = `# Export GOOGLE_CLOUD_PROJECT and ${service.envVar.split('=')[0]}\neval "$(localcloud env)"`;
 const agentSection = isPlanned ? undefined : serviceAgentSections.find((section) => section.slug === service.slug);
 // The six services searched for as "<service> emulator" carry a head-term title and the setup FAQ.
 const searchPage = isPlanned ? undefined : emulatorSearchPages[service.id];
@@ -40,7 +42,7 @@ const searchPage = isPlanned ? undefined : emulatorSearchPages[service.id];
 const faqItems = searchPage ? [
   {
     question: `How do I run ${service.name} locally?`,
-    answer: `Install the LocalCloud CLI, start the runtime, and export its environment, as in the example above.${isServiceDisabledByDefault(service) ? ` ${service.name} is opt-in, so start it with ${optInStartCommand(service)}.` : ''}`,
+    answer: `Start LocalCloud using the setup guide, then export its environment in the same terminal as your application.${isServiceDisabledByDefault(service) ? ` ${service.name} is opt-in, so start it with ${optInStartCommand(service)}.` : ''}`,
   },
   {
     question: `Which environment variable points the SDK at the local ${service.name}?`,
@@ -86,6 +88,7 @@ const structuredData = [
   createBreadcrumbSchema([
     { name: 'Home', url: productFacts.siteUrl },
     { name: 'Services', url: new URL('services/', productFacts.siteUrl).toString() },
+    { name: categoryLabel, url: new URL(`services/#catalog-${service.category}`, productFacts.siteUrl).toString() },
     { name: service.name, url: pageUrl },
   ]),
   ...(faqItems.length ? [{
@@ -102,7 +105,7 @@ const structuredData = [
     <section class="site-section site-section--hero">
       <div class="container service-hero-grid">
         <div class="service-hero-intro">
-          <nav aria-label="Breadcrumb" class="mb-5 flex items-center gap-2 text-sm text-[var(--text-2)]"><a href={`${base}services/`}>Services</a><span aria-hidden="true">/</span><span>{service.name}</span></nav>
+          <nav aria-label="Breadcrumb" class="mb-5 flex flex-wrap items-center gap-2 text-sm text-[var(--text-2)]"><a href={`${base}services/`}>Services</a><span aria-hidden="true">/</span><a href={`${base}services/#catalog-${service.category}`} data-service-category>{categoryLabel}</a><span aria-hidden="true">/</span><span aria-current="page">{service.name}</span></nav>
           <div class="service-title-row" data-service-heading>
             <span class="service-hero-icon" data-service-hero-icon><ServiceIcon iconId={service.iconId} name={service.name} size={144} loading="eager" /></span>
             <div class="min-w-0">
@@ -122,7 +125,6 @@ const structuredData = [
               {guide.typicalUses.map((use) => <li class="site-chip">{use}</li>)}
             </ul>
           </section>}
-          <div class="mt-5" data-service-category><span class="site-chip site-chip--accent">{categoryLabel}</span></div>
           {!isPlanned && isServiceDisabledByDefault(service) && (
             <p class="mt-4 text-sm leading-6 text-[var(--accent-strong)]">{service.name} is opt-in to save memory. Add <code>{service.id}</code> to the services you start, for example <code>{optInStartCommand(service)}</code>; <code>--services</code> sets the exact list.</p>
           )}
@@ -169,41 +171,24 @@ const structuredData = [
     {!isPlanned && <section id="usage" class="site-section site-section--tight scroll-mt-24" aria-labelledby="usage-title">
       <div class="container">
         <div class="site-panel min-w-0 p-5 reveal sm:p-6">
-          <span class="site-kicker">{codeExamples.length ? 'Hello world' : 'Local workflow'}</span>
+          <span class="site-kicker">Use your existing clients</span>
           <h2 id="usage-title" class="mt-3 text-2xl font-semibold tracking-tight">Example usage</h2>
+          <p class="mt-3 text-sm leading-6 text-[var(--text-2)]">With LocalCloud running, export its environment in the same terminal as your application. These values include the current project and remapped ports. <a class="font-medium text-[var(--accent-strong)]" href={`${base}docs/`}>First-time setup <span aria-hidden="true">→</span></a></p>
           <div class="mt-5">
-            <p class="mb-3 text-sm leading-6 text-[var(--text-2)]">Install the CLI, start LocalCloud, and export its environment in the same shell. Generated endpoints account for remapped ports.</p>
-            <div class="rounded-xl border border-[var(--line)] bg-[var(--surface-2)]">
-              <div class="flex items-center justify-between gap-3 border-b border-[var(--line)] px-4 py-3"><span class="site-micro">1. Install and start · shell</span><CopyButton text={environmentSetup} /></div>
-              <pre class="overflow-x-auto p-4 text-sm leading-7"><code class="border-0 bg-transparent p-0" data-example-environment>{environmentSetup}</code></pre>
-            </div>
+            <div class="mb-2 flex items-center justify-between gap-3"><h3 class="font-semibold">Connect to LocalCloud</h3><CopyButton text={environmentSetup} label="Copy LocalCloud environment exports" /></div>
+            <pre class="overflow-x-auto rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-4 text-sm leading-7"><code class="border-0 bg-transparent p-0" data-example-environment>{environmentSetup}</code></pre>
+            <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">Run these commands before creating a client. Each tab includes any additional endpoint or credentials configuration it needs.</p>
           </div>
-          {codeExamples.length > 0 ? (
-            <div class:list={['mt-5 grid min-w-0 gap-5', codeExamples.length > 1 && 'xl:grid-cols-2']}>
-              {codeExamples.map((example) => (
-                <article class="min-w-0 rounded-xl border border-[var(--line)]" data-hello-world>
-                  <div class="p-4"><span class="site-chip site-chip--accent">{example.label}</span><h3 class="mt-3 text-lg font-semibold">{example.title}</h3></div>
-                  <div class="border-y border-[var(--line)] bg-[var(--surface-2)]">
-                    <div class="flex items-center justify-between gap-3 px-4 pt-3"><span class="site-micro">2. Install SDK · shell</span><CopyButton text={example.setup} /></div>
-                    <pre class="overflow-x-auto p-4 text-sm leading-7"><code class="border-0 bg-transparent p-0">{example.setup}</code></pre>
-                  </div>
-                  <div class="flex items-center justify-between gap-3 border-b border-[var(--line)] px-4 py-3"><span class="site-micro">3. Save as {example.filename}</span><CopyButton text={example.code} /></div>
-                  <pre class="overflow-x-auto p-4 text-sm leading-7"><code class="border-0 bg-transparent p-0" data-example-code>{example.code}</code></pre>
-                  <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--line)] bg-[var(--surface-2)] px-4 py-3"><div class="min-w-0"><span class="site-micro">4. Run</span><code class="ml-3 break-all">{example.run}</code></div><CopyButton text={example.run} /></div>
-                  <a class="m-4 inline-block text-sm font-medium text-[var(--accent-strong)]" href={exampleHref(example.href)}>Full example guide <span aria-hidden="true">→</span></a>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div class="mt-5">
-              <p class="font-semibold">{guide.example.title}</p>
-              <ol class="mt-5 space-y-4">
-                {guide.example.steps.map((step, index) => (
-                  <li class="flex items-start gap-3 text-[var(--text-2)]"><span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-xs font-semibold text-[var(--accent-strong)]" aria-hidden="true">{index + 1}</span><span class="leading-7">{step}</span></li>
-                ))}
-              </ol>
-            </div>
-          )}
+          {codeExamples.length > 0 && <div class="service-examples mt-6">
+            <CodeTabs labels={codeExamples.map((example) => example.label)}>
+              {codeExamples[0] && <ServiceCodeExample slot="tab-0" example={codeExamples[0]} />}
+              {codeExamples[1] && <ServiceCodeExample slot="tab-1" example={codeExamples[1]} />}
+              {codeExamples[2] && <ServiceCodeExample slot="tab-2" example={codeExamples[2]} />}
+              {codeExamples[3] && <ServiceCodeExample slot="tab-3" example={codeExamples[3]} />}
+              {codeExamples[4] && <ServiceCodeExample slot="tab-4" example={codeExamples[4]} />}
+            </CodeTabs>
+          </div>}
+
         </div>
       </div>
     </section>}
@@ -295,6 +280,11 @@ const structuredData = [
   .service-hero-icon :global(img) { display: block; width: 100%; height: auto; }
   :global(html[data-site-view="classic"]) [data-service-capabilities] li { overflow-wrap: anywhere; }
   [data-service-typical-uses] .site-chip { max-width: 100%; white-space: normal; }
+  .service-examples :global(.code-tabs) { border: 0; border-radius: 0; background: transparent; }
+  .service-examples :global(.code-tabs__bar) { border-bottom: 1px solid var(--line); background: transparent; }
+  .service-examples :global(.code-tabs__panel) { padding-top: 1.5rem; }
+  .service-examples :global(.code-tabs__panel pre) { border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface-2); }
+  .service-examples :global(.code-tabs__panel pre > code) { padding: 0; }
   .service-example-card { transition: border-color 160ms ease, box-shadow 160ms ease; }
   .service-example-card:hover { border-color: var(--accent-strong); box-shadow: var(--shadow-md); }
   .service-example-card:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 4px; }

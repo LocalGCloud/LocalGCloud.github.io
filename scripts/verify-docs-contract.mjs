@@ -281,7 +281,8 @@ const detailSource = routeSources.get('src/pages/services/[slug].astro');
 assert(!detailSource.includes('getServiceStatusLabel'), 'detail route still renders aggregate evidence labels');
 assert(detailSource.includes('serviceCompatibilityEditorial') && detailSource.includes('compatibility.capabilities.map'), 'detail route must share documented workflow summaries with compatibility');
 assert(detailSource.includes('compatibility.boundaries.map'), 'detail route must share service boundaries with compatibility');
-assert(detailSource.includes('serviceGuides') && detailSource.includes('getServiceCodeExamples') && detailSource.includes('data-example-code'), 'detail route must render introductions and maintained SDK examples');
+const codeExampleSource = await readFile(new URL('../src/components/ServiceCodeExample.astro', import.meta.url), 'utf8');
+assert(detailSource.includes('serviceGuides') && detailSource.includes('getServiceCodeExamples') && detailSource.includes('<ServiceCodeExample') && codeExampleSource.includes('data-example-code'), 'detail route must render introductions and maintained SDK examples');
 assert(!detailSource.includes('id="performance"') && !detailSource.includes('guide.metrics.map'), 'detail route must not render the removed performance section');
 assert(!detailSource.includes('<strong>{operation.label}</strong>: Coming soon.'), 'detail route turns unsupported operations into roadmap promises');
 for (const fact of ['registryDefaultEnabled', 'assembledDefaultEnabled', 'defaultQualification', 'minTier', 'persistence']) {
