@@ -32,7 +32,7 @@
 
   --text: #202124;
   --text-2: #5f6368;
-  --text-3: #6a6f74;
+  --text-3: #5f6368;
 
   --brand-blue: #1a73e8;
   --brand-blue-strong: #1557b0;
@@ -2640,7 +2640,7 @@ html.mobile-view{--mobile-dock-space:calc(9rem + env(safe-area-inset-bottom,0px)
 
 /* One code panel treatment for service examples, Markdown and legacy snippets. */
 .code-block { position:relative; min-width:0; margin-block:1rem; border:1px solid var(--line); border-radius:var(--radius-control); background:var(--code-bg); }
-.code-block > pre { margin:0!important; padding:1rem 4rem 1rem 1rem!important; border:0!important; border-radius:inherit!important; background:var(--code-bg)!important; color:var(--code-text)!important; overflow-x:auto; }
+.code-block > pre { margin:0 3.25rem 0 0!important; padding:1rem!important; border:0!important; border-radius:inherit!important; background:var(--code-bg)!important; color:var(--code-text)!important; overflow-x:auto; }
 .code-block > pre > code { display:block; padding:0!important; border:0; background:transparent; color:inherit; }
 .code-block > .copy-btn { position:absolute!important; top:.35rem; right:.35rem; margin:0!important; transform:none!important; width:2.75rem; min-width:2.75rem!important; min-height:2.75rem; padding:0!important; z-index:1; background:var(--code-bg)!important; color:var(--code-text)!important; border-color:var(--line)!important; }
 .code-block > .copy-btn .copy-label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
