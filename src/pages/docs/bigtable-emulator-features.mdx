@@ -27,6 +27,8 @@ The runtime contract records each operation's concrete boundaries. The `latest` 
 
 ## Current operation contract
 
+Use the [Bigtable documented workflows](/services/bigtable/#workflows) for application scenarios; this table describes individual API areas.
+
 <div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Bigtable operation contract">
 <table>
   <thead><tr><th>Operation area</th><th>Status</th><th>Boundary</th></tr></thead>
@@ -40,10 +42,13 @@ The runtime contract records each operation's concrete boundaries. The `latest` 
 
 ## Runtime and recovery limits
 
-<ul>
-  {bigtable.limitations.map((limitation) => <li>{limitation}</li>)}
-  <li>{bigtable.persistence.restartBehavior}</li>
-  {bigtable.persistence.recoveryLimitations.map((limitation) => <li>{limitation}</li>)}
-</ul>
+LocalCloud uses PostgreSQL-backed persistence. Test a restart against the mounted volume and compare exact row bytes. IAM is permissive, change streams use one partition, and local HLL++/multi-column view-key encodings differ from cloud representations.
 
-Metadata-only backup, view, or IAM operations do not prove data restoration, query execution, or authorization enforcement. Assert exact row bytes through the application data client and test required connector behavior separately. Validate production-managed behavior in Google Cloud.
+## Verify backup and cleanup behavior
+
+1. Write known row keys, families, qualifiers, timestamps, and values through the native client.
+2. Create a data-bearing backup and restore it to a separate table. Read the restored cells and compare the bytes; metadata readback alone is insufficient.
+3. List backups through the native administration API when using filters, ordering, or pagination. The REST path ignores those options.
+4. Delete owned backups and clear resource deletion protection before deleting the instance or project. If cleanup fails, inspect the native API error and retained project record.
+
+For row-filter tests, `Sink` preserves cells past subsequent filters and is invalid inside a `Condition`. Verify writes through the native API when the Console does not surface a rejection. Validate managed replication and production authorization in Google Cloud.

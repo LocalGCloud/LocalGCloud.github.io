@@ -57,6 +57,29 @@ For architectural design details, see [docs/site-marketing-principles.md](file:/
 
 ---
 
+### Refresh documentation from LocalCloud
+
+Use committed sibling repositories (`../localcloud`, `../localcloud-cli`, and the BigQuery dependency) when updating capabilities:
+
+```bash
+node scripts/sync-upstream-docs.mjs
+UPSTREAM_DOCS_STRICT=1 node scripts/verify-upstream-docs.mjs
+```
+
+Review the snapshot diff before changing public copy. Source revisions and dependency matrices describe source capabilities; a qualified image claim also needs the exact assembled-image digest and execution evidence. A locally installed `latest` tag alone does not provide that evidence.
+
+Maintain each capability once in `src/data/serviceEditorial.ts`: `operations` ties it to the upstream contract, `summary` feeds compact compatibility/agent overviews, and `workflow` explains what to set up, exercise, and assert on service pages and their Markdown twins. Keep boundaries to distinct configuration, security, data, or runtime constraints. Configuration readback and completed no-op responses must not imply execution or recovery.
+
+Keep API and persistence detail in feature references, and link to the service workflows instead of repeating their instructions. The content verifier rejects duplicate workflow summaries/details and boundaries within a service, missing rendered workflow instructions, and repeated long paragraphs within a documentation article. Responsive copies and language tabs remain intentional.
+
+```bash
+node scripts/generate-distributed-docs.mjs
+node scripts/verify-distributed-docs.mjs
+pnpm run build
+pnpm run test:installer
+graft build
+```
+
 ## 4. The 14-Stage Build & Verification Pipeline
 
 When running `pnpm run build`, the pipeline executes the following checks in sequence. Any failure halts the build with exit code 1:

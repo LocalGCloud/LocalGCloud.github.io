@@ -288,7 +288,8 @@ for (const phrase of [
 	"Docker build pins a source commit",
 	"PostgreSQL under the mounted",
 	"bigtable.operations.map",
-	"Metadata-only backup",
+	"data-bearing backup",
+	"compare the bytes",
 	"PrepareQuery",
 ]) {
 	assert(

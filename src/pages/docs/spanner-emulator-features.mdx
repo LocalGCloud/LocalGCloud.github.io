@@ -30,6 +30,8 @@ Use `localcloud env` for the actual mapped endpoints. Provision the instance, da
 
 ## Current operation contract
 
+For task-oriented examples, use the [Spanner documented workflows](/services/spanner/#workflows). The reference below describes individual API areas.
+
 <div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Spanner operation contract">
 <table>
   <thead><tr><th>Operation area</th><th>Status</th><th>Boundary</th></tr></thead>
@@ -41,22 +43,23 @@ Use `localcloud env` for the actual mapped endpoints. Provision the instance, da
 </table>
 </div>
 
-## Features that need scoped checks
+## Exercise a transactional workflow
 
-- GoogleSQL and PostgreSQL dialect types, DDL, query syntax, and metadata.
-- Transaction isolation, wound-wait conflict handling, retries, locking, and commit metadata.
-- Graph, vector, and full-text query behavior beyond parser or catalog acceptance.
-- Fine-grained database roles, caller identity, and enforcement through every required API path.
-- Backup, restore, point-in-time reads, schedules, change streams, and resume behavior.
+1. Follow the [Python SDK example](/docs/sdk-examples/#spanner-python) to create an instance, database, and schema before opening the application client.
+2. Insert a small order and inventory fixture. Update both in one transaction and query the committed values.
+3. Run conflicting updates with the isolation level your application selects. Assert wound-wait conflict handling, retries, and the final inventory value.
+4. If the application uses database roles, create a session with `creator_role` and check both allowed and denied operations.
 
-A declaration or registered method alone does not establish these semantics. Keep any broader standalone dependency evidence separate from the current LocalCloud operation contract.
+## Follow committed changes
+
+1. Create a change stream for the fixture table and read it through `ExecuteStreamingSql`; unary `ExecuteSql` does not read change streams.
+2. Commit a write while the reader is active. Check the data-change record, transaction metadata, and heartbeat handling.
+3. Resume at the stream's row-boundary token and assert the consumer's handling of repeated records. Use persistent storage when testing retained stream state across restart.
 
 ## Runtime and recovery limits
 
-<ul>
-  {spanner.limitations.map((limitation) => <li>{limitation}</li>)}
-  <li>{spanner.persistence.restartBehavior}</li>
-  {spanner.persistence.recoveryLimitations.map((limitation) => <li>{limitation}</li>)}
-</ul>
+Backups and durable stream recovery require the mounted Spanner data directory. Back up known rows, restore into a separate database, and compare schema and data. A successful backup operation alone does not validate recovery.
+
+Unauthenticated emulator connections bypass network IAM. Database-role checks do not establish Google IAM authority; CMEK and Google-managed regional behavior require cloud validation.
 
 Verify production IAM, managed replication, regional availability, performance, and required functional behavior in Google Cloud before release.

@@ -1,6 +1,42 @@
 # LocalCloud Documentation Accuracy Audit
 
-## Current verification — 2026-09-29
+## Current content refresh — 2026-10-16
+
+**Scope:** Synchronize the website with committed upstream documentation, remove repeated guidance, expand documented workflows, and shorten service boundaries. Runtime and CLI repositories were read only.
+
+### Source and artifact evidence
+
+| Source | Identity |
+| --- | --- |
+| LocalCloud runtime | `60df464a17f11779c2533aefe29db2150b0a34c1` |
+| LocalCloud CLI | `0339e0134185338b6ee03eb89f4109bef33e4fcb`; source version `0.1.12` |
+| BigQuery matrix | `15792e2c08b58d987bcf50e62431e3a2f32d2735` |
+| Sync provenance | SHA-256 source digests in `src/data/docs-contract.snapshot.json`; no uncommitted upstream sources |
+| Locally installed image | `agentcloud/localcloud@sha256:9175252172a4569e395f54b3eba8c692f415bca4c63aa1170de66b5fd6ad970c` |
+
+The image identity was read with `docker image inspect`. Its labels do not identify the runtime source revision, and application workflows were not executed against it. The contract therefore retains a null assembled-image digest and `release-unverified` qualification. This refresh establishes source and static-documentation accuracy, not published-image or live-site qualification.
+
+### Findings and corrections
+
+- **Workflow detail:** Expanded 84 operation-linked workflows across the 25 locally available services. Each explains setup, an action, and a result to inspect or assert. Service HTML and Markdown twins share the details; compatibility and agent indexes retain compact summaries and guide links.
+- **Repeated information:** Removed repeated environment/setup explanations from service pages and duplicated audit-ledger lists from the BigQuery, Bigtable, and Spanner references. Reference pages retain API notes once and add targeted pipeline, transaction/change-stream, and backup/cleanup procedures. Responsive copies and self-contained language tabs remain intentional.
+- **Brief boundaries:** Consolidated 92 boundary bullets into 73 distinct constraints while retaining security, destructive-operation, transport, and recovery warnings.
+- **Capability drift:** Documented Pub/Sub push wrappers and policy readback, Cloud Tasks HTTP target overrides and BufferTask, GKE's `/container/v1` routing and identity prerequisites, and Monitoring's supported filtering and ignored aggregation. Storage versioning/archive implementation still awaits image validation. Cloud SQL backup metadata and no-op export/import/restore/restart responses are separated from actual data work; TLS and project-export limits remain explicit.
+- **Durable maintenance:** `BUILD.md` now documents the strict committed-source sync, editorial review, duplicate checks, generated Markdown, and final verification workflow. The build rejects duplicated service summaries/details/boundaries, missing rendered workflow details, and repeated long paragraphs within documentation articles.
+
+### Verification
+
+- Strict upstream parity: passed against all recorded commits and source digests.
+- Full `pnpm run build`: passed for 87 rendered pages, including contract, CLI/example, policy, distributed content, HTML/Markdown, SEO, links/anchors, content facts, search, CSP finalization, and compression.
+- `pnpm run test:installer`: passed using a temporary loopback fixture server.
+- Service examples: passed coverage/shell checks and Java REST compilation.
+- Page and agent-document budgets: passed without increasing ceilings; the expanded technical corpus remains below the existing limit.
+- Negative content fixtures: duplicate workflows, repeated article prose, and missing rendered workflow details were each rejected, then original files were restored.
+- `graft build` and `git diff --check`: passed.
+
+Astro retains its existing Shiki/inline-style CSP warning; the emitted-script CSP verification passed. No deployment, immutable-image application test, production-cloud check, or public registry refresh was performed.
+
+## Previous verification — 2026-09-29
 
 **Scope:** The working-copy website, all documentation routes, service and compatibility pages, generated agent/workflow/comparison content, raw Markdown endpoints, LLM files, and distributed Agent Skills. Historical planning and audit documents are retained as historical records.
 

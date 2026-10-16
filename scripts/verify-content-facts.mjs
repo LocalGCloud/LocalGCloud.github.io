@@ -324,8 +324,18 @@ for (const service of services) {
     .filter((operation) => ['verified', 'partial', 'release-unverified'].includes(operation.status))
     .map((operation) => operation.id));
   const referencedOperations = new Set();
+  for (const [label, items] of [
+    ['workflow summaries', editorial.capabilities.map((item) => item.summary)],
+    ['workflow details', editorial.capabilities.map((item) => item.workflow)],
+    ['boundaries', editorial.boundaries],
+  ]) {
+    const normalized = items.map((item) => item?.replace(/\s+/g, ' ').trim().toLowerCase());
+    if (normalized.some((item) => !item)) errors.push(`Service ${service.id} has empty ${label}`);
+    if (new Set(normalized).size !== normalized.length) errors.push(`Service ${service.id} repeats ${label}`);
+  }
   for (const capability of editorial.capabilities) {
     if (!capability.summary.trim() || !capability.operations.length) errors.push(`Empty compatibility capability for ${service.id}`);
+    if (capability.workflow?.trim() === capability.summary.trim()) errors.push(`Service ${service.id} workflow repeats its summary`);
     for (const id of capability.operations) {
       if (!supportedOperations.has(id)) errors.push(`Compatibility claim ${id} is missing or unsupported upstream`);
       referencedOperations.add(id);
@@ -393,6 +403,18 @@ if (JSON.stringify(registryIds) !== JSON.stringify(servicesInCatalogOrder.map((s
 // Keep every service page aligned with the compatibility table, including future updates.
 const plainText = (markup) => visibleText(markup).replace(/\s+/g, ' ').trim();
 const listItems = (markup) => [...markup.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((match) => plainText(match[1]));
+// Repeated navigation, responsive views, and language tabs are intentional; check docs prose.
+for (const [file, html] of htmlPages) {
+  if (!file.startsWith('docs/')) continue;
+  const article = html.match(/<div class="prose-site">([\s\S]*?)<footer class="docs-article__meta"/)?.[1] ?? '';
+  const seen = new Set();
+  for (const [, markup] of article.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)) {
+    const text = plainText(markup).toLowerCase();
+    if (text.length < 100) continue;
+    if (seen.has(text)) errors.push(`${file} repeats documentation prose: ${text.slice(0, 100)}`);
+    seen.add(text);
+  }
+}
 for (const service of services) {
   const guide = serviceGuides[service.id];
   const editorial = serviceCompatibilityEditorial[service.id];
@@ -404,7 +426,10 @@ for (const service of services) {
   const text = plainText(html);
   const capabilities = html.match(/<ul\b[^>]*data-service-capabilities[^>]*>([\s\S]*?)<\/ul>/)?.[1] ?? '';
   const boundaries = html.match(/<ul\b[^>]*data-service-boundaries[^>]*>([\s\S]*?)<\/ul>/)?.[1] ?? '';
-  if (JSON.stringify(listItems(capabilities)) !== JSON.stringify(editorial.capabilities.map((item) => item.summary))) errors.push(`Service ${service.id} workflows differ from compatibility`);
+  const workflowSummaries = [...capabilities.matchAll(/<h3\b[^>]*data-workflow-summary[^>]*>([\s\S]*?)<\/h3>/g)].map((match) => plainText(match[1]));
+  const workflowDetails = [...capabilities.matchAll(/<p\b[^>]*data-workflow-detail[^>]*>([\s\S]*?)<\/p>/g)].map((match) => plainText(match[1]));
+  if (JSON.stringify(workflowSummaries) !== JSON.stringify(editorial.capabilities.map((item) => item.summary))) errors.push(`Service ${service.id} workflows differ from compatibility`);
+  if (JSON.stringify(workflowDetails) !== JSON.stringify(editorial.capabilities.map((item) => item.workflow))) errors.push(`Service ${service.id} omits workflow instructions`);
   if (JSON.stringify(listItems(boundaries)) !== JSON.stringify(editorial.boundaries)) errors.push(`Service ${service.id} boundaries differ from compatibility`);
   const codeExamples = getServiceCodeExamples(service.id, sdkExamplesSource);
   const renderedCodes = [...html.matchAll(/<code\b[^>]*data-example-code[^>]*>([\s\S]*?)<\/code>/g)].map((match) => plainText(match[1]));

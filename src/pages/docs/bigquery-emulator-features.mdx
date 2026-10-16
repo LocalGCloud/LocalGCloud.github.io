@@ -43,15 +43,15 @@ The CLI may remap host ports. The [Python SDK example](/docs/sdk-examples/#bigqu
 </table>
 </div>
 
-## Feature areas to test
+## Validate a data pipeline locally
 
-- **GoogleSQL execution:** test the exact types, expressions, joins, scripting, and error behavior used by the application.
-- **BQML:** selected local models are implemented; model types, feature shapes, and `TRANSFORM` variants have documented gaps.
-- **Vector Search and text search:** check the specific index, function, and option against the feature inventory.
-- **Geography:** spherical functions have bounded geometry and input support, including remaining snapping, covering, and union gaps.
-- **Security and governance:** row policies, masking, and IAM-shaped APIs require path-specific tests. Nested policy tags and taxonomy operations have recorded boundaries.
-- **External tables and federation:** validate the exact source format and connector. An emulator fixture or stored connection does not prove a live federated query.
-- **Storage API and Spark:** test transport, TLS, schema, read/write method, connector version, and architecture separately.
+1. Follow the [deterministic query example](/docs/sdk-examples/#bigquery-deterministic-query) to configure the REST client, then create an owned dataset and tables with small, known fixtures.
+2. Run the application's query, script, or stored procedure. Assert exact rows, column types, null handling, and expected errors.
+3. For external tables, upload a CSV, JSONL, Parquet, Avro, or ORC fixture to local Cloud Storage and query it. Check the returned data instead of relying on stored connection metadata.
+4. If the pipeline uses Storage Read/Write, configure its separate gRPC endpoint and CA trust, then verify Avro or Arrow records through that client.
+5. Delete the owned dataset and Storage fixtures after the test. Keep application cases in the suite so future image updates run the same assertions.
+
+The [BigQuery documented workflows](/services/bigquery/#workflows) cover query, job, security, BQML, Vector Search, and metadata scenarios. Check exact SQL, model, geography, and connector inputs against the matrix below.
 
 To weigh LocalCloud against standalone emulators and real BigQuery, see [BigQuery emulator alternatives](/compare/bigquery-emulator-alternatives/).
 
@@ -105,10 +105,6 @@ Before relying on a capability that this page does not list, test it with your a
 
 ## Runtime and production boundaries
 
-<ul>
-  {bigquery.limitations.map((limitation) => <li>{limitation}</li>)}
-  <li>{bigquery.persistence.restartBehavior}</li>
-  {bigquery.persistence.recoveryLimitations.map((limitation) => <li>{limitation}</li>)}
-</ul>
+Data and metadata live beneath the mounted BigQuery data directory. Verify the application's queries after restart; a mounted volume alone is not a recovery guarantee.
 
-Validate required production IAM, billing, quotas, reservations, concurrency, managed integrations, and recovery in Google Cloud. Local functional gaps also need validation; they are not all cloud-only infrastructure limitations.
+Ingestion-time partition pseudocolumn reads, nested policy tags, and native Bigtable/Sheets/HTTP/local-file external sources are unavailable. Validate production IAM, billing, quotas, reservations, managed integrations, and recovery in Google Cloud.

@@ -194,7 +194,7 @@ const compatibilitySections = agenticServiceMetadata
 
 export const agentCompatibilityMarkdown = `# LocalCloud capabilities and boundaries for agents
 
-What each service runs locally and where its local behavior stops. Check the boundaries before relying on a local result, and follow the rules in https://local.cloud/ai/agents.md. The same lists appear on each service page and on https://local.cloud/compatibility/.
+What each service runs locally and where its local behavior stops. Follow the rules in https://local.cloud/ai/agents.md. The service guides explain how to exercise these workflows; https://local.cloud/compatibility/ shares this compact overview.
 
 ${compatibilitySections}
 `;
