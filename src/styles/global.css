@@ -18,13 +18,17 @@
 }
 
 :root {
-  --bg: #ffffff;
-  --bg-2: #f8f9fa;
-  --surface: #ffffff;
+  --bg: #f7f8fa;
+  --bg-2: #eef0f3;
+  --surface: #fcfcfd;
   --surface-2: #f1f3f4;
   --surface-3: #e8eaed;
-  --line: #dadce0;
-  --line-strong: #dadce0;
+  --code-bg: #f1f3f4;
+  --code-text: #37474f;
+  --chrome: #eef0f3;
+  --desktop-bg: #e2e7ee;
+  --line: #d6dbe1;
+  --line-strong: #d6dbe1;
 
   --text: #202124;
   --text-2: #5f6368;
@@ -45,7 +49,7 @@
   --success-soft: rgba(24, 128, 56, 0.12);
   --warn: #866439;
   --warn-soft: rgba(134, 100, 57, 0.12);
-  --border: #dadce0;
+  --border: #d6dbe1;
   --border-hover: rgba(26, 115, 232, 0.45);
 
   --shadow-lg: 0 24px 60px -34px rgba(0, 0, 0, 0.12);
@@ -1402,47 +1406,8 @@
 }
 
 .docs-article pre > code {
-  padding-top: 2.25rem;
-  padding-right: 5.2rem;
   font-size: var(--fs-small);
   line-height: 1.75;
-}
-
-.docs-code-copy {
-  position: absolute;
-  top: 0.55rem;
-  right: 0.55rem;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.38rem;
-  min-height: 2.75rem;
-  padding: 0 0.68rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  color: var(--text-2);
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  letter-spacing: 0.02em;
-  cursor: pointer;
-}
-
-.docs-code-copy:hover {
-  color: var(--text);
-  border-color: var(--border-hover);
-}
-
-.docs-code-copy.is-copied {
-  color: var(--success-ink);
-}
-
-.docs-code-copy.is-copy-error {
-  max-width: min(20rem, calc(100% - 1.1rem));
-  color: var(--text);
-  line-height: 1.35;
-  text-align: left;
-  white-space: normal;
 }
 
 .copy-btn .copy-label {
@@ -2672,3 +2637,12 @@
 
 html.mobile-view{--mobile-dock-space:calc(9rem + env(safe-area-inset-bottom,0px))}
 @media(min-width:64rem){.desktop-view .desktop-taskbar>div{max-width:calc(50vw - 12rem)}.desktop-view .desktop-taskbar>a:first-of-type{margin-left:auto}}
+
+/* One code panel treatment for service examples, Markdown and legacy snippets. */
+.code-block { position:relative; min-width:0; margin-block:1rem; border:1px solid var(--line); border-radius:var(--radius-control); background:var(--code-bg); }
+.code-block > pre { margin:0!important; padding:3.5rem 1rem 1rem!important; border:0!important; border-radius:inherit!important; background:var(--code-bg)!important; color:var(--code-text)!important; overflow-x:auto; }
+.code-block > pre > code { display:block; padding:0!important; border:0; background:transparent; color:inherit; }
+.code-block > .copy-btn { position:absolute!important; top:.35rem; right:.35rem; margin:0!important; transform:none!important; min-height:2.75rem; z-index:1; background:var(--code-bg)!important; color:var(--code-text)!important; border-color:var(--line)!important; }
+.code-block > .copy-btn:focus-visible, .code-block > pre:focus-visible { outline:2px solid var(--accent-strong); outline-offset:2px; }
+.installation-methods__command:has(> .code-block) { display:block; border:0; background:transparent; }
+.installation-methods__command > .code-block { margin:0; }

@@ -14,6 +14,9 @@ import { gzipSync } from 'node:zlib';
 // 2026-10-07: UI setup moved from blocking requests into HTML; interactions now have a
 // direct module tag, so scriptBytes includes a previously dynamic module. Account for those
 // existing bytes here; the aggregate startup ceiling below still counts and bounds all JS.
+// 2026-10-16: the shared clipboard template adds 1,345 raw bytes per page.
+// Keep CSS, gzip and JS ceilings intact; bound only this new markup when present.
+const codeCopyTemplateBytes = 1_400;
 const htmlBudget = { rawBytes: 196_000, gzipBytes: 40_000, styleBytes: 94_600, scriptBytes: 21_000 };
 // Mobile adds one shared CSS presentation (~8KB raw) and a Home service strip/persona
 // section (~18KB raw/~2.2KB gzip). Bound that actual new UI separately; other HTML/script
@@ -91,6 +94,7 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     const isHome = file === join(dist, 'index.html');
     const limits = {...htmlBudget, styleBytes:htmlBudget.styleBytes+mobileStyleBytes, startupScriptBytes};
     if (html.includes('data-desktop-manifest=')) limits.startupScriptBytes += desktopPrefetchBytes;
+    if (html.includes('data-code-copy-template')) limits.rawBytes += codeCopyTemplateBytes;
     if (isHome) for (const [metric, extra] of Object.entries(mobileHomeBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(classicHomeBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(agentHomeBytes)) limits[metric] += extra;

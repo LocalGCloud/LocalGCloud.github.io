@@ -5,6 +5,7 @@ import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import rehypeTableRegions from './src/utils/rehype-table-regions.mjs';
+import { neutralPaperTheme } from './src/utils/code-theme.mjs';
 import { loadEnv } from 'vite';
 import { resolvePosthogConfig } from './src/utils/posthog-config.mjs';
 import { resolveCloudflareAnalyticsConfig } from './src/utils/cloudflare-analytics-config.mjs';
@@ -113,10 +114,7 @@ export default defineConfig({
   markdown: {
     processor: unified({ gfm: true, rehypePlugins: [rehypeTableRegions] }),
     shikiConfig: {
-      themes: {
-        light: 'github-light-high-contrast',
-        dark: 'github-dark',
-      },
+      theme: neutralPaperTheme,
     },
   },
 });

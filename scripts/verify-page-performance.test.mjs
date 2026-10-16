@@ -343,7 +343,7 @@ test('code_copied names the closest analytics label and fires only on a successf
   listeners.get('click')({ target: { closest: () => null } });
   assert.equal(captured.length, 2);
   assert.match(readFileSync(new URL('../src/components/CopyButton.astro', import.meta.url), 'utf8'), /import copyScript from '\.\.\/scripts\/copy-buttons\.mjs\?url'/);
-  for (const source of ['../src/scripts/copy-buttons.mjs', '../src/layouts/DocsLayout.astro', '../src/pages/ai/index.astro']) {
+  for (const source of ['../src/scripts/copy-buttons.mjs', '../src/pages/ai/index.astro']) {
     const handler = readFileSync(new URL(source, import.meta.url), 'utf8');
     const write = handler.indexOf('await navigator.clipboard.writeText(');
     const dispatch = handler.indexOf("new CustomEvent('lc:copied'");

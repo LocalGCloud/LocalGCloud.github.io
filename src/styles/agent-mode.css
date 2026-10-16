@@ -1,11 +1,12 @@
 /* Agent audience uses the same page and OS shell with a technical presentation. */
 html:root[data-audience="agents"]{
-  color-scheme:dark;
-  --bg:#050d07;--bg-2:#09140c;--surface:#09140c;--surface-2:#152b18;--surface-3:#284e2a;
-  --line:#507d4b;--line-strong:#77ae79;--border:#507d4b;--border-hover:#a6f58b;
-  --text:#b7efad;--text-2:#91c695;--text-3:#91c695;--warn:#f1cf86;--warn-soft:#362b13;
-  --brand-blue:#a6f58b;--brand-blue-strong:#a6f58b;--brand-sky:#a6f58b;
-  --accent:#a6f58b;--accent-strong:#a6f58b;--accent-soft:#152b18;--focus-ring:var(--accent);--success-ink:#a6f58b;--success-soft:#244929;
+  color-scheme:light;
+  --code-bg:var(--surface-2);--code-text:var(--text);
+  --bg:#f7f8fa;--bg-2:#fcfcfd;--surface:#fcfcfd;--surface-2:#f1f3f4;--surface-3:#e8eaed;
+  --line:#d6dbe1;--line-strong:#8795a4;--border:#d6dbe1;--border-hover:#315f9c;
+  --text:#37474f;--text-2:#5f6368;--text-3:#5f6368;--warn:#866439;--warn-soft:#f5eddf;
+  --brand-blue:#315f9c;--brand-blue-strong:#315f9c;--brand-sky:#315f9c;
+  --accent:#315f9c;--accent-strong:#315f9c;--accent-soft:#f1f3f4;--focus-ring:var(--accent);--success-ink:#315f9c;--success-soft:#e8f0fe;
   --font-display:var(--font-mono);--font-body:var(--font-mono);
   --radius-inline:0;--radius-control:0;--radius-panel:0;--radius-feature:0;--radius-pill:0;
   & .desktop-background{inset:0;animation:none;background:var(--bg)}
@@ -22,7 +23,6 @@ html:root[data-audience="agents"]{
   & .mobile-dock a:active{background:var(--accent-soft)}
   & .site-button--primary{color:var(--bg)}
   & [class*="rounded-"]{border-radius:0}
-  & :is(.astro-code,.astro-code span){color:var(--text)!important;background-color:var(--surface)!important}
   & :is(.docs-sidebar__link:hover,.docs-sidebar__link.is-active){background:var(--accent-soft);color:var(--accent)}
   & :is(.callout--info,.callout--note,.callout--tip){background:var(--accent-soft);border-color:var(--line)}
   & :is(.desktop-content,.site-header,.site-footer) :is(input,button,.site-button,[data-service-name],.site-panel){border-radius:0}

@@ -1,5 +1,7 @@
 ---
 import { Code } from 'astro:components';
+import CopyButton from './CopyButton.astro';
+import { neutralPaperTheme } from '../utils/code-theme.mjs';
 
 interface Props {
   code: string;
@@ -13,12 +15,15 @@ const transformers = marker ? [{
 }] : [];
 ---
 
-<Code {code} {lang} theme="dark-plus" class="service-code" tabindex="0" role="region" aria-label={label} data-code-language={lang} {transformers} />
+<div class="code-block" data-code-block>
+  <Code {code} {lang} theme={neutralPaperTheme} class="service-code" tabindex="0" role="region" aria-label={label} data-code-language={lang} {transformers} />
+  <CopyButton text={code} label={`Copy ${label}`} />
+</div>
 
 <style>
   :global(pre.service-code) {
     overflow-x: auto;
-    border: 1px solid #454545;
+    border: 1px solid var(--line);
     border-radius: var(--radius-control);
     padding: 1rem;
     font-size: 0.875rem;

@@ -1,5 +1,34 @@
 const resetTimers = new WeakMap();
 
+// Enhance legacy panels and Markdown without duplicating their existing copy actions.
+export function initCodeBlocks(scope = document) {
+  const template = document.querySelector('[data-code-copy-template]');
+  if (!template) return;
+  scope.querySelectorAll('pre > code').forEach((code) => {
+    const pre = code.parentElement;
+    // The compact install control already contains Copy and its Brew/curl switch.
+    if (pre.closest('[data-code-block], .field-install, .my-cloud-body')) return;
+    let parent = pre.parentElement, button;
+    while (parent && !['MAIN', 'BODY', 'HTML'].includes(parent.tagName) && !button) {
+      button = [...parent.querySelectorAll('.copy-btn[data-copy]')].find((candidate) =>
+        !candidate.closest('[data-code-block], .field-install, .my-cloud-body, .lc-agent-prompt') && candidate.dataset.copy.trimEnd() === code.textContent.trimEnd());
+      parent = parent.parentElement;
+    }
+    if (!button) {
+      button = template.content.querySelector('.copy-btn').cloneNode(true);
+      button.dataset.copy = code.textContent;
+      button.setAttribute('aria-label', `Copy ${pre.getAttribute('aria-label') || 'code example'}`);
+      button.title = button.getAttribute('aria-label');
+    }
+    const panel = document.createElement('div');
+    panel.className = 'code-block';
+    panel.setAttribute('data-code-block', '');
+    pre.before(panel);
+    panel.append(pre, button);
+    if (!pre.hasAttribute('tabindex')) pre.tabIndex = 0;
+  });
+}
+
 export function initCopyButtons(scope = document) {
   scope.querySelectorAll('[data-install-toggle]').forEach((toggle) => {
     if (toggle.dataset.installReady === 'true') return;
@@ -59,7 +88,8 @@ export function initCopyButtons(scope = document) {
 }
 
 if (typeof document !== 'undefined') {
-  initCopyButtons();
-  document.addEventListener('astro:page-load', () => initCopyButtons());
-  document.addEventListener('lc:copy-bind', () => initCopyButtons());
+  const bind = () => { initCodeBlocks(); initCopyButtons(); };
+  bind();
+  document.addEventListener('astro:page-load', bind);
+  document.addEventListener('lc:copy-bind', bind);
 }
