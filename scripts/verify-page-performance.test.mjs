@@ -775,7 +775,9 @@ test('every page keeps its critical bootstraps inline with retained maps and exa
     assert.ok(filters <= 1 && feedback <= 2, path);
     assert.equal(search, 1, path);
     assert.ok(agentWidgets <= 1, path);
-    assert.equal(scripts.length, 4 + filters + search + feedback + agentWidgets, path);
+    const overviews = [...html.matchAll(/<script\b[^>]*data-critical-bootstrap="overview"/g)].length;
+    assert.equal(overviews, html.includes('class="mobile-service-context"') ? 1 : 0, path);
+    assert.equal(scripts.length, 4 + filters + search + feedback + agentWidgets + overviews, path);
     for (const [, code] of scripts) {
       const src = code.match(/\/\/# sourceURL=https:\/\/local\.cloud(\/[^\n]+)/)?.[1];
       assert.ok(src, path);

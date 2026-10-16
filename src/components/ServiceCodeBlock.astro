@@ -16,10 +16,6 @@ const transformers = marker ? [{
 ---
 
 <div class="code-block" data-code-block>
-  <Code {code} {lang} theme={neutralPaperTheme} class="service-code" tabindex="0" role="region" aria-label={label} data-code-language={lang} {transformers} />
+  <Code {code} {lang} theme={neutralPaperTheme} tabindex="0" role="region" aria-label={label} {transformers} />
   <CopyButton text={code} label={`Copy ${label}`} />
 </div>
-
-<style>
-  :global(pre.service-code) { font-size: 0.875rem; line-height: 1.75; }
-</style>

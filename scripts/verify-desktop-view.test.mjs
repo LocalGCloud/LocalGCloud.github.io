@@ -303,6 +303,43 @@ test('Mobile leaves an overview disclosure open for an existing descendant fragm
   assert.equal(overview.open, false);
 });
 
+test('service overview initializes before paint and preserves interaction before the controller loads', () => {
+  const source = readFileSync(new URL('../src/pages/services/[slug].astro', import.meta.url), 'utf8');
+  const early = source.match(/<script is:inline data-critical-bootstrap="overview">([\s\S]*?)<\/script>/)[1];
+  for (const [view, hash, type, saved, expected] of [
+    ['mobile', '', 'navigate', null, false],
+    ['mobile', '#typical-uses-title', 'navigate', null, true],
+    ['mobile', '#typical%2Duses-title', 'navigate', null, true],
+    ['mobile', '#%broken', 'navigate', null, false],
+    ['mobile', '', 'reload', 'true', true],
+    ['mobile', '', 'back_forward', 'false', false],
+    ['desktop', '', 'navigate', null, true],
+    ['classic', '', 'navigate', null, true],
+  ]) {
+    const overview = { dataset: {}, open: true, contains: () => false };
+    const context = { URL, initViewLinks() {}, desktopSection, decodeURIComponent,
+      location: { href: 'https://local.cloud/services/bigquery/' + hash, hash, pathname: '/services/bigquery/' },
+      performance: { getEntriesByType: () => [{ type }] }, sessionStorage: { getItem: () => saved },
+      document: { documentElement: { dataset: { siteView: view } }, querySelector: () => overview,
+        getElementById: () => null, querySelectorAll: selector => selector === '.mobile-service-context' ? [overview] : [] } };
+    runInNewContext(early, context);
+    assert.equal(overview.open, expected, `${view} ${hash} ${type}`);
+    if (view !== 'mobile') continue;
+    if (type === 'navigate') {
+      overview.open = !expected;
+      runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
+      assert.equal(overview.open, !expected, 'a user toggle before initialization is preserved');
+      assert.equal(overview.dataset.mobileInitial, undefined);
+      overview.open = true; overview.dataset.mobileOpen = 'false'; context.location.href = 'https://local.cloud/services/bigquery/';
+      runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
+      assert.equal(overview.open, false, 'returning from Desktop uses the saved Mobile choice');
+    }
+    overview.dataset.mobileReady = 'true'; overview.open = true;
+    runInNewContext(early, context);
+    assert.equal(overview.open, true, 'content navigation replay leaves an initialized disclosure alone');
+  }
+});
+
 test('native Mobile history restores a valid horizontal offset and ignores corrupt scroll state', () => {
   for (const saved of ['1200', 'broken', '-1', null]) {
     const strip={dataset:{},scrollLeft:17,clientWidth:320,querySelector:()=>({offsetLeft:600,offsetWidth:80})};
