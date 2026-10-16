@@ -2,7 +2,7 @@
 [data-mobile-only]{display:none!important}
 .mobile-view{
  font-size:100%;
- --bg:#f7f8fa;--bg-2:#eef0f3;--surface:#fcfcfd;--surface-2:#f1f3f4;--text:#202020;--text-2:#465367;--text-3:#465367;--accent:#2f58ed;--accent-strong:#2448ce;--line:#d6dbe1;--mobile-dock-space:calc(6rem + env(safe-area-inset-bottom,0px));
+ --bg:#e6ecf3;--bg-2:#eef0f3;--surface:#fcfcfd;--surface-2:#f1f3f4;--text:#202020;--text-2:#465367;--text-3:#465367;--accent:#2f58ed;--accent-strong:#2448ce;--line:#d6dbe1;--mobile-dock-space:calc(6rem + env(safe-area-inset-bottom,0px));
  scroll-behavior:auto;
  & body{overflow:auto;padding-bottom:var(--mobile-dock-space);background:var(--bg)}
  & body::before,& .site-view-switch{display:none}

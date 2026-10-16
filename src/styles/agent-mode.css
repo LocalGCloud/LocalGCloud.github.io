@@ -9,7 +9,7 @@ html:root[data-audience="agents"]{
   --accent:#315f9c;--accent-strong:#315f9c;--accent-soft:#f1f3f4;--focus-ring:var(--accent);--success-ink:#315f9c;--success-soft:#e8f0fe;
   --font-display:var(--font-mono);--font-body:var(--font-mono);
   --radius-inline:0;--radius-control:0;--radius-panel:0;--radius-feature:0;--radius-pill:0;
-  & .desktop-background{inset:0;animation:none;background:var(--bg)}
+  & .desktop-background{inset:0;animation:none;background:var(--desktop-bg)}
   & :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar,.mobile-dock){background:var(--surface-2);color:var(--text);border-color:var(--line)}
   @media(min-width:64rem){&.desktop-view :is(.desktop-toolbar,.desktop-titlebar,.desktop-taskbar){text-transform:uppercase;letter-spacing:.04em;border-width:2px;font-size:.75rem}}
   & :is(.desktop-chrome,.desktop-titlebar,.desktop-taskbar) :is(a,button){transition:none}
