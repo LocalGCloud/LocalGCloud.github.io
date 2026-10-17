@@ -419,14 +419,19 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           document.head.append(script);
         };
         loadCopyButtons();
-        document.addEventListener('astro:page-load', loadCopyButtons);
+
         window.addEventListener('lc:audience-change', loadCopyButtons);
-        let agentLoading;
+        let agentLoading = false;
         const loadAgentDocument = () => {
           if (document.documentElement.dataset.audience !== 'agents' || agentLoading) return;
-          agentLoading = import(agentDocumentScript).catch(error => { agentLoading = undefined; console.warn('Agent presentation unavailable', error); });
+          agentLoading = true;
+          const script = document.createElement('script');
+          script.type = 'module'; script.src = new URL(agentDocumentScript, location.href).href;
+          script.onerror = () => { agentLoading = false; script.remove(); };
+          document.head.append(script);
         };
         loadAgentDocument();
+        document.addEventListener('astro:page-load', () => { loadCopyButtons(); loadAgentDocument(); });
         window.addEventListener('lc:audience-change', loadAgentDocument);
       })();
     </script>

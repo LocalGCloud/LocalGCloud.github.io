@@ -217,3 +217,17 @@ test('agent documents preserve client selection, disclosure state, Markdown link
     runInNewContext('('+initAgentDocument.toString()+')()', context);assert.equal(backdrop.children.length,1);
   }
 });
+
+
+test('agent controller loads once through the trusted module loader and retries a failed request', () => {
+  const source = [...read('../src/layouts/BaseLayout.astro').matchAll(/<script\b[^>]*data-critical-bootstrap[^>]*>([\s\S]*?)<\/script>/g)].map(match=>match[1]).find(code=>code.includes('.copy-btn[data-copy-script]'));
+  const events = new Map(), windowEvents = new Map(), loaded = [];
+  const document = {documentElement:{dataset:{audience:'humans'}},querySelector:()=>null,
+    createElement:()=>({remove(){}}),head:{append(script){loaded.push(script);}},addEventListener:(name,fn)=>events.set(name,fn)};
+  runInNewContext(source,{document,URL,agentDocumentScript:'/_astro/agent-document.test.mjs',location:{href:'https://local.cloud/'},window:{addEventListener:(name,fn)=>windowEvents.set(name,fn)}});
+  assert.equal(loaded.length,0,'human visits fetch no agent controller');
+  document.documentElement.dataset.audience='agents';windowEvents.get('lc:audience-change')();
+  assert.equal(loaded.length,1);assert.equal(loaded[0].type,'module');assert.equal(loaded[0].src,'https://local.cloud/_astro/agent-document.test.mjs');
+  events.get('astro:page-load')();assert.equal(loaded.length,1);
+  loaded[0].onerror();events.get('astro:page-load')();assert.equal(loaded.length,2);
+});
