@@ -121,6 +121,7 @@ public class Hello {
   },
   pubsub: {
     title: 'Create a topic and publish a message', label: 'Java',
+    verification: 'Publishing returns a message ID, and the finally block deletes the temporary topic. This checks publishing; use the Python or gcloud example to verify subscriber delivery.',
     summary: 'Publish a message to a new topic; Pub/Sub lets producers send events independently of their consumers.',
     description: 'Java needs an explicit plaintext channel and no-credentials provider. Requires JDK 17+ and Maven.',
     setup: javaSetup('pubsub', '1.157.0'), filename: 'Hello.java',

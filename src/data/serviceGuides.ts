@@ -271,6 +271,12 @@ const sdkExampleSummaries: Record<string, string> = {
   "bigquery": "Run a deterministic SQL query; BigQuery provides tabular results for analytical application workflows."
 };
 
+// Literal values printed by the maintained examples below.
+const sdkExampleOutputs: Record<string, string> = {
+  gcs: 'Hello from LocalCloud!', pubsub: 'Hello, Pub/Sub!', bigquery: 'Hello from LocalCloud!',
+  firestore: 'hello', bigtable: 'hello', spanner: 'hello',
+};
+
 // Reuse the maintained SDK guide so the inline samples and linked guide stay identical.
 export function getServiceCodeExamples(serviceId: string, sdkSource: string): ServiceCodeExample[] {
   const maintainedExamples = (serviceGuides[serviceId].examples ?? []).filter((example) => example.install).map((example) => {
@@ -284,6 +290,7 @@ export function getServiceCodeExamples(serviceId: string, sdkSource: string): Se
     return {
       ...example,
       summary: sdkExampleSummaries[serviceId],
+      output: sdkExampleOutputs[serviceId],
       code: snippet[2],
       filename: isPython ? 'hello.py' : 'hello.cjs',
       setup: isPython
@@ -294,7 +301,7 @@ export function getServiceCodeExamples(serviceId: string, sdkSource: string): Se
   });
   return [...maintainedExamples, ...getServiceClientExamples(serviceId)].map(example => {
     const discovery = /^(List |Browse |Read structured log entries)/.test(example.title);
-    const verification = discovery
+    const verification = example.verification ?? (discovery
       ? 'The request succeeds. An empty list or no printed rows is valid before matching resources exist. Continue with the documented workflows for a resource test.'
       : example.output
       ? `The command completes successfully and prints the expected output shown below.`
@@ -306,7 +313,7 @@ export function getServiceCodeExamples(serviceId: string, sdkSource: string): Se
       ? 'The query response contains a row whose value is 1. A successful HTTP status alone does not verify the query result.'
       : example.label === 'gcloud CLI' && serviceId === 'pubsub'
       ? 'The pulled message contains Hello from LocalCloud!. The trap removes the subscription and topic on exit; verify the message contents before treating the test as successful.'
-      : 'The SDK returns the read-back value without an exception; all assertions pass. Keep cleanup for temporary resources.';
+      : 'The SDK returns the read-back value without an exception; all assertions pass. Keep cleanup for temporary resources.');
     return { ...example, discovery, verification };
   });
 }
