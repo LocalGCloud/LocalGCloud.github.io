@@ -89,7 +89,7 @@ const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
       root.dataset.tabsReady = 'true';
 
       const tabs = Array.from(root.querySelectorAll('[role="tab"]'));
-      const panels = root.querySelectorAll('[role="tabpanel"]');
+      const panels = root.querySelectorAll('[data-panel-index]');
 
       function activateTab(tab) {
         const idx = tab.getAttribute('data-tab-index');

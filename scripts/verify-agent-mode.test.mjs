@@ -231,3 +231,20 @@ test('agent controller loads once through the trusted module loader and retries 
   events.get('astro:page-load')();assert.equal(loaded.length,1);
   loaded[0].onerror();events.get('astro:page-load')();assert.equal(loaded.length,2);
 });
+
+
+test('client tabs bind agent regions after cached navigation and work when human mode returns', () => {
+  const node = attrs => ({attrs,events:new Map(),hidden:false,classList:{toggle(){}},
+    getAttribute(name){return this.attrs[name];},setAttribute(name,value){this.attrs[name]=value;if(name==='hidden')this.hidden=true;},
+    removeAttribute(name){delete this.attrs[name];if(name==='hidden')this.hidden=false;},
+    addEventListener(name,fn){this.events.set(name,fn);},focus(){} });
+  const tabs=[0,1].map(i=>node({'data-tab-index':String(i),'aria-selected':String(i===0)}));
+  const panels=[0,1].map(i=>node({'data-panel-index':String(i),role:'region'}));
+  const root={dataset:{},querySelectorAll:selector=>selector==='[role="tab"]'?tabs:selector==='[data-panel-index]'?panels:[],querySelector:()=>({addEventListener(){}})};
+  const source=read('../src/components/CodeTabs.astro').match(/<script>([\s\S]*?)<\/script>/)[1];
+  runInNewContext(source,{document:{querySelectorAll:()=>[root],addEventListener(){}}});
+  panels.forEach(panel=>panel.attrs.role='tabpanel');
+  tabs[1].events.get('click')();
+  assert.equal(panels[0].hidden,true);assert.equal(panels[1].hidden,false);
+  assert.equal(tabs[1].attrs['aria-selected'],'true');
+});

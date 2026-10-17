@@ -19,7 +19,7 @@ html:root[data-audience="agents"]{
  & .desktop-background{display:block!important;position:fixed;inset:0;background:radial-gradient(#507d4b16 1px,transparent 1px) 0 0/5px 5px,var(--bg);pointer-events:none;overflow:hidden;z-index:0}
  & .agent-document-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:28px;font:12px/1.6 var(--font-mono);color:var(--text-2)}
  & .agent-document-header nav{display:flex;flex-wrap:wrap;gap:10px 20px}
- & .agent-document-header :is(a,button){color:var(--text-2);padding:0;border:0;background:none;font:inherit;border-radius:0;cursor:pointer;box-shadow:none}
+ & .agent-document-header :is(a,button){color:var(--text-2);padding:0;border:0;background:none;font:inherit;border-radius:0;cursor:pointer;box-shadow:none;transition:none}
  & .agent-document-header .agent-document-brand{color:var(--accent);font-weight:600;text-decoration:none}
  & .agent-document-header :is(a:hover,button:hover,a[aria-current]){color:var(--accent);text-decoration:underline;text-underline-offset:4px}
  & .agent-document-markdown{display:block;margin-bottom:28px;font-size:12px;color:var(--accent);text-decoration:underline;text-underline-offset:4px}
