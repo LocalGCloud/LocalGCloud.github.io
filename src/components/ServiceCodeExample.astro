@@ -12,7 +12,13 @@ const language = example.filename?.endsWith('.py') ? 'python' : example.filename
     <h3 class="text-xl font-semibold">{example.title}</h3>
     <p class="mt-2 leading-7" data-example-summary>{example.summary}</p>
     <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">{example.description}</p>
+    {example.discovery && <p class="mt-2 text-sm" data-example-discovery>Discovery check · reads existing local state.</p>}
   </div>
+  {example.setup && <details class="text-sm">
+    <summary class="cursor-pointer font-semibold">SDK dependencies</summary>
+    <div class="mt-3"><p class="mb-2">Run in a new example directory</p>
+    <ServiceCodeBlock code={example.setup} label={`${example.label} dependency setup`} /></div>
+  </details>}
   {example.environment && <div>
     <h4 class="mb-2 font-semibold">Configure {example.label}</h4>
     <ServiceCodeBlock code={example.environment} label={`${example.label} environment exports`} marker="data-client-environment" />
@@ -21,15 +27,11 @@ const language = example.filename?.endsWith('.py') ? 'python' : example.filename
     <h4 class="mb-2 font-semibold">{example.filename ? `Save as ${example.filename}` : 'Run in your terminal'}</h4>
     <ServiceCodeBlock code={example.code} lang={language} label={`${example.label} example`} marker="data-example-code" />
   </div>
-  {example.setup && <details class="text-sm">
-    <summary class="cursor-pointer font-semibold">SDK dependencies</summary>
-    <div class="mt-3"><p class="mb-2">Run in a new example directory</p>
-    <ServiceCodeBlock code={example.setup} label={`${example.label} dependency setup`} /></div>
-  </details>}
   {example.run && <div>
     <h4 class="mb-2 font-semibold">Run the example</h4>
     <ServiceCodeBlock code={example.run} label={`${example.label} run command`} />
   </div>}
+  {example.verification && <div><h4 class="mb-2 font-semibold">Verify the result</h4><p data-example-verification>{example.verification}</p></div>}
   {example.output && <div><h4 class="mb-2 font-semibold">Expected output</h4><ServiceCodeBlock code={example.output} lang="text" label="Expected output" /></div>}
   {example.href && <a class="inline-block text-sm font-medium text-[var(--accent-strong)]" href={example.href}>Full example guide <span aria-hidden="true">→</span></a>}
 </article>

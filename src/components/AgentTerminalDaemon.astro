@@ -1,34 +1,28 @@
 ---
-import { agentModeExamples } from '../data/agentModeExamples';
+import { agentModeExamples, agentOverview } from '../data/agentModeExamples';
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
-const sections = {
-  setup: { title: 'Start the runtime', description: 'Install the latest CLI, start a local runtime, and export its mapped endpoints in the same shell.', result: 'The readiness request succeeds before you create a client.' },
-  python: { title: 'Verify an SDK call', description: 'Python · BigQuery. Execute a constant query against the local endpoint.', result: 'The query returns ok = 1 and the assertion passes.' },
-  config: { title: 'Configure the project', description: 'Save as localcloud.yaml to select the local project and services.', result: 'Start LocalCloud from this directory to use the configuration.' },
-};
 ---
 <div class="agent-terminal" aria-label="LocalCloud workflow examples">
   {agentModeExamples.map(example => <section class="agent-terminal__pane" aria-labelledby={`agent-section-${example.id}`}>
-    <h2 id={`agent-section-${example.id}`}>{sections[example.id].title}</h2>
-    <p>{sections[example.id].description}</p>
+    <h2 id={`agent-section-${example.id}`}>{example.title}</h2>
+    <p>{example.description}</p>
+    {example.setup && <><h3>SDK dependencies</h3><pre tabindex="0" role="region" aria-label="Python dependencies"><code>{example.setup}</code></pre></>}
+    <h3>{example.label}</h3>
     <pre tabindex="0" role="region" aria-label={example.label}><code>{example.code}</code></pre>
-    <p class="agent-terminal__note">Verify: {sections[example.id].result}</p>
+    {example.run && <><h3>Run the example</h3><pre tabindex="0" role="region" aria-label="Python run command"><code>{example.run}</code></pre></>}
+    <p class="agent-terminal__note">Expected result: {example.result}</p>
   </section>)}
   <section>
-    <h2>Choose a service</h2>
-    <p>Each guide lists connection variables, client examples, and the behavior to verify.</p>
-    <nav aria-label="Service guides"><a href={base + 'services/'}>Browse all service guides</a></nav>
-  </section>
-  <section>
-    <h2>Scope and reference</h2>
-    <p>Use LocalCloud for development, tests, and CI. Validate production endpoints, authentication, IAM, quotas, and regional behavior against Google Cloud.</p>
-    <nav aria-label="Agent references"><a href={base + 'ai/agents.md'}>Agent instructions</a> · <a href={base + 'llms.txt'}>Documentation index</a> · <a href={base + 'docs/mcp/'}>MCP setup</a></nav>
+    <h2>Scope and references</h2>
+    <p>{agentOverview.scope}</p>
+    <ul>{agentOverview.references.map(item => <li><a href={base + item.href}>{item.title}</a></li>)}</ul>
   </section>
 </div>
 <style>
  .agent-terminal{font:14px/1.8 var(--font-mono);min-width:0}
  section{margin-top:32px}
+ h3{font:500 13px/1.6 var(--font-mono);color:var(--text-2);margin:16px 0 8px}
  h2{margin:0 0 12px;font:600 16px/1.5 var(--font-mono);color:var(--accent)}
  p{margin:0 0 14px;color:var(--text-2)}
  pre{margin:12px 0;font:13px/1.8 var(--font-mono);white-space:pre;overflow:auto;max-width:100%}

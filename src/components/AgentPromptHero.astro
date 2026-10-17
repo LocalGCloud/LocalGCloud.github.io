@@ -1,13 +1,20 @@
 ---
+import { agentOverview } from '../data/agentModeExamples';
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 ---
 <section class="lc-agent-start" aria-labelledby="agent-bootstrap-title">
-  <h2 id="agent-bootstrap-title">Start with context</h2>
-  <p>Read the setup instructions, inspect the repository, configure local endpoints, and verify the first SDK call.</p>
-  <a href={base + 'ai/agent-template.md'}>https://local.cloud/ai/agent-template.md</a>
+  <h2 id="agent-bootstrap-title">Choose your next step</h2>
+  <ul>{agentOverview.routes.map(item => <li><a href={base + item.href}>{item.title}</a> — {item.description}</li>)}</ul>
+  <h2>Start with repository context</h2>
+  <p>{agentOverview.context}</p>
+  <p>Read <a href={base + 'ai/agents.md'}>the agent instructions</a>. Merge relevant <a href={base + 'ai/agent-template.md'}>AGENTS.md guidance</a> into existing repository instructions; preserve the project's own rules.</p>
+  <h2>Prerequisites</h2>
+  <p>{agentOverview.prerequisites} <a href={base + 'docs/#install-the-cli'}>Setup guide</a></p>
 </section>
 <style>
+ ul{padding-left:20px;margin:0 0 24px}
+ li{margin-bottom:10px}
  h2{margin:0 0 12px;color:var(--accent);font:600 16px/1.5 var(--font-mono)}
  p{margin:0 0 14px;color:var(--text-2)}
  a{color:var(--accent);text-decoration:underline;text-underline-offset:4px;overflow-wrap:anywhere}

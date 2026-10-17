@@ -10,6 +10,8 @@ export interface ServiceCodeExample {
   run?: string;
   href?: string;
   output?: string;
+  discovery?: boolean;
+  verification?: string;
 }
 
 const javaSetup = (artifact: string, version: string) => `cat > pom.xml <<'XML'

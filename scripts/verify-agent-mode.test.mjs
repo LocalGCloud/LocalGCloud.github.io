@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
-import { transformSync } from 'esbuild';
+import { transformSync, buildSync } from 'esbuild';
 import { renderMarkdownTwin } from '../src/utils/render-markdown-twin.mjs';
 
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
@@ -109,6 +109,31 @@ test('Markdown conversion strips agent decoration while retaining technical cont
   assert.doesNotMatch(markdown, /eyebrow|captcha|decoration|fake registry/);
 });
 
+test('agent overview shares executable examples and reading order with its Markdown', () => {
+  const source = buildSync({ entryPoints: [new URL('../src/data/agentModeExamples.ts', import.meta.url).pathname], bundle: true, platform: 'node', format: 'cjs', write: false }).outputFiles[0].text;
+  const context = { module: { exports: {} }, structuredClone, URL };
+  runInNewContext(source, context);
+  const { agentModeExamples: examples, agentOverview, agentOverviewMarkdown: markdown } = context.module.exports;
+  assert.ok(markdown.includes(agentOverview.description));
+  let cursor = -1;
+  for (const example of examples) {
+    const next = markdown.indexOf('## ' + example.title);
+    assert.ok(next > cursor, example.id);
+    assert.ok(markdown.includes(example.code), example.id);
+    assert.ok(markdown.includes(example.result), example.id);
+    cursor = next;
+  }
+  assert.deepEqual(Array.from(examples, example => example.id), ['config', 'setup', 'python']);
+  const setup = examples.find(example => example.id === 'setup');
+  assert.doesNotMatch(setup.code, /localhost:\d+|localcloud console/);
+  assert.match(setup.code, /localcloud start --local-only/);
+  const sdk = examples.find(example => example.id === 'python');
+  assert.match(sdk.setup, /pip install google-cloud-bigquery/);
+  assert.equal(sdk.run, 'python assert_query.py');
+  assert.match(sdk.code, /assert rows\[0\]\.ok == 1/);
+  assert.match(sdk.code, /print\("ok=1"\)/);
+});
+
 test('repeated page lifecycle events do not double-bind the agent puzzle', () => {
   const listeners = new Map();
   const node = () => ({ dataset: {}, classList: { add() {}, remove() {}, contains() { return false; } }, setAttribute() {}, addEventListener(name, fn) { const list = listeners.get(this) || []; list.push(fn); listeners.set(this, list); } });
@@ -211,6 +236,7 @@ test('agent documents preserve client selection, disclosure state, Markdown link
     document.hidden=true;events.get('visibilitychange')();assert.equal(rain.dataset.running,'false');
     document.hidden=false;events.get('visibilitychange')();
     buttonEvents.get('click')();assert.equal(rain.dataset.running,String(!expected));
+    alternate.href='/index.md';events.get('lc:page-mounted')();assert.equal(markdown.href,'/ai/overview.md');
     alternate.href='/docs/index.md';events.get('astro:page-load')();assert.equal(markdown.href,'/docs/index.md');
     root.dataset.audience='humans';windowEvents.get('lc:audience-change')();
     assert.equal(panel.hidden,true);assert.equal(panel.attrs.role,'tabpanel');assert.equal(detail.open,false);assert.equal(rain.hidden,true);

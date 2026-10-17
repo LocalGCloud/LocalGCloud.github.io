@@ -292,7 +292,23 @@ export function getServiceCodeExamples(serviceId: string, sdkSource: string): Se
       run: isPython ? 'python hello.py' : 'node hello.cjs',
     };
   });
-  return [...maintainedExamples, ...getServiceClientExamples(serviceId)];
+  return [...maintainedExamples, ...getServiceClientExamples(serviceId)].map(example => {
+    const discovery = /^(List |Browse |Read structured log entries)/.test(example.title);
+    const verification = discovery
+      ? 'The request succeeds. An empty list or no printed rows is valid before matching resources exist. Continue with the documented workflows for a resource test.'
+      : example.output
+      ? `The command completes successfully and prints the expected output shown below.`
+      : serviceId === 'memorystore'
+      ? 'SET returns OK, GET returns Hello from LocalCloud!, and DEL removes the temporary key. The key also expires after 60 seconds.'
+      : serviceId === 'sheets'
+      ? 'The response contains the values for the seeded spreadsheet ID and exact A1 range. Seed the fixture first; this read-only request does not create a spreadsheet.'
+      : example.label === 'HTTP' && serviceId === 'bigquery'
+      ? 'The query response contains a row whose value is 1. A successful HTTP status alone does not verify the query result.'
+      : example.label === 'gcloud CLI' && serviceId === 'pubsub'
+      ? 'The pulled message contains Hello from LocalCloud!. The trap removes the subscription and topic on exit; verify the message contents before treating the test as successful.'
+      : 'The SDK returns the read-back value without an exception; all assertions pass. Keep cleanup for temporary resources.';
+    return { ...example, discovery, verification };
+  });
 }
 
 // These are the services explicitly listed in the maintained Terraform guide.

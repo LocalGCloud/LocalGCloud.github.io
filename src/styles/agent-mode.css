@@ -1,5 +1,5 @@
 /* Agent documents retain the Matrix palette without the desktop-window presentation. */
-.agent-document-header,.agent-document-markdown,.agent-code-nav,.agent-code-label{display:none}
+.agent-document-header,.agent-document-markdown,.agent-code-nav,.agent-code-label,.agent-catalog-reference,.agent-catalog-connection{display:none}
 html:root[data-audience="agents"]{
  color-scheme:dark;
  --bg:#050d07;--bg-2:#09140c;--surface:#09140c;--surface-2:#152b18;--surface-3:#284e2a;
@@ -52,6 +52,8 @@ html:root[data-audience="agents"]{
  & .site-section+.site-section{margin-top:36px}
  & .site-eyebrow{display:none}
  & .service-filter__search{padding:10px 0!important;background:none!important;border:0;border-bottom:1px solid var(--line);border-radius:0!important}
+ & .agent-catalog-reference{display:block;margin:20px 0;line-height:1.8}
+ & .agent-catalog-reference a{color:var(--accent);text-decoration:underline}
  & .service-filter__input{background:none!important;color:var(--text);border:0;border-radius:0}
  & [data-service-name]{display:block;padding:0!important;margin-block:24px}
  & [data-service-name] span:has(>img),& [data-service-name]>.mt-5{display:none}
@@ -62,7 +64,9 @@ html:root[data-audience="agents"]{
  & .service-hero-grid{display:block!important}
  & .service-hero-connection{margin-top:32px;padding:0!important}
  & .service-hero-icon{display:none}
- & :is(.mobile-service-context,[data-service-connection-summary]){display:none!important}
+ & [data-service-connection-summary]{display:none!important}
+ & .mobile-service-context{display:block!important}
+ & .mobile-service-context>summary{display:none!important}
  & .field-home .field-home__shell>:not(.field-hero){display:none!important}
  & .field-home .field-hero__headline--agent{display:none!important}
  & .field-home .field-hero{border:0!important;margin:0!important}

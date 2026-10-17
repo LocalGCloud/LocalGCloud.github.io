@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import ServiceIcon from '../../components/ServiceIcon.astro';
+import { serviceGuides } from '../../data/serviceGuides';
 import ServiceFilterBootstrap from '../../components/ServiceFilterBootstrap.astro';
 import { availableServiceCount, comingSoonServiceCount, getServiceSignalLabel, publishedServiceCount, serviceCatalogGroups } from '../../data/services';
 
@@ -26,7 +27,7 @@ const categoryGroups = serviceCatalogGroups;
           <template data-desktop-headline data-desktop-copy data-pagefind-ignore><span data-desktop-copy data-pagefind-ignore>Service catalog</span></template>
           <p class="mt-4 text-lg leading-8 text-[var(--text-2)]">
             <span data-classic-copy>Find connection details, workflows, and limits for every local service. Services that don't run locally are marked Unsupported.</span>
-            <span data-desktop-copy data-pagefind-ignore>Find a local service, explore its workflows and connect your tools.<br />{availableServiceCount} local services</span>
+            <span data-desktop-copy data-pagefind-ignore>Choose a service for your application task, check its startup requirements, then open its client examples.<br />{availableServiceCount} local services</span>
           </p>
         </div>
       </div>
@@ -41,6 +42,7 @@ const categoryGroups = serviceCatalogGroups;
           </div>
           <a class="desktop-catalog-compatibility" href={base + 'compatibility/'} data-desktop-copy data-pagefind-ignore>Compatibility</a>
         </div>
+        <p class="agent-catalog-reference">The ports shown are defaults. Export <code>eval "$(localcloud env)"</code> to use the runtime's actual endpoints. See the <a href={base + 'ai/services.md'}>service connection reference</a> and <a href={base + 'ai/compatibility.md'}>capabilities and boundaries</a> as Markdown.</p>
         <nav class="desktop-catalog-categories" aria-label="Service categories" data-desktop-copy data-pagefind-ignore>{categoryGroups.map((group) => <a href={'#catalog-' + group.category}>{group.title}</a>)}</nav>
         <p class="catalog-empty" data-service-empty hidden data-desktop-copy data-pagefind-ignore>No matching services. Try another service name.</p>
       </div>
@@ -74,7 +76,8 @@ const categoryGroups = serviceCatalogGroups;
                   </div>
                   <span class:list={['site-chip', getServiceSignalLabel(service) === 'Unsupported' ? 'site-chip--warn' : 'site-chip--accent']}>{getServiceSignalLabel(service)}</span>
                 </div>
-                <p class="mt-4 text-sm leading-7 text-[var(--text-2)]" title={service.description}>{service.description}</p>
+                <p class="mt-4 text-sm leading-7 text-[var(--text-2)]" title={service.description}>{service.marketingStatus === 'supported' ? serviceGuides[service.id].whenToUse : service.description}</p>
+                {service.marketingStatus === 'supported' && <p class="agent-catalog-connection">ID: <code>{service.id}</code> · {service.registryDefaultEnabled ? 'Starts by default' : 'Opt-in: include this ID in the exact enabled-service list'}<br /><code>{service.envVar.split('=')[0]}</code></p>}
                 <div class="mt-5 text-sm font-semibold text-[var(--text)]">{service.category === 'auxiliary' ? 'View integration guide' : 'View service guide'}</div>
               </a>
             ))}

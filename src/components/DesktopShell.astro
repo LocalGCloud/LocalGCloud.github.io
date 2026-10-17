@@ -111,7 +111,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
           <button type="button" data-target-audience="humans">Human view</button><button type="button" data-agent-rain-toggle aria-label="Play background animation" title="Play background animation">▶</button>
         </nav>
       </header>
-      <a class="agent-document-markdown" data-agent-markdown href={markdownPath ?? undefined} hidden={!markdownPath}>Read this page as Markdown ↗</a>
+      <a class="agent-document-markdown" data-agent-markdown href={path === base ? base + 'ai/overview.md' : markdownPath ?? undefined} hidden={!markdownPath}>Read this page as Markdown ↗</a>
       <header class="desktop-titlebar" data-window-titlebar tabindex="-1" aria-label="Current content window" data-pagefind-ignore>
         <div class="desktop-controls">
           <button type="button" class="desktop-close" data-window-action="close" aria-label="Close current page window" title="Close window"></button>

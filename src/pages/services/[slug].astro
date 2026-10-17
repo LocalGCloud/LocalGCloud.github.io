@@ -188,10 +188,13 @@ const structuredData = [
       <div class="container">
         <div class="site-panel min-w-0 p-5 reveal sm:p-6">
           <h2 id="usage-title" class="mt-3 text-2xl font-semibold tracking-tight">Example usage</h2>
+          <p class="mt-3 text-sm leading-6" data-service-prerequisites>Service ID: <code>{service.id}</code>. {service.registryDefaultEnabled ? 'Starts by default.' : 'Enable this service in the exact list of services your project starts; see the opt-in instruction above.'} Use an already running LocalCloud runtime for the examples below.</p>
           <p class="mt-3 text-sm leading-6 text-[var(--text-2)]">Export the local project and mapped endpoints before creating a client. <a class="font-medium text-[var(--accent-strong)]" href={`${base}docs/`}>First-time setup <span aria-hidden="true">→</span></a></p>
           <div class="mt-5">
             <ServiceCodeBlock code={environmentSetup} label="LocalCloud environment exports" marker="data-example-environment" />
           </div>
+          <p class="mt-3 text-sm leading-6">Run exports in the client process. Keep the generated ports and apply the endpoint and credential settings shown for your chosen client.</p>
+          {codeExamples.some(example => (example.code + (example.environment ?? '')).includes('SERVICE_USAGE_EMULATOR_HOST')) && <p class="mt-3 text-sm leading-6">REST gateway examples use the generated HTTP address in <code>SERVICE_USAGE_EMULATOR_HOST</code>; native SDKs can use a different protocol.</p>}
           {codeExamples.length > 0 && <div class="service-examples mt-6">
             <CodeTabs labels={codeExamples.map((example) => example.label)}>
               {codeExamples[0] && <ServiceCodeExample slot="tab-0" example={codeExamples[0]} />}
@@ -204,6 +207,10 @@ const structuredData = [
 
         </div>
       </div>
+    </section>}
+
+    {!isPlanned && <section class="site-section site-section--tight" aria-label="Verify and clean up">
+      <div class="container"><p>Verify a resource workflow by creating isolated state, performing the operation, and reading the result back. Run cleanup even after a failure; delete only test-owned resources.</p><p class="mt-3">Connection failed? Check <code>localcloud status --verbose</code>, enabled services, and client exports. Stop accidental Google Cloud calls; correct local routing before retrying.</p></div>
     </section>}
 
     {!isPlanned && <section id="workflows" class="site-section site-section--tight scroll-mt-24">

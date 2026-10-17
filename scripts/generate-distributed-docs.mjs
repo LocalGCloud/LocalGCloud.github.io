@@ -152,8 +152,9 @@ ${quickStart.script}
 
 ## Agent resources
 
+- [Agent overview](${site}ai/overview.md): purpose, task navigation, and a first local SDK call
 - [Agent guide](${site}ai/agents.md): install-first quick start, rules, and workflow for coding agents
-- [AGENTS.md template](${site}ai/agent-template.md): repository instructions to copy into a project
+- [AGENTS.md template](${site}ai/agent-template.md): guidance to merge into existing repository instructions
 - [Service matrix](${site}ai/services.md): ports, environment variables, and guides
 - [Capabilities and boundaries](${site}ai/compatibility.md): what each service runs locally
 - [Docs index for agents](${site}ai/docs.md)

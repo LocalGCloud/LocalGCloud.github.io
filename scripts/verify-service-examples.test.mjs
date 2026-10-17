@@ -17,6 +17,8 @@ test('every supported service has usable client examples; unsupported services h
     assert.equal(new Set(examples.map((example) => example.label)).size, examples.length, service.id);
     for (const example of examples) {
       assert.ok(example.title && example.code.trim() && example.description, `${service.id}: ${example.label}`);
+      assert.ok(example.verification?.trim(), `${service.id}: ${example.label} needs an observable expected result`);
+      if (example.discovery) assert.match(example.verification, /empty list|no printed rows/);
       assert.ok(example.summary?.trim(), `${service.id}: ${example.label} needs a purpose summary`);
       assert.doesNotMatch(example.summary, /\n/, `${service.id}: keep the purpose summary to one sentence`);
       if (example.label === 'gcloud CLI') {

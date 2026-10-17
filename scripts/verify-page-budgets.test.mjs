@@ -34,6 +34,9 @@ const classicHomeBytes = { rawBytes: 4_500, gzipBytes: 700, styleBytes: 2_000 };
 // Approved plain agent document adds about 6KB HTML/CSS and 1.4KB gzip on the largest service.
 // Bound that shared presentation and its agent-only controller; other ceilings stay intact.
 const agentDocumentBytes = { rawBytes: 6_500, gzipBytes: 1_500, startupScriptBytes: 4_500 };
+// Approved service instructions grow the largest guides by about 2.3KB raw / 0.6KB gzip.
+// Bound only pages rendering these verification notes; keep base and startup limits.
+const serviceInstructionBytes = { rawBytes: 3_000, gzipBytes: 500 };
 const audienceSwitchBytes = { rawBytes: 700, startupScriptBytes: 1_200 };
 // 2026-10-14: Home also carries the statically rendered agent view (setup prompt, agent
 // verification puzzle, daemon terminal and spec cards) so agents reading the HTML see it.
@@ -60,8 +63,11 @@ const markdownTwinBytes = 15_400;
 const guideDocumentBytes = { 'docs/github-actions.md': 31_300, 'docs/mcp.md': 17_200 };
 const githubActionsGzipBytes = 44_300;
 // 2026-10-16: client examples and connection exports across all 25 supported service
-// guides bring the measured technical corpus to 342,155 bytes; allow the usual 5% margin.
-const llmsFullBytes = 359_300;
+// guides brought the measured technical corpus to 342,155 bytes.
+// Approved agent task navigation, service prerequisites, and observable example outcomes
+// bring it to about 384KB. Bound it by the generator's existing 400KB hard ceiling;
+// retain the base HTML, startup JS, individual document, and Markdown-twin ceilings.
+const llmsFullBytes = 400_000;
 const isMarkdownTwin = (file) => /^(?:docs|services|compare)\/[^/]+\.md$/.test(file);
 
 const dist = new URL('../dist/', import.meta.url).pathname;
@@ -99,6 +105,7 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     if (html.includes('data-desktop-manifest=')) limits.startupScriptBytes += desktopPrefetchBytes;
     if (html.includes('data-agent-markdown')) for (const [metric, extra] of Object.entries(agentDocumentBytes)) limits[metric] += extra;
     if (html.includes('data-code-copy-template')) limits.rawBytes += codeCopyTemplateBytes;
+    if (html.includes('data-example-verification')) for (const [metric, extra] of Object.entries(serviceInstructionBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(mobileHomeBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(classicHomeBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(agentHomeBytes)) limits[metric] += extra;

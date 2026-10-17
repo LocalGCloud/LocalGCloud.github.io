@@ -88,7 +88,7 @@ export const agentsExecutionGuide = `# LocalCloud agent guide
 
 ${agenticFacts.positioning}
 
-To give a repository the same instructions, copy https://local.cloud/ai/agent-template.md into it as \`AGENTS.md\`.
+To give a repository the same instructions, merge relevant guidance from https://local.cloud/ai/agent-template.md into its \`AGENTS.md\`. Preserve existing project instructions.
 
 ## Start LocalCloud
 ${fence(quickStart.script)}
@@ -134,6 +134,7 @@ export const agentResourceIndexMarkdown = `# LocalCloud agent Markdown resources
 The HTML pages on https://local.cloud/ are canonical. These raw Markdown routes give AI agents the same facts in compact form; if a route and an HTML page disagree, follow the HTML page.
 
 ## Agent routes
+- https://local.cloud/ai/overview.md — overview, task navigation, and a verified-call walkthrough.
 - https://local.cloud/ai/agents.md — agent guide: quick start, rules, and workflow.
 - https://local.cloud/ai/agent-template.md — AGENTS.md template for a repository.
 - https://local.cloud/ai/services.md — ports, environment variables, and guides for every service.
@@ -155,6 +156,7 @@ const serviceRows = localServices
 	.map((service) =>
 		[
 			service.name,
+			`\`${service.id}\``,
 			service.registryDefaultEnabled ? "on" : `opt-in (\`${service.id}\`)`,
 			service.endpointLabel,
 			`\`${service.envVar}\``,
@@ -170,10 +172,10 @@ export const agentServicesMarkdown = `# LocalCloud services for agents
 
 ${servicesSummary}
 
-Once LocalCloud is running (https://local.cloud/ai/agents.md), \`localcloud env\` exports these values with the ports the CLI actually uses.
+Ports in this table are defaults. Use the generated SDK settings in the client process. Once LocalCloud is running (https://local.cloud/ai/agents.md), \`localcloud env\` exports these values with the ports the CLI actually uses.
 
-| Service | Default | Endpoints | Environment variable | Guide |
-| --- | --- | --- | --- | --- |
+| Service | ID | Default | Endpoints | Environment variable | Guide |
+| --- | --- | --- | --- | --- | --- |
 ${serviceRows}
 
 ## Unsupported locally
@@ -221,6 +223,7 @@ ${dockerFallback}
 - https://local.cloud/docs/console/ — web console for local health and data inspection.
 
 ## Agent routes
+- https://local.cloud/ai/overview.md — overview, task navigation, and a verified-call walkthrough.
 - https://local.cloud/ai/agents.md — agent guide.
 - https://local.cloud/ai/agent-template.md — AGENTS.md template.
 - https://local.cloud/ai/services.md — ports, environment variables, and guides.

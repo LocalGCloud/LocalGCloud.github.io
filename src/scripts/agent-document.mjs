@@ -53,7 +53,11 @@ export function initAgentDocument() {
     });
     const markdown = document.querySelector('[data-agent-markdown]');
     const href = document.querySelector('link[rel="alternate"][type="text/markdown"]')?.getAttribute('href');
-    if (markdown) { markdown.hidden = !href; if (href) markdown.href = href; }
+    if (markdown) {
+      markdown.hidden = !href;
+      const base = document.querySelector('[data-desktop-shell]')?.dataset.base || '/';
+      if (href) markdown.href = href === base + 'index.md' ? base + 'ai/overview.md' : href;
+    }
     document.querySelectorAll('[data-agent-nav]').forEach(link => {
       const base = document.querySelector('[data-desktop-shell]')?.dataset.base || '/';
       const active = link.pathname === base ? location.pathname === base : location.pathname.startsWith(link.pathname);

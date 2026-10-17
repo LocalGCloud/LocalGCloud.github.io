@@ -38,8 +38,9 @@ localcloud console
 
 ## Agent resources
 
+- [Agent overview](https://local.cloud/ai/overview.md): purpose, task navigation, and a first local SDK call
 - [Agent guide](https://local.cloud/ai/agents.md): install-first quick start, rules, and workflow for coding agents
-- [AGENTS.md template](https://local.cloud/ai/agent-template.md): repository instructions to copy into a project
+- [AGENTS.md template](https://local.cloud/ai/agent-template.md): guidance to merge into existing repository instructions
 - [Service matrix](https://local.cloud/ai/services.md): ports, environment variables, and guides
 - [Capabilities and boundaries](https://local.cloud/ai/compatibility.md): what each service runs locally
 - [Docs index for agents](https://local.cloud/ai/docs.md)

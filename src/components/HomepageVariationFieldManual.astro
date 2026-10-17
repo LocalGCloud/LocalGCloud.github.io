@@ -18,6 +18,7 @@ import { availableServiceCount, serviceCatalogGroups } from '../data/services';
 import InstallationMethods from './InstallationMethods.astro';
 import { docsContract } from '../data/docs-contract';
 import { productFacts } from '../data/productFacts';
+import { agentOverview } from '../data/agentModeExamples';
 import { homepageFaq } from '../data/homepageFaq';
 import {
   cosignVerifyCommand,
@@ -135,13 +136,10 @@ for (const column of atlasColumns) {
           </h1>
           <p class="field-intro" data-classic-copy>{definition}</p>
           <p class="field-intro--agent" data-agent-only>
-            Provision, query and test Google Cloud services locally. Connect your existing SDKs or use the LocalCloud MCP server.
+            {agentOverview.description}
           </p>
           <dl class="agent-readme__facts" data-agent-only aria-label="Local development environment">
-            <div><dt>runtime</dt><dd>one Docker container</dd></div>
-            <div><dt>services</dt><dd>{availableServiceCount} local service APIs</dd></div>
-            <div><dt>connect</dt><dd>Google Cloud SDKs / stdio MCP</dd></div>
-            <div><dt>scope</dt><dd>development / tests / CI</dd></div>
+            {agentOverview.facts.map(item => <div><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
           </dl>
         </div>
         <p class="mobile-intro" data-mobile-only data-pagefind-ignore>{definition}</p>
