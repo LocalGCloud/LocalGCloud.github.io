@@ -30,7 +30,7 @@ function dialogHarness(t, permission = 'granted') {
   const status = { textContent: '' }, setup = { hidden: true }, retry = element('retry');
   const dialog = { ...element('dialog'), dataset: {}, open: false,
     showModal() { this.open = true; },
-    querySelector(selector) { return ({ '[data-my-cloud-status]': status, '[data-my-cloud-setup]': setup, '[data-my-cloud-retry]': retry, 'code': code, '.copy-btn': copy, '[data-my-cloud-open]': openLink, '[data-my-cloud-guide]': guide })[selector]; },
+    querySelector(selector) { return ({ '[data-my-cloud-status]': status, '[data-my-cloud-setup]': setup, '[data-my-cloud-retry]': retry, 'code': code, 'pre': code, '.copy-btn': copy, '[data-my-cloud-open]': openLink, '[data-my-cloud-guide]': guide })[selector]; },
     querySelectorAll() { return []; },
   };
   const previous = Object.getOwnPropertyDescriptor(globalThis, 'document');
@@ -65,15 +65,17 @@ test('network rejection, blocked access, and readable HTTP errors do not claim a
   assert.equal(await probeMyCloud(), false);
 });
 
-test('denied localhost permission skips the probe and retains direct console navigation', async (t) => {
+test('denied localhost permission shows setup without probing or opening the console', async (t) => {
   const h = dialogHarness(t, 'denied');
   const fetch = t.mock.method(globalThis, 'fetch', () => assert.fail('denied access must not be probed'));
   let destination;
-  const tab = { location: { replace(url) { destination = url; } }, close() { assert.fail('keep the direct console tab'); } };
+  const tab = { location: { replace(url) { destination = url; } }, close() { this.closed = true; } };
   assert.equal(await probeMyCloud(), null);
-  await initMyCloud(() => assert.fail('no setup dialog'))({ detail: { tab } });
-  assert.equal(destination, myCloudURL);
-  assert.equal(h.dialog.open, false);
+  await initMyCloud(() => {})({ detail: { tab } });
+  assert.equal(destination, undefined);
+  assert.equal(tab.closed, true);
+  assert.equal(h.dialog.open, true);
+  assert.equal(h.setup.hidden, false);
   assert.equal(fetch.mock.callCount(), 0);
 });
 
@@ -89,6 +91,19 @@ test('browsers without the permission API do not treat blocked probes as an offl
   assert.equal(await probeMyCloud(), null);
 });
 
+for (const permission of ['prompt', undefined]) {
+  test(`an inconclusive ${permission || 'unsupported'} permission check shows setup instead of navigating`, async (t) => {
+    const h = dialogHarness(t, permission === undefined ? null : permission);
+    t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
+    const tab = { location: { replace() { assert.fail('no response means no automatic navigation'); } }, close() { this.closed = true; } };
+    await initMyCloud(() => {})({ detail: { tab } });
+    assert.equal(tab.closed, true);
+    assert.equal(h.dialog.open, true);
+    assert.equal(h.setup.hidden, false);
+    assert.match(h.status.textContent, /browser couldn’t check localhost/);
+  });
+}
+
 test('an older browser permission name still recognizes denied local access', async (t) => {
   permissionHarness(t, 'denied');
   navigator.permissions.query = async ({ name }) => {
@@ -99,11 +114,11 @@ test('an older browser permission name still recognizes denied local access', as
   assert.equal(await probeMyCloud(), null);
 });
 
-test('blocked retries offer a direct console action without installation or a false green check', async (t) => {
+test('blocked retries retain setup and a manual console action without a false green check', async (t) => {
   const h = dialogHarness(t, 'denied');
   await initMyCloud(() => {})({ detail: { tab: null } });
   await h.listeners.get('retry:click')();
-  assert.equal(h.setup.hidden, true);
+  assert.equal(h.setup.hidden, false);
   assert.match(h.status.textContent, /browser couldn’t check localhost/);
   assert.equal(h.openLink.classList.running, false);
   assert.equal(h.openLink.textContent, 'Open console ↗');
@@ -211,8 +226,12 @@ test('unsupported dialog browsers retain the direct console link without probing
   assert.equal(h.listeners.has('link:click'), false);
 });
 
-test('the launcher loads its dialog once on ordinary clicks and preserves modified clicks', async (t) => {
+for (const assets of ['_astro/', 'src/scripts/']) {
+test(`the launcher loads ${assets} assets once and preserves modified clicks`, async (t) => {
   const h = dialogHarness(t);
+  h.link.dataset.myCloudAssets = assets;
+  h.link.dataset.myCloudScript = '/' + assets + 'my-cloud.mjs';
+  h.link.dataset.copyScript = '/' + assets + 'copy-buttons.mjs';
   const source = readFileSync(new URL('../src/components/MyCloudLauncher.astro', import.meta.url), 'utf8').match(/<script is:inline data-critical-bootstrap>([\s\S]*?)<\/script>/)[1];
   const script = transformSync(source, { loader: 'js' }).code;
   let loads = 0, opens = 0, tabs = 0;
@@ -220,7 +239,7 @@ test('the launcher loads its dialog once on ordinary clicks and preserves modifi
   h.dialog.dispatchEvent = (event) => { assert.equal(event.type, 'lc:my-cloud-open'); assert.equal(event.detail.tab, tab); assert.equal(tab.opener, null); opens++; };
   document.createElement = () => ({ remove() {} });
   document.head.append = (asset) => {
-    assert.ok(asset.src.startsWith('http://127.0.0.1:4325/_astro/'), 'script URLs use the page host, not a source-map URL');
+    assert.ok(asset.src.startsWith('http://127.0.0.1:4325/' + assets), 'script URLs use the page host, not a source-map URL');
     loads++; queueMicrotask(() => asset.onload());
   };
   runInNewContext(script, { document, URL, setTimeout, clearTimeout, CustomEvent: class { constructor(type, options) { this.type = type; this.detail = options.detail; } },
@@ -239,6 +258,39 @@ test('the launcher loads its dialog once on ordinary clicks and preserves modifi
   h.click(); await settle();
   assert.equal(loads, 2); assert.equal(opens, 2);
 });
+
+}
+
+for (const failedAsset of ['my-cloud', 'copy-buttons']) {
+  test(`a failed ${failedAsset} asset never bypasses the localhost check`, async (t) => {
+    const h = dialogHarness(t);
+    const source = readFileSync(new URL('../src/components/MyCloudLauncher.astro', import.meta.url), 'utf8').match(/<script is:inline data-critical-bootstrap>([\s\S]*?)<\/script>/)[1];
+    const tab = { close() { this.closed = true; }, location: { replace() { assert.fail('never navigate on an asset error'); } } };
+    let checks = 0, copies = 0;
+    h.dialog.dispatchEvent = () => { checks++; };
+    document.createElement = () => ({ remove() {} });
+    document.head.append = (asset) => {
+      if (!asset.src) return;
+      if (asset.src.includes('copy-buttons')) copies++;
+      queueMicrotask(() => asset.src.includes(failedAsset) ? asset.onerror() : asset.onload());
+    };
+    runInNewContext(source, { document, URL, setTimeout, clearTimeout, CustomEvent: class {},
+      window: { open() { return tab; } },
+      location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325', assign() { assert.fail('never navigate on an asset error'); } },
+    });
+    h.click(); await settle();
+    if (failedAsset === 'my-cloud') {
+      assert.equal(tab.closed, true);
+      assert.equal(h.dialog.open, true, 'a failed module load still offers setup');
+      assert.equal(checks, 0);
+      assert.equal(h.code.textContent, h.link.dataset.setupCommand);
+      h.click(); await settle();
+      assert.equal(copies, 2, 'failed modules can load again');
+    } else {
+      assert.equal(checks, 1, 'optional copy controls cannot bypass or prevent the localhost check');
+    }
+  });
+}
 
 test('copy controls also initialize after desktop navigation and retry a failed asset load', () => {
   const layout = readFileSync(new URL('../src/layouts/BaseLayout.astro', import.meta.url), 'utf8');

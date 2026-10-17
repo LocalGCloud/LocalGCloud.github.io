@@ -20,7 +20,7 @@ before(async () => {
 after(async () => { if (ownsConsole) await new Promise(resolve => consoleServer.close(resolve)); });
 
 for (const permission of [undefined, 'denied', 'granted']) {
-  test(`the built launcher opens a running Console with ${permission || 'default'} browser permissions`, { timeout: 30_000 }, async (t) => {
+  test(`the built launcher requires a response with ${permission || 'default'} browser permissions`, { timeout: 30_000 }, async (t) => {
     assert.ok(executablePath, 'Chrome is required for the localhost permission regression test');
     const browser = await puppeteer.launch({ executablePath, headless: true });
     t.after(() => browser.close());
@@ -31,7 +31,7 @@ for (const permission of [undefined, 'denied', 'granted']) {
     const page = await browser.newPage();
     await page.setViewport({ width: 1440, height: 1000 });
     await page.setRequestInterception(true);
-    let probes = 0, blockProbe = false;
+    let probes = 0, blockProbe = permission !== 'granted';
     page.on('request', async (request) => {
       const url = new URL(request.url());
       if (url.origin !== origin) {
@@ -47,12 +47,11 @@ for (const permission of [undefined, 'denied', 'granted']) {
       } catch { await request.abort(); }
     });
     await page.goto(origin + '/', { waitUntil: 'networkidle0' });
-    const consoleTarget = browser.waitForTarget(target => target.url() === consoleURL, { timeout: 12_000 });
-    await page.click('[data-my-cloud]');
-    const target = await consoleTarget;
-    assert.equal(await page.$eval('[data-my-cloud-dialog]', dialog => dialog.open), false, 'a blocked probe must never show installation');
-    if (permission === 'denied') assert.equal(probes, 0, 'denied permission goes straight to the Console');
     if (permission === 'granted') {
+      const consoleTarget = browser.waitForTarget(target => target.url() === consoleURL, { timeout: 12_000 });
+      await page.click('[data-my-cloud]');
+      const target = await consoleTarget;
+      assert.equal(await page.$eval('[data-my-cloud-dialog]', dialog => dialog.open), false, 'a confirmed response opens the console');
       assert.ok(probes > 0, 'granted permission still performs the lightweight HTTP check');
       await (await target.page()).close();
       await page.bringToFront();
@@ -64,6 +63,12 @@ for (const permission of [undefined, 'denied', 'granted']) {
       await page.click('[data-my-cloud-retry]');
       await page.waitForFunction(() => document.querySelector('[data-my-cloud-open]').classList.contains('is-running'));
       assert.equal(await page.$eval('[data-my-cloud-open]', link => link.textContent), '✓ Working now · Open console ↗');
+    } else {
+      await page.click('[data-my-cloud]');
+      await page.waitForFunction(() => document.querySelector('[data-my-cloud-dialog]').open);
+      assert.equal(await page.$eval('[data-my-cloud-setup]', setup => setup.hidden), false);
+      assert.ok(!browser.targets().some(target => target.url() === consoleURL), 'unconfirmed checks must not open localhost');
+      if (permission === 'denied') assert.equal(probes, 0, 'denied permission skips the probe');
     }
   });
 }

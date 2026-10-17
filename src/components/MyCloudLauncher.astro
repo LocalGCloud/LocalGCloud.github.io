@@ -9,7 +9,7 @@ import copyScript from '../scripts/copy-buttons.mjs?url';
 const setupCommand = consoleQuickStart(docsContract);
 ---
 
-<a href={myCloudURL} target="_blank" rel="noopener noreferrer" class="desktop-shortcut desktop-my-cloud" data-my-cloud data-my-cloud-script={dialogScript} data-copy-script={copyScript} data-my-cloud-styles={dialogStyles} data-setup-command={setupCommand} data-setup-guide={import.meta.env.BASE_URL + 'docs/#install-the-cli'} aria-haspopup="dialog" aria-controls="my-cloud-dialog" aria-label="My cloud: check and open your local LocalCloud console">
+<a href={myCloudURL} target="_blank" rel="noopener noreferrer" class="desktop-shortcut desktop-my-cloud" data-my-cloud data-my-cloud-assets={import.meta.env.DEV ? 'src/scripts/' : undefined} data-my-cloud-script={dialogScript} data-copy-script={copyScript} data-my-cloud-styles={dialogStyles} data-setup-command={setupCommand} data-setup-guide={import.meta.env.BASE_URL + 'docs/#install-the-cli'} aria-haspopup="dialog" aria-controls="my-cloud-dialog" aria-label="My cloud: check and open your local LocalCloud console">
   <img src={appIcon} width="64" height="64" alt="" loading="lazy" decoding="async" />
   <span>My cloud</span>
   <small>localhost:5380 ↗</small>
@@ -24,7 +24,7 @@ const setupCommand = consoleQuickStart(docsContract);
     const load = (source) => new Promise((resolve, reject) => {
       const url = new URL(source, location.href);
       const base = document.querySelector('[data-desktop-shell]')?.dataset.base || '/';
-      if (url.origin !== location.origin || !url.pathname.startsWith(base + '_astro/')) return reject();
+      if (url.origin !== location.origin || !url.pathname.startsWith(base + (link.dataset.myCloudAssets || '_astro/'))) return reject();
       const script = document.createElement('script');
       script.type = 'module'; script.src = url.href;
       const finish = (ok) => { clearTimeout(timer); script.remove(); ok ? resolve() : reject(); };
@@ -38,16 +38,19 @@ const setupCommand = consoleQuickStart(docsContract);
       event.preventDefault();
       if (launching) return;
       launching = true;
-      // Reserve the tab during the click so the async probe cannot trigger popup blocking.
+      // Reserve a tab before awaiting to avoid popup blocking.
       const tab = dialog.open ? null : window.open();
       if (tab) tab.opener = null;
       try {
-        loaded ||= Promise.all([load(link.dataset.myCloudScript), load(link.dataset.copyScript)]);
+        loaded ||= Promise.all([load(link.dataset.myCloudScript), load(link.dataset.copyScript).catch(() => {})]);
         await loaded;
         dialog.dispatchEvent(new CustomEvent('lc:my-cloud-open', { detail: { tab } }));
       } catch {
         loaded = undefined;
-        (tab && !tab.closed ? tab : window).location.href = link.href;
+        tab?.close();
+        dialog.innerHTML = '<form method="dialog"><h2 id="my-cloud-title">Start LocalCloud</h2><pre id="my-cloud-status"></pre><button>Close</button></form>';
+        dialog.querySelector('pre').textContent = link.dataset.setupCommand;
+        if (!dialog.open) dialog.showModal();
       } finally { launching = false; }
     });
   })();

@@ -68,7 +68,7 @@ export function initMyCloud(bindCopyButtons) {
       : responding
       ? 'Your cloud is responding at localhost:5380. You can open it now.'
       : 'Looks like your local LocalCloud container isn’t running, or your browser couldn’t reach it.';
-    setup.hidden = responding !== false;
+    setup.hidden = responding === true;
     openLink.classList.toggle('is-running', responding === true);
     openLink.textContent = responding ? '✓ Working now · Open console ↗' : 'Open console ↗';
     retry.disabled = false;
@@ -82,7 +82,7 @@ export function initMyCloud(bindCopyButtons) {
   return async (event) => {
     const tab = event?.detail?.tab;
     const responding = await check();
-    if (responding !== false && responding !== undefined && tab && !tab.closed) { tab.location.replace(myCloudURL); return; }
+    if (responding === true && tab && !tab.closed) { tab.location.replace(myCloudURL); return; }
     tab?.close();
     if (responding === undefined) return;
     bindCopyButtons(dialog);
