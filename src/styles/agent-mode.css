@@ -11,7 +11,7 @@ html:root[data-audience="agents"]{
  & :focus-visible{outline:2px solid var(--focus-ring);outline-offset:4px}
  & body::before{display:none!important}
  & body{overflow:auto!important;background:var(--bg);padding:0!important}
- & :is(.desktop-toolbar,.desktop-shortcuts,.desktop-history,.desktop-titlebar,.desktop-taskbar,.mobile-dock,.lc-audience-dock,.site-header,.site-footer,.site-view-switch,.copy-btn,.copy-button,.code-tabs__bar,.lc-agent-captcha,.field-hero__headline--agent,.field-ribbon,.field-atlas__agent-bar,.mobile-service-strip,.mobile-service-launcher,.mobile-launcher,.mobile-guide-actions,.feedback-fab,.docs-feedback,.docs-mobile-nav,.docs-article__header,.docs-toolbar__actions){display:none!important}
+ & :is(.desktop-toolbar,.desktop-shortcuts,.desktop-history,.desktop-titlebar,.desktop-taskbar,.mobile-dock,.lc-audience-dock,.site-header,.site-view-switch,.copy-btn,.copy-button,.code-tabs__bar,.lc-agent-captcha,.field-hero__headline--agent,.field-ribbon,.field-atlas__agent-bar,.mobile-service-strip,.mobile-service-launcher,.mobile-launcher,.mobile-guide-actions,.feedback-fab,.docs-feedback,.docs-mobile-nav,.docs-article__header,.docs-toolbar__actions,.site-footer__intro,.site-footer__grid,.site-footer__meta-copy){display:none!important}
  & :is(.desktop-root,.desktop-stage){display:block!important;position:static!important;inset:auto!important;pointer-events:auto}
  & .desktop-window{display:block;position:relative!important;inset:auto!important;width:min(880px,calc(100% - 80px))!important;min-width:0;min-height:0;height:auto!important;margin:64px auto 32px;padding:36px 48px 44px;overflow:visible;background:var(--bg);border:1px solid var(--line);outline:0;box-shadow:none;border-radius:0;z-index:1}
  & .desktop-content{display:block;flex:none;overflow:visible;padding:0!important;scrollbar-gutter:auto}
@@ -25,6 +25,10 @@ html:root[data-audience="agents"]{
  & .agent-document-markdown{display:block;margin-bottom:28px;font-size:12px;color:var(--accent);text-decoration:underline;text-underline-offset:4px}
  & .agent-document-markdown[hidden]{display:none}
  & :is(.site-page,.site-section,.container,.docs-shell,.docs-content,.field-home__shell){max-width:100%;width:100%;padding:0!important;margin-inline:0;display:block}
+ & .site-footer{display:block!important;margin:40px 0 0;padding:0;background:none;border:0}
+ & .site-footer__meta{display:block;margin:0;border:0;padding:0}
+ & .site-footer__legal-links{display:flex;align-items:center;gap:20px;flex-wrap:wrap;font-size:11px}
+ & .site-footer__analytics{padding:0;background:none;border:0;box-shadow:none;color:var(--text-2);font:inherit;cursor:pointer}
  & .docs-sidebar{display:none}
  & .docs-article__frame{padding:0;border:0}
  & .prose-site h2{border:0}
