@@ -32,6 +32,6 @@ const language = example.filename?.endsWith('.py') ? 'python' : example.filename
     <ServiceCodeBlock code={example.run} label={`${example.label} run command`} />
   </div>}
   {example.verification && <div><h4 class="mb-2 font-semibold">Verify the result</h4><p data-example-verification>{example.verification}</p></div>}
-  {example.output && <div><h4 class="mb-2 font-semibold">Expected output</h4><ServiceCodeBlock code={example.output} lang="text" label="Expected output" /></div>}
+  {example.output && <div><h4 class="mb-2 font-semibold">Expected output</h4><pre tabindex="0" role="region" aria-label="Expected output" class="overflow-x-auto font-mono text-sm"><code>{example.output}</code></pre></div>}
   {example.href && <a class="inline-block text-sm font-medium text-[var(--accent-strong)]" href={example.href}>Full example guide <span aria-hidden="true">→</span></a>}
 </article>
