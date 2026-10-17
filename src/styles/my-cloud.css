@@ -16,7 +16,7 @@
 .my-cloud-actions button:disabled{cursor:wait;opacity:.65}
 .my-cloud-dialog :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .my-cloud-command{position:relative;margin:1rem 0 .5rem;border:1px solid var(--line);border-radius:.75rem;background:var(--surface-2);overflow:hidden}
-.my-cloud-body pre{margin:0;padding:3.5rem 1rem 1rem;font-size:.8rem;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.my-cloud-body pre{margin:0;padding:1rem 5.5rem 1rem 1rem;font-size:.8rem;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
 .my-cloud-command .copy-btn{position:absolute;top:.4rem;right:.4rem;min-height:2.5rem;padding:.35rem .65rem;color:var(--accent-strong);font-size:.8rem}
 .my-cloud-note{font-size:.875rem;color:var(--text-2)}
 .my-cloud-note a{text-decoration:underline}
