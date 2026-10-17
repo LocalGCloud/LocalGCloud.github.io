@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 import { runInNewContext } from 'node:vm';
-import { pickView, switchView, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic, initViewLinks, loadViewModule } from '../src/scripts/desktop-view.mjs';
+import { pickView, switchView, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic, initViewLinks, loadViewModule, getNavigation } from '../src/scripts/desktop-view.mjs';
 import { initDesktop } from '../src/scripts/desktop-controller.mjs';
 import { initMobile } from '../src/scripts/mobile-view.mjs';
 import { markdownTwinPath } from '../src/utils/markdown-twins.mjs';
@@ -295,7 +295,7 @@ test('Mobile leaves an overview disclosure open for an existing descendant fragm
   const target = {};
   const overview = { dataset: {}, open: true, contains: node => node === target };
   const context = { URL, initViewLinks() {}, desktopSection, location: { href: 'https://local.cloud/services/bigquery/#typical-uses-title' },
-    document: { getElementById: id => id === 'typical-uses-title' ? target : null, querySelector: () => null, querySelectorAll: selector => selector === '.mobile-service-context' ? [overview] : [] } };
+    document: { documentElement: {dataset:{}}, getElementById: id => id === 'typical-uses-title' ? target : null, querySelector: () => null, querySelectorAll: selector => selector === '.mobile-service-context' ? [overview] : [] } };
   runInNewContext('(' + initMobile.toString() + ')({initViewLinks,desktopSection})', context);
   assert.equal(overview.open, true);
   context.location.href = 'https://local.cloud/services/bigquery/';
@@ -356,7 +356,7 @@ test('content-only Mobile Back restores strip and overview even though the docum
   const overview={dataset:{},open:false,contains:()=>false};
   const context={URL,initViewLinks(){},desktopSection,location:{href:'https://local.cloud/services/bigquery/',pathname:'/services/bigquery/'},
     performance:{getEntriesByType:()=>[{type:'navigate'}]},sessionStorage:{getItem:key=>key.includes('overview')?'true':'1200'},
-    document:{querySelector:()=>null,querySelectorAll:selector=>selector==='.mobile-service-strip'?[strip]:selector==='.mobile-service-context'?[overview]:[]}};
+    document:{documentElement:{dataset:{}},querySelector:()=>null,querySelectorAll:selector=>selector==='.mobile-service-strip'?[strip]:selector==='.mobile-service-context'?[overview]:[]}};
   runInNewContext('('+initMobile.toString()+')({initViewLinks,desktopSection,historyTraversal:true})',context);
   assert.equal(strip.scrollLeft,1200);assert.equal(overview.open,true);
 });
@@ -769,4 +769,13 @@ test('every content route exposes its generated Markdown version; error pages ar
     count++;
   }
   assert.equal(count, 83);
+});
+
+
+test('development pages without a pinned route manifest keep native navigation', async () => {
+  const result = await runInNewContext('('+getNavigation.toString()+')()', {
+    document:{querySelector:()=>({dataset:{}})}, Promise,
+    loadViewModule:()=>assert.fail('no content router should attach before a build pins its manifest'),
+  });
+  assert.equal(result,null);
 });

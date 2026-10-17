@@ -31,6 +31,9 @@ const classicHomeBytes = { rawBytes: 4_500, gzipBytes: 700, styleBytes: 2_000 };
 // 2026-10-15: search results, in-place history updates, and pending navigation/failure
 // fallbacks preserve audience intent. The initial font selector and deferred hero also
 // avoid loading normal-mode assets for agents. Bound these controller additions at 700B.
+// Approved plain agent document adds about 6KB HTML/CSS and 1.4KB gzip on the largest service.
+// Bound that shared presentation and its agent-only controller; other ceilings stay intact.
+const agentDocumentBytes = { rawBytes: 6_500, gzipBytes: 1_500, startupScriptBytes: 4_500 };
 const audienceSwitchBytes = { rawBytes: 700, startupScriptBytes: 1_200 };
 // 2026-10-14: Home also carries the statically rendered agent view (setup prompt, agent
 // verification puzzle, daemon terminal and spec cards) so agents reading the HTML see it.
@@ -81,7 +84,7 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     const externalScriptBytes = scriptPaths.map(path => join(dist,path))
       .reduce((sum, path) => sum + (existsSync(path) ? statSync(path).size : 0), 0);
     const startupSources = [html,...scriptPaths.map(path=>readFileSync(join(dist,path),'utf8'))].join('\n');
-    const startupPaths = new Set([...scriptPaths,...[...startupSources.matchAll(/\/(_astro\/(?:desktop-view|desktop-controller|desktop-navigation|site-interactions|service-filter)\.[^"'\s<>]+\.(?:mjs|js))/g)].map(match=>match[1])]);
+    const startupPaths = new Set([...scriptPaths,...[...startupSources.matchAll(/\/(_astro\/(?:desktop-view|desktop-controller|desktop-navigation|site-interactions|service-filter|agent-document)\.[^"'\s<>]+\.(?:mjs|js))/g)].map(match=>match[1])]);
     assert.ok([...startupPaths].some(path=>path.includes('/desktop-view.')),file+' must count the externally bootstrapped controller');
     if(file.endsWith('/services/index.html'))assert.ok([...startupPaths].some(path=>path.includes('/service-filter.')),file+' must count its filter bootstrap');
     const measured = {
@@ -94,13 +97,14 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     const isHome = file === join(dist, 'index.html');
     const limits = {...htmlBudget, styleBytes:htmlBudget.styleBytes+mobileStyleBytes, startupScriptBytes};
     if (html.includes('data-desktop-manifest=')) limits.startupScriptBytes += desktopPrefetchBytes;
+    if (html.includes('data-agent-markdown')) for (const [metric, extra] of Object.entries(agentDocumentBytes)) limits[metric] += extra;
     if (html.includes('data-code-copy-template')) limits.rawBytes += codeCopyTemplateBytes;
     if (isHome) for (const [metric, extra] of Object.entries(mobileHomeBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(classicHomeBytes)) limits[metric] += extra;
     if (isHome) for (const [metric, extra] of Object.entries(agentHomeBytes)) limits[metric] += extra;
     for (const [metric, extra] of Object.entries(audienceSwitchBytes)) limits[metric] += extra;
     if (html.includes('id="my-cloud-dialog"')) for (const [metric, extra] of Object.entries(consoleDialogBytes)) limits[metric] += extra;
-    if (file === join(dist, 'docs/github-actions/index.html')) limits.gzipBytes = githubActionsGzipBytes;
+    if (file === join(dist, 'docs/github-actions/index.html')) limits.gzipBytes = githubActionsGzipBytes + agentDocumentBytes.gzipBytes;
     for (const [metric, limit] of Object.entries(limits)) {
       if (measured[metric] > limit) failures.push(`${file.slice(dist.length)}: ${metric} ${measured[metric]} > ${limit}`);
     }

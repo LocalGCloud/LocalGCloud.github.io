@@ -125,6 +125,8 @@ function contentPageURL(href) {
 
 export function getNavigation() {
   const root = document.querySelector('[data-desktop-shell]');
+  // Development pages have no pinned route manifest; use native navigation.
+  if (!root.dataset.desktopManifest) return Promise.resolve(null);
   if (!root.navigationReady) root.navigationReady = loadViewModule(root.dataset.navigationScript).then(module => module.installDesktopNavigation({
     root, views: ['desktop', 'mobile'], before() {},
     validate: contentPageURL,

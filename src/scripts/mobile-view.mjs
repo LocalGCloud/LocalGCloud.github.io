@@ -6,7 +6,7 @@ export function initMobile({ initViewLinks, desktopSection, historyTraversal }) 
   const traversal = historyTraversal ?? (typeof performance !== 'undefined' && ['back_forward', 'reload'].includes(performance.getEntriesByType('navigation')[0]?.type));
   if (fragment) { try { target = document.getElementById(decodeURIComponent(fragment)); } catch {} }
   for (const context of document.querySelectorAll('.mobile-service-context')) {
-    context.open = !!target && context.contains(target) || (context.dataset.mobileInitial === 'true' ? context.open : context.dataset.mobileOpen === 'true');
+    context.open = document.documentElement.dataset.audience === 'agents' || !!target && context.contains(target) || (context.dataset.mobileInitial === 'true' ? context.open : context.dataset.mobileOpen === 'true');
     delete context.dataset.mobileInitial;
     if (traversal) { try {
       const saved = sessionStorage.getItem('lc-mobile-overview:' + location.pathname);

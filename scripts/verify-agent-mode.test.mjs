@@ -1,3 +1,4 @@
+import { initAgentDocument } from '../src/scripts/agent-document.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -155,7 +156,8 @@ test('the copy loader accepts the exact local dev module only in development', (
   const source = [...read('../src/layouts/BaseLayout.astro').matchAll(/<script\b[^>]*data-critical-bootstrap[^>]*>([\s\S]*?)<\/script>/g)].map(match => match[1]).find(code => code.includes('.copy-btn[data-copy-script]'));
   for (const [copyDevelopment, asset, expected] of [[true, '/src/scripts/copy-buttons.mjs', 1], [false, '/src/scripts/copy-buttons.mjs', 0], [true, 'https://example.com/copy-buttons.mjs', 0], [true, '/src/scripts/unrelated.mjs', 0], [false, '/_astro/copy-buttons.js', 1]]) {
     const appended = [];
-    runInNewContext(source, { copyDevelopment, URL, location: new URL('http://localhost:4321/'), document: {
+    runInNewContext(source, { copyDevelopment, URL, window: { addEventListener() {} }, location: new URL('http://localhost:4321/'), document: {
+      documentElement: { dataset: { audience: 'humans' } },
       querySelector: selector => selector === '[data-desktop-shell]' ? { dataset: { base: '/' } } : { dataset: { copyScript: asset } },
       createElement: () => ({}), head: { append: script => appended.push(script) }, addEventListener() {},
     } });
@@ -181,4 +183,37 @@ test('example tabs bind once and support arrow, Home, and End keyboard navigatio
     assert.equal(panes.filter(pane => !pane.hidden).length, 1); assert.equal(panes[expected].hidden, false);
   }
   key(0, 'ArrowLeft', 2); key(2, 'Home', 0); key(0, 'End', 2); key(2, 'ArrowRight', 0);
+});
+
+
+test('agent documents preserve client selection, disclosure state, Markdown links and motion preferences', () => {
+  for (const [choice, reducedMotion, expected] of [[null,false,true],[null,true,false],['play',true,true],['pause',false,false],['invalid',true,false],['blocked',true,false]]) {
+    const events = new Map(), windowEvents = new Map(), buttonEvents = new Map();
+    const node = () => ({ dataset: {}, style: {}, children: [], attrs: {}, append(child) { this.children.push(child); }, setAttribute(k,v) { this.attrs[k]=v; }, getAttribute(k) { return this.attrs[k]; }, classList: { remove() {}, toggle() {} } });
+    const root = node(); root.dataset.audience = 'agents';
+    const backdrop = node(), button = node(), panel = node(), detail = node(), markdown = node(), main = node();
+    panel.hidden = true; panel.attrs['aria-labelledby'] = 'java-tab';
+    detail.open = false; detail.querySelector = () => ({});
+    const alternate = { href: '/services/bigtable.md', getAttribute() { return this.href; } };
+    button.addEventListener = (name, fn) => buttonEvents.set(name, fn);
+    const document = { documentElement: root, hidden: false, createElement: node,
+      querySelector: selector => ({'.desktop-background':backdrop,'[data-agent-rain-toggle]':button,'[data-desktop-main]':main,'[data-agent-markdown]':markdown,'link[rel="alternate"][type="text/markdown"]':alternate})[selector],
+      querySelectorAll: selector => selector.includes('data-panel-index') ? [panel] : selector === 'details' ? [detail] : [],
+      getElementById: () => ({getAttribute: () => 'false'}), addEventListener: (name,fn) => events.set(name,fn) };
+    const context = { document, matchMedia: () => ({matches:reducedMotion,addEventListener(){}}),
+      localStorage: {getItem(){if(choice==='blocked')throw Error('blocked');return choice;},setItem(){if(choice==='blocked')throw Error('blocked');}}, window:{addEventListener:(name,fn)=>windowEvents.set(name,fn)} };
+    runInNewContext('('+initAgentDocument.toString()+')()', context);
+    const rain = backdrop.children[0];
+    assert.equal(rain.children.length,36);
+    assert.equal(rain.dataset.running,String(expected));
+    assert.equal(panel.hidden,false); assert.equal(panel.attrs.role,'region'); assert.equal(detail.open,true);
+    assert.equal(markdown.href,'/services/bigtable.md');
+    document.hidden=true;events.get('visibilitychange')();assert.equal(rain.dataset.running,'false');
+    document.hidden=false;events.get('visibilitychange')();
+    buttonEvents.get('click')();assert.equal(rain.dataset.running,String(!expected));
+    alternate.href='/docs/index.md';events.get('astro:page-load')();assert.equal(markdown.href,'/docs/index.md');
+    root.dataset.audience='humans';windowEvents.get('lc:audience-change')();
+    assert.equal(panel.hidden,true);assert.equal(panel.attrs.role,'tabpanel');assert.equal(detail.open,false);assert.equal(rain.hidden,true);
+    runInNewContext('('+initAgentDocument.toString()+')()', context);assert.equal(backdrop.children.length,1);
+  }
 });

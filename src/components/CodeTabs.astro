@@ -32,6 +32,7 @@ const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 <div class="code-tabs" data-code-tabs={id}>
+  <nav class="agent-code-nav" data-agent-only aria-label="Client examples">{labels.map((label, i) => <a href={`#${id}-panel-${i}`}>{label} ↓</a>)}</nav>
   <div class="code-tabs__bar" role="tablist">
     {labels.map((label, i) => (
       <button
@@ -51,26 +52,31 @@ const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
 
   {labels.length > 0 && (
     <div id={`${id}-panel-0`} role="tabpanel" class="code-tabs__panel" data-panel-index="0" aria-labelledby={`${id}-tab-0`}>
+      <h3 class="agent-code-label" data-agent-only>{labels[0]}</h3>
       <slot name="tab-0" />
     </div>
   )}
   {labels.length > 1 && (
     <div id={`${id}-panel-1`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="1" aria-labelledby={`${id}-tab-1`} hidden>
+      <h3 class="agent-code-label" data-agent-only>{labels[1]}</h3>
       <slot name="tab-1" />
     </div>
   )}
   {labels.length > 2 && (
     <div id={`${id}-panel-2`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="2" aria-labelledby={`${id}-tab-2`} hidden>
+      <h3 class="agent-code-label" data-agent-only>{labels[2]}</h3>
       <slot name="tab-2" />
     </div>
   )}
   {labels.length > 3 && (
     <div id={`${id}-panel-3`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="3" aria-labelledby={`${id}-tab-3`} hidden>
+      <h3 class="agent-code-label" data-agent-only>{labels[3]}</h3>
       <slot name="tab-3" />
     </div>
   )}
   {labels.length > 4 && (
     <div id={`${id}-panel-4`} role="tabpanel" class="code-tabs__panel is-hidden" data-panel-index="4" aria-labelledby={`${id}-tab-4`} hidden>
+      <h3 class="agent-code-label" data-agent-only>{labels[4]}</h3>
       <slot name="tab-4" />
     </div>
   )}

@@ -121,7 +121,7 @@ const structuredData = [
           <script is:inline data-critical-bootstrap="overview">
             {
               const overview = document.querySelector('.mobile-service-context');
-              if (overview && document.documentElement.dataset.siteView === 'mobile' && !overview.dataset.mobileReady) {
+              if (overview && document.documentElement.dataset.siteView === 'mobile' && document.documentElement.dataset.audience !== 'agents' && !overview.dataset.mobileReady) {
                 overview.open = false;
                 try {
                   overview.open = decodeURIComponent(location.hash) === '#typical-uses-title';
@@ -167,7 +167,7 @@ const structuredData = [
             <a class="mt-5 inline-block font-medium text-[var(--accent-strong)]" href={guide.reference}>Read the official {service.name} documentation <span aria-hidden="true">↗</span></a>
           </aside>
         ) : (
-          <aside class="site-panel service-hero-connection p-5 reveal sm:p-6">
+          <aside class="site-panel service-hero-connection p-5 reveal sm:p-6" data-service-connection-summary>
             <div class="flex flex-wrap items-center justify-between gap-3"><span class="site-kicker">{isAuxiliary ? 'Auxiliary API connection' : 'Connection'}</span><CopyButton text={service.envVar} /></div>
             <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4"><p class="site-micro">Environment variable</p><code class="mt-3 block break-all border-0 bg-transparent p-0 text-sm leading-7 text-[var(--accent-strong)]">{service.envVar}</code></div>
             <div class="mt-4 rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface-2)] p-4">

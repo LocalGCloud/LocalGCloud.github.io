@@ -246,13 +246,13 @@ test('copy controls also initialize after desktop navigation and retry a failed 
     .map(match => match[1]).find(code => code.includes('.copy-btn[data-copy-script]'));
   let mounted = false, asset = '/_astro/copy-buttons.js';
   const loaded = [], listeners = new Map();
-  const document = {
+  const document = { documentElement: {dataset:{audience:'humans'}},
     querySelector(selector) { return selector === '[data-desktop-shell]' ? { dataset: { base: '/' } }
       : mounted ? { dataset: { copyScript: asset } } : null; },
     createElement() { return { remove() {} }; }, head: { append(script) { loaded.push(script); } },
     addEventListener(event, handler) { listeners.set(event, handler); },
   };
-  runInNewContext(source, { document, URL, location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325' } });
+  runInNewContext(source, { document, window: {addEventListener(){}}, URL, location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325' } });
   assert.equal(loaded.length, 0);
   mounted = true; listeners.get('astro:page-load')();
   assert.equal(loaded.length, 1);

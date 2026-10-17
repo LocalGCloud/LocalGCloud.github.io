@@ -1,40 +1,14 @@
 ---
-import CopyButton from './CopyButton.astro';
-
 const rawBase = import.meta.env.BASE_URL;
-const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
-const promptText = 'Set up LocalCloud by reading https://local.cloud/ai/agent-template.md and following its instructions.';
-const context = [
-  { path: 'ai/agents.md', label: '/ai/agents.md' },
-  { path: 'llms.txt', label: '/llms.txt' },
-  { path: 'ai/agent-template.md', label: '/ai/agent-template.md' },
-];
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 ---
-
 <section class="lc-agent-start" aria-labelledby="agent-bootstrap-title">
-  <h2 id="agent-bootstrap-title">## bootstrap</h2>
-  <p class="lc-agent-prompt__hint">Paste this into your coding agent:</p>
-  <div class="lc-agent-prompt">
-    <code class="lc-agent-prompt__code">{promptText}</code>
-    <CopyButton text={promptText} label="Copy prompt for AI coding agents" class="lc-agent-prompt__copy-btn" />
-  </div>
-  <nav class="lc-agent-context" aria-label="Agent context documents">
-    <span class="lc-agent-key">read:</span>
-    {context.map((item) => <a href={base + item.path} target="_blank" rel="noopener noreferrer">{item.label}</a>)}
-  </nav>
-  <p class="lc-agent-friends"><span class="lc-agent-key">clients:</span> Codex · Claude Code · Cursor · Gemini · Antigravity · Windsurf</p>
+  <h2 id="agent-bootstrap-title">Start with context</h2>
+  <p>Read the setup instructions, inspect the repository, configure local endpoints, and verify the first SDK call.</p>
+  <a href={base + 'ai/agent-template.md'}>https://local.cloud/ai/agent-template.md</a>
 </section>
-
 <style>
-  .lc-agent-start{min-width:0;font:.8125rem/1.7 var(--font-mono);text-align:left}
-  h2{margin:0 0 .5rem;color:var(--text);font:600 .9375rem/1.5 var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
-  .lc-agent-prompt__hint{margin:0 0 .5rem;color:var(--text-2)}
-  .lc-agent-prompt{display:flex;align-items:flex-start;gap:1rem;border:1px solid var(--line);outline:1px solid var(--line);outline-offset:3px;background:var(--surface);padding:.75rem;margin:1rem 4px}
-  .lc-agent-prompt__code{flex:1;min-width:0;padding:0;border:0;background:transparent;color:var(--accent);font:inherit;overflow-wrap:anywhere;user-select:all}
-  :global(.lc-agent-prompt__copy-btn){flex-shrink:0;border-radius:0!important;background:var(--accent)!important;color:var(--bg)!important;border-color:var(--accent)!important;box-shadow:2px 2px 0 var(--line);font-family:var(--font-mono)}
-  .lc-agent-context{display:flex;flex-wrap:wrap;align-items:baseline;gap:.35rem 1rem;margin-top:1rem}
-  .lc-agent-context a{color:var(--accent);text-decoration:underline;text-underline-offset:.2em;overflow-wrap:anywhere}
-  .lc-agent-key{color:var(--text-2)}
-  .lc-agent-friends{margin:.5rem 0 0;color:var(--text-2);overflow-wrap:anywhere}
-  @media(max-width:30rem){.lc-agent-prompt{flex-direction:column;gap:.5rem}}
+ h2{margin:0 0 12px;color:var(--accent);font:600 16px/1.5 var(--font-mono)}
+ p{margin:0 0 14px;color:var(--text-2)}
+ a{color:var(--accent);text-decoration:underline;text-underline-offset:4px;overflow-wrap:anywhere}
 </style>

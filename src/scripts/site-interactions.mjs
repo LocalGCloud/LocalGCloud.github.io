@@ -128,6 +128,7 @@
     var target = event.target.closest && event.target.closest('#lc-audience-switch,[data-target-audience]');
     if (!target) return;
     var audience = target.dataset.targetAudience || (root.dataset.audience === 'agents' ? 'humans' : 'agents');
+    window.dispatchEvent(new Event('lc:before-audience-change'));
     root.dataset.audience = audience;
     try { localStorage.setItem('lc-audience', audience); } catch (e) {}
     sync();
@@ -136,7 +137,9 @@
   sync();
   d.addEventListener('astro:page-load', sync);
   window.addEventListener('popstate', function() {
+    window.dispatchEvent(new Event('lc:before-audience-change'));
     root.dataset.audience = new URL(location.href).searchParams.get('audience') === 'agents' ? 'agents' : 'humans';
     sync();
+    window.dispatchEvent(new Event('lc:audience-change'));
   });
 })();

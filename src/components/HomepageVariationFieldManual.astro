@@ -12,7 +12,6 @@ import ServiceFilterBootstrap from './ServiceFilterBootstrap.astro';
 import CopyButton from './CopyButton.astro';
 import AlternativesTable from './AlternativesTable.astro';
 import AgentPromptHero from './AgentPromptHero.astro';
-import AgentCaptcha from './AgentCaptcha.astro';
 import AgentTerminalDaemon from './AgentTerminalDaemon.astro';
 import AgentRibbonSpecs from './AgentRibbonSpecs.astro';
 import { availableServiceCount, serviceCatalogGroups } from '../data/services';
@@ -130,17 +129,13 @@ for (const column of atlasColumns) {
         <p class="mobile-eyebrow" data-mobile-only data-pagefind-ignore>Cloud for agents</p>
         <p class="desktop-hero-eyebrow" data-desktop-copy data-pagefind-ignore>Cloud for agents</p>
         <div class="field-hero__headline-wrapper">
-          <div class="field-hero__headline--agent" data-agent-only aria-hidden="true">
-            <pre class="agent-readme__cloud">{'       .--.\n    .-(    ).\n   (___.__)__)'}</pre>
-            <div><span class="agent-readme__path">local.cloud / agent mode</span><br />Google Cloud APIs. Local endpoints. Your SDKs.</div>
-          </div>
           <h1 class="field-hero__headline">
             <span class="field-hero__headline-main" data-classic-copy>localcloud is</span>{' '}
             <span class="field-hero__headline-tag" data-classic-copy>cloud for agents.</span>
           </h1>
           <p class="field-intro" data-classic-copy>{definition}</p>
           <p class="field-intro--agent" data-agent-only>
-            &gt; @agents: provision, query, test, repeat. Your local cloud is the sandbox.
+            Provision, query and test Google Cloud services locally. Connect your existing SDKs or use the LocalCloud MCP server.
           </p>
           <dl class="agent-readme__facts" data-agent-only aria-label="Local development environment">
             <div><dt>runtime</dt><dd>one Docker container</dd></div>
@@ -222,7 +217,6 @@ for (const column of atlasColumns) {
         <div class="field-hero__visual field-hero__visual--agent" data-agent-visual>
           <div class="field-hero__agent-stack">
             <AgentPromptHero />
-            <AgentCaptcha />
             <AgentTerminalDaemon />
           </div>
         </div>
@@ -1355,44 +1349,17 @@ for (const column of atlasColumns) {
 </style>
 
 <style is:global>
-.field-hero__headline--agent,.field-intro--agent,.agent-readme__facts,.field-hero__visual--agent,.field-ribbon__agent,.field-atlas__agent-bar{display:none}
-html[data-audience="agents"] .field-home :is(.field-hero__visual--human,.field-ribbon__human,.desktop-hero-art,.desktop-hero-summary,.mobile-hero-art,.mobile-intro,.mobile-eyebrow,.desktop-hero-eyebrow,.desktop-install-heading,.desktop-hero-proof,.field-install,.field-actions,.field-proof){display:none!important}
-html[data-audience="agents"] .field-home .field-hero{display:block!important;background:var(--bg);color:var(--text);text-align:left;padding:0!important}
-html[data-audience="agents"] .field-home .field-hero__copy{width:100%;max-width:68rem;margin-inline:auto;padding:1.75rem 2rem 0}
-html[data-audience="agents"] .field-home .field-hero__headline--agent{display:flex!important;align-items:center;gap:1.5rem;margin:0 0 1.5rem;font:.75rem/1.65 var(--font-mono);color:var(--text-2)}
-html[data-audience="agents"] .field-home .agent-readme__cloud{flex-shrink:0;margin:0;padding:0;border:0;background:transparent;color:var(--accent);font:.8125rem/1.15 var(--font-mono);white-space:pre;overflow:visible}
-html[data-audience="agents"] .field-home .agent-readme__path{color:var(--accent);text-transform:uppercase;letter-spacing:.12em}
-html[data-audience="agents"] .field-home .field-hero__headline{display:block!important;width:auto!important;margin:0!important;font:700 clamp(1.25rem,2.1vw,1.75rem)/1.45 var(--font-mono)!important;letter-spacing:.015em!important;text-transform:uppercase;color:var(--accent);text-align:left}
-html[data-audience="agents"] .field-home .field-hero__headline::before{content:'# ';color:var(--text-2)}
-html[data-audience="agents"] .field-home .field-hero__headline [data-classic-copy]{display:inline!important;white-space:normal;line-height:inherit;font-size:inherit;color:inherit}
-html[data-audience="agents"] .field-home .field-hero__headline [data-desktop-copy]{display:none!important}
-html[data-audience="agents"] .field-home .field-intro--agent{display:block!important;margin:.5rem 0 1rem;font:.8125rem/1.7 var(--font-mono);color:var(--text-2);text-align:left}
-html[data-audience="agents"] .field-home .field-hero .field-intro{display:none!important}
-html[data-audience="agents"] .field-home .agent-readme__facts{display:grid;gap:.2rem;margin:0 0 1.5rem;font:.8125rem/1.7 var(--font-mono)}
-html[data-audience="agents"] .field-home .agent-readme__facts>div{display:grid;grid-template-columns:7rem minmax(0,1fr);gap:1rem}
-html[data-audience="agents"] .field-home .agent-readme__facts dt{color:var(--text-2)}
-html[data-audience="agents"] .field-home .agent-readme__facts dd{margin:0;color:var(--text);overflow-wrap:anywhere}
-html[data-audience="agents"] .field-home .field-hero__visual--agent{display:block!important}
-html[data-audience="agents"] .field-home .field-hero__visual-area{width:100%;max-width:68rem;min-width:0;margin-inline:auto;padding:0 2rem 2rem}
-html[data-audience="agents"] .field-home .field-hero__agent-stack{display:grid;grid-template-columns:minmax(0,1fr) 15rem;align-items:start;gap:1.75rem 2rem;width:100%}
-html[data-audience="agents"] .field-home .lc-agent-start{grid-column:1;grid-row:1;align-self:center;padding-block:1.25rem;border-block:1px dashed var(--line)}
-html[data-audience="agents"] .field-home .agent-terminal{grid-column:1/-1;grid-row:2;min-width:0}
-html[data-audience="agents"] .field-home .lc-agent-captcha{grid-column:2;grid-row:1;align-self:center;max-width:100%;padding:0 0 0 1.25rem;border-left:1px dashed var(--line)}
-html[data-audience="agents"] .field-home .field-ribbon__agent{display:block}
-html[data-audience="agents"] .field-home .field-atlas__agent-bar{display:flex;gap:.6rem;padding:.75rem 0;border-block:1px solid var(--line);font:.8125rem/1.5 var(--font-mono);color:var(--accent);margin-bottom:1rem}
-html[data-audience="agents"] .field-home .field-atlas__agent-dot{color:var(--accent)}
-html[data-audience="agents"] .field-home .field-service strong{font-family:var(--font-mono)}
-@media(max-width:64rem){
-  html[data-audience="agents"] .field-home .field-hero__agent-stack{grid-template-columns:minmax(0,1fr)}
-  html[data-audience="agents"] .field-home :is(.lc-agent-start,.agent-terminal,.lc-agent-captcha){grid-column:auto;grid-row:auto}
-  html[data-audience="agents"] .field-home .lc-agent-captcha{max-width:22rem;padding:1.25rem 0 0;border-left:0;border-top:1px solid var(--line)}
-}
-@media(max-width:48rem){
-  html[data-audience="agents"] .field-home .field-hero{border-color:var(--line)}
-  html[data-audience="agents"] .field-home .field-hero__copy{padding:1.25rem 1.25rem 0}
-  html[data-audience="agents"] .field-home .field-hero__visual-area{padding:0 1.25rem 1.25rem}
-  html[data-audience="agents"] .field-home .field-hero__headline--agent{gap:1rem;align-items:flex-start;font-size:.75rem}
-  html[data-audience="agents"] .field-home .agent-readme__cloud{font-size:.6875rem}
-  html[data-audience="agents"] .field-home .agent-readme__facts>div{grid-template-columns:5rem minmax(0,1fr);gap:.5rem}
+.field-intro--agent,.agent-readme__facts,.field-hero__visual--agent,.field-ribbon__agent,.field-atlas__agent-bar{display:none}
+html:root[data-audience="agents"] .field-home{
+ & :is(.field-hero__visual--human,.field-ribbon__human,.desktop-hero-art,.desktop-hero-summary,.mobile-hero-art,.mobile-intro,.mobile-eyebrow,.desktop-hero-eyebrow,.desktop-install-heading,.desktop-hero-proof,.field-install,.field-actions,.field-proof,.field-intro){display:none!important}
+ & .field-hero{display:block!important;background:var(--bg);color:var(--text);text-align:left;padding:0!important}
+ & .field-hero__headline [data-classic-copy]{display:inline!important;white-space:normal;line-height:inherit;font-size:inherit;color:inherit}
+ & .field-hero__headline [data-desktop-copy]{display:none!important}
+ & .field-intro--agent{display:block!important;margin:14px 0 20px;color:var(--text-2)}
+ & .agent-readme__facts{display:grid;gap:3px;margin:0;font:12px/1.8 var(--font-mono)}
+ & .agent-readme__facts>div{display:grid;grid-template-columns:7rem minmax(0,1fr);gap:14px}
+ & .agent-readme__facts dt{color:var(--text-2)}
+ & .agent-readme__facts dd{margin:0;color:var(--text);overflow-wrap:anywhere}
+ & .field-hero__visual--agent{display:block!important}
 }
 </style>

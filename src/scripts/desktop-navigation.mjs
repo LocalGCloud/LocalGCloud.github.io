@@ -12,8 +12,9 @@ const sha = async (text) => [...new Uint8Array(await crypto.subtle.digest('SHA-2
 export async function installDesktopNavigation({root, validate, before, mounted, synchronized = () => {}, views = ['desktop']}) {
   const pane = root.querySelector('[data-desktop-content]'), base = root.dataset.base || '/';
   const mobile=()=>document.documentElement.dataset.siteView==='mobile';
+  const documentView=()=>mobile()||document.documentElement.dataset.audience==='agents';
   const active=()=>views.includes(document.documentElement.dataset.siteView)&&(mobile()||matchMedia('(min-width:64rem)').matches);
-  const scrolling=()=>mobile()?document.scrollingElement:pane;
+  const scrolling=()=>documentView()?document.scrollingElement:pane;
   const originalStyle = await sha([...document.querySelectorAll('style')].map(el => el.textContent).join('\n'));
   const ran = new Set(await Promise.all([...document.scripts].map(async script => script.src ? 'url:' + new URL(script.src).pathname : 'inline:' + await sha(script.textContent))));
   const cache = new Map();
@@ -24,7 +25,7 @@ export async function installDesktopNavigation({root, validate, before, mounted,
     if (new URL(location.href).searchParams.get('audience') === 'agents') url.searchParams.set('audience', 'agents');
     else url.searchParams.delete('audience');
   };
-  window.addEventListener('lc:audience-change', () => audienceURL(rendered));
+  window.addEventListener('lc:audience-change', () => { audienceURL(rendered); restoreMode(); scrolling().scrollTop = positions.get(renderedEntry) ?? history.state?.lcScroll ?? 0; });
   const json = async (url) => {
     const safe = safeDesktopAsset(url,location.href,base);
     if (!safe) throw Error('Invalid desktop content URL');
@@ -119,7 +120,7 @@ export async function installDesktopNavigation({root, validate, before, mounted,
   };
   const positions=new Map(),session=crypto.randomUUID();let entry=0,renderedEntry=session+':0';
   let mode=document.documentElement.dataset.siteView;
-  const restoreMode=()=>{history.scrollRestoration=mobile()&&active()?'manual':'auto';};
+  const restoreMode=()=>{history.scrollRestoration=documentView()&&active()?'manual':'auto';};
   restoreMode();
   window.addEventListener('pageshow',restoreMode);
   window.addEventListener('lc:view-change',()=>{
@@ -138,6 +139,7 @@ export async function installDesktopNavigation({root, validate, before, mounted,
     if(positions.size>50)positions.delete(positions.keys().next().value);
     if(rendered.pathname===location.pathname&&rendered.search===location.search)history.replaceState({...history.state,lcDesktop:true,lcEntry:renderedEntry,lcScroll:scrolling().scrollTop},'',location.href);
   };
+  window.addEventListener('lc:before-audience-change', saveScroll);
   saveScroll();if(rendered.hash&&active()&&!mobile())scrollToContent(rendered);
   const scrolled=()=>{
     if(swapping||!active())return;
@@ -145,7 +147,7 @@ export async function installDesktopNavigation({root, validate, before, mounted,
     if(!scrollTimer)scrollTimer=setTimeout(saveScroll,500);
   };
   pane.addEventListener('scroll',scrolled,{passive:true});
-  window.addEventListener('scroll',()=>{if(mobile())scrolled();},{passive:true});
+  window.addEventListener('scroll',()=>{if(documentView())scrolled();},{passive:true});
   window.addEventListener('pagehide',()=>{saveScroll();history.scrollRestoration='auto';});
   const navigate = async (href, traversal = false) => {
     if (!active()) return false;
@@ -181,19 +183,19 @@ export async function installDesktopNavigation({root, validate, before, mounted,
       if(!traversal)history.pushState({lcDesktop:true,lcEntry:session+':'+ ++entry,lcScroll:0},'',url);
       renderedEntry=history.state?.lcEntry;
       rendered = url;
-      if(mobile()&&!traversal&&!url.hash)scrolling().scrollTop=0;
-      if(!mobile())swapping=false;
+      if(documentView()&&!traversal&&!url.hash)scrolling().scrollTop=0;
+      if(!documentView())swapping=false;
       if(activeStyle!==nextStyle)activeStyle?.remove();activeStyle=nextStyle;
       metadata(page);
       synchronized(url.href);
       await mounted(page,url.href,traversal);
       if(mountedVersion!==contentVersion)return false;
-      if(mobile()&&version===sequence&&(traversal||url.hash))scrollToContent(url,savedScroll,traversal);
+      if(documentView()&&version===sequence&&(traversal||url.hash))scrollToContent(url,savedScroll,traversal);
       swapping=false;
       for(const item of page.scripts){if(mountedVersion!==contentVersion)return false;await script(item);}
       if(mountedVersion!==contentVersion)return false;
       document.dispatchEvent(new Event('astro:page-load'));
-      if(version===sequence&&active()){if(!mobile()||traversal||!url.hash)scrollToContent(url,positions.get(renderedEntry)??savedScroll,traversal);if(!url.hash&&!traversal)focus(pane.querySelector?.('main h1, main'));}
+      if(version===sequence&&active()){if(!documentView()||traversal||!url.hash)scrollToContent(url,positions.get(renderedEntry)??savedScroll,traversal);if(!url.hash&&!traversal)focus(pane.querySelector?.('main h1, main'));}
       if(version===sequence&&active()){warmed.clear();warmAfterLoad();}
       return true;
     } catch(error) {

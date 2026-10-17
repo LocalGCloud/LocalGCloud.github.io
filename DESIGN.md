@@ -171,7 +171,7 @@ Components feel precise and immediately operable: quiet at rest, unmistakable on
 - **State:** Chips describe category or status. They are not default containers for body copy or navigation.
 
 ### Cards / Containers
-- **Corner Style:** Standard panels and feature surfaces use 0.5rem; code blocks and controls use 0.375rem. Agent mode retains its independent dark Matrix palette, green monospace text, square corners, pixel icons and static scanlines. The human palette does not override agent mode.
+- **Corner Style:** Standard panels and feature surfaces use 0.5rem; code blocks and controls use 0.375rem. Agent mode uses one plain, naturally scrolling document with the dark Matrix palette and green monospace text. It has text navigation and a direct Markdown link, with no OS window controls, icon rails, taskbar, puzzle, copy controls, or hidden client examples. CSS code rain stays behind the opaque document; it pauses in hidden tabs, respects reduced motion by default, and offers an explicit persisted Play/Pause choice. Human mode keeps its existing layout.
 - **Background:** Canvas at the page level; Inset Surface for nested technical values.
 - **Shadow Strategy:** Flat by default; floating chrome and desktop windows receive a light shadow, while interactive cards lift only on hover.
 - **Border:** One-pixel Border; the Service Catalog boxes both categories and services, while documentation navigation uses grouped rules.

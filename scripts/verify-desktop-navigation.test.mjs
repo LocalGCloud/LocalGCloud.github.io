@@ -87,6 +87,7 @@ test('audience-only URL changes keep the mounted page and scroll state across fr
   const h = await harness(false, {}, { views:['desktop','mobile'] });
   await h.navigate('/b/');
   h.pane.scrollTop = 321;
+  h.windowListeners.get('lc:before-audience-change')();
   h.setURL('/b/?audience=agents');
   h.windowListeners.get('lc:audience-change')();
   h.windowListeners.get('pagehide')();
@@ -552,4 +553,21 @@ test('desktop payloads retain canonical metadata, Markdown discovery and every s
   assert.equal(markdownPages,Object.keys(manifest.routes).filter(path=>path!=='/404.html').length);
   const headers=readFileSync(new URL('../public/_headers',import.meta.url),'utf8');
   assert.match(headers, /\/_desktop\/\*\s+X-Robots-Tag: noindex/);
+});
+
+
+test('agent navigation uses document scrolling and preserves it across audience changes and Back',async()=>{
+  const h=await harness(false,{}, {views:['desktop','mobile']});
+  h.pane.scrollTop=246;h.windowListeners.get('lc:before-audience-change')();
+  h.context.document.documentElement.dataset.audience='agents';h.setURL('/a/?audience=agents');
+  h.windowListeners.get('lc:audience-change')();
+  assert.equal(h.context.document.scrollingElement.scrollTop,246);
+  assert.equal(h.context.history.scrollRestoration,'manual');
+  await h.navigate('/b/?audience=agents');assert.equal(h.context.document.scrollingElement.scrollTop,0);
+  h.context.document.scrollingElement.scrollTop=712;h.windowListeners.get('scroll')();
+  await h.navigate('/c/?audience=agents');await h.back();
+  assert.equal(h.context.document.scrollingElement.scrollTop,712);
+  h.windowListeners.get('lc:before-audience-change')();
+  h.context.document.documentElement.dataset.audience='humans';h.setURL('/b/');h.windowListeners.get('lc:audience-change')();
+  assert.equal(h.pane.scrollTop,712);assert.equal(h.context.history.scrollRestoration,'auto');
 });

@@ -8,6 +8,7 @@ import '../styles/agent-mode.css';
 import DesktopShell from '../components/DesktopShell.astro';
 import CopyButton from '../components/CopyButton.astro';
 import copyScript from '../scripts/copy-buttons.mjs?url';
+import agentDocumentScript from '../scripts/agent-document.mjs?url';
 import desktopScript from '../scripts/desktop-view.mjs?url';
 import mobileScript from '../scripts/mobile-view.mjs?url';
 import desktopControllerScript from '../scripts/desktop-controller.mjs?url';
@@ -400,11 +401,11 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     </script>
 
     <template data-code-copy-template data-copy-script={copyScript}><CopyButton text="" label="Copy code" /></template>
-    <script is:inline data-critical-bootstrap define:vars={{ copyDevelopment: import.meta.env.DEV }}>
+    <script is:inline data-critical-bootstrap define:vars={{ copyDevelopment: import.meta.env.DEV, agentDocumentScript }}>
       (() => {
         let loading = false;
         const loadCopyButtons = () => {
-          if (!document.querySelector('pre > code, .copy-btn')) return;
+          if (document.documentElement.dataset.audience === 'agents' || !document.querySelector('pre > code, .copy-btn')) return;
           const source = document.querySelector('.copy-btn[data-copy-script], [data-code-copy-template]')?.dataset.copyScript;
           if (!source || loading) return;
           const url = new URL(source, location.href);
@@ -419,6 +420,14 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         };
         loadCopyButtons();
         document.addEventListener('astro:page-load', loadCopyButtons);
+        window.addEventListener('lc:audience-change', loadCopyButtons);
+        let agentLoading;
+        const loadAgentDocument = () => {
+          if (document.documentElement.dataset.audience !== 'agents' || agentLoading) return;
+          agentLoading = import(agentDocumentScript).catch(error => { agentLoading = undefined; console.warn('Agent presentation unavailable', error); });
+        };
+        loadAgentDocument();
+        window.addEventListener('lc:audience-change', loadAgentDocument);
       })();
     </script>
 
