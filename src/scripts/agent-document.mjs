@@ -26,7 +26,12 @@ export function initAgentDocument() {
     rain.hidden = !agent;
     rain.dataset.running = String(agent && moving && !document.hidden);
     const button = document.querySelector('[data-agent-rain-toggle]');
-    if (button) { button.textContent = moving ? 'Pause' : 'Play'; }
+    if (button) {
+      button.textContent = moving ? 'Ⅱ' : '▶';
+      const label = moving ? 'Pause background animation' : 'Play background animation';
+      button.setAttribute('aria-label', label);
+      button.title = label;
+    }
   };
   const sync = () => {
     const agent = root.dataset.audience === 'agents';

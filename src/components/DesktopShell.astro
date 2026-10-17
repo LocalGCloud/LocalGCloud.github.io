@@ -108,7 +108,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
         <a href={base} class="agent-document-brand">local.cloud / agents</a>
         <nav aria-label="Agent navigation">
           <a href={base} data-agent-nav>Overview</a><a href={base + 'services/'} data-agent-nav>Services</a><a href={base + 'docs/'} data-agent-nav>Docs</a>
-          <button type="button" data-target-audience="humans">Human view</button><button type="button" data-agent-rain-toggle>Play</button>
+          <button type="button" data-target-audience="humans">Human view</button><button type="button" data-agent-rain-toggle aria-label="Play background animation" title="Play background animation">▶</button>
         </nav>
       </header>
       <a class="agent-document-markdown" data-agent-markdown href={markdownPath ?? undefined} hidden={!markdownPath}>Read this page as Markdown ↗</a>
