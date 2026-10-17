@@ -26,7 +26,7 @@ export function initAgentDocument() {
     rain.hidden = !agent;
     rain.dataset.running = String(agent && moving && !document.hidden);
     const button = document.querySelector('[data-agent-rain-toggle]');
-    if (button) { button.textContent = moving ? 'Pause rain' : 'Play rain'; }
+    if (button) { button.textContent = moving ? 'Pause' : 'Play'; }
   };
   const sync = () => {
     const agent = root.dataset.audience === 'agents';
