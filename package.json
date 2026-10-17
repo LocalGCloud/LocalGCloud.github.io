@@ -15,7 +15,7 @@
     "dev": "astro dev",
     "build:cloudflare": "SITE_DEPLOYMENT_TARGET=cloudflare pnpm run build",
     "build:static": "SITE_DEPLOYMENT_TARGET=static pnpm run build",
-    "build": "node scripts/generate-distributed-docs.mjs && node scripts/verify-docs-contract.mjs && node scripts/verify-upstream-docs.mjs && node scripts/verify-cli-docs.mjs && node scripts/verify-doc-examples.mjs && node scripts/verify-policy-docs.mjs && node scripts/verify-distributed-docs.mjs && astro build && node scripts/generate-markdown-twins.mjs && node scripts/verify-rendered-docs.mjs && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node scripts/verify-content-facts.mjs && node scripts/verify-blog-presentation.mjs && pagefind --site dist && node scripts/bundle-pagefind.mjs && node scripts/finalize-static-csp.mjs && node scripts/generate-desktop-content.mjs && node scripts/precompress-html.mjs && node scripts/asset-manifest.mjs write",
+    "build": "node scripts/generate-distributed-docs.mjs && node scripts/verify-docs-contract.mjs && node scripts/verify-upstream-docs.mjs && node scripts/verify-cli-docs.mjs && node scripts/verify-doc-examples.mjs && node scripts/verify-policy-docs.mjs && node scripts/verify-distributed-docs.mjs && node --test scripts/verify-agentation.test.mjs && astro build && node scripts/generate-markdown-twins.mjs && node scripts/verify-rendered-docs.mjs && node scripts/write-sitemap-alias.mjs && node scripts/verify-static-seo.mjs && node scripts/verify-content-facts.mjs && node scripts/verify-blog-presentation.mjs && pagefind --site dist && node scripts/bundle-pagefind.mjs && node scripts/finalize-static-csp.mjs && node scripts/generate-desktop-content.mjs && node scripts/precompress-html.mjs && node scripts/asset-manifest.mjs write && node scripts/verify-no-agentation.mjs",
     "test:performance": "node --test scripts/verify-code-panels.test.mjs scripts/verify-agent-mode.test.mjs scripts/verify-page-performance.test.mjs scripts/verify-page-budgets.test.mjs scripts/verify-desktop-view.test.mjs scripts/verify-desktop-navigation.test.mjs scripts/verify-my-cloud.test.mjs scripts/verify-my-cloud-browser.test.mjs scripts/verify-install-toggle.test.mjs scripts/html-structure.test.mjs scripts/verify-static-response.test.mjs",
     "test:worker": "node --test --test-timeout=180000 scripts/verify-worker-runtime.test.mjs",
     "test:analytics": "node --test scripts/verify-posthog-proxy.test.mjs scripts/verify-install-tracking.test.mjs",
@@ -27,7 +27,9 @@
     "test:sitemap-guard": "node --test scripts/sitemap-guard.test.mjs",
     "test:asset-manifest": "node --test scripts/asset-manifest.test.mjs",
     "deploy:cloudflare": "node scripts/verify-clean-release.mjs && pnpm run test:dependencies && pnpm run build:cloudflare && pnpm run test:installer && pnpm run test:performance && pnpm run test:worker && pnpm run test:analytics && pnpm run test:live-seo && pnpm run test:sitemap-guard && pnpm run test:asset-manifest && node scripts/sitemap-guard.mjs check && node scripts/asset-manifest.mjs carry && wrangler deploy",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "dev:agentation": "LOCAL_AGENTATION=1 astro dev --host 127.0.0.1 --ignore-lock",
+    "test:agentation": "node --test scripts/verify-agentation.test.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.1",
@@ -40,10 +42,13 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "agentation": "3.1.2",
     "esbuild": "0.28.2",
     "pagefind": "^1.5.2",
-    "sharp": "0.35.5",
     "puppeteer-core": "^25.12.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sharp": "0.35.5",
     "turndown": "^7.2.4",
     "vite": "8.3.2",
     "wrangler": "4.147.0",

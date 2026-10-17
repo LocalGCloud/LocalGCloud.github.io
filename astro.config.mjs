@@ -13,6 +13,7 @@ import { lastModifiedForUrl } from './src/utils/page-dates.mjs';
 
 import { renderMarkdownTwin } from './src/utils/render-markdown-twin.mjs';
 import { twinSourcePath } from './src/utils/markdown-twins.mjs';
+import agentation from './scripts/agentation-integration.mjs';
 
 const env = loadEnv(process.env.NODE_ENV || 'production', process.cwd(), '');
 const posthog = resolvePosthogConfig(env);
@@ -75,6 +76,7 @@ export default defineConfig({
     },
   },
   integrations: [
+    agentation,
     mdx(),
     sitemap({
       filter: (page) => !unlistedPages.has(page),

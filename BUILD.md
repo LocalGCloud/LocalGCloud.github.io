@@ -28,6 +28,47 @@ graft build
 
 ---
 
+### Local visual feedback for coding agents
+
+Run `pnpm run dev:agentation` and open the printed URL (normally
+**http://127.0.0.1:4321/**) in a desktop browser.
+Click the Agentation toolbar in the bottom-right corner, select an element, and add
+your feedback. Regular `pnpm run dev` leaves the toolbar off.
+
+For direct delivery, keep a coding-agent session with the **Agentation MCP server**
+running. Configure its MCP command as `npx` with arguments
+`["-y", "agentation-mcp@1.3.2", "server"]` if it is not already installed in your
+agent. Restart that agent after changing its MCP configuration. The toolbar
+connects to **http://localhost:4747**, the server's default loopback endpoint; reuse
+the existing server rather than starting another on the same port.
+
+1. Check the server with `npx -y agentation-mcp@1.3.2 doctor`.
+2. Add an annotation on the local site.
+3. Ask the agent: **“Read my Agentation feedback for this localhost page and apply
+   the requested changes.”** Confirm that it can read the exact comment and URL
+   with `agentation_get_all_pending` (or the tools for that session).
+
+Without MCP, the toolbar still saves feedback locally and can copy structured
+Markdown to paste into any coding agent. A healthy server alone does not prove
+browser delivery; the test annotation does. For continuous feedback, ask the agent
+to watch this page's session with `agentation_watch_annotations`.
+
+Agentation and React are development dependencies. Astro injects their entry only
+for `astro dev` with `LOCAL_AGENTATION=1`; the browser also refuses to load them
+outside `localhost`, `127.0.0.1`, or `[::1]`. The opt-in command binds the development
+server to `127.0.0.1` and starts a separate instance with `--ignore-lock`, so an
+existing dev server cannot silently reuse its previous activation setting. Build
+and preview ignore the flag, and production CSP is
+unchanged. No CDN, webhook, or remote annotation service is configured.
+
+`pnpm run test:agentation` checks activation, host restrictions, hot reload cleanup,
+and the production-output guard. Every full build also runs these tests and scans
+the completed output, including source maps and the asset manifest, for leaked
+Agentation or React code. To verify the production boundary explicitly, run
+`LOCAL_AGENTATION=1 pnpm run build`, then `pnpm run test:installer`.
+
+---
+
 ## 2. Environment Prerequisites
 
 - **Node.js:** `24.21.0` (current LTS; pinned by Volta and CI)
@@ -93,13 +134,13 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 | **5** | `node scripts/verify-doc-examples.mjs` | Validates that all code snippets and examples across docs are syntactically valid and refer to valid local endpoints. |
 | **6** | `node scripts/verify-policy-docs.mjs` | Verifies privacy policies, license terms, free preview pricing statements, and navigation order. |
 | **7** | `node scripts/verify-distributed-docs.mjs` | Verifies `public/llms.txt` for required public facts (definition, opt-in services, license after services, open-source policy), pricing URLs, a guide link per service, absence of retired MCP packages, and accurate service counts. |
-| **8** | `astro build` | Compiles static pages, markdown routes, and sitemaps into `dist/`. |
+| **8** | `node --test scripts/verify-agentation.test.mjs` → `astro build` | Checks the local visual-feedback activation and production guard, then compiles static pages, markdown routes, and sitemaps into `dist/`. |
 | **9** | `node scripts/generate-markdown-twins.mjs` | Converts canonical `<main>` content from every content page into a Markdown twin with turndown (83 pages; 404 excluded), verifies its `<link rel="alternate" type="text/markdown">`, and preserves curated `/ai/*.md` resources. `llms-full.txt` retains its bounded 47-page technical corpus rather than including all marketing pages. |
 | **10** | `node scripts/verify-rendered-docs.mjs` | Inspects compiled HTML output (e.g. comparison tables and accessible scroll wrappers) to ensure proper rendering. |
 | **11** | `node scripts/write-sitemap-alias.mjs` | Copies `sitemap-index.xml` to `sitemap.xml` for legacy crawler compatibility. |
 | **12** | `node scripts/verify-static-seo.mjs` | On every indexable page: unique titles (≤65 characters) and descriptions (70–160), canonical URL, one H1, a raster `og:image` and share metadata, valid JSON-LD with the required types per page family; plus robots.txt, a sitemap that lists every indexable page with `lastmod` and no raw files, and the priority routes. |
 | **13** | `node scripts/verify-content-facts.mjs` → `node scripts/verify-blog-presentation.mjs` | **Content & Marketing Principles Verification:**<br>• Confirms every service has `marketingStatus: "supported"` or `"unsupported"`.<br>• Asserts Firestore is supported and disabled by default.<br>• Asserts Dataproc is supported.<br>• Asserts no page contains `"partial local emulation"` or badging as `"partial"`.<br>• Verifies all local internal links and fragment anchors across all published pages, and every `https://local.cloud` or root-relative link in `llms*.txt`, `/ai/*.md` and the Markdown twins.<br>• Checks that the CLI quick start appears verbatim in llms.txt and `/ai/*.md` and in order on the homepage, that agent pages install the CLI before using it, and that agent text has no `..` or `.;` join artifacts.<br>• Fails when any built page ships an HTML comment or renders its `<h1>` inside a `.reveal` element (tag tokenizer in `scripts/html-structure.mjs`). |
-| **14** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` → `node scripts/generate-desktop-content.mjs` → `node scripts/precompress-html.mjs` → `node scripts/asset-manifest.mjs write` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes (including the speculation rules) and moves it to directly after `<meta charset>`, generates immutable build-pinned Desktop manifests and content payloads, writes a Brotli sidecar for every page, and lists every `/_astro/` file in `dist/asset-manifest.json` so the next deploy can keep this one's bundles. |
+| **14** | `pagefind --site dist` → `node scripts/bundle-pagefind.mjs` → `node scripts/finalize-static-csp.mjs` → `node scripts/generate-desktop-content.mjs` → `node scripts/precompress-html.mjs` → `node scripts/asset-manifest.mjs write` → `node scripts/verify-no-agentation.mjs` | Indexes published pages, bundles a lazy integrity-protected search client, then finalizes each page's CSP from its exact emitted script bytes (including the speculation rules) and moves it to directly after `<meta charset>`, generates immutable build-pinned Desktop manifests and content payloads, writes a Brotli sidecar for every page, and lists every `/_astro/` file in `dist/asset-manifest.json` so the next deploy can keep this one's bundles. Finally rejects Agentation or its React runtime anywhere in the production output, including source maps and the manifest. |
 
 ---
 
