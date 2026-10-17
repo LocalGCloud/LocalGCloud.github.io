@@ -8,6 +8,7 @@ html:root[data-audience="agents"]{
  --brand-blue:#a6f58b;--brand-blue-strong:#a6f58b;--brand-sky:#a6f58b;--accent:#a6f58b;--accent-strong:#a6f58b;--accent-soft:#152b18;
  --focus-ring:var(--accent);--success-ink:#a6f58b;--success-soft:#244929;--code-bg:var(--bg);--code-text:var(--text);
  --font-display:var(--font-mono);--font-body:var(--font-mono);--radius-inline:0;--radius-control:0;--radius-panel:0;--radius-feature:0;--radius-pill:0;
+ & :focus-visible{outline:2px solid var(--focus-ring);outline-offset:4px}
  & body::before{display:none!important}
  & body{overflow:auto!important;background:var(--bg);padding:0!important}
  & :is(.desktop-toolbar,.desktop-shortcuts,.desktop-history,.desktop-titlebar,.desktop-taskbar,.mobile-dock,.lc-audience-dock,.site-header,.site-footer,.site-view-switch,.copy-btn,.copy-button,.code-tabs__bar,.lc-agent-captcha,.field-hero__headline--agent,.field-ribbon,.field-atlas__agent-bar,.mobile-service-strip,.mobile-service-launcher,.mobile-launcher,.mobile-guide-actions,.feedback-fab,.docs-feedback,.docs-mobile-nav,.docs-article__header,.docs-toolbar__actions){display:none!important}
