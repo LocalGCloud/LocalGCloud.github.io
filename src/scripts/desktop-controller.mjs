@@ -174,7 +174,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
         link.classList.toggle('is-active',active);if(active)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');
       });
       let md=root.querySelector('.desktop-markdown');
-      if(page.markdown&&!md){md=document.createElement('a');md.className='desktop-markdown';md.textContent='.md';md.target='_blank';md.rel='noopener noreferrer';md.setAttribute('aria-label','Read this page as Markdown');main.querySelector('[data-window-titlebar]').insertBefore(md,root.querySelector('.desktop-open-tab'));}
+      if(page.markdown&&!md){md=document.createElement('a');md.className='desktop-markdown';md.textContent='.md';md.target='_blank';md.rel='noopener noreferrer';md.setAttribute('aria-label','.md — read this page as Markdown');main.querySelector('[data-window-titlebar]').insertBefore(md,root.querySelector('.desktop-open-tab'));}
       if(md){md.hidden=!page.markdown;if(page.markdown)md.href=page.markdown;}
       if(document.documentElement.dataset.siteView==='desktop')presentContent();
       renderHistory();syncURL(url);

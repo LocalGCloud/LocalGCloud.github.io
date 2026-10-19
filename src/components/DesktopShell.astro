@@ -78,7 +78,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
     </nav>
     <span class="desktop-current" data-desktop-current aria-live="polite">{pageLabel}</span>
     <div class="desktop-toolbar-actions">
-      <button type="button" data-search-trigger aria-label="Search documentation">Search <kbd>⌘K</kbd></button>
+      <button type="button" data-search-trigger title="Search documentation" aria-keyshortcuts="Meta+K Control+K">Search <kbd>⌘K</kbd></button>
       <a href={base + 'docs/#install-the-cli'} class="desktop-start" data-desktop-open>Get started</a>
     </div>
   </header>
@@ -119,8 +119,8 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
           <button type="button" class="desktop-expand" data-window-action="expand" aria-label="Expand window" aria-pressed="false" title="Expand window"></button>
         </div>
         <span>local.cloud — {pageLabel}</span>
-        {markdownPath && <a href={markdownPath} target="_blank" rel="noopener noreferrer" class="desktop-markdown" aria-label="Read this page as Markdown">.md</a>}
-        <a href={pagePath} target="_blank" rel="noopener noreferrer" class="desktop-open-tab" aria-label="Open current page in a browser tab">Open tab</a>
+        {markdownPath && <a href={markdownPath} target="_blank" rel="noopener noreferrer" class="desktop-markdown" aria-label=".md — read this page as Markdown">.md</a>}
+        <a href={pagePath} target="_blank" rel="noopener noreferrer" class="desktop-open-tab" aria-label="Open tab — current page in a browser tab">Open tab</a>
       </header>
       <div class="desktop-content" data-desktop-content>
         <template data-desktop-content-start></template>
@@ -130,7 +130,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
     </div>
   </div>
   <footer class="desktop-taskbar" data-pagefind-ignore>
-    <button type="button" data-desktop-back disabled aria-label="Return to previous page">Back</button>
+    <button type="button" data-desktop-back disabled aria-label="Back to previous page">Back</button>
     <button type="button" data-desktop-restore hidden>Show current page</button>
     <div data-desktop-tasks></div>
     <a href={currentViewURL('classic')} data-view-choice="classic">Classic site</a>
