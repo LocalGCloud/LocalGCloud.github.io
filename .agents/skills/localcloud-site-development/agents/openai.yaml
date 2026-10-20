@@ -1,0 +1,4 @@
+interface:
+  display_name: "LocalCloud Site Development"
+  short_description: "Plan, build, and qualify LocalCloud site additions"
+  default_prompt: "Use $localcloud-site-development to scope, implement, and verify a LocalCloud site addition from the feature brief."
