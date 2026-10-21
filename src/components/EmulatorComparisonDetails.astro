@@ -15,8 +15,9 @@ const Heading = embedded ? 'h2' : 'h1';
     </div>
     <div class="comparison-meta">
       <p><strong>{comparison.total.toLocaleString('en-US')}</strong> features · <strong>{comparison.exclusive}</strong> advantages · <strong>{comparison.broader}</strong> broader behaviors</p>
-      <details class="comparison-notes"><summary>Notes</summary><p>{comparison.summary} Compared with <a href={comparison.baselineUrl}>{comparison.baseline}</a>. {comparison.scope} Counts describe documented rows and can overlap.</p></details>
     </div>
+    {comparison.id === 'firestore' && <p class="comparison-profile-note">Matching profiles share one mark. Extended is opt-in; Compatibility follows Java emulator behavior.</p>}
   </div>
 </header>
 <EmulatorComparisonTable {comparison} {embedded} {preview} />
+<div class:list={['comparison-notes', !embedded && 'container']}><p><strong>Comparison notes.</strong> {comparison.summary} Compared with <a href={comparison.baselineUrl}>{comparison.baseline}</a>. {comparison.scope} Counts describe documented rows and can overlap.</p></div>

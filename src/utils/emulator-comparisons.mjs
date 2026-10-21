@@ -1,5 +1,4 @@
 export const comparisonPreviewSize = 10;
-export const comparisonNotesInlineLimit = 60;
 export const comparisonStates = {
   available: 'Available', limited: 'Scoped', unavailable: 'Not available',
   unknown: 'Not assessed', na: 'Not applicable', 'no-effect': 'Accepted, no effect',
