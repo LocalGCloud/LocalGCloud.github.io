@@ -67,7 +67,7 @@ if (!isPlanned) exampleLinks.push({
   description: 'Start the runtime, verify readiness, exercise your SDK, and clean up test state.',
 });
 if (emulatorComparison && !isPlanned) exampleLinks.push({
-  title: `${service.name} emulator feature comparison`, href: emulatorComparison.path, label: 'Comparison',
+  title: `${service.name} emulator feature comparison`, href: emulatorComparison.workspacePath, label: 'Comparison',
   description: 'Compare feature availability; filter LocalCloud advantages or explore every documented feature.',
 });
 if (officialSampleLinks[service.id] && !isPlanned) exampleLinks.push({
@@ -157,7 +157,7 @@ const structuredData = [
             {exampleLinks.length > 0 && <a href="#examples">Code and integrations</a>}
             {agentSection && <a href="#ai-agent">Use with an AI agent</a>}
             {faqItems.length > 0 && <a href="#faq">FAQ</a>}
-            {emulatorComparison && <a href={`${base}${emulatorComparison.path.slice(1)}`}>Compare emulator features</a>}
+            {emulatorComparison && <a href={`${base}${emulatorComparison.workspacePath.slice(1)}`}>Compare emulator features</a>}
           </nav>}
           </details>
         </div>

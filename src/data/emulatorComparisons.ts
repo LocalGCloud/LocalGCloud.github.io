@@ -53,6 +53,7 @@ export const emulatorComparisons = definitions.map(definition => {
   return { ...definition, ...metrics[definition.id], rows, dataUrl: assets[key] as string,
     sourcesUrl: sourceAssets[`./emulator-comparison-sources/${definition.id}.json`] as string,
     path: `/compare/emulators/${definition.slug}/`,
+    workspacePath: `/compare/emulators/?service=${definition.slug}`,
     areas: [...new Set(rows.map(row => row.area))],
   };
 });

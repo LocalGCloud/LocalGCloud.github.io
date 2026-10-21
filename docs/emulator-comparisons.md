@@ -1,12 +1,15 @@
 # Service emulator comparisons
 
-The public hub is `/compare/emulators/`. Five service comparisons use a shared
-table and their service guides link to them. Use LocalCloud service names in the
+The public workspace is `/compare/emulators/`. Service tabs on the left select a
+shared detail pane on the right; on mobile the tabs sit above the content. Service
+guides link to `?service=<slug>`, and Back/Forward restores the selection. Existing
+standalone service comparison URLs remain available, including without JavaScript.
+Use LocalCloud service names in the
 headings and table columns. Keep introductions and configuration notes concise;
 review dates and detailed provenance remain in the source records.
 
 The initial HTML and Markdown twin contain a small advantage preview. On entry,
-the browser loads the build-hashed inventory and displays every matching row on
+the browser loads only the selected service's build-hashed inventory and displays every matching row on
 one page. The existing filters search the complete inventory without pagination.
 JSON data and source references appear in the For agents audience only.
 
