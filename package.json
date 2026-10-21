@@ -30,7 +30,7 @@
     "preview": "astro preview",
     "dev:agentation": "LOCAL_AGENTATION=1 astro dev --host 127.0.0.1 --ignore-lock",
     "test:agentation": "node --test scripts/verify-agentation.test.mjs",
-    "test:comparisons": "node --test scripts/verify-emulator-comparisons.test.mjs scripts/verify-emulator-comparisons-browser.test.mjs"
+    "test:comparisons": "python3 -B -m unittest scripts/test_sync_emulator_comparisons.py && node --test scripts/verify-emulator-comparisons.test.mjs scripts/verify-emulator-comparisons-browser.test.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.1",

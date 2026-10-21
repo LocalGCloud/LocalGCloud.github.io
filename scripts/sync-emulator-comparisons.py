@@ -1,122 +1,544 @@
-"""Import the supplied comparison inventories without inventing competitor gaps.
+"""Import the service comparison documents into the site's feature inventories.
 
-Usage: python3 scripts/sync-emulator-comparisons.py /path/to/local_cloud_dependencies
-Only committed source documents are accepted. Builds use the checked-in snapshots.
+Usage: python3 scripts/sync-emulator-comparisons.py [--check] [/path/to/local_cloud_dependencies]
+
+The upstream comparison documents are the source of truth for feature parity. This importer
+reads them, refuses anything it cannot account for, and publishes a polished, visitor-facing
+inventory per service. Builds use only the checked-in output and never read sibling repositories.
+
+Safeguards, all fail-closed so a changed document layout stops the sync instead of dropping data:
+  * only committed documents are accepted (the digest of each is recorded);
+  * every table is matched by header role, never by column position, and unknown marks are errors;
+  * parsed counts must equal the totals the document itself states;
+  * notes are rewritten for visitors and scanned for internal wording before they are written.
+
+Internal detail (evidence labels, file references, revisions, source text) never reaches the
+published inventories; it stays in src/data/emulator-comparison-provenance.json.
 """
+import argparse
 import csv
 import hashlib
 import io
 import json
-from pathlib import Path
 import re
 import subprocess
 import sys
+from collections import Counter, defaultdict
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCUMENTS = {
-    'gcs': ('localcloud-fake-gcs-server', ['docs/upstream-comparison.md']),
-    'firestore': ('firestore-go', ['docs/emulator-comparison.md']),
-    'bigtable': ('little_bigtable', ['EMULATOR_COMPARISON.md']),
-    'spanner': ('cloud-spanner-emulator', ['docs/emulator-comparison.md']),
-    'bigquery': ('bigquery-emulator-on-duckdb', ['docs/COMPARISON.md', 'docs/COMPARISON_FEATURES.md', 'docs/comparison-features.csv']),
-}
-MARKS = {'✓': 'available', '√': 'available', '✗': 'unavailable', '×': 'unavailable', 'X': 'unavailable', '◐': 'limited', '△': 'limited', '?': 'unknown', '—': 'na', '○': 'no-effect'}
+INVENTORIES = ROOT / 'src/data/emulator-comparisons'
+PROVENANCE = ROOT / 'src/data/emulator-comparison-provenance.json'
 
+# repository, document that holds the rows, companion documents read to reconcile or for provenance
+DOCUMENTS = {
+    'gcs': ('localcloud-fake-gcs-server', 'docs/upstream-comparison.md', []),
+    'firestore': ('firestore-go', 'docs/emulator-comparison.md', ['docs/emulator-comparison-metrics.md']),
+    'bigtable': ('little_bigtable', 'EMULATOR_COMPARISON.md', []),
+    'spanner': ('cloud-spanner-emulator', 'docs/emulator-comparison.md', []),
+    'bigquery': ('bigquery-emulator-on-duckdb', 'docs/comparison-features.csv', ['docs/COMPARISON.md']),
+}
+
+STATES = {'✓': 'available', '√': 'available', '✗': 'unavailable', '×': 'unavailable', 'X': 'unavailable',
+          '◐': 'limited', '△': 'limited', '?': 'unknown', '—': 'na', '○': 'no-effect'}
+MARK = re.compile(r'^(✓|√|✗|×|X|◐|△|\?|—|○)†?$')
+
+# Where a service's notes are engineering evidence rather than guidance, visitors see them only for these results.
+NOTE_STATES = {'firestore': {'limited', 'unavailable', 'no-effect'}, 'bigquery': {'limited'}}
+
+# LocalCloud rows with no result of their own say nothing to a visitor; they stay in the document.
+HIDE_UNASSESSED_LOCAL = True
+
+
+class SyncError(Exception):
+    pass
+
+
+# ----------------------------------------------------------------------------- markdown reading
 
 def plain(text):
+    text = re.sub(r'<a id="[^"]*"></a>', '', text)
     text = re.sub(r'</?(?:a|br|code|span|strong|em)\b[^>]*>', '', text)
-    text = re.sub(r'\[([^\]]+)\]\([^)]*\)|\[([^\]]+)\]\[[^\]]*\]', lambda m: m[1] or m[2], text)
-    return text.replace('`', '').replace('**', '').replace('\\|', '|').strip()
+    text = re.sub(r'\[([^\]]+)\]\([^)]*\)', r'\1', text)
+    text = re.sub(r'\[([^\]]+)\]\[[^\]]*\]', r'\1', text)
+    return text.replace('&amp;', '&').replace('`', '').replace('**', '').replace('\\|', '|').strip()
 
 
-def mark(text):
-    value = plain(text)
-    if value not in MARKS:
-        raise ValueError(f'Unrecognized comparison marker: {text!r}')
-    return MARKS[value]
+def state(cell, where):
+    value = plain(cell)
+    if not MARK.match(value):
+        raise SyncError(f'{where}: unrecognized comparison mark {cell!r}')
+    return STATES[value.rstrip('†')]
 
 
-def markdown_rows(service, text, source):
-    rows, headings, header = [], {}, []
+def split_row(line):
+    return [cell.strip() for cell in re.split(r'(?<!\\)\|', line.strip())[1:-1]]
+
+
+def tables(text):
+    """Every pipe table with the headings above it: [{'heads', 'header', 'rows': [(line, cells)]}]."""
+    found, heads, current = [], {}, None
     for number, line in enumerate(text.splitlines(), 1):
-        heading = re.match(r'^(#{2,6}) (.+)', line)
+        if line.startswith('|'):
+            cells = split_row(line)
+            if current is None:
+                current = {'heads': dict(heads), 'header': cells, 'rows': [], 'line': number, 'separated': False}
+            elif not current['separated'] and cells and all(re.fullmatch(r':?-+:?', c) for c in cells):
+                current['separated'] = True
+            else:
+                current['rows'].append((number, cells))
+            continue
+        if current is not None:
+            found.append(current)
+            current = None
+        heading = re.match(r'^(#{1,6}) (.+)', line)
         if heading:
             depth = len(heading[1])
-            headings = {k: v for k, v in headings.items() if k < depth}
-            headings[depth] = plain(heading[2])
-        if not line.startswith('|'):
-            header = []
+            heads = {k: v for k, v in heads.items() if k < depth}
+            heads[depth] = plain(heading[2])
+    if current is not None:
+        found.append(current)
+    return found
+
+
+def roles_for(header, spec):
+    """Column index per role, or None when the table is not a feature table of this service."""
+    found = {}
+    for role, pattern in spec.items():
+        optional = role.endswith('?')
+        index = next((i for i, cell in enumerate(header) if re.search(pattern, plain(cell))), None)
+        if index is None and not optional:
+            return None
+        if index is not None:
+            found[role.rstrip('?')] = index
+    return found
+
+
+def feature_rows(service, text, spec):
+    """Rows of every feature table: [{'roles', 'cells', 'heads', 'line'}]; tables must agree on their roles."""
+    rows, shapes = [], set()
+    for table in tables(text):
+        roles = roles_for(table['header'], spec)
+        if roles is None:
             continue
-        cells = [v.strip() for v in re.split(r'(?<!\\)\|', line.strip())[1:-1]]
-        if all(re.fullmatch(r':?-+:?', c) for c in cells):
-            continue
-        if not header:
-            header = cells
-            continue
-        if service == 'gcs' and header[:2] == ['ID', 'Individual capability']:
-            identity, name, other, local, notes = cells
-            default = None
-        elif service == 'firestore' and header[0] == 'Individual feature':
-            name, other, default, local, notes = cells
-            identity = f'firestore-{number}'
-            default = mark(default)
-        elif service == 'spanner' and header[0] == 'Individual feature / behavior':
-            name, other, local, scope, evidence = cells
-            identity, notes, default = f'spanner-{number}', scope + ' Evidence: ' + evidence, None
-        elif service == 'bigtable' and len(header) > 2 and header[1:3] == ['Google', 'Fork']:
-            name, other, local, *extra = cells
-            identity, notes, default = f'bigtable-{number}', ' · '.join(extra), None
-            # RPC names and field names recur in different protobuf services/messages.
-            if header[0] in ['RPC', 'Field']:
-                name = headings.get(4, '') + '.' + plain(name)
-        else:
-            continue
-        area = ' / '.join(v for k, v in headings.items() if k >= 3)
-        row = dict(id=plain(identity), name=plain(name), area=area, local=mark(local), other=mark(other), notes=plain(notes), source=source, line=number)
-        if default is not None:
-            row['default'] = default
-        rows.append(row)
+        shapes.add(frozenset(k for k in roles if k in ('competitor', 'default', 'production')))
+        for number, cells in table['rows']:
+            if len(cells) != len(table['header']):
+                raise SyncError(f'{service}: line {number} has {len(cells)} cells under {len(table["header"])} headings')
+            rows.append({'roles': roles, 'cells': cells, 'heads': table['heads'], 'line': number})
+    if len(shapes) > 1:
+        raise SyncError(f'{service}: feature tables disagree on their columns: {sorted(map(sorted, shapes))}')
     return rows
 
 
-def bigquery_rows(text, source):
-    states = {'implemented': 'available', 'partial': 'limited', 'unsupported': 'unavailable', 'unknown': 'unknown'}
+def cell(row, role):
+    index = row['roles'].get(role)
+    return row['cells'][index] if index is not None else ''
+
+
+def heading_path(row, depth=3):
+    return [v for k, v in sorted(row['heads'].items()) if k >= depth]
+
+
+# ----------------------------------------------------------------------------- visitor wording
+
+TERMS = {
+    'gcs': [(r'\bupstream\b', 'fake-gcs-server'), (r'\bfork\b', 'LocalCloud')],
+    'bigtable': [(r'\bthe fork\b', 'LocalCloud'), (r'\bFork\b', 'LocalCloud'), (r'\bfork\b', 'LocalCloud'),
+                 (r'\bLittle Bigtable\b', 'LocalCloud Bigtable')],
+    'spanner': [(r'\bupstream PostgreSQL\b', 'PostgreSQL'), (r'\bUpstream\b', "Google's emulator"), (r'\bthe fork\b', 'LocalCloud'),
+                (r'\b[Ff]ork\b', 'LocalCloud')],
+}
+
+# Parts of a note that describe how a row was verified or where it lives, never what a visitor can do.
+DROP = {
+    '*': [r'\bsource[- ]evidence\b', r'\bsource[- ]only\b', r'\binventor(?:y|ies)\b', r'\bevidence\b', r'\bqualif\w*',
+          r'\brepresentative\b', r'\bfixtures?\b', r'\ballowlist\b', r'\bTest[A-Z]\w+', r'\bpinned\b', r'\bparity\b',
+          r'\.(?:go|py|cc|md|csv|json|mjs|js)\b', r'github\.com', r'https?://', r'\blinked (?:source|test)\b',
+          r'\bowning test\b', r'^Local behavior is covered by', r'\bcovered by the linked\b'],
+    'firestore': [r'\bJava\b', r'(?-i:\bGo\b)', r'\bhost bridge\b', r'\bpaired\b', r'\bobservations?\b', r'\bregistry\b',
+                  r'\bprocess-lifetime\b', r'\bbacklog\b', r'\binvented\b', r'\bremains? open\b', r'\bunmeasured\b'],
+    'spanner': [r'^Implemented for local development$', r'^Local RPC behavior$', r'^Spanner allowlist\b', r'\breference evaluator\b',
+                r'execution override', r'enabled (?:string/date )?alias', r'inherited from upstream', r'disabled upstream',
+                r'upstream syntax did not', r'comparison remains', r'\bunscored\b'],
+    'bigquery': [r'^The emulator does not implement this production BigQuery capability\.?$'],
+    'bigtable': [r'^Fork standalone\b', r'\bregistry\b'],
+}
+
+LEAKS = [r'\[[A-Za-z][\w-]*\]', r'\bEvidence:', r'\binventor(?:y|ies)\b', r'github\.com', r'https?://', r'/Users/',
+         r'\.(?:go|py|cc|md|csv|json)\b', r'\bTest[A-Z]\w+', r'\bfork\b', r'\bupstream\b', r'\b[0-9a-f]{40}\b',
+         r'\bjay[-_]', r'LocalGCloud', r'AGENTS|CLAUDE|graft\b', r'\bqualif\w*', r'source evidence', r'semantic-compatibility:']
+
+
+def sentences(text):
+    return [part.strip() for part in re.split(r';|(?<=[a-z0-9)])\.\s+(?=[A-Z])', text) if part.strip(' .,')]
+
+
+def polish(service, text):
+    text = re.sub(r'<a id="[^"]*"></a>', '', text)
+    text = re.sub(r'\[[^\]]+\]\[[^\]]*\]|\[[^\]]+\]\([^)]*\)', '', text)  # reference-style and inline links
+    text = re.sub(r'(?<![\w`])\[[A-Za-z][\w -]*\](?![(\[:])', '', text)  # shortcut references such as [host]
+    text = text.replace('&amp;', '&').replace('`', '').replace('**', '').replace('semantic-compatibility:', '')
+    for pattern, replacement in TERMS.get(service, []):
+        text = re.sub(pattern, replacement, text)
+    drops = [re.compile(p, re.I) for p in DROP['*'] + DROP.get(service, [])]
+    kept = []
+    for part in sentences(text):
+        part = re.sub(r'^[\s,/·\-–]+|[\s,/·.]+$', '', part)
+        if part and not any(p.search(part) for p in drops) and part.lower() not in (k.lower() for k in kept):
+            kept.append(part)
+    if not kept:
+        return ''
+    first = kept[0]
+    if re.fullmatch(r'[a-z]+', first.split(' ')[0]):
+        kept[0] = first[0].upper() + first[1:]
+    return '; '.join(kept).rstrip('.') + '.'
+
+
+def check_wording(service, rows):
+    offenders = [(row['id'], pattern) for row in rows for pattern in LEAKS if re.search(pattern, row['notes'], re.I)]
+    if offenders:
+        shown = '; '.join(f'{rid} ~ {pattern}' for rid, pattern in offenders[:8])
+        raise SyncError(f'{service}: {len(offenders)} notes still carry internal wording ({shown}); extend DROP/TERMS in polish()')
+
+
+def slug(text):
+    return re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-') or 'feature'
+
+
+# ----------------------------------------------------------------------------- service adapters
+
+def gcs_rows(text):
+    spec = {'id': r'^ID$', 'name': r'^Production GCS capability$', 'production': r'^GCS$', 'competitor': r'^Upstream$',
+            'local': r'^Fork$', 'notes': r'^Implementation evidence'}
+    out = []
+    for row in feature_rows('gcs', text, spec):
+        out.append(dict(id=plain(cell(row, 'id')), name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
+                        local=state(cell(row, 'local'), f'gcs line {row["line"]}'),
+                        other=state(cell(row, 'competitor'), f'gcs line {row["line"]}'), note=cell(row, 'notes')))
+    return out
+
+
+def firestore_rows(text):
+    spec = {'name': r'^Individual production feature$', 'production': r'^Production$', 'competitor': r'^Google emulator$',
+            'default': r'^(?:Go default|Compatibility(?: profile)?)$', 'local': r'^(?:Go production|Extended(?: profile)?)$',
+            'notes': r'^Emulator evidence'}
+    out = []
+    for row in feature_rows('firestore', text, spec):
+        where = f'firestore line {row["line"]}'
+        out.append(dict(name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
+                        local=state(cell(row, 'local'), where), other=state(cell(row, 'competitor'), where),
+                        default=state(cell(row, 'default'), where), note=cell(row, 'notes')))
+    return out
+
+
+BIGTABLE_AREAS = {
+    'Documented production RPCs': 'RPC methods', 'Documented pinned request/schema fields': 'Request fields',
+    'Every RowFilter variant': 'Row filters', 'Every GC rule variant': 'Garbage-collection rules',
+    'Every production Mutation variant': 'Mutations', 'Every read-modify-write operation': 'Read-modify-write',
+    'Aggregate family types': 'Aggregate types', 'Production behaviors and boundaries': 'Behaviors',
+    'Documented production SQL functions and syntax': 'SQL functions and syntax',
+}
+
+
+def bigtable_rows(text):
+    spec = {'name': r'^(?:RPC|Field|Capability|SQL name)$', 'production': r'^Production$', 'local': r'^Local(?: query)?$',
+            'competitor?': r'^Google(?: emulator)?(?: query)?$', 'notes?': r'^Local contract or limit$', 'form?': r'^Local form$', 'cmv_production?': r'^Production CMV aggregate$',
+            'cmv_local?': r'^Local CMV aggregate$'}
+    out = []
+    for row in feature_rows('bigtable', text, spec):
+        where = f'bigtable line {row["line"]}'
+        path = heading_path(row)
+        top = BIGTABLE_AREAS.get(path[0], re.sub(r'^(?:Documented|Every) (?:production )?', '', path[0]))
+        name = plain(cell(row, 'name'))
+        if top in ('RPC methods', 'Request fields') and len(path) > 1:
+            name = f'{path[1].rsplit(".", 1)[-1]}.{name}'
+        note = cell(row, 'notes')
+        if 'form' in row['roles']:
+            form = plain(cell(row, 'form')).lower()
+            production, local = (state(cell(row, c), where) for c in ('cmv_production', 'cmv_local'))
+            note = ''
+            if form == 'aggregate' and production == 'available':
+                note = 'Supported in continuous materialized views.' if local == 'available' else 'Not available in continuous materialized views.'
+        other = state(cell(row, 'competitor'), where) if 'competitor' in row['roles'] else None
+        out.append(dict(name=name, area=top, local=state(cell(row, 'local'), where), other=other, note=note.strip()))
+    return out
+
+
+def spanner_rows(text):
+    spec = {'name': r'^Production feature / behavior$', 'competitor': r'^Google emulator\b', 'local': r'^Extended$',
+            'notes': r'^Scope / difference$'}
+    out = []
+    for row in feature_rows('spanner', text, spec):
+        where = f'spanner line {row["line"]}'
+        out.append(dict(name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
+                        local=state(cell(row, 'local'), where), other=state(cell(row, 'competitor'), where),
+                        note=cell(row, 'notes')))
+    return out
+
+
+BIGQUERY_SURFACES = {'sql': 'SQL', 'metadata': 'Metadata', 'rest_v2': 'REST API', 'storage_read_v1': 'Storage Read API',
+                     'storage_write_v1': 'Storage Write API'}
+BIGQUERY_CATEGORIES = {'Expression': 'Expressions', 'Scripting & Procedural': 'Scripting', 'SetOps': 'Set operations',
+                       'Set Operations': 'Set operations', 'Row Access Policies': 'Row access policies',
+                       'RowAccessPolicies': 'Row access policies', 'Function': 'Functions', 'Type': 'Types',
+                       'Operator': 'Operators', 'Clauses': 'Clauses', 'Tables': 'Tables'}
+BIGQUERY_STATES = {'implemented': 'available', 'partial': 'limited', 'unsupported': 'unavailable', 'unknown': 'unknown'}
+BIGQUERY_COLUMNS = ['capability_id', 'feature_name', 'surface', 'category', 'local_development', 'goccy_status', 'local_limitations']
+
+
+def bigquery_rows(text):
+    reader = csv.DictReader(io.StringIO(text))
+    missing = [c for c in BIGQUERY_COLUMNS if c not in (reader.fieldnames or [])]
+    if missing:
+        raise SyncError(f'bigquery: comparison-features.csv lacks columns {missing}')
+    out = []
+    for number, entry in enumerate(reader, 2):
+        try:
+            local, other = BIGQUERY_STATES[entry['local_development']], BIGQUERY_STATES[entry['goccy_status']]
+        except KeyError as error:
+            raise SyncError(f'bigquery: row {number} has unknown status {error}')
+        surface = BIGQUERY_SURFACES.get(entry['surface'], entry['surface'])
+        category = BIGQUERY_CATEGORIES.get(entry['category'].replace('&amp;', '&'), entry['category'])
+        area = surface if entry['surface'].startswith('storage_') else f'{surface} / {category}'
+        out.append(dict(id=entry['capability_id'], name=entry['feature_name'], area=area, local=local, other=other,
+                        note=entry['local_limitations']))
+    return out
+
+
+ADAPTERS = {'gcs': gcs_rows, 'firestore': firestore_rows, 'bigtable': bigtable_rows, 'spanner': spanner_rows,
+            'bigquery': bigquery_rows}
+
+
+# ----------------------------------------------------------------------------- reconciliation
+
+def number(value):
+    return int(re.sub(r'[^\d]', '', plain(value)))
+
+
+def state_of(label):
+    match = re.match(r'^\W*(✓|√|✗|×|X|◐|△|\?|—|○)', plain(label))
+    return STATES[match[1]] if match else None
+
+
+def table_after(text, start):
+    for table in tables(text):
+        if re.search(start, plain(table['header'][0])):
+            return table
+    return None
+
+
+def count(rows, key):
+    return Counter(row[key] for row in rows if row.get(key))
+
+
+def stated(service, documents, rows):
+    """Totals the documents state about themselves, per column and state; every one must equal the parsed rows."""
+    primary = documents[DOCUMENTS[service][1]]
+    expected = {}
+    if service == 'gcs':
+        table = table_after(primary, r'^Status across')
+        if table:
+            for _, cells in table['rows']:
+                key = state_of(cells[0])
+                if key:
+                    expected.setdefault('other', {})[key] = number(cells[2])
+                    expected.setdefault('local', {})[key] = number(cells[3])
+            expected['total'] = number(re.search(r'across (\d+) production', table['header'][0])[1])
+    elif service == 'spanner':
+        table = table_after(primary, r'^Production-contract coverage$')
+        if table:
+            for _, cells in table['rows']:
+                key = state_of(cells[0])
+                if key:
+                    expected.setdefault('other', {})[key] = number(cells[1])
+                    expected.setdefault('local', {})[key] = number(cells[2])
+                elif 'documented checks' in cells[0]:
+                    expected['total'] = number(cells[1])
+    elif service == 'bigtable':
+        table = table_after(primary, r'^Production inventory$')
+        if table:
+            header = [plain(h) for h in table['header']]
+            def column(pattern):
+                return next((i for i, h in enumerate(header) if re.search(pattern, h)), None)
+            def total(index):
+                if index is None:
+                    raise SyncError('bigtable: the coverage metrics table lacks a column the importer needs; update stated()')
+                return sum(number(cells[index]) for _, cells in table['rows'])
+            expected = {'total': total(column(r'^Documented rows$'))}
+            for key, prefix in (('local', 'Local'), ('other', 'Google')):
+                columns = {name: column(rf'^{prefix} {mark}$') for name, mark in (('available', '✓'), ('limited', '◐'), ('unavailable', '✗'), ('unknown', r'\?'))}
+                if all(i is not None for i in columns.values()):
+                    expected[key] = {name: total(i) for name, i in columns.items()}
+    elif service == 'firestore':
+        table = table_after(documents['docs/emulator-comparison-metrics.md'], r'^Marker$')
+        if table:
+            for _, cells in table['rows']:
+                key = state_of(cells[0])
+                if key:
+                    expected.setdefault('production', {})[key] = number(cells[1])
+                    expected.setdefault('other', {})[key] = number(cells[2])
+                    expected.setdefault('default', {})[key] = number(cells[3])
+                    expected.setdefault('local', {})[key] = number(cells[4])
+            expected['total'] = expected['production'].get('available', 0) if 'production' in expected else None
+    elif service == 'bigquery':
+        block = re.search(r'<!-- comparison-metrics:start -->(.*?)<!-- comparison-metrics:end -->', documents['docs/COMPARISON.md'], re.S)
+        table = block and tables(block[1])[0]
+        if table:
+            for _, cells in table['rows']:
+                key = state_of(cells[0])
+                if key:
+                    expected.setdefault('local', {})[key] = number(cells[1])
+                    expected.setdefault('other', {})[key] = number(cells[2])
+                elif 'baseline rows' in cells[0]:
+                    expected['total'] = number(cells[1])
+    if not table or not expected.get('total'):
+        raise SyncError(f'{service}: the document no longer states its totals where the importer looks; update stated()')
+    problems = []
+    if expected['total'] != len(rows):
+        problems.append(f'{len(rows)} rows parsed, document states {expected["total"]}')
+    for key in ('local', 'other', 'default'):
+        if key in expected:
+            actual = count(rows, key)
+            for item in set(actual) | set(expected[key]):
+                if actual.get(item, 0) != expected[key].get(item, 0):
+                    problems.append(f'{key} {item}: parsed {actual.get(item, 0)}, document states {expected[key].get(item, 0)}')
+    if problems:
+        raise SyncError(f'{service}: parsed rows do not match the document\'s own totals: ' + '; '.join(problems))
+    return expected
+
+
+# ----------------------------------------------------------------------------- assembling the inventory
+
+SURFACE_ORDER = ['sql.', 'rest_v2.', 'storage_', 'metadata.']
+COLLAPSE_REPEATS = {'bigquery'}  # its inherited catalog lists some features under two categories
+
+
+def assemble(service, raw_rows):
+    """Stable IDs, visitor wording and the two documented visibility rules; returns (rows, hidden counts)."""
+    seen = Counter()
     rows = []
-    for number, entry in enumerate(csv.DictReader(io.StringIO(text)), 2):
-        notes = [entry[key] for key in ['local_scope', 'local_limitations', 'local_notes', 'goccy_note'] if entry[key]]
-        if entry['goccy_basis']:
-            notes.append('Competitor evidence basis: ' + entry['goccy_basis'] + ' (S: source; D: documentation; B: backend declaration). Not a fresh runtime test.')
-        rows.append(dict(id=entry['capability_id'], name=entry['feature_name'], area=entry['surface'] + ' / ' + entry['category'], local=states[entry['local_development']], other=states[entry['goccy_status']], notes=' '.join(notes), source=source, line=number))
-    return rows
+    for raw in raw_rows:
+        row_id = raw.get('id') or slug(f'{service} {raw["area"]} {raw["name"]}')
+        seen[row_id] += 1
+        if seen[row_id] > 1:
+            if raw.get('id'):
+                raise SyncError(f'{service}: the document repeats the row ID {row_id}')
+            row_id = f'{row_id}-{seen[row_id]}'
+        row = {'id': row_id, 'name': raw['name'], 'area': raw['area'], 'local': raw['local']}
+        if raw['other'] is not None:
+            row['other'] = raw['other']
+        if 'default' in raw:
+            row['default'] = raw['default']
+        row['notes'] = polish(service, raw['note'])
+        if row['local'] not in NOTE_STATES.get(service, STATES.values()):
+            row['notes'] = ''
+        rows.append(row)
+    check_wording(service, rows)
+    hidden = {'unassessed': 0, 'repeated': 0}
+    if HIDE_UNASSESSED_LOCAL:
+        hidden['unassessed'] = sum(row['local'] == 'unknown' for row in rows)
+        rows = [row for row in rows if row['local'] != 'unknown']
+    if service not in COLLAPSE_REPEATS:
+        return rows, hidden
+    ranked = sorted(rows, key=lambda r: next((i for i, p in enumerate(SURFACE_ORDER) if r['id'].startswith(p)), len(SURFACE_ORDER)))
+    keep, shown = set(), set()
+    for row in ranked:  # one feature to a visitor: same name, same result
+        signature = (re.sub(r'[^a-z0-9]+', ' ', row['name'].lower()).strip(), row['local'], row.get('other'), row.get('default'))
+        if signature not in shown:
+            shown.add(signature)
+            keep.add(row['id'])
+    hidden['repeated'] = len(rows) - len(keep)
+    return [row for row in rows if row['id'] in keep], hidden
 
 
-def sync(dependencies):
-    metadata = {}
-    for service, (repository, paths) in DOCUMENTS.items():
-        directory = dependencies / repository
-        revision = subprocess.check_output(['git', '-C', str(directory), 'rev-parse', 'HEAD'], text=True).strip()
-        documents = []
-        for path in paths:
-            raw = (directory / path).read_bytes()
-            committed = subprocess.check_output(['git', '-C', str(directory), 'show', f'{revision}:{path}'])
-            if raw != committed:
-                raise ValueError(f'{repository}/{path} has uncommitted changes; commit upstream before syncing')
-            documents.append(dict(path=path, sha256=hashlib.sha256(raw).hexdigest(), content=raw.decode()))
-        source = documents[-1]
-        rows = bigquery_rows(source['content'], source['path']) if service == 'bigquery' else markdown_rows(service, source['content'], source['path'])
-        if not rows or len({r['id'] for r in rows}) != len(rows):
-            raise ValueError(f'{service}: empty inventory or duplicate IDs')
-        summary = dict(total=len(rows), exclusive=sum(r['local'] == 'available' and r['other'] in ['unavailable', 'no-effect'] for r in rows), broader=sum(r['local'] == 'available' and r['other'] == 'limited' for r in rows))
-        metadata[service] = summary
-        snapshots = ROOT / 'src/data/emulator-comparisons'
-        sources = ROOT / 'src/data/emulator-comparison-sources'
-        snapshots.mkdir(parents=True, exist_ok=True)
-        sources.mkdir(parents=True, exist_ok=True)
-        (snapshots / f'{service}.json').write_text(json.dumps(rows, ensure_ascii=False, indent=2) + '\n')
-        (sources / f'{service}.json').write_text(json.dumps(dict(repository=repository, revision=revision, documents=documents), ensure_ascii=False, indent=2) + '\n')
-        print(service, summary)
-    (snapshots / 'index.json').write_text(json.dumps(metadata, indent=2) + '\n')
+def summarize(rows):
+    has_competitor = any('other' in row for row in rows)
+    advantages = [r for r in rows if r['local'] == 'available' and r.get('other') in ('unavailable', 'no-effect')]
+    broader = [r for r in rows if r['local'] == 'available' and r.get('other') == 'limited']
+    return {'total': len(rows), 'exclusive': len(advantages), 'broader': len(broader), 'hasCompetitor': has_competitor}
+
+
+# ----------------------------------------------------------------------------- reading the repositories
+
+def git(directory, *args):
+    return subprocess.check_output(['git', '-C', str(directory), *args], text=True).strip()
+
+
+def committed_document(directory, path):
+    raw = (directory / path).read_bytes()
+    revision = git(directory, 'rev-parse', 'HEAD')
+    if raw != subprocess.check_output(['git', '-C', str(directory), 'show', f'{revision}:{path}']):
+        raise SyncError(f'{directory.name}/{path} has uncommitted changes; commit it upstream before syncing')
+    return raw, revision, git(directory, 'log', '-1', '--format=%H', '--', path)
+
+
+def build(service, dependencies):
+    repository, path, companions = DOCUMENTS[service]
+    directory = dependencies / repository
+    texts, documents = {}, []
+    for name in [path, *companions]:
+        raw, revision, commit = committed_document(directory, name)
+        texts[name] = raw.decode()
+        documents.append({'path': name, 'commit': commit, 'sha256': hashlib.sha256(raw).hexdigest()})
+    parsed = ADAPTERS[service](texts[path])
+    expected = stated(service, texts, parsed)
+    rows, hidden = assemble(service, parsed)
+    if not rows:
+        raise SyncError(f'{service}: nothing left to publish')
+    reviewed = next(filter(None, (re.search(r'\b(20\d\d-\d\d-\d\d)\b', texts[name][:6000]) for name in texts)), None)
+    provenance = {'repository': repository, 'revision': revision, 'reviewed': reviewed and reviewed[1], 'documents': documents,
+                  'documented': {'rows': len(parsed), **{k: v for k, v in expected.items() if k != 'total'}}, 'hidden': hidden}
+    return rows, summarize(rows), provenance
+
+
+def render(value):
+    return json.dumps(value, ensure_ascii=False, indent=2) + '\n'
+
+
+def sync(dependencies, check=False):
+    outputs = {service: build(service, dependencies) for service in DOCUMENTS}
+    index = {service: metrics for service, (_, metrics, _) in outputs.items()}
+    provenance = {service: details for service, (_, _, details) in outputs.items()}
+    drift = []
+    if check:
+        recorded = json.loads(PROVENANCE.read_text()) if PROVENANCE.exists() else {}
+        for service, (rows, _, details) in outputs.items():
+            file = INVENTORIES / f'{service}.json'
+            if not file.exists() or file.read_text() != render(rows):
+                drift.append(f'{service}: inventory differs from the documents')
+            if [d['sha256'] for d in recorded.get(service, {}).get('documents', [])] != [d['sha256'] for d in details['documents']]:
+                drift.append(f'{service}: document digests differ from the recorded provenance')
+        if (INVENTORIES / 'index.json').read_text() != render(index):
+            drift.append('index.json differs from the documents')
+    else:
+        INVENTORIES.mkdir(parents=True, exist_ok=True)
+        for service, (rows, _, _) in outputs.items():
+            (INVENTORIES / f'{service}.json').write_text(render(rows))
+        (INVENTORIES / 'index.json').write_text(render(index))
+        PROVENANCE.write_text(render(provenance))
+    for service, (_, metrics, details) in outputs.items():
+        hidden = details['hidden']
+        print(f'{service:9s} documented {details["documented"]["rows"]:5d} -> shown {metrics["total"]:5d}  '
+              f'advantages {metrics["exclusive"]:4d}  broader {metrics["broader"]:3d}  '
+              f'(unassessed {hidden["unassessed"]}, repeated {hidden["repeated"]}, competitor {"yes" if metrics["hasCompetitor"] else "no"})')
+    if drift:
+        print('\n'.join(['Out of date:', *drift]), file=sys.stderr)
+        return 1
+    return 0
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+    parser.add_argument('dependencies', nargs='?', type=Path, default=ROOT.parent / 'local_cloud_dependencies')
+    parser.add_argument('--check', action='store_true', help='report whether the checked-in inventories match the documents; write nothing')
+    args = parser.parse_args(argv)
+    try:
+        return sync(args.dependencies, args.check)
+    except SyncError as error:
+        print(f'sync failed: {error}', file=sys.stderr)
+        return 2
 
 
 if __name__ == '__main__':
-    sync(Path(sys.argv[1]) if len(sys.argv) == 2 else ROOT.parent / 'local_cloud_dependencies')
+    sys.exit(main(sys.argv[1:]))

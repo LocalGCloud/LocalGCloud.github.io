@@ -10,14 +10,14 @@ const Heading = embedded ? 'h2' : 'h1';
 <header class:list={[embedded ? '' : 'site-section site-section--tight']}>
   <div class:list={[!embedded && 'container']}>
     <div class="comparison-title-row">
-      <Heading class="comparison-heading">{embedded ? comparison.engine : `${comparison.engine} vs ${comparison.competitor}`}</Heading>
+      <Heading class="comparison-heading">{embedded || !comparison.hasCompetitor ? comparison.engine : `${comparison.engine} vs ${comparison.competitor}`}</Heading>
       <a class="comparison-guide" href={`${base}services/${comparison.slug}/`}>Service guide <span aria-hidden="true">↗</span></a>
     </div>
     <div class="comparison-meta">
-      <p><strong>{comparison.total.toLocaleString('en-US')}</strong> features · <strong>{comparison.exclusive}</strong> advantages · <strong>{comparison.broader}</strong> broader behaviors</p>
+      <p><strong>{comparison.total.toLocaleString('en-US')}</strong> features{comparison.hasCompetitor && <> · <strong>{comparison.exclusive}</strong> advantages · <strong>{comparison.broader}</strong> broader behaviors</>}</p>
     </div>
     {comparison.id === 'firestore' && <p class="comparison-profile-note">Matching profiles share one mark. Extended is opt-in; Compatibility follows Java emulator behavior.</p>}
   </div>
 </header>
 <EmulatorComparisonTable {comparison} {embedded} {preview} />
-<div class:list={['comparison-notes', !embedded && 'container']}><p><strong>Comparison notes.</strong> {comparison.summary} Compared with <a href={comparison.baselineUrl}>{comparison.baseline}</a>. {comparison.scope} Counts describe documented rows and can overlap.</p></div>
+<div class:list={['comparison-notes', !embedded && 'container']}><p><strong>Comparison notes.</strong> {comparison.summary} {comparison.hasCompetitor ? <>Compared with <a href={comparison.baselineUrl}>{comparison.baseline}</a>.</> : <>Compared with the features of production Google Cloud {comparison.name}.</>} {comparison.scope} Counts describe documented rows and can overlap.</p></div>
