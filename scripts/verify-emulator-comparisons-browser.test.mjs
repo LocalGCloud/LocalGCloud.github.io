@@ -34,9 +34,13 @@ async function open(t, path, width = 1440, javascript = true, beforeNavigate = a
   await page.goto(origin + path, { waitUntil: 'networkidle0' });
   return page;
 }
-const settled = page => page.waitForFunction(() => !document.querySelector('[data-emulator-comparison]').hasAttribute('aria-busy'));
-const status = page => page.$eval('[data-comparison-status]', node => node.textContent);
-const choose = async (page, mode) => { await page.click(`input[value="${mode}"]`); await settled(page); };
+const activeTable = '[data-emulator-comparison]:not([hidden] *)';
+const settled = page => page.waitForFunction(selector => {
+  const table = document.querySelector(selector);
+  return table?.dataset.bound && !table.hasAttribute('aria-busy');
+}, {}, activeTable);
+const status = page => page.$eval(`${activeTable} [data-comparison-status]`, node => node.textContent);
+const choose = async (page, mode) => { await page.click(`${activeTable} input[value="${mode}"]`); await settled(page); };
 
 const names = { 'cloud-storage': 'LocalCloud GCS', firestore: 'LocalCloud Firestore', bigtable: 'LocalCloud Bigtable', spanner: 'LocalCloud Spanner', bigquery: 'LocalCloud BigQuery' };
 const advantages = { 'cloud-storage': 90, firestore: 42, bigtable: 303, spanner: 189, bigquery: 53 };
@@ -82,15 +86,15 @@ test('mobile filters search the complete inventory and restore shared URL state'
 test('Desktop service-to-comparison navigation and return remount the controls', { timeout: 45000 }, async t => {
   const page = await open(t, '/services/bigtable/');
   const marker = await page.evaluate(() => { window.comparisonNavigationMarker = 'retained'; return window.comparisonNavigationMarker; });
-  await page.click('main a[href*="/compare/emulators/bigtable/"]');
-  await page.waitForSelector('[data-emulator-comparison][data-bound]');
+  await page.click('main a[href*="/compare/emulators/?service=bigtable"]');
+  await settled(page);
   assert.equal(await page.evaluate(() => window.comparisonNavigationMarker), marker, 'Desktop navigation keeps the shell');
   await choose(page, 'broader');
   assert.match(await status(page), /Showing 25 matching rows/);
-  await page.click('main a.site-button--secondary[href*="/services/bigtable/"]');
+  await page.click('[data-comparison-service="bigtable"] a.site-button--secondary');
   await page.waitForSelector('[data-service-heading]');
-  await page.click('main a[href*="/compare/emulators/bigtable/"]');
-  await page.waitForSelector('[data-emulator-comparison][data-bound]');
+  await page.click('main a[href*="/compare/emulators/?service=bigtable"]');
+  await settled(page);
   await choose(page, 'all');
   assert.match(await status(page), /Showing 464 matching rows/);
 });
@@ -128,4 +132,115 @@ test('agent audience exposes the complete JSON view and source reference', { tim
   await page.click('.agent-document-header [data-target-audience="humans"]');
   await page.waitForFunction(() => document.documentElement.dataset.audience !== 'agents');
   assert.equal(await page.$eval('[data-comparison-agent]', node => getComputedStyle(node).display), 'none');
+});
+
+test('one-page workspace switches every service, loads on demand and restores history', { timeout: 45000 }, async t => {
+  const inventories = [];
+  const page = await open(t, '/compare/emulators/?view=classic&service=bigquery', 1440, true, async page => {
+    page.on('request', request => {
+      if (/\/_astro\/(gcs|firestore|bigtable|spanner|bigquery)\.[^/]+\.json$/.test(new URL(request.url()).pathname)) inventories.push(request.url());
+    });
+  });
+  await settled(page);
+  assert.equal(inventories.length, 1, 'deep link loads only the selected inventory');
+  assert.match(inventories[0], /bigquery\./);
+  assert.equal(await page.$$eval('[role="tab"]', tabs => tabs.length), 5);
+  assert.equal(await page.$eval('[role="tablist"]', node => node.getAttribute('aria-orientation')), 'vertical');
+  const layout = await page.evaluate(() => {
+    const tabs = document.querySelector('[role="tablist"]').getBoundingClientRect();
+    const pane = document.querySelector('[role="tabpanel"]:not([hidden])').getBoundingClientRect();
+    return tabs.right < pane.left && Math.abs(tabs.top - pane.top) < 70;
+  });
+  assert.ok(layout, 'services sit to the left of the detail pane');
+  const duplicates = await page.$$eval('main [id]', nodes => nodes.map(node => node.id).filter((id, index, ids) => ids.indexOf(id) !== index));
+  assert.deepEqual(duplicates, [], 'shared content has unique IDs');
+  await choose(page, 'all');
+  assert.equal(await page.$$eval(`${activeTable} tbody tr`, rows => rows.length), 1534);
+  await page.evaluate(() => window.workspaceMarker = 'retained');
+  for (const [slug, count] of Object.entries(advantages)) {
+    await page.click(`[data-service-tab="${slug}"]`);
+    await settled(page);
+    assert.equal(new URL(page.url()).pathname, '/compare/emulators/');
+    assert.equal(new URL(page.url()).searchParams.get('service'), slug);
+    assert.equal(await page.evaluate(() => window.workspaceMarker), 'retained', 'tab switches never navigate');
+    assert.equal(await page.$eval(`${activeTable} thead th:nth-child(2)`, node => node.textContent.trim()), names[slug]);
+    await choose(page, 'advantages');
+    assert.equal(await page.$$eval(`${activeTable} tbody tr`, rows => rows.length), count);
+  }
+  assert.equal(inventories.length, 5, 'each service loads once');
+  await page.goBack();
+  await page.waitForFunction(() => document.querySelector('[role="tab"][aria-selected="true"]')?.dataset.serviceTab === 'spanner');
+  await settled(page);
+  assert.equal(await page.$eval('[role="tab"][aria-selected="true"]', node => node.dataset.serviceTab), 'spanner');
+  await page.goForward();
+  await page.waitForFunction(() => document.querySelector('[role="tab"][aria-selected="true"]')?.dataset.serviceTab === 'bigquery');
+  await settled(page);
+  assert.equal(await page.$eval('[role="tab"][aria-selected="true"]', node => node.dataset.serviceTab), 'bigquery');
+  await page.focus('[role="tab"][aria-selected="true"]');
+  await page.keyboard.press('Home'); await settled(page);
+  assert.equal(await page.$eval('[role="tab"][aria-selected="true"]', node => node.dataset.serviceTab), 'cloud-storage');
+  await page.keyboard.press('ArrowDown'); await settled(page);
+  assert.equal(await page.evaluate(() => document.activeElement.dataset.serviceTab), 'firestore');
+  await page.keyboard.press('End'); await settled(page);
+  assert.equal(await page.evaluate(() => document.activeElement.dataset.serviceTab), 'bigquery');
+  assert.equal(inventories.length, 5, 'revisiting a service reuses its inventory');
+});
+
+test('mobile workspace keeps tabs above the table and retains view and audience', { timeout: 30000 }, async t => {
+  const page = await open(t, '/compare/emulators/?service=firestore&view=mobile&audience=agents', 390);
+  await settled(page);
+  assert.equal(await page.$eval('[role="tablist"]', node => node.getAttribute('aria-orientation')), 'horizontal');
+  await page.click('[data-service-tab="spanner"]'); await settled(page);
+  assert.equal(new URL(page.url()).searchParams.get('view'), 'mobile');
+  assert.equal(new URL(page.url()).searchParams.get('audience'), 'agents');
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  assert.notEqual(await page.$eval(`${activeTable} [data-comparison-agent]`, node => getComputedStyle(node).display), 'none');
+  await page.goBack();
+  await page.waitForFunction(() => document.querySelector('[role="tab"][aria-selected="true"]')?.dataset.serviceTab === 'firestore');
+  await settled(page);
+  assert.equal(await page.$eval('[role="tab"][aria-selected="true"]', node => node.dataset.serviceTab), 'firestore');
+});
+
+test('Desktop tab switches stay in the content pane and Back restores the selected service', { timeout: 30000 }, async t => {
+  const page = await open(t, '/compare/emulators/?service=firestore');
+  await settled(page);
+  await page.evaluate(() => window.workspaceMarker = 'desktop');
+  await page.click('[data-service-tab="spanner"]'); await settled(page);
+  assert.equal(new URL(page.url()).pathname, '/compare/emulators/');
+  assert.equal(await page.evaluate(() => window.workspaceMarker), 'desktop');
+  assert.match(await status(page), /Showing 189 matching rows/);
+  await page.goBack();
+  await page.waitForFunction(() => document.querySelector('[role="tab"][aria-selected="true"]')?.dataset.serviceTab === 'firestore');
+  await settled(page);
+  assert.match(await status(page), /Showing 42 matching rows/);
+});
+
+test('a slow inactive inventory cannot overwrite the active service filters or URL', { timeout: 30000 }, async t => {
+  const page = await open(t, '/compare/emulators/?view=classic', 1440, true, async page => {
+    await page.evaluateOnNewDocument(() => {
+      const fetch = window.fetch.bind(window);
+      window.fetch = async (...args) => {
+        const response = await fetch(...args);
+        if (String(args[0]).includes('/spanner.')) await new Promise(resolve => window.releaseInventory = resolve);
+        return response;
+      };
+    });
+  });
+  await settled(page);
+  await page.click('[data-service-tab="spanner"]');
+  await page.waitForFunction(() => typeof window.releaseInventory === 'function');
+  await page.click('[data-service-tab="firestore"]'); await settled(page);
+  await choose(page, 'broader');
+  await page.evaluate(() => window.releaseInventory());
+  await page.waitForFunction(() => !document.querySelector('[data-comparison-service="spanner"] [data-emulator-comparison]').hasAttribute('aria-busy'));
+  assert.equal(new URL(page.url()).searchParams.get('service'), 'firestore');
+  assert.equal(new URL(page.url()).searchParams.get('features'), 'broader');
+  assert.match(await status(page), /Showing 6 matching rows/);
+});
+
+test('workspace without JavaScript retains the preview and real service links', { timeout: 30000 }, async t => {
+  const page = await open(t, '/compare/emulators/?view=classic', 390, false);
+  assert.equal(await page.$$eval(`${activeTable} tbody tr`, rows => rows.length), comparisonPreviewSize);
+  assert.equal(await page.$eval('[role="tablist"]', tabs => tabs.hidden), true, 'interactive tabs stay hidden without JavaScript');
+  assert.equal(await page.$eval('main a[href*="/compare/emulators/firestore/"]', node => new URL(node.href).pathname), '/compare/emulators/firestore/');
 });

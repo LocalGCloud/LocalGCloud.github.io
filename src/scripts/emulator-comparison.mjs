@@ -1,16 +1,17 @@
 import { comparisonStates, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
 
-export function initEmulatorComparisons() {
-  document.querySelectorAll('[data-emulator-comparison]').forEach(root => {
-    if (root.dataset.bound) return;
+export function initEmulatorComparisons(scope = document) {
+  scope.querySelectorAll('[data-emulator-comparison]').forEach(root => {
+    if (root.dataset.bound || root.closest('[hidden]')) return;
     root.dataset.bound = 'true';
     const controls = root.querySelector('[data-comparison-controls]');
     const query = root.querySelector('input[type="search"]');
     const area = root.querySelector('select');
     const status = root.querySelector('[data-comparison-status]');
     const body = root.querySelector('tbody');
+    const template = root.querySelector('[data-comparison-row]');
     let data, pending, request = 0;
-    const mode = () => root.querySelector('[name="comparison-mode"]:checked').value;
+    const mode = () => root.querySelector('input:checked').value;
     const load = () => data ? Promise.resolve(data) : pending ||= fetch(root.dataset.inventory, { signal: AbortSignal.timeout(10000) })
       .then(response => { if (!response.ok) throw Error('Inventory unavailable'); return response.json(); })
       .then(rows => data = rows).catch(error => { pending = undefined; throw error; });
@@ -19,27 +20,21 @@ export function initEmulatorComparisons() {
       root.setAttribute('aria-busy', 'true');
       try {
         const rows = selectComparisonRows(await load(), { mode: mode(), query: query.value, area: area.value });
-        if (version !== request || !root.isConnected) return;
+        if (version !== request || !root.isConnected || root.closest('[hidden]')) return;
         body.replaceChildren(...rows.map(row => {
-          const tr = document.createElement('tr');
+          const tr = template.content.firstElementChild.cloneNode(true);
           tr.dataset.featureId = row.id;
-          const heading = document.createElement('th'); heading.scope = 'row';
-          const name = document.createElement('span'); name.textContent = row.name;
-          const category = document.createElement('small'); category.textContent = row.area;
-          heading.append(name, category);
-          const local = document.createElement('td'); local.dataset.state = row.local;
-          local.textContent = comparisonStates[row.local];
+          tr.querySelector('span').textContent = row.name;
+          tr.querySelector('small').textContent = row.area;
+          const [local, other] = tr.querySelectorAll('td');
+          local.dataset.state = row.local;
+          local.textContent = (row.default ? 'Extended: ' : '') + comparisonStates[row.local];
           if (row.default) {
-            local.textContent = 'Extended: ' + comparisonStates[row.local];
             const compatible = document.createElement('small'); compatible.textContent = 'Compatibility: ' + comparisonStates[row.default]; local.append(compatible);
           }
-          const other = document.createElement('td'); other.dataset.state = row.other; other.textContent = comparisonStates[row.other];
-          const notes = document.createElement('td');
-          const details = document.createElement('details');
-          const summary = document.createElement('summary'); summary.textContent = 'Details';
-          const text = document.createElement('p'); text.textContent = presentComparisonNotes(row.notes);
-          details.append(summary, text); notes.append(details);
-          tr.append(heading, local, other, notes); return tr;
+          other.dataset.state = row.other; other.textContent = comparisonStates[row.other];
+          tr.querySelector('p').textContent = presentComparisonNotes(row.notes);
+          return tr;
         }));
         status.textContent = rows.length ? `Showing ${rows.length} matching rows.` : 'No matching features. Try another filter.';
         const url = new URL(location.href);
@@ -54,18 +49,68 @@ export function initEmulatorComparisons() {
         if (version === request) root.removeAttribute('aria-busy');
       }
     };
-    root.querySelectorAll('[data-comparison-controls]').forEach(control => control.hidden = false);
+    controls.hidden = false;
     controls.addEventListener('input', render);
-    const params = new URL(location.href).searchParams;
-    const selected = params.get('features');
-    if (['all', 'broader'].includes(selected)) root.querySelector(`[value="${selected}"]`).checked = true;
-    query.value = params.get('q') || '';
-    if ([...area.options].some(option => option.value === params.get('area'))) area.value = params.get('area');
-    render();
+    const restore = () => {
+      const params = new URL(location.href).searchParams;
+      const selected = ['all', 'broader'].includes(params.get('features')) ? params.get('features') : 'advantages';
+      root.querySelector(`input[value="${selected}"]`).checked = true;
+      query.value = params.get('q') || '';
+      area.value = [...area.options].some(option => option.value === params.get('area')) ? params.get('area') : '';
+      render();
+    };
+    root.addEventListener('lc:comparison-restore', restore);
+    restore();
+  });
+}
+
+function initComparisonWorkspaces() {
+  document.querySelectorAll('[data-comparison-workspace]').forEach(workspace => {
+    const tabs = [...workspace.querySelectorAll('[data-service-tab]')];
+    const panels = workspace.querySelectorAll('[data-comparison-service]');
+    const tablist = workspace.querySelector('[data-comparison-tabs]');
+    tablist.hidden = false;
+    const activate = (tab, push = false) => {
+      if (push) {
+        const url = new URL(location.href);
+        url.searchParams.set('service', tab.dataset.serviceTab);
+        url.searchParams.delete('area');
+        history.pushState(history.state, '', url);
+      }
+      tabs.forEach((item, index) => {
+        const selected = item === tab;
+        item.ariaSelected = String(selected);
+        item.tabIndex = selected ? 0 : -1;
+        panels[index].hidden = !selected;
+      });
+      tablist.ariaOrientation = matchMedia('(min-width:64rem)').matches ? 'vertical' : 'horizontal';
+      const panel = panels[tabs.indexOf(tab)];
+      const table = panel.querySelector('[data-emulator-comparison]');
+      if (table.dataset.bound) table.dispatchEvent(new Event('lc:comparison-restore'));
+      else initEmulatorComparisons(panel);
+    };
+    tablist.onclick = event => {
+      const tab = event.target.closest('[data-service-tab]');
+      if (tab && tab.ariaSelected !== 'true') activate(tab, true);
+    };
+    tablist.onkeydown = event => {
+      const index = tabs.indexOf(event.target);
+      if (index < 0) return;
+      const offset = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key];
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : offset ? (index + offset + tabs.length) % tabs.length : -1;
+      if (next < 0) return;
+      event.preventDefault();
+      tabs[next].focus();
+      if (tabs[next].ariaSelected !== 'true') activate(tabs[next], true);
+    };
+    activate(tabs.find(tab => tab.dataset.serviceTab === new URL(location.href).searchParams.get('service')) || tabs[0]);
   });
 }
 
 if (typeof document !== 'undefined') {
-  document.addEventListener('astro:page-load', initEmulatorComparisons);
-  initEmulatorComparisons();
+  const init = () => { initComparisonWorkspaces(); initEmulatorComparisons(); };
+  document.addEventListener('astro:page-load', init);
+  window.addEventListener('popstate', initComparisonWorkspaces);
+  matchMedia('(min-width:64rem)').addEventListener('change', initComparisonWorkspaces);
+  init();
 }

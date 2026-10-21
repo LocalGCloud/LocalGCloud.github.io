@@ -1,21 +1,24 @@
 ---
 import { comparisonPreviewSize, comparisonStates, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
 import type { emulatorComparisons } from '../data/emulatorComparisons';
-interface Props { comparison: (typeof emulatorComparisons)[number]; }
-const { comparison } = Astro.props;
+interface Props { comparison: (typeof emulatorComparisons)[number]; embedded?: boolean; preview?: boolean; }
+const { comparison, embedded = false, preview = true } = Astro.props;
 const initial = selectComparisonRows(comparison.rows);
+const titleId = embedded ? `feature-table-${comparison.id}` : 'feature-table-title';
+const legendId = `comparison-legend-${comparison.id}`;
+const Heading = embedded ? 'h3' : 'h2';
 ---
 
-<section class="site-section" aria-labelledby="feature-table-title">
-  <div class="container" data-emulator-comparison data-inventory={comparison.dataUrl}>
-    <h2 id="feature-table-title">Explore the feature comparison</h2>
+<section class:list={[embedded ? 'mt-8' : 'site-section']} aria-labelledby={titleId}>
+  <div class:list={[!embedded && 'container']} data-emulator-comparison data-inventory={comparison.dataUrl}>
+    <Heading id={titleId}>Explore the feature comparison</Heading>
     <div class="comparison-controls mt-6" data-comparison-controls hidden data-pagefind-ignore>
       <fieldset>
         <legend class="site-micro mb-3">Show features</legend>
         <div class="comparison-modes">
-          <label><input type="radio" name="comparison-mode" value="advantages" checked />Only LocalCloud advantages</label>
-          <label><input type="radio" name="comparison-mode" value="all" />All features</label>
-          <label><input type="radio" name="comparison-mode" value="broader" />Broader local behavior</label>
+          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="advantages" checked />Only LocalCloud advantages</label>
+          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="all" />All features</label>
+          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="broader" />Broader local behavior</label>
         </div>
       </fieldset>
       <div class="comparison-search mt-4">
@@ -23,14 +26,15 @@ const initial = selectComparisonRows(comparison.rows);
         <label>Feature area<select><option value="">All areas</option>{comparison.areas.map(area => <option value={area}>{area}</option>)}</select></label>
       </div>
     </div>
-    <p class="mt-4 text-sm leading-6 text-[var(--text-2)]" id="comparison-legend">Scoped features have limits explained in Details. Not assessed means unknown, not missing.</p>
-    <p class="mt-4 font-medium" role="status" aria-live="polite" data-comparison-status>Preview: {Math.min(comparisonPreviewSize, initial.length)} of {initial.length} LocalCloud advantages.</p>
-    <div class="comparison-scroll mt-4" tabindex="0" role="region" aria-label={`${comparison.name} feature comparison table`} aria-describedby="comparison-legend">
+    <p class="mt-4 text-sm leading-6 text-[var(--text-2)]" id={legendId}>Scoped features have limits explained in Details. Not assessed means unknown, not missing.</p>
+    <p class="mt-4 font-medium" role="status" aria-live="polite" data-comparison-status>{preview ? `Preview: ${Math.min(comparisonPreviewSize, initial.length)} of ${initial.length} LocalCloud advantages.` : 'Select this service to explore its features.'}</p>
+    <template data-comparison-row><tr><th scope="row"><span></span><small></small></th><td></td><td></td><td><details><summary>Details</summary><p></p></details></td></tr></template>
+    <div class="comparison-scroll mt-4" tabindex="0" role="region" aria-label={`${comparison.name} feature comparison table`} aria-describedby={legendId}>
       <table class="comparison-table">
         <caption class="sr-only">{comparison.engine} compared with {comparison.competitor}</caption>
         <thead><tr><th scope="col">Feature</th><th scope="col">{comparison.engine}</th><th scope="col">{comparison.competitor}</th><th scope="col">Details</th></tr></thead>
         <tbody>
-          {initial.slice(0, comparisonPreviewSize).map(row => <tr data-feature-id={row.id}>
+          {initial.slice(0, preview ? comparisonPreviewSize : 0).map(row => <tr data-feature-id={row.id}>
             <th scope="row"><span>{row.name}</span><small>{row.area}</small></th>
             <td data-state={row.local}>{row.default ? `Extended: ${comparisonStates[row.local]}` : comparisonStates[row.local]}{row.default && <small>Compatibility: {comparisonStates[row.default]}</small>}</td>
             <td data-state={row.other}>{comparisonStates[row.other]}</td>
@@ -71,4 +75,26 @@ const initial = selectComparisonRows(comparison.rows);
   .comparison-table summary { cursor:pointer; }
   .comparison-table details p { margin:1rem 0; line-height:1.65; }
   @media(max-width:40rem) { .comparison-search { grid-template-columns:1fr; } }
+
+  .comparison-heading { font-size:clamp(1.5rem,2.5vw,2.25rem); line-height:1.2; }
+  .comparison-metrics { display:flex; flex-wrap:wrap; gap:1rem 2rem; padding:1.25rem 0; border-block:1px solid var(--line); }
+  .comparison-metrics dt { font-size:.8125rem; color:var(--text-2); }
+  .comparison-metrics dd { margin:.35rem 0 0; font-size:1.5rem; font-weight:600; }
+  .comparison-intro { padding-block:2rem; }
+  .comparison-workspace { display:grid; grid-template-columns:12.5rem minmax(0,1fr); gap:2rem; align-items:start; }
+  .comparison-services { position:sticky; top:1rem; }
+  .comparison-service-tabs:not([hidden]) { display:flex; flex-direction:column; gap:.5rem; margin-top:1rem; }
+  .comparison-service-tabs button { display:block; padding:1rem; border:1px solid transparent; border-radius:.65rem; color:var(--text); text-align:left; cursor:pointer; }
+  .comparison-service-tabs button:hover { background:var(--surface-2); }
+  .comparison-service-tabs button[aria-selected="true"] { background:var(--surface-2); border-color:var(--accent-strong); }
+  .comparison-service-tabs span { display:block; font-weight:600; }
+  .comparison-service-tabs small { display:block; margin-top:.35rem; font-size:.75rem; color:var(--text-2); }
+  .comparison-content { min-width:0; }
+  @media(max-width:63.999rem) {
+    .comparison-workspace { grid-template-columns:minmax(0,1fr); gap:1.5rem; }
+    .comparison-services { position:static; min-width:0; }
+    .comparison-service-tabs:not([hidden]) { flex-direction:row; overflow-x:auto; padding-bottom:.5rem; }
+    .comparison-service-tabs button { flex:0 0 auto; padding:.75rem; }
+  }
+  .comparison-breadcrumb { padding-top:2rem; }
 </style>
