@@ -47,7 +47,7 @@ for (const [service, count] of Object.entries(expected)) {
     }
     assert.deepEqual(metrics[service], { total: count, exclusive: selectComparisonRows(rows).length, broader: selectComparisonRows(rows, { mode: 'broader' }).length });
     const last = rows.at(-1);
-    assert.ok(selectComparisonRows(rows, { mode: 'all', query: last.id, area: last.area }).some(row => row.id === last.id), 'search covers rows beyond the first page');
+    assert.ok(selectComparisonRows(rows, { mode: 'all', query: last.id, area: last.area }).some(row => row.id === last.id), 'search covers the complete inventory');
   });
 }
 

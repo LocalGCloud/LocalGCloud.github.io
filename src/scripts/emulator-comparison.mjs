@@ -1,4 +1,4 @@
-import { comparisonPageSize, comparisonStates, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
+import { comparisonStates, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
 
 export function initEmulatorComparisons() {
   document.querySelectorAll('[data-emulator-comparison]').forEach(root => {
@@ -9,9 +9,7 @@ export function initEmulatorComparisons() {
     const area = root.querySelector('select');
     const status = root.querySelector('[data-comparison-status]');
     const body = root.querySelector('tbody');
-    const previous = root.querySelector('[data-comparison-previous]');
-    const next = root.querySelector('[data-comparison-next]');
-    let data, pending, page = 1, request = 0;
+    let data, pending, request = 0;
     const mode = () => root.querySelector('[name="comparison-mode"]:checked').value;
     const load = () => data ? Promise.resolve(data) : pending ||= fetch(root.dataset.inventory, { signal: AbortSignal.timeout(10000) })
       .then(response => { if (!response.ok) throw Error('Inventory unavailable'); return response.json(); })
@@ -22,9 +20,7 @@ export function initEmulatorComparisons() {
       try {
         const rows = selectComparisonRows(await load(), { mode: mode(), query: query.value, area: area.value });
         if (version !== request || !root.isConnected) return;
-        page = Math.max(1, Math.min(page, Math.ceil(rows.length / comparisonPageSize)));
-        const start = (page - 1) * comparisonPageSize;
-        body.replaceChildren(...rows.slice(start, start + comparisonPageSize).map(row => {
+        body.replaceChildren(...rows.map(row => {
           const tr = document.createElement('tr');
           tr.dataset.featureId = row.id;
           const heading = document.createElement('th'); heading.scope = 'row';
@@ -40,37 +36,32 @@ export function initEmulatorComparisons() {
           const other = document.createElement('td'); other.dataset.state = row.other; other.textContent = comparisonStates[row.other];
           const notes = document.createElement('td');
           const details = document.createElement('details');
-          const summary = document.createElement('summary'); summary.textContent = 'Scope and evidence';
+          const summary = document.createElement('summary'); summary.textContent = 'Details';
           const text = document.createElement('p'); text.textContent = presentComparisonNotes(row.notes);
-          const source = document.createElement('a'); source.href = root.dataset.sources;
-          source.textContent = row.source + ', line ' + row.line + ' (source JSON)';
-          details.append(summary, text, source); notes.append(details);
+          details.append(summary, text); notes.append(details);
           tr.append(heading, local, other, notes); return tr;
         }));
-        status.textContent = rows.length ? `Showing ${start + 1}–${Math.min(start + comparisonPageSize, rows.length)} of ${rows.length} matching rows.` : 'No matching features. Try All features, another area or a different search.';
-        previous.disabled = page === 1; next.disabled = start + comparisonPageSize >= rows.length;
+        status.textContent = rows.length ? `Showing ${rows.length} matching rows.` : 'No matching features. Try another filter.';
         const url = new URL(location.href);
-        for (const [key, value] of Object.entries({ features: mode() === 'advantages' ? '' : mode(), q: query.value, area: area.value, page: page > 1 ? String(page) : '' })) {
+        url.searchParams.delete('page');
+        for (const [key, value] of Object.entries({ features: mode() === 'advantages' ? '' : mode(), q: query.value, area: area.value })) {
           value ? url.searchParams.set(key, value) : url.searchParams.delete(key);
         }
         history.replaceState(history.state, '', url);
       } catch {
-        if (version === request) status.textContent = 'The full inventory could not load. Your current rows remain available. Try again or download the source documents below.';
+        if (version === request) status.textContent = 'Could not load the full table. Change a filter to retry.';
       } finally {
         if (version === request) root.removeAttribute('aria-busy');
       }
     };
     root.querySelectorAll('[data-comparison-controls]').forEach(control => control.hidden = false);
-    controls.addEventListener('input', () => { page = 1; render(); });
-    previous.addEventListener('click', () => { page--; render(); });
-    next.addEventListener('click', () => { page++; render(); });
+    controls.addEventListener('input', render);
     const params = new URL(location.href).searchParams;
     const selected = params.get('features');
     if (['all', 'broader'].includes(selected)) root.querySelector(`[value="${selected}"]`).checked = true;
     query.value = params.get('q') || '';
     if ([...area.options].some(option => option.value === params.get('area'))) area.value = params.get('area');
-    page = Math.max(1, Number.parseInt(params.get('page'), 10) || 1);
-    if (selected || query.value || area.value || page > 1) render();
+    render();
   });
 }
 
