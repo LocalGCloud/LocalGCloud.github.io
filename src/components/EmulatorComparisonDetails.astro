@@ -7,18 +7,16 @@ const base = import.meta.env.BASE_URL;
 const Heading = embedded ? 'h2' : 'h1';
 ---
 
-<header class:list={[embedded ? '' : 'site-section site-section--hero']}>
+<header class:list={[embedded ? '' : 'site-section site-section--tight']}>
   <div class:list={[!embedded && 'container']}>
-    <span class="site-kicker">{comparison.name}</span>
-    <Heading class="mt-3 comparison-heading">{comparison.engine} vs {comparison.competitor}</Heading>
-    <p class="mt-4 leading-7 text-[var(--text-2)]">{comparison.summary}</p>
-    <a class="site-button site-button--secondary mt-5" href={`${base}services/${comparison.slug}/`}>{comparison.name} service guide</a>
-    <dl class="comparison-metrics mt-6">
-      <div><dt>Compared features</dt><dd>{comparison.total.toLocaleString('en-US')}</dd></div>
-      <div><dt>LocalCloud advantages</dt><dd>{comparison.exclusive}</dd></div>
-      <div><dt>Broader behaviors</dt><dd>{comparison.broader}</dd></div>
-    </dl>
-    <details class="mt-5 text-sm leading-6 text-[var(--text-2)]"><summary class="cursor-pointer">Comparison notes</summary><p class="mt-2">Compared with <a href={comparison.baselineUrl}>{comparison.baseline}</a>. {comparison.scope}</p></details>
+    <div class="comparison-title-row">
+      <Heading class="comparison-heading">{embedded ? comparison.engine : `${comparison.engine} vs ${comparison.competitor}`}</Heading>
+      <a class="comparison-guide" href={`${base}services/${comparison.slug}/`}>Service guide <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="comparison-meta">
+      <p><strong>{comparison.total.toLocaleString('en-US')}</strong> features · <strong>{comparison.exclusive}</strong> advantages · <strong>{comparison.broader}</strong> broader behaviors</p>
+      <details class="comparison-notes"><summary>Notes</summary><p>{comparison.summary} Compared with <a href={comparison.baselineUrl}>{comparison.baseline}</a>. {comparison.scope} Counts describe documented rows and can overlap.</p></details>
+    </div>
   </div>
 </header>
 <EmulatorComparisonTable {comparison} {embedded} {preview} />
