@@ -132,3 +132,19 @@ When adding new services or syncing updates from upstream repositories, follow t
    pnpm run test:installer
    ```
    Confirm all static routes, SEO checks, and contract assertions pass cleanly.
+
+## Service emulator comparison tables
+
+Named baselines are permitted on `/compare/emulators/` and its service pages for
+the requested feature comparisons. Retain the source review date and version,
+credit shared functionality, and link the source evidence. This exception does
+not change competitor naming on unrelated pages.
+
+“Only LocalCloud advantages” requires an implemented local capability and an
+explicitly absent baseline behavior, including accepted requests with no effect.
+Keep narrower baseline behavior in a separate view. Unknown or unassessed behavior
+never establishes absence. These are engine comparisons; retain configuration and
+shipping-image boundaries. Overlapping inventory rows must not be presented as
+independent features or a compatibility percentage. Original source documents are
+downloadable; table copy uses the site's capability vocabulary without changing
+availability markers or removing behavioral limits.
