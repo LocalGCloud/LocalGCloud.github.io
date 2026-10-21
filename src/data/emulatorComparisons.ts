@@ -11,7 +11,7 @@ const sourceAssets = import.meta.glob('./emulator-comparison-sources/*.json', { 
 
 const definitions = [
   {
-    id: 'gcs', slug: 'cloud-storage', name: 'Cloud Storage', engine: 'gcs-server-extended',
+    id: 'gcs', slug: 'cloud-storage', name: 'Cloud Storage', engine: 'LocalCloud GCS',
     competitor: 'fake-gcs-server', baseline: 'fsouza/fake-gcs-server · 3c29d20789f6',
     baselineUrl: 'https://github.com/fsouza/fake-gcs-server/tree/3c29d20789f6475f65d2554ad6898c4afd7124bb',
     summary: 'Test permission failures, HMAC credentials, object moves and notification recovery alongside ordinary storage operations.',
@@ -19,7 +19,7 @@ const definitions = [
     highlights: ['Exercise HMAC key creation, rotation and invalid-signature rejection.', 'Test project-filtered bucket listings and conditional object moves.', 'Recover queued notifications after temporary Pub/Sub outages.'],
   },
   {
-    id: 'firestore', slug: 'firestore', name: 'Firestore', engine: 'firestore-go',
+    id: 'firestore', slug: 'firestore', name: 'Firestore', engine: 'LocalCloud firestore',
     competitor: 'Google Firestore emulator', baseline: 'Google documentation and pinned Java emulator 1.22.0',
     baselineUrl: 'https://docs.cloud.google.com/firestore/native/docs/emulator',
     summary: 'Exercise missing-index failures, query Explain and transaction conflicts with the extended engine profile.',
@@ -27,7 +27,7 @@ const definitions = [
     highlights: ['Catch missing composite indexes in queries, listeners and aggregations.', 'Inspect actual local query work with Explain.', 'Exercise optimistic transaction conflicts and Rules deployment workflows.'],
   },
   {
-    id: 'bigtable', slug: 'bigtable', name: 'Bigtable', engine: 'Little Bigtable',
+    id: 'bigtable', slug: 'bigtable', name: 'Bigtable', engine: 'LocalCloud Bigtable',
     competitor: 'Google Bigtable emulator', baseline: 'Google guide and google-cloud-go source · 3266de7c69fd',
     baselineUrl: 'https://docs.cloud.google.com/bigtable/docs/emulator',
     summary: 'Keep persistent fixtures and test resource lifecycle, recovery, restricted views, change streams and local SQL.',
@@ -35,7 +35,7 @@ const definitions = [
     highlights: ['Retain row and administration state with SQLite or PostgreSQL.', 'Rehearse backups, restore, soft deletion and undelete.', 'Develop SQL queries and consumers of local change streams.'],
   },
   {
-    id: 'spanner', slug: 'spanner', name: 'Spanner', engine: 'Extended Spanner emulator',
+    id: 'spanner', slug: 'spanner', name: 'Spanner', engine: 'LocalCloud Spanner',
     competitor: 'Google Spanner emulator', baseline: 'Google emulator v1.5.58 · a081a7e7',
     baselineUrl: 'https://github.com/GoogleCloudPlatform/cloud-spanner-emulator/tree/a081a7e71aba5f4d05fc8c6b21ef1a269dcbac28',
     summary: 'Keep local databases, rehearse backup and recovery, enforce database-role privileges and execute graph algorithms.',
@@ -43,7 +43,7 @@ const definitions = [
     highlights: ['Keep fixtures and resume supported change streams after restart.', 'Test database-role permissions and drop protection.', 'Consume local query plans, execution statistics and graph results.'],
   },
   {
-    id: 'bigquery', slug: 'bigquery', name: 'BigQuery', engine: 'BigQuery emulator on DuckDB',
+    id: 'bigquery', slug: 'bigquery', name: 'BigQuery', engine: 'LocalCloud BigQuery',
     competitor: 'goccy BigQuery emulator', baseline: 'goccy · cb8555bee739 · googlesqlite v0.3.1',
     baselineUrl: 'https://github.com/goccy/bigquery-emulator/tree/cb8555bee739c794343337e8c3242b59d5d7470a',
     summary: 'Test executable ML, external tables, federation, policies, snapshots and clones alongside analytical SQL.',
