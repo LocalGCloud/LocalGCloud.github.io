@@ -1,5 +1,6 @@
 ---
-import { comparisonPreviewSize, comparisonStates, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
+import { comparisonPreviewSize, comparisonNotesInlineLimit, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
+import EmulatorComparisonStatus from './EmulatorComparisonStatus.astro';
 import type { emulatorComparisons } from '../data/emulatorComparisons';
 interface Props { comparison: (typeof emulatorComparisons)[number]; embedded?: boolean; preview?: boolean; }
 const { comparison, embedded = false, preview = true } = Astro.props;
@@ -9,41 +10,45 @@ const legendId = `comparison-legend-${comparison.id}`;
 const Heading = embedded ? 'h3' : 'h2';
 ---
 
-<section class:list={[embedded ? 'mt-8' : 'site-section']} aria-labelledby={titleId}>
+<section class:list={['comparison-features', !embedded && 'site-section']} aria-labelledby={titleId}>
   <div class:list={[!embedded && 'container']} data-emulator-comparison data-inventory={comparison.dataUrl}>
-    <Heading id={titleId}>Explore the feature comparison</Heading>
-    <div class="comparison-controls mt-6" data-comparison-controls hidden data-pagefind-ignore>
+    <Heading id={titleId} class="sr-only">Explore the feature comparison</Heading>
+    <div class="comparison-controls" data-comparison-controls hidden data-pagefind-ignore>
       <fieldset>
-        <legend class="site-micro mb-3">Show features</legend>
+        <legend class="sr-only">Show features</legend>
         <div class="comparison-modes">
-          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="advantages" checked />Only LocalCloud advantages</label>
+          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="advantages" checked />Advantages</label>
           <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="all" />All features</label>
-          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="broader" />Broader local behavior</label>
+          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="broader" />Broader behavior</label>
         </div>
       </fieldset>
-      <div class="comparison-search mt-4">
-        <label>Search features<input type="search" placeholder="Try backups, indexes or ML" autocomplete="off" /></label>
-        <label>Feature area<select><option value="">All areas</option>{comparison.areas.map(area => <option value={area}>{area}</option>)}</select></label>
+      <div class="comparison-search">
+        <label><span class="sr-only">Search features</span><input type="search" placeholder="Search features" autocomplete="off" /></label>
+        <label><span class="sr-only">Feature area</span><select><option value="">All areas</option>{comparison.areas.map(area => <option value={area}>{area}</option>)}</select></label>
       </div>
     </div>
-    <p class="mt-4 text-sm leading-6 text-[var(--text-2)]" id={legendId}>Scoped features have limits explained in Details. Not assessed means unknown, not missing.</p>
-    <p class="mt-4 font-medium" role="status" aria-live="polite" data-comparison-status>{preview ? `Preview: ${Math.min(comparisonPreviewSize, initial.length)} of ${initial.length} LocalCloud advantages.` : 'Select this service to explore its features.'}</p>
-    <template data-comparison-row><tr><th scope="row"><span></span><small></small></th><td></td><td></td><td><details><summary>Details</summary><p></p></details></td></tr></template>
-    <div class="comparison-scroll mt-4" tabindex="0" role="region" aria-label={`${comparison.name} feature comparison table`} aria-describedby={legendId}>
+    <div class="comparison-table-meta">
+      <p class="comparison-result" role="status" aria-live="polite" data-comparison-status>{preview ? `Preview: ${Math.min(comparisonPreviewSize, initial.length)} of ${initial.length} LocalCloud advantages.` : 'Select this service to explore its features.'}</p>
+      <p id={legendId}>Scoped = see details. Not assessed = unknown.</p>
+    </div>
+    <template data-comparison-row><tr><th scope="row"><span></span><small></small></th><td><span data-comparison-profile hidden>Extended: </span><EmulatorComparisonStatus state="unknown" /><small data-comparison-profile hidden>Compatibility: <EmulatorComparisonStatus state="unknown" /></small></td><td><EmulatorComparisonStatus state="unknown" /></td><td><details><summary>Details</summary><p></p></details></td></tr></template>
+    <div class="comparison-scroll" tabindex="0" role="region" aria-label={`${comparison.name} feature comparison table`} aria-describedby={legendId}>
       <table class="comparison-table">
         <caption class="sr-only">{comparison.engine} compared with {comparison.competitor}</caption>
         <thead><tr><th scope="col">Feature</th><th scope="col">{comparison.engine}</th><th scope="col">{comparison.competitor}</th><th scope="col">Details</th></tr></thead>
         <tbody>
-          {initial.slice(0, preview ? comparisonPreviewSize : 0).map(row => <tr data-feature-id={row.id}>
+          {initial.slice(0, preview ? comparisonPreviewSize : 0).map(row => {
+            const note = presentComparisonNotes(row.notes);
+            const long = note.length > comparisonNotesInlineLimit || note.includes('\n');
+            return <tr data-feature-id={row.id}>
             <th scope="row"><span>{row.name}</span><small>{row.area}</small></th>
-            <td data-state={row.local}>{row.default ? `Extended: ${comparisonStates[row.local]}` : comparisonStates[row.local]}{row.default && <small>Compatibility: {comparisonStates[row.default]}</small>}</td>
-            <td data-state={row.other}>{comparisonStates[row.other]}</td>
-            <td><details><summary>Details</summary><p>{presentComparisonNotes(row.notes)}</p></details></td>
-          </tr>)}
+            <td>{row.default && 'Extended: '}<EmulatorComparisonStatus state={row.local} />{row.default && <small>Compatibility: <EmulatorComparisonStatus state={row.default} /></small>}</td>
+            <td><EmulatorComparisonStatus state={row.other} /></td>
+            <td>{long ? <details><summary>Details</summary><p>{note}</p></details> : <p>{note}</p>}</td>
+          </tr>})}
         </tbody>
       </table>
     </div>
-    <p class="mt-5 text-sm leading-6 text-[var(--text-2)]">Counts describe documented rows and can overlap.</p>
     <aside class="mt-5 text-sm leading-6" data-comparison-agent>
       <h3 class="font-medium">Agent data</h3>
       <p><a href={comparison.dataUrl}>JSON comparison view</a> · <a href={comparison.sourcesUrl}>Source reference</a></p>
@@ -58,29 +63,44 @@ const Heading = embedded ? 'h3' : 'h2';
 
 <style is:global>
   html:not([data-audience="agents"]) [data-comparison-agent] { display:none; }
-  .comparison-modes { display:flex; flex-wrap:wrap; gap:.6rem; }
-  .comparison-modes label { display:flex; align-items:center; gap:.5rem; padding:.65rem .9rem; border:1px solid var(--line); border-radius:.6rem; cursor:pointer; font-size:.875rem; }
+  .comparison-features { margin-top:1rem; }
+  .comparison-controls:not([hidden]) { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem .75rem; }
+  .comparison-controls fieldset { min-width:0; }
+  .comparison-modes { display:flex; flex-wrap:wrap; gap:.375rem; }
+  .comparison-modes label { display:flex; align-items:center; gap:.375rem; min-height:2.25rem; padding:.35rem .55rem; border:1px solid var(--line); border-radius:.4rem; cursor:pointer; font-size:.8125rem; white-space:nowrap; }
   .comparison-modes label:has(:checked) { border-color:var(--accent-strong); background:var(--surface-2); }
   .comparison-modes input { accent-color:var(--accent-strong); }
-  .comparison-search { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-  .comparison-search label { display:grid; gap:.4rem; font-size:.875rem; min-width:0; }
-  .comparison-search input,.comparison-search select { min-width:0; width:100%; border:1px solid var(--line); border-radius:.5rem; padding:.7rem; background:var(--surface); color:var(--text); }
+  .comparison-search { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:.5rem; flex:1 1 17rem; }
+  .comparison-search label { font-size:.8125rem; min-width:0; }
+  .comparison-search input,.comparison-search select { min-width:0; width:100%; min-height:2.25rem; border:1px solid var(--line); border-radius:.4rem; padding:.35rem .55rem; background:var(--surface); color:var(--text); }
+  .comparison-table-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.25rem 1rem; margin:.5rem 0; font-size:.75rem; color:var(--text-2); }
+  .comparison-table-meta p { margin:0; }
   .comparison-scroll { overflow-x:auto; }
   .comparison-table { width:100%; min-width:46rem; border-collapse:collapse; text-align:left; font-size:.875rem; table-layout:fixed; }
-  .comparison-table th,.comparison-table td { padding:1rem .8rem; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
-  .comparison-table th:first-child { width:32%; }
-  .comparison-table th:nth-child(2),.comparison-table th:nth-child(3) { width:19%; }
+  .comparison-table th,.comparison-table td { padding:.625rem .7rem; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
+  .comparison-table th:first-child { width:30%; }
+  .comparison-table th:nth-child(2),.comparison-table th:nth-child(3) { width:17%; }
+  .comparison-table th:nth-child(2),.comparison-table th:nth-child(3),.comparison-table td:nth-child(2),.comparison-table td:nth-child(3) { text-align:center; }
   .comparison-table small { display:block; color:var(--text-2); font-weight:400; margin-top:.4rem; }
-  .comparison-table [data-state="available"] { color:var(--accent-strong); font-weight:600; }
+  .comparison-table [hidden] { display:none; }
+  .comparison-state { display:inline-block; position:relative; }
+  .comparison-state[data-state="available"] > .comparison-mark::before { content:'✓'; color:var(--success-ink); }
+  .comparison-state[data-state="unavailable"] > .comparison-mark::before { content:'✕'; color:var(--brand-red); }
+  .comparison-mark::before { font-size:1.125rem; font-weight:700; line-height:1; }
+  .comparison-state:is([data-state="available"],[data-state="unavailable"]) > .comparison-label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
   .comparison-table summary { cursor:pointer; }
-  .comparison-table details p { margin:1rem 0; line-height:1.65; }
-  @media(max-width:40rem) { .comparison-search { grid-template-columns:1fr; } }
+  .comparison-table td p { margin:0; line-height:1.55; }
+  .comparison-table details p { margin:.5rem 0 0; }
 
-  .comparison-heading { font-size:clamp(1.5rem,2.5vw,2.25rem); line-height:1.2; }
-  .comparison-metrics { display:flex; flex-wrap:wrap; gap:1rem 2rem; padding:1.25rem 0; border-block:1px solid var(--line); }
-  .comparison-metrics dt { font-size:.8125rem; color:var(--text-2); }
-  .comparison-metrics dd { margin:.35rem 0 0; font-size:1.5rem; font-weight:600; }
-  .comparison-intro { padding-block:2rem; }
+  .comparison-title-row { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:.25rem 1rem; }
+  .comparison-title-row .comparison-heading { font-size:1.25rem; line-height:1.35; letter-spacing:-.02em; }
+  .comparison-guide { font-size:.8125rem; white-space:nowrap; }
+  .comparison-meta { display:flex; flex-wrap:wrap; align-items:baseline; gap:.25rem 1rem; margin-top:.375rem; font-size:.8125rem; color:var(--text-2); }
+  .comparison-meta p { margin:0; }
+  .comparison-notes summary { cursor:pointer; }
+  .comparison-notes[open] { flex-basis:100%; }
+  .comparison-notes[open] p { margin-top:.5rem; line-height:1.6; }
+  .site-section.comparison-intro { padding-block:1rem; }
   .comparison-workspace { display:grid; grid-template-columns:12.5rem minmax(0,1fr); gap:2rem; align-items:start; }
   .comparison-services { position:sticky; top:1rem; }
   .comparison-service-tabs:not([hidden]) { display:flex; flex-direction:column; gap:.5rem; margin-top:1rem; }
@@ -91,10 +111,12 @@ const Heading = embedded ? 'h3' : 'h2';
   .comparison-service-tabs small { display:block; margin-top:.35rem; font-size:.75rem; color:var(--text-2); }
   .comparison-content { min-width:0; }
   @media(max-width:63.999rem) {
+    .comparison-intro h1 { font-size:1.75rem; margin-top:.4rem; }
+    .comparison-intro p,.comparison-services > .site-micro { display:none; }
     .comparison-workspace { grid-template-columns:minmax(0,1fr); gap:1.5rem; }
     .comparison-services { position:static; min-width:0; }
-    .comparison-service-tabs:not([hidden]) { flex-direction:row; overflow-x:auto; padding-bottom:.5rem; }
-    .comparison-service-tabs button { flex:0 0 auto; padding:.75rem; }
+    .comparison-service-tabs:not([hidden]) { flex-direction:row; overflow-x:auto; margin-top:0; padding-bottom:.5rem; }
+    .comparison-service-tabs button { flex:0 0 auto; padding:.5rem .75rem; }
   }
   .comparison-breadcrumb { padding-top:2rem; }
 </style>

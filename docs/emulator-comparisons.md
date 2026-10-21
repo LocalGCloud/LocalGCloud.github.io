@@ -13,6 +13,12 @@ the browser loads only the selected service's build-hashed inventory and display
 one page. The existing filters search the complete inventory without pagination.
 JSON data and source references appear in the For agents audience only.
 
+Keep the detail header, metric counts and filters compact so feature rows are
+visible on entry. Available and unavailable states use green checks and red crosses
+with readable screen-reader and Markdown labels. Other states keep their text.
+Notes of up to 60 characters without line breaks appear inline; longer notes
+remain expandable. Apply the same presentation to server previews and loaded rows.
+
 Only **Available locally + Not available/Accepted, no effect upstream** qualifies
 for the advantages filter. Scoped upstream behavior has a separate filter.
 Unknown and not-applicable values never imply a competitor gap. Firestore retains

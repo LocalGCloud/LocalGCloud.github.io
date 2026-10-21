@@ -1,4 +1,4 @@
-import { comparisonStates, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
+import { comparisonStates, comparisonNotesInlineLimit, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
 
 export function initEmulatorComparisons(scope = document) {
   scope.querySelectorAll('[data-emulator-comparison]').forEach(root => {
@@ -12,12 +12,12 @@ export function initEmulatorComparisons(scope = document) {
     const template = root.querySelector('[data-comparison-row]');
     let data, pending, request = 0;
     const mode = () => root.querySelector('input:checked').value;
-    const load = () => data ? Promise.resolve(data) : pending ||= fetch(root.dataset.inventory, { signal: AbortSignal.timeout(10000) })
+    const load = () => data || (pending ||= fetch(root.dataset.inventory, { signal: AbortSignal.timeout(10000) })
       .then(response => { if (!response.ok) throw Error('Inventory unavailable'); return response.json(); })
-      .then(rows => data = rows).catch(error => { pending = undefined; throw error; });
+      .then(rows => data = rows).catch(error => { pending = undefined; throw error; }));
     const render = async () => {
       const version = ++request;
-      root.setAttribute('aria-busy', 'true');
+      root.ariaBusy = 'true';
       try {
         const rows = selectComparisonRows(await load(), { mode: mode(), query: query.value, area: area.value });
         if (version !== request || !root.isConnected || root.closest('[hidden]')) return;
@@ -26,14 +26,17 @@ export function initEmulatorComparisons(scope = document) {
           tr.dataset.featureId = row.id;
           tr.querySelector('span').textContent = row.name;
           tr.querySelector('small').textContent = row.area;
-          const [local, other] = tr.querySelectorAll('td');
-          local.dataset.state = row.local;
-          local.textContent = (row.default ? 'Extended: ' : '') + comparisonStates[row.local];
-          if (row.default) {
-            const compatible = document.createElement('small'); compatible.textContent = 'Compatibility: ' + comparisonStates[row.default]; local.append(compatible);
-          }
-          other.dataset.state = row.other; other.textContent = comparisonStates[row.other];
-          tr.querySelector('p').textContent = presentComparisonNotes(row.notes);
+          tr.querySelectorAll('.comparison-state').forEach((node, index) => {
+            const value = [row.local, row.default, row.other][index];
+            if (!value) return;
+            node.dataset.state = value;
+            node.lastElementChild.textContent = comparisonStates[value];
+          });
+          tr.querySelectorAll('[data-comparison-profile]').forEach(node => node.hidden = !row.default);
+          const note = presentComparisonNotes(row.notes);
+          const details = tr.querySelector('details'), text = details.lastElementChild;
+          text.textContent = note;
+          if (note.length <= comparisonNotesInlineLimit && !note.includes('\n')) details.replaceWith(text);
           return tr;
         }));
         status.textContent = rows.length ? `Showing ${rows.length} matching rows.` : 'No matching features. Try another filter.';
@@ -46,7 +49,7 @@ export function initEmulatorComparisons(scope = document) {
       } catch {
         if (version === request) status.textContent = 'Could not load the full table. Change a filter to retry.';
       } finally {
-        if (version === request) root.removeAttribute('aria-busy');
+        if (version === request) root.ariaBusy = null;
       }
     };
     controls.hidden = false;
@@ -70,7 +73,7 @@ function initComparisonWorkspaces() {
     const panels = workspace.querySelectorAll('[data-comparison-service]');
     const tablist = workspace.querySelector('[data-comparison-tabs]');
     tablist.hidden = false;
-    const activate = (tab, push = false) => {
+    const activate = (tab, push) => {
       if (push) {
         const url = new URL(location.href);
         url.searchParams.set('service', tab.dataset.serviceTab);

@@ -1,0 +1,6 @@
+---
+import { comparisonStates } from '../utils/emulator-comparisons.mjs';
+interface Props { state: string; }
+const { state } = Astro.props;
+---
+<span class="comparison-state" data-state={state}><span class="comparison-mark" aria-hidden="true"></span><span class="comparison-label">{comparisonStates[state]}</span></span>
