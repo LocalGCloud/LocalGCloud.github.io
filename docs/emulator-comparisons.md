@@ -1,11 +1,14 @@
 # Service emulator comparisons
 
 The public hub is `/compare/emulators/`. Five service comparisons use a shared
-table and their service guides link to them. The initial HTML and Markdown twin
-contain an advantage preview, scope, baseline and links to the full inventories.
-The browser loads the complete, build-hashed JSON inventory on first interaction,
-then filters all rows and displays 10 at a time. The no-script fallback offers
-complete inventory and source-document downloads.
+table and their service guides link to them. Use LocalCloud service names in the
+headings and table columns. Keep introductions and configuration notes concise;
+review dates and detailed provenance remain in the source records.
+
+The initial HTML and Markdown twin contain a small advantage preview. On entry,
+the browser loads the build-hashed inventory and displays every matching row on
+one page. The existing filters search the complete inventory without pagination.
+JSON data and source references appear in the For agents audience only.
 
 Only **Available locally + Not available/Accepted, no effect upstream** qualifies
 for the advantages filter. Scoped upstream behavior has a separate filter.
@@ -38,4 +41,4 @@ Inventory counts have different denominators and overlapping facets. Do not sum
 them into a product feature count or present them as a benchmark. Source and test
 references do not qualify a released image or establish a new runtime result.
 The comparison hub belongs in `llms-full.txt`; detailed tables have individual
-Markdown previews and full JSON downloads to preserve the bounded reading corpus.
+Markdown previews and agent JSON views to preserve the bounded reading corpus.

@@ -46,7 +46,7 @@ const compare = (left, right) => {
 };
 
 const twins = [];
-// Detailed inventories have their own twins and complete JSON downloads. Keep their
+// Detailed inventories have their own twins and agent JSON views. Keep their
 // discovery hub in the bounded corpus rather than duplicating thousands of rows here.
 const technical = twinPages.filter((page) => /^\/(docs|services|compare)\//.test(page.route)
   && !/^\/compare\/emulators\/[^/]+\/$/.test(page.route));
@@ -64,7 +64,7 @@ const full = `${llms.trimEnd()}
 
 ---
 
-The sections below are the Markdown versions of docs, service guides and comparison overviews on https://local.cloud/, in reading order. Each section names its source page. Detailed emulator inventories are linked from https://local.cloud/compare/emulators/ and have separate Markdown previews and complete JSON downloads.
+The sections below are the Markdown versions of docs, service guides and comparison overviews on https://local.cloud/, in reading order. Each section names its source page. Detailed emulator inventories are linked from https://local.cloud/compare/emulators/ and have separate Markdown previews and agent JSON views.
 
 ---
 
