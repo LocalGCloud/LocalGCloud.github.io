@@ -1,0 +1,27 @@
+{
+  "gcs": {
+    "total": 244,
+    "exclusive": 90,
+    "broader": 0
+  },
+  "firestore": {
+    "total": 206,
+    "exclusive": 42,
+    "broader": 6
+  },
+  "bigtable": {
+    "total": 464,
+    "exclusive": 303,
+    "broader": 25
+  },
+  "spanner": {
+    "total": 783,
+    "exclusive": 189,
+    "broader": 39
+  },
+  "bigquery": {
+    "total": 1534,
+    "exclusive": 53,
+    "broader": 5
+  }
+}

@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Comparison evidence is data, not utility-class markup. */
+@source not "../data/emulator-comparisons";
+@source not "../data/emulator-comparison-sources";
 
 /* Keep the first rendered font when a slow connection misses the font window. */
 @font-face {

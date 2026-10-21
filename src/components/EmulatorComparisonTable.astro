@@ -1,0 +1,76 @@
+---
+import { comparisonPageSize, comparisonStates, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
+import type { emulatorComparisons } from '../data/emulatorComparisons';
+interface Props { comparison: (typeof emulatorComparisons)[number]; }
+const { comparison } = Astro.props;
+const initial = selectComparisonRows(comparison.rows);
+const sources = comparison.sourcesUrl;
+---
+
+<section class="site-section" aria-labelledby="feature-table-title">
+  <div class="container" data-emulator-comparison data-inventory={comparison.dataUrl} data-sources={sources}>
+    <h2 id="feature-table-title">Explore the feature comparison</h2>
+    <p class="mt-4 max-w-[52rem] leading-7 text-[var(--text-2)]">Start with capabilities the compared baseline lacks, or explore the full inventory. Search and area filters cover every row, including those on other pages.</p>
+    <div class="comparison-controls mt-6" data-comparison-controls hidden data-pagefind-ignore>
+      <fieldset>
+        <legend class="site-micro mb-3">Show features</legend>
+        <div class="comparison-modes">
+          <label><input type="radio" name="comparison-mode" value="advantages" checked />Only LocalCloud advantages</label>
+          <label><input type="radio" name="comparison-mode" value="all" />All features</label>
+          <label><input type="radio" name="comparison-mode" value="broader" />Broader local behavior</label>
+        </div>
+      </fieldset>
+      <div class="comparison-search mt-4">
+        <label>Search features<input type="search" placeholder="Try backups, indexes or ML" autocomplete="off" /></label>
+        <label>Feature area<select><option value="">All areas</option>{comparison.areas.map(area => <option value={area}>{area}</option>)}</select></label>
+      </div>
+    </div>
+    <p class="mt-4 text-sm leading-6 text-[var(--text-2)]" id="comparison-legend">Available applies to the named behavior. Scoped means the row has a material limit; open its notes. Not assessed is an unknown, never a missing feature. “Only LocalCloud advantages” requires Available locally and either Not available or Accepted, no effect in the compared baseline. “Broader local behavior” requires Available locally and Scoped in that baseline.</p>
+    <p class="mt-4 font-medium" role="status" aria-live="polite" data-comparison-status>Showing 1–{Math.min(comparisonPageSize, initial.length)} of {initial.length} advantage rows.</p>
+    <div class="comparison-scroll mt-4" tabindex="0" role="region" aria-label={`${comparison.name} feature comparison table`} aria-describedby="comparison-legend">
+      <table class="comparison-table">
+        <caption class="sr-only">{comparison.name}: LocalCloud engine compared with {comparison.competitor}, reviewed {comparison.reviewedAt}</caption>
+        <thead><tr><th scope="col">Feature</th><th scope="col">LocalCloud engine</th><th scope="col">{comparison.competitor}</th><th scope="col">Details</th></tr></thead>
+        <tbody>
+          {initial.slice(0, comparisonPageSize).map(row => <tr data-feature-id={row.id}>
+            <th scope="row"><span>{row.name}</span><small>{row.area}</small></th>
+            <td data-state={row.local}>{row.default ? `Extended: ${comparisonStates[row.local]}` : comparisonStates[row.local]}{row.default && <small>Compatibility: {comparisonStates[row.default]}</small>}</td>
+            <td data-state={row.other}>{comparisonStates[row.other]}</td>
+            <td><details><summary>Scope and evidence</summary><p>{presentComparisonNotes(row.notes)}</p><a href={sources}>{row.source}, line {row.line} (source JSON)</a></details></td>
+          </tr>)}
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-5 flex flex-wrap items-center gap-3" data-comparison-controls hidden data-pagefind-ignore>
+      <button type="button" class="site-button site-button--secondary" data-comparison-previous disabled>Previous rows</button>
+      <button type="button" class="site-button site-button--secondary" data-comparison-next disabled={initial.length <= comparisonPageSize}>Next rows</button>
+    </div>
+    <p class="mt-5 text-sm leading-6 text-[var(--text-2)]">These are inventory rows, with overlapping operations, fields and function names. Counts are not independent feature totals, a compatibility percentage or a benchmark.</p>
+    <p class="mt-3 text-sm leading-6"><a href={comparison.dataUrl} download={`${comparison.id}-features.json`}>Download every comparison row (JSON)</a> · <a href={sources} download={`${comparison.id}-sources.json`}>Download source documents (JSON)</a></p>
+    <noscript><p class="mt-4">This preview shows the first advantage rows. Enable JavaScript to filter and browse every row, or download the complete inventory and source documents above.</p></noscript>
+  </div>
+</section>
+
+<script>
+  import '../scripts/emulator-comparison.mjs';
+</script>
+
+<style is:global>
+  .comparison-modes { display:flex; flex-wrap:wrap; gap:.6rem; }
+  .comparison-modes label { display:flex; align-items:center; gap:.5rem; padding:.65rem .9rem; border:1px solid var(--line); border-radius:.6rem; cursor:pointer; font-size:.875rem; }
+  .comparison-modes label:has(:checked) { border-color:var(--accent-strong); background:var(--surface-2); }
+  .comparison-modes input { accent-color:var(--accent-strong); }
+  .comparison-search { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .comparison-search label { display:grid; gap:.4rem; font-size:.875rem; min-width:0; }
+  .comparison-search input,.comparison-search select { min-width:0; width:100%; border:1px solid var(--line); border-radius:.5rem; padding:.7rem; background:var(--surface); color:var(--text); }
+  .comparison-scroll { overflow-x:auto; }
+  .comparison-table { width:100%; min-width:46rem; border-collapse:collapse; text-align:left; font-size:.875rem; table-layout:fixed; }
+  .comparison-table th,.comparison-table td { padding:1rem .8rem; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
+  .comparison-table th:first-child { width:32%; }
+  .comparison-table th:nth-child(2),.comparison-table th:nth-child(3) { width:19%; }
+  .comparison-table small { display:block; color:var(--text-2); font-weight:400; margin-top:.4rem; }
+  .comparison-table [data-state="available"] { color:var(--accent-strong); font-weight:600; }
+  .comparison-table summary { cursor:pointer; }
+  .comparison-table details p { margin:1rem 0; line-height:1.65; }
+  @media(max-width:40rem) { .comparison-search { grid-template-columns:1fr; } }
+</style>

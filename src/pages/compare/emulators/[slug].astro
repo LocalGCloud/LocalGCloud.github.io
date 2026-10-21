@@ -1,0 +1,36 @@
+---
+import LandingLayout from '../../../layouts/LandingLayout.astro';
+import EmulatorComparisonTable from '../../../components/EmulatorComparisonTable.astro';
+import { emulatorComparisons } from '../../../data/emulatorComparisons';
+import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../../data/productFacts';
+export function getStaticPaths() {
+  return emulatorComparisons.map(comparison => ({ params: { slug: comparison.slug }, props: { comparison } }));
+}
+interface Props { comparison: (typeof emulatorComparisons)[number]; }
+const { comparison } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const title = `${comparison.name} Emulator Comparison — LocalCloud`;
+const description = `Compare LocalCloud's ${comparison.name} engine with ${comparison.competitor}. Filter added capabilities, explore all features, and inspect evidence and scope.`;
+const url = new URL(comparison.path.slice(1), productFacts.siteUrl).toString();
+const structuredData = [createWebPageSchema({ url, name: title, description }), createBreadcrumbSchema([
+  { name: 'Home', url: productFacts.siteUrl }, { name: 'Emulator comparisons', url: new URL('compare/emulators/', productFacts.siteUrl).toString() }, { name: comparison.name, url },
+])];
+---
+<LandingLayout {title} {description} {structuredData}>
+  <section class="site-section site-section--hero"><div class="container">
+    <nav aria-label="Breadcrumb"><a href={`${base}compare/emulators/`}>Emulator comparisons</a> <span aria-hidden="true">/</span> {comparison.name}</nav>
+    <span class="site-kicker mt-5 block">{comparison.engine}</span>
+    <h1 class="mt-4 max-w-[48rem]">{comparison.name}: what LocalCloud adds</h1>
+    <p class="mt-6 max-w-[48rem] text-lg leading-8 text-[var(--text-2)]">{comparison.summary}</p>
+    <div class="mt-6 flex flex-wrap gap-3"><a class="site-button site-button--primary" href="#feature-table-title">Explore features</a><a class="site-button site-button--secondary" href={`${base}services/${comparison.slug}/`}>{comparison.name} service guide</a></div>
+  </div></section>
+  <section class="site-section site-section--tight"><div class="container grid gap-5 lg:grid-cols-2">
+    <article class="site-panel p-6"><h2 class="text-2xl">More to test locally</h2><ul class="site-list mt-4">{comparison.highlights.map(text => <li>{text}</li>)}</ul><p class="mt-4 text-sm leading-6">{comparison.total.toLocaleString('en-US')} inventory rows · {comparison.exclusive} implemented rows absent or without effect in the compared baseline · {comparison.broader} with broader local behavior.</p></article>
+    <aside class="site-panel p-6" aria-labelledby="comparison-baseline"><h2 class="text-2xl" id="comparison-baseline">Baseline and scope</h2>
+      <p class="mt-3 font-medium"><a href={comparison.baselineUrl}>{comparison.baseline}</a></p>
+      <p class="mt-3 text-sm leading-6 text-[var(--text-2)]">Reviewed <time datetime={comparison.reviewedAt}>{comparison.reviewedAt}</time>. {comparison.scope}</p>
+    </aside>
+  </div></section>
+  <EmulatorComparisonTable {comparison} />
+  <section class="site-section site-section--tight"><div class="container"><p class="max-w-[52rem] text-sm leading-6 text-[var(--text-2)]">The supplied comparisons describe source implementations and representative test evidence. They do not establish a fresh side-by-side runtime result, cloud production parity, performance improvement, or verification of an installed LocalCloud image. Use the service guide to check configuration and the workflows available in your runtime.</p><p class="mt-4"><a href={`${base}compare/emulators/`}>Compare another service <span aria-hidden="true">→</span></a></p></div></section>
+</LandingLayout>

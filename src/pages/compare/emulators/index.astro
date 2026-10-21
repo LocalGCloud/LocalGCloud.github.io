@@ -1,0 +1,35 @@
+---
+import LandingLayout from '../../../layouts/LandingLayout.astro';
+import { emulatorComparisons } from '../../../data/emulatorComparisons';
+import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../../data/productFacts';
+const base = import.meta.env.BASE_URL;
+const title = 'Emulator Feature Comparisons — LocalCloud';
+const description = 'Compare LocalCloud engines with Google and community emulators. Explore detailed feature tables, filter LocalCloud advantages, and inspect source evidence.';
+const url = new URL('compare/emulators/', productFacts.siteUrl).toString();
+const structuredData = [createWebPageSchema({ url, name: title, description }), createBreadcrumbSchema([
+  { name: 'Home', url: productFacts.siteUrl }, { name: 'Comparisons', url: new URL('compare/', productFacts.siteUrl).toString() }, { name: 'Emulator features', url },
+])];
+---
+<LandingLayout {title} {description} {structuredData}>
+  <section class="site-section site-section--hero"><div class="container">
+    <a href={`${base}compare/`}>All comparisons</a>
+    <span class="site-kicker mt-5 block">Compare local testing workflows</span>
+    <h1 class="mt-4 max-w-[48rem]">See what LocalCloud adds to each emulator</h1>
+    <p class="mt-6 max-w-[48rem] text-lg leading-8 text-[var(--text-2)]">Go beyond basic API calls: test recovery, permissions, data lifecycle and more application behavior locally. Compare each engine with a named Google or community baseline, then filter to the capabilities that add value for your tests.</p>
+    <p class="mt-4 text-sm leading-6 text-[var(--text-2)]">Source comparisons reviewed October 20, 2026. These describe engine capabilities at the recorded revisions; they do not qualify every feature in a shipped LocalCloud image.</p>
+  </div></section>
+  <section class="site-section site-section--tight"><div class="container grid gap-5 lg:grid-cols-2">
+    {emulatorComparisons.map(comparison => <article class="site-panel p-6">
+      <span class="site-kicker">{comparison.name}</span>
+      <h2 class="mt-3 text-2xl">LocalCloud vs {comparison.competitor}</h2>
+      <p class="mt-3 leading-7 text-[var(--text-2)]">{comparison.summary}</p>
+      <ul class="site-list mt-4">{comparison.highlights.map(text => <li>{text}</li>)}</ul>
+      <p class="mt-4 text-sm text-[var(--text-2)]">{comparison.total.toLocaleString('en-US')} inventory rows · {comparison.exclusive} implemented rows absent or without effect in the compared baseline</p>
+      <div class="mt-5 flex flex-wrap gap-4"><a class="font-medium text-[var(--accent-strong)]" href={`${base}${comparison.path.slice(1)}`}>Compare {comparison.name} features <span aria-hidden="true">→</span></a><a href={`${base}services/${comparison.slug}/`}>{comparison.name} service guide</a></div>
+    </article>)}
+  </div></section>
+  <section class="site-section"><div class="container"><h2>Choose the level of detail you need</h2>
+    <p class="mt-4 max-w-[52rem] leading-7 text-[var(--text-2)]">Each table starts with “Only LocalCloud advantages”. Choose “All features” for shared capabilities and gaps, or “Broader local behavior” for behaviors the baseline implements with a narrower contract. Search across the entire inventory and narrow by feature area. Unknown competitor behavior never earns an advantage.</p>
+    <p class="mt-4 max-w-[52rem] leading-7 text-[var(--text-2)]">Counts use each document’s own inventory and can include overlapping facets. Compare the workflows you need rather than adding counts across services. Every table retains scope notes and downloadable source documents.</p>
+  </div></section>
+</LandingLayout>

@@ -23,7 +23,7 @@ const localstackPage = {
   h1="LocalCloud comparisons for agents"
   eyebrow="Compare"
   deck="Choose the right local or hosted sandbox by job: service fidelity, arbitrary code isolation, BigQuery-only testing, or multi-service local GCP workflows."
-  pages={[...comparisonPages, localstackPage]}
+  pages={[{ path: '/compare/emulators/', eyebrow: 'Service features', h1: 'Compare emulator features', description: 'Detailed Cloud Storage, Firestore, Bigtable, Spanner and BigQuery comparisons, with a filter for LocalCloud advantages.', quickFacts: ['Search the complete inventories by feature or area.', 'Every comparison retains its baseline, scope and evidence.'] }, ...comparisonPages, localstackPage]}
   listHeading="Comparisons"
 >
   <section class="site-section" aria-labelledby="local-options">

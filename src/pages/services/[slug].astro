@@ -12,6 +12,7 @@ import { getServiceCategoryLabel, getServiceImplementationLabel, isServiceDisabl
 import ServiceTier from '../../components/ServiceTier.astro';
 import { serviceAgentSections } from '../../data/agenticContent';
 import { serviceCompatibilityEditorial } from '../../data/serviceEditorial';
+import { emulatorComparisons } from '../../data/emulatorComparisons';
 import { relatedAnchor } from '../../data/relatedPages';
 import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../data/productFacts';
 import { lastModifiedForRoute } from '../../utils/page-dates.mjs';
@@ -33,6 +34,7 @@ const isPlanned = service.catalogState === 'coming-soon' || service.marketingSta
 const isAuxiliary = service.category === 'auxiliary';
 const compatibility = serviceCompatibilityEditorial[service.id];
 const guide = serviceGuides[service.id];
+const emulatorComparison = emulatorComparisons.find(comparison => comparison.id === service.id);
 if (!compatibility || !guide) throw new Error(`Missing service guide for ${service.id}`);
 const codeExamples = isPlanned ? [] : getServiceCodeExamples(service.id, sdkExamplesSource);
 const environmentSetup = `# Export GOOGLE_CLOUD_PROJECT and ${service.envVar.split('=')[0]}\neval "$(localcloud env)"`;
@@ -63,6 +65,10 @@ if (terraformExampleServiceIds.includes(service.id) && !isPlanned) exampleLinks.
 if (!isPlanned) exampleLinks.push({
   title: 'Build an integration test loop', href: '/gcp-integration-testing/', label: 'Integration',
   description: 'Start the runtime, verify readiness, exercise your SDK, and clean up test state.',
+});
+if (emulatorComparison && !isPlanned) exampleLinks.push({
+  title: `${service.name} emulator feature comparison`, href: emulatorComparison.path, label: 'Comparison',
+  description: 'Compare feature availability; filter LocalCloud advantages or explore every documented feature.',
 });
 if (officialSampleLinks[service.id] && !isPlanned) exampleLinks.push({
   title: 'Official SDK code samples', href: officialSampleLinks[service.id], label: 'Google Cloud', external: true,
@@ -151,6 +157,7 @@ const structuredData = [
             {exampleLinks.length > 0 && <a href="#examples">Code and integrations</a>}
             {agentSection && <a href="#ai-agent">Use with an AI agent</a>}
             {faqItems.length > 0 && <a href="#faq">FAQ</a>}
+            {emulatorComparison && <a href={`${base}${emulatorComparison.path.slice(1)}`}>Compare emulator features</a>}
           </nav>}
           </details>
         </div>
@@ -189,11 +196,10 @@ const structuredData = [
         <div class="site-panel min-w-0 p-5 reveal sm:p-6">
           <h2 id="usage-title" class="mt-3 text-2xl font-semibold tracking-tight">Example usage</h2>
           <p class="mt-3 text-sm leading-6" data-service-prerequisites>Service ID: <code>{service.id}</code>. {service.registryDefaultEnabled ? 'Starts by default.' : 'Enable this service in the exact list of services your project starts; see the opt-in instruction above.'} Use an already running LocalCloud runtime for the examples below.</p>
-          <p class="mt-3 text-sm leading-6 text-[var(--text-2)]">Export the local project and mapped endpoints before creating a client. <a class="font-medium text-[var(--accent-strong)]" href={`${base}docs/`}>First-time setup <span aria-hidden="true">→</span></a></p>
+          <p class="mt-3 text-sm leading-6 text-[var(--text-2)]">Export the local project and mapped endpoints in your client process, then use the client settings below. <a class="font-medium text-[var(--accent-strong)]" href={`${base}docs/`}>First-time setup <span aria-hidden="true">→</span></a></p>
           <div class="mt-5">
             <ServiceCodeBlock code={environmentSetup} label="LocalCloud environment exports" marker="data-example-environment" />
           </div>
-          <p class="mt-3 text-sm leading-6">Run exports in the client process. Keep the generated ports and apply the endpoint and credential settings shown for your chosen client.</p>
           {codeExamples.some(example => (example.code + (example.environment ?? '')).includes('SERVICE_USAGE_EMULATOR_HOST')) && <p class="mt-3 text-sm leading-6">REST gateway examples use the generated HTTP address in <code>SERVICE_USAGE_EMULATOR_HOST</code>; native SDKs can use a different protocol.</p>}
           {codeExamples.length > 0 && <div class="service-examples mt-6">
             <CodeTabs labels={codeExamples.map((example) => example.label)}>

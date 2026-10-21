@@ -670,20 +670,19 @@ for (const question of homepageFaqJson?.mainEntity ?? []) {
 if (!homepageFaqJson) errors.push('homepage must publish FAQPage JSON-LD for its FAQ');
 if (!homepageMain.includes('data-alternatives-table="compact"')) errors.push('the homepage comparison answer must include the compact alternatives table');
 
-// LocalStack is the only competitor the site names; Google's own emulators and the Firebase
-// Local Emulator Suite are the platform vendor's tools. Small and upcoming projects are never
-// named or linked: comparisons say "single-service community emulators" instead. A project
-// LocalCloud is built on may be credited where the page documents that component (the
-// attribution files listed); llms-full.txt may repeat those credits through the twins only.
+// Named community baselines belong in the requested source-backed emulator comparisons.
+// Other pages retain the general competitor-name policy and existing component credits.
+// llms-full.txt may repeat credited names through the included Markdown twins only.
+const emulatorComparisonFiles = slug => ['compare/emulators/index.html', 'compare/emulators.md', `compare/emulators/${slug}/index.html`, `compare/emulators/${slug}.md`];
 const deniedProjects = [
   { pattern: /\blocalgcp\b/gi, name: 'localgcp' },
   { pattern: /slokam-ai/gi, name: 'localgcp (slokam-ai)' },
-  { pattern: /\bgoccy\b/gi, name: 'goccy/bigquery-emulator' },
+  { pattern: /\bgoccy\b/gi, name: 'goccy/bigquery-emulator', attribution: emulatorComparisonFiles('bigquery') },
   { pattern: /\bdaytona\b/gi, name: 'Daytona' },
   { pattern: /\bnorthflank\b/gi, name: 'Northflank' },
   // Case-sensitive so the UI word "modal" (search-modal) stays allowed.
   { pattern: /\bModal\b|modal\.com/g, name: 'Modal' },
-  { pattern: /fake-gcs-server|fsouza\//gi, name: 'fake-gcs-server', attribution: ['docs/architecture/index.html', 'docs/architecture.md'] },
+  { pattern: /fake-gcs-server|fsouza\//gi, name: 'fake-gcs-server', attribution: ['docs/architecture/index.html', 'docs/architecture.md', ...emulatorComparisonFiles('cloud-storage')] },
   { pattern: /little[_-]bigtable/gi, name: 'little_bigtable', attribution: ['docs/architecture/index.html', 'docs/architecture.md', 'docs/bigtable-emulator-features/index.html', 'docs/bigtable-emulator-features.md'] },
 ];
 const publishedText = new Map([...htmlPages, ...agentText]);
@@ -693,7 +692,7 @@ for (const { pattern, name, attribution = [] } of deniedProjects) {
   for (const [file, text] of publishedText) {
     if (attribution.includes(file)) continue;
     const found = count(text) - (file === 'llms-full.txt' ? creditedInTwins : 0);
-    if (found > 0) errors.push(`${file} names or links ${name}; LocalStack is the only competitor the site names (use "single-service community emulators")`);
+    if (found > 0) errors.push(`${file} names or links ${name} outside its credited component documentation or emulator comparison`);
   }
 }
 

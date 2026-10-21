@@ -1,8 +1,8 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-10-16",
+  "reviewedAt": "2026-10-20",
   "provenance": {
-    "runtimeRevision": "60df464a17f11779c2533aefe29db2150b0a34c1",
+    "runtimeRevision": "89ab19005f31cdad6b3956a3c73830bb29c88975",
     "cliRevision": "0339e0134185338b6ee03eb89f4109bef33e4fcb",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
@@ -61,7 +61,7 @@
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:0a724678530622a513f7dcdb22016f922d096676c8350629391e8fe6f990ee2e",
       "../localcloud/localcloud.defaults.yaml": "sha256:b4f2a50cbe372e3cb92c9ee6a4235bbde14276f4ac2ee03bd75aa141ed8a1c1a",
-      "../localcloud/documentation.yaml": "sha256:acb02bab67d606569d7d61310bbe55e17f1538ec89f1888877245403a3a3d175",
+      "../localcloud/documentation.yaml": "sha256:5c55e937d30bbba7ff7ec2799a726f706d30a2ac5056b35d5aa330218db5e145",
       "../localcloud/docs/status/service-status.md": "sha256:ddad5257b8ba3b5fb4f12bfee0364fa7710e24a3afec22cae2255db33923538f",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:b802e16849b303588a43b2862f8a94365662558eadb9b88bedae38fb4da94e32",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:efba8366f8a625010982d9e10559722f998dfa5ff7c24cde053e8c745e1fa31c",
@@ -3206,6 +3206,6 @@
         "notes": "Native source-overlay 2026-09-27: pinned aggregate signature 2061, point union with duplicate removal, empty/no rows, fail-closed nonpoint/all-NULL and modifier cases, REST GEOGRAPHY publication. The previous array-scan refusal does not describe this bounded native path. Grouped point inputs pass; GEOGRAPHY-valued UNNEST array scans remain refused by the relation spine. 2026-09-28 validation: partial. Supported subset: point-only and polygon-only groups union with S2. Remaining boundary: Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused."
       }
     ],
-    "revision": "15792e2c08b58d987bcf50e62431e3a2f32d2735"
+    "revision": "8ac079a9f21f869bfbec18b067bf90ef20b0a0f0"
   }
 }

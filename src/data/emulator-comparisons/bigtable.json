@@ -1,0 +1,4642 @@
+[
+  {
+    "id": "bigtable-142",
+    "name": "google.bigtable.v2.Bigtable.ReadRows",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "limited",
+    "notes": "Core reads; missing view targets and some filters; reverse scans require a feature flag. · TestConformanceReadChunkShape",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 142
+  },
+  {
+    "id": "bigtable-143",
+    "name": "google.bigtable.v2.Bigtable.SampleRowKeys",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Random sampling; ignores the requested row range and initial splits. · TestConformanceSampleRowKeysEndOfTable",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 143
+  },
+  {
+    "id": "bigtable-144",
+    "name": "google.bigtable.v2.Bigtable.MutateRow",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "limited",
+    "notes": "Applies mutations in place; a later validation error can leave earlier mutations applied. · TestConformanceWriteMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 144
+  },
+  {
+    "id": "bigtable-145",
+    "name": "google.bigtable.v2.Bigtable.MutateRows",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "limited",
+    "notes": "Applies entries in place; mutation errors use Internal rather than specific per-entry codes. · TestConformanceWriteMutateRowsPerEntryStatus",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 145
+  },
+  {
+    "id": "bigtable-146",
+    "name": "google.bigtable.v2.Bigtable.CheckAndMutateRow",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "limited",
+    "notes": "Conditional writes exist; chosen mutations are applied in place without whole-list validation. · TestConformanceWriteCheckAndMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 146
+  },
+  {
+    "id": "bigtable-147",
+    "name": "google.bigtable.v2.Bigtable.ReadModifyWriteRow",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "limited",
+    "notes": "Append/increment exist; rules apply sequentially before later errors are known. · TestConformanceWriteReadModifyWriteRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 147
+  },
+  {
+    "id": "bigtable-148",
+    "name": "google.bigtable.v2.Bigtable.PingAndWarm",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Success-only no-op upstream; fork validates instance and app profile. · TestConformanceTargetAppProfileResolution",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 148
+  },
+  {
+    "id": "bigtable-149",
+    "name": "google.bigtable.v2.Bigtable.GenerateInitialChangeStreamPartitions",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork uses a single local partition. · TestConformanceChangeStreamPartitions",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 149
+  },
+  {
+    "id": "bigtable-150",
+    "name": "google.bigtable.v2.Bigtable.ReadChangeStream",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork uses a single local partition. · TestConformanceChangeStreamMutateRowIsOneDataChange",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 150
+  },
+  {
+    "id": "bigtable-151",
+    "name": "google.bigtable.v2.Bigtable.PrepareQuery",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceSQLQueryThroughClient",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 151
+  },
+  {
+    "id": "bigtable-152",
+    "name": "google.bigtable.v2.Bigtable.ExecuteQuery",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceSQLQueryThroughClient",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 152
+  },
+  {
+    "id": "bigtable-153",
+    "name": "google.bigtable.v2.Bigtable.GetClientConfiguration",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceSessionGetClientConfiguration",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 153
+  },
+  {
+    "id": "bigtable-154",
+    "name": "google.bigtable.v2.Bigtable.OpenTable",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceSessionPermissionsAndErrors",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 154
+  },
+  {
+    "id": "bigtable-155",
+    "name": "google.bigtable.v2.Bigtable.OpenAuthorizedView",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceSessionAuthorizedViewRestrictions",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 155
+  },
+  {
+    "id": "bigtable-156",
+    "name": "google.bigtable.v2.Bigtable.OpenMaterializedView",
+    "area": "Every registered RPC / google.bigtable.v2.Bigtable",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceMaterializedViewSession",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 156
+  },
+  {
+    "id": "bigtable-162",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.CreateTable",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "limited",
+    "notes": "Basic create; no strict parent hierarchy or persisted initial splits upstream. · TestConformanceTableAdminCreateTableValidation",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 162
+  },
+  {
+    "id": "bigtable-163",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.GetTable",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "limited",
+    "notes": "Basic schema returned; response view selection is not implemented upstream. · TestConformanceTableAdminGetTableViews",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 163
+  },
+  {
+    "id": "bigtable-164",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.ListTables",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "limited",
+    "notes": "Name listing exists; no pagination or response view selection upstream. · TestConformanceTableAdminListTablesViewsAndPagination",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 164
+  },
+  {
+    "id": "bigtable-165",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.UpdateTable",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "limited",
+    "notes": "Only deletion protection is applied upstream. · TestConformanceTableAdminUpdateTableMasks",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 165
+  },
+  {
+    "id": "bigtable-166",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.DeleteTable",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic operation implemented on both sides. · TestConformanceTableAdminDeleteUndelete",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 166
+  },
+  {
+    "id": "bigtable-167",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.UndeleteTable",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceTableAdminDeleteUndelete",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 167
+  },
+  {
+    "id": "bigtable-168",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.ModifyColumnFamilies",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "limited",
+    "notes": "Modifications apply sequentially; no whole-request atomic rejection upstream. · TestConformanceTableAdminModifyColumnFamiliesAtomic",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 168
+  },
+  {
+    "id": "bigtable-169",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.DropRowRange",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic operation implemented on both sides. · TestConformanceTableAdminDropRowRange",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 169
+  },
+  {
+    "id": "bigtable-170",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.GenerateConsistencyToken",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Deterministic local token; no replicated cluster state on either side. · TestConformanceTableAdminConsistencyTokens",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 170
+  },
+  {
+    "id": "bigtable-171",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.CheckConsistency",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Always consistent for the local single-cluster model on either side. · TestConformanceTableAdminConsistencyTokens",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 171
+  },
+  {
+    "id": "bigtable-172",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.CreateTableFromSnapshot",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork also rejects deprecated snapshot APIs. · TestConformanceTableAdminSnapshotsUnimplemented",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 172
+  },
+  {
+    "id": "bigtable-173",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.SnapshotTable",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork also rejects deprecated snapshot APIs. · TestConformanceTableAdminSnapshotsUnimplemented",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 173
+  },
+  {
+    "id": "bigtable-174",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.GetSnapshot",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork also rejects deprecated snapshot APIs. · TestConformanceTableAdminSnapshotsUnimplemented",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 174
+  },
+  {
+    "id": "bigtable-175",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.ListSnapshots",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork also rejects deprecated snapshot APIs. · TestConformanceTableAdminSnapshotsUnimplemented",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 175
+  },
+  {
+    "id": "bigtable-176",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.DeleteSnapshot",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork also rejects deprecated snapshot APIs. · TestConformanceTableAdminSnapshotsUnimplemented",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 176
+  },
+  {
+    "id": "bigtable-177",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.CreateAuthorizedView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceAuthorizedViewResponseViewsAndPagination",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 177
+  },
+  {
+    "id": "bigtable-178",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.ListAuthorizedViews",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceAuthorizedViewResponseViewsAndPagination",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 178
+  },
+  {
+    "id": "bigtable-179",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.GetAuthorizedView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceAuthorizedViewResponseViewsAndPagination",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 179
+  },
+  {
+    "id": "bigtable-180",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.UpdateAuthorizedView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceAuthorizedViewEtagAndUpdateMask",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 180
+  },
+  {
+    "id": "bigtable-181",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.DeleteAuthorizedView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. · TestConformanceAuthorizedViewEtagAndUpdateMask",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 181
+  },
+  {
+    "id": "bigtable-182",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.CreateBackup",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceBackupExpireTimeAndEdition",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 182
+  },
+  {
+    "id": "bigtable-183",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.RestoreTable",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceBackupRestoreAfterSourceDeletedAndRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 183
+  },
+  {
+    "id": "bigtable-184",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.CopyBackup",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceBackupCopyRules",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 184
+  },
+  {
+    "id": "bigtable-185",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.DeleteBackup",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceBackupCopyRules",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 185
+  },
+  {
+    "id": "bigtable-186",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.ListBackups",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceBackupListFilterOrderPagination",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 186
+  },
+  {
+    "id": "bigtable-187",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.GetBackup",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceBackupExpiredHiddenAndPurged",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 187
+  },
+  {
+    "id": "bigtable-188",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.UpdateBackup",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceBackupHotBackupRules",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 188
+  },
+  {
+    "id": "bigtable-189",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.GetIamPolicy",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork stores policies but does not enforce identities. · TestConformanceIAMOfficialClientHandles",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 189
+  },
+  {
+    "id": "bigtable-190",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.SetIamPolicy",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork stores policies but does not enforce identities. · TestConformanceIAMOfficialClientHandles",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 190
+  },
+  {
+    "id": "bigtable-191",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.TestIamPermissions",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork stores policies but does not enforce identities. · TestConformanceIAMOfficialClientHandles",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 191
+  },
+  {
+    "id": "bigtable-192",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.CreateSchemaBundle",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceSchemaBundleProtoCRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 192
+  },
+  {
+    "id": "bigtable-193",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.UpdateSchemaBundle",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceSchemaBundleProtoCRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 193
+  },
+  {
+    "id": "bigtable-194",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.GetSchemaBundle",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceSchemaBundleProtoCRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 194
+  },
+  {
+    "id": "bigtable-195",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.DeleteSchemaBundle",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceSchemaBundleProtoCRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 195
+  },
+  {
+    "id": "bigtable-196",
+    "name": "google.bigtable.admin.v2.BigtableTableAdmin.ListSchemaBundles",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableTableAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceSchemaBundlePagination",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 196
+  },
+  {
+    "id": "bigtable-202",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.CreateInstance",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminCreateRequirements",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 202
+  },
+  {
+    "id": "bigtable-203",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.GetInstance",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminCreateRequirements",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 203
+  },
+  {
+    "id": "bigtable-204",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.ListInstances",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminListPaginationAndWildcard",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 204
+  },
+  {
+    "id": "bigtable-205",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.ListClusters",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminListPaginationAndWildcard",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 205
+  },
+  {
+    "id": "bigtable-206",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.ListAppProfiles",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminListPaginationAndWildcard",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 206
+  },
+  {
+    "id": "bigtable-207",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.UpdateInstance",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminUpdateInstanceScope",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 207
+  },
+  {
+    "id": "bigtable-208",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.PartialUpdateInstance",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminPartialUpdateMasks",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 208
+  },
+  {
+    "id": "bigtable-209",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.DeleteInstance",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Only checks/removes an internal map entry; no working create-instance workflow upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminOfficialClient",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 209
+  },
+  {
+    "id": "bigtable-210",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.CreateCluster",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminClusterIDValidation",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 210
+  },
+  {
+    "id": "bigtable-211",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.GetCluster",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminClusterIDValidation",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 211
+  },
+  {
+    "id": "bigtable-212",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.UpdateCluster",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminClusterUpdates",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 212
+  },
+  {
+    "id": "bigtable-213",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.PartialUpdateCluster",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminClusterUpdates",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 213
+  },
+  {
+    "id": "bigtable-214",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.DeleteCluster",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminDeleteClusterRules",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 214
+  },
+  {
+    "id": "bigtable-215",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.CreateAppProfile",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminAppProfileRouting",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 215
+  },
+  {
+    "id": "bigtable-216",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.DeleteAppProfile",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminAppProfileRouting",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 216
+  },
+  {
+    "id": "bigtable-217",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.GetAppProfile",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminAppProfileEtag",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 217
+  },
+  {
+    "id": "bigtable-218",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.UpdateAppProfile",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork administers local metadata; no cloud provisioning/capacity. · TestConformanceInstanceAdminAppProfileEtag",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 218
+  },
+  {
+    "id": "bigtable-219",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.GetIamPolicy",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork stores policies but does not enforce identities. · TestConformanceIAMOfficialClientHandles",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 219
+  },
+  {
+    "id": "bigtable-220",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.SetIamPolicy",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork stores policies but does not enforce identities. · TestConformanceIAMOfficialClientHandles",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 220
+  },
+  {
+    "id": "bigtable-221",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.TestIamPermissions",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Explicit unsupported stub upstream. Fork stores policies but does not enforce identities. · TestConformanceIAMOfficialClientHandles",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 221
+  },
+  {
+    "id": "bigtable-222",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.ListHotTablets",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork excludes production hardware behavior. · TestConformanceInstanceAdminProductionHardwareUnimplemented",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 222
+  },
+  {
+    "id": "bigtable-223",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.GetMemoryLayer",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork excludes production hardware behavior. · TestConformanceInstanceAdminProductionHardwareUnimplemented",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 223
+  },
+  {
+    "id": "bigtable-224",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.ListMemoryLayers",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork excludes production hardware behavior. · TestConformanceInstanceAdminProductionHardwareUnimplemented",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 224
+  },
+  {
+    "id": "bigtable-225",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.UpdateMemoryLayer",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork excludes production hardware behavior. · TestConformanceInstanceAdminProductionHardwareUnimplemented",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 225
+  },
+  {
+    "id": "bigtable-226",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.CreateLogicalView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestLogicalViews_CRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 226
+  },
+  {
+    "id": "bigtable-227",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.GetLogicalView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestLogicalViews_CRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 227
+  },
+  {
+    "id": "bigtable-228",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.ListLogicalViews",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestLogicalViews_CRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 228
+  },
+  {
+    "id": "bigtable-229",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.UpdateLogicalView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestLogicalViews_CRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 229
+  },
+  {
+    "id": "bigtable-230",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.DeleteLogicalView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestLogicalViews_CRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 230
+  },
+  {
+    "id": "bigtable-231",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.CreateMaterializedView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceMaterializedViewSurvivesRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 231
+  },
+  {
+    "id": "bigtable-232",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.GetMaterializedView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceMaterializedViewSurvivesRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 232
+  },
+  {
+    "id": "bigtable-233",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.ListMaterializedViews",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceMaterializedViewSurvivesRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 233
+  },
+  {
+    "id": "bigtable-234",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.UpdateMaterializedView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceMaterializedViewSurvivesRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 234
+  },
+  {
+    "id": "bigtable-235",
+    "name": "google.bigtable.admin.v2.BigtableInstanceAdmin.DeleteMaterializedView",
+    "area": "Every registered RPC / google.bigtable.admin.v2.BigtableInstanceAdmin",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. · TestConformanceMaterializedViewSurvivesRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 235
+  },
+  {
+    "id": "bigtable-241",
+    "name": "google.longrunning.Operations.GetOperation",
+    "area": "Every registered RPC / google.longrunning.Operations",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork persists operation handles; no cloud provisioning delay. · TestConformanceOperationsMetadataTypes",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 241
+  },
+  {
+    "id": "bigtable-242",
+    "name": "google.longrunning.Operations.ListOperations",
+    "area": "Every registered RPC / google.longrunning.Operations",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork persists operation handles; no cloud provisioning delay. · TestConformanceOperationsListFilterPagination",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 242
+  },
+  {
+    "id": "bigtable-243",
+    "name": "google.longrunning.Operations.WaitOperation",
+    "area": "Every registered RPC / google.longrunning.Operations",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork persists operation handles; no cloud provisioning delay. · TestConformanceOperationsWaitDeleteCancel",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 243
+  },
+  {
+    "id": "bigtable-244",
+    "name": "google.longrunning.Operations.DeleteOperation",
+    "area": "Every registered RPC / google.longrunning.Operations",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork persists operation handles; no cloud provisioning delay. · TestConformanceOperationsWaitDeleteCancel",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 244
+  },
+  {
+    "id": "bigtable-245",
+    "name": "google.longrunning.Operations.CancelOperation",
+    "area": "Every registered RPC / google.longrunning.Operations",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "No concrete upstream handler. Fork persists operation handles; no cloud provisioning delay. · TestConformanceOperationsWaitDeleteCancel",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 245
+  },
+  {
+    "id": "bigtable-253",
+    "name": "google.bigtable.v2.ReadRowsRequest.table_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadRowsRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceReadMixedKeysAndRanges",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 253
+  },
+  {
+    "id": "bigtable-254",
+    "name": "google.bigtable.v2.ReadRowsRequest.rows",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadRowsRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceReadMixedKeysAndRanges",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 254
+  },
+  {
+    "id": "bigtable-255",
+    "name": "google.bigtable.v2.ReadRowsRequest.filter",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadRowsRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream lacks Sink/ValueBitmask; all 20 variants appear separately below. · TestConformanceFilterSinkDocExample",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 255
+  },
+  {
+    "id": "bigtable-256",
+    "name": "google.bigtable.v2.ReadRowsRequest.rows_limit",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadRowsRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream honors positive limits; fork also rejects negative limits. · TestConformanceReadReversedWithLimit",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 256
+  },
+  {
+    "id": "bigtable-257",
+    "name": "google.bigtable.v2.ReadRowsRequest.reversed",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadRowsRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream requires the ReverseScans client feature flag. · TestConformanceReadReversedWithLimit",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 257
+  },
+  {
+    "id": "bigtable-258",
+    "name": "google.bigtable.v2.ReadRowsRequest.request_stats_view",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadRowsRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceReadRequestStatsFull",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 258
+  },
+  {
+    "id": "bigtable-259",
+    "name": "google.bigtable.v2.ReadRowsRequest.authorized_view_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadRowsRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceAuthorizedViewReadRestriction",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 259
+  },
+  {
+    "id": "bigtable-260",
+    "name": "google.bigtable.v2.ReadRowsRequest.app_profile_id",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadRowsRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceTargetAppProfileResolution",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 260
+  },
+  {
+    "id": "bigtable-261",
+    "name": "google.bigtable.v2.ReadRowsRequest.materialized_view_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadRowsRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceMaterializedViewReadsAndRefresh",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 261
+  },
+  {
+    "id": "bigtable-267",
+    "name": "google.bigtable.v2.SampleRowKeysRequest.table_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.SampleRowKeysRequest",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Both sample locally; fork includes stored splits and honors range restriction. · TestConformanceSampleRowKeysRowRange",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 267
+  },
+  {
+    "id": "bigtable-268",
+    "name": "google.bigtable.v2.SampleRowKeysRequest.row_range",
+    "area": "Every pinned request/schema field / google.bigtable.v2.SampleRowKeysRequest",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Upstream sampling ignores row_range. · TestConformanceSampleRowKeysRowRange",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 268
+  },
+  {
+    "id": "bigtable-269",
+    "name": "google.bigtable.v2.SampleRowKeysRequest.authorized_view_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.SampleRowKeysRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceTargetExactlyOneTarget",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 269
+  },
+  {
+    "id": "bigtable-270",
+    "name": "google.bigtable.v2.SampleRowKeysRequest.app_profile_id",
+    "area": "Every pinned request/schema field / google.bigtable.v2.SampleRowKeysRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceTargetAppProfileResolution",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 270
+  },
+  {
+    "id": "bigtable-271",
+    "name": "google.bigtable.v2.SampleRowKeysRequest.materialized_view_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.SampleRowKeysRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceMaterializedViewReadsAndRefresh",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 271
+  },
+  {
+    "id": "bigtable-277",
+    "name": "google.bigtable.v2.MutateRowRequest.table_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceWriteMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 277
+  },
+  {
+    "id": "bigtable-278",
+    "name": "google.bigtable.v2.MutateRowRequest.row_key",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceWriteMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 278
+  },
+  {
+    "id": "bigtable-279",
+    "name": "google.bigtable.v2.MutateRowRequest.mutations",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Fork validates before commit and preserves specific entry errors. · TestConformanceWriteMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 279
+  },
+  {
+    "id": "bigtable-280",
+    "name": "google.bigtable.v2.MutateRowRequest.idempotency",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceWriteIdempotency",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 280
+  },
+  {
+    "id": "bigtable-281",
+    "name": "google.bigtable.v2.MutateRowRequest.authorized_view_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceAuthorizedViewWriteRestriction",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 281
+  },
+  {
+    "id": "bigtable-282",
+    "name": "google.bigtable.v2.MutateRowRequest.app_profile_id",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceTargetAppProfileResolution",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 282
+  },
+  {
+    "id": "bigtable-288",
+    "name": "google.bigtable.v2.MutateRowsRequest.table_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowsRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceWriteMutateRowsPerEntryStatus",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 288
+  },
+  {
+    "id": "bigtable-289",
+    "name": "google.bigtable.v2.MutateRowsRequest.entries",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowsRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Fork validates before commit and preserves specific entry errors. · TestConformanceWriteMutateRowsPerEntryStatus",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 289
+  },
+  {
+    "id": "bigtable-290",
+    "name": "google.bigtable.v2.MutateRowsRequest.authorized_view_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowsRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceAuthorizedViewWriteRestriction",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 290
+  },
+  {
+    "id": "bigtable-291",
+    "name": "google.bigtable.v2.MutateRowsRequest.app_profile_id",
+    "area": "Every pinned request/schema field / google.bigtable.v2.MutateRowsRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceTargetAppProfileResolution",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 291
+  },
+  {
+    "id": "bigtable-297",
+    "name": "google.bigtable.v2.CheckAndMutateRowRequest.table_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.CheckAndMutateRowRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceWriteCheckAndMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 297
+  },
+  {
+    "id": "bigtable-298",
+    "name": "google.bigtable.v2.CheckAndMutateRowRequest.row_key",
+    "area": "Every pinned request/schema field / google.bigtable.v2.CheckAndMutateRowRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceWriteCheckAndMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 298
+  },
+  {
+    "id": "bigtable-299",
+    "name": "google.bigtable.v2.CheckAndMutateRowRequest.predicate_filter",
+    "area": "Every pinned request/schema field / google.bigtable.v2.CheckAndMutateRowRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream filter/atomicity limits apply; fork validates the chosen branch. · TestConformanceWriteCheckAndMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 299
+  },
+  {
+    "id": "bigtable-300",
+    "name": "google.bigtable.v2.CheckAndMutateRowRequest.true_mutations",
+    "area": "Every pinned request/schema field / google.bigtable.v2.CheckAndMutateRowRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream filter/atomicity limits apply; fork validates the chosen branch. · TestConformanceWriteCheckAndMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 300
+  },
+  {
+    "id": "bigtable-301",
+    "name": "google.bigtable.v2.CheckAndMutateRowRequest.false_mutations",
+    "area": "Every pinned request/schema field / google.bigtable.v2.CheckAndMutateRowRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream filter/atomicity limits apply; fork validates the chosen branch. · TestConformanceWriteCheckAndMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 301
+  },
+  {
+    "id": "bigtable-302",
+    "name": "google.bigtable.v2.CheckAndMutateRowRequest.authorized_view_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.CheckAndMutateRowRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceAuthorizedViewCheckAndMutatePredicate",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 302
+  },
+  {
+    "id": "bigtable-303",
+    "name": "google.bigtable.v2.CheckAndMutateRowRequest.app_profile_id",
+    "area": "Every pinned request/schema field / google.bigtable.v2.CheckAndMutateRowRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceTargetAppProfileResolution",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 303
+  },
+  {
+    "id": "bigtable-309",
+    "name": "google.bigtable.v2.ReadModifyWriteRowRequest.table_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadModifyWriteRowRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceWriteReadModifyWriteRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 309
+  },
+  {
+    "id": "bigtable-310",
+    "name": "google.bigtable.v2.ReadModifyWriteRowRequest.row_key",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadModifyWriteRowRequest",
+    "local": "available",
+    "other": "available",
+    "notes": "Basic field behavior exists on both sides. · TestConformanceWriteReadModifyWriteRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 310
+  },
+  {
+    "id": "bigtable-311",
+    "name": "google.bigtable.v2.ReadModifyWriteRowRequest.rules",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadModifyWriteRowRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Fork rejects invalid rule lists atomically. · TestConformanceWriteReadModifyWriteRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 311
+  },
+  {
+    "id": "bigtable-312",
+    "name": "google.bigtable.v2.ReadModifyWriteRowRequest.authorized_view_name",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadModifyWriteRowRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceAuthorizedViewReadModifyWrite",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 312
+  },
+  {
+    "id": "bigtable-313",
+    "name": "google.bigtable.v2.ReadModifyWriteRowRequest.app_profile_id",
+    "area": "Every pinned request/schema field / google.bigtable.v2.ReadModifyWriteRowRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream handler ignores this capability. · TestConformanceTargetAppProfileResolution",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 313
+  },
+  {
+    "id": "bigtable-319",
+    "name": "google.bigtable.admin.v2.CreateTableRequest.parent",
+    "area": "Every pinned request/schema field / google.bigtable.admin.v2.CreateTableRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream accepts the basic field; fork adds hierarchy/schema/ID validation. · TestConformanceTableAdminCreateTableValidation",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 319
+  },
+  {
+    "id": "bigtable-320",
+    "name": "google.bigtable.admin.v2.CreateTableRequest.table_id",
+    "area": "Every pinned request/schema field / google.bigtable.admin.v2.CreateTableRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream accepts the basic field; fork adds hierarchy/schema/ID validation. · TestConformanceTableAdminCreateTableValidation",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 320
+  },
+  {
+    "id": "bigtable-321",
+    "name": "google.bigtable.admin.v2.CreateTableRequest.table",
+    "area": "Every pinned request/schema field / google.bigtable.admin.v2.CreateTableRequest",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream accepts the basic field; fork adds hierarchy/schema/ID validation. · TestConformanceTableAdminCreateTableValidation",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 321
+  },
+  {
+    "id": "bigtable-322",
+    "name": "google.bigtable.admin.v2.CreateTableRequest.initial_splits",
+    "area": "Every pinned request/schema field / google.bigtable.admin.v2.CreateTableRequest",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Upstream does not consume InitialSplits; fork persists and samples them. · TestConformanceTableAdminInitialSplitsPersisted",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 322
+  },
+  {
+    "id": "bigtable-328",
+    "name": "google.bigtable.admin.v2.ColumnFamily.gc_rule",
+    "area": "Every pinned request/schema field / google.bigtable.admin.v2.ColumnFamily",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Upstream lacks GC intersection. · TestConformanceGCRuleTruthTables",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 328
+  },
+  {
+    "id": "bigtable-329",
+    "name": "google.bigtable.admin.v2.ColumnFamily.value_type",
+    "area": "Every pinned request/schema field / google.bigtable.admin.v2.ColumnFamily",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream aggregation specializes Int64 sum; fork adds Min/Max/HLL++. · TestConformanceWriteAggregateSemantics",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 329
+  },
+  {
+    "id": "bigtable-335",
+    "name": "chain",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 335
+  },
+  {
+    "id": "bigtable-336",
+    "name": "interleave",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "Duplicates retained on both sides; fork tests downstream limits. · TestConformanceFilterInterleaveDuplicatesAndLimits",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 336
+  },
+  {
+    "id": "bigtable-337",
+    "name": "condition",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 337
+  },
+  {
+    "id": "bigtable-338",
+    "name": "sink",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Missing upstream; forbidden inside Condition in the fork. · TestConformanceFilterSinkDocExample",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 338
+  },
+  {
+    "id": "bigtable-339",
+    "name": "pass_all_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 339
+  },
+  {
+    "id": "bigtable-340",
+    "name": "block_all_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 340
+  },
+  {
+    "id": "bigtable-341",
+    "name": "row_key_regex_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 341
+  },
+  {
+    "id": "bigtable-342",
+    "name": "row_sample_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 342
+  },
+  {
+    "id": "bigtable-343",
+    "name": "family_name_regex_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 343
+  },
+  {
+    "id": "bigtable-344",
+    "name": "column_qualifier_regex_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 344
+  },
+  {
+    "id": "bigtable-345",
+    "name": "column_range_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 345
+  },
+  {
+    "id": "bigtable-346",
+    "name": "timestamp_range_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 346
+  },
+  {
+    "id": "bigtable-347",
+    "name": "value_regex_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 347
+  },
+  {
+    "id": "bigtable-348",
+    "name": "value_range_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 348
+  },
+  {
+    "id": "bigtable-349",
+    "name": "cells_per_row_offset_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 349
+  },
+  {
+    "id": "bigtable-350",
+    "name": "cells_per_row_limit_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 350
+  },
+  {
+    "id": "bigtable-351",
+    "name": "cells_per_column_limit_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 351
+  },
+  {
+    "id": "bigtable-352",
+    "name": "strip_value_transformer",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterValidationBeforeRead",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 352
+  },
+  {
+    "id": "bigtable-353",
+    "name": "apply_label_transformer",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceFilterLabelValidation",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 353
+  },
+  {
+    "id": "bigtable-354",
+    "name": "value_bitmask_filter",
+    "area": "Every RowFilter variant",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Missing upstream; fork checks mask/value lengths. · TestConformanceFilterValueBitmask",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 354
+  },
+  {
+    "id": "bigtable-360",
+    "name": "max_num_versions",
+    "area": "Every GC rule variant",
+    "local": "available",
+    "other": "available",
+    "notes": "Rule semantics; timing is listed separately below. · TestConformanceGCRuleTruthTables",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 360
+  },
+  {
+    "id": "bigtable-361",
+    "name": "max_age",
+    "area": "Every GC rule variant",
+    "local": "available",
+    "other": "available",
+    "notes": "Rule semantics; timing is listed separately below. · TestConformanceGCRuleTruthTables",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 361
+  },
+  {
+    "id": "bigtable-362",
+    "name": "intersection",
+    "area": "Every GC rule variant",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Fork deletes a cell only when every child rule deletes it. · TestConformanceGCRuleTruthTables",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 362
+  },
+  {
+    "id": "bigtable-363",
+    "name": "union",
+    "area": "Every GC rule variant",
+    "local": "available",
+    "other": "available",
+    "notes": "A cell is deleted when any child rule deletes it. · TestConformanceGCRuleTruthTables",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 363
+  },
+  {
+    "id": "bigtable-369",
+    "name": "set_cell",
+    "area": "Every Mutation field",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceWriteMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 369
+  },
+  {
+    "id": "bigtable-370",
+    "name": "add_to_cell",
+    "area": "Every Mutation field",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream: sum-only aggregation specialization; fork: typed aggregate families. · TestConformanceWriteAggregateFamilyTypeChecks",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 370
+  },
+  {
+    "id": "bigtable-371",
+    "name": "merge_to_cell",
+    "area": "Every Mutation field",
+    "local": "available",
+    "other": "limited",
+    "notes": "Upstream: sum-only aggregation specialization; fork: typed aggregate families. · TestConformanceWriteAggregateFamilyTypeChecks",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 371
+  },
+  {
+    "id": "bigtable-372",
+    "name": "delete_from_column",
+    "area": "Every Mutation field",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceWriteMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 372
+  },
+  {
+    "id": "bigtable-373",
+    "name": "delete_from_family",
+    "area": "Every Mutation field",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceWriteMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 373
+  },
+  {
+    "id": "bigtable-374",
+    "name": "delete_from_row",
+    "area": "Every Mutation field",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceWriteMutateRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 374
+  },
+  {
+    "id": "bigtable-375",
+    "name": "timestamp_origin",
+    "area": "Every Mutation field",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Message option, not a mutation oneof variant; fork applies origin/granularity rules. · Source: granularity.resolve",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 375
+  },
+  {
+    "id": "bigtable-381",
+    "name": "append_value",
+    "area": "Every read-modify-write operation",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceWriteReadModifyWriteRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 381
+  },
+  {
+    "id": "bigtable-382",
+    "name": "increment_amount",
+    "area": "Every read-modify-write operation",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceWriteReadModifyWriteRowAtomicity",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 382
+  },
+  {
+    "id": "bigtable-388",
+    "name": "Sum<Int64>",
+    "area": "Every implemented aggregate family type",
+    "local": "available",
+    "other": "available",
+    "notes": "— · TestConformanceWriteAggregateSemantics",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 388
+  },
+  {
+    "id": "bigtable-389",
+    "name": "Min<Int64>",
+    "area": "Every implemented aggregate family type",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "— · TestConformanceWriteAggregateSemantics",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 389
+  },
+  {
+    "id": "bigtable-390",
+    "name": "Max<Int64>",
+    "area": "Every implemented aggregate family type",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "— · TestConformanceWriteAggregateSemantics",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 390
+  },
+  {
+    "id": "bigtable-391",
+    "name": "HLL++",
+    "area": "Every implemented aggregate family type",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Fork sketch bytes are emulator-local, not ZetaSketch/BigQuery bytes. · TestConformanceWriteAggregateSemantics",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 391
+  },
+  {
+    "id": "bigtable-397",
+    "name": "rows_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Row data retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 397
+  },
+  {
+    "id": "bigtable-398",
+    "name": "tables_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Table metadata retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 398
+  },
+  {
+    "id": "bigtable-399",
+    "name": "instances_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Instance metadata retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 399
+  },
+  {
+    "id": "bigtable-400",
+    "name": "clusters_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Cluster metadata retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 400
+  },
+  {
+    "id": "bigtable-401",
+    "name": "app_profiles_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "App-profile metadata retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 401
+  },
+  {
+    "id": "bigtable-402",
+    "name": "materialized_views_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "CMV definitions retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 402
+  },
+  {
+    "id": "bigtable-403",
+    "name": "change_stream_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Change-stream records retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 403
+  },
+  {
+    "id": "bigtable-404",
+    "name": "authorized_views_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Authorized-view definitions retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 404
+  },
+  {
+    "id": "bigtable-405",
+    "name": "backups_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Backup metadata retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 405
+  },
+  {
+    "id": "bigtable-406",
+    "name": "backup_manifests_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Backup schema manifests retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 406
+  },
+  {
+    "id": "bigtable-407",
+    "name": "logical_views_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Logical-view definitions retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 407
+  },
+  {
+    "id": "bigtable-408",
+    "name": "schema_bundles_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Schema-bundle definitions retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 408
+  },
+  {
+    "id": "bigtable-409",
+    "name": "iam_policies_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "IAM policies retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 409
+  },
+  {
+    "id": "bigtable-410",
+    "name": "operations_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Operation handles retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 410
+  },
+  {
+    "id": "bigtable-411",
+    "name": "idempotency_t",
+    "area": "Every persisted SQL entity",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Mutation idempotency tokens retained in the selected database. · Storage schema; audit persistence",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 411
+  },
+  {
+    "id": "bigtable-417",
+    "name": "SQLite backend",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Persistent single-file local storage. · Storage contract",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 417
+  },
+  {
+    "id": "bigtable-418",
+    "name": "PostgreSQL backend",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "External SQL backend; PostgreSQL runtime was not rerun for this document. · Storage contract",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 418
+  },
+  {
+    "id": "bigtable-419",
+    "name": "Strict instance existence checks",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Fork standalone enables strict-admin by default. · CLI configuration",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 419
+  },
+  {
+    "id": "bigtable-420",
+    "name": "Table deletion protection",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "available",
+    "notes": "Already present upstream; persistence is a separate row. · Table admin",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 420
+  },
+  {
+    "id": "bigtable-421",
+    "name": "Deletion protection across restart",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Database retention required. · TestConformanceTableAdminUpdateTablePersistsAcrossRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 421
+  },
+  {
+    "id": "bigtable-422",
+    "name": "Soft-deleted table recovery",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Seven-day local undelete window. · TestConformanceTableAdminDeleteUndelete",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 422
+  },
+  {
+    "id": "bigtable-423",
+    "name": "Backup row snapshots",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Snapshots are independent of subsequent source changes. · TestConformanceBackupRestoreAfterSourceDeletedAndRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 423
+  },
+  {
+    "id": "bigtable-424",
+    "name": "Backup schema snapshots",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Schema restored from the backup manifest. · TestConformanceBackupRestoreAfterSourceDeletedAndRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 424
+  },
+  {
+    "id": "bigtable-425",
+    "name": "Backup expiry validation",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Expiry and edition limits validated. · TestConformanceBackupExpireTimeAndEdition",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 425
+  },
+  {
+    "id": "bigtable-426",
+    "name": "Backup type validation",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "HOT/STANDARD local metadata and rules. · TestConformanceBackupHotBackupRules",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 426
+  },
+  {
+    "id": "bigtable-427",
+    "name": "Backup copy restrictions",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Source readiness and copy-of-copy restrictions. · TestConformanceBackupCopyRules",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 427
+  },
+  {
+    "id": "bigtable-428",
+    "name": "Automated backup scheduling",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Policy metadata does not run a scheduler. · Audit backups",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 428
+  },
+  {
+    "id": "bigtable-429",
+    "name": "Change-stream enable/disable",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Opt-in per table; disable purges records. · TestConformanceChangeStreamDisablePurgesRecords",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 429
+  },
+  {
+    "id": "bigtable-430",
+    "name": "Change-stream retention purge",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Records expire within the configured local retention. · TestConformanceChangeStreamRetentionPurge",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 430
+  },
+  {
+    "id": "bigtable-431",
+    "name": "Grouped change records per row commit",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "One committed row change groups its mutations. · TestConformanceChangeStreamMutateRowIsOneDataChange",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 431
+  },
+  {
+    "id": "bigtable-432",
+    "name": "Change-stream continuation tokens",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Resume without replaying committed records. · TestConformanceChangeStreamResumeWithContinuationToken",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 432
+  },
+  {
+    "id": "bigtable-433",
+    "name": "Change-stream heartbeats",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Heartbeat and token behavior. · TestConformanceChangeStreamHeartbeats",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 433
+  },
+  {
+    "id": "bigtable-434",
+    "name": "GC change records",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "GC-triggered deletions appear in the stream. · TestConformanceChangeStreamGarbageCollectionRecords",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 434
+  },
+  {
+    "id": "bigtable-435",
+    "name": "Range-deletion change records",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "DropRowRange emits change records. · TestConformanceChangeStreamDropRowRangeRecords",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 435
+  },
+  {
+    "id": "bigtable-436",
+    "name": "Change-stream partition splits",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Fork uses one partition. · Audit change streams",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 436
+  },
+  {
+    "id": "bigtable-437",
+    "name": "Change-stream partition merges",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Fork uses one partition. · Audit change streams",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 437
+  },
+  {
+    "id": "bigtable-438",
+    "name": "Authorized-view row-prefix restrictions",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Subset enforcement is separate from IAM identities. · TestConformanceAuthorizedViewReadRestriction",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 438
+  },
+  {
+    "id": "bigtable-439",
+    "name": "Authorized-view family restrictions",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Only selected families are readable. · TestConformanceAuthorizedViewReadRestriction",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 439
+  },
+  {
+    "id": "bigtable-440",
+    "name": "Authorized-view qualifier restrictions",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Only selected qualifiers/prefixes are readable. · TestConformanceAuthorizedViewReadRestriction",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 440
+  },
+  {
+    "id": "bigtable-441",
+    "name": "Authorized-view write restrictions",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Out-of-view writes fail with PermissionDenied. · TestConformanceAuthorizedViewWriteRestriction",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 441
+  },
+  {
+    "id": "bigtable-442",
+    "name": "Protobuf schema validation",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "FileDescriptorSet validation. · TestConformanceSchemaBundleProtoCRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 442
+  },
+  {
+    "id": "bigtable-443",
+    "name": "Avro schema validation",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Avro JSON validation. · TestConformanceSchemaBundleAvroCRUD",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 443
+  },
+  {
+    "id": "bigtable-444",
+    "name": "Prepared-query parameters",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Prepare, bind and execute through the Go SDK. · TestConformanceSQLQueryThroughClient",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 444
+  },
+  {
+    "id": "bigtable-445",
+    "name": "Prepared-query refresh after schema changes",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Expired prepared queries can be refreshed. · TestConformanceSQLPreparedQueryRefreshesAfterSchemaChange",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 445
+  },
+  {
+    "id": "bigtable-446",
+    "name": "Logical-view query execution",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Validated stored SQL executes locally. · TestConformanceLogicalViewQuery",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 446
+  },
+  {
+    "id": "bigtable-447",
+    "name": "Parameterized logical-view definitions",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "view_parameters is unsupported. · Audit SQL/views",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 447
+  },
+  {
+    "id": "bigtable-448",
+    "name": "CMV GROUP BY definitions",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Supported aggregate subset; see per-function CMV column below. · CMV definition tests",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 448
+  },
+  {
+    "id": "bigtable-449",
+    "name": "CMV ORDER BY secondary indexes",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "ORDER BY index definition, separate from GROUP BY. · CMV definition tests",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 449
+  },
+  {
+    "id": "bigtable-450",
+    "name": "CMV read refresh",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Recomputes before reads; does not reproduce eventual-consistency lag. · TestConformanceMaterializedViewReadsAndRefresh",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 450
+  },
+  {
+    "id": "bigtable-451",
+    "name": "CMV definitions across restart",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Definitions reload from SQL. · TestConformanceMaterializedViewSurvivesRestart",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 451
+  },
+  {
+    "id": "bigtable-452",
+    "name": "Production-compatible multi-column CMV keys",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unknown",
+    "other": "unavailable",
+    "notes": "Fork encoding has not been verified against production. · CMV layout",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 452
+  },
+  {
+    "id": "bigtable-453",
+    "name": "Production-compatible HLL++ sketch bytes",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Fork byte format is local. · Audit remaining gaps",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 453
+  },
+  {
+    "id": "bigtable-454",
+    "name": "Asynchronous GC timing",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "available",
+    "notes": "Upstream has a background GC loop; fork hides expired cells on read and collects on write. · GC implementation",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 454
+  },
+  {
+    "id": "bigtable-455",
+    "name": "IAM identity enforcement",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Fork policy APIs are permissive. · IAM implementation",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 455
+  },
+  {
+    "id": "bigtable-456",
+    "name": "Standalone authenticated TLS transport",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Both standalone servers are unauthenticated. · Standalone server",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 456
+  },
+  {
+    "id": "bigtable-457",
+    "name": "Replication across clusters",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Single-process local model. · Audit replication",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 457
+  },
+  {
+    "id": "bigtable-458",
+    "name": "Cluster failover",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No distributed cluster topology. · Audit replication",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 458
+  },
+  {
+    "id": "bigtable-459",
+    "name": "Real autoscaling",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Fork stores configuration metadata only. · Audit instance administration",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 459
+  },
+  {
+    "id": "bigtable-460",
+    "name": "Real node capacity",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Cluster node counts do not provision hardware. · Audit instance administration",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 460
+  },
+  {
+    "id": "bigtable-461",
+    "name": "Cloud Monitoring integration",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Read request stats do not reproduce Cloud Monitoring. · Audit observability",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 461
+  },
+  {
+    "id": "bigtable-462",
+    "name": "Key Visualizer",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Not emulated. · Audit observability",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 462
+  },
+  {
+    "id": "bigtable-463",
+    "name": "Data Boost compute isolation",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Routing validation is not isolated serverless compute. · Audit exclusions",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 463
+  },
+  {
+    "id": "bigtable-464",
+    "name": "CMEK key custody",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No managed key custody. · Audit backups",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 464
+  },
+  {
+    "id": "bigtable-465",
+    "name": "ListLocations",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Locations service is not registered in the fork. · Audit RPC disposition",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 465
+  },
+  {
+    "id": "bigtable-466",
+    "name": "GetLocation",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Locations service is not registered in the fork. · Audit RPC disposition",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 466
+  },
+  {
+    "id": "bigtable-467",
+    "name": "RouteLookup",
+    "area": "Additional behaviors and explicit boundaries",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "RouteLookupService is not registered. · Audit RPC disposition",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 467
+  },
+  {
+    "id": "bigtable-486",
+    "name": "ABS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 486
+  },
+  {
+    "id": "bigtable-487",
+    "name": "ACOS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 487
+  },
+  {
+    "id": "bigtable-488",
+    "name": "ACOSH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 488
+  },
+  {
+    "id": "bigtable-489",
+    "name": "ANY_VALUE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 489
+  },
+  {
+    "id": "bigtable-490",
+    "name": "APPROX_COUNT_DISTINCT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 490
+  },
+  {
+    "id": "bigtable-491",
+    "name": "APPROX_QUANTILES",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 491
+  },
+  {
+    "id": "bigtable-492",
+    "name": "APPROX_TOP_COUNT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 492
+  },
+  {
+    "id": "bigtable-493",
+    "name": "APPROX_TOP_SUM",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 493
+  },
+  {
+    "id": "bigtable-494",
+    "name": "ARRAY_AGG",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 494
+  },
+  {
+    "id": "bigtable-495",
+    "name": "ARRAY_CONCAT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 495
+  },
+  {
+    "id": "bigtable-496",
+    "name": "ARRAY_CONCAT_AGG",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 496
+  },
+  {
+    "id": "bigtable-497",
+    "name": "ARRAY_FILTER",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 497
+  },
+  {
+    "id": "bigtable-498",
+    "name": "ARRAY_FIRST",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 498
+  },
+  {
+    "id": "bigtable-499",
+    "name": "ARRAY_FIRST_N",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 499
+  },
+  {
+    "id": "bigtable-500",
+    "name": "ARRAY_INCLUDES",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 500
+  },
+  {
+    "id": "bigtable-501",
+    "name": "ARRAY_INCLUDES_ALL",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 501
+  },
+  {
+    "id": "bigtable-502",
+    "name": "ARRAY_INCLUDES_ANY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 502
+  },
+  {
+    "id": "bigtable-503",
+    "name": "ARRAY_IS_DISTINCT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 503
+  },
+  {
+    "id": "bigtable-504",
+    "name": "ARRAY_LAST",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 504
+  },
+  {
+    "id": "bigtable-505",
+    "name": "ARRAY_LAST_N",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 505
+  },
+  {
+    "id": "bigtable-506",
+    "name": "ARRAY_LENGTH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 506
+  },
+  {
+    "id": "bigtable-507",
+    "name": "ARRAY_OFFSET",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 507
+  },
+  {
+    "id": "bigtable-508",
+    "name": "ARRAY_OFFSETS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 508
+  },
+  {
+    "id": "bigtable-509",
+    "name": "ARRAY_REVERSE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 509
+  },
+  {
+    "id": "bigtable-510",
+    "name": "ARRAY_SLICE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 510
+  },
+  {
+    "id": "bigtable-511",
+    "name": "ARRAY_TO_STRING",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 511
+  },
+  {
+    "id": "bigtable-512",
+    "name": "ARRAY_TRANSFORM",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 512
+  },
+  {
+    "id": "bigtable-513",
+    "name": "ASCII",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 513
+  },
+  {
+    "id": "bigtable-514",
+    "name": "ASIN",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 514
+  },
+  {
+    "id": "bigtable-515",
+    "name": "ASINH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 515
+  },
+  {
+    "id": "bigtable-516",
+    "name": "ATAN",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 516
+  },
+  {
+    "id": "bigtable-517",
+    "name": "ATAN2",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 517
+  },
+  {
+    "id": "bigtable-518",
+    "name": "ATANH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 518
+  },
+  {
+    "id": "bigtable-519",
+    "name": "AVG",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 519
+  },
+  {
+    "id": "bigtable-520",
+    "name": "BIT_AND",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 520
+  },
+  {
+    "id": "bigtable-521",
+    "name": "BIT_OR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 521
+  },
+  {
+    "id": "bigtable-522",
+    "name": "BIT_XOR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 522
+  },
+  {
+    "id": "bigtable-523",
+    "name": "BYTE_LENGTH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 523
+  },
+  {
+    "id": "bigtable-524",
+    "name": "CAST",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "syntax · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 524
+  },
+  {
+    "id": "bigtable-525",
+    "name": "CEIL",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 525
+  },
+  {
+    "id": "bigtable-526",
+    "name": "CEILING",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 526
+  },
+  {
+    "id": "bigtable-527",
+    "name": "CHARACTER_LENGTH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 527
+  },
+  {
+    "id": "bigtable-528",
+    "name": "CHAR_LENGTH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 528
+  },
+  {
+    "id": "bigtable-529",
+    "name": "CHR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 529
+  },
+  {
+    "id": "bigtable-530",
+    "name": "COALESCE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 530
+  },
+  {
+    "id": "bigtable-531",
+    "name": "CODE_POINTS_TO_BYTES",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 531
+  },
+  {
+    "id": "bigtable-532",
+    "name": "CODE_POINTS_TO_STRING",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 532
+  },
+  {
+    "id": "bigtable-533",
+    "name": "CONCAT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 533
+  },
+  {
+    "id": "bigtable-534",
+    "name": "CORR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 534
+  },
+  {
+    "id": "bigtable-535",
+    "name": "COS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 535
+  },
+  {
+    "id": "bigtable-536",
+    "name": "COSH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 536
+  },
+  {
+    "id": "bigtable-537",
+    "name": "COSINE_DISTANCE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 537
+  },
+  {
+    "id": "bigtable-538",
+    "name": "COT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 538
+  },
+  {
+    "id": "bigtable-539",
+    "name": "COTH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 539
+  },
+  {
+    "id": "bigtable-540",
+    "name": "COUNT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 540
+  },
+  {
+    "id": "bigtable-541",
+    "name": "COUNTIF",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 541
+  },
+  {
+    "id": "bigtable-542",
+    "name": "COVAR_POP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 542
+  },
+  {
+    "id": "bigtable-543",
+    "name": "COVAR_SAMP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 543
+  },
+  {
+    "id": "bigtable-544",
+    "name": "CSC",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 544
+  },
+  {
+    "id": "bigtable-545",
+    "name": "CSCH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 545
+  },
+  {
+    "id": "bigtable-546",
+    "name": "CUME_DIST",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 546
+  },
+  {
+    "id": "bigtable-547",
+    "name": "CURRENT_DATE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 547
+  },
+  {
+    "id": "bigtable-548",
+    "name": "CURRENT_TIMESTAMP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 548
+  },
+  {
+    "id": "bigtable-549",
+    "name": "DATE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 549
+  },
+  {
+    "id": "bigtable-550",
+    "name": "DATE_ADD",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 550
+  },
+  {
+    "id": "bigtable-551",
+    "name": "DATE_DIFF",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 551
+  },
+  {
+    "id": "bigtable-552",
+    "name": "DATE_FROM_UNIX_DATE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 552
+  },
+  {
+    "id": "bigtable-553",
+    "name": "DATE_SUB",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 553
+  },
+  {
+    "id": "bigtable-554",
+    "name": "DATE_TRUNC",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 554
+  },
+  {
+    "id": "bigtable-555",
+    "name": "DENSE_RANK",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 555
+  },
+  {
+    "id": "bigtable-556",
+    "name": "DIV",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 556
+  },
+  {
+    "id": "bigtable-557",
+    "name": "ENDS_WITH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 557
+  },
+  {
+    "id": "bigtable-558",
+    "name": "EUCLIDEAN_DISTANCE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 558
+  },
+  {
+    "id": "bigtable-559",
+    "name": "EXP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 559
+  },
+  {
+    "id": "bigtable-560",
+    "name": "EXTRACT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "syntax · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 560
+  },
+  {
+    "id": "bigtable-561",
+    "name": "FIRST_VALUE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 561
+  },
+  {
+    "id": "bigtable-562",
+    "name": "FLOOR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 562
+  },
+  {
+    "id": "bigtable-563",
+    "name": "FORMAT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 563
+  },
+  {
+    "id": "bigtable-564",
+    "name": "FORMAT_DATE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 564
+  },
+  {
+    "id": "bigtable-565",
+    "name": "FORMAT_TIMESTAMP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 565
+  },
+  {
+    "id": "bigtable-566",
+    "name": "FROM_BASE32",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 566
+  },
+  {
+    "id": "bigtable-567",
+    "name": "FROM_BASE64",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 567
+  },
+  {
+    "id": "bigtable-568",
+    "name": "FROM_HEX",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 568
+  },
+  {
+    "id": "bigtable-569",
+    "name": "GENERATE_ARRAY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 569
+  },
+  {
+    "id": "bigtable-570",
+    "name": "GENERATE_DATE_ARRAY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 570
+  },
+  {
+    "id": "bigtable-571",
+    "name": "GENERATE_TIMESTAMP_ARRAY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 571
+  },
+  {
+    "id": "bigtable-572",
+    "name": "GREATEST",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 572
+  },
+  {
+    "id": "bigtable-573",
+    "name": "HLL_COUNT.EXTRACT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 573
+  },
+  {
+    "id": "bigtable-574",
+    "name": "HLL_COUNT.INIT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 574
+  },
+  {
+    "id": "bigtable-575",
+    "name": "HLL_COUNT.MERGE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 575
+  },
+  {
+    "id": "bigtable-576",
+    "name": "HLL_COUNT.MERGE_PARTIAL",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 576
+  },
+  {
+    "id": "bigtable-577",
+    "name": "IEEE_DIVIDE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 577
+  },
+  {
+    "id": "bigtable-578",
+    "name": "IF",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 578
+  },
+  {
+    "id": "bigtable-579",
+    "name": "IFERROR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 579
+  },
+  {
+    "id": "bigtable-580",
+    "name": "IFNULL",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 580
+  },
+  {
+    "id": "bigtable-581",
+    "name": "INITCAP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 581
+  },
+  {
+    "id": "bigtable-582",
+    "name": "INSTR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 582
+  },
+  {
+    "id": "bigtable-583",
+    "name": "ISERROR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 583
+  },
+  {
+    "id": "bigtable-584",
+    "name": "IS_INF",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 584
+  },
+  {
+    "id": "bigtable-585",
+    "name": "IS_NAN",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 585
+  },
+  {
+    "id": "bigtable-586",
+    "name": "JSON_EXTRACT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 586
+  },
+  {
+    "id": "bigtable-587",
+    "name": "JSON_EXTRACT_ARRAY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 587
+  },
+  {
+    "id": "bigtable-588",
+    "name": "JSON_EXTRACT_SCALAR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 588
+  },
+  {
+    "id": "bigtable-589",
+    "name": "JSON_EXTRACT_STRING_ARRAY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 589
+  },
+  {
+    "id": "bigtable-590",
+    "name": "JSON_QUERY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 590
+  },
+  {
+    "id": "bigtable-591",
+    "name": "JSON_QUERY_ARRAY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 591
+  },
+  {
+    "id": "bigtable-592",
+    "name": "JSON_VALUE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 592
+  },
+  {
+    "id": "bigtable-593",
+    "name": "JSON_VALUE_ARRAY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 593
+  },
+  {
+    "id": "bigtable-594",
+    "name": "LAG",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 594
+  },
+  {
+    "id": "bigtable-595",
+    "name": "LAST_DAY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 595
+  },
+  {
+    "id": "bigtable-596",
+    "name": "LAST_VALUE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 596
+  },
+  {
+    "id": "bigtable-597",
+    "name": "LEAD",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 597
+  },
+  {
+    "id": "bigtable-598",
+    "name": "LEAST",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 598
+  },
+  {
+    "id": "bigtable-599",
+    "name": "LEFT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 599
+  },
+  {
+    "id": "bigtable-600",
+    "name": "LENGTH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 600
+  },
+  {
+    "id": "bigtable-601",
+    "name": "LN",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 601
+  },
+  {
+    "id": "bigtable-602",
+    "name": "LOG",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 602
+  },
+  {
+    "id": "bigtable-603",
+    "name": "LOG10",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 603
+  },
+  {
+    "id": "bigtable-604",
+    "name": "LOGICAL_AND",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 604
+  },
+  {
+    "id": "bigtable-605",
+    "name": "LOGICAL_OR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 605
+  },
+  {
+    "id": "bigtable-606",
+    "name": "LOWER",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 606
+  },
+  {
+    "id": "bigtable-607",
+    "name": "LPAD",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 607
+  },
+  {
+    "id": "bigtable-608",
+    "name": "LTRIM",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 608
+  },
+  {
+    "id": "bigtable-609",
+    "name": "MAP_CONTAINS_KEY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 609
+  },
+  {
+    "id": "bigtable-610",
+    "name": "MAP_EMPTY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 610
+  },
+  {
+    "id": "bigtable-611",
+    "name": "MAP_ENTRIES",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 611
+  },
+  {
+    "id": "bigtable-612",
+    "name": "MAP_KEYS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 612
+  },
+  {
+    "id": "bigtable-613",
+    "name": "MAP_VALUES",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 613
+  },
+  {
+    "id": "bigtable-614",
+    "name": "MAX",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 614
+  },
+  {
+    "id": "bigtable-615",
+    "name": "MIN",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 615
+  },
+  {
+    "id": "bigtable-616",
+    "name": "MOD",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 616
+  },
+  {
+    "id": "bigtable-617",
+    "name": "NORMALIZE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 617
+  },
+  {
+    "id": "bigtable-618",
+    "name": "NORMALIZE_AND_CASEFOLD",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 618
+  },
+  {
+    "id": "bigtable-619",
+    "name": "NTH_VALUE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 619
+  },
+  {
+    "id": "bigtable-620",
+    "name": "NTILE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 620
+  },
+  {
+    "id": "bigtable-621",
+    "name": "NULLIF",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 621
+  },
+  {
+    "id": "bigtable-622",
+    "name": "NULLIFERROR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 622
+  },
+  {
+    "id": "bigtable-623",
+    "name": "OCTET_LENGTH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 623
+  },
+  {
+    "id": "bigtable-624",
+    "name": "PARSE_DATE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 624
+  },
+  {
+    "id": "bigtable-625",
+    "name": "PARSE_TIMESTAMP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 625
+  },
+  {
+    "id": "bigtable-626",
+    "name": "PERCENTILE_CONT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 626
+  },
+  {
+    "id": "bigtable-627",
+    "name": "PERCENTILE_DISC",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 627
+  },
+  {
+    "id": "bigtable-628",
+    "name": "PERCENT_RANK",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 628
+  },
+  {
+    "id": "bigtable-629",
+    "name": "PI",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 629
+  },
+  {
+    "id": "bigtable-630",
+    "name": "POW",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 630
+  },
+  {
+    "id": "bigtable-631",
+    "name": "POWER",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 631
+  },
+  {
+    "id": "bigtable-632",
+    "name": "RAND",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 632
+  },
+  {
+    "id": "bigtable-633",
+    "name": "RANK",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 633
+  },
+  {
+    "id": "bigtable-634",
+    "name": "REGEXP_CONTAINS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 634
+  },
+  {
+    "id": "bigtable-635",
+    "name": "REGEXP_EXTRACT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 635
+  },
+  {
+    "id": "bigtable-636",
+    "name": "REGEXP_EXTRACT_ALL",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 636
+  },
+  {
+    "id": "bigtable-637",
+    "name": "REGEXP_INSTR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 637
+  },
+  {
+    "id": "bigtable-638",
+    "name": "REGEXP_REPLACE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 638
+  },
+  {
+    "id": "bigtable-639",
+    "name": "REGEXP_SUBSTR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 639
+  },
+  {
+    "id": "bigtable-640",
+    "name": "REPEAT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 640
+  },
+  {
+    "id": "bigtable-641",
+    "name": "REPLACE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 641
+  },
+  {
+    "id": "bigtable-642",
+    "name": "REVERSE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 642
+  },
+  {
+    "id": "bigtable-643",
+    "name": "RIGHT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 643
+  },
+  {
+    "id": "bigtable-644",
+    "name": "ROUND",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 644
+  },
+  {
+    "id": "bigtable-645",
+    "name": "ROW_NUMBER",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 645
+  },
+  {
+    "id": "bigtable-646",
+    "name": "RPAD",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 646
+  },
+  {
+    "id": "bigtable-647",
+    "name": "RTRIM",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 647
+  },
+  {
+    "id": "bigtable-648",
+    "name": "S2_CELLIDFROMPOINT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 648
+  },
+  {
+    "id": "bigtable-649",
+    "name": "S2_COVERINGCELLIDS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 649
+  },
+  {
+    "id": "bigtable-650",
+    "name": "SAFE_ADD",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 650
+  },
+  {
+    "id": "bigtable-651",
+    "name": "SAFE_CAST",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "syntax · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 651
+  },
+  {
+    "id": "bigtable-652",
+    "name": "SAFE_CONVERT_BYTES_TO_STRING",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 652
+  },
+  {
+    "id": "bigtable-653",
+    "name": "SAFE_DIVIDE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 653
+  },
+  {
+    "id": "bigtable-654",
+    "name": "SAFE_MULTIPLY",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 654
+  },
+  {
+    "id": "bigtable-655",
+    "name": "SAFE_NEGATE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 655
+  },
+  {
+    "id": "bigtable-656",
+    "name": "SAFE_SUBTRACT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 656
+  },
+  {
+    "id": "bigtable-657",
+    "name": "SEC",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 657
+  },
+  {
+    "id": "bigtable-658",
+    "name": "SECH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 658
+  },
+  {
+    "id": "bigtable-659",
+    "name": "SIGN",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 659
+  },
+  {
+    "id": "bigtable-660",
+    "name": "SIN",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 660
+  },
+  {
+    "id": "bigtable-661",
+    "name": "SINH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 661
+  },
+  {
+    "id": "bigtable-662",
+    "name": "SOUNDEX",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 662
+  },
+  {
+    "id": "bigtable-663",
+    "name": "SPLIT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 663
+  },
+  {
+    "id": "bigtable-664",
+    "name": "SQRT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 664
+  },
+  {
+    "id": "bigtable-665",
+    "name": "STARTS_WITH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 665
+  },
+  {
+    "id": "bigtable-666",
+    "name": "STDDEV",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 666
+  },
+  {
+    "id": "bigtable-667",
+    "name": "STDDEV_POP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 667
+  },
+  {
+    "id": "bigtable-668",
+    "name": "STDDEV_SAMP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 668
+  },
+  {
+    "id": "bigtable-669",
+    "name": "STRING",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 669
+  },
+  {
+    "id": "bigtable-670",
+    "name": "STRING_AGG",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 670
+  },
+  {
+    "id": "bigtable-671",
+    "name": "STRPOS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 671
+  },
+  {
+    "id": "bigtable-672",
+    "name": "ST_ACCUM",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 672
+  },
+  {
+    "id": "bigtable-673",
+    "name": "ST_AREA",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 673
+  },
+  {
+    "id": "bigtable-674",
+    "name": "ST_DISTANCE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 674
+  },
+  {
+    "id": "bigtable-675",
+    "name": "ST_GEOGPOINT",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 675
+  },
+  {
+    "id": "bigtable-676",
+    "name": "ST_UNION_AGG",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "unsupported · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 676
+  },
+  {
+    "id": "bigtable-677",
+    "name": "SUBSTR",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 677
+  },
+  {
+    "id": "bigtable-678",
+    "name": "SUBSTRING",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 678
+  },
+  {
+    "id": "bigtable-679",
+    "name": "SUM",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✓ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 679
+  },
+  {
+    "id": "bigtable-680",
+    "name": "TAN",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 680
+  },
+  {
+    "id": "bigtable-681",
+    "name": "TANH",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 681
+  },
+  {
+    "id": "bigtable-682",
+    "name": "TIMESTAMP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 682
+  },
+  {
+    "id": "bigtable-683",
+    "name": "TIMESTAMP_ADD",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 683
+  },
+  {
+    "id": "bigtable-684",
+    "name": "TIMESTAMP_DIFF",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 684
+  },
+  {
+    "id": "bigtable-685",
+    "name": "TIMESTAMP_FROM_UNIX_MICROS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 685
+  },
+  {
+    "id": "bigtable-686",
+    "name": "TIMESTAMP_FROM_UNIX_MILLIS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 686
+  },
+  {
+    "id": "bigtable-687",
+    "name": "TIMESTAMP_FROM_UNIX_SECONDS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 687
+  },
+  {
+    "id": "bigtable-688",
+    "name": "TIMESTAMP_MICROS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 688
+  },
+  {
+    "id": "bigtable-689",
+    "name": "TIMESTAMP_MILLIS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 689
+  },
+  {
+    "id": "bigtable-690",
+    "name": "TIMESTAMP_SECONDS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 690
+  },
+  {
+    "id": "bigtable-691",
+    "name": "TIMESTAMP_SUB",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 691
+  },
+  {
+    "id": "bigtable-692",
+    "name": "TIMESTAMP_TRUNC",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 692
+  },
+  {
+    "id": "bigtable-693",
+    "name": "TO_BASE32",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 693
+  },
+  {
+    "id": "bigtable-694",
+    "name": "TO_BASE64",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 694
+  },
+  {
+    "id": "bigtable-695",
+    "name": "TO_CODE_POINTS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 695
+  },
+  {
+    "id": "bigtable-696",
+    "name": "TO_FLOAT32",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 696
+  },
+  {
+    "id": "bigtable-697",
+    "name": "TO_FLOAT64",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 697
+  },
+  {
+    "id": "bigtable-698",
+    "name": "TO_HEX",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 698
+  },
+  {
+    "id": "bigtable-699",
+    "name": "TO_INT64",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 699
+  },
+  {
+    "id": "bigtable-700",
+    "name": "TO_JSON_STRING",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 700
+  },
+  {
+    "id": "bigtable-701",
+    "name": "TO_VECTOR32",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 701
+  },
+  {
+    "id": "bigtable-702",
+    "name": "TO_VECTOR64",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 702
+  },
+  {
+    "id": "bigtable-703",
+    "name": "TRANSLATE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 703
+  },
+  {
+    "id": "bigtable-704",
+    "name": "TRIM",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 704
+  },
+  {
+    "id": "bigtable-705",
+    "name": "TRUNC",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 705
+  },
+  {
+    "id": "bigtable-706",
+    "name": "UNICODE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 706
+  },
+  {
+    "id": "bigtable-707",
+    "name": "UNIX_DATE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 707
+  },
+  {
+    "id": "bigtable-708",
+    "name": "UNIX_MICROS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 708
+  },
+  {
+    "id": "bigtable-709",
+    "name": "UNIX_MILLIS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 709
+  },
+  {
+    "id": "bigtable-710",
+    "name": "UNIX_SECONDS",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 710
+  },
+  {
+    "id": "bigtable-711",
+    "name": "UNPACK",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "syntax · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 711
+  },
+  {
+    "id": "bigtable-712",
+    "name": "UPPER",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "scalar · — · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 712
+  },
+  {
+    "id": "bigtable-713",
+    "name": "VARIANCE",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 713
+  },
+  {
+    "id": "bigtable-714",
+    "name": "VAR_POP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 714
+  },
+  {
+    "id": "bigtable-715",
+    "name": "VAR_SAMP",
+    "area": "Every inventoried SQL function and syntax form",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "aggregate · ✗ · Source",
+    "source": "EMULATOR_COMPARISON.md",
+    "line": 715
+  }
+]
