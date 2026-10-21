@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import test, { before, after } from 'node:test';
 import puppeteer from 'puppeteer-core';
-import { comparisonPreviewSize, comparisonNotesInlineLimit, presentComparisonNotes } from '../src/utils/emulator-comparisons.mjs';
+import { comparisonPreviewSize, presentComparisonNotes } from '../src/utils/emulator-comparisons.mjs';
 
 const dist = new URL('../dist/', import.meta.url);
 const origin = 'https://local.cloud';
@@ -67,8 +67,8 @@ for (const [slug, count] of Object.entries({ 'cloud-storage': 244, firestore: 20
     await page.$eval('input[type="search"]', input => { input.value = ''; input.dispatchEvent(new Event('input', { bubbles: true })); }); await settled(page);
     assert.match(await status(page), new RegExp(`Showing ${count} matching rows`));
     assert.equal(await page.$eval('.comparison-table td', node => getComputedStyle(node).paddingTop), '10px', 'dynamic rows retain compact table styling');
-    await page.click('tbody details summary');
-    assert.ok(await page.$eval('tbody details', node => node.open));
+    assert.equal(await page.$$eval('tbody details', nodes => nodes.length), 0);
+    assert.ok(await page.$$eval('tbody td:last-child > p', nodes => nodes.length > 0 && nodes.every(node => node.textContent.trim())));
   });
 }
 
@@ -121,7 +121,8 @@ test('without JavaScript the preview remains available without download links', 
   assert.equal(await page.$$eval('main a[download]', links => links.length), 0);
   assert.equal(await page.$eval('[data-comparison-controls]', node => node.hidden), true);
   assert.equal(await page.$eval('.comparison-state[data-state="available"] .comparison-mark', node => getComputedStyle(node, '::before').content), '"✓"');
-  assert.ok(await page.$$eval('tbody td > p', nodes => nodes.some(node => node.textContent.trim())), 'the static preview also shows brief notes inline');
+  assert.ok(await page.$$eval('tbody td > p', nodes => nodes.length === 10 && nodes.every(node => node.textContent.trim())), 'the static preview shows every note inline');
+  assert.equal(await page.$$eval('main details', nodes => nodes.length), 0);
 });
 
 test('agent audience exposes the complete JSON view and source reference', { timeout: 30000 }, async t => {
@@ -255,11 +256,11 @@ test('compact comparison shows rows immediately in Desktop, Classic and Mobile',
     const position = await page.$eval(`${activeTable} tbody tr`, row => ({ top: row.getBoundingClientRect().top, bottom: row.getBoundingClientRect().bottom }));
     assert.ok(position.top > 0 && position.bottom < (view === 'mobile' ? 780 : 700), `${view}: the first row is visible with room for more rows (${JSON.stringify(position)})`);
     assert.equal(await page.$eval('[data-comparison-service="bigtable"] .comparison-heading', node => getComputedStyle(node).fontSize), '20px');
-    assert.equal(await page.$eval('[data-comparison-service="bigtable"] .comparison-notes', node => node.open), false);
+    assert.equal(await page.$$eval('[data-comparison-workspace] details', nodes => nodes.length), 0);
   }
 });
 
-test('availability marks retain accessible labels, short notes stay inline and long notes expand', { timeout: 30000 }, async t => {
+test('availability marks retain accessible labels, all notes stay inline and profile duplicates disappear', { timeout: 30000 }, async t => {
   const markdown = readFileSync(new URL('../dist/compare/emulators/cloud-storage.md', import.meta.url), 'utf8');
   assert.match(markdown, /Available/); assert.match(markdown, /Not available/);
   const page = await open(t, '/compare/emulators/?view=classic');
@@ -277,15 +278,12 @@ test('availability marks retain accessible labels, short notes stay inline and l
   assert.ok(nodes.some(node => !node.ignored && node.name?.value === 'Available'));
   assert.ok(nodes.some(node => !node.ignored && node.name?.value === 'Not available'));
   const inventory = JSON.parse(readFileSync(new URL('../src/data/emulator-comparisons/gcs.json', import.meta.url)));
-  const notes = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => ({ id: row.dataset.featureId, inline: row.lastElementChild.querySelector(':scope > p')?.textContent, expanded: row.lastElementChild.querySelector('details p')?.textContent })));
-  assert.ok(notes.some(note => note.inline), 'brief notes are visible directly');
-  assert.ok(notes.some(note => note.expanded), 'long notes keep a disclosure');
+  const notes = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => ({ id: row.dataset.featureId, inline: row.lastElementChild.querySelector(':scope > p')?.textContent })));
   for (const row of inventory) {
     const text = presentComparisonNotes(row.notes), note = notes.find(note => note.id === row.id);
-    assert.equal(text.length <= comparisonNotesInlineLimit && !text.includes('\n') ? note.inline : note.expanded, text);
+    assert.equal(note.inline, text);
   }
-  await page.click(`${activeTable} tbody details summary`);
-  assert.equal(await page.$eval(`${activeTable} tbody details`, node => node.open), true);
+  assert.equal(await page.$$eval('[data-comparison-workspace] details', nodes => nodes.length), 0);
   await page.click('[data-service-tab="firestore"]'); await settled(page);
   const profiles = await page.$$eval(`${activeTable} tbody tr`, rows => {
     const cell = rows.find(row => row.querySelector('th > span').textContent === 'Required composite-index rejection for queries').querySelector('td');
@@ -294,4 +292,21 @@ test('availability marks retain accessible labels, short notes stay inline and l
   assert.deepEqual(profiles, [{ state: 'available', label: 'Available' }, { state: 'unavailable', label: 'Not available' }]);
   await choose(page, 'all');
   assert.ok(await page.$eval(`${activeTable} .comparison-state[data-state="unknown"]`, node => node.textContent.includes('Not assessed')));
+  const firestore = JSON.parse(readFileSync(new URL('../src/data/emulator-comparisons/firestore.json', import.meta.url)));
+  const visibleProfiles = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => ({ id: row.dataset.featureId,
+    states: [...row.querySelector('td').querySelectorAll('.comparison-state')].filter(node => !node.closest('[hidden]')).map(node => node.dataset.state) })));
+  for (const row of firestore) {
+    assert.deepEqual(visibleProfiles.find(result => result.id === row.id).states, row.default === row.local ? [row.local] : [row.local, row.default]);
+  }
+});
+
+test('the longest comparison note remains fully visible as plain text', { timeout: 30000 }, async t => {
+  const inventory = JSON.parse(readFileSync(new URL('../src/data/emulator-comparisons/bigquery.json', import.meta.url)));
+  const row = inventory.reduce((longest, row) => row.notes.length > longest.notes.length ? row : longest);
+  const page = await open(t, `/compare/emulators/?service=bigquery&features=all&q=${encodeURIComponent(row.id)}&view=mobile`, 390);
+  await settled(page);
+  const text = await page.$eval(`${activeTable} tbody td:last-child > p`, node => ({ text: node.textContent, display: getComputedStyle(node).display, clipped: node.scrollHeight > node.clientHeight + 1 }));
+  assert.equal(text.text, presentComparisonNotes(row.notes));
+  assert.notEqual(text.display, 'none'); assert.equal(text.clipped, false);
+  assert.equal(await page.$$eval('[data-comparison-workspace] details', nodes => nodes.length), 0);
 });

@@ -1,4 +1,4 @@
-import { comparisonStates, comparisonNotesInlineLimit, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
+import { comparisonStates, presentComparisonNotes, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
 
 export function initEmulatorComparisons(scope = document) {
   scope.querySelectorAll('[data-emulator-comparison]').forEach(root => {
@@ -32,11 +32,8 @@ export function initEmulatorComparisons(scope = document) {
             node.dataset.state = value;
             node.lastElementChild.textContent = comparisonStates[value];
           });
-          tr.querySelectorAll('[data-comparison-profile]').forEach(node => node.hidden = !row.default);
-          const note = presentComparisonNotes(row.notes);
-          const details = tr.querySelector('details'), text = details.lastElementChild;
-          text.textContent = note;
-          if (note.length <= comparisonNotesInlineLimit && !note.includes('\n')) details.replaceWith(text);
+          tr.querySelectorAll('[data-comparison-profile]').forEach(node => node.hidden = !row.default || row.default === row.local);
+          tr.querySelector('p').textContent = presentComparisonNotes(row.notes);
           return tr;
         }));
         status.textContent = rows.length ? `Showing ${rows.length} matching rows.` : 'No matching features. Try another filter.';
