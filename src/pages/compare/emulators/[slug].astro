@@ -10,7 +10,9 @@ interface Props { comparison: (typeof emulatorComparisons)[number]; }
 const { comparison } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const title = `${comparison.name} Emulator Comparison — LocalCloud`;
-const description = `Compare ${comparison.engine} with ${comparison.competitor}. Explore feature support and filter capabilities available only in LocalCloud.`;
+const description = comparison.hasCompetitor
+  ? `Compare ${comparison.engine} with ${comparison.competitor}. Explore feature support and filter capabilities available only in LocalCloud.`
+  : `Explore ${comparison.engine} feature support and search the capabilities available for your local tests.`;
 const url = new URL(comparison.path.slice(1), productFacts.siteUrl).toString();
 const structuredData = [createWebPageSchema({ url, name: title, description }), createBreadcrumbSchema([
   { name: 'Home', url: productFacts.siteUrl }, { name: 'Emulator comparisons', url: new URL('compare/emulators/', productFacts.siteUrl).toString() }, { name: comparison.name, url },

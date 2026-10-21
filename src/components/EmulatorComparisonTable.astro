@@ -4,38 +4,40 @@ import EmulatorComparisonStatus from './EmulatorComparisonStatus.astro';
 import type { emulatorComparisons } from '../data/emulatorComparisons';
 interface Props { comparison: (typeof emulatorComparisons)[number]; embedded?: boolean; preview?: boolean; }
 const { comparison, embedded = false, preview = true } = Astro.props;
-const initial = selectComparisonRows(comparison.rows);
+const hasCompetitor = comparison.hasCompetitor;
+const defaultMode = hasCompetitor ? 'advantages' : 'all';
+const initial = selectComparisonRows(comparison.rows, { mode: defaultMode });
 const titleId = embedded ? `feature-table-${comparison.id}` : 'feature-table-title';
 const legendId = `comparison-legend-${comparison.id}`;
 const Heading = embedded ? 'h3' : 'h2';
 ---
 
 <section class:list={['comparison-features', !embedded && 'site-section']} aria-labelledby={titleId}>
-  <div class:list={[!embedded && 'container']} data-emulator-comparison data-inventory={comparison.dataUrl}>
+  <div class:list={[!embedded && 'container']} data-emulator-comparison data-inventory={comparison.dataUrl} data-default-mode={defaultMode}>
     <Heading id={titleId} class="sr-only">Explore the feature comparison</Heading>
     <div class="comparison-controls" data-comparison-controls hidden data-pagefind-ignore>
-      <fieldset>
+      {hasCompetitor ? <fieldset>
         <legend class="sr-only">Show features</legend>
         <div class="comparison-modes">
           <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="advantages" checked />Advantages</label>
           <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="all" />All features</label>
           <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="broader" />Broader behavior</label>
         </div>
-      </fieldset>
+      </fieldset> : <input type="radio" name={`comparison-mode-${comparison.id}`} value="all" checked hidden />}
       <div class="comparison-search">
         <label><span class="sr-only">Search features</span><input type="search" placeholder="Search features" autocomplete="off" /></label>
         <label><span class="sr-only">Feature area</span><select><option value="">All areas</option>{comparison.areas.map(area => <option value={area}>{area}</option>)}</select></label>
       </div>
     </div>
     <div class="comparison-table-meta">
-      <p class="comparison-result" role="status" aria-live="polite" data-comparison-status>{preview ? `Preview: ${Math.min(comparisonPreviewSize, initial.length)} of ${initial.length} LocalCloud advantages.` : 'Select this service to explore its features.'}</p>
+      <p class="comparison-result" role="status" aria-live="polite" data-comparison-status>{preview ? `Preview: ${Math.min(comparisonPreviewSize, initial.length)} of ${initial.length} ${hasCompetitor ? 'LocalCloud advantages' : 'features'}.` : 'Select this service to explore its features.'}</p>
       <p id={legendId}>Scoped = see details. Not assessed = unknown.</p>
     </div>
-    <template data-comparison-row><tr><th scope="row"><span></span><small></small></th><td><span data-comparison-profile hidden>Extended: </span><EmulatorComparisonStatus state="unknown" /><small data-comparison-profile hidden>Compatibility: <EmulatorComparisonStatus state="unknown" /></small></td><td><EmulatorComparisonStatus state="unknown" /></td><td><p></p></td></tr></template>
+    <template data-comparison-row><tr><th scope="row"><span></span><small></small></th><td><span data-comparison-profile hidden>Extended: </span><EmulatorComparisonStatus state="unknown" /><small data-comparison-profile hidden>Compatibility: <EmulatorComparisonStatus state="unknown" /></small></td>{hasCompetitor && <td><EmulatorComparisonStatus state="unknown" /></td>}<td><p></p></td></tr></template>
     <div class="comparison-scroll" tabindex="0" role="region" aria-label={`${comparison.name} feature comparison table`} aria-describedby={legendId}>
-      <table class="comparison-table">
-        <caption class="sr-only">{comparison.engine} compared with {comparison.competitor}</caption>
-        <thead><tr><th scope="col">Feature</th><th scope="col">{comparison.engine}</th><th scope="col">{comparison.competitor}</th><th scope="col">Details</th></tr></thead>
+      <table class:list={['comparison-table', !hasCompetitor && 'comparison-table--solo']}>
+        <caption class="sr-only">{hasCompetitor ? `${comparison.engine} compared with ${comparison.competitor}` : `${comparison.engine} features`}</caption>
+        <thead><tr><th scope="col">Feature</th><th scope="col">{comparison.engine}</th>{hasCompetitor && <th scope="col">{comparison.competitor}</th>}<th scope="col">Details</th></tr></thead>
         <tbody>
           {initial.slice(0, preview ? comparisonPreviewSize : 0).map(row => {
             const note = presentComparisonNotes(row.notes);
@@ -43,7 +45,7 @@ const Heading = embedded ? 'h3' : 'h2';
             return <tr data-feature-id={row.id}>
             <th scope="row"><span>{row.name}</span><small>{row.area}</small></th>
             <td>{profilesDiffer && 'Extended: '}<EmulatorComparisonStatus state={row.local} />{profilesDiffer && <small>Compatibility: <EmulatorComparisonStatus state={row.default} /></small>}</td>
-            <td><EmulatorComparisonStatus state={row.other} /></td>
+            {hasCompetitor && <td><EmulatorComparisonStatus state={row.other} /></td>}
             <td><p>{note}</p></td>
           </tr>})}
         </tbody>
@@ -51,7 +53,7 @@ const Heading = embedded ? 'h3' : 'h2';
     </div>
     <aside class="mt-5 text-sm leading-6" data-comparison-agent>
       <h3 class="font-medium">Agent data</h3>
-      <p><a href={comparison.dataUrl}>JSON comparison view</a> · <a href={comparison.sourcesUrl}>Source reference</a></p>
+      <p><a href={comparison.dataUrl}>JSON comparison view</a></p>
     </aside>
     <noscript><p class="mt-4">Enable JavaScript to show and filter every matching feature.</p></noscript>
   </div>
@@ -89,6 +91,8 @@ const Heading = embedded ? 'h3' : 'h2';
   .comparison-mark::before { font-size:1.125rem; font-weight:700; line-height:1; }
   .comparison-state:is([data-state="available"],[data-state="unavailable"]) > .comparison-label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
   .comparison-table td p { margin:0; line-height:1.55; }
+  .comparison-table--solo { min-width:36rem; }
+  .comparison-table--solo th:nth-child(3),.comparison-table--solo td:nth-child(3) { width:auto; text-align:left; }
 
   .comparison-title-row { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:.25rem 1rem; }
   .comparison-title-row .comparison-heading { font-size:1.25rem; line-height:1.35; letter-spacing:-.02em; }

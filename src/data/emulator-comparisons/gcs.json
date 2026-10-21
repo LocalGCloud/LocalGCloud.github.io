@@ -1,353 +1,27 @@
 [
   {
-    "id": "S01",
-    "name": "Embedded Go test server",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Server",
-    "source": "docs/upstream-comparison.md",
-    "line": 67
-  },
-  {
-    "id": "S02",
-    "name": "Preconfigured Go Storage client",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Server",
-    "source": "docs/upstream-comparison.md",
-    "line": 68
-  },
-  {
-    "id": "S03",
-    "name": "Standalone CLI server",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "CLI",
-    "source": "docs/upstream-comparison.md",
-    "line": 69
-  },
-  {
-    "id": "S04",
-    "name": "Docker build definition",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Dockerfile; publication is separate",
-    "source": "docs/upstream-comparison.md",
-    "line": 70
-  },
-  {
-    "id": "S05",
-    "name": "HTTP listener",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "CLI",
-    "source": "docs/upstream-comparison.md",
-    "line": 71
-  },
-  {
-    "id": "S06",
-    "name": "HTTPS listener",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "CLI",
-    "source": "docs/upstream-comparison.md",
-    "line": 72
-  },
-  {
-    "id": "S07",
-    "name": "Simultaneous HTTP and HTTPS listeners",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "CLI",
-    "source": "docs/upstream-comparison.md",
-    "line": 73
-  },
-  {
-    "id": "S08",
-    "name": "Custom TLS certificate",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config",
-    "source": "docs/upstream-comparison.md",
-    "line": 74
-  },
-  {
-    "id": "S09",
-    "name": "Custom TLS private key",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config",
-    "source": "docs/upstream-comparison.md",
-    "line": 75
-  },
-  {
-    "id": "S10",
-    "name": "Configurable bind host",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config",
-    "source": "docs/upstream-comparison.md",
-    "line": 76
-  },
-  {
-    "id": "S11",
-    "name": "Configurable HTTPS/primary port",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config",
-    "source": "docs/upstream-comparison.md",
-    "line": 77
-  },
-  {
-    "id": "S12",
-    "name": "Configurable secondary HTTP port",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config",
-    "source": "docs/upstream-comparison.md",
-    "line": 78
-  },
-  {
-    "id": "S13",
-    "name": "In-memory storage backend",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Memory",
-    "source": "docs/upstream-comparison.md",
-    "line": 79
-  },
-  {
-    "id": "S14",
-    "name": "Filesystem storage backend",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Filesystem",
-    "source": "docs/upstream-comparison.md",
-    "line": 80
-  },
-  {
-    "id": "S15",
-    "name": "Initial Go object fixtures",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Server",
-    "source": "docs/upstream-comparison.md",
-    "line": 81
-  },
-  {
-    "id": "S16",
-    "name": "Startup data-directory seeding",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Server",
-    "source": "docs/upstream-comparison.md",
-    "line": 82
-  },
-  {
-    "id": "S17",
-    "name": "Public hostname configuration",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config",
-    "source": "docs/upstream-comparison.md",
-    "line": 83
-  },
-  {
-    "id": "S18",
-    "name": "External URL for resumable upload locations",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config",
-    "source": "docs/upstream-comparison.md",
-    "line": 84
-  },
-  {
-    "id": "S19",
-    "name": "Configurable CORS allowed headers",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config",
-    "source": "docs/upstream-comparison.md",
-    "line": 85
-  },
-  {
-    "id": "S20",
-    "name": "Configurable bucket response location",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config; response metadata",
-    "source": "docs/upstream-comparison.md",
-    "line": 86
-  },
-  {
-    "id": "S21",
-    "name": "Environment-variable configuration",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config; FAKE_GCS_*",
-    "source": "docs/upstream-comparison.md",
-    "line": 87
-  },
-  {
-    "id": "S22",
-    "name": "Internal health check",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 88
-  },
-  {
-    "id": "S23",
-    "name": "Runtime external/public URL update",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Routes; /_internal/config",
-    "source": "docs/upstream-comparison.md",
-    "line": 89
-  },
-  {
-    "id": "S24",
-    "name": "Internal reseed operation",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 90
-  },
-  {
-    "id": "S25",
-    "name": "Internal delete-all operation",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 91
-  },
-  {
-    "id": "S26",
-    "name": "Clear durable notification state on delete-all",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Reset; pending/in-flight coordination",
-    "source": "docs/upstream-comparison.md",
-    "line": 92
-  },
-  {
-    "id": "S27",
-    "name": "Clear resumable sessions on delete-all",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 93
-  },
-  {
-    "id": "S28",
-    "name": "Reset HMAC registry on delete-all",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 94
-  },
-  {
-    "id": "S29",
-    "name": "Public-host matching across dual-listener published ports",
-    "area": "Server and configuration",
-    "local": "limited",
-    "other": "unavailable",
-    "notes": "Host tests; same exact hostname works; loopback alias/case expectations fail",
-    "source": "docs/upstream-comparison.md",
-    "line": 95
-  },
-  {
-    "id": "S30",
-    "name": "HTTP/gRPC multiplexing on the same listener",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "CLI",
-    "source": "docs/upstream-comparison.md",
-    "line": 96
-  },
-  {
-    "id": "S31",
-    "name": "HTTP request logging through Go writer option",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Server",
-    "source": "docs/upstream-comparison.md",
-    "line": 97
-  },
-  {
-    "id": "S32",
-    "name": "Configurable CLI log level",
-    "area": "Server and configuration",
-    "local": "available",
-    "other": "available",
-    "notes": "Config",
-    "source": "docs/upstream-comparison.md",
-    "line": 98
-  },
-  {
     "id": "B01",
     "name": "Create bucket",
     "area": "Buckets and project ownership",
-    "local": "available",
-    "other": "available",
-    "notes": "Buckets",
-    "source": "docs/upstream-comparison.md",
-    "line": 104
+    "local": "limited",
+    "other": "limited",
+    "notes": "Basic creation works; project validation and full resource fields differ."
   },
   {
     "id": "B02",
     "name": "List buckets",
     "area": "Buckets and project ownership",
     "local": "available",
-    "other": "available",
-    "notes": "Buckets",
-    "source": "docs/upstream-comparison.md",
-    "line": 105
+    "other": "limited",
+    "notes": "fake-gcs-server lists globally; LocalCloud filters recorded ownership."
   },
   {
     "id": "B03",
     "name": "Read bucket metadata",
     "area": "Buckets and project ownership",
-    "local": "available",
-    "other": "available",
-    "notes": "Buckets",
-    "source": "docs/upstream-comparison.md",
-    "line": 106
+    "local": "limited",
+    "other": "limited",
+    "notes": "Metadata subset; project number and etag are placeholders."
   },
   {
     "id": "B04",
@@ -355,9 +29,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "limited",
-    "notes": "Buckets; versioning/default hold subset",
-    "source": "docs/upstream-comparison.md",
-    "line": 107
+    "notes": "versioning/default hold subset."
   },
   {
     "id": "B05",
@@ -365,9 +37,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Buckets",
-    "source": "docs/upstream-comparison.md",
-    "line": 108
+    "notes": ""
   },
   {
     "id": "B06",
@@ -375,9 +45,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "unavailable",
-    "notes": "Wire contract",
-    "source": "docs/upstream-comparison.md",
-    "line": 109
+    "notes": ""
   },
   {
     "id": "B07",
@@ -385,19 +53,15 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Bucket tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 110
+    "notes": ""
   },
   {
     "id": "B08",
     "name": "Validate bucket names on JSON creation",
     "area": "Buckets and project ownership",
-    "local": "available",
-    "other": "available",
-    "notes": "Buckets",
-    "source": "docs/upstream-comparison.md",
-    "line": 111
+    "local": "limited",
+    "other": "limited",
+    "notes": "Local format checks; not global uniqueness/domain ownership validation."
   },
   {
     "id": "B09",
@@ -405,9 +69,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Buckets",
-    "source": "docs/upstream-comparison.md",
-    "line": 112
+    "notes": ""
   },
   {
     "id": "B10",
@@ -415,89 +77,39 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Bucket tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 113
+    "notes": ""
   },
   {
     "id": "B11",
-    "name": "Record owning project from JSON bucket creation",
+    "name": "Associate a new bucket with its requested project",
     "area": "Buckets and project ownership",
-    "local": "available",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Ownership; ?project=",
-    "source": "docs/upstream-comparison.md",
-    "line": 114
+    "notes": "JSON creates only; no project existence/number resolution."
   },
   {
     "id": "B12",
     "name": "Filter bucket listing by recorded project",
     "area": "Buckets and project ownership",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Wire contract; filter before pagination",
-    "source": "docs/upstream-comparison.md",
-    "line": 115
-  },
-  {
-    "id": "B13",
-    "name": "Internal bucket-to-project inventory endpoint",
-    "area": "Buckets and project ownership",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Ownership tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 116
-  },
-  {
-    "id": "B14",
-    "name": "Persist bucket-to-project associations on filesystem",
-    "area": "Buckets and project ownership",
     "local": "limited",
     "other": "unavailable",
-    "notes": "Ownership; persistence errors are ignored",
-    "source": "docs/upstream-comparison.md",
-    "line": 117
-  },
-  {
-    "id": "B15",
-    "name": "Remove ownership record when bucket is deleted",
-    "area": "Buckets and project ownership",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Ownership tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 118
+    "notes": "Exact recorded project string; seeded/gRPC-created buckets are unattributed."
   },
   {
     "id": "B16",
-    "name": "Enable object versioning with memory backend",
+    "name": "Object Versioning",
     "area": "Buckets and project ownership",
-    "local": "available",
-    "other": "available",
-    "notes": "Memory",
-    "source": "docs/upstream-comparison.md",
-    "line": 119
-  },
-  {
-    "id": "B17",
-    "name": "Enable object versioning with filesystem backend",
-    "area": "Buckets and project ownership",
-    "local": "unavailable",
-    "other": "unavailable",
-    "notes": "Filesystem; explicitly rejected",
-    "source": "docs/upstream-comparison.md",
-    "line": 120
+    "local": "limited",
+    "other": "limited",
+    "notes": "Memory only; no filesystem version history."
   },
   {
     "id": "B18",
-    "name": "Store/report default event-based hold flag",
+    "name": "Default event-based object hold",
     "area": "Buckets and project ownership",
-    "local": "available",
-    "other": "available",
-    "notes": "Buckets; not a claim of hold enforcement",
-    "source": "docs/upstream-comparison.md",
-    "line": 121
+    "local": "limited",
+    "other": "limited",
+    "notes": "Flag stored; per-object event hold/enforcement not modeled."
   },
   {
     "id": "B19",
@@ -505,9 +117,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Bucket tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 122
+    "notes": ""
   },
   {
     "id": "B20",
@@ -515,9 +125,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
-    "notes": "Responses; reports enabled: false",
-    "source": "docs/upstream-comparison.md",
-    "line": 123
+    "notes": "Reports enabled: false."
   },
   {
     "id": "B21",
@@ -525,9 +133,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 124
+    "notes": ""
   },
   {
     "id": "B22",
@@ -535,9 +141,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 125
+    "notes": ""
   },
   {
     "id": "B23",
@@ -545,9 +149,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 126
+    "notes": ""
   },
   {
     "id": "B24",
@@ -555,9 +157,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 127
+    "notes": ""
   },
   {
     "id": "B25",
@@ -565,9 +165,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 128
+    "notes": ""
   },
   {
     "id": "B26",
@@ -575,479 +173,551 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "limited",
-    "notes": "Buckets; public/authenticated scopes only",
-    "source": "docs/upstream-comparison.md",
-    "line": 129
+    "notes": "public/authenticated scopes only."
+  },
+  {
+    "id": "B27",
+    "name": "Replace bucket metadata with buckets.update (PUT)",
+    "area": "Buckets and project ownership",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "PATCH exists, bucket PUT is not registered."
+  },
+  {
+    "id": "B28",
+    "name": "Bucket-specific CORS configuration",
+    "area": "Buckets and project ownership",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Global emulator CORS headers are not per-bucket CORS policy."
+  },
+  {
+    "id": "B29",
+    "name": "Choose and enforce a real bucket storage location",
+    "area": "Buckets and project ownership",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "One configured response location, no placement semantics."
+  },
+  {
+    "id": "B30",
+    "name": "Object Lifecycle Management rules",
+    "area": "Buckets and project ownership",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No lifecycle configuration or executor."
+  },
+  {
+    "id": "B31",
+    "name": "Bucket retention policy",
+    "area": "Buckets and project ownership",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Bucket retention policy not modeled."
+  },
+  {
+    "id": "B32",
+    "name": "Lock bucket retention policy",
+    "area": "Buckets and project ownership",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No lockRetentionPolicy route."
+  },
+  {
+    "id": "B33",
+    "name": "Configure soft-delete policy",
+    "area": "Buckets and project ownership",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "softDeletePolicy not modeled."
+  },
+  {
+    "id": "B34",
+    "name": "Restore soft-deleted bucket",
+    "area": "Buckets and project ownership",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No bucket restore route."
+  },
+  {
+    "id": "B35",
+    "name": "Patch one bucket ACL entry",
+    "area": "Buckets and project ownership",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "PUT supported; ACL PATCH absent."
   },
   {
     "id": "O01",
     "name": "Read object metadata",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 135
+    "notes": ""
   },
   {
     "id": "O02",
     "name": "Download object bytes",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 136
+    "notes": ""
   },
   {
     "id": "O03",
     "name": "HEAD object/download requests",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 137
+    "notes": ""
   },
   {
     "id": "O04",
     "name": "Download byte ranges",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 138
+    "notes": ""
   },
   {
     "id": "O05",
     "name": "Gzip download transcoding",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 139
+    "notes": ""
   },
   {
     "id": "O06",
     "name": "Preserve compressed download when requested",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 140
+    "notes": ""
   },
   {
     "id": "O07",
     "name": "Download response-header overrides",
-    "area": "Objects, listing, and metadata",
-    "local": "available",
-    "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 141
+    "area": "Objects, listing, metadata, and protection",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Local override handling; authenticated XML/RSA restrictions differ."
   },
   {
     "id": "O08",
     "name": "List objects",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 142
+    "notes": ""
   },
   {
     "id": "O09",
     "name": "Object-list prefix filtering",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 143
+    "notes": ""
   },
   {
     "id": "O10",
     "name": "Object-list delimiter/common prefixes",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 144
+    "notes": ""
   },
   {
     "id": "O11",
     "name": "Object-list matchGlob filtering",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Glob",
-    "source": "docs/upstream-comparison.md",
-    "line": 145
+    "notes": ""
   },
   {
     "id": "O12",
     "name": "Reject invalid matchGlob patterns",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 146
+    "notes": ""
   },
   {
     "id": "O13",
     "name": "Object-list start offset",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 147
+    "notes": ""
   },
   {
     "id": "O14",
     "name": "Object-list end offset",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 148
+    "notes": ""
   },
   {
     "id": "O15",
     "name": "Include trailing delimiter objects",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 149
+    "notes": ""
   },
   {
     "id": "O16",
     "name": "Object-list pagination",
-    "area": "Objects, listing, and metadata",
-    "local": "available",
-    "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 150
+    "area": "Objects, listing, metadata, and protection",
+    "local": "limited",
+    "other": "limited",
+    "notes": "object-only maxResults limit does not account for prefixes."
   },
   {
     "id": "O17",
     "name": "List historical object generations",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
-    "notes": "Object tests; memory versioning only",
-    "source": "docs/upstream-comparison.md",
-    "line": 151
+    "notes": "Memory versioning only."
   },
   {
     "id": "O18",
     "name": "Read a specified historical generation",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
-    "notes": "Object tests; memory versioning only",
-    "source": "docs/upstream-comparison.md",
-    "line": 152
+    "notes": "Memory versioning only."
   },
   {
     "id": "O19",
     "name": "Delete object",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 153
+    "notes": ""
   },
   {
     "id": "O20",
     "name": "Successful object deletion returns empty HTTP 204",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "unavailable",
-    "notes": "Wire contract",
-    "source": "docs/upstream-comparison.md",
-    "line": 154
+    "notes": ""
   },
   {
     "id": "O21",
     "name": "Delete a specified object generation",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
-    "notes": "Object tests; filesystem has no history",
-    "source": "docs/upstream-comparison.md",
-    "line": 155
+    "notes": "Filesystem has no history."
   },
   {
     "id": "O22",
     "name": "Copy object with copyTo",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 156
+    "notes": ""
   },
   {
     "id": "O23",
     "name": "Rewrite object with rewriteTo",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 157
+    "notes": ""
   },
   {
     "id": "O24",
     "name": "Compose objects",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 158
+    "notes": ""
   },
   {
     "id": "O25",
     "name": "Patch object metadata",
-    "area": "Objects, listing, and metadata",
-    "local": "available",
-    "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 159
+    "area": "Objects, listing, metadata, and protection",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Selected mutable fields; contexts/complete retention semantics differ."
   },
   {
     "id": "O26",
-    "name": "Update object metadata with PUT/POST",
-    "area": "Objects, listing, and metadata",
-    "local": "available",
-    "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 160
+    "name": "Replace object metadata using PUT objects.update",
+    "area": "Objects, listing, metadata, and protection",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Supported metadata subset; broader production resource not modeled."
   },
   {
     "id": "O27",
-    "name": "PATCH through method-override header",
-    "area": "Objects, listing, and metadata",
+    "name": "PATCH through X-HTTP-Method-Override",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 161
+    "notes": "POST override to PATCH."
   },
   {
     "id": "O28",
     "name": "Store custom metadata entries",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 162
+    "notes": ""
   },
   {
     "id": "O29",
     "name": "Store content type",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 163
+    "notes": ""
   },
   {
     "id": "O30",
     "name": "Store content encoding",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 164
+    "notes": ""
   },
   {
     "id": "O31",
     "name": "Store content disposition",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 165
+    "notes": ""
   },
   {
     "id": "O32",
     "name": "Store content language",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 166
+    "notes": ""
   },
   {
     "id": "O33",
     "name": "Store cache-control metadata",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 167
+    "notes": ""
   },
   {
     "id": "O34",
     "name": "Store custom time",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 168
+    "notes": ""
   },
   {
     "id": "O35",
     "name": "Object response projection",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 169
+    "notes": ""
   },
   {
     "id": "O36",
     "name": "Object retention mode/retain-until handling",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
-    "notes": "Object tests; inspect TestObjectRetention/TestRetentionLocked, not full bucket retention",
-    "source": "docs/upstream-comparison.md",
-    "line": 170
+    "notes": ""
   },
   {
     "id": "O37",
     "name": "List object ACL entries",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 171
+    "notes": ""
   },
   {
     "id": "O38",
     "name": "Read one object ACL entry",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 172
+    "notes": ""
   },
   {
     "id": "O39",
     "name": "Insert object ACL entry",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 173
+    "notes": ""
   },
   {
     "id": "O40",
     "name": "Update object ACL entry",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 174
+    "notes": ""
   },
   {
     "id": "O41",
     "name": "Delete object ACL entry",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 175
+    "notes": ""
   },
   {
     "id": "O42",
     "name": "Generation-specific object ACL lookup",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
-    "notes": "Object tests; memory history",
-    "source": "docs/upstream-comparison.md",
-    "line": 176
+    "notes": "Memory history."
   },
   {
     "id": "O43",
     "name": "Predefined object ACLs on upload/copy/compose",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
-    "notes": "Object tests; emulator ACL model",
-    "source": "docs/upstream-comparison.md",
-    "line": 177
+    "notes": "Emulator ACL model."
   },
   {
     "id": "O44",
     "name": "XML object listing",
-    "area": "Objects, listing, and metadata",
-    "local": "available",
-    "other": "available",
-    "notes": "Object tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 178
+    "area": "Objects, listing, metadata, and protection",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Basic list/prefix/delimiter; continuation/version-listing fields incomplete."
   },
   {
     "id": "O45",
     "name": "Virtual-hosted object download",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 179
+    "notes": ""
   },
   {
     "id": "O46",
     "name": "Path-style object download",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 180
+    "notes": ""
   },
   {
     "id": "O47",
     "name": "Virtual-hosted object DELETE route",
-    "area": "Objects, listing, and metadata",
+    "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "unavailable",
-    "notes": "Routes",
-    "source": "docs/upstream-comparison.md",
-    "line": 181
+    "notes": ""
+  },
+  {
+    "id": "O48",
+    "name": "Patch one object ACL entry",
+    "area": "Objects, listing, metadata, and protection",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "PUT supported; ACL PATCH absent."
+  },
+  {
+    "id": "O49",
+    "name": "Restore a soft-deleted object",
+    "area": "Objects, listing, metadata, and protection",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No object restore route."
+  },
+  {
+    "id": "O50",
+    "name": "Bulk restore soft-deleted objects",
+    "area": "Objects, listing, metadata, and protection",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No bulkRestore route."
+  },
+  {
+    "id": "O51",
+    "name": "Increment metageneration on metadata changes",
+    "area": "Objects, listing, metadata, and protection",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Metageneration fixed at 1."
+  },
+  {
+    "id": "O52",
+    "name": "Use customer-managed encryption keys (CMEK)",
+    "area": "Objects, listing, metadata, and protection",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No KMS encryption path."
+  },
+  {
+    "id": "O53",
+    "name": "Use customer-supplied encryption keys (CSEK)",
+    "area": "Objects, listing, metadata, and protection",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No CSEK encryption path."
+  },
+  {
+    "id": "D01",
+    "name": "Default object ACL: list",
+    "area": "Default object ACL operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No defaultObjectAcl route."
+  },
+  {
+    "id": "D02",
+    "name": "Default object ACL: get",
+    "area": "Default object ACL operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No defaultObjectAcl route."
+  },
+  {
+    "id": "D03",
+    "name": "Default object ACL: insert",
+    "area": "Default object ACL operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No defaultObjectAcl route."
+  },
+  {
+    "id": "D04",
+    "name": "Default object ACL: update",
+    "area": "Default object ACL operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No defaultObjectAcl route."
+  },
+  {
+    "id": "D05",
+    "name": "Default object ACL: patch",
+    "area": "Default object ACL operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No defaultObjectAcl route."
+  },
+  {
+    "id": "D06",
+    "name": "Default object ACL: delete",
+    "area": "Default object ACL operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No defaultObjectAcl route."
   },
   {
     "id": "U01",
@@ -1055,9 +725,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 187
+    "notes": ""
   },
   {
     "id": "U02",
@@ -1065,9 +733,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Uploads",
-    "source": "docs/upstream-comparison.md",
-    "line": 188
+    "notes": ""
   },
   {
     "id": "U03",
@@ -1075,9 +741,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Uploads",
-    "source": "docs/upstream-comparison.md",
-    "line": 189
+    "notes": ""
   },
   {
     "id": "U04",
@@ -1085,39 +749,15 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Uploads",
-    "source": "docs/upstream-comparison.md",
-    "line": 190
+    "notes": ""
   },
   {
     "id": "U05",
     "name": "Resumable upload cancellation",
     "area": "Uploads and conditional operations",
-    "local": "available",
-    "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 191
-  },
-  {
-    "id": "U06",
-    "name": "Body-based resumable initiation",
-    "area": "Uploads and conditional operations",
-    "local": "available",
-    "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 192
-  },
-  {
-    "id": "U07",
-    "name": "X-Goog-Upload-Protocol resumable flow",
-    "area": "Uploads and conditional operations",
-    "local": "available",
-    "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 193
+    "local": "limited",
+    "other": "limited",
+    "notes": "Handler returns JSON API's 499 status but does not invalidate the stored upload session."
   },
   {
     "id": "U08",
@@ -1125,9 +765,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 194
+    "notes": ""
   },
   {
     "id": "U09",
@@ -1135,19 +773,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 195
-  },
-  {
-    "id": "U10",
-    "name": "Parse single-quoted gsutil/gcloud multipart boundaries",
-    "area": "Uploads and conditional operations",
-    "local": "available",
-    "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 196
+    "notes": ""
   },
   {
     "id": "U11",
@@ -1155,9 +781,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Checksum",
-    "source": "docs/upstream-comparison.md",
-    "line": 197
+    "notes": ""
   },
   {
     "id": "U12",
@@ -1165,9 +789,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Checksum",
-    "source": "docs/upstream-comparison.md",
-    "line": 198
+    "notes": ""
   },
   {
     "id": "U13",
@@ -1175,9 +797,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 199
+    "notes": ""
   },
   {
     "id": "U14",
@@ -1185,9 +805,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 200
+    "notes": ""
   },
   {
     "id": "U15",
@@ -1195,19 +813,15 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Conditions",
-    "source": "docs/upstream-comparison.md",
-    "line": 201
+    "notes": ""
   },
   {
     "id": "U16",
     "name": "ifGenerationNotMatch precondition",
     "area": "Uploads and conditional operations",
-    "local": "available",
-    "other": "available",
-    "notes": "Conditions",
-    "source": "docs/upstream-comparison.md",
-    "line": 202
+    "local": "limited",
+    "other": "limited",
+    "notes": "Generic handler accepts missing object for some NotMatch checks."
   },
   {
     "id": "U17",
@@ -1215,9 +829,7 @@
     "area": "Uploads and conditional operations",
     "local": "limited",
     "other": "limited",
-    "notes": "Conditions; metageneration is fixed at 1",
-    "source": "docs/upstream-comparison.md",
-    "line": 203
+    "notes": "Metageneration is fixed at 1."
   },
   {
     "id": "U18",
@@ -1225,9 +837,7 @@
     "area": "Uploads and conditional operations",
     "local": "limited",
     "other": "limited",
-    "notes": "Conditions; metageneration is fixed at 1",
-    "source": "docs/upstream-comparison.md",
-    "line": 204
+    "notes": "Metageneration is fixed at 1."
   },
   {
     "id": "U19",
@@ -1235,9 +845,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 205
+    "notes": ""
   },
   {
     "id": "U20",
@@ -1245,9 +853,7 @@
     "area": "Uploads and conditional operations",
     "local": "limited",
     "other": "limited",
-    "notes": "Conditions; fixed metageneration",
-    "source": "docs/upstream-comparison.md",
-    "line": 206
+    "notes": "Fixed metageneration."
   },
   {
     "id": "U21",
@@ -1255,19 +861,15 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Server tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 207
+    "notes": ""
   },
   {
     "id": "U22",
-    "name": "Inherit authorization identity headers into batch parts",
+    "name": "Inherit outer Authorization header into batch subrequests",
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "unavailable",
-    "notes": "Routes; individual parts still traverse middleware",
-    "source": "docs/upstream-comparison.md",
-    "line": 208
+    "notes": "LocalCloud copies standard Authorization; local identity headers are not GCS features."
   },
   {
     "id": "U23",
@@ -1275,9 +877,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
-    "notes": "Upload tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 209
+    "notes": ""
   },
   {
     "id": "U24",
@@ -1285,9 +885,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "unavailable",
-    "notes": "Uploads; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 210
+    "notes": "XML S3-interoperability spelling; not full S3 support."
   },
   {
     "id": "U25",
@@ -1295,79 +893,63 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "unavailable",
-    "notes": "Uploads; retains full session entry; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 211
+    "notes": "Retains full session entry."
+  },
+  {
+    "id": "U26",
+    "name": "Continue resumable upload using bearer session URI",
+    "area": "Uploads and conditional operations",
+    "local": "limited",
+    "other": "available",
+    "notes": "LocalCloud additionally checks initiating key revocation and optional callback."
   },
   {
     "id": "M01",
     "name": "JSON objects.move / moveTo endpoint",
     "area": "Same-bucket object moves",
-    "local": "available",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Move tests; same bucket only",
-    "source": "docs/upstream-comparison.md",
-    "line": 217
+    "notes": "route/data movement implemented; atomicity, retention and projection gaps below."
   },
   {
     "id": "M02",
-    "name": "Move in memory backend",
+    "name": "All-or-nothing atomic object move",
     "area": "Same-bucket object moves",
-    "local": "available",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Backend tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 218
-  },
-  {
-    "id": "M03",
-    "name": "Move in filesystem backend",
-    "area": "Same-bucket object moves",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Backend tests; not crash-transactional",
-    "source": "docs/upstream-comparison.md",
-    "line": 219
+    "notes": "locks/rollback exist; multiple disk writes are not a crash-atomic transaction."
   },
   {
     "id": "M04",
-    "name": "Move source generation conditions",
+    "name": "Move source ifSourceGenerationMatch precondition",
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
-    "notes": "Move tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 220
+    "notes": ""
   },
   {
     "id": "M05",
-    "name": "Move destination generation conditions",
+    "name": "Move destination ifGenerationMatch precondition",
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
-    "notes": "Move tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 221
+    "notes": ""
   },
   {
     "id": "M06",
-    "name": "Move source metageneration conditions",
+    "name": "Move source ifSourceMetagenerationMatch precondition",
     "area": "Same-bucket object moves",
     "local": "limited",
     "other": "unavailable",
-    "notes": "Objects; fixed metageneration",
-    "source": "docs/upstream-comparison.md",
-    "line": 222
+    "notes": "Fixed metageneration."
   },
   {
     "id": "M07",
-    "name": "Move destination metageneration conditions",
+    "name": "Move destination ifMetagenerationMatch precondition",
     "area": "Same-bucket object moves",
     "local": "limited",
     "other": "unavailable",
-    "notes": "Objects; fixed metageneration",
-    "source": "docs/upstream-comparison.md",
-    "line": 223
+    "notes": "Fixed metageneration."
   },
   {
     "id": "M08",
@@ -1375,9 +957,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
-    "notes": "Backend tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 224
+    "notes": ""
   },
   {
     "id": "M09",
@@ -1385,9 +965,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
-    "notes": "Backend tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 225
+    "notes": ""
   },
   {
     "id": "M10",
@@ -1395,19 +973,15 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
-    "notes": "Backend tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 226
+    "notes": ""
   },
   {
     "id": "M11",
-    "name": "Emit source delete/archive event on move",
+    "name": "Move source notification semantics",
     "area": "Same-bucket object moves",
-    "local": "available",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 227
+    "notes": "Source delete/archive path."
   },
   {
     "id": "M12",
@@ -1415,9 +989,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 228
+    "notes": ""
   },
   {
     "id": "M13",
@@ -1425,139 +997,135 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
-    "notes": "Objects",
-    "source": "docs/upstream-comparison.md",
-    "line": 229
+    "notes": ""
+  },
+  {
+    "id": "M14",
+    "name": "Move source ifSourceGenerationNotMatch precondition",
+    "area": "Same-bucket object moves",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Metadata conditions use fixed metageneration."
+  },
+  {
+    "id": "M15",
+    "name": "Move destination ifGenerationNotMatch precondition",
+    "area": "Same-bucket object moves",
+    "local": "available",
+    "other": "unavailable",
+    "notes": "Metadata conditions use fixed metageneration."
+  },
+  {
+    "id": "M16",
+    "name": "Move source ifSourceMetagenerationNotMatch precondition",
+    "area": "Same-bucket object moves",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Metadata conditions use fixed metageneration."
+  },
+  {
+    "id": "M17",
+    "name": "Move destination ifMetagenerationNotMatch precondition",
+    "area": "Same-bucket object moves",
+    "local": "limited",
+    "other": "unavailable",
+    "notes": "Metadata conditions use fixed metageneration."
+  },
+  {
+    "id": "M18",
+    "name": "Reject moving retention-protected source or destination",
+    "area": "Same-bucket object moves",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Move path has no object/bucket retention-policy check."
   },
   {
     "id": "A01",
-    "name": "Optional external HTTP permission-decision callback",
-    "area": "HTTP authorization integration",
-    "local": "available",
+    "name": "Enforce resource IAM permissions on JSON/XML requests",
+    "area": "Access control",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Authorization; external evaluator required",
-    "source": "docs/upstream-comparison.md",
-    "line": 235
-  },
-  {
-    "id": "A02",
-    "name": "Configure callback through CLI/environment",
-    "area": "HTTP authorization integration",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Config; -authorization-endpoint / FAKE_GCS_AUTHORIZATION_ENDPOINT",
-    "source": "docs/upstream-comparison.md",
-    "line": 236
-  },
-  {
-    "id": "A03",
-    "name": "Configure callback through Go Options",
-    "area": "HTTP authorization integration",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Server; AuthorizationEndpoint",
-    "source": "docs/upstream-comparison.md",
-    "line": 237
-  },
-  {
-    "id": "A04",
-    "name": "Map HTTP routes to resource permission checks",
-    "area": "HTTP authorization integration",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Authorization",
-    "source": "docs/upstream-comparison.md",
-    "line": 238
+    "notes": "Requires external callback; open by default; subset of permissions."
   },
   {
     "id": "A05",
     "name": "Require delete permission when overwriting",
-    "area": "HTTP authorization integration",
-    "local": "available",
+    "area": "Access control",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Authorization tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 239
+    "notes": "Create + delete checks when callback configured."
   },
   {
     "id": "A06",
-    "name": "Check source reads during copy/compose",
-    "area": "HTTP authorization integration",
-    "local": "available",
+    "name": "Check source-read permission for compose",
+    "area": "Access control",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Authorization",
-    "source": "docs/upstream-comparison.md",
-    "line": 240
-  },
-  {
-    "id": "A07",
-    "name": "Recheck permission on resumable continuation",
-    "area": "HTTP authorization integration",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Authorization",
-    "source": "docs/upstream-comparison.md",
-    "line": 241
+    "notes": "Source get checks delegated to callback."
   },
   {
     "id": "A08",
     "name": "Use IAM administration permissions for ACL routes",
-    "area": "HTTP authorization integration",
-    "local": "available",
+    "area": "Access control",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Authorization; not an IAM policy CRUD API",
-    "source": "docs/upstream-comparison.md",
-    "line": 242
-  },
-  {
-    "id": "A09",
-    "name": "Deny HTTP access when callback is unavailable",
-    "area": "HTTP authorization integration",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Authorization tests; HTTP 503",
-    "source": "docs/upstream-comparison.md",
-    "line": 243
+    "notes": "Callback checks selected getIamPolicy/setIamPolicy routes."
   },
   {
     "id": "A10",
-    "name": "Supply verified HMAC service-account identity to callback",
-    "area": "HTTP authorization integration",
-    "local": "available",
+    "name": "Authorize XML requests as the HMAC key's service account",
+    "area": "Access control",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Authorization; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 244
+    "notes": "Verified identity delegated; no complete service-account model."
   },
   {
-    "id": "A11",
-    "name": "Serialize HTTP authorization and mutation",
-    "area": "HTTP authorization integration",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Authorization; throughput tradeoff",
-    "source": "docs/upstream-comparison.md",
-    "line": 245
-  },
-  {
-    "id": "A12",
-    "name": "Apply this callback to gRPC operations",
-    "area": "HTTP authorization integration",
+    "id": "A13",
+    "name": "Read bucket IAM policy",
+    "area": "Access control",
     "local": "unavailable",
     "other": "unavailable",
-    "notes": "gRPC; accesses backend directly",
-    "source": "docs/upstream-comparison.md",
-    "line": 246
+    "notes": "Callback integration does not implement policy API."
+  },
+  {
+    "id": "A14",
+    "name": "Set bucket IAM policy",
+    "area": "Access control",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Callback integration does not implement policy API."
+  },
+  {
+    "id": "A15",
+    "name": "Test bucket IAM permissions",
+    "area": "Access control",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Callback integration does not implement policy API."
+  },
+  {
+    "id": "A16",
+    "name": "Uniform bucket-level access",
+    "area": "Access control",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Uniform access configuration/enforcement not modeled."
+  },
+  {
+    "id": "A17",
+    "name": "Public access prevention",
+    "area": "Access control",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Public access prevention configuration not modeled."
   },
   {
     "id": "K01",
     "name": "Create HMAC key",
     "area": "HMAC key management",
-    "local": "available",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "HMAC",
-    "source": "docs/upstream-comparison.md",
-    "line": 252
+    "notes": "Generates keys; validates email shape/project suffix rather than an existing Google account."
   },
   {
     "id": "K02",
@@ -1565,9 +1133,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC",
-    "source": "docs/upstream-comparison.md",
-    "line": 253
+    "notes": ""
   },
   {
     "id": "K03",
@@ -1575,9 +1141,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 254
+    "notes": ""
   },
   {
     "id": "K04",
@@ -1585,9 +1149,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 255
+    "notes": ""
   },
   {
     "id": "K05",
@@ -1595,9 +1157,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 256
+    "notes": ""
   },
   {
     "id": "K06",
@@ -1605,9 +1165,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC",
-    "source": "docs/upstream-comparison.md",
-    "line": 257
+    "notes": ""
   },
   {
     "id": "K07",
@@ -1615,9 +1173,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC",
-    "source": "docs/upstream-comparison.md",
-    "line": 258
+    "notes": ""
   },
   {
     "id": "K08",
@@ -1625,9 +1181,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC",
-    "source": "docs/upstream-comparison.md",
-    "line": 259
+    "notes": ""
   },
   {
     "id": "K09",
@@ -1635,9 +1189,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC",
-    "source": "docs/upstream-comparison.md",
-    "line": 260
+    "notes": ""
   },
   {
     "id": "K10",
@@ -1645,9 +1197,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 261
+    "notes": ""
   },
   {
     "id": "K11",
@@ -1655,9 +1205,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 262
+    "notes": ""
   },
   {
     "id": "K12",
@@ -1665,89 +1213,15 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 263
+    "notes": ""
   },
   {
     "id": "K13",
-    "name": "Validate service-account email against requested project",
+    "name": "Invalidate HMAC keys when owning service account is deleted",
     "area": "HMAC key management",
-    "local": "available",
+    "local": "unavailable",
     "other": "unavailable",
-    "notes": "HMAC; logical principals, no account CRUD",
-    "source": "docs/upstream-comparison.md",
-    "line": 264
-  },
-  {
-    "id": "K14",
-    "name": "Encrypt filesystem HMAC registry",
-    "area": "HMAC key management",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "HMAC tests; AES-GCM; local root key",
-    "source": "docs/upstream-comparison.md",
-    "line": 265
-  },
-  {
-    "id": "K15",
-    "name": "Restrict HMAC registry/root-key file permissions",
-    "area": "HMAC key management",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "HMAC tests; 0600",
-    "source": "docs/upstream-comparison.md",
-    "line": 266
-  },
-  {
-    "id": "K16",
-    "name": "Restore HMAC keys after filesystem restart",
-    "area": "HMAC key management",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "HMAC tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 267
-  },
-  {
-    "id": "K17",
-    "name": "Reject startup on corrupt encrypted HMAC registry",
-    "area": "HMAC key management",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "HMAC tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 268
-  },
-  {
-    "id": "K18",
-    "name": "Do not publish newly created key after persistence failure",
-    "area": "HMAC key management",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "HMAC tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 269
-  },
-  {
-    "id": "K19",
-    "name": "Protect HMAC state against bucket/object path traversal",
-    "area": "HMAC key management",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "HMAC tests; targets fork-private state",
-    "source": "docs/upstream-comparison.md",
-    "line": 270
-  },
-  {
-    "id": "H01",
-    "name": "Route RSA signed URL uploads/downloads",
-    "area": "HMAC signing",
-    "local": "available",
-    "other": "available",
-    "notes": "Routes; routing does not validate signatures",
-    "source": "docs/upstream-comparison.md",
-    "line": 281
+    "notes": "No service-account lifecycle integration."
   },
   {
     "id": "H02",
@@ -1755,9 +1229,7 @@
     "area": "HMAC signing",
     "local": "unavailable",
     "other": "unavailable",
-    "notes": "Signing; GOOG4-RSA-SHA256 exempted",
-    "source": "docs/upstream-comparison.md",
-    "line": 282
+    "notes": "GOOG4-RSA-SHA256 exempted."
   },
   {
     "id": "H03",
@@ -1765,9 +1237,7 @@
     "area": "HMAC signing",
     "local": "unavailable",
     "other": "unavailable",
-    "notes": "Signing",
-    "source": "docs/upstream-comparison.md",
-    "line": 283
+    "notes": ""
   },
   {
     "id": "H04",
@@ -1775,9 +1245,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 284
+    "notes": ""
   },
   {
     "id": "H05",
@@ -1785,9 +1253,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 285
+    "notes": ""
   },
   {
     "id": "H06",
@@ -1795,19 +1261,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 286
-  },
-  {
-    "id": "H07",
-    "name": "Verify AWS V2 HMAC signed URL",
-    "area": "HMAC signing",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 287
+    "notes": ""
   },
   {
     "id": "H08",
@@ -1815,9 +1269,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 288
+    "notes": ""
   },
   {
     "id": "H09",
@@ -1825,9 +1277,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 289
+    "notes": ""
   },
   {
     "id": "H10",
@@ -1835,9 +1285,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 290
+    "notes": ""
   },
   {
     "id": "H11",
@@ -1845,9 +1293,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 291
+    "notes": ""
   },
   {
     "id": "H12",
@@ -1855,9 +1301,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 292
+    "notes": ""
   },
   {
     "id": "H13",
@@ -1865,9 +1309,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; 15 minutes",
-    "source": "docs/upstream-comparison.md",
-    "line": 293
+    "notes": "15 minutes."
   },
   {
     "id": "H14",
@@ -1875,19 +1317,15 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; host required",
-    "source": "docs/upstream-comparison.md",
-    "line": 294
+    "notes": "Host required."
   },
   {
     "id": "H15",
-    "name": "Verify V4 declared payload SHA256",
+    "name": "Verify declared V4 payload SHA256 (allow UNSIGNED-PAYLOAD)",
     "area": "HMAC signing",
-    "local": "limited",
+    "local": "available",
     "other": "unavailable",
-    "notes": "Signing; UNSIGNED-PAYLOAD intentionally accepted",
-    "source": "docs/upstream-comparison.md",
-    "line": 295
+    "notes": "Unsigned payload is permitted by the Google contract."
   },
   {
     "id": "H16",
@@ -1895,9 +1333,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 296
+    "notes": ""
   },
   {
     "id": "H17",
@@ -1905,9 +1341,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 297
+    "notes": ""
   },
   {
     "id": "H18",
@@ -1915,9 +1349,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 298
+    "notes": ""
   },
   {
     "id": "H19",
@@ -1925,9 +1357,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 299
+    "notes": ""
   },
   {
     "id": "H20",
@@ -1935,9 +1365,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 300
+    "notes": ""
   },
   {
     "id": "H21",
@@ -1945,9 +1373,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 301
+    "notes": ""
   },
   {
     "id": "H22",
@@ -1955,9 +1381,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 302
+    "notes": ""
   },
   {
     "id": "H23",
@@ -1965,9 +1389,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 303
+    "notes": ""
   },
   {
     "id": "H24",
@@ -1975,468 +1397,422 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC tests and signing",
-    "source": "docs/upstream-comparison.md",
-    "line": 304
+    "notes": "And."
   },
   {
     "id": "H25",
-    "name": "Reject malformed HMAC requests in open IAM mode",
+    "name": "Reject malformed signed XML authentication",
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
-    "notes": "HMAC tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 305
-  },
-  {
-    "id": "H26",
-    "name": "Bind HMAC resumable session to initiating key",
-    "area": "HMAC signing",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 306
-  },
-  {
-    "id": "H27",
-    "name": "Reject resumable continuation after initiating key revocation",
-    "area": "HMAC signing",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Signing; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 307
+    "notes": "Exercised without optional IAM callback."
   },
   {
     "id": "N01",
     "name": "Create notification configuration",
-    "area": "Notifications",
-    "local": "available",
-    "other": "available",
-    "notes": "Notifications",
-    "source": "docs/upstream-comparison.md",
-    "line": 313
+    "area": "Pub/Sub notifications",
+    "local": "limited",
+    "other": "limited",
+    "notes": "API exists; production response fields and configuration quotas incomplete."
   },
   {
     "id": "N02",
     "name": "List notification configurations",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Notifications",
-    "source": "docs/upstream-comparison.md",
-    "line": 314
+    "notes": ""
   },
   {
     "id": "N03",
     "name": "Read notification configuration",
-    "area": "Notifications",
-    "local": "available",
-    "other": "available",
-    "notes": "Notifications",
-    "source": "docs/upstream-comparison.md",
-    "line": 315
+    "area": "Pub/Sub notifications",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Selected response fields; etag/selfLink missing."
   },
   {
     "id": "N04",
     "name": "Delete notification configuration",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Notifications",
-    "source": "docs/upstream-comparison.md",
-    "line": 316
+    "notes": ""
   },
   {
     "id": "N05",
     "name": "Deliver notifications to Pub/Sub",
-    "area": "Notifications",
-    "local": "available",
-    "other": "available",
-    "notes": "Registry; upstream already publishes",
-    "source": "docs/upstream-comparison.md",
-    "line": 317
+    "area": "Pub/Sub notifications",
+    "local": "limited",
+    "other": "limited",
+    "notes": "Publishing implemented; production delivery guarantees differ."
   },
   {
     "id": "N06",
     "name": "Filter notifications by event type",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Registry",
-    "source": "docs/upstream-comparison.md",
-    "line": 318
+    "notes": ""
   },
   {
     "id": "N07",
     "name": "Filter notifications by object-name prefix",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Registry",
-    "source": "docs/upstream-comparison.md",
-    "line": 319
+    "notes": ""
   },
   {
     "id": "N08",
     "name": "JSON_API_V1 notification payload",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Events",
-    "source": "docs/upstream-comparison.md",
-    "line": 320
+    "notes": ""
   },
   {
     "id": "N09",
     "name": "NONE notification payload",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Events",
-    "source": "docs/upstream-comparison.md",
-    "line": 321
+    "notes": ""
   },
   {
     "id": "N10",
     "name": "Custom notification attributes",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Registry",
-    "source": "docs/upstream-comparison.md",
-    "line": 322
+    "notes": ""
   },
   {
     "id": "N11",
     "name": "OBJECT_FINALIZE events",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Events",
-    "source": "docs/upstream-comparison.md",
-    "line": 323
+    "notes": ""
   },
   {
     "id": "N12",
     "name": "OBJECT_DELETE events",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Events",
-    "source": "docs/upstream-comparison.md",
-    "line": 324
+    "notes": ""
   },
   {
     "id": "N13",
     "name": "OBJECT_METADATA_UPDATE events",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
-    "notes": "Events",
-    "source": "docs/upstream-comparison.md",
-    "line": 325
+    "notes": ""
   },
   {
     "id": "N14",
     "name": "OBJECT_ARCHIVE events",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "limited",
     "other": "limited",
-    "notes": "Events; requires memory versioning",
-    "source": "docs/upstream-comparison.md",
-    "line": 326
-  },
-  {
-    "id": "N15",
-    "name": "Startup CLI event-topic configuration",
-    "area": "Notifications",
-    "local": "available",
-    "other": "available",
-    "notes": "Config; separate legacy event manager",
-    "source": "docs/upstream-comparison.md",
-    "line": 327
+    "notes": "Requires memory versioning."
   },
   {
     "id": "N16",
     "name": "Validate notification topic at creation",
-    "area": "Notifications",
-    "local": "available",
+    "area": "Pub/Sub notifications",
+    "local": "limited",
     "other": "unavailable",
-    "notes": "Delivery tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 328
+    "notes": "Validates topic syntax; production topic existence/publish permissions are not checked here."
   },
   {
     "id": "N17",
     "name": "Validate notification payload format at creation",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
-    "notes": "Delivery tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 329
+    "notes": ""
   },
   {
     "id": "N18",
     "name": "Validate configured event types at creation",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
-    "notes": "Delivery tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 330
+    "notes": ""
   },
   {
     "id": "N19",
     "name": "Enforce custom attribute count limit",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
-    "notes": "Registry; at most ten; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 331
+    "notes": "At most ten."
   },
   {
     "id": "N20",
-    "name": "Persist notification configurations on filesystem",
-    "area": "Notifications",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Delivery tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 332
-  },
-  {
-    "id": "N21",
-    "name": "Queue pending registry notifications",
-    "area": "Notifications",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Registry",
-    "source": "docs/upstream-comparison.md",
-    "line": 333
-  },
-  {
-    "id": "N22",
-    "name": "Persist pending notification queue on filesystem",
-    "area": "Notifications",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Delivery tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 334
+    "name": "At-least-once notification delivery guarantee",
+    "area": "Pub/Sub notifications",
+    "local": "limited",
+    "other": "limited",
+    "notes": "LocalCloud retries persisted events, but object/outbox write gap can lose events."
   },
   {
     "id": "N23",
-    "name": "Retry failed queued publications",
-    "area": "Notifications",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Registry; bounded backoff, 30-second maximum",
-    "source": "docs/upstream-comparison.md",
-    "line": 335
-  },
-  {
-    "id": "N24",
-    "name": "Replay persisted pending events after restart",
-    "area": "Notifications",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Delivery tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 336
+    "name": "Retry failed notification publications",
+    "area": "Pub/Sub notifications",
+    "local": "limited",
+    "other": "limited",
+    "notes": "fake-gcs-server client retries within timeout; LocalCloud queue retries; Google failure lifecycle differs."
   },
   {
     "id": "N25",
-    "name": "Snapshot event payload before asynchronous delivery",
-    "area": "Notifications",
+    "name": "Notification payload reflects the triggering object change",
+    "area": "Pub/Sub notifications",
     "local": "available",
-    "other": "unavailable",
-    "notes": "Delivery tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 337
+    "other": "limited",
+    "notes": "LocalCloud snapshots payload before async delivery."
   },
   {
     "id": "N26",
     "name": "Include notification configuration identifier in attributes",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
-    "notes": "Delivery tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 338
+    "notes": ""
   },
   {
     "id": "N27",
     "name": "Include deletion time in delete-event payload",
-    "area": "Notifications",
+    "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
-    "notes": "Delivery tests",
-    "source": "docs/upstream-comparison.md",
-    "line": 339
-  },
-  {
-    "id": "N28",
-    "name": "Reject malformed persisted notification state at startup",
-    "area": "Notifications",
-    "local": "available",
-    "other": "unavailable",
-    "notes": "Registry; source evidence",
-    "source": "docs/upstream-comparison.md",
-    "line": 340
+    "notes": ""
   },
   {
     "id": "N29",
-    "name": "Filter legacy CLI events by bucket",
-    "area": "Notifications",
-    "local": "available",
-    "other": "available",
-    "notes": "Config; -event.bucket",
-    "source": "docs/upstream-comparison.md",
-    "line": 341
+    "name": "Enforce 100 notification configurations per bucket",
+    "area": "Pub/Sub notifications",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No total configuration quota check."
   },
   {
     "id": "N30",
-    "name": "Filter legacy CLI events by object prefix",
-    "area": "Notifications",
-    "local": "available",
-    "other": "available",
-    "notes": "Config; -event.object-prefix",
-    "source": "docs/upstream-comparison.md",
-    "line": 342
+    "name": "Enforce ten configurations per event type per bucket",
+    "area": "Pub/Sub notifications",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No per-event configuration quota check."
   },
   {
-    "id": "N31",
-    "name": "Select legacy CLI event types",
-    "area": "Notifications",
-    "local": "available",
-    "other": "available",
-    "notes": "Config; -event.list",
-    "source": "docs/upstream-comparison.md",
-    "line": 343
+    "id": "F01",
+    "name": "Hierarchical folder: insert",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No folders API."
+  },
+  {
+    "id": "F02",
+    "name": "Hierarchical folder: get",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No folders API."
+  },
+  {
+    "id": "F03",
+    "name": "Hierarchical folder: list",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No folders API."
+  },
+  {
+    "id": "F04",
+    "name": "Hierarchical folder: rename",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No folders API."
+  },
+  {
+    "id": "F05",
+    "name": "Hierarchical folder: delete",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No folders API."
+  },
+  {
+    "id": "F06",
+    "name": "Managed folder: insert",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No managedFolders API."
+  },
+  {
+    "id": "F07",
+    "name": "Managed folder: get",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No managedFolders API."
+  },
+  {
+    "id": "F08",
+    "name": "Managed folder: list",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No managedFolders API."
+  },
+  {
+    "id": "F09",
+    "name": "Managed folder: delete",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No managedFolders API."
+  },
+  {
+    "id": "F10",
+    "name": "Managed folder: getIamPolicy",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No managedFolders API."
+  },
+  {
+    "id": "F11",
+    "name": "Managed folder: setIamPolicy",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No managedFolders API."
+  },
+  {
+    "id": "F12",
+    "name": "Managed folder: testIamPermissions",
+    "area": "Folders and managed folders",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "No managedFolders API."
   },
   {
     "id": "G01",
-    "name": "gRPC GetBucket",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 354
+    "name": "Storage v2 gRPC GetBucket",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G02",
-    "name": "gRPC DeleteBucket",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 355
+    "name": "Storage v2 gRPC CreateBucket",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G03",
-    "name": "gRPC InsertBucket",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 356
+    "name": "Storage v2 gRPC DeleteBucket",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G04",
-    "name": "gRPC UpdateBucket",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 357
+    "name": "Storage v2 gRPC UpdateBucket",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G05",
-    "name": "gRPC ListBuckets",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 358
+    "name": "Storage v2 gRPC ListBuckets",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G06",
-    "name": "gRPC InsertObject",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC; receives one message",
-    "source": "docs/upstream-comparison.md",
-    "line": 359
+    "name": "Storage v2 gRPC GetObject",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G07",
-    "name": "gRPC GetObject",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 360
+    "name": "Storage v2 gRPC DeleteObject",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G08",
-    "name": "gRPC DeleteObject",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 361
+    "name": "Storage v2 gRPC UpdateObject",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G09",
-    "name": "gRPC UpdateObject",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 362
+    "name": "Storage v2 gRPC ListObjects",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G10",
-    "name": "gRPC PatchObject",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 363
+    "name": "Storage v2 gRPC ComposeObject",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G11",
-    "name": "gRPC ComposeObject",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC; destination attributes omitted",
-    "source": "docs/upstream-comparison.md",
-    "line": 364
+    "name": "Storage v2 gRPC ReadObject",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   },
   {
     "id": "G12",
-    "name": "gRPC ListObjects",
-    "area": "Implemented legacy Storage v1 gRPC methods",
-    "local": "limited",
-    "other": "limited",
-    "notes": "gRPC",
-    "source": "docs/upstream-comparison.md",
-    "line": 365
+    "name": "Storage v2 gRPC WriteObject",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
+  },
+  {
+    "id": "G13",
+    "name": "Storage v2 gRPC StartResumableWrite",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
+  },
+  {
+    "id": "G14",
+    "name": "Storage v2 gRPC QueryWriteStatus",
+    "area": "Current Storage v2 gRPC operations",
+    "local": "unavailable",
+    "other": "unavailable",
+    "notes": "Only legacy google.storage.v1 service registered."
   }
 ]

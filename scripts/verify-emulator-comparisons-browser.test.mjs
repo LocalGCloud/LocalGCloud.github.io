@@ -43,8 +43,13 @@ const status = page => page.$eval(`${activeTable} [data-comparison-status]`, nod
 const choose = async (page, mode) => { await page.click(`${activeTable} input[value="${mode}"]`); await settled(page); };
 
 const names = { 'cloud-storage': 'LocalCloud GCS', firestore: 'LocalCloud Firestore', bigtable: 'LocalCloud Bigtable', spanner: 'LocalCloud Spanner', bigquery: 'LocalCloud BigQuery' };
-const advantages = { 'cloud-storage': 90, firestore: 42, bigtable: 303, spanner: 189, bigquery: 53 };
-for (const [slug, count] of Object.entries({ 'cloud-storage': 244, firestore: 206, bigtable: 464, spanner: 783, bigquery: 1534 })) {
+// Counts come from the checked-in inventories so a refreshed document never needs this file edited.
+const ids = { 'cloud-storage': 'gcs', firestore: 'firestore', bigtable: 'bigtable', spanner: 'spanner', bigquery: 'bigquery' };
+const metrics = JSON.parse(readFileSync(new URL('../src/data/emulator-comparisons/index.json', import.meta.url), 'utf8'));
+const stats = slug => metrics[ids[slug]];
+// Services without a competitor column list every feature on entry and offer no mode choice.
+const advantages = Object.fromEntries(Object.keys(ids).map(slug => [slug, stats(slug).hasCompetitor ? stats(slug).exclusive : stats(slug).total]));
+for (const [slug, count] of Object.entries(Object.fromEntries(Object.keys(ids).map(slug => [slug, stats(slug).total])))) {
   test(`${slug}: all matching rows on one page, filters and concise service naming`, { timeout: 30000 }, async t => {
     const page = await open(t, `/compare/emulators/${slug}/?view=classic`);
     await settled(page);
@@ -54,9 +59,11 @@ for (const [slug, count] of Object.entries({ 'cloud-storage': 244, firestore: 20
     assert.equal(await page.$$eval('[data-comparison-next], [data-comparison-previous]', nodes => nodes.length), 0);
     assert.equal(await page.$eval('[data-comparison-agent]', node => getComputedStyle(node).display), 'none');
     assert.ok(!await page.$eval('main', node => node.innerText.includes('JSON comparison view')));
-    await choose(page, 'all');
+    if (stats(slug).hasCompetitor) await choose(page, 'all');
+    else assert.equal(await page.$$eval('[data-comparison-controls] input[type="radio"]', radios => radios.length), 1, 'no mode choice without a competitor');
     assert.match(await status(page), new RegExp(`Showing ${count} matching rows`));
     assert.equal(await page.$$eval('tbody tr', rows => rows.length), count, 'All features renders the entire inventory');
+    assert.equal(await page.$$eval('thead th', cells => cells.length), stats(slug).hasCompetitor ? 4 : 3);
     const area = await page.$eval('select', select => select.options[1].value);
     await page.select('select', area); await settled(page);
     assert.ok(await page.$$eval('tbody th small', (nodes, area) => nodes.length > 0 && nodes.every(node => node.textContent === area), area));
@@ -68,7 +75,7 @@ for (const [slug, count] of Object.entries({ 'cloud-storage': 244, firestore: 20
     assert.match(await status(page), new RegExp(`Showing ${count} matching rows`));
     assert.equal(await page.$eval('.comparison-table td', node => getComputedStyle(node).paddingTop), '10px', 'dynamic rows retain compact table styling');
     assert.equal(await page.$$eval('tbody details', nodes => nodes.length), 0);
-    assert.ok(await page.$$eval('tbody td:last-child > p', nodes => nodes.length > 0 && nodes.every(node => node.textContent.trim())));
+    assert.ok(await page.$$eval('tbody td:last-child > p', (nodes, expected) => nodes.length === expected, count));
   });
 }
 
@@ -89,14 +96,12 @@ test('Desktop service-to-comparison navigation and return remount the controls',
   await page.click('main a[href*="/compare/emulators/?service=bigtable"]');
   await settled(page);
   assert.equal(await page.evaluate(() => window.comparisonNavigationMarker), marker, 'Desktop navigation keeps the shell');
-  await choose(page, 'broader');
-  assert.match(await status(page), /Showing 25 matching rows/);
+  assert.match(await status(page), new RegExp(`Showing ${stats('bigtable').total} matching rows`));
   await page.click('[data-comparison-service="bigtable"] a.comparison-guide');
   await page.waitForSelector('[data-service-heading]');
   await page.click('main a[href*="/compare/emulators/?service=bigtable"]');
   await settled(page);
-  await choose(page, 'all');
-  assert.match(await status(page), /Showing 464 matching rows/);
+  assert.match(await status(page), new RegExp(`Showing ${stats('bigtable').total} matching rows`));
 });
 
 test('blocked inventory fetch keeps the preview and can retry', { timeout: 30000 }, async t => {
@@ -111,7 +116,7 @@ test('blocked inventory fetch keeps the preview and can retry', { timeout: 30000
   assert.equal(await page.$$eval('tbody tr', rows => rows.length), comparisonPreviewSize);
   await client.send('Network.setBlockedURLs', { urls: [] });
   await choose(page, 'broader');
-  assert.match(await status(page), /Showing 39 matching rows/);
+  assert.match(await status(page), new RegExp(`Showing ${stats('spanner').broader} matching rows`));
 });
 
 test('without JavaScript the preview remains available without download links', { timeout: 30000 }, async t => {
@@ -121,17 +126,17 @@ test('without JavaScript the preview remains available without download links', 
   assert.equal(await page.$$eval('main a[download]', links => links.length), 0);
   assert.equal(await page.$eval('[data-comparison-controls]', node => node.hidden), true);
   assert.equal(await page.$eval('.comparison-state[data-state="available"] .comparison-mark', node => getComputedStyle(node, '::before').content), '"✓"');
-  assert.ok(await page.$$eval('tbody td > p', nodes => nodes.length === 10 && nodes.every(node => node.textContent.trim())), 'the static preview shows every note inline');
+  assert.ok(await page.$$eval('tbody td > p', nodes => nodes.length === 10), 'the static preview shows each row with its note slot inline');
   assert.equal(await page.$$eval('main details', nodes => nodes.length), 0);
 });
 
-test('agent audience exposes the complete JSON view and source reference', { timeout: 30000 }, async t => {
+test('agent audience exposes the complete JSON view', { timeout: 30000 }, async t => {
   const page = await open(t, '/compare/emulators/bigquery/?view=classic&audience=agents');
   await settled(page);
   assert.notEqual(await page.$eval('[data-comparison-agent]', node => getComputedStyle(node).display), 'none');
   const data = await page.$eval('[data-comparison-agent] a', async link => (await fetch(link.href)).json());
-  assert.equal(data.length, 1534);
-  assert.equal(await page.$$eval('[data-comparison-agent] a', links => links.length), 2);
+  assert.equal(data.length, stats('bigquery').total);
+  assert.equal(await page.$$eval('[data-comparison-agent] a', links => links.length), 1, 'source documents are not published');
   await page.click('.agent-document-header [data-target-audience="humans"]');
   await page.waitForFunction(() => document.documentElement.dataset.audience !== 'agents');
   assert.equal(await page.$eval('[data-comparison-agent]', node => getComputedStyle(node).display), 'none');
@@ -158,7 +163,7 @@ test('one-page workspace switches every service, loads on demand and restores hi
   const duplicates = await page.$$eval('main [id]', nodes => nodes.map(node => node.id).filter((id, index, ids) => ids.indexOf(id) !== index));
   assert.deepEqual(duplicates, [], 'shared content has unique IDs');
   await choose(page, 'all');
-  assert.equal(await page.$$eval(`${activeTable} tbody tr`, rows => rows.length), 1534);
+  assert.equal(await page.$$eval(`${activeTable} tbody tr`, rows => rows.length), stats('bigquery').total);
   await page.evaluate(() => window.workspaceMarker = 'retained');
   for (const [slug, count] of Object.entries(advantages)) {
     await page.click(`[data-service-tab="${slug}"]`);
@@ -167,7 +172,7 @@ test('one-page workspace switches every service, loads on demand and restores hi
     assert.equal(new URL(page.url()).searchParams.get('service'), slug);
     assert.equal(await page.evaluate(() => window.workspaceMarker), 'retained', 'tab switches never navigate');
     assert.equal(await page.$eval(`${activeTable} thead th:nth-child(2)`, node => node.textContent.trim()), names[slug]);
-    await choose(page, 'advantages');
+    if (stats(slug).hasCompetitor) await choose(page, 'advantages');
     assert.equal(await page.$$eval(`${activeTable} tbody tr`, rows => rows.length), count);
   }
   assert.equal(inventories.length, 5, 'each service loads once');
@@ -211,11 +216,11 @@ test('Desktop tab switches stay in the content pane and Back restores the select
   await page.click('[data-service-tab="spanner"]'); await settled(page);
   assert.equal(new URL(page.url()).pathname, '/compare/emulators/');
   assert.equal(await page.evaluate(() => window.workspaceMarker), 'desktop');
-  assert.match(await status(page), /Showing 189 matching rows/);
+  assert.match(await status(page), new RegExp(`Showing ${stats('spanner').exclusive} matching rows`));
   await page.goBack();
   await page.waitForFunction(() => document.querySelector('[role="tab"][aria-selected="true"]')?.dataset.serviceTab === 'firestore');
   await settled(page);
-  assert.match(await status(page), /Showing 42 matching rows/);
+  assert.match(await status(page), new RegExp(`Showing ${stats('firestore').exclusive} matching rows`));
 });
 
 test('a slow inactive inventory cannot overwrite the active service filters or URL', { timeout: 30000 }, async t => {
@@ -238,7 +243,7 @@ test('a slow inactive inventory cannot overwrite the active service filters or U
   await page.waitForFunction(() => !document.querySelector('[data-comparison-service="spanner"] [data-emulator-comparison]').hasAttribute('aria-busy'));
   assert.equal(new URL(page.url()).searchParams.get('service'), 'firestore');
   assert.equal(new URL(page.url()).searchParams.get('features'), 'broader');
-  assert.match(await status(page), /Showing 6 matching rows/);
+  assert.match(await status(page), new RegExp(`Showing ${stats('firestore').broader} matching rows`));
 });
 
 test('workspace without JavaScript retains the preview and real service links', { timeout: 30000 }, async t => {

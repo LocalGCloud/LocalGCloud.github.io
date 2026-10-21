@@ -39,7 +39,7 @@ export function initEmulatorComparisons(scope = document) {
         status.textContent = rows.length ? `Showing ${rows.length} matching rows.` : 'No matching features. Try another filter.';
         const url = new URL(location.href);
         url.searchParams.delete('page');
-        for (const [key, value] of Object.entries({ features: mode() === 'advantages' ? '' : mode(), q: query.value, area: area.value })) {
+        for (const [key, value] of Object.entries({ features: mode() === root.dataset.defaultMode ? '' : mode(), q: query.value, area: area.value })) {
           value ? url.searchParams.set(key, value) : url.searchParams.delete(key);
         }
         history.replaceState(history.state, '', url);
@@ -54,7 +54,7 @@ export function initEmulatorComparisons(scope = document) {
     const restore = () => {
       const params = new URL(location.href).searchParams;
       const selected = ['all', 'broader'].includes(params.get('features')) ? params.get('features') : 'advantages';
-      root.querySelector(`input[value="${selected}"]`).checked = true;
+      (root.querySelector(`input[value="${selected}"]`) || root.querySelector('input[type="radio"]')).checked = true;
       query.value = params.get('q') || '';
       area.value = [...area.options].some(option => option.value === params.get('area')) ? params.get('area') : '';
       render();

@@ -22,7 +22,7 @@ const structuredData = [createWebPageSchema({ url, name: title, description }), 
       <span class="site-micro">Services</span>
       <div class="comparison-service-tabs" data-comparison-tabs role="tablist" aria-label="Services" hidden>
         {emulatorComparisons.map(comparison => <button type="button" role="tab" aria-controls={`comparison-pane-${comparison.id}`} id={`comparison-tab-${comparison.id}`} data-service-tab={comparison.slug}>
-          <span>{comparison.name}</span><small>{comparison.exclusive} LocalCloud advantages</small>
+          <span>{comparison.name}</span><small>{comparison.hasCompetitor ? `${comparison.exclusive} LocalCloud advantages` : `${comparison.total} features`}</small>
         </button>)}
       </div>
       <noscript><ul>{emulatorComparisons.map(comparison => <li><a href={`${base}${comparison.path.slice(1)}`}>{comparison.name}</a></li>)}</ul></noscript>

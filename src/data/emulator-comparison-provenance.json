@@ -1,0 +1,179 @@
+{
+  "gcs": {
+    "repository": "localcloud-fake-gcs-server",
+    "revision": "67e227c369b506a2383223e31db208976fe11b83",
+    "reviewed": "2026-10-20",
+    "documents": [
+      {
+        "path": "docs/upstream-comparison.md",
+        "commit": "67e227c369b506a2383223e31db208976fe11b83",
+        "sha256": "7b13a9f4dd6381e942cef1919a0da2ec4be4e32d1109259cba15d23bd0a81b5a"
+      }
+    ],
+    "documented": {
+      "rows": 227,
+      "other": {
+        "available": 69,
+        "limited": 31,
+        "unavailable": 127
+      },
+      "local": {
+        "available": 122,
+        "limited": 46,
+        "unavailable": 59
+      }
+    },
+    "hidden": {
+      "unassessed": 0,
+      "repeated": 0
+    }
+  },
+  "firestore": {
+    "repository": "firestore-go",
+    "revision": "2d4cee87e126210064f82a43feb81cad83cf576a",
+    "reviewed": "2026-10-20",
+    "documents": [
+      {
+        "path": "docs/emulator-comparison.md",
+        "commit": "6978a94b6f15f6c57b1f976a60757c748c11e5ff",
+        "sha256": "0e44f0bb5b85df366892405f9537f62b282afbf1fccc833e813fd4de56b3c3c5"
+      },
+      {
+        "path": "docs/emulator-comparison-metrics.md",
+        "commit": "6978a94b6f15f6c57b1f976a60757c748c11e5ff",
+        "sha256": "f084e7947d62084d676aed4d5e56d3202675b4ad172552ce817410e726616acd"
+      }
+    ],
+    "documented": {
+      "rows": 179,
+      "production": {
+        "available": 179,
+        "limited": 0,
+        "unavailable": 0,
+        "unknown": 0,
+        "na": 0
+      },
+      "other": {
+        "available": 54,
+        "limited": 18,
+        "unavailable": 40,
+        "unknown": 67,
+        "na": 0
+      },
+      "default": {
+        "available": 71,
+        "limited": 26,
+        "unavailable": 82,
+        "unknown": 0,
+        "na": 0
+      },
+      "local": {
+        "available": 149,
+        "limited": 21,
+        "unavailable": 9,
+        "unknown": 0,
+        "na": 0
+      }
+    },
+    "hidden": {
+      "unassessed": 0,
+      "repeated": 0
+    }
+  },
+  "bigtable": {
+    "repository": "little_bigtable",
+    "revision": "ed8c06e71d5abcc67423bb993067441de0e43789",
+    "reviewed": "2026-10-20",
+    "documents": [
+      {
+        "path": "EMULATOR_COMPARISON.md",
+        "commit": "ed8c06e71d5abcc67423bb993067441de0e43789",
+        "sha256": "29c7d55bd53e28d88ab9458a3cc2e5f0eb9a86760f274187a48a2c41faa644db"
+      }
+    ],
+    "documented": {
+      "rows": 493,
+      "local": {
+        "available": 336,
+        "limited": 39,
+        "unavailable": 116,
+        "unknown": 2
+      }
+    },
+    "hidden": {
+      "unassessed": 2,
+      "repeated": 0
+    }
+  },
+  "spanner": {
+    "repository": "cloud-spanner-emulator",
+    "revision": "a2e0c2fcd9eed2bd24ed57c8d48221b2fd498c7f",
+    "reviewed": "2026-10-20",
+    "documents": [
+      {
+        "path": "docs/emulator-comparison.md",
+        "commit": "a2e0c2fcd9eed2bd24ed57c8d48221b2fd498c7f",
+        "sha256": "d5523abb75ac80de0d36a15d7260dae10f22738bc2b6a59abbd81bc389789aaa"
+      }
+    ],
+    "documented": {
+      "rows": 757,
+      "other": {
+        "available": 481,
+        "unavailable": 163,
+        "limited": 44,
+        "no-effect": 69,
+        "na": 0,
+        "unknown": 0
+      },
+      "local": {
+        "available": 697,
+        "unavailable": 20,
+        "limited": 6,
+        "no-effect": 34,
+        "na": 0,
+        "unknown": 0
+      }
+    },
+    "hidden": {
+      "unassessed": 0,
+      "repeated": 0
+    }
+  },
+  "bigquery": {
+    "repository": "bigquery-emulator-on-duckdb",
+    "revision": "5e42c9cb57c377b8d8ec855390251976556bf7aa",
+    "reviewed": "2026-09-28",
+    "documents": [
+      {
+        "path": "docs/comparison-features.csv",
+        "commit": "5e42c9cb57c377b8d8ec855390251976556bf7aa",
+        "sha256": "6fe4eb3dcdc7d5f1b53df6c2a9846a73d8975bd1e8403ee294b310f304b7eb10"
+      },
+      {
+        "path": "docs/COMPARISON.md",
+        "commit": "5e42c9cb57c377b8d8ec855390251976556bf7aa",
+        "sha256": "d3b526fd0115e739ec2c46af84006ad13c822312b0a93b34e76c14e36ff362dc"
+      }
+    ],
+    "documented": {
+      "rows": 1453,
+      "local": {
+        "available": 1068,
+        "limited": 10,
+        "unavailable": 66,
+        "unknown": 309
+      },
+      "other": {
+        "available": 454,
+        "limited": 9,
+        "unavailable": 74,
+        "unknown": 916
+      }
+    },
+    "hidden": {
+      "unassessed": 309,
+      "repeated": 23
+    }
+  }
+}

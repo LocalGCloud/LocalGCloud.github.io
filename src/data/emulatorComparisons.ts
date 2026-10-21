@@ -1,15 +1,22 @@
-import metrics from './emulator-comparisons/index.json';
+import indexed from './emulator-comparisons/index.json';
 
+const metrics = indexed as Record<string, { total: number; exclusive: number; broader: number; hasCompetitor: boolean }>;
+
+// Visitor-facing rows written by scripts/sync-emulator-comparisons.py. `other` is absent for services
+// whose comparison document has no competitor column (then `hasCompetitor` is false and the competitor
+// details below stay unused); `default` only where a second profile exists.
 export interface ComparisonRow {
-  id: string; name: string; area: string; local: string; other: string;
-  notes: string; source: string; line: number; default?: string;
+  id: string; name: string; area: string; local: string; other?: string; default?: string; notes: string;
+}
+interface ComparisonDefinition {
+  id: string; slug: string; name: string; engine: string; competitor?: string; baseline: string; baselineUrl: string;
+  summary: string; scope: string;
 }
 
 const inventories = import.meta.glob('./emulator-comparisons/*.json', { eager: true, import: 'default' });
 const assets = import.meta.glob('./emulator-comparisons/*.json', { eager: true, query: '?url', import: 'default' });
-const sourceAssets = import.meta.glob('./emulator-comparison-sources/*.json', { eager: true, query: '?url', import: 'default' });
 
-const definitions = [
+const definitions: ComparisonDefinition[] = [
   {
     id: 'gcs', slug: 'cloud-storage', name: 'Cloud Storage', engine: 'LocalCloud GCS',
     competitor: 'fake-gcs-server', baseline: 'fake-gcs-server',
@@ -43,15 +50,14 @@ const definitions = [
     competitor: 'goccy BigQuery emulator', baseline: 'goccy BigQuery emulator',
     baselineUrl: 'https://github.com/goccy/bigquery-emulator/tree/cb8555bee739c794343337e8c3242b59d5d7470a',
     summary: 'Run ML, external tables, federation, policies, snapshots and clones alongside SQL.',
-    scope: 'Generative ML requires a configured provider. Unassessed competitor behavior never counts as a missing feature.',
+    scope: 'Generative ML requires a configured provider. Competitor results come from its documentation, source or backend declarations, not new test runs, and unassessed behavior never counts as a missing feature.',
   },
-] as const;
+];
 
 export const emulatorComparisons = definitions.map(definition => {
   const key = `./emulator-comparisons/${definition.id}.json`;
   const rows = inventories[key] as ComparisonRow[];
   return { ...definition, ...metrics[definition.id], rows, dataUrl: assets[key] as string,
-    sourcesUrl: sourceAssets[`./emulator-comparison-sources/${definition.id}.json`] as string,
     path: `/compare/emulators/${definition.slug}/`,
     workspacePath: `/compare/emulators/?service=${definition.slug}`,
     areas: [...new Set(rows.map(row => row.area))],
