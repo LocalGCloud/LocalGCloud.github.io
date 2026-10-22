@@ -200,26 +200,6 @@
     "notes": "Sessions remain transient across restart."
   },
   {
-    "id": "spanner-data-api-and-sessions-directed-read-replica-routing",
-    "name": "Directed-read replica routing",
-    "area": "Data API and sessions",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Lets read-only transactions and single reads name which replicas serve them, by including or excluding replicas by location and type; read-write transactions cannot use it.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/directed-reads",
-    "notes": "Options are validated but run on the same local engine."
-  },
-  {
-    "id": "spanner-data-api-and-sessions-data-boost-separate-compute",
-    "name": "Data Boost separate compute",
-    "area": "Data API and sessions",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Runs eligible read-only analytics queries and exports on separate serverless compute, so they do not use the provisioned instance's capacity or slow its transactional workload.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/databoost/databoost-overview",
-    "notes": "Options are validated but run on the same local engine."
-  },
-  {
     "id": "spanner-instance-administration-instanceadminservice-listinstanceconfigs",
     "name": "InstanceAdminService.ListInstanceConfigs",
     "area": "Instance administration",
@@ -348,16 +328,6 @@
     "description": "Deletes an instance together with all of its databases and stops billing for its resources.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.spanner.admin.instance.v1#google.spanner.admin.instance.v1.InstanceAdmin.DeleteInstance",
     "notes": ""
-  },
-  {
-    "id": "spanner-instance-administration-instanceadminservice-moveinstance",
-    "name": "InstanceAdminService.MoveInstance",
-    "area": "Instance administration",
-    "local": "no-effect",
-    "other": "unavailable",
-    "description": "Moves an instance to a different instance configuration as a long-running operation, relocating its data to the new replicas without downtime.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.spanner.admin.instance.v1#google.spanner.admin.instance.v1.InstanceAdmin.MoveInstance",
-    "notes": "Updates instance-config metadata; no physical data movement."
   },
   {
     "id": "spanner-instance-administration-instanceadminservice-listinstancepartitions",
@@ -680,16 +650,6 @@
     "notes": "Maintains chain fields."
   },
   {
-    "id": "spanner-database-administration-operations-and-backups-physically-incremental-backup-storage",
-    "name": "Physically incremental backup storage",
-    "area": "Database administration, operations, and backups",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "An incremental backup stores only the changes made since the previous backup in its chain, while the first backup of a chain is a full copy of the database.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.spanner.admin.database.v1",
-    "notes": "Every backup remains a full copy."
-  },
-  {
     "id": "spanner-database-administration-operations-and-backups-databaseadminservice-updatedatabaseddl",
     "name": "DatabaseAdminService.UpdateDatabaseDdl",
     "area": "Database administration, operations, and backups",
@@ -708,16 +668,6 @@
     "description": "Returns the current schema of a database as a list of formatted DDL statements; schema updates that are still pending are not included.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.spanner.admin.database.v1#google.spanner.admin.database.v1.DatabaseAdmin.GetDatabaseDdl",
     "notes": ""
-  },
-  {
-    "id": "spanner-database-administration-operations-and-backups-databaseadminservice-addsplitpoints",
-    "name": "DatabaseAdminService.AddSplitPoints",
-    "area": "Database administration, operations, and backups",
-    "local": "no-effect",
-    "other": "unavailable",
-    "description": "Adds split points to chosen tables and indexes of a database, marking key boundaries where Spanner should divide data ahead of expected load.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.spanner.admin.database.v1#google.spanner.admin.database.v1.DatabaseAdmin.AddSplitPoints",
-    "notes": "Stores and reports split metadata; does not physically pre-split storage."
   },
   {
     "id": "spanner-database-administration-operations-and-backups-operationsservice-getoperation",
@@ -748,16 +698,6 @@
     "description": "Waits until a long-running operation is done or a timeout passes, then returns its latest state; it may return early, so callers should check the done flag.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.longrunning#google.longrunning.Operations.WaitOperation",
     "notes": ""
-  },
-  {
-    "id": "spanner-database-administration-operations-and-backups-operationsservice-canceloperation",
-    "name": "OperationsService.CancelOperation",
-    "area": "Database administration, operations, and backups",
-    "local": "no-effect",
-    "other": "unavailable",
-    "description": "Starts a best-effort cancellation of a long-running operation; a cancelled operation is not deleted and ends with a CANCELLED error.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.longrunning#google.longrunning.Operations.CancelOperation",
-    "notes": "Validates an already completed operation; no running work is canceled."
   },
   {
     "id": "spanner-schema-and-ddl-create-table",
@@ -1090,16 +1030,6 @@
     "notes": ""
   },
   {
-    "id": "spanner-schema-and-ddl-remote-function-execution-against-cloud-run",
-    "name": "Remote function execution against Cloud Run",
-    "area": "Schema and DDL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "A remote function is callable from SQL but runs in a Cloud Run or Cloud Run functions HTTPS endpoint, which receives batches of arguments as JSON and returns a reply for each call.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/cloud-run-remote-function#create-a-remote-function",
-    "notes": "Emulators return placeholders without production Cloud Run invocation."
-  },
-  {
     "id": "spanner-schema-and-ddl-googlesql-create-placement",
     "name": "GoogleSQL CREATE PLACEMENT",
     "area": "Schema and DDL",
@@ -1270,36 +1200,6 @@
     "notes": "Filters sweeper deletes."
   },
   {
-    "id": "spanner-schema-and-ddl-create-locality-group",
-    "name": "CREATE LOCALITY GROUP",
-    "area": "Schema and DDL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Defines a locality group with a storage option of ssd or hdd and an optional ssd_to_hdd_spill_timespan after which data moves from SSD to HDD; columns and indexes can be assigned to it.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/tiered-storage",
-    "notes": "DDL/catalog metadata only; no storage tiering."
-  },
-  {
-    "id": "spanner-schema-and-ddl-alter-locality-group",
-    "name": "ALTER LOCALITY GROUP",
-    "area": "Schema and DDL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Changes the storage type, the SSD-to-HDD spill timespan, or both for an existing locality group; the built-in default group is named with backticks.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/tiered-storage",
-    "notes": "DDL/catalog metadata only; no storage tiering."
-  },
-  {
-    "id": "spanner-schema-and-ddl-drop-locality-group",
-    "name": "DROP LOCALITY GROUP",
-    "area": "Schema and DDL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Removes a locality group; it fails while the group still holds data, which must first be moved to another locality group.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/tiered-storage",
-    "notes": "DDL/catalog metadata only; no storage tiering."
-  },
-  {
     "id": "spanner-schema-and-ddl-version-retention-period-enforcement",
     "name": "version_retention_period enforcement",
     "area": "Schema and DDL",
@@ -1328,106 +1228,6 @@
     "description": "Database option whose only valid value is bit_reversed_positive; sequences and identity columns that name no kind use it, producing positive INT64 values that are not sequential.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#alter-database",
     "notes": "Validated default sequence kind."
-  },
-  {
-    "id": "spanner-schema-and-ddl-score-version-metadata",
-    "name": "score_version metadata",
-    "area": "Schema and DDL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Database option that sets the default version of the scoring algorithm behind the SCORE function in full-text search; a version in a query's SCORE options overrides it.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#alter-database",
-    "notes": "Stored metadata; no production scoring engine."
-  },
-  {
-    "id": "spanner-schema-and-ddl-witness-location-physical-effect",
-    "name": "witness_location physical effect",
-    "area": "Schema and DDL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Database option naming the location of the witness replica, a replica that votes on writes to form a quorum but serves no reads.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#alter-database",
-    "notes": "No witness placement."
-  },
-  {
-    "id": "spanner-schema-and-ddl-read-lease-regions-physical-effect",
-    "name": "read_lease_regions physical effect",
-    "area": "Schema and DDL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Database option listing non-leader read-write or read-only regions that may serve strong reads from their own replicas, reducing strong read latency in those regions.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#alter-database",
-    "notes": "No regional read leases."
-  },
-  {
-    "id": "spanner-schema-and-ddl-per-placement-routing-metadata-physical-effect",
-    "name": "per_placement_routing_metadata physical effect",
-    "area": "Schema and DDL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Database option choosing where routing metadata lives for geo-partitioned data: with TRUE it sits in each placement's own partition, with FALSE it is centralized in the default partition.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#alter-database",
-    "notes": "Metadata only."
-  },
-  {
-    "id": "spanner-schema-and-ddl-columnar-policy-physical-effect",
-    "name": "columnar_policy physical effect",
-    "area": "Schema and DDL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "An option that configures the Spanner columnar engine, which builds a per-column storage layout in the background to speed up analytical queries on current operational data.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#alter-database",
-    "notes": "No separate columnar storage engine."
-  },
-  {
-    "id": "spanner-schema-and-ddl-create-queue-statement",
-    "name": "CREATE QUEUE statement",
-    "area": "Schema and DDL",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Creates a queue, a table-like object that holds messages, with key columns, one Payload column, a primary key and options such as receive_mode, disable_send and disable_delivery.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#create-queue",
-    "notes": "Not exposed in this LocalCloud baseline; v1.5.59 adds queues."
-  },
-  {
-    "id": "spanner-schema-and-ddl-alter-queue-statement",
-    "name": "ALTER QUEUE statement",
-    "area": "Schema and DDL",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Changes an existing queue: sets options such as disable_send, disable_delivery and locality_group, changes ON DELETE or interleaving, and adds, drops or replaces its row deletion policy.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#alter-queue",
-    "notes": "Not exposed in this LocalCloud baseline."
-  },
-  {
-    "id": "spanner-schema-and-ddl-drop-queue-statement",
-    "name": "DROP QUEUE statement",
-    "area": "Schema and DDL",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Deletes a queue; with IF EXISTS, naming a queue that does not exist is not an error.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#drop-queue",
-    "notes": "Not exposed in this LocalCloud baseline."
-  },
-  {
-    "id": "spanner-schema-and-ddl-queue-receive-execution",
-    "name": "Queue RECEIVE execution",
-    "area": "Schema and DDL",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Calls the queue's RECEIVE table-valued function through ExecuteStreamingSQL to stream messages to a worker as a long-running query, each with a lease token and lease expiration time.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language",
-    "notes": "Not exposed in this LocalCloud baseline."
-  },
-  {
-    "id": "spanner-schema-and-ddl-queue-renewlease-execution",
-    "name": "Queue RENEWLEASE execution",
-    "area": "Schema and DDL",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Calls the queue's RENEWLEASE table-valued function with an array of lease tokens to extend the leases of messages being processed, so they are not redelivered on timeout.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language",
-    "notes": "Not exposed in this LocalCloud baseline."
   },
   {
     "id": "spanner-types-and-values-bool-type",
@@ -3068,66 +2868,6 @@
     "description": "Statement hint that makes a statement take exclusive instead of shared locks on the ranges it scans, reducing aborts and retries when many transactions contend for the same rows.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/query-syntax",
     "notes": "Acquires exclusive locks."
-  },
-  {
-    "id": "spanner-googlesql-query-language-and-functions-optimizer-version-query-hint",
-    "name": "OPTIMIZER_VERSION query hint",
-    "area": "GoogleSQL query language and functions",
-    "local": "no-effect",
-    "other": "unavailable",
-    "description": "Statement hint on a query that pins the query optimizer version used to compile it, as a version number, latest_version or default_version, overriding client and database settings.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/query-syntax",
-    "notes": "Accepted and validated; no production optimizer selection."
-  },
-  {
-    "id": "spanner-googlesql-query-language-and-functions-optimizer-version-dml-hint",
-    "name": "OPTIMIZER_VERSION DML hint",
-    "area": "GoogleSQL query language and functions",
-    "local": "no-effect",
-    "other": "unavailable",
-    "description": "Statement hint placed before an INSERT, UPDATE or DELETE statement that selects the query optimizer version used to compile that DML statement, overriding client and database settings.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/query-syntax",
-    "notes": "Accepted and validated; no production optimizer selection."
-  },
-  {
-    "id": "spanner-googlesql-query-language-and-functions-optimizer-statistics-package-hint-effect",
-    "name": "OPTIMIZER_STATISTICS_PACKAGE hint effect",
-    "area": "GoogleSQL query language and functions",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Statement hint that chooses which optimizer statistics package, named in INFORMATION_SCHEMA.SPANNER_STATISTICS or set to latest, the optimizer uses when planning the statement.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/query-syntax",
-    "notes": "Does not use a production statistics package."
-  },
-  {
-    "id": "spanner-googlesql-query-language-and-functions-join-method-hint-effect",
-    "name": "JOIN_METHOD hint effect",
-    "area": "GoogleSQL query language and functions",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Join hint that selects the physical join algorithm, such as HASH_JOIN, APPLY_JOIN, MERGE_JOIN or PUSH_BROADCAST_HASH_JOIN, instead of letting the optimizer decide.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/query-syntax",
-    "notes": "Validated but does not select a production join implementation."
-  },
-  {
-    "id": "spanner-googlesql-query-language-and-functions-index-strategy-hint-effect",
-    "name": "INDEX_STRATEGY hint effect",
-    "area": "GoogleSQL query language and functions",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Table hint INDEX_STRATEGY=FORCE_INDEX_UNION that reads from two or more indexes and unions their results, which suits WHERE clauses that combine OR conditions on different columns.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/query-syntax",
-    "notes": "Validated without the physical optimization."
-  },
-  {
-    "id": "spanner-googlesql-query-language-and-functions-group-method-hint-effect",
-    "name": "GROUP_METHOD hint effect",
-    "area": "GoogleSQL query language and functions",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Hint on GROUP BY that picks the aggregation strategy: HASH_GROUP builds an in-memory hash table of groups, while STREAM_GROUP aggregates already sorted input without buffering groups.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/query-syntax",
-    "notes": "Validated without the physical optimization."
   },
   {
     "id": "spanner-googlesql-query-language-and-functions-plan-query-plan-tree",
@@ -4820,16 +4560,6 @@
     "notes": "Local documented mutation counting; index/constraint differences remain possible."
   },
   {
-    "id": "spanner-transactions-timestamps-and-concurrency-max-commit-delay-delay-effect",
-    "name": "max_commit_delay delay effect",
-    "area": "Transactions, timestamps, and concurrency",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "An optional commit setting that lets Spanner hold a commit for a short, bounded time so it can be grouped with others, trading a little latency for higher throughput.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.spanner.v1#google.spanner.v1.CommitRequest.FIELDS.google.protobuf.Duration.google.spanner.v1.CommitRequest.max_commit_delay",
-    "notes": "LocalCloud validates 0–500 ms but does not delay commits."
-  },
-  {
     "id": "spanner-transactions-timestamps-and-concurrency-read-write-transaction-read-query-write-buffering",
     "name": "Read-write transaction read/query/write buffering",
     "area": "Transactions, timestamps, and concurrency",
@@ -5710,16 +5440,6 @@
     "notes": "Applies provided category weights."
   },
   {
-    "id": "spanner-full-text-search-score-version-option-effect",
-    "name": "SCORE version option effect",
-    "area": "Full-text search",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Option in the SCORE options JSON that selects a specific release of the scoring algorithm so scores stay stable as the scorer improves; the score_version database option sets a database-wide default.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/search_functions",
-    "notes": "Accepts version without changing local scoring."
-  },
-  {
     "id": "spanner-full-text-search-score-ngrams-array-aggregator",
     "name": "SCORE_NGRAMS array_aggregator",
     "area": "Full-text search",
@@ -5908,26 +5628,6 @@
     "description": "The vector_length annotation fixes the number of dimensions of a FLOAT64 array column used for double-precision embeddings, at twice the storage per element of FLOAT32; PostgreSQL uses VECTOR LENGTH.",
     "docs": "https://docs.cloud.google.com/spanner/docs/find-k-nearest-neighbors",
     "notes": "Local validation; no dedicated vector storage engine."
-  },
-  {
-    "id": "spanner-vector-search-ann-recall-latency-tuning",
-    "name": "ANN recall/latency tuning",
-    "area": "Vector search",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Approximate nearest neighbor queries trade recall for speed: scanning more leaves of the vector index, through num_leaves_to_search or pct_leaves_to_search, improves recall but raises latency and cost.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/find-approximate-nearest-neighbors",
-    "notes": "Exact scans cannot model production ANN tuning."
-  },
-  {
-    "id": "spanner-vector-search-num-leaves-to-search-query-tuning",
-    "name": "num_leaves_to_search query tuning",
-    "area": "Vector search",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Search option in the approximate distance functions' options JSON that sets how many vector index leaves to scan; it must be a positive integer and cannot be combined with pct_leaves_to_search.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/find-approximate-nearest-neighbors",
-    "notes": "Validated but does not alter the exact scan."
   },
   {
     "id": "spanner-spanner-graph-and-gql-graph-match-queries",
@@ -6310,36 +6010,6 @@
     "notes": "Writes computed rows; violating rows may be skipped."
   },
   {
-    "id": "spanner-spanner-graph-and-gql-graph-export-data-to-csv",
-    "name": "Graph EXPORT DATA to CSV",
-    "area": "Spanner Graph and GQL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Writes algorithm results as CSV text to Cloud Storage, with options such as header, field_delimiter, overwrite and GZIP compression; nested and repeated data cannot be exported.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/graph/run-algorithms",
-    "notes": "Validates options, then discards rows."
-  },
-  {
-    "id": "spanner-spanner-graph-and-gql-graph-export-data-to-parquet",
-    "name": "Graph EXPORT DATA to Parquet",
-    "area": "Spanner Graph and GQL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Writes algorithm results to Cloud Storage in the columnar Parquet format, with options overwrite and compression of SNAPPY, GZIP or ZSTD.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/graph/run-algorithms",
-    "notes": "Validates options, then discards rows."
-  },
-  {
-    "id": "spanner-spanner-graph-and-gql-graph-export-data-to-avro",
-    "name": "Graph EXPORT DATA to Avro",
-    "area": "Spanner Graph and GQL",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Writes algorithm results to Cloud Storage in the row-oriented Avro format, with options overwrite and compression of DEFLATE or SNAPPY.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/graph/run-algorithms",
-    "notes": "Validates options, then discards rows."
-  },
-  {
     "id": "spanner-ml-and-external-integrations-create-model-remote",
     "name": "CREATE MODEL REMOTE",
     "area": "ML and external integrations",
@@ -6378,66 +6048,6 @@
     "description": "Removes a model definition from the database; queries that reference it then fail, while the Vertex AI endpoint itself is unaffected.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#create-model",
     "notes": ""
-  },
-  {
-    "id": "spanner-ml-and-external-integrations-ml-predict-model-inference",
-    "name": "ML.PREDICT() model inference",
-    "area": "ML and external integrations",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Table-valued function that runs a registered model over each row of an input table or subquery and returns the model outputs together with the input's pass-through columns.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/ml-functions#mlpredict",
-    "notes": "Production requires model-backed inference; Emulators return placeholders by default."
-  },
-  {
-    "id": "spanner-ml-and-external-integrations-postgresql-spanner-ml-predict-row-model-inference",
-    "name": "PostgreSQL spanner.ml_predict_row() model inference",
-    "area": "ML and external integrations",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "PostgreSQL-dialect scalar function that sends one row's arguments as JSONB to a Vertex AI endpoint and returns the prediction as JSONB, usable wherever a scalar expression is allowed.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/postgresql/functions",
-    "notes": "Production requires model-backed inference; Emulators return placeholders by default."
-  },
-  {
-    "id": "spanner-ml-and-external-integrations-ai-if-model-inference",
-    "name": "AI.IF() model inference",
-    "area": "ML and external integrations",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Asks a Gemini model whether a natural-language condition in a prompt string is true and returns a BOOL; returns NULL when an argument is NULL or the prompt is empty.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/ml-functions#aiif",
-    "notes": "Production requires model-backed inference; Emulators return placeholders by default."
-  },
-  {
-    "id": "spanner-ml-and-external-integrations-ai-score-model-inference",
-    "name": "AI.SCORE() model inference",
-    "area": "ML and external integrations",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Rates the input described in a prompt according to a scoring scheme stated in the prompt and returns a FLOAT64, commonly combined with ORDER BY to rank rows.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/ml-functions#aiscore",
-    "notes": "Production requires model-backed inference; Emulators return placeholders by default."
-  },
-  {
-    "id": "spanner-ml-and-external-integrations-ai-classify-model-inference",
-    "name": "AI.CLASSIFY() model inference",
-    "area": "ML and external integrations",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Assigns the input prompt to one of the categories you list, either as plain names or as name and description pairs, and returns the best-fitting category as a STRING.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/ml-functions#aiclassify",
-    "notes": "Production requires model-backed inference; Emulators return placeholders by default."
-  },
-  {
-    "id": "spanner-ml-and-external-integrations-google-hosted-vertex-ai-endpoint-execution",
-    "name": "Google-hosted Vertex AI endpoint execution",
-    "area": "ML and external integrations",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Spanner sends model input from a query directly to a model deployed on a Vertex AI endpoint and returns the endpoint's predictions into the query, without a client round trip.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/ml",
-    "notes": "Not called by either local emulator."
   },
   {
     "id": "spanner-metadata-information-schema-and-spanner-sys-information-schema-tables",
@@ -7000,16 +6610,6 @@
     "notes": "Stores/returns policies; no authenticated IAM enforcement."
   },
   {
-    "id": "spanner-security-and-governance-databaseadminservice-testiampermissions",
-    "name": "DatabaseAdminService.TestIamPermissions",
-    "area": "Security and governance",
-    "local": "no-effect",
-    "other": "unavailable",
-    "description": "Returns which of a list of permissions the caller holds on a database or backup, so a client can check its access without changing anything.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.spanner.admin.database.v1#google.spanner.admin.database.v1.DatabaseAdmin.TestIamPermissions",
-    "notes": "Returns requested permissions; it does not evaluate IAM access."
-  },
-  {
     "id": "spanner-security-and-governance-instanceadminservice-setiampolicy",
     "name": "InstanceAdminService.SetIamPolicy",
     "area": "Security and governance",
@@ -7028,26 +6628,6 @@
     "description": "Returns the access control policy of an instance, or an empty policy when none has been set.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.spanner.admin.instance.v1#google.spanner.admin.instance.v1.InstanceAdmin.GetIamPolicy",
     "notes": "Stores/returns policies; no authenticated IAM enforcement."
-  },
-  {
-    "id": "spanner-security-and-governance-instanceadminservice-testiampermissions",
-    "name": "InstanceAdminService.TestIamPermissions",
-    "area": "Security and governance",
-    "local": "no-effect",
-    "other": "unavailable",
-    "description": "Returns which of a list of permissions the caller holds on an instance, so a client can check its access without changing anything.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/rpc/google.spanner.admin.instance.v1#google.spanner.admin.instance.v1.InstanceAdmin.TestIamPermissions",
-    "notes": "Returns requested permissions; it does not evaluate IAM access."
-  },
-  {
-    "id": "spanner-security-and-governance-authenticated-iam-authorization-decisions",
-    "name": "Authenticated IAM authorization decisions",
-    "area": "Security and governance",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Each request is attributed to an authenticated IAM identity and allowed only if its roles grant the needed permission, such as spanner.databases.select, at project, instance or database level.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/iam",
-    "notes": "No authenticated principal reaches the emulator."
   },
   {
     "id": "spanner-security-and-governance-grant-select-privilege",
@@ -7150,76 +6730,6 @@
     "notes": "Both dialects; sessions without creator_role retain full access."
   },
   {
-    "id": "spanner-security-and-governance-customer-managed-encryption-keys",
-    "name": "Customer-managed encryption keys",
-    "area": "Security and governance",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Encrypts a database and its backups with a key you own in Cloud KMS instead of the default Google-managed key, so you control the key's rotation, disabling and destruction.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/cmek",
-    "notes": "Local data is plaintext; CMEK unavailable."
-  },
-  {
-    "id": "spanner-security-and-governance-cloud-audit-logs",
-    "name": "Cloud Audit Logs",
-    "area": "Security and governance",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Records who did what in Spanner as Cloud Audit Logs entries, covering Admin Activity for configuration changes and Data Access for reads and writes.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/audit-logging",
-    "notes": "No production audit logging."
-  },
-  {
-    "id": "spanner-operations-replication-availability-and-observability-distributed-replication",
-    "name": "Distributed replication",
-    "area": "Operations, replication, availability, and observability",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Spanner synchronously replicates each split of data across replicas in several zones or regions using Paxos, with a leader ordering writes, so data survives failures.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/replication",
-    "notes": "No distributed local deployment simulation."
-  },
-  {
-    "id": "spanner-operations-replication-availability-and-observability-multi-region-serving",
-    "name": "Multi-region serving",
-    "area": "Operations, replication, availability, and observability",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "A multi-region instance configuration places read-write, read-only and witness replicas in several regions, so data stays readable and writable if a whole region fails.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/replication",
-    "notes": "No distributed local deployment simulation."
-  },
-  {
-    "id": "spanner-operations-replication-availability-and-observability-physical-regional-row-placement",
-    "name": "Physical regional row placement",
-    "area": "Operations, replication, availability, and observability",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Stores rows in the geographic regions chosen for them, using a placement key column whose value maps each row to a placement in a specific region.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/replication",
-    "notes": "No distributed local deployment simulation."
-  },
-  {
-    "id": "spanner-operations-replication-availability-and-observability-physical-compute-autoscaling",
-    "name": "Physical compute autoscaling",
-    "area": "Operations, replication, availability, and observability",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "The managed autoscaler adds or removes an instance's compute capacity in nodes or processing units as CPU load and storage change, within minimum and maximum limits you set.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/autoscaling-overview",
-    "notes": "Capacity is local metadata."
-  },
-  {
-    "id": "spanner-operations-replication-availability-and-observability-cloud-monitoring-integration",
-    "name": "Cloud Monitoring integration",
-    "area": "Operations, replication, availability, and observability",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Publishes Spanner instance and database metrics such as CPU utilization, storage use and request latency to Cloud Monitoring for dashboards, charts and alerting policies.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/monitoring-cloud",
-    "notes": "Not emulated."
-  },
-  {
     "id": "spanner-operations-replication-availability-and-observability-table-count-limit-validation",
     "name": "Table-count limit validation",
     "area": "Operations, replication, availability, and observability",
@@ -7258,36 +6768,6 @@
     "description": "Caps the size of a single cell value, such as a STRING or BYTES value, and rejects a write whose value is larger than the cap.",
     "docs": "https://docs.cloud.google.com/spanner/quotas",
     "notes": "Selected API/schema limits only, not all cloud quotas."
-  },
-  {
-    "id": "spanner-operations-replication-availability-and-observability-admin-api-rate-quotas",
-    "name": "Admin API rate quotas",
-    "area": "Operations, replication, availability, and observability",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Limits how many instance, database and backup admin API requests a project or user may send per period, including polling of long-running operations; extra requests are rejected.",
-    "docs": "https://docs.cloud.google.com/spanner/quotas",
-    "notes": "Not enforced locally."
-  },
-  {
-    "id": "spanner-operations-replication-availability-and-observability-capacity-based-admission-quotas",
-    "name": "Capacity-based admission quotas",
-    "area": "Operations, replication, availability, and observability",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Quotas bound how much compute capacity a project may provision per region, and an instance accepts only the load its provisioned capacity can serve.",
-    "docs": "https://docs.cloud.google.com/spanner/quotas",
-    "notes": "Not enforced locally."
-  },
-  {
-    "id": "spanner-operations-replication-availability-and-observability-default-leader-physical-routing-effect",
-    "name": "default_leader physical routing effect",
-    "area": "Operations, replication, availability, and observability",
-    "local": "no-effect",
-    "other": "no-effect",
-    "description": "Names the read-write region that hosts leader replicas for a dual-region or multi-region database, so writes are first handled in that region, close to the writers.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/leader-aware-routing",
-    "notes": "Stored metadata does not select a real regional leader."
   },
   {
     "id": "spanner-clients-drivers-and-tooling-spanner-grpc-endpoint",
@@ -7548,25 +7028,5 @@
     "description": "PostgreSQL-dialect JSONB values are stored durably in their normalized form, and reading them back returns the same JSON content.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/postgresql/functions#jsonb",
     "notes": "Requires --data_dir; power-loss durability and type limitations remain documented."
-  },
-  {
-    "id": "spanner-emulator-specific-capabilities-persistent-non-null-proto-values",
-    "name": "Persistent non-NULL PROTO values",
-    "area": "Emulator-specific capabilities",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Non-NULL PROTO column values, serialized protocol buffer messages, are stored durably with the row and are read back as the same message.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-types#protocol_buffer_type",
-    "notes": "Value codec returns UNIMPLEMENTED; no commit is stored."
-  },
-  {
-    "id": "spanner-emulator-specific-capabilities-persistent-non-null-enum-values",
-    "name": "Persistent non-NULL ENUM values",
-    "area": "Emulator-specific capabilities",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Non-NULL ENUM column values, named integer constants from a protocol buffer enum in the schema's proto bundle, are stored durably and read back unchanged.",
-    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-types#enum_type",
-    "notes": "Value codec returns UNIMPLEMENTED; no commit is stored."
   }
 ]

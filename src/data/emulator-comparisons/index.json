@@ -1,26 +1,26 @@
 {
   "gcs": {
-    "total": 227,
+    "total": 168,
     "exclusive": 68,
     "hasCompetitor": true
   },
   "firestore": {
-    "total": 179,
+    "total": 176,
     "exclusive": 37,
     "hasCompetitor": true
   },
   "bigtable": {
-    "total": 491,
+    "total": 376,
     "exclusive": 302,
     "hasCompetitor": true
   },
   "spanner": {
-    "total": 757,
+    "total": 703,
     "exclusive": 178,
     "hasCompetitor": true
   },
   "bigquery": {
-    "total": 1121,
+    "total": 1112,
     "exclusive": 55,
     "hasCompetitor": true
   }

@@ -53,25 +53,56 @@ const defaultMode = slug => stats(slug).hasCompetitor ? 'advantages' : 'all';
 const categories = (slug, mode = defaultMode(slug)) => groupComparisonRows(inventory(slug)).filter(group => mode === 'all' || group.exclusive > 0);
 const featureCount = (groups, mode) => groups.reduce((sum, group) => sum + (mode === 'all' ? group.total : group.exclusive), 0);
 const entryStatus = (slug, mode = defaultMode(slug)) => { const groups = categories(slug, mode); return resultsText(featureCount(groups, mode), groups.length, mode); };
-const visibleGroups = page => page.$$eval(`${activeTable} [data-comparison-group]`, nodes => nodes.filter(node => !node.hidden).length);
-const openGroups = page => page.$$eval(`${activeTable} [data-comparison-group][open]`, nodes => nodes.length);
-const rowCount = page => page.$$eval(`${activeTable} tbody tr`, rows => rows.length);
+const categoryRows = `${activeTable} tr[data-comparison-category]`;
+const visibleGroups = page => page.$$eval(categoryRows, nodes => nodes.filter(node => !node.hidden).length);
+const openGroups = page => page.$$eval(`${categoryRows} button[aria-expanded="true"]`, nodes => nodes.length);
+const rowCount = page => page.$$eval(`${activeTable} tr[data-feature-id]`, rows => rows.length);
 // Opens every listed category and waits until each one has drawn its features.
 const openAll = async page => {
-  await page.$$eval(`${activeTable} [data-comparison-group]:not([hidden])`, nodes => nodes.forEach(node => { node.open = true; }));
-  await page.waitForFunction(selector => [...document.querySelectorAll(`${selector} [data-comparison-group]:not([hidden])`)].every(node => node.querySelector('tbody')?.children.length), {}, activeTable);
+  await page.$$eval(`${categoryRows}:not([hidden]) button[aria-expanded="false"]`, buttons => buttons.forEach(button => button.click()));
+  await page.waitForFunction(selector => {
+    const root = document.querySelector(selector);
+    const mode = root.querySelector('input:checked').value;
+    const expected = [...root.querySelectorAll('tr[data-comparison-category]:not([hidden])')].reduce((sum, row) => sum + Number(mode === 'all' ? row.dataset.total : row.dataset.exclusive), 0);
+    return root.querySelectorAll('tr[data-feature-id]').length === expected;
+  }, {}, activeTable);
+};
+const clickFirstCategory = async page => {
+  await page.click(`${categoryRows}:not([hidden]) button`);
+  await page.waitForSelector(`${activeTable} tr[data-feature-id]`);
 };
 
 for (const slug of Object.keys(ids)) {
-  test(`${slug}: categories start collapsed, open to documented features and filter by search`, { timeout: 60000 }, async t => {
+  test(`${slug}: categories are table rows that start collapsed, count what is supported and open to documented features`, { timeout: 60000 }, async t => {
     const page = await open(t, `/compare/emulators/${slug}/?view=classic`);
     await settled(page);
     const service = stats(slug), mode = defaultMode(slug), groups = categories(slug);
-    assert.equal(await visibleGroups(page), groups.length, 'one category per document section that has something to show');
+    assert.equal(await visibleGroups(page), groups.length, 'one category row per document section that has something to show');
     assert.equal(await openGroups(page), 0, 'categories are collapsed by default');
     assert.equal(await rowCount(page), 0, 'no feature rows until a category opens');
+    assert.equal(await page.$$eval('main details', nodes => nodes.length), 0, 'categories are rows of the one table, not separate widgets');
+    assert.equal(await page.$$eval('main table', nodes => nodes.length), 1);
     assert.equal(await status(page), entryStatus(slug));
-    assert.deepEqual(await page.$$eval(`${activeTable} .comparison-group-name`, nodes => nodes.filter(node => !node.closest('[hidden]')).map(node => node.textContent)), groups.map(group => group.area));
+    assert.deepEqual(await page.$$eval(`${categoryRows}:not([hidden]) .comparison-category-name`, nodes => nodes.map(node => node.textContent)), groups.map(group => group.area));
+    const numbers = await page.$$eval(`${categoryRows}:not([hidden])`, rows => rows.map(row => {
+      const [supported, missing] = [row.children[1], row.children[2]].map(cell => cell.querySelector('.comparison-count'));
+      return { area: row.dataset.area, supported: supported.querySelector('.sr-only').textContent, supportedGlyph: supported.firstElementChild.textContent, supportedClass: supported.className,
+        supportedColor: getComputedStyle(supported).color, missing: missing.querySelector('.sr-only').textContent, missingGlyph: missing.firstElementChild.textContent,
+        missingClass: missing.className, missingColor: getComputedStyle(missing).color, details: row.children[3].textContent.trim(), cells: row.children.length };
+    }));
+    for (const [index, group] of groups.entries()) {
+      const row = numbers[index];
+      assert.equal(row.supported, `${group.supported} supported`, `${group.area}: LocalCloud's number counts the features it supports`);
+      assert.equal(row.missing, `${group.missing} not supported`, `${group.area}: the competitor's number counts the features it lacks`);
+      assert.equal(row.supportedGlyph, group.supported ? `✓ ${group.supported}` : '0');
+      assert.equal(row.missingGlyph, group.missing ? `✕ ${group.missing}` : '0');
+      assert.match(row.supportedClass, group.supported ? /comparison-count--supported/ : /comparison-count--zero/);
+      assert.match(row.missingClass, group.missing ? /comparison-count--missing/ : /comparison-count--zero/);
+      if (group.supported) assert.equal(row.supportedColor, 'rgb(19, 115, 51)');
+      if (group.missing) assert.equal(row.missingColor, 'rgb(234, 67, 53)');
+      assert.equal(row.details, '', 'the Details cell of a category row stays empty');
+      assert.equal(row.cells, service.hasCompetitor ? 4 : 3);
+    }
     const meta = await page.$eval('.comparison-meta', node => node.textContent.replace(/\s+/g, ' ').trim());
     assert.equal(meta.replace(/ \(not in [^)]+\)$/, ''), `${service.total.toLocaleString('en-US')} features in total · ${service.exclusive.toLocaleString('en-US')} only available in LocalCloud`);
     assert.match(meta, /\(not in [^)]+\)$/, 'the line names the emulator the count is measured against');
@@ -81,14 +112,15 @@ for (const slug of Object.keys(ids)) {
     assert.equal(await page.$eval('[data-comparison-agent]', node => getComputedStyle(node).display), 'none');
     assert.ok(!await page.$eval('main', node => node.innerText.includes('JSON comparison view')));
 
-    await page.click(`${activeTable} [data-comparison-group]:not([hidden]) summary`);
-    await page.waitForSelector(`${activeTable} [data-comparison-group][open] tbody tr`);
-    assert.equal(await rowCount(page), mode === 'all' ? groups[0].total : groups[0].exclusive, 'a category lists the features its header counts');
+    await clickFirstCategory(page);
+    assert.equal(await openGroups(page), 1);
+    assert.equal(await rowCount(page), mode === 'all' ? groups[0].total : groups[0].exclusive, 'a category lists the features it counts');
     assert.equal(await page.$eval(`${activeTable} thead th:nth-child(2)`, node => node.textContent.trim()), names[slug]);
     assert.equal(await page.$$eval(`${activeTable} thead th`, cells => cells.length), service.hasCompetitor ? 4 : 3);
-    assert.equal(await page.$$eval(`${activeTable} tbody th small`, nodes => nodes.length), 0, 'the category is the header, not repeated under each feature');
+    assert.equal(await page.$$eval(`${activeTable} tr[data-feature-id] th small`, nodes => nodes.length), 0, 'the category is a row, not repeated under each feature');
+    assert.equal(await page.$eval(`${categoryRows}:not([hidden])`, row => row.nextElementSibling.dataset.featureId !== undefined), true, 'features sit directly under their category row');
     const sources = new Map(inventory(slug).map(row => [row.id, row]));
-    const shown = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => {
+    const shown = await page.$$eval(`${activeTable} tr[data-feature-id]`, rows => rows.map(row => {
       const link = row.querySelector('.comparison-doc a');
       return { id: row.dataset.featureId, description: row.querySelector('td:last-child > p:first-child').textContent, href: link?.href, target: link?.target, rel: link?.rel, label: link?.firstElementChild.textContent, hidden: row.querySelector('.comparison-doc').hidden };
     }));
@@ -102,7 +134,11 @@ for (const slug of Object.keys(ids)) {
       assert.match(row.label, /^(?:Google Cloud|Firebase|Google) docs$/);
     }
     assert.equal(await page.$eval('.comparison-table td', node => getComputedStyle(node).paddingTop), '10px', 'dynamic rows retain compact table styling');
-    assert.equal(await page.$$eval('main details details', nodes => nodes.length), 0);
+    await page.click(`${categoryRows}:not([hidden]) button`);
+    assert.equal(await rowCount(page), 0, 'closing a category removes its features');
+    assert.equal(await openGroups(page), 0);
+    await page.click(`${categoryRows}:not([hidden]) button`);
+    await page.waitForSelector(`${activeTable} tr[data-feature-id]`);
 
     if (service.hasCompetitor) {
       await choose(page, 'all');
@@ -118,17 +154,19 @@ for (const slug of Object.keys(ids)) {
 
     const last = inventory(slug).at(-1);
     await page.type(`${activeTable} input[type="search"]`, last.id); await settled(page);
-    assert.ok(await page.$(`${activeTable} [data-comparison-group][open] tr[data-feature-id="${last.id}"]`), 'a search opens the category holding the match');
+    assert.ok(await page.$(`${activeTable} tr[data-feature-id="${last.id}"]`), 'a search opens the category holding the match');
     assert.match(await status(page), /^\d[\d,]* matching features? in \d+ categor(?:y|ies)\.$/);
+    assert.equal(await page.$eval(`${categoryRows}:not([hidden]) small`, node => /matching feature/.test(node.textContent)), true, 'while searching a category row counts its matches');
     await page.$eval(`${activeTable} input[type="search"]`, input => { input.value = ''; input.dispatchEvent(new Event('input', { bubbles: true })); }); await settled(page);
     assert.equal(await openGroups(page), 1, 'categories a search opened close again; the one the reader opened stays');
+    assert.equal(await page.$eval(`${categoryRows}:not([hidden]) small`, node => /^\d[\d,]* features?$/.test(node.textContent)), true);
   });
 }
 
 test('mobile filters search the complete inventory and restore shared URL state', { timeout: 30000 }, async t => {
   const page = await open(t, '/compare/emulators/bigquery/?features=all&q=sql.function.abs&view=mobile&audience=humans&page=2', 390);
   await settled(page);
-  assert.ok(await page.$eval('tbody', body => body.textContent.includes('ABS')));
+  assert.ok(await page.$eval('tr[data-feature-id]', row => row.textContent.includes('ABS')));
   assert.equal(await openGroups(page), await visibleGroups(page), 'every category with a match is open');
   assert.ok((await page.url()).includes('view=mobile'));
   assert.ok(!new URL(page.url()).searchParams.has('page'), 'obsolete pagination parameters are removed');
@@ -164,20 +202,22 @@ test('blocked inventory fetch keeps the category list and can retry', { timeout:
   await client.send('Network.setBlockedURLs', { urls: [] });
   await choose(page, 'all');
   assert.equal(await status(page), entryStatus('spanner', 'all'));
-  await page.click(`${activeTable} [data-comparison-group]:not([hidden]) summary`);
-  await page.waitForSelector(`${activeTable} [data-comparison-group][open] tbody tr`);
+  await page.click(`${activeTable} tr[data-comparison-category]:not([hidden]) button`);
+  await page.waitForSelector(`${activeTable} tr[data-feature-id]`);
   assert.equal(await rowCount(page), categories('spanner', 'all')[0].total);
 });
 
 test('without JavaScript the categories remain listed with their counts and no download links', { timeout: 30000 }, async t => {
   const page = await open(t, '/compare/emulators/firestore/?view=classic', 390, false);
   const groups = categories('firestore');
-  assert.equal(await page.$$eval('main details', nodes => nodes.filter(node => !node.hidden).length), groups.length);
-  assert.deepEqual(await page.$$eval('main details', nodes => nodes.filter(node => !node.hidden).map(node => node.querySelector('.comparison-group-count').textContent)), groups.map(group => `${group.exclusive} only in LocalCloud`));
+  assert.equal(await page.$$eval(categoryRows, nodes => nodes.filter(node => !node.hidden).length), groups.length);
+  assert.deepEqual(await page.$$eval(`${categoryRows}:not([hidden])`, rows => rows.map(row => [row.children[1].querySelector('.sr-only').textContent, row.children[2].querySelector('.sr-only').textContent])),
+    groups.map(group => [`${group.supported} supported`, `${group.missing} not supported`]), 'the numbers are in the page without JavaScript');
   assert.equal(await page.$$eval('main a[download]', links => links.length), 0);
   assert.equal(await page.$eval('[data-comparison-controls]', node => node.hidden), true);
-  assert.equal(await page.$$eval('tbody tr', rows => rows.length), 0);
-  assert.ok(await page.$eval('main', node => node.textContent.includes('Enable JavaScript to list these features')));
+  assert.equal(await page.$$eval('tr[data-feature-id]', rows => rows.length), 0);
+  assert.equal(await page.$eval(`${categoryRows} .comparison-chevron`, node => getComputedStyle(node).visibility), 'hidden', 'no expand affordance without JavaScript');
+  assert.ok(await page.$eval('main', node => node.textContent.includes('Enable JavaScript to list the features in each category')));
 });
 
 test('agent audience exposes the complete JSON view with a documentation link for every row', { timeout: 30000 }, async t => {
@@ -302,7 +342,7 @@ test('a slow inactive inventory cannot overwrite the active service filters or U
 
 test('workspace without JavaScript retains the category list and real service links', { timeout: 30000 }, async t => {
   const page = await open(t, '/compare/emulators/?view=classic', 390, false);
-  assert.equal(await page.$$eval(`${activeTable} [data-comparison-group]`, nodes => nodes.filter(node => !node.hidden).length), categories('cloud-storage').length);
+  assert.equal(await page.$$eval(`${categoryRows}`, nodes => nodes.filter(node => !node.hidden).length), categories('cloud-storage').length);
   assert.equal(await page.$eval('[role="tablist"]', tabs => tabs.hidden), true, 'interactive tabs stay hidden without JavaScript');
   assert.equal(await page.$eval('main a[href*="/compare/emulators/firestore/"]', node => new URL(node.href).pathname), '/compare/emulators/firestore/');
 });
@@ -312,7 +352,7 @@ test('the first categories show immediately in Desktop, Classic and Mobile', { t
     const page = await open(t, `/compare/emulators/?service=bigtable&view=${view}`, width);
     await page.setViewport({ width, height: 900 });
     await settled(page);
-    const position = await page.$eval(`${activeTable} [data-comparison-group]:not([hidden]) summary`, node => ({ top: node.getBoundingClientRect().top, bottom: node.getBoundingClientRect().bottom }));
+    const position = await page.$eval(`${activeTable} tr[data-comparison-category]:not([hidden]) button`, node => ({ top: node.getBoundingClientRect().top, bottom: node.getBoundingClientRect().bottom }));
     assert.ok(position.top > 0 && position.bottom < (view === 'mobile' ? 780 : 700), `${view}: the first category is visible with room for more (${JSON.stringify(position)})`);
     assert.equal(await page.$eval('[data-comparison-service="bigtable"] .comparison-heading', node => getComputedStyle(node).fontSize), '20px');
   }
@@ -325,12 +365,13 @@ test('a documented limit reads as a green check, never as a separate Scoped resu
   await openAll(page);
   const sources = new Map(inventory('cloud-storage').map(row => [row.id, row]));
   assert.ok([...sources.values()].some(row => row.local === 'limited') && [...sources.values()].some(row => row.other === 'limited'), 'the sample contains limited results on both sides');
-  const marks = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => ({ id: row.dataset.featureId, states: [...row.querySelectorAll('.comparison-state')].filter(node => !node.closest('[hidden]')).map(node => node.dataset.state) })));
+  const marks = await page.$$eval(`${activeTable} tr[data-feature-id]`, rows => rows.map(row => ({ id: row.dataset.featureId, states: [...row.querySelectorAll('.comparison-state')].filter(node => !node.closest('[hidden]')).map(node => node.dataset.state) })));
   for (const row of marks) {
     const source = sources.get(row.id);
     assert.deepEqual(row.states, [comparisonMarkState(source.local), comparisonMarkState(source.other)], `${row.id}: a limited result shows the supported mark`);
   }
   assert.equal(await page.$$eval(`${activeTable} .comparison-state[data-state="limited"]`, nodes => nodes.length), 0);
+  assert.ok(marks.every(row => !(row.states[0] === 'unavailable' && row.states[1] === 'unavailable')), 'a feature neither side supports is never listed');
   assert.ok(!await page.$eval('main', node => node.innerText.includes('Scoped')));
   const limited = [...sources.values()].find(row => row.local === 'limited' && row.notes);
   assert.ok(await page.$eval(`${activeTable} tr[data-feature-id="${limited.id}"]`, row => row.querySelector('.comparison-limit').textContent.startsWith('Note: ')), 'the limit stays visible as a note');
@@ -338,7 +379,11 @@ test('a documented limit reads as a green check, never as a separate Scoped resu
 
 test('availability marks keep accessible labels, notes stay inline and profile duplicates disappear', { timeout: 60000 }, async t => {
   const markdown = readFileSync(new URL('../dist/compare/emulators/cloud-storage.md', import.meta.url), 'utf8');
-  for (const group of categories('cloud-storage')) assert.ok(markdown.includes(group.area), `${group.area}: the Markdown twin lists each category`);
+  for (const group of categories('cloud-storage')) {
+    assert.ok(markdown.includes(`${group.area} ${group.total} features`), `${group.area}: the Markdown twin lists each category with its size`);
+    assert.ok(markdown.includes(`| ${group.supported} supported | ${group.missing} not supported |`), `${group.area}: and the two numbers`);
+  }
+  assert.ok(!markdown.includes('Default object ACL operations'), 'categories the default filter hides stay out of the twin');
   const page = await open(t, '/compare/emulators/?view=classic');
   await settled(page);
   await choose(page, 'all');
@@ -355,7 +400,7 @@ test('availability marks keep accessible labels, notes stay inline and profile d
   assert.ok(nodes.some(node => !node.ignored && node.name?.value === 'Available'));
   assert.ok(nodes.some(node => !node.ignored && node.name?.value === 'Not available'));
   const source = inventory('cloud-storage');
-  const details = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => {
+  const details = await page.$$eval(`${activeTable} tr[data-feature-id]`, rows => rows.map(row => {
     const [description, , limit] = row.lastElementChild.querySelectorAll(':scope > p');
     return { id: row.dataset.featureId, description: description.textContent, limit: limit && !limit.hidden ? limit.textContent : '' };
   }));
@@ -368,14 +413,14 @@ test('availability marks keep accessible labels, notes stay inline and profile d
   await page.click('[data-service-tab="firestore"]'); await settled(page);
   await choose(page, 'all');
   await openAll(page);
-  const profiles = await page.$$eval(`${activeTable} tbody tr`, rows => {
+  const profiles = await page.$$eval(`${activeTable} tr[data-feature-id]`, rows => {
     const cell = rows.find(row => row.querySelector('th > span').textContent === 'Required composite-index rejection for queries').querySelector('td');
     return [...cell.querySelectorAll('.comparison-state')].map(node => ({ state: node.dataset.state, label: node.querySelector('.comparison-label').textContent }));
   });
   assert.deepEqual(profiles, [{ state: 'available', label: 'Available' }, { state: 'unavailable', label: 'Not available' }]);
   assert.ok(await page.$eval(`${activeTable} .comparison-state[data-state="unknown"]`, node => node.textContent.includes('Not assessed')));
   const firestore = inventory('firestore');
-  const visibleProfiles = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => ({ id: row.dataset.featureId,
+  const visibleProfiles = await page.$$eval(`${activeTable} tr[data-feature-id]`, rows => rows.map(row => ({ id: row.dataset.featureId,
     states: [...row.querySelector('td').querySelectorAll('.comparison-state')].filter(node => !node.closest('[hidden]')).map(node => node.dataset.state) })));
   for (const row of firestore) {
     const local = comparisonMarkState(row.local), other = comparisonMarkState(row.default);
@@ -388,11 +433,11 @@ test('the longest comparison note and description remain fully visible as plain 
   const row = rows.reduce((longest, row) => row.notes.length > longest.notes.length ? row : longest);
   const page = await open(t, `/compare/emulators/?service=bigquery&features=all&q=${encodeURIComponent(row.id)}&view=mobile`, 390);
   await settled(page);
-  const read = selector => page.$eval(`${activeTable} tbody td:last-child > ${selector}`, node => ({ text: node.textContent, display: getComputedStyle(node).display, clipped: node.scrollHeight > node.clientHeight + 1 }));
+  const read = selector => page.$eval(`${activeTable} tr[data-feature-id] td:last-child > ${selector}`, node => ({ text: node.textContent, display: getComputedStyle(node).display, clipped: node.scrollHeight > node.clientHeight + 1 }));
   const text = await read('.comparison-limit'), description = await read('p:first-child'), doc = await read('.comparison-doc');
   assert.equal(text.text, `Note: ${presentComparisonNotes(row.notes)}`);
   assert.equal(description.text, row.description);
   assert.match(doc.text, /^(?:Google Cloud|Firebase|Google) docs ↗/);
   for (const part of [text, description, doc]) { assert.notEqual(part.display, 'none'); assert.equal(part.clipped, false); }
-  assert.equal(await page.$$eval('[data-comparison-workspace] details details', nodes => nodes.length), 0);
+  assert.equal(await page.$$eval('[data-comparison-workspace] details', nodes => nodes.length), 0);
 });

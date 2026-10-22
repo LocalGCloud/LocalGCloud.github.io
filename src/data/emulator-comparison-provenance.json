@@ -25,6 +25,7 @@
     },
     "hidden": {
       "unassessed": 0,
+      "unavailable": 59,
       "repeated": 0
     },
     "sharedDescriptions": []
@@ -78,6 +79,7 @@
     },
     "hidden": {
       "unassessed": 0,
+      "unavailable": 3,
       "repeated": 0
     },
     "sharedDescriptions": []
@@ -110,6 +112,7 @@
     },
     "hidden": {
       "unassessed": 2,
+      "unavailable": 115,
       "repeated": 0
     },
     "sharedDescriptions": []
@@ -146,6 +149,7 @@
     },
     "hidden": {
       "unassessed": 0,
+      "unavailable": 54,
       "repeated": 0
     },
     "sharedDescriptions": []
@@ -183,6 +187,7 @@
     },
     "hidden": {
       "unassessed": 309,
+      "unavailable": 9,
       "repeated": 23
     },
     "sharedDescriptions": []

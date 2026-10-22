@@ -522,10 +522,13 @@ def assemble(service, raw_rows):
             row['notes'] = ''
         rows.append(row)
     check_wording(service, rows)
-    hidden = {'unassessed': 0, 'repeated': 0}
+    hidden = {'unassessed': 0, 'unavailable': 0, 'repeated': 0}
     if HIDE_UNASSESSED_LOCAL:
         hidden['unassessed'] = sum(row['local'] == 'unknown' for row in rows)
         rows = [row for row in rows if row['local'] != 'unknown']
+    # A feature that neither LocalCloud nor the compared emulator offers tells a visitor nothing.
+    hidden['unavailable'] = sum(unavailable_everywhere(row) for row in rows)
+    rows = [row for row in rows if not unavailable_everywhere(row)]
     if service not in COLLAPSE_REPEATS:
         return rows, hidden
     ranked = sorted(rows, key=lambda r: next((i for i, p in enumerate(SURFACE_ORDER) if r['id'].startswith(p)), len(SURFACE_ORDER)))
@@ -537,6 +540,15 @@ def assemble(service, raw_rows):
             keep.add(row['id'])
     hidden['repeated'] = len(rows) - len(keep)
     return [row for row in rows if row['id'] in keep], hidden
+
+
+NOT_AVAILABLE = ('unavailable', 'no-effect')
+
+
+def unavailable_everywhere(row):
+    """Not available in LocalCloud (either profile) and not available in the compared emulator."""
+    return (row['local'] in NOT_AVAILABLE and row.get('other') in NOT_AVAILABLE
+            and row.get('default', 'unavailable') in NOT_AVAILABLE)
 
 
 def summarize(rows):
@@ -611,7 +623,7 @@ def sync(dependencies, check=False):
         hidden = details['hidden']
         print(f'{service:9s} documented {details["documented"]["rows"]:5d} -> shown {metrics["total"]:5d}  '
               f'only in LocalCloud {metrics["exclusive"]:4d}  '
-              f'(unassessed {hidden["unassessed"]}, repeated {hidden["repeated"]}, competitor {"yes" if metrics["hasCompetitor"] else "no"})')
+              f'(unassessed {hidden["unassessed"]}, unavailable in both {hidden["unavailable"]}, repeated {hidden["repeated"]}, competitor {"yes" if metrics["hasCompetitor"] else "no"})')
         for item in details['sharedDescriptions']:
             print(f'  warning: {item["features"]} different {service} features share the description "{item["description"][:90]}"')
     if drift:

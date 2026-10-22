@@ -24,7 +24,9 @@ export function converter(pageUrl) {
 	const absolute = (href) => (href.startsWith("#") ? `${pageUrl}${href}` : new URL(href, pageUrl).toString());
 	const singleLine = (text) => text.replace(/\s+/g, " ").trim();
 	const service = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced", bulletListMarker: "-", emDelimiter: "_" });
-	service.remove(["script", "style", "noscript", "template", "svg", "button", "form", "textarea", "select", "input", "iframe"]);
+	service.remove(["script", "style", "noscript", "template", "svg", "form", "textarea", "select", "input", "iframe"]);
+	// A button is a control, so it is dropped unless it also carries text a reader needs, such as a table category name.
+	service.remove((node) => node.nodeName === "BUTTON" && !node.hasAttribute("data-markdown-keep"));
 	service.remove(isNoise);
 	service.addRule('viewPresentation', { filter: (node) => node.hasAttribute?.('data-desktop-copy') || node.hasAttribute?.('data-mobile-only'), replacement: () => '' });
 	service.addRule("code", {
@@ -40,7 +42,7 @@ export function converter(pageUrl) {
 		filter: "table",
 		replacement: (_, node) => {
 			// The DOM here (domino) returns array-like lists, not iterables.
-			const rows = Array.from(node.querySelectorAll("tr"), (row) =>
+			const rows = Array.from(node.querySelectorAll("tr")).filter((row) => !isNoise(row)).map((row) =>
 				Array.from(row.children, (cell) => singleLine(service.turndown(cell.innerHTML)).replaceAll("|", "\\|")),
 			);
 			if (!rows.length) return "";

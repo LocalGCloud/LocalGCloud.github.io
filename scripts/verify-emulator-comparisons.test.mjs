@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
-import { comparisonMarkState, comparisonStates, docsLabel, groupComparisonRows, groupLabel, presentComparisonNotes, selectComparisonRows } from '../src/utils/emulator-comparisons.mjs';
+import { comparisonMarkState, comparisonStates, docsLabel, groupComparisonRows, presentComparisonNotes, selectComparisonRows } from '../src/utils/emulator-comparisons.mjs';
 
 const json = path => JSON.parse(readFileSync(new URL('../' + path, import.meta.url), 'utf8'));
 const metrics = json('src/data/emulator-comparisons/index.json');
@@ -49,20 +49,20 @@ test('a documented limit reads as supported, so Scoped never appears as a result
   for (const state of ['available', 'unavailable', 'unknown', 'na', 'no-effect']) assert.equal(comparisonMarkState(state), state);
 });
 
-test('rows group by category in document order with the counts a header states', () => {
+test('rows group by category in document order with the two numbers a category row states', () => {
   const rows = [
     { id: 'a', area: 'Buckets', local: 'available', other: 'unavailable' },
     { id: 'b', area: 'Objects', local: 'available', other: 'available' },
     { id: 'c', area: 'Buckets', local: 'limited', other: 'no-effect' },
     { id: 'd', area: 'Buckets', local: 'available', other: 'available' },
+    { id: 'e', area: 'Buckets', local: 'unavailable', other: 'available' },
+    { id: 'f', area: 'Objects', local: 'available', other: 'unknown' },
   ];
   const groups = groupComparisonRows(rows);
-  assert.deepEqual(groups.map(({ area, total, exclusive }) => [area, total, exclusive]), [['Buckets', 3, 2], ['Objects', 1, 0]]);
-  assert.deepEqual(groups[0].rows.map(row => row.id), ['a', 'c', 'd']);
-  assert.equal(groupLabel(groups[0]), '2 only in LocalCloud');
-  assert.equal(groupLabel(groups[0], { mode: 'all' }), '3 features · 2 only in LocalCloud');
-  assert.equal(groupLabel(groups[1], { mode: 'all' }), '1 feature · 0 only in LocalCloud');
-  assert.equal(groupLabel(groups[0], { hasCompetitor: false }), '3 features');
+  // supported = LocalCloud ✓ or limited; missing = the competitor lacks it; exclusive = both at once.
+  assert.deepEqual(groups.map(({ area, total, supported, missing, exclusive }) => [area, total, supported, missing, exclusive]),
+    [['Buckets', 4, 3, 2, 2], ['Objects', 2, 2, 0, 0]]);
+  assert.deepEqual(groups[0].rows.map(row => row.id), ['a', 'c', 'd', 'e']);
 });
 
 test('documentation links are labelled by the family of Google documentation they open', () => {
@@ -85,8 +85,10 @@ for (const service of services) {
       assert.match(document.sha256, /^[a-f0-9]{64}$/);
       assert.match(document.commit, /^[a-f0-9]{40}$/);
     }
-    assert.equal(details.documented.rows, rows.length + details.hidden.unassessed + details.hidden.repeated,
+    assert.equal(details.documented.rows, rows.length + details.hidden.unassessed + details.hidden.unavailable + details.hidden.repeated,
       'every document row is either published or accounted for as hidden');
+    assert.ok(!rows.some(row => ['unavailable', 'no-effect'].includes(row.local) && ['unavailable', 'no-effect'].includes(row.other)
+      && ['unavailable', 'no-effect'].includes(row.default ?? 'unavailable')), 'a feature neither side supports is not published');
     for (const row of rows) {
       assert.ok(row.name && row.area, row.id);
       assert.match(row.docs, /^https:\/\/(?:docs\.cloud\.google\.com|cloud\.google\.com|firebase\.google\.com|developers\.google\.com)\/[^\s]+$/, `${row.id}: every feature links Google's own documentation`);

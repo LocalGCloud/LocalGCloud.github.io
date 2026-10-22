@@ -160,16 +160,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-rpc-methods-bigtableinstanceadmin-getmemorylayer",
-    "name": "BigtableInstanceAdmin.GetMemoryLayer",
-    "area": "RPC methods",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns information about the memory layer of a cluster.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/admin/rpc/google.bigtable.admin.v2#google.bigtable.admin.v2.BigtableInstanceAdmin.GetMemoryLayer",
-    "notes": "Hot tablets and memory layers describe production serving hardware; there is no single-process analogue, so these RPCs answer Unimplemented."
-  },
-  {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-listappprofiles",
     "name": "BigtableInstanceAdmin.ListAppProfiles",
     "area": "RPC methods",
@@ -188,16 +178,6 @@
     "description": "Lists the clusters of an instance, or of every instance in a project when the instance is given as a wildcard.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/admin/rpc/google.bigtable.admin.v2#google.bigtable.admin.v2.BigtableInstanceAdmin.ListClusters",
     "notes": "ListInstances/ListClusters return one page (the proto has no page_size) and validate page tokens; ListAppProfiles paginates; '-' lists across instances."
-  },
-  {
-    "id": "bigtable-rpc-methods-bigtableinstanceadmin-listhottablets",
-    "name": "BigtableInstanceAdmin.ListHotTablets",
-    "area": "RPC methods",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Lists the hot tablets of a cluster within a time range, ordered by CPU usage, to help find hotspots.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/admin/rpc/google.bigtable.admin.v2#google.bigtable.admin.v2.BigtableInstanceAdmin.ListHotTablets",
-    "notes": "Hot tablets and memory layers describe production serving hardware; there is no single-process analogue, so these RPCs answer Unimplemented."
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-listinstances",
@@ -228,16 +208,6 @@
     "description": "Lists the materialized views in an instance, one page at a time.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/admin/rpc/google.bigtable.admin.v2#google.bigtable.admin.v2.BigtableInstanceAdmin.ListMaterializedViews",
     "notes": ""
-  },
-  {
-    "id": "bigtable-rpc-methods-bigtableinstanceadmin-listmemorylayers",
-    "name": "BigtableInstanceAdmin.ListMemoryLayers",
-    "area": "RPC methods",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Lists information about the memory layers of clusters, one page at a time.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/admin/rpc/google.bigtable.admin.v2#google.bigtable.admin.v2.BigtableInstanceAdmin.ListMemoryLayers",
-    "notes": "Hot tablets and memory layers describe production serving hardware; there is no single-process analogue, so these RPCs answer Unimplemented."
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-partialupdatecluster",
@@ -1630,16 +1600,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-behaviors-automated-backup-scheduling",
-    "name": "Automated backup scheduling",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "A table can have an automated backup policy that creates backups on a schedule and keeps them for a set retention period.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/managing-backups",
-    "notes": "Policy metadata does not run a scheduler."
-  },
-  {
     "id": "bigtable-behaviors-change-stream-enable-disable",
     "name": "Change-stream enable/disable",
     "area": "Behaviors",
@@ -1708,26 +1668,6 @@
     "description": "Rows removed with the DropRowRange admin call are captured in the change stream as data change records.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/change-streams-overview",
     "notes": ""
-  },
-  {
-    "id": "bigtable-behaviors-change-stream-partition-splits",
-    "name": "Change-stream partition splits",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "When a tablet splits, the stream of its partition ends and tells readers which new partitions to read instead.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/change-streams-overview",
-    "notes": "LocalCloud uses one partition."
-  },
-  {
-    "id": "bigtable-behaviors-change-stream-partition-merges",
-    "name": "Change-stream partition merges",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "When tablets merge, the streams of the merged partitions end and readers continue on the new, larger partition.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/change-streams-overview",
-    "notes": "LocalCloud uses one partition."
   },
   {
     "id": "bigtable-behaviors-authorized-view-row-prefix-restrictions",
@@ -1810,16 +1750,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-behaviors-parameterized-logical-view-definitions",
-    "name": "Parameterized logical-view definitions",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "A parameterized logical view reads caller-supplied string parameters with VIEW_PARAMETERS to scope its results to a user or tenant.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/parameterized-views-overview",
-    "notes": "view_parameters is unsupported."
-  },
-  {
     "id": "bigtable-behaviors-cmv-group-by-definitions",
     "name": "CMV GROUP BY definitions",
     "area": "Behaviors",
@@ -1860,16 +1790,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-behaviors-production-compatible-hll-sketch-bytes",
-    "name": "Production-compatible HLL++ sketch bytes",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "HyperLogLog++ sketches in aggregate cells are stored as bytes in a standard encoding that the HLL_COUNT functions can read and merge.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/hll_functions",
-    "notes": "LocalCloud byte format is local."
-  },
-  {
     "id": "bigtable-behaviors-asynchronous-gc-timing",
     "name": "Asynchronous GC timing",
     "area": "Behaviors",
@@ -1878,146 +1798,6 @@
     "description": "Garbage collection runs in the background on its own schedule, so cells past their rules can stay readable for a while.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/garbage-collection",
     "notes": "Production GC is asynchronous; local reads hide expired cells and writes collect them."
-  },
-  {
-    "id": "bigtable-behaviors-iam-identity-enforcement",
-    "name": "IAM identity enforcement",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Each request is checked against IAM policies, and callers without the needed permission are denied.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/access-control",
-    "notes": "LocalCloud policy APIs are permissive."
-  },
-  {
-    "id": "bigtable-behaviors-authenticated-service-connections",
-    "name": "Authenticated service connections",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Clients authenticate with Google credentials, so every request carries the identity of a user or service account.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/authentication",
-    "notes": "Production checks identities; the standalone emulator is unauthenticated."
-  },
-  {
-    "id": "bigtable-behaviors-replication-across-clusters",
-    "name": "Replication across clusters",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Writes made in one cluster of an instance are copied automatically to its other clusters, which can be in different zones or regions.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/replication-overview",
-    "notes": "Single-process local model."
-  },
-  {
-    "id": "bigtable-behaviors-cluster-failover",
-    "name": "Cluster failover",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "When a cluster becomes unavailable, requests can be redirected to another cluster of the instance, automatically or by manual change.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/failovers",
-    "notes": "No distributed cluster topology."
-  },
-  {
-    "id": "bigtable-behaviors-real-autoscaling",
-    "name": "Real autoscaling",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "A cluster can add and remove nodes automatically to keep CPU and storage utilization near configured targets.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/autoscaling",
-    "notes": "LocalCloud stores configuration metadata only."
-  },
-  {
-    "id": "bigtable-behaviors-real-node-capacity",
-    "name": "Real node capacity",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Each node adds serving capacity, so a cluster's node count determines the read and write throughput and storage it can handle.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/instances-clusters-nodes",
-    "notes": "Cluster node counts do not provision hardware."
-  },
-  {
-    "id": "bigtable-behaviors-cloud-monitoring-integration",
-    "name": "Cloud Monitoring integration",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Bigtable publishes usage and performance metrics, such as CPU load and request latency, to Cloud Monitoring.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/monitoring-instance",
-    "notes": "Read request stats do not reproduce Cloud Monitoring."
-  },
-  {
-    "id": "bigtable-behaviors-key-visualizer",
-    "name": "Key Visualizer",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Key Visualizer shows heatmaps of how read and write activity is spread across the row-key space over time, revealing hot spots.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/keyvis-overview",
-    "notes": "Not emulated."
-  },
-  {
-    "id": "bigtable-behaviors-data-boost-compute-isolation",
-    "name": "Data Boost compute isolation",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Data Boost serves large read-only workloads on separate serverless compute, so they do not slow down production traffic.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/data-boost-overview",
-    "notes": "Routing validation is not isolated serverless compute."
-  },
-  {
-    "id": "bigtable-behaviors-cmek-key-custody",
-    "name": "CMEK key custody",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Customer-managed encryption keys let a cluster's data be encrypted with a key that the customer controls in Cloud KMS.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/cmek",
-    "notes": "No managed key custody."
-  },
-  {
-    "id": "bigtable-behaviors-listlocations",
-    "name": "ListLocations",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Lists the Google Cloud locations where Bigtable is available to a project.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/admin/rpc/google.cloud.location#google.cloud.location.Locations.ListLocations",
-    "notes": "Locations service is not registered in LocalCloud."
-  },
-  {
-    "id": "bigtable-behaviors-routelookup",
-    "name": "RouteLookup",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the target that a client should send requests for a given key to, using the gRPC route lookup protocol.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/data/rpc/grpc.lookup.v1#grpc.lookup.v1.RouteLookupService.RouteLookup",
-    "notes": "RouteLookupService is not registered."
-  },
-  {
-    "id": "bigtable-behaviors-tls-encryption-in-transit",
-    "name": "TLS encryption in transit",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Traffic between clients and Bigtable is encrypted in transit with TLS.",
-    "docs": "https://docs.cloud.google.com/docs/security/encryption-in-transit",
-    "notes": "Default standalone listener uses plaintext gRPC."
-  },
-  {
-    "id": "bigtable-behaviors-cmv-cluster-attribute-routing",
-    "name": "CMV CLUSTER_ATTRIBUTE routing",
-    "area": "Behaviors",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "CLUSTER_ATTRIBUTE returns an attribute of the cluster processing a continuous materialized view query, so a view can be limited to one cluster.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/continuous-materialized-view-queries#cluster-attribute",
-    "notes": ""
   },
   {
     "id": "bigtable-sql-functions-and-syntax-abs",
@@ -2070,36 +1850,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-sql-functions-and-syntax-approx-quantiles",
-    "name": "APPROX_QUANTILES",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns approximate quantile boundaries of a column's values, from the approximate minimum through to the maximum.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/approximate_aggregate_functions#approx_quantiles",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-approx-top-count",
-    "name": "APPROX_TOP_COUNT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the most frequent values of a column together with their approximate occurrence counts.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/approximate_aggregate_functions#approx_top_count",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-approx-top-sum",
-    "name": "APPROX_TOP_SUM",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the values with the largest approximate total of an associated weight column, along with those totals.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/approximate_aggregate_functions#approx_top_sum",
-    "notes": ""
-  },
-  {
     "id": "bigtable-sql-functions-and-syntax-array-agg",
     "name": "ARRAY_AGG",
     "area": "SQL functions and syntax",
@@ -2127,16 +1877,6 @@
     "other": "unavailable",
     "description": "Concatenates the arrays from all the rows of a group into one single array, optionally ignoring duplicate arrays.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/aggregate_functions#array_concat_agg",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-array-filter",
-    "name": "ARRAY_FILTER",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a new array holding only the elements for which a lambda condition is true, in their original order.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/array_functions#array_filter",
     "notes": ""
   },
   {
@@ -2267,16 +2007,6 @@
     "other": "unavailable",
     "description": "Joins the elements of an array into one string with a delimiter, replacing NULL elements with optional text or skipping them.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/array_functions#array_to_string",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-array-transform",
-    "name": "ARRAY_TRANSFORM",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a new array of the same length in which a lambda expression has been applied to every element.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/array_functions#array_transform",
     "notes": ""
   },
   {
@@ -2450,16 +2180,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-sql-functions-and-syntax-cluster-attribute",
-    "name": "CLUSTER_ATTRIBUTE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns an attribute of the cluster that is processing a continuous materialized view query, such as its cluster ID.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/continuous-materialized-view-queries#cluster-attribute",
-    "notes": ""
-  },
-  {
     "id": "bigtable-sql-functions-and-syntax-code-points-to-bytes",
     "name": "CODE_POINTS_TO_BYTES",
     "area": "SQL functions and syntax",
@@ -2610,16 +2330,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-sql-functions-and-syntax-cume-dist",
-    "name": "CUME_DIST",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the fraction of rows in a window partition that come at or before the current row in the ordering.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/numbering_functions#cume_dist",
-    "notes": ""
-  },
-  {
     "id": "bigtable-sql-functions-and-syntax-current-date",
     "name": "CURRENT_DATE",
     "area": "SQL functions and syntax",
@@ -2700,16 +2410,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-sql-functions-and-syntax-dense-rank",
-    "name": "DENSE_RANK",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the rank of the current row within its window partition, giving tied rows the same rank and leaving no gaps.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/numbering_functions#dense_rank",
-    "notes": ""
-  },
-  {
     "id": "bigtable-sql-functions-and-syntax-div",
     "name": "DIV",
     "area": "SQL functions and syntax",
@@ -2757,16 +2457,6 @@
     "other": "unavailable",
     "description": "Pulls one part, such as the year, month, day or hour, out of a date or timestamp value.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/timestamp_functions#extract",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-first-value",
-    "name": "FIRST_VALUE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the value of an expression from the first row of the current window frame.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/navigation_functions#first_value",
     "notes": ""
   },
   {
@@ -3060,16 +2750,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-sql-functions-and-syntax-lag",
-    "name": "LAG",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the value of an expression from a row that comes a given number of rows before the current row in its window.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/navigation_functions#lag",
-    "notes": ""
-  },
-  {
     "id": "bigtable-sql-functions-and-syntax-last-day",
     "name": "LAST_DAY",
     "area": "SQL functions and syntax",
@@ -3077,26 +2757,6 @@
     "other": "unavailable",
     "description": "Returns the last day of the month, or of another chosen period such as the year or week, that contains a date.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/date_functions#last_day",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-last-value",
-    "name": "LAST_VALUE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the value of an expression from the last row of the current window frame.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/navigation_functions#last_value",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-lead",
-    "name": "LEAD",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the value of an expression from a row that comes a given number of rows after the current row in its window.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/navigation_functions#lead",
     "notes": ""
   },
   {
@@ -3290,46 +2950,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-sql-functions-and-syntax-normalize",
-    "name": "NORMALIZE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a string to one of the four Unicode normalization forms, NFC by default.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/string_functions#normalize",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-normalize-and-casefold",
-    "name": "NORMALIZE_AND_CASEFOLD",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Normalizes a string and applies case folding so that comparisons ignore letter case and equivalent character forms.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/string_functions#normalize_and_casefold",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-nth-value",
-    "name": "NTH_VALUE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the value of an expression from the Nth row of the current window frame, or NULL if that row does not exist.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/navigation_functions#nth_value",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-ntile",
-    "name": "NTILE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Divides the rows of a window partition into a given number of roughly equal buckets and returns each row's bucket number.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/numbering_functions#ntile",
-    "notes": ""
-  },
-  {
     "id": "bigtable-sql-functions-and-syntax-nullif",
     "name": "NULLIF",
     "area": "SQL functions and syntax",
@@ -3380,36 +3000,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-sql-functions-and-syntax-percentile-cont",
-    "name": "PERCENTILE_CONT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a percentile of a set of values, interpolating between the nearest values when it falls between two.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/navigation_functions#percentile_cont",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-percentile-disc",
-    "name": "PERCENTILE_DISC",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the first value in sorted order whose cumulative distribution reaches or exceeds a given percentile.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/navigation_functions#percentile_disc",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-percent-rank",
-    "name": "PERCENT_RANK",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the relative rank of the current row within its window partition as a fraction between 0 and 1.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/numbering_functions#percent_rank",
-    "notes": ""
-  },
-  {
     "id": "bigtable-sql-functions-and-syntax-pow",
     "name": "POW",
     "area": "SQL functions and syntax",
@@ -3437,16 +3027,6 @@
     "other": "unavailable",
     "description": "Returns a pseudo-random floating-point number from 0 up to but not including 1.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/mathematical_functions#rand",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-rank",
-    "name": "RANK",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the rank of the current row within its window partition, giving tied rows the same rank and skipping the ranks after them.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/numbering_functions#rank",
     "notes": ""
   },
   {
@@ -3550,16 +3130,6 @@
     "notes": ""
   },
   {
-    "id": "bigtable-sql-functions-and-syntax-row-number",
-    "name": "ROW_NUMBER",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a sequential number for each row in a window partition, starting at 1 and following the window ordering.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/numbering_functions#row_number",
-    "notes": ""
-  },
-  {
     "id": "bigtable-sql-functions-and-syntax-rpad",
     "name": "RPAD",
     "area": "SQL functions and syntax",
@@ -3577,26 +3147,6 @@
     "other": "unavailable",
     "description": "Removes the given characters, or spaces by default, from the end of a string or bytes value.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/string_functions#rtrim",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-s2-cellidfrompoint",
-    "name": "S2_CELLIDFROMPOINT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the ID of the S2 grid cell that covers a point on the Earth's surface.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#s2_cellidfrompoint",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-s2-coveringcellids",
-    "name": "S2_COVERINGCELLIDS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns an array of S2 cell IDs that together cover a geography, which supports indexing geographic data by cell.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#s2_coveringcellids",
     "notes": ""
   },
   {
@@ -3817,696 +3367,6 @@
     "other": "unavailable",
     "description": "Returns the 1-based position of the first occurrence of a substring in a value, or 0 if it does not occur.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/string_functions#strpos",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-accum",
-    "name": "ST_ACCUM",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Aggregates the geography values of a group of rows into an array of geographies.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_accum",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-angle",
-    "name": "ST_ANGLE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the angle in radians between two lines defined by three point geographies, measured clockwise from the first line.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_angle",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-area",
-    "name": "ST_AREA",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the area in square meters covered by the polygons in a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_area",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-asbinary",
-    "name": "ST_ASBINARY",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a geography to its well-known binary representation as a bytes value.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_asbinary",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-asgeojson",
-    "name": "ST_ASGEOJSON",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a geography to a GeoJSON geometry string.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_asgeojson",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-askml",
-    "name": "ST_ASKML",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a geography to a string in KML geometry format.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_askml",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-astext",
-    "name": "ST_ASTEXT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a geography to its well-known text representation as a string.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_astext",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-azimuth",
-    "name": "ST_AZIMUTH",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the azimuth in radians of the line segment from one point geography to another, measured clockwise from north.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_azimuth",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-boundary",
-    "name": "ST_BOUNDARY",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a geography made from the boundaries of the components of the input geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_boundary",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-boundingbox",
-    "name": "ST_BOUNDINGBOX",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the bounding box of a geography as a struct with its minimum and maximum longitude and latitude.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_boundingbox",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-buffer",
-    "name": "ST_BUFFER",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a geography covering all points within a given distance of the input, approximated with a number of segments.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_buffer",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-bufferwithtolerance",
-    "name": "ST_BUFFERWITHTOLERANCE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a geography covering all points within a given distance of the input, approximated to within a tolerance.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_bufferwithtolerance",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-centroid",
-    "name": "ST_CENTROID",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the centroid of a geography, the center of mass of its components, as a point geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_centroid",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-closestpoint",
-    "name": "ST_CLOSESTPOINT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the point on the first geography that is closest to the second geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_closestpoint",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-contains",
-    "name": "ST_CONTAINS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if the first geography contains the second, so no point of the second lies outside it and their interiors intersect.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_contains",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-convexhull",
-    "name": "ST_CONVEXHULL",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the smallest convex geography that covers the input geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_convexhull",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-coveredby",
-    "name": "ST_COVEREDBY",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if no point of the first geography lies outside the second geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_coveredby",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-covers",
-    "name": "ST_COVERS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if no point of the second geography lies outside the first geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_covers",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-difference",
-    "name": "ST_DIFFERENCE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the part of the first geography that does not intersect the second geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_difference",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-dimension",
-    "name": "ST_DIMENSION",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the dimension of the highest-dimensional element of a geography: 0 for points, 1 for lines and 2 for polygons.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_dimension",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-disjoint",
-    "name": "ST_DISJOINT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if two geographies have no points in common.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_disjoint",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-distance",
-    "name": "ST_DISTANCE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the shortest distance in meters between two geographies.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_distance",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-dump",
-    "name": "ST_DUMP",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns an array of the simple geographies, such as single points, lines and polygons, that make up a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_dump",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-dumppoints",
-    "name": "ST_DUMPPOINTS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns an array of point geographies, one for every point and vertex in a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_dumppoints",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-dwithin",
-    "name": "ST_DWITHIN",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if any points of two geographies are within a given distance of each other.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_dwithin",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-endpoint",
-    "name": "ST_ENDPOINT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the last point of a linestring geography as a point geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_endpoint",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-equals",
-    "name": "ST_EQUALS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if two geographies represent the same set of points.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_equals",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-extent",
-    "name": "ST_EXTENT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the bounding box that contains all the geographies of a group of rows.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_extent",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-exteriorring",
-    "name": "ST_EXTERIORRING",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the outermost ring of a polygon geography as a linestring.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_exteriorring",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-geogfrom",
-    "name": "ST_GEOGFROM",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a string or bytes value in a supported format, such as WKT, WKB or GeoJSON, into a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_geogfrom",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-geogfromgeojson",
-    "name": "ST_GEOGFROMGEOJSON",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a GeoJSON geometry string into a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_geogfromgeojson",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-geogfromkml",
-    "name": "ST_GEOGFROMKML",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a string in KML geometry format into a geography value.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_geogfromkml",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-geogfromtext",
-    "name": "ST_GEOGFROMTEXT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a well-known text string into a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_geogfromtext",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-geogfromwkb",
-    "name": "ST_GEOGFROMWKB",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts well-known binary bytes, or a hexadecimal well-known binary string, into a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_geogfromwkb",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-geogpoint",
-    "name": "ST_GEOGPOINT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Creates a point geography from a longitude and a latitude in degrees.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_geogpoint",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-geogpointfromgeohash",
-    "name": "ST_GEOGPOINTFROMGEOHASH",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a point geography at the center of the bounding box that a GeoHash string describes.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_geogpointfromgeohash",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-geohash",
-    "name": "ST_GEOHASH",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Converts a point geography to a GeoHash string, which encodes the location as a short text code.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_geohash",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-geometrytype",
-    "name": "ST_GEOMETRYTYPE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the OGC geometry type of a geography, such as ST_Point, ST_LineString or ST_Polygon.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_geometrytype",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-hausdorffdistance",
-    "name": "ST_HAUSDORFFDISTANCE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the discrete Hausdorff distance between two geographies, a measure of how far apart their shapes are.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_hausdorffdistance",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-hausdorffdwithin",
-    "name": "ST_HAUSDORFFDWITHIN",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if the Hausdorff distance between two geographies is within a given distance.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_hausdorffdwithin",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-interiorrings",
-    "name": "ST_INTERIORRINGS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the interior rings, which are the holes, of a polygon geography as an array of linestrings.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_interiorrings",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-intersection",
-    "name": "ST_INTERSECTION",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the set of points that two geographies have in common.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_intersection",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-intersects",
-    "name": "ST_INTERSECTS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if two geographies share at least one point.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_intersects",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-intersectsbox",
-    "name": "ST_INTERSECTSBOX",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if a geography intersects a rectangle given by its longitude and latitude bounds.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_intersectsbox",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-isclosed",
-    "name": "ST_ISCLOSED",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if every element of a non-empty geography is closed, meaning it has an empty boundary.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_isclosed",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-iscollection",
-    "name": "ST_ISCOLLECTION",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if a geography contains more than one point, linestring or polygon in total.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_iscollection",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-isempty",
-    "name": "ST_ISEMPTY",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if a geography contains no points, meaning it is the empty geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_isempty",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-isring",
-    "name": "ST_ISRING",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if a geography is a closed linestring that does not cross itself.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_isring",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-length",
-    "name": "ST_LENGTH",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the total length in meters of the lines in a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_length",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-lineinterpolatepoint",
-    "name": "ST_LINEINTERPOLATEPOINT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the point at a given fraction of the way along a linestring geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_lineinterpolatepoint",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-linelocatepoint",
-    "name": "ST_LINELOCATEPOINT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the fraction of a linestring's length that lies between its start and the point on it closest to a given point.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_linelocatepoint",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-linesubstring",
-    "name": "ST_LINESUBSTRING",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the part of a single linestring that lies between a starting and an ending fraction of its length.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_linesubstring",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-makeline",
-    "name": "ST_MAKELINE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Creates a linestring by connecting the points, and the vertices of linestrings, of the input geographies in order.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_makeline",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-makepolygon",
-    "name": "ST_MAKEPOLYGON",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Constructs a polygon from a linestring shell and optional linestring holes.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_makepolygon",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-makepolygonoriented",
-    "name": "ST_MAKEPOLYGONORIENTED",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Constructs a polygon from an array of linestrings, using the vertex order to set each ring's orientation.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_makepolygonoriented",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-maxdistance",
-    "name": "ST_MAXDISTANCE",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the longest distance in meters between a pair of points, one from each of two non-empty geographies.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_maxdistance",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-npoints",
-    "name": "ST_NPOINTS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "An alias of ST_NUMPOINTS that returns the number of vertices in a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_npoints",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-numgeometries",
-    "name": "ST_NUMGEOMETRIES",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the number of geometries, such as points, lines and polygons, in a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_numgeometries",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-numpoints",
-    "name": "ST_NUMPOINTS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the total number of vertices across all the elements of a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_numpoints",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-perimeter",
-    "name": "ST_PERIMETER",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the length in meters of the boundaries of the polygons in a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_perimeter",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-pointn",
-    "name": "ST_POINTN",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the point at a given position among the vertices of a linestring geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_pointn",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-regionstats",
-    "name": "ST_REGIONSTATS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Computes statistics, such as sum or mean, over the raster pixels that intersect a geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_regionstats",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-simplify",
-    "name": "ST_SIMPLIFY",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a simplified version of a geography with fewer vertices, within a given tolerance.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_simplify",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-snaptogrid",
-    "name": "ST_SNAPTOGRID",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns a geography with every vertex snapped to a longitude and latitude grid of a given size.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_snaptogrid",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-startpoint",
-    "name": "ST_STARTPOINT",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the first point of a linestring geography as a point geography.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_startpoint",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-touches",
-    "name": "ST_TOUCHES",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if two geographies intersect only at their boundaries, with no shared interior points.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_touches",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-union",
-    "name": "ST_UNION",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns the set of points that belong to any of the input geographies.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_union",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-union-agg",
-    "name": "ST_UNION_AGG",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Aggregates the geographies of a group of rows and returns the union of all their points.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_union_agg",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-st-within",
-    "name": "ST_WITHIN",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Returns TRUE if the first geography lies inside the second, so that no point of it falls outside the second.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/geography_functions#st_within",
     "notes": ""
   },
   {
@@ -4897,16 +3757,6 @@
     "other": "unavailable",
     "description": "Returns the sample variance, using the n minus 1 correction, of a numeric column across a group of rows.",
     "docs": "https://docs.cloud.google.com/bigtable/docs/reference/sql/statistical_aggregate_functions#var_samp",
-    "notes": ""
-  },
-  {
-    "id": "bigtable-sql-functions-and-syntax-view-parameters",
-    "name": "VIEW_PARAMETERS",
-    "area": "SQL functions and syntax",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Reads a caller-supplied string parameter, such as a user ID, inside a logical view definition to scope what the view returns.",
-    "docs": "https://docs.cloud.google.com/bigtable/docs/parameterized-views-overview#how-pvs-work",
     "notes": ""
   }
 ]

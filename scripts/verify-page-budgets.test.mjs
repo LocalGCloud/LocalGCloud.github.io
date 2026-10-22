@@ -36,7 +36,8 @@ const classicHomeBytes = { rawBytes: 4_500, gzipBytes: 700, styleBytes: 2_000 };
 const agentDocumentBytes = { rawBytes: 6_500, gzipBytes: 1_500, startupScriptBytes: 4_500 };
 // Approved service instructions grow the largest guides by about 2.3KB raw / 0.6KB gzip.
 // Bound only pages rendering these verification notes; keep base and startup limits.
-const serviceInstructionBytes = { rawBytes: 3_000, gzipBytes: 500 };
+// 100 bytes of the gzip allowance absorb the few bytes the content-hashed asset names move the compressed size by from build to build.
+const serviceInstructionBytes = { rawBytes: 3_000, gzipBytes: 600 };
 const audienceSwitchBytes = { rawBytes: 700, startupScriptBytes: 1_200 };
 // 2026-10-14: Home also carries the statically rendered agent view (setup prompt, agent
 // verification puzzle, daemon terminal and spec cards) so agents reading the HTML see it.
@@ -56,8 +57,10 @@ const startupScriptBytes = 45_000;
 const desktopPrefetchBytes = 400;
 // 2026-10-21: the comparison pages load one script that groups features into collapsible categories,
 // searches across them, and draws each row's description, documentation link and note (~1.9KB over the
-// plain row renderer). The allowance applies only to pages that carry a comparison table.
-const emulatorComparisonBytes = { startupScriptBytes: 2_100, scriptBytes: 1_450 };
+// plain row renderer). The workspace page also carries one category row per document section for five
+// services (69 rows, about 51KB), and each service page its own. The allowance applies only to pages
+// that carry a comparison table.
+const emulatorComparisonBytes = { startupScriptBytes: 2_100, scriptBytes: 1_450, rawBytes: 21_000 };
 const rawDocumentBytes = 21_800;
 // The Markdown twins of docs and service pages and the llms-full.txt bundle built from them
 // have their own ceilings: the largest twin measured on 2026-10-05, plus 10%, and the bundle
@@ -65,7 +68,8 @@ const rawDocumentBytes = 21_800;
 const markdownTwinBytes = 15_400;
 // 2026-10-09: complete CI and MCP setup guides need their measured sizes plus 5%;
 // keep the default twin/HTML/JS limits for other pages and bound the expanded corpus.
-const guideDocumentBytes = { 'docs/github-actions.md': 31_300, 'docs/mcp.md': 17_200 };
+// compare/emulators.md carries the category table of five services, 2026-10-22.
+const guideDocumentBytes = { 'docs/github-actions.md': 31_300, 'docs/mcp.md': 17_200, 'compare/emulators.md': 17_900 };
 const githubActionsGzipBytes = 44_300;
 // 2026-10-16: client examples and connection exports across all 25 supported service
 // guides brought the measured technical corpus to 342,155 bytes.

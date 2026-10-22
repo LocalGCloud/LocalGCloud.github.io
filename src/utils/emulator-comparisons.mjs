@@ -24,13 +24,16 @@ export function selectComparisonRows(rows, { mode = 'advantages', query = '' } =
     && (!term || [row.name, row.id, row.area, row.description, row.notes].join(' ').toLowerCase().includes(term)));
 }
 
-// Categories in document order, each with its feature count and how many are only in LocalCloud.
+// Categories in document order. A category row states how many of its features LocalCloud supports (`supported`)
+// and how many the compared emulator lacks (`missing`); `exclusive` is the subset that only LocalCloud has.
 export function groupComparisonRows(rows) {
   const groups = new Map();
   for (const row of rows) {
-    const group = groups.get(row.area) ?? groups.set(row.area, { area: row.area, rows: [], total: 0, exclusive: 0 }).get(row.area);
+    const group = groups.get(row.area) ?? groups.set(row.area, { area: row.area, rows: [], total: 0, supported: 0, missing: 0, exclusive: 0 }).get(row.area);
     group.rows.push(row);
     group.total++;
+    if (['available', 'limited'].includes(row.local)) group.supported++;
+    if (['unavailable', 'no-effect'].includes(row.other)) group.missing++;
     if (isOnlyInLocalCloud(row)) group.exclusive++;
   }
   return [...groups.values()];
@@ -41,12 +44,6 @@ export const plural = (count, noun, many = `${noun}s`) => `${count.toLocaleStrin
 // The line under the controls before anyone opens a category.
 export const resultsText = (features, categories, mode) =>
   `${plural(features, 'feature')}${mode === 'all' ? '' : ' only in LocalCloud'} in ${plural(categories, 'category', 'categories')}. Select a category to see them.`;
-
-// What a category header says: its features, and how many of them the compared emulator lacks.
-export function groupLabel({ total, exclusive }, { mode = 'advantages', hasCompetitor = true } = {}) {
-  if (!hasCompetitor) return plural(total, 'feature');
-  return mode === 'all' ? `${plural(total, 'feature')} · ${exclusive.toLocaleString('en-US')} only in LocalCloud` : `${exclusive.toLocaleString('en-US')} only in LocalCloud`;
-}
 
 // Every link is Google's own page for the feature; the label says which family of documentation opens.
 export function docsLabel(url) {

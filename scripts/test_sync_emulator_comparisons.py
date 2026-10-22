@@ -304,6 +304,29 @@ class Assembly(unittest.TestCase):
         self.assertEqual([r['name'] for r in rows], ['Known'])
         self.assertEqual(hidden['unassessed'], 1)
 
+    def test_features_neither_side_offers_are_counted_but_not_published(self):
+        rows, hidden = sync.assemble('spanner', [
+            self.raw('Both lack', local='unavailable', other='unavailable'),
+            self.raw('Accepted without effect', local='no-effect', other='unavailable'),
+            self.raw('Only the competitor has it', local='unavailable', other='available'),
+            self.raw('Competitor result unknown', local='unavailable', other='unknown'),
+            self.raw('Only LocalCloud has it'), self.raw('Both have it', other='available'),
+            self.raw('Unassessed here', local='unknown', other='unavailable')])
+        self.assertEqual([r['name'] for r in rows], ['Only the competitor has it', 'Competitor result unknown', 'Only LocalCloud has it', 'Both have it'])
+        self.assertEqual((hidden['unavailable'], hidden['unassessed']), (2, 1))
+
+    def test_a_second_profile_that_works_keeps_the_feature_listed(self):
+        rows, hidden = sync.assemble('firestore', [
+            self.raw('Compatibility only', local='unavailable', other='unavailable', default='available'),
+            self.raw('Neither profile', local='unavailable', other='unavailable', default='unavailable')])
+        self.assertEqual([r['name'] for r in rows], ['Compatibility only'])
+        self.assertEqual(hidden['unavailable'], 1)
+
+    def test_a_service_without_a_competitor_column_never_hides_a_row_as_unavailable_in_both(self):
+        rows, hidden = sync.assemble('spanner', [dict(name='Solo', area='A', local='unavailable', other=None, note='')])
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(hidden['unavailable'], 0)
+
     def test_bigquery_features_listed_twice_with_the_same_result_appear_once(self):
         rows, hidden = sync.assemble('bigquery', [
             self.raw('EXTERNAL_QUERY()', id='metadata.advanced.external-query'),

@@ -1,0 +1,9 @@
+---
+// A category row's number: how many features LocalCloud supports (green ✓) or the compared emulator lacks (red ✕).
+// The glyph is decoration; readers and the Markdown twin get the words.
+interface Props { value: number; kind: 'supported' | 'missing'; }
+const { value, kind } = Astro.props;
+const glyph = value ? (kind === 'supported' ? '✓ ' : '✕ ') : '';
+const label = `${value.toLocaleString('en-US')} ${kind === 'supported' ? 'supported' : 'not supported'}`;
+---
+<span class:list={['comparison-count', value ? `comparison-count--${kind}` : 'comparison-count--zero']}><span aria-hidden="true">{glyph}{value.toLocaleString('en-US')}</span><span class="sr-only">{label}</span></span>

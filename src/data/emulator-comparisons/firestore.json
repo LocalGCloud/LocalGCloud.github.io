@@ -1837,17 +1837,6 @@
     "notes": "Current edition option; Google stage coverage not established."
   },
   {
-    "id": "firestore-production-security-editions-and-service-guarantees-pipeline-search-stage-native-enterprise",
-    "name": "Pipeline search stage (Native Enterprise)",
-    "area": "Production security, editions and service guarantees",
-    "local": "unavailable",
-    "other": "unavailable",
-    "default": "unavailable",
-    "description": "A pipeline stage that runs text or geospatial searches within a collection or collection group, and must come first in the pipeline.",
-    "docs": "https://docs.cloud.google.com/firestore/native/docs/pipeline/stages/transformation/search",
-    "notes": "Current Google limitation."
-  },
-  {
     "id": "firestore-production-security-editions-and-service-guarantees-cmek-database-configuration",
     "name": "CMEK database configuration",
     "area": "Production security, editions and service guarantees",
@@ -1868,17 +1857,6 @@
     "description": "Allows or denies each Firestore request from server client libraries and APIs according to the IAM roles and permissions granted to the caller.",
     "docs": "https://firebase.google.com/docs/firestore/security/iam",
     "notes": "Host IAM admission; standalone credentials and host enforcement are not the complete managed IAM service."
-  },
-  {
-    "id": "firestore-production-security-editions-and-service-guarantees-multi-region-replication",
-    "name": "Multi-region replication",
-    "area": "Production security, editions and service guarantees",
-    "local": "unavailable",
-    "other": "unavailable",
-    "default": "unavailable",
-    "description": "Replicates a database's data across several regions of a multi-region location, so it stays available if one region fails.",
-    "docs": "https://firebase.google.com/docs/firestore/locations",
-    "notes": "Cloud infrastructure guarantee; neither emulator provides physical replication."
   },
   {
     "id": "firestore-production-security-editions-and-service-guarantees-cmek-unavailable-key-access-denial",
@@ -1956,16 +1934,5 @@
     "description": "Runs a function when a document is deleted, passing the document's data as it was just before the deletion.",
     "docs": "https://firebase.google.com/docs/functions/firestore-events",
     "notes": ""
-  },
-  {
-    "id": "firestore-production-security-editions-and-service-guarantees-managed-firestore-availability-sla",
-    "name": "Managed Firestore availability SLA",
-    "area": "Production security, editions and service guarantees",
-    "local": "unavailable",
-    "other": "unavailable",
-    "default": "unavailable",
-    "description": "Commits to a Monthly Uptime Percentage for regional and multi-region Firestore databases and gives financial credits when it is not met.",
-    "docs": "https://cloud.google.com/firestore/sla",
-    "notes": "Managed service guarantee; local emulator tests cannot supply an SLA."
   }
 ]

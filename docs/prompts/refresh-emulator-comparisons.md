@@ -28,7 +28,7 @@ python3 scripts/sync-emulator-comparisons.py --check ../local_cloud_dependencies
 ```
 
 It prints, per service, documented rows, rows shown, rows only in LocalCloud, rows
-hidden as unassessed or repeated, and whether the document has a competitor column, and it
+hidden as unassessed, unavailable in both or repeated, and whether the document has a competitor column, and it
 lists what is out of date. If nothing is out of date, say so and stop.
 
 ## 3. Sync
@@ -64,7 +64,7 @@ write a short summary per service:
 
 - documented vs shown rows; rows only in LocalCloud before and after;
 - rows added, removed, renamed (ID changes) and whose status changed, with the largest swings;
-- `hidden.unassessed` and `hidden.repeated`: each hidden unassessed LocalCloud row is a gap in
+- `hidden.unassessed`, `hidden.unavailable` and `hidden.repeated`: each hidden unassessed LocalCloud row is a gap in
   the document, so list the biggest groups for the upstream owners;
 - any service whose `hasCompetitor` flipped (a document that gains or loses its competitor column).
   The site then shows or hides the competitor column and advantage counts by itself; confirm that

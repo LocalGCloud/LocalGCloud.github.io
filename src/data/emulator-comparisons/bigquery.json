@@ -220,16 +220,6 @@
     "notes": ""
   },
   {
-    "id": "metadata.enterprise.analytics-hub",
-    "name": "Analytics Hub",
-    "area": "Metadata / Enterprise",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "A data-sharing service where publishers list datasets in exchanges and subscribers query them in place without copying the data.",
-    "docs": "https://docs.cloud.google.com/bigquery/docs/analytics-hub-introduction",
-    "notes": ""
-  },
-  {
     "id": "metadata.enterprise.audit-logs",
     "name": "Audit logs",
     "area": "Metadata / Enterprise",
@@ -237,36 +227,6 @@
     "other": "unknown",
     "description": "Records of administrative actions and data access in BigQuery, written to Cloud Logging for security review and compliance.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/auditlogs",
-    "notes": ""
-  },
-  {
-    "id": "metadata.enterprise.authorized-datasets",
-    "name": "Authorized datasets",
-    "area": "Metadata / Enterprise",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Authorizes every view in one dataset to read the tables of another dataset, without granting those views' users access to the source dataset.",
-    "docs": "https://docs.cloud.google.com/bigquery/docs/authorized-datasets",
-    "notes": ""
-  },
-  {
-    "id": "metadata.enterprise.authorized-views",
-    "name": "Authorized views",
-    "area": "Metadata / Enterprise",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "A view that has been granted access to a source dataset, so users can query the view without having access to its underlying tables.",
-    "docs": "https://docs.cloud.google.com/bigquery/docs/authorized-views",
-    "notes": ""
-  },
-  {
-    "id": "metadata.enterprise.bi-engine",
-    "name": "BI Engine",
-    "area": "Metadata / Enterprise",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "An in-memory analysis service that speeds up SQL queries from dashboards and BI tools by caching data in reserved memory capacity.",
-    "docs": "https://docs.cloud.google.com/bigquery/docs/bi-engine-intro",
     "notes": ""
   },
   {
@@ -280,16 +240,6 @@
     "notes": ""
   },
   {
-    "id": "metadata.enterprise.cmek-customer-managed-encryption",
-    "name": "CMEK (customer-managed encryption)",
-    "area": "Metadata / Enterprise",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Encrypts BigQuery data with encryption keys that you control in Cloud KMS instead of Google-managed keys.",
-    "docs": "https://docs.cloud.google.com/bigquery/docs/customer-managed-encryption",
-    "notes": ""
-  },
-  {
     "id": "metadata.enterprise.column-level-security",
     "name": "Column-level security",
     "area": "Metadata / Enterprise",
@@ -298,16 +248,6 @@
     "description": "Controls which users can read sensitive columns by classifying them with policy tags and checking IAM access on each tag.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/column-level-security-intro",
     "notes": "Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served."
-  },
-  {
-    "id": "metadata.enterprise.connection-api-external-connection",
-    "name": "Connection API (EXTERNAL CONNECTION)",
-    "area": "Metadata / Enterprise",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Manages connection resources that store the settings and credentials BigQuery needs to reach external sources such as Cloud SQL, Spanner or Cloud Storage.",
-    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/bigqueryconnection/rest",
-    "notes": ""
   },
   {
     "id": "metadata.enterprise.create-model",
@@ -337,16 +277,6 @@
     "other": "unavailable",
     "description": "Hides sensitive column values at query time by applying masking rules tied to policy tags, based on the roles the reader holds.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/column-data-masking-intro",
-    "notes": ""
-  },
-  {
-    "id": "metadata.enterprise.data-transfer-service",
-    "name": "Data Transfer Service",
-    "area": "Metadata / Enterprise",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "A managed service that schedules and automates data loads into BigQuery from sources such as Google applications, Cloud Storage and other warehouses.",
-    "docs": "https://docs.cloud.google.com/bigquery/docs/dts-introduction",
     "notes": ""
   },
   {
@@ -417,16 +347,6 @@
     "other": "unavailable",
     "description": "Runs a trained model over input rows and returns a prediction for each row.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-predict",
-    "notes": ""
-  },
-  {
-    "id": "metadata.enterprise.ml-understand-text",
-    "name": "ML.UNDERSTAND_TEXT",
-    "area": "Metadata / Enterprise",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Analyzes text with the Cloud Natural Language API through a remote model, for tasks such as entity, sentiment or syntax analysis.",
-    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-understand-text",
     "notes": ""
   },
   {
@@ -5217,16 +5137,6 @@
     "other": "available",
     "description": "Returns e raised to the power of a number, the natural exponential, and raises an error if the result overflows.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#exp",
-    "notes": ""
-  },
-  {
-    "id": "sql.function.external-object-transform",
-    "name": "EXTERNAL_OBJECT_TRANSFORM",
-    "area": "SQL / Functions",
-    "local": "unavailable",
-    "other": "unavailable",
-    "description": "Table function that takes an object table and returns it with extra columns for each object, such as time-limited read-only access links to the stored objects.",
-    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/table-functions-built-in#external_object_transform",
     "notes": ""
   },
   {

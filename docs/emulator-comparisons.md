@@ -9,16 +9,20 @@ standalone service comparison URLs remain available, including without JavaScrip
 Use LocalCloud service names in the headings and table columns. Keep introductions
 and configuration notes concise.
 
-Each service lists its **categories**, the document's own sections, collapsed by default
-with a count ("31 features · 12 only in LocalCloud"). The initial HTML and Markdown twin
-hold only the category headers; the browser loads the selected service's build-hashed
-inventory and draws a category's features when it opens. A search covers the complete
+Each service lists its **categories**, the document's own sections, as rows of the one
+comparison table, collapsed by default. Under LocalCloud's column a category row shows how
+many of its features LocalCloud supports (green ✓ and a number); under the competitor's
+column it shows how many the competitor lacks (red ✕ and a number); its Details cell stays
+empty and "N features" sits under its name. Opening it lists its features beneath, each
+with a green ✓ or red ✕ in both columns. The initial HTML and Markdown twin hold only the
+category rows; the browser loads the selected service's build-hashed inventory and draws a
+category's features when it opens. A search covers the complete
 inventory and opens every category that has a match. The two filters are "Only in
 LocalCloud" (the default) and "All features". The JSON comparison view appears in the
 For agents audience only.
 
 The header says "N features in total · M only available in LocalCloud (not in <the
-emulator compared>)". Available and unavailable states use green checks and red crosses
+emulator compared>)"; N counts the features listed, so it leaves out the ones neither side supports. Available and unavailable states use green checks and red crosses
 with readable screen-reader and Markdown labels. **A limited result (◐) shows the same
 green check as a supported one**: the mark says the feature works and the "Note:" line
 says how far, so the site never labels a result "Partial" or "Scoped". Every row shows
@@ -88,6 +92,11 @@ how many rows were left out; it is not imported by any page.
   terms are removed, "fork"/"upstream" become the product or competitor name, and
   nothing is invented: if only evidence remains, the note is empty. Some services show
   notes only where the result is limited or unavailable (`NOTE_STATES` in the importer).
+- **Features neither side supports are not listed.** A row that LocalCloud (both profiles)
+  and the compared emulator all lack, or accept without effect, says nothing a visitor can
+  use. It is counted in the provenance (`hidden.unavailable`) and reported by every sync.
+  A feature only the competitor supports stays (a red ✕ under LocalCloud), as does one whose
+  competitor result is not assessed.
 - **Unassessed LocalCloud rows are not shown.** A feature whose LocalCloud result is
   unknown says nothing a visitor can use. It stays in the document, is counted in the
   provenance (`hidden.unassessed`) and is reported by every sync so it can be assessed
