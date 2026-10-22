@@ -5,6 +5,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "limited",
+    "description": "Creates a new bucket in a project under a globally unique name, with its location, storage class and optional default access settings.",
     "notes": "Basic creation works; project validation and full resource fields differ."
   },
   {
@@ -13,6 +14,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "limited",
+    "description": "Lists the buckets in a project and returns each bucket's resource with its name, location and settings.",
     "notes": "fake-gcs-server lists globally; LocalCloud filters recorded ownership."
   },
   {
@@ -21,6 +23,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "limited",
+    "description": "Reads one bucket's metadata resource, including its location, storage class, labels and settings such as versioning.",
     "notes": "Metadata subset; project number and etag are placeholders."
   },
   {
@@ -29,6 +32,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "limited",
+    "description": "Changes only the bucket fields included in the request, such as labels, versioning or the default object hold, and leaves the rest as they were.",
     "notes": "versioning/default hold subset."
   },
   {
@@ -37,6 +41,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Permanently deletes a bucket after all of its objects have been removed.",
     "notes": ""
   },
   {
@@ -45,6 +50,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "unavailable",
+    "description": "A successful bucket deletion returns HTTP status 204 No Content with an empty response body.",
     "notes": ""
   },
   {
@@ -53,6 +59,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Refuses to delete a bucket that still contains objects and returns an error instead of removing the bucket or its contents.",
     "notes": ""
   },
   {
@@ -61,6 +68,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "limited",
+    "description": "Checks a new bucket name against the naming rules, such as length limits, allowed characters, no IP address form and no goog prefix.",
     "notes": "Local format checks; not global uniqueness/domain ownership validation."
   },
   {
@@ -69,6 +77,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Narrows a bucket listing to buckets whose names begin with a given string.",
     "notes": ""
   },
   {
@@ -77,6 +86,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Returns a long bucket listing in pages, using a maximum page size and a page token to continue from the previous page.",
     "notes": ""
   },
   {
@@ -85,6 +95,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "unavailable",
+    "description": "Attaches a newly created bucket to the project named in the request, making that project the bucket's owner.",
     "notes": "JSON creates only; no project existence/number resolution."
   },
   {
@@ -93,6 +104,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "unavailable",
+    "description": "Scopes a bucket listing to one project, so only buckets owned by the project named in the request are returned.",
     "notes": "Exact recorded project string; seeded/gRPC-created buckets are unattributed."
   },
   {
@@ -101,6 +113,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "limited",
+    "description": "A bucket setting that keeps older generations of an object as noncurrent versions when it is overwritten or deleted, so they can be listed and restored.",
     "notes": "Memory only; no filesystem version history."
   },
   {
@@ -109,6 +122,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "limited",
+    "description": "A bucket setting that places an event-based hold on every new object, which cannot be deleted or replaced until the hold is released.",
     "notes": "Flag stored; per-object event hold/enforcement not modeled."
   },
   {
@@ -117,6 +131,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Returns where a bucket stores its data and whether hierarchical namespace is on: its name, location, location type and namespace setting.",
     "notes": ""
   },
   {
@@ -125,6 +140,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Creates a bucket with hierarchical namespace turned on, which organizes objects into real folders and allows atomic folder renames. It can be chosen only at creation.",
     "notes": "Reports enabled: false."
   },
   {
@@ -133,6 +149,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Lists the access control entries on a bucket, each pairing an entity such as a user or group with a role.",
     "notes": ""
   },
   {
@@ -141,6 +158,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Reads the single access control entry that grants one named entity a role on a bucket.",
     "notes": ""
   },
   {
@@ -149,6 +167,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Adds an access control entry to a bucket, granting a user, group, domain or special group a role such as reader or owner.",
     "notes": ""
   },
   {
@@ -157,6 +176,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Replaces the role of an existing bucket access control entry for an entity, using a full PUT request.",
     "notes": ""
   },
   {
@@ -165,6 +185,7 @@
     "area": "Buckets and project ownership",
     "local": "available",
     "other": "available",
+    "description": "Removes the access control entry for a named entity from a bucket, ending the access that entry granted.",
     "notes": ""
   },
   {
@@ -173,6 +194,7 @@
     "area": "Buckets and project ownership",
     "local": "limited",
     "other": "limited",
+    "description": "Lets a create request name a predefined ACL set, such as private or publicRead, which expands into the full list of bucket access entries.",
     "notes": "public/authenticated scopes only."
   },
   {
@@ -181,6 +203,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Updates a bucket's metadata with a PUT request, which can change fields the request does not mention; patch is generally preferred.",
     "notes": "PATCH exists, bucket PUT is not registered."
   },
   {
@@ -189,6 +212,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "A bucket setting listing the origins, methods and response headers that browsers may use for cross-origin requests, plus a preflight cache time.",
     "notes": "Global emulator CORS headers are not per-bucket CORS policy."
   },
   {
@@ -197,6 +221,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "The location chosen when a bucket is created, a region, dual-region or multi-region, which sets where its data is stored and affects availability, price and latency.",
     "notes": "One configured response location, no placement semantics."
   },
   {
@@ -205,6 +230,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Rules that automatically act on objects when conditions such as age or number of newer versions are met, for example deleting them or changing their storage class.",
     "notes": "No lifecycle configuration or executor."
   },
   {
@@ -213,6 +239,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "A bucket setting that sets the minimum time objects must be kept before they can be deleted or replaced, given as a retention period in seconds.",
     "notes": "Bucket retention policy not modeled."
   },
   {
@@ -221,6 +248,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Permanently locks a bucket's retention policy so it can no longer be removed or shortened. The request must name the bucket's current metageneration.",
     "notes": "No lockRetentionPolicy route."
   },
   {
@@ -229,6 +257,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "A bucket setting that keeps deleted objects recoverable for a set number of seconds before they are permanently removed; zero turns it off.",
     "notes": "softDeletePolicy not modeled."
   },
   {
@@ -237,6 +266,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Brings a soft-deleted bucket back to live status, identified by its generation number, with its metadata but not its objects.",
     "notes": "No bucket restore route."
   },
   {
@@ -245,6 +275,7 @@
     "area": "Buckets and project ownership",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Changes part of a single bucket access control entry for an entity with a PATCH request, rather than replacing the whole entry.",
     "notes": "PUT supported; ACL PATCH absent."
   },
   {
@@ -253,6 +284,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Returns an object's metadata, such as its size, content type, checksums, generation and storage class, without its data.",
     "notes": ""
   },
   {
@@ -261,6 +293,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Returns an object's stored bytes rather than its metadata when a get request asks for media content.",
     "notes": ""
   },
   {
@@ -269,6 +302,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Returns only the headers of an object, such as size, content type and checksums, with no body, using an XML API HEAD request.",
     "notes": ""
   },
   {
@@ -277,6 +311,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Returns only a requested byte range of an object through the Range header, useful for resuming a download or reading part of a file.",
     "notes": ""
   },
   {
@@ -285,6 +320,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Decompresses an object stored with gzip content encoding while serving it, unless the client says it accepts gzip, so the client receives the original bytes.",
     "notes": ""
   },
   {
@@ -293,6 +329,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Serves a gzip-encoded object still compressed, with a gzip content-encoding header, when the request accepts gzip or the object is marked no-transform.",
     "notes": ""
   },
   {
@@ -301,6 +338,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Lets an authenticated download request override the content type or content disposition returned for that one response without changing the stored object.",
     "notes": "Local override handling; authenticated XML/RSA restrictions differ."
   },
   {
@@ -309,6 +347,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Retrieves the objects stored in a bucket as a list of object resources with their metadata.",
     "notes": ""
   },
   {
@@ -317,6 +356,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Returns only objects whose names begin with a given prefix, for example everything under a folder-like path.",
     "notes": ""
   },
   {
@@ -325,6 +365,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Groups object names at a delimiter, usually a slash, returning names without the delimiter as items and shared leading parts as prefixes, to mimic directories.",
     "notes": ""
   },
   {
@@ -333,6 +374,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Returns only objects whose names match a glob pattern, which can use wildcards to select names across path levels.",
     "notes": ""
   },
   {
@@ -341,6 +383,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Responds with an error when the matchGlob value in a listing request is not a valid glob pattern.",
     "notes": ""
   },
   {
@@ -349,6 +392,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Returns only objects whose names sort at or after the given value, an inclusive lower bound that begins a name range.",
     "notes": ""
   },
   {
@@ -357,6 +401,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Returns only objects whose names sort before the given value, an exclusive upper bound that ends a name range.",
     "notes": ""
   },
   {
@@ -365,6 +410,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "When listing with a delimiter, also returns the metadata of objects whose names end with that delimiter, in addition to listing them as prefixes.",
     "notes": ""
   },
   {
@@ -373,6 +419,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Returns a long object listing in pages, with a maximum page size and a page token for the next page; each page counts objects and prefixes together.",
     "notes": "object-only maxResults limit does not account for prefixes."
   },
   {
@@ -381,6 +428,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Includes every stored generation of each object, not only the live one, as separate results ordered by increasing generation when versions are requested.",
     "notes": "Memory versioning only."
   },
   {
@@ -389,6 +437,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Reads the metadata or data of one particular generation of an object, identified by its generation number, rather than the latest version.",
     "notes": "Memory versioning only."
   },
   {
@@ -397,6 +446,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Removes an object and its metadata from a bucket; with versioning or soft delete turned on, the data can remain recoverable.",
     "notes": ""
   },
   {
@@ -405,6 +455,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "unavailable",
+    "description": "A successful object deletion returns HTTP status 204 No Content with an empty response body.",
     "notes": ""
   },
   {
@@ -413,6 +464,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Permanently deletes one specific generation of an object by naming its generation number, leaving other generations in place.",
     "notes": "Filesystem has no history."
   },
   {
@@ -421,6 +473,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Copies a source object to a destination name in a single request, optionally overriding metadata; the copy does not keep the source object's ACLs.",
     "notes": ""
   },
   {
@@ -429,6 +482,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Copies a source object to a destination in one or more calls, returning a rewrite token to continue until the work is done, and can override metadata.",
     "notes": ""
   },
   {
@@ -437,6 +491,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Concatenates up to 32 existing objects from one bucket into a single new object in that bucket, leaving the sources unchanged by default.",
     "notes": ""
   },
   {
@@ -445,6 +500,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Updates only the metadata fields named in the request, such as custom metadata or retention, and leaves other fields unchanged.",
     "notes": "Selected mutable fields; contexts/complete retention semantics differ."
   },
   {
@@ -453,6 +509,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Updates an object's metadata with a PUT request, which can change metadata fields that the request does not mention; patch is generally preferred.",
     "notes": "Supported metadata subset; broader production resource not modeled."
   },
   {
@@ -461,6 +518,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Lets a client that cannot send PATCH use a POST request with the method override header set to PATCH to apply a patch-style update.",
     "notes": "POST override to PATCH."
   },
   {
@@ -469,6 +527,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Lets users attach their own key and value pairs to an object, sent as x-goog-meta headers in the XML API, and returns them with the object.",
     "notes": ""
   },
   {
@@ -477,6 +536,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Records the object's media type, such as image/png, which tells browsers and clients how to interpret its bytes.",
     "notes": ""
   },
   {
@@ -485,6 +545,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Records that an object's bytes are compressed, for example with gzip, while the content type still describes the underlying file.",
     "notes": ""
   },
   {
@@ -493,6 +554,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Records how a browser should present the object, such as showing it inline or offering it as a download with a given file name.",
     "notes": ""
   },
   {
@@ -501,6 +563,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Records the language or languages an object is intended for, using language codes such as en or fr.",
     "notes": ""
   },
   {
@@ -509,6 +572,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Records caching directives such as max-age or no-transform that control whether caches may store the object and for how long.",
     "notes": ""
   },
   {
@@ -517,6 +581,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Records a user-chosen timestamp on an object, used by lifecycle rules that act a number of days after that time; once set it cannot be moved earlier.",
     "notes": ""
   },
   {
@@ -525,6 +590,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Controls how much of an object's metadata a response includes: full returns every property, while noAcl leaves out the owner and access control list.",
     "notes": ""
   },
   {
@@ -533,6 +599,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Sets a per-object retention mode, unlocked or locked, and a retain-until time before which the object cannot be deleted or replaced.",
     "notes": ""
   },
   {
@@ -541,6 +608,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Lists the access control entries on an object, each granting an entity a role on that object.",
     "notes": ""
   },
   {
@@ -549,6 +617,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Reads the single access control entry for a named entity on an object, for the latest generation or a specified one.",
     "notes": ""
   },
   {
@@ -557,6 +626,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Adds an access control entry to an object, granting a user, group or special group a role such as reader or owner on it.",
     "notes": ""
   },
   {
@@ -565,6 +635,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Replaces the role of an existing object access control entry for an entity, using a full PUT request.",
     "notes": ""
   },
   {
@@ -573,6 +644,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Removes the access control entry for a named entity from an object, ending the access that entry granted.",
     "notes": ""
   },
   {
@@ -581,6 +653,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Looks up an object's access control entry for one specific generation of the object by passing its generation number, instead of the latest version.",
     "notes": "Memory history."
   },
   {
@@ -589,6 +662,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Applies a predefined access set such as private, publicRead or bucketOwnerRead to an object when it is uploaded, copied or composed.",
     "notes": "Emulator ACL model."
   },
   {
@@ -597,6 +671,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "limited",
     "other": "limited",
+    "description": "Lists the objects in a bucket through the XML API as a ListBucketResult document, with Contents entries, common prefixes and truncation markers.",
     "notes": "Basic list/prefix/delimiter; continuation/version-listing fields incomplete."
   },
   {
@@ -605,6 +680,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Downloads an object through the XML API from an address where the bucket name forms part of the host name and the object name is the path.",
     "notes": ""
   },
   {
@@ -613,6 +689,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "available",
+    "description": "Downloads an object through the XML API from an address where the bucket name is the first segment of the path after the host.",
     "notes": ""
   },
   {
@@ -621,6 +698,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "available",
     "other": "unavailable",
+    "description": "Deletes an object with an XML API DELETE request sent to an address whose host name begins with the bucket name.",
     "notes": ""
   },
   {
@@ -629,6 +707,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Changes part of a single object access control entry with a PATCH request, rather than replacing the whole entry.",
     "notes": "PUT supported; ACL PATCH absent."
   },
   {
@@ -637,6 +716,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Restores a soft-deleted object by creating a new live copy in the same bucket from a named generation, with the metadata it had before deletion.",
     "notes": "No object restore route."
   },
   {
@@ -645,6 +725,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Starts a long-running operation that restores many soft-deleted objects at once, filtered by a name glob or a soft-deletion time range.",
     "notes": "No bulkRestore route."
   },
   {
@@ -653,6 +734,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Raises an object's metageneration counter by one each time its metadata changes, starting at 1 for each new generation, so conditional requests can detect changes.",
     "notes": "Metageneration fixed at 1."
   },
   {
@@ -661,6 +743,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Encrypts an object with a symmetric Cloud KMS key you control, named per request or set as the bucket default, instead of a Google-managed key.",
     "notes": "No KMS encryption path."
   },
   {
@@ -669,6 +752,7 @@
     "area": "Objects, listing, metadata, and protection",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Encrypts an object with your own AES-256 key supplied in request headers on each operation; Google keeps only a hash of the key afterwards.",
     "notes": "No CSEK encryption path."
   },
   {
@@ -677,6 +761,7 @@
     "area": "Default object ACL operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Lists the default object access control entries of a bucket, which apply to new objects created in the bucket without their own ACL.",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -685,6 +770,7 @@
     "area": "Default object ACL operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Reads the default object access control entry for one named entity on a bucket.",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -693,6 +779,7 @@
     "area": "Default object ACL operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Adds an entry to a bucket's default object ACL, granting an entity a role on new objects that are created without an ACL.",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -701,6 +788,7 @@
     "area": "Default object ACL operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Replaces the role in an existing default object ACL entry for an entity, using a full PUT request.",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -709,6 +797,7 @@
     "area": "Default object ACL operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Changes part of a default object ACL entry for an entity with a PATCH request, rather than replacing the whole entry.",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -717,6 +806,7 @@
     "area": "Default object ACL operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Removes the default object ACL entry for an entity, so new objects no longer receive that grant.",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -725,6 +815,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Uploads an object's bytes in a single request, sending no metadata, with the object name given as a query parameter.",
     "notes": ""
   },
   {
@@ -733,6 +824,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Uploads an object's data together with its metadata in one multipart request, so content type and custom metadata are set at creation.",
     "notes": ""
   },
   {
@@ -741,6 +833,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Starts a resumable upload by sending the object name and optional metadata, and returns a session URI that later requests use to send the data.",
     "notes": ""
   },
   {
@@ -749,6 +842,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Sends data to the session URI in chunks with a Content-Range header, receiving a 308 response until the final chunk completes the object with 200 or 201.",
     "notes": ""
   },
   {
@@ -757,6 +851,7 @@
     "area": "Uploads and conditional operations",
     "local": "limited",
     "other": "limited",
+    "description": "Cancels an unfinished resumable upload by sending DELETE to its session URI; the JSON API answers 499 and the session cannot be used again.",
     "notes": "Handler returns JSON API's 499 status but does not invalidate the stored upload session."
   },
   {
@@ -765,6 +860,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Uploads one object from an HTML form with a POST request, where the form carries the object name, an optional signed policy and the file as its last field.",
     "notes": ""
   },
   {
@@ -773,6 +869,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Uploads content that is already gzip-compressed, usually with its content encoding set to gzip, so it is stored compressed and can be transcoded on download.",
     "notes": ""
   },
   {
@@ -781,6 +878,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Produces a base64 MD5 hash of an object's data, returned in its metadata, for checking integrity; composite objects do not have one.",
     "notes": ""
   },
   {
@@ -789,6 +887,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Produces a CRC32C checksum of an object's data, returned in its metadata, which is the recommended hash for integrity checks.",
     "notes": ""
   },
   {
@@ -797,6 +896,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Rejects an upload whose data does not match the MD5 hash declared in the request, so corrupted transfers are not stored.",
     "notes": ""
   },
   {
@@ -805,6 +905,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Rejects an upload whose data does not match the CRC32C checksum declared in the request, failing the write instead of storing corrupted data.",
     "notes": ""
   },
   {
@@ -813,6 +914,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Runs a request only if the object's current generation equals the given number; zero means it succeeds only when no live object exists.",
     "notes": ""
   },
   {
@@ -821,6 +923,7 @@
     "area": "Uploads and conditional operations",
     "local": "limited",
     "other": "limited",
+    "description": "Runs a request only if the object's current generation differs from the given number, which guards against acting on one particular version.",
     "notes": "Generic handler accepts missing object for some NotMatch checks."
   },
   {
@@ -829,6 +932,7 @@
     "area": "Uploads and conditional operations",
     "local": "limited",
     "other": "limited",
+    "description": "Runs a request only if the object's metageneration equals the given number, which detects metadata changes made since it was read.",
     "notes": "Metageneration is fixed at 1."
   },
   {
@@ -837,6 +941,7 @@
     "area": "Uploads and conditional operations",
     "local": "limited",
     "other": "limited",
+    "description": "Runs a request only if the object's metageneration differs from the given number, which shows whether metadata has changed since it was last read.",
     "notes": "Metageneration is fixed at 1."
   },
   {
@@ -845,6 +950,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Makes a copy or rewrite proceed only if the source object's generation matches ifSourceGenerationMatch, so the intended version is the one copied.",
     "notes": ""
   },
   {
@@ -853,6 +959,7 @@
     "area": "Uploads and conditional operations",
     "local": "limited",
     "other": "limited",
+    "description": "Makes a copy or rewrite proceed only if the source object's metageneration matches ifSourceMetagenerationMatch.",
     "notes": "Fixed metageneration."
   },
   {
@@ -861,6 +968,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Combines several JSON API calls into one HTTP request, up to 100 calls in a multipart body, and returns one response part for each call.",
     "notes": ""
   },
   {
@@ -869,6 +977,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "unavailable",
+    "description": "Applies the Authorization header of the outer batch request to every inner call unless a call sets its own, so credentials are given once.",
     "notes": "LocalCloud copies standard Authorization; local identity headers are not GCS features."
   },
   {
@@ -877,6 +986,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "available",
+    "description": "Turns request headers beginning with x-goog-meta- into the custom metadata of the uploaded object, through the XML API.",
     "notes": ""
   },
   {
@@ -885,6 +995,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "unavailable",
+    "description": "Treats Amazon S3 style x-amz-meta headers on an XML API upload as custom metadata, matching x-goog-meta headers, for S3 interoperability.",
     "notes": "XML S3-interoperability spelling; not full S3 support."
   },
   {
@@ -893,6 +1004,7 @@
     "area": "Uploads and conditional operations",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates a checksum declared on the final request of a resumable upload against the whole object assembled from all of its chunks.",
     "notes": "Retains full session entry."
   },
   {
@@ -901,6 +1013,7 @@
     "area": "Uploads and conditional operations",
     "local": "limited",
     "other": "available",
+    "description": "Lets whoever holds a resumable upload's session URI continue that upload without further credentials, because the URI acts as an authentication token.",
     "notes": "LocalCloud additionally checks initiating key revocation and optional callback."
   },
   {
@@ -909,6 +1022,7 @@
     "area": "Same-bucket object moves",
     "local": "limited",
     "other": "unavailable",
+    "description": "Renames an object within its bucket by moving it from a source name to a destination name, replacing any object already at the destination.",
     "notes": "route/data movement implemented; atomicity, retention and projection gaps below."
   },
   {
@@ -917,6 +1031,7 @@
     "area": "Same-bucket object moves",
     "local": "limited",
     "other": "unavailable",
+    "description": "Performs the whole move as one atomic transaction, so either every step completes or no change is made.",
     "notes": "locks/rollback exist; multiple disk writes are not a crash-atomic transaction."
   },
   {
@@ -925,6 +1040,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
+    "description": "Moves the source only when its generation matches ifSourceGenerationMatch, guarding against moving a version that changed since it was read.",
     "notes": ""
   },
   {
@@ -933,6 +1049,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
+    "description": "Moves only when the live destination object has the generation given in ifGenerationMatch; zero means the destination must not already exist.",
     "notes": ""
   },
   {
@@ -941,6 +1058,7 @@
     "area": "Same-bucket object moves",
     "local": "limited",
     "other": "unavailable",
+    "description": "Moves the source only when its metageneration matches ifSourceMetagenerationMatch, guarding against metadata changed since it was read.",
     "notes": "Fixed metageneration."
   },
   {
@@ -949,6 +1067,7 @@
     "area": "Same-bucket object moves",
     "local": "limited",
     "other": "unavailable",
+    "description": "Moves only when the live destination object's metageneration matches ifMetagenerationMatch.",
     "notes": "Fixed metageneration."
   },
   {
@@ -957,6 +1076,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
+    "description": "Keeps the source object's data and metadata on the destination, apart from its name, generation, metageneration and timestamps.",
     "notes": ""
   },
   {
@@ -965,6 +1085,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
+    "description": "Gives the destination object a new generation number and resets its metageneration to 1, because the move creates a new object.",
     "notes": ""
   },
   {
@@ -973,6 +1094,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
+    "description": "Leaves both the source and the destination unchanged when a move fails because a precondition is not met.",
     "notes": ""
   },
   {
@@ -981,6 +1103,7 @@
     "area": "Same-bucket object moves",
     "local": "limited",
     "other": "unavailable",
+    "description": "Determines which Pub/Sub notification event is published for the object at its original name when a move takes it away.",
     "notes": "Source delete/archive path."
   },
   {
@@ -989,6 +1112,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
+    "description": "Publishes an object finalize notification for the destination object that a move creates.",
     "notes": ""
   },
   {
@@ -997,6 +1121,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
+    "description": "Publishes a delete or archive notification for an existing object at the destination name when a move replaces it.",
     "notes": ""
   },
   {
@@ -1005,6 +1130,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
+    "description": "Moves the source only when its generation differs from ifSourceGenerationNotMatch.",
     "notes": "Metadata conditions use fixed metageneration."
   },
   {
@@ -1013,6 +1139,7 @@
     "area": "Same-bucket object moves",
     "local": "available",
     "other": "unavailable",
+    "description": "Moves only when a live destination object exists whose generation differs from ifGenerationNotMatch.",
     "notes": "Metadata conditions use fixed metageneration."
   },
   {
@@ -1021,6 +1148,7 @@
     "area": "Same-bucket object moves",
     "local": "limited",
     "other": "unavailable",
+    "description": "Moves the source only when its metageneration differs from ifSourceMetagenerationNotMatch.",
     "notes": "Metadata conditions use fixed metageneration."
   },
   {
@@ -1029,6 +1157,7 @@
     "area": "Same-bucket object moves",
     "local": "limited",
     "other": "unavailable",
+    "description": "Moves only when the live destination object's metageneration differs from ifMetagenerationNotMatch.",
     "notes": "Metadata conditions use fixed metageneration."
   },
   {
@@ -1037,6 +1166,7 @@
     "area": "Same-bucket object moves",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Fails a move with a 403 retention error when the source or a live destination object is under an object or bucket retention policy.",
     "notes": "Move path has no object/bucket retention-policy check."
   },
   {
@@ -1045,6 +1175,7 @@
     "area": "Access control",
     "local": "limited",
     "other": "unavailable",
+    "description": "Checks that the caller holds the IAM permission each JSON or XML request needs on the bucket or object, and rejects the request if it does not.",
     "notes": "Requires external callback; open by default; subset of permissions."
   },
   {
@@ -1053,6 +1184,7 @@
     "area": "Access control",
     "local": "limited",
     "other": "unavailable",
+    "description": "Requires the delete permission as well as create when an upload replaces an existing object.",
     "notes": "Create + delete checks when callback configured."
   },
   {
@@ -1061,6 +1193,7 @@
     "area": "Access control",
     "local": "limited",
     "other": "unavailable",
+    "description": "Requires permission to read every source object, as well as create permission on the destination, when composing objects.",
     "notes": "Source get checks delegated to callback."
   },
   {
@@ -1069,6 +1202,7 @@
     "area": "Access control",
     "local": "limited",
     "other": "unavailable",
+    "description": "Requires the IAM administration permissions to read or change ACLs on buckets and objects, such as getIamPolicy and setIamPolicy.",
     "notes": "Callback checks selected getIamPolicy/setIamPolicy routes."
   },
   {
@@ -1077,6 +1211,7 @@
     "area": "Access control",
     "local": "limited",
     "other": "unavailable",
+    "description": "Treats a request signed with an HMAC key as made by the service account or user that owns the key, so that identity's IAM permissions apply.",
     "notes": "Verified identity delegated; no complete service-account model."
   },
   {
@@ -1085,6 +1220,7 @@
     "area": "Access control",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Returns the IAM policy of a bucket: its role bindings, optional conditions, policy version and etag.",
     "notes": "Callback integration does not implement policy API."
   },
   {
@@ -1093,6 +1229,7 @@
     "area": "Access control",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Replaces a bucket's IAM policy with the one supplied, granting or removing roles for members.",
     "notes": "Callback integration does not implement policy API."
   },
   {
@@ -1101,6 +1238,7 @@
     "area": "Access control",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Returns which of the listed permissions the caller holds on a bucket, without needing any permission itself.",
     "notes": "Callback integration does not implement policy API."
   },
   {
@@ -1109,6 +1247,7 @@
     "area": "Access control",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "A bucket setting that disables ACLs so access is controlled only through IAM, and that cannot be turned off once it has been on for 90 days.",
     "notes": "Uniform access configuration/enforcement not modeled."
   },
   {
@@ -1117,6 +1256,7 @@
     "area": "Access control",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "A bucket or organization setting that stops buckets and objects from being made public through IAM or ACLs, so allUsers grants have no effect.",
     "notes": "Public access prevention configuration not modeled."
   },
   {
@@ -1125,6 +1265,7 @@
     "area": "HMAC key management",
     "local": "limited",
     "other": "unavailable",
+    "description": "Creates an HMAC key for a service account and returns the key's access ID and its secret in the response.",
     "notes": "Generates keys; validates email shape/project suffix rather than an existing Google account."
   },
   {
@@ -1133,6 +1274,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Returns metadata for the HMAC keys in a project, without their secrets.",
     "notes": ""
   },
   {
@@ -1141,6 +1283,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Returns the metadata of one HMAC key by its access ID, including its state and service account, but not its secret.",
     "notes": ""
   },
   {
@@ -1149,6 +1292,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Changes an HMAC key's state to active or inactive; permanent removal is done with the delete method.",
     "notes": ""
   },
   {
@@ -1157,6 +1301,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Permanently removes an HMAC key whose state is inactive, making it unusable and unrecoverable.",
     "notes": ""
   },
   {
@@ -1165,6 +1310,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Returns an error if a request tries to delete an HMAC key that is still active, so a key must be made inactive first.",
     "notes": ""
   },
   {
@@ -1173,6 +1319,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Narrows an HMAC key listing to the keys that belong to one service account, identified by its email address.",
     "notes": ""
   },
   {
@@ -1181,6 +1328,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Returns a long HMAC key listing in pages, using a maximum page size and a page token to continue.",
     "notes": ""
   },
   {
@@ -1189,6 +1337,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Includes keys in the DELETED state in an HMAC key listing, which are left out by default.",
     "notes": ""
   },
   {
@@ -1197,6 +1346,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Accepts an etag with a key update and applies the change only if it matches the key's current etag, guarding against overwriting a concurrent change.",
     "notes": ""
   },
   {
@@ -1205,6 +1355,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Shows an HMAC key's secret only in the response that creates it; later reads return metadata alone, so a lost secret cannot be retrieved.",
     "notes": ""
   },
   {
@@ -1213,6 +1364,7 @@
     "area": "HMAC key management",
     "local": "available",
     "other": "unavailable",
+    "description": "Limits each service account to 10 HMAC keys that are not deleted; deleted keys do not count toward the limit.",
     "notes": ""
   },
   {
@@ -1221,6 +1373,7 @@
     "area": "HMAC key management",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Deletes a service account's HMAC keys when the account itself is deleted, though they may keep working for a short time afterwards.",
     "notes": "No service-account lifecycle integration."
   },
   {
@@ -1229,6 +1382,7 @@
     "area": "HMAC signing",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Checks the signature on a signed URL created with an RSA private key using GOOG4-RSA-SHA256, so only URLs signed by a valid key are accepted.",
     "notes": "GOOG4-RSA-SHA256 exempted."
   },
   {
@@ -1237,6 +1391,7 @@
     "area": "HMAC signing",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Rejects a signed URL once its expiration time has passed; a V4 URL can be valid for at most 7 days.",
     "notes": ""
   },
   {
@@ -1245,6 +1400,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates an Authorization header of the form GOOG1 followed by an access ID and a V2 signature computed with an HMAC key's secret.",
     "notes": ""
   },
   {
@@ -1253,6 +1409,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates an Authorization header of the form AWS followed by an access ID and a V2 signature, as sent by S3 style clients.",
     "notes": ""
   },
   {
@@ -1261,6 +1418,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates a V2 signed URL that carries GoogleAccessId, Expires and Signature query parameters and is signed with an HMAC key.",
     "notes": ""
   },
   {
@@ -1269,6 +1427,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates an Authorization header that uses GOOG4-HMAC-SHA256, whose signature is made with a signing key derived from an HMAC secret.",
     "notes": ""
   },
   {
@@ -1277,6 +1436,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates an Authorization header that uses AWS4-HMAC-SHA256, the Amazon S3 style V4 signature accepted for XML API interoperability.",
     "notes": ""
   },
   {
@@ -1285,6 +1445,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates a V4 signed URL made with GOOG4-HMAC-SHA256 and its X-Goog-Algorithm, Credential, Date, Expires, SignedHeaders and Signature query parameters.",
     "notes": ""
   },
   {
@@ -1293,6 +1454,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates a signed URL made with the AWS4-HMAC-SHA256 algorithm of Amazon S3 style V4 signing, accepted by the XML API for interoperability.",
     "notes": ""
   },
   {
@@ -1301,6 +1463,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Rejects an HMAC signed URL whose expiration time has already passed, so access ends when the URL expires.",
     "notes": ""
   },
   {
@@ -1309,6 +1472,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Checks that the timestamp in a signed request's date header falls within an allowed window around the server's current time, rejecting stale or future requests.",
     "notes": "15 minutes."
   },
   {
@@ -1317,6 +1481,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Checks that the signature covers the headers named in the signed headers list, including the mandatory host header, so those headers cannot be altered.",
     "notes": "Host required."
   },
   {
@@ -1325,6 +1490,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Checks the payload hash declared in a V4 request against the body, and also allows the value UNSIGNED-PAYLOAD to skip hashing the payload.",
     "notes": "Unsigned payload is permitted by the Google contract."
   },
   {
@@ -1333,6 +1499,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Includes the Content-MD5 header in the signed data when a request has one, so a changed body digest invalidates the signature.",
     "notes": ""
   },
   {
@@ -1341,6 +1508,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates an HTML form upload policy signed with the V2 scheme, using the GoogleAccessId, Base64 policy and signature form fields.",
     "notes": ""
   },
   {
@@ -1349,6 +1517,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Validates an HTML form upload policy signed with the V4 scheme, using the x-goog-algorithm, credential, date and signature form fields.",
     "notes": ""
   },
   {
@@ -1357,6 +1526,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Rejects a form upload when the policy document's expiration time has passed, so a form stops working after its validity window.",
     "notes": ""
   },
   {
@@ -1365,6 +1535,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Requires a form field to equal the exact value given in a policy condition, such as a fixed content type or object name.",
     "notes": ""
   },
   {
@@ -1373,6 +1544,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Requires a form field to start with the value given in a starts-with policy condition, such as an object name prefix.",
     "notes": ""
   },
   {
@@ -1381,6 +1553,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Requires the uploaded file's size to fall between the minimum and maximum bytes set by a content-length-range policy condition.",
     "notes": ""
   },
   {
@@ -1389,6 +1562,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Requires a form policy to contain conditions covering every submitted form field, including bucket and key, so uploads cannot be redirected.",
     "notes": ""
   },
   {
@@ -1397,6 +1571,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Rejects a request signed with an access ID that does not exist or whose HMAC key is inactive or deleted.",
     "notes": "And."
   },
   {
@@ -1405,6 +1580,7 @@
     "area": "HMAC signing",
     "local": "available",
     "other": "unavailable",
+    "description": "Rejects a request whose XML API authentication data is malformed, such as a broken Authorization header or missing signature parameters.",
     "notes": "Exercised without optional IAM callback."
   },
   {
@@ -1413,6 +1589,7 @@
     "area": "Pub/Sub notifications",
     "local": "limited",
     "other": "limited",
+    "description": "Creates a notification configuration on a bucket that sends Pub/Sub messages to a topic for chosen events, with a payload format and optional filters.",
     "notes": "API exists; production response fields and configuration quotas incomplete."
   },
   {
@@ -1421,6 +1598,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Returns all notification configurations defined on a bucket.",
     "notes": ""
   },
   {
@@ -1429,6 +1607,7 @@
     "area": "Pub/Sub notifications",
     "local": "limited",
     "other": "limited",
+    "description": "Returns one notification configuration of a bucket by its ID, including its topic, event types and payload format.",
     "notes": "Selected response fields; etag/selfLink missing."
   },
   {
@@ -1437,6 +1616,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Deletes a notification configuration by its ID so the bucket stops publishing messages for it.",
     "notes": ""
   },
   {
@@ -1445,6 +1625,7 @@
     "area": "Pub/Sub notifications",
     "local": "limited",
     "other": "limited",
+    "description": "Publishes a message to the configured Pub/Sub topic whenever a matching change happens to an object in the bucket.",
     "notes": "Publishing implemented; production delivery guarantees differ."
   },
   {
@@ -1453,6 +1634,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Limits a configuration to chosen event types, for example only finalize and delete; an empty list sends every event type.",
     "notes": ""
   },
   {
@@ -1461,6 +1643,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Limits a configuration to objects whose names start with a given prefix, so other objects do not trigger messages.",
     "notes": ""
   },
   {
@@ -1469,6 +1652,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Sends a payload that is the object's metadata resource as a UTF-8 JSON string in the message body.",
     "notes": ""
   },
   {
@@ -1477,6 +1661,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Sends the message with no payload, leaving only the event details in the message attributes.",
     "notes": ""
   },
   {
@@ -1485,6 +1670,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Adds user-defined key and value pairs to the attributes of every message that a configuration publishes.",
     "notes": ""
   },
   {
@@ -1493,6 +1679,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Fires when a new object, or a new generation of an existing object, is successfully created, including by copy, rewrite or restore.",
     "notes": ""
   },
   {
@@ -1501,6 +1688,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Fires when an object is permanently deleted, including when it is replaced or removed by a lifecycle rule.",
     "notes": ""
   },
   {
@@ -1509,6 +1697,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "available",
+    "description": "Fires when the metadata of an existing object changes, for example after a patch or update.",
     "notes": ""
   },
   {
@@ -1517,6 +1706,7 @@
     "area": "Pub/Sub notifications",
     "local": "limited",
     "other": "limited",
+    "description": "Fires when a live object becomes noncurrent, which happens only in a bucket with Object Versioning, for example on overwrite or delete.",
     "notes": "Requires memory versioning."
   },
   {
@@ -1525,6 +1715,7 @@
     "area": "Pub/Sub notifications",
     "local": "limited",
     "other": "unavailable",
+    "description": "Rejects a new configuration whose Pub/Sub topic is malformed, does not exist or cannot be published to by Cloud Storage.",
     "notes": "Validates topic syntax; production topic existence/publish permissions are not checked here."
   },
   {
@@ -1533,6 +1724,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
+    "description": "Rejects a new configuration whose payload format is anything other than JSON_API_V1 or NONE.",
     "notes": ""
   },
   {
@@ -1541,6 +1733,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
+    "description": "Rejects a new configuration that lists an event type Cloud Storage does not recognize.",
     "notes": ""
   },
   {
@@ -1549,6 +1742,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
+    "description": "Allows at most 10 custom attributes on one notification configuration and rejects a configuration that has more.",
     "notes": "At most ten."
   },
   {
@@ -1557,6 +1751,7 @@
     "area": "Pub/Sub notifications",
     "local": "limited",
     "other": "limited",
+    "description": "Cloud Storage guarantees at-least-once delivery of each notification to Pub/Sub, so duplicate messages are possible and order is not guaranteed.",
     "notes": "LocalCloud retries persisted events, but object/outbox write gap can lose events."
   },
   {
@@ -1565,6 +1760,7 @@
     "area": "Pub/Sub notifications",
     "local": "limited",
     "other": "limited",
+    "description": "Retries publishing a notification that fails to reach Pub/Sub; one that stays undeliverable may be deleted after 7 days.",
     "notes": "fake-gcs-server client retries within timeout; LocalCloud queue retries; Google failure lifecycle differs."
   },
   {
@@ -1573,6 +1769,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "limited",
+    "description": "Builds each message's payload from the object's metadata after the triggering change, so it describes the object as of that event.",
     "notes": "LocalCloud snapshots payload before async delivery."
   },
   {
@@ -1581,6 +1778,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
+    "description": "Adds a notificationConfig attribute to every message, identifying the configuration that produced it.",
     "notes": ""
   },
   {
@@ -1589,6 +1787,7 @@
     "area": "Pub/Sub notifications",
     "local": "available",
     "other": "unavailable",
+    "description": "For delete events with a JSON payload, includes the object's metadata from before deletion plus a timeDeleted property.",
     "notes": ""
   },
   {
@@ -1597,6 +1796,7 @@
     "area": "Pub/Sub notifications",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Allows at most 100 notification configurations on a bucket in total.",
     "notes": "No total configuration quota check."
   },
   {
@@ -1605,6 +1805,7 @@
     "area": "Pub/Sub notifications",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Allows at most 10 notification configurations on a bucket that trigger on the same event type.",
     "notes": "No per-event configuration quota check."
   },
   {
@@ -1613,6 +1814,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Creates a folder in a bucket with hierarchical namespace, and can also create any missing parent folders when the recursive option is set.",
     "notes": "No folders API."
   },
   {
@@ -1621,6 +1823,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Returns the metadata of one folder in a bucket with hierarchical namespace, identified by its name.",
     "notes": "No folders API."
   },
   {
@@ -1629,6 +1832,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Lists the folders in a bucket with hierarchical namespace, optionally under a prefix that ends in a slash, one page at a time.",
     "notes": "No folders API."
   },
   {
@@ -1637,6 +1841,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Renames a folder and everything in it as a long-running operation that cannot be canceled once it has started.",
     "notes": "No folders API."
   },
   {
@@ -1645,6 +1850,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Deletes a folder from a bucket with hierarchical namespace; the folder must be empty, and any managed folder attached to it is deleted too.",
     "notes": "No folders API."
   },
   {
@@ -1653,6 +1859,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Creates a managed folder in a bucket, a named prefix that can carry its own IAM policy to control access to the objects under it.",
     "notes": "No managedFolders API."
   },
   {
@@ -1661,6 +1868,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Returns the metadata of one managed folder, identified by its path within the bucket.",
     "notes": "No managedFolders API."
   },
   {
@@ -1669,6 +1877,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Lists the managed folders in a bucket, optionally only those whose names begin with a prefix, one page at a time.",
     "notes": "No managedFolders API."
   },
   {
@@ -1677,6 +1886,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Deletes a managed folder; the allowNonEmpty option allows deleting it even while it still contains objects or other managed folders.",
     "notes": "No managedFolders API."
   },
   {
@@ -1685,6 +1895,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Returns the IAM policy attached to a managed folder, which controls access to the objects under it.",
     "notes": "No managedFolders API."
   },
   {
@@ -1693,6 +1904,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Replaces the IAM policy attached to a managed folder, changing who can access the objects under it.",
     "notes": "No managedFolders API."
   },
   {
@@ -1701,6 +1913,7 @@
     "area": "Folders and managed folders",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Returns which of the listed permissions the caller holds on a managed folder.",
     "notes": "No managedFolders API."
   },
   {
@@ -1709,6 +1922,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Returns the metadata of one bucket named in the request, through the Storage v2 gRPC API.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1717,6 +1931,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Creates a new bucket in a project from the bucket details supplied in the request.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1725,6 +1940,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Permanently deletes a bucket that holds no objects, identified by its name in the request.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1733,6 +1949,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Updates a bucket by applying a patch-style change to only the fields named in the request.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1741,6 +1958,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Retrieves the buckets of a project, ordered lexicographically by name.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1749,6 +1967,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Retrieves an object's metadata, such as size, content type and checksums, without its data.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1757,6 +1976,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Deletes an object and its metadata; depending on versioning and soft delete, the deletion can be permanent or recoverable.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1765,6 +1985,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Updates an object's metadata, equivalent to the JSON API patch method.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1773,6 +1994,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Retrieves the objects in a bucket that match the criteria in the request, such as a prefix or delimiter.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1781,6 +2003,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Concatenates a list of existing objects into a new object in the same bucket.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1789,6 +2012,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Retrieves an object's data as a stream of messages, and can start at an offset and stop at a limit.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1797,6 +2021,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Stores a new object and its metadata, with the data sent from the client as a stream of messages.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1805,6 +2030,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Starts a resumable write and returns an upload ID that later write calls use to continue the upload.",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1813,6 +2039,7 @@
     "area": "Current Storage v2 gRPC operations",
     "local": "unavailable",
     "other": "unavailable",
+    "description": "Reports the persisted size of an object that is still being written, so an interrupted upload knows where to resume.",
     "notes": "Only legacy google.storage.v1 service registered."
   }
 ]

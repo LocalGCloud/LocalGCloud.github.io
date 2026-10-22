@@ -13,9 +13,9 @@
   },
   "bigtable": {
     "total": 491,
-    "exclusive": 0,
-    "broader": 0,
-    "hasCompetitor": false
+    "exclusive": 270,
+    "broader": 25,
+    "hasCompetitor": true
   },
   "spanner": {
     "total": 757,

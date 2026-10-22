@@ -16,16 +16,17 @@ Keep the detail header, metric counts and filters compact so feature rows are
 visible on entry. Available and unavailable states use green checks and red crosses
 with readable screen-reader and Markdown labels. Other states keep their text; the
 site never labels a result "Partial" (a limited result reads "Scoped"). Every row
-shows its complete note inline. Comparison notes appear as plain text below the
-table. Apply the same presentation to server previews and loaded rows. Firestore
+shows what the production feature is, inline in Details, and, when the result differs
+from production, a "Note:" line after it. Comparison notes appear as plain text below
+the table. Apply the same presentation to server previews and loaded rows. Firestore
 uses one mark when its Compatibility and Extended profiles agree; show both labeled
 results only where they differ. The raw JSON retains both profiles.
 
-A service whose document has no competitor column (Bigtable today) shows LocalCloud's
-own results with no mode choice, no competitor column and no advantage counts. When
-its document gains a competitor column, the next sync turns those on by itself. The
-competitor name and baseline are already in `src/data/emulatorComparisons.ts`; confirm
-them against the document's baseline section.
+A service whose document has no competitor column shows LocalCloud's own results with
+no mode choice, no competitor column and no advantage counts. When its document gains a
+competitor column, the next sync turns those on by itself. The competitor name and
+baseline are in `src/data/emulatorComparisons.ts`; confirm them against the document's
+baseline section.
 
 Only **Available locally + Not available/Accepted, no effect in the competitor** qualifies
 for the advantages filter. Scoped competitor behavior has a separate filter. Unknown and
@@ -49,7 +50,7 @@ upstream repository document ──► scripts/sync-emulator-comparisons.py ─�
 | --- | --- | --- | --- | --- |
 | Cloud Storage | `localcloud-fake-gcs-server` | `docs/upstream-comparison.md` | | fake-gcs-server |
 | Firestore | `firestore-go` | `docs/emulator-comparison.md` | `docs/emulator-comparison-metrics.md` (totals) | Google emulator; two LocalCloud profiles |
-| Bigtable | `little_bigtable` | `EMULATOR_COMPARISON.md` | | none yet (Google emulator, once added) |
+| Bigtable | `little_bigtable` | `EMULATOR_COMPARISON.md` | | Google Cloud Bigtable emulator (`cbtemulator`) |
 | Spanner | `cloud-spanner-emulator` | `docs/emulator-comparison.md` | | Google emulator |
 | BigQuery | `bigquery-emulator-on-duckdb` | `docs/comparison-features.csv` | `docs/COMPARISON.md` (totals) | goccy |
 
@@ -64,6 +65,11 @@ how many rows were left out; it is not imported by any page.
   repository and test links, revisions, branch names, evidence labels, file names and
   the source documents themselves. A leak scan stops the sync if any of it survives
   into a note, and `scripts/verify-emulator-comparisons.test.mjs` checks the data again.
+- **Every row is described.** The documents carry a `Description` for each compared
+  feature (the `description` column of the BigQuery CSV): one or two sentences on what the
+  production feature is or does, with no mention of any emulator. It is the first thing
+  Details shows, so the cell is never empty, and the filters search it. The contract is in
+  `docs/prompts/upstream/descriptions.md`.
 - **Notes are rewritten for visitors.** Link labels, evidence phrases and engineering
   terms are removed, "fork"/"upstream" become the product or competitor name, and
   nothing is invented: if only evidence remains, the note is empty. Some services show
@@ -89,7 +95,12 @@ The sync is fail-closed, so a changed document layout stops it instead of droppi
   cells, duplicate document IDs and unknown marks;
 - parsed counts that differ from the totals the document states (per column and state);
 - a document that no longer states its totals where the importer looks;
+- a compared row without a description, a description that only repeats the feature name,
+  is too short or too long, or carries internal wording (rows the site hides included);
 - any internal wording left in a note after rewriting.
+
+The sync also warns when four or more differently named features share one description,
+which usually means filler that should be rewritten upstream.
 
 ## Updating
 

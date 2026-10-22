@@ -49,6 +49,7 @@ fix the cause in the importer, never by weakening a check:
 | `parsed rows do not match the document's own totals` | a table was renamed, split, or its columns changed, so rows were skipped or misread | open the document, update that service's role patterns (`spec`) in its adapter, re-run; the totals must then match exactly |
 | `no longer states its totals where the importer looks` | the metrics table moved or was reworded | update `stated()` for that service |
 | `the document repeats the row ID` | duplicate IDs upstream | report upstream |
+| `rows have no description` / `unusable descriptions` | a feature was added without its `Description`, or it is blank filler, too short or leaks internal wording | report upstream with the feature names; never write descriptions on the site |
 | `notes still carry internal wording` | new evidence phrasing leaked into notes | extend `DROP` or `TERMS` for that service; never edit `LEAKS` to let it pass |
 | `lacks columns` (BigQuery CSV) | the generator changed its columns | update `BIGQUERY_COLUMNS` and the adapter |
 
@@ -64,10 +65,13 @@ write a short summary per service:
 - rows added, removed, renamed (ID changes) and whose status changed, with the largest swings;
 - `hidden.unassessed` and `hidden.repeated`: each hidden unassessed LocalCloud row is a gap in
   the document, so list the biggest groups for the upstream owners;
-- any service whose `hasCompetitor` flipped (Bigtable gains its Google emulator column when
-  upstream restores it). The site then shows the competitor column and advantage counts by itself;
-  confirm that service's `competitor`, `baseline` and `baselineUrl` in
-  `src/data/emulatorComparisons.ts` against the document's own baseline section;
+- any service whose `hasCompetitor` flipped (a document that gains or loses its competitor column).
+  The site then shows or hides the competitor column and advantage counts by itself; confirm that
+  service's `competitor`, `baseline` and `baselineUrl` in `src/data/emulatorComparisons.ts` against
+  the document's own baseline section;
+- descriptions: read about 20 new or changed ones per service against the feature they describe,
+  and look at the `sharedDescriptions` warnings the sync prints. A wrong or filler description is
+  an upstream defect; report it, do not edit the inventory;
 - a change of baseline (emulator version or commit, production reference date). Update the
   `baseline`, `baselineUrl` and `scope` text so it still matches the document.
 

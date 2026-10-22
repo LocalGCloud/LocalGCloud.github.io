@@ -1,4 +1,4 @@
-# Prompt: Bigtable comparison, Google emulator column, unknowns and stable IDs
+# Prompt: Bigtable comparison, unknowns and stable IDs
 
 Paste into an agent session in the `little_bigtable` repository. Read `README.md` in this
 folder first (the document contract and working rules).
@@ -7,28 +7,18 @@ folder first (the document contract and working rules).
 
 You own `EMULATOR_COMPARISON.md`, which compares Little Bigtable (LocalCloud Bigtable) with
 **production Google Cloud Bigtable**: 493 rows across RPCs, request fields, filters, GC rules,
-mutations, read-modify-write operations, aggregate types, behaviors and SQL functions. Its
-totals table reproduces exactly. Fix these:
+mutations, read-modify-write operations, aggregate types, behaviors and SQL functions, with a
+Google Cloud Bigtable emulator column and a description for each row. Its totals table reproduces
+exactly. Fix these:
 
-## 1. Restore the Google emulator column
+## 1. The Google emulator column (done)
 
-The previous version of the document (commit `dd3a724`, "EMULATOR_COMPARISON.md") compared
-against Google's own emulator (`cbtemulator`, package `bttest` of
-`googleapis/google-cloud-go` commit `3266de7c69fd3c05c921823bcfd92b0a8f0b1ffa`, with the Cloud SDK
-emulator guide) with one assessed row per RPC. The rewrite onto the production baseline dropped
-that column completely, so the site can no longer show where LocalCloud Bigtable goes beyond
-Google's emulator (the old document supported 303 such rows).
-
-- Add a column headed `Google emulator` next to `Local` in every feature table (RPC, Field,
-  Capability, SQL), keeping `Production` first. Carry the old marks forward by mapping each old
-  RPC and capability row onto its production row; re-inspect the pinned source for rows that
-  changed meaning. Basis rules: `✗` only for an explicit absence (no handler, a documented
-  limitation such as volatile storage); `?` where the source was not checked. The Google emulator
-  has no GoogleSQL engine, so verify that and mark SQL rows accordingly.
-- Add the Google emulator to the baselines table (pin the commit and review date), the legend,
-  and the coverage metrics table (add `Google ✓ / ◐ / ✗ / ?` columns), so the totals stay
-  verifiable against the rows.
-- Keep one definition of each production row. Do not re-add emulator-only rows.
+Completed on 2026-10-21 in commit `96bbab6`: every feature table and the side-by-side table carry a
+`Google Cloud Bigtable emulator` column (the `cbtemulator` server, package `bttest` of
+`cloud.google.com/go/bigtable` v1.58.0), the coverage metrics table has `Google emulator ✓ / ◐ / ✗ / ?`
+columns, and `tools/check_emulator_comparison.py` verifies the tables. Keep it current: when the
+client library moves to a newer release, re-inspect `bttest` and `cmd/emulator`, update the marks
+and the version in the baselines table, and re-run the check. Do not re-add emulator-only rows.
 
 ## 2. Assess the two unknown local rows
 
@@ -50,6 +40,6 @@ name each link defines.
 
 ## Done when
 
-The totals table (now including the Google column) equals the rows, the two unknowns are resolved,
+The totals table equals the rows, the two unknowns are resolved,
 and the generator check and the repository tests pass. Commit with before and after totals. Do not
 push.

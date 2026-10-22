@@ -4,9 +4,10 @@ const metrics = indexed as Record<string, { total: number; exclusive: number; br
 
 // Visitor-facing rows written by scripts/sync-emulator-comparisons.py. `other` is absent for services
 // whose comparison document has no competitor column (then `hasCompetitor` is false and the competitor
-// details below stay unused); `default` only where a second profile exists.
+// details below stay unused); `default` only where a second profile exists. `description` says what the production
+// feature is and is always present; `notes` states how the result differs and is often empty.
 export interface ComparisonRow {
-  id: string; name: string; area: string; local: string; other?: string; default?: string; notes: string;
+  id: string; name: string; area: string; local: string; other?: string; default?: string; description: string; notes: string;
 }
 interface ComparisonDefinition {
   id: string; slug: string; name: string; engine: string; competitor?: string; baseline: string; baselineUrl: string;
@@ -33,10 +34,10 @@ const definitions: ComparisonDefinition[] = [
   },
   {
     id: 'bigtable', slug: 'bigtable', name: 'Bigtable', engine: 'LocalCloud Bigtable',
-    competitor: 'Google Bigtable emulator', baseline: 'Google Bigtable emulator',
+    competitor: 'Google Cloud Bigtable emulator', baseline: 'Google Cloud Bigtable emulator · client library v1.58.0',
     baselineUrl: 'https://docs.cloud.google.com/bigtable/docs/emulator',
     summary: 'Keep persistent data and test backups, restricted views, change streams and SQL.',
-    scope: 'Change streams use one local partition. IAM policies manage configuration without enforcing identity.',
+    scope: 'Change streams use one local partition. IAM policies manage configuration without enforcing identity. Google emulator results come from its open-source implementation, not from a Cloud SDK bundle.',
   },
   {
     id: 'spanner', slug: 'spanner', name: 'Spanner', engine: 'LocalCloud Spanner',

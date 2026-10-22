@@ -4,6 +4,8 @@
     "name": "BigtableInstanceAdmin.CreateAppProfile",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Creates an app profile that tells Bigtable how to route a client application's requests across the clusters of an instance.",
     "notes": "App profiles must route to existing clusters and carry etags; a default single-cluster transactional profile is created with each instance."
   },
   {
@@ -11,6 +13,8 @@
     "name": "BigtableInstanceAdmin.CreateCluster",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Adds a cluster to an existing instance in a chosen location, sized with a fixed node count or autoscaling limits.",
     "notes": "Cluster IDs are validated, serve_nodes/autoscaling/node_scaling_factor are stored, and DeleteCluster is blocked for the last cluster, for clusters holding backups and for clusters referenced by app-profile routing."
   },
   {
@@ -18,6 +22,8 @@
     "name": "BigtableInstanceAdmin.CreateInstance",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Creates an instance together with its initial clusters, and returns a long-running operation that finishes when they are ready.",
     "notes": "Instances need a 6-33 character ID and at least one cluster; non-empty display names 4-30 characters (empty create names default to the instance ID); PartialUpdateInstance supports display_name/labels/type/edition and rejects PRODUCTION->DEVELOPMENT; deletion is blocked by protected resources or backups and cascades otherwise."
   },
   {
@@ -25,20 +31,26 @@
     "name": "BigtableInstanceAdmin.CreateLogicalView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Logical-view descriptors support CRUD, etags, deletion protection, parent-scoped pagination and typed LRO metadata; the query is validated and executed by the GoogleSQL engine (always built)."
+    "other": "unavailable",
+    "description": "Creates a logical view, a named SQL query over table data that applications can read like a table, within an instance.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-creatematerializedview",
     "name": "BigtableInstanceAdmin.CreateMaterializedView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Continuous materialized views are defined in GoogleSQL (GROUP BY or ORDER BY), populated at creation, refreshed before reads after source writes, read-only, persisted, deletion protected and immutable except for deletion_protection."
+    "other": "unavailable",
+    "description": "Creates a continuous materialized view, which keeps the results of an aggregation or reordering query up to date as the source table changes.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-deleteappprofile",
     "name": "BigtableInstanceAdmin.DeleteAppProfile",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Deletes an app profile from an instance, optionally skipping the safety checks about clients that still use it.",
     "notes": "App profiles must route to existing clusters and carry etags; a default single-cluster transactional profile is created with each instance."
   },
   {
@@ -46,6 +58,8 @@
     "name": "BigtableInstanceAdmin.DeleteCluster",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Permanently removes a cluster, and the replica of the instance's data that it holds, from an instance.",
     "notes": "DeleteCluster is blocked for the last cluster, for clusters holding unexpired backups and for clusters referenced by single-cluster app-profile routing."
   },
   {
@@ -53,6 +67,8 @@
     "name": "BigtableInstanceAdmin.DeleteInstance",
     "area": "RPC methods",
     "local": "limited",
+    "other": "limited",
+    "description": "Deletes an instance and everything it contains, including its clusters and tables.",
     "notes": "DeleteInstance is blocked by protected tables, views and backups, and otherwise cascades to every child resource."
   },
   {
@@ -60,20 +76,26 @@
     "name": "BigtableInstanceAdmin.DeleteLogicalView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Logical-view descriptors support CRUD, etags, deletion protection, parent-scoped pagination and typed LRO metadata; the query is validated and executed by the GoogleSQL engine (always built)."
+    "other": "unavailable",
+    "description": "Deletes a logical view from an instance; the table data that the view's query reads is not affected.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-deletematerializedview",
     "name": "BigtableInstanceAdmin.DeleteMaterializedView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Continuous materialized views are defined in GoogleSQL (GROUP BY or ORDER BY), populated at creation, refreshed before reads after source writes, read-only, persisted, deletion protected and immutable except for deletion_protection."
+    "other": "unavailable",
+    "description": "Deletes a materialized view from an instance and stops maintaining its precomputed results.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-getappprofile",
     "name": "BigtableInstanceAdmin.GetAppProfile",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Returns the configuration of one app profile, including its routing policy and isolation settings.",
     "notes": "App profiles carry etags; UpdateAppProfile honors update_mask and etags and returns an UpdateAppProfile LRO."
   },
   {
@@ -81,6 +103,8 @@
     "name": "BigtableInstanceAdmin.GetCluster",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Returns the details of one cluster, such as its location, state, node count and storage type.",
     "notes": "Cluster IDs are validated, serve_nodes/autoscaling/node_scaling_factor are stored, and DeleteCluster is blocked for the last cluster, for clusters holding backups and for clusters referenced by app-profile routing."
   },
   {
@@ -88,6 +112,8 @@
     "name": "BigtableInstanceAdmin.GetIamPolicy",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Returns the IAM policy that controls who can access an instance and the resources inside it.",
     "notes": "Instance policies persist with etags and update_mask and require an existing instance."
   },
   {
@@ -95,6 +121,8 @@
     "name": "BigtableInstanceAdmin.GetInstance",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Returns the details of one instance, such as its display name, type, labels and state.",
     "notes": "Instances need a 6-33 character ID and at least one cluster; non-empty display names 4-30 characters (empty create names default to the instance ID); PartialUpdateInstance supports display_name/labels/type/edition and rejects PRODUCTION->DEVELOPMENT; deletion is blocked by protected resources or backups and cascades otherwise."
   },
   {
@@ -102,20 +130,26 @@
     "name": "BigtableInstanceAdmin.GetLogicalView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Logical-view descriptors support CRUD, etags, deletion protection, parent-scoped pagination and typed LRO metadata; the query is validated and executed by the GoogleSQL engine (always built)."
+    "other": "unavailable",
+    "description": "Returns a logical view, including the SQL query that defines it.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-getmaterializedview",
     "name": "BigtableInstanceAdmin.GetMaterializedView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Continuous materialized views are defined in GoogleSQL (GROUP BY or ORDER BY), populated at creation, refreshed before reads after source writes, read-only, persisted, deletion protected and immutable except for deletion_protection."
+    "other": "unavailable",
+    "description": "Returns a materialized view, including the query that defines it and its settings.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-getmemorylayer",
     "name": "BigtableInstanceAdmin.GetMemoryLayer",
     "area": "RPC methods",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns information about the memory layer of a cluster.",
     "notes": "Hot tablets and memory layers describe production serving hardware; there is no single-process analogue, so these RPCs answer Unimplemented."
   },
   {
@@ -123,6 +157,8 @@
     "name": "BigtableInstanceAdmin.ListAppProfiles",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Lists the app profiles defined in an instance, with their routing policies, one page at a time.",
     "notes": "ListInstances/ListClusters return one page (the proto has no page_size) and validate page tokens; ListAppProfiles paginates; '-' lists across instances."
   },
   {
@@ -130,6 +166,8 @@
     "name": "BigtableInstanceAdmin.ListClusters",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Lists the clusters of an instance, or of every instance in a project when the instance is given as a wildcard.",
     "notes": "ListInstances/ListClusters return one page (the proto has no page_size) and validate page tokens; ListAppProfiles paginates; '-' lists across instances."
   },
   {
@@ -137,6 +175,8 @@
     "name": "BigtableInstanceAdmin.ListHotTablets",
     "area": "RPC methods",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Lists the hot tablets of a cluster within a time range, ordered by CPU usage, to help find hotspots.",
     "notes": "Hot tablets and memory layers describe production serving hardware; there is no single-process analogue, so these RPCs answer Unimplemented."
   },
   {
@@ -144,6 +184,8 @@
     "name": "BigtableInstanceAdmin.ListInstances",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Lists the instances in a project, and reports any locations that could not be reached.",
     "notes": "ListInstances/ListClusters return one page (the proto has no page_size) and validate page tokens; ListAppProfiles paginates; '-' lists across instances."
   },
   {
@@ -151,20 +193,26 @@
     "name": "BigtableInstanceAdmin.ListLogicalViews",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Logical-view descriptors support CRUD, etags, deletion protection, parent-scoped pagination and typed LRO metadata; the query is validated and executed by the GoogleSQL engine (always built)."
+    "other": "unavailable",
+    "description": "Lists the logical views in an instance, one page at a time.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-listmaterializedviews",
     "name": "BigtableInstanceAdmin.ListMaterializedViews",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Continuous materialized views are defined in GoogleSQL (GROUP BY or ORDER BY), populated at creation, refreshed before reads after source writes, read-only, persisted, deletion protected and immutable except for deletion_protection."
+    "other": "unavailable",
+    "description": "Lists the materialized views in an instance, one page at a time.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-listmemorylayers",
     "name": "BigtableInstanceAdmin.ListMemoryLayers",
     "area": "RPC methods",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Lists information about the memory layers of clusters, one page at a time.",
     "notes": "Hot tablets and memory layers describe production serving hardware; there is no single-process analogue, so these RPCs answer Unimplemented."
   },
   {
@@ -172,6 +220,8 @@
     "name": "BigtableInstanceAdmin.PartialUpdateCluster",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Updates only the cluster fields named in an update mask, such as the node count or autoscaling configuration.",
     "notes": "UpdateCluster stores serve_nodes; PartialUpdateCluster supports serve_nodes, cluster_config.cluster_autoscaling_config and node_scaling_factor masks."
   },
   {
@@ -179,6 +229,8 @@
     "name": "BigtableInstanceAdmin.PartialUpdateInstance",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Updates only the instance fields named in an update mask, such as the display name, labels or type.",
     "notes": "PartialUpdateInstance supports display_name, labels, type and edition masks and returns a PartialUpdateInstance LRO."
   },
   {
@@ -186,6 +238,8 @@
     "name": "BigtableInstanceAdmin.SetIamPolicy",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Replaces the IAM policy of an instance, which changes who is allowed to access it.",
     "notes": "Instance policies persist with etags and update_mask and require an existing instance."
   },
   {
@@ -193,6 +247,8 @@
     "name": "BigtableInstanceAdmin.TestIamPermissions",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Returns the subset of the given permissions that the caller holds on an instance.",
     "notes": "Instance policies persist with etags and update_mask and require an existing instance."
   },
   {
@@ -200,6 +256,8 @@
     "name": "BigtableInstanceAdmin.UpdateAppProfile",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Changes the description, routing policy or isolation settings of an app profile, as selected by an update mask.",
     "notes": "App profiles carry etags; UpdateAppProfile honors update_mask and etags and returns an UpdateAppProfile LRO."
   },
   {
@@ -207,6 +265,8 @@
     "name": "BigtableInstanceAdmin.UpdateCluster",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Updates the serving configuration of a cluster, such as its node count, and returns a long-running operation.",
     "notes": "UpdateCluster stores serve_nodes; PartialUpdateCluster supports serve_nodes, cluster_config.cluster_autoscaling_config and node_scaling_factor masks."
   },
   {
@@ -214,6 +274,8 @@
     "name": "BigtableInstanceAdmin.UpdateInstance",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Updates the display name and type of an instance; other properties are changed with PartialUpdateInstance.",
     "notes": "UpdateInstance changes only display_name and type (PRODUCTION->DEVELOPMENT rejected); labels are left unchanged."
   },
   {
@@ -221,20 +283,26 @@
     "name": "BigtableInstanceAdmin.UpdateLogicalView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Logical-view descriptors support CRUD, etags, deletion protection, parent-scoped pagination and typed LRO metadata; the query is validated and executed by the GoogleSQL engine (always built)."
+    "other": "unavailable",
+    "description": "Changes the SQL query or other settings of an existing logical view.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtableinstanceadmin-updatematerializedview",
     "name": "BigtableInstanceAdmin.UpdateMaterializedView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Continuous materialized views are defined in GoogleSQL (GROUP BY or ORDER BY), populated at creation, refreshed before reads after source writes, read-only, persisted, deletion protected and immutable except for deletion_protection."
+    "other": "unavailable",
+    "description": "Updates the mutable settings of a materialized view, such as its deletion protection.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-checkconsistency",
     "name": "BigtableTableAdmin.CheckConsistency",
     "area": "RPC methods",
     "local": "limited",
+    "other": "limited",
+    "description": "Checks whether replication has caught up on every cluster for writes made before a consistency token was generated.",
     "notes": "Tokens are validated per table and are always consistent because there is a single local replica."
   },
   {
@@ -242,76 +310,98 @@
     "name": "BigtableTableAdmin.CopyBackup",
     "area": "RPC methods",
     "local": "available",
-    "notes": "CopyBackup requires a READY source that is not itself a copy, always produces a STANDARD backup, and limits expire_time to 6h..30d from the request; a source expiring within 24h is FailedPrecondition."
+    "other": "unavailable",
+    "description": "Copies a backup to a new backup in a destination cluster, which can be in another instance or project.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-createauthorizedview",
     "name": "BigtableTableAdmin.CreateAuthorizedView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "CRUD with etags (ABORTED on mismatch), NAME_ONLY/BASIC/FULL views, pagination, subset_view/deletion_protection masks and typed LRO metadata; data RPCs through a view are restricted to its row prefixes and family subsets."
+    "other": "unavailable",
+    "description": "Creates an authorized view of a table that exposes only chosen row prefixes, column families or column qualifiers.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-createbackup",
     "name": "BigtableTableAdmin.CreateBackup",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Backups are immutable schema and row snapshots: expire_time 6h..90d (365d for Enterprise Plus), HOT/STANDARD rules, per-table limits, copy rules (no copy of a copy, <= 30 days after source creation) and restore into a new table without inheriting GC policies."
+    "other": "unavailable",
+    "description": "Starts creating a backup of a table in a cluster, with an expiration time, and returns a long-running operation.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-createschemabundle",
     "name": "BigtableTableAdmin.CreateSchemaBundle",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Proto (FileDescriptorSet) and Avro (JSON) bundles with validation, 10 per table, 4MB, immutable oneof structure, backward-compatibility checks overridable by ignore_warnings, etags and pagination."
+    "other": "unavailable",
+    "description": "Creates a schema bundle in a table: a named collection of protocol buffer definitions for reading stored bytes as typed values.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-createtable",
     "name": "BigtableTableAdmin.CreateTable",
     "area": "RPC methods",
     "local": "available",
-    "notes": "CreateTable validates IDs, GC rules (max_age >= 1ms, <= 500 bytes), aggregate value types, change-stream retention and row-key schemas, and persists initial splits; GetTable/ListTables honor views and pagination."
+    "other": "limited",
+    "description": "Creates a table in an instance with its initial column families, optional split points and timestamp granularity.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-deleteauthorizedview",
     "name": "BigtableTableAdmin.DeleteAuthorizedView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Updates honor update_mask (empty = fields set in the request, '*' = all) and etags; deletes honor etags and deletion protection."
+    "other": "unavailable",
+    "description": "Deletes an authorized view of a table; the data in the table is not affected.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-deletebackup",
     "name": "BigtableTableAdmin.DeleteBackup",
     "area": "RPC methods",
     "local": "available",
-    "notes": "CopyBackup requires a READY source that is not itself a copy, always produces a STANDARD backup, and limits expire_time to 6h..30d from the request; a source expiring within 24h is FailedPrecondition."
+    "other": "unavailable",
+    "description": "Deletes a backup of a table before it reaches its expiration time.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-deleteschemabundle",
     "name": "BigtableTableAdmin.DeleteSchemaBundle",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Proto (FileDescriptorSet) and Avro (JSON) bundles with validation, 10 per table, 4MB, immutable oneof structure, backward-compatibility checks overridable by ignore_warnings, etags and pagination."
+    "other": "unavailable",
+    "description": "Deletes a schema bundle from a table; the stored data is not changed.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-deletetable",
     "name": "BigtableTableAdmin.DeleteTable",
     "area": "RPC methods",
     "local": "available",
-    "notes": "DeleteTable is blocked by table/authorized-view deletion protection and soft-deletes the table; UndeleteTable restores data within 7 days, enables deletion protection, and is AlreadyExists when a live table with the same ID exists."
+    "other": "available",
+    "description": "Permanently deletes a table and all of its data, unless deletion protection is enabled on it.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-droprowrange",
     "name": "BigtableTableAdmin.DropRowRange",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Deletes by prefix or the whole table in one transaction, recording DeleteFromFamily change records when change streams are enabled."
+    "other": "available",
+    "description": "Deletes all rows that share a key prefix, or every row in the table, without deleting the table itself.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-generateconsistencytoken",
     "name": "BigtableTableAdmin.GenerateConsistencyToken",
     "area": "RPC methods",
     "local": "limited",
+    "other": "limited",
+    "description": "Returns a token that CheckConsistency can later use to confirm that writes made up to now have replicated to every cluster.",
     "notes": "Tokens are validated per table and are always consistent because there is a single local replica."
   },
   {
@@ -319,20 +409,26 @@
     "name": "BigtableTableAdmin.GetAuthorizedView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "CRUD with etags (ABORTED on mismatch), NAME_ONLY/BASIC/FULL views, pagination, subset_view/deletion_protection masks and typed LRO metadata; data RPCs through a view are restricted to its row prefixes and family subsets."
+    "other": "unavailable",
+    "description": "Returns an authorized view, including the subsets of the table that it exposes.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-getbackup",
     "name": "BigtableTableAdmin.GetBackup",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Expired backups are invisible to Get/List/Copy/Restore/Update and are purged by maintenance with their manifests and snapshot rows."
+    "other": "unavailable",
+    "description": "Returns the metadata of one backup, such as its source table, size, state and expiration time.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-getiampolicy",
     "name": "BigtableTableAdmin.GetIamPolicy",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Returns the IAM policy attached to a table, authorized view or backup.",
     "notes": "Policies persist with etags and update_mask, require existing resources and are removed with the table."
   },
   {
@@ -340,62 +436,80 @@
     "name": "BigtableTableAdmin.GetSchemaBundle",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Proto (FileDescriptorSet) and Avro (JSON) bundles with validation, 10 per table, 4MB, immutable oneof structure, backward-compatibility checks overridable by ignore_warnings, etags and pagination."
+    "other": "unavailable",
+    "description": "Returns a schema bundle and the protocol buffer definitions that it holds.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-gettable",
     "name": "BigtableTableAdmin.GetTable",
     "area": "RPC methods",
     "local": "available",
-    "notes": "GetTable defaults to SCHEMA_VIEW and supports NAME_ONLY, REPLICATION_VIEW and ENCRYPTION_VIEW (one READY cluster, GOOGLE_DEFAULT_ENCRYPTION) and FULL."
+    "other": "limited",
+    "description": "Returns the details of one table, such as its column families and garbage collection rules.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-listauthorizedviews",
     "name": "BigtableTableAdmin.ListAuthorizedViews",
     "area": "RPC methods",
     "local": "available",
-    "notes": "CRUD with etags (ABORTED on mismatch), NAME_ONLY/BASIC/FULL views, pagination, subset_view/deletion_protection masks and typed LRO metadata; data RPCs through a view are restricted to its row prefixes and family subsets."
+    "other": "unavailable",
+    "description": "Lists the authorized views defined on a table, one page at a time.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-listbackups",
     "name": "BigtableTableAdmin.ListBackups",
     "area": "RPC methods",
     "local": "available",
-    "notes": "ListBackups supports the '-' cluster wildcard, filters (name, source_table, state, backup_type, source_backup, times, size_bytes with comparison operators and AND), single-field order_by (default start_time desc) and pagination."
+    "other": "unavailable",
+    "description": "Lists the backups in a cluster, or in every cluster of an instance, with optional filtering and ordering.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-listschemabundles",
     "name": "BigtableTableAdmin.ListSchemaBundles",
     "area": "RPC methods",
     "local": "available",
-    "notes": "ListSchemaBundles paginates per table with stable tokens."
+    "other": "unavailable",
+    "description": "Lists the schema bundles in a table, one page at a time.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-listtables",
     "name": "BigtableTableAdmin.ListTables",
     "area": "RPC methods",
     "local": "available",
-    "notes": "ListTables defaults to NAME_ONLY, supports SCHEMA_VIEW, and paginates with stable tokens; invalid tokens are InvalidArgument."
+    "other": "limited",
+    "description": "Lists the tables in an instance, optionally with their full schema, one page at a time.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-modifycolumnfamilies",
     "name": "BigtableTableAdmin.ModifyColumnFamilies",
     "area": "RPC methods",
     "local": "available",
-    "notes": "All modifications are validated before any is applied; per-modification update_mask supports gc_rule, value_type is immutable, and dropping a family physically removes its data."
+    "other": "limited",
+    "description": "Creates, updates or drops column families of a table in one request, including changes to their garbage collection rules.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-restoretable",
     "name": "BigtableTableAdmin.RestoreTable",
     "area": "RPC methods",
     "local": "available",
-    "notes": "RestoreTable creates a new table from the backup snapshot, independent of the live source, with RestoreInfo and an OptimizeRestoredTable operation; GC policies, automated backup policy and deletion protection are not inherited."
+    "other": "unavailable",
+    "description": "Creates a new table by restoring a completed backup, and returns a long-running operation.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-setiampolicy",
     "name": "BigtableTableAdmin.SetIamPolicy",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Replaces the IAM policy attached to a table, authorized view or backup, which changes who is allowed to access it.",
     "notes": "Policies persist with etags and update_mask, require existing resources and are removed with the table."
   },
   {
@@ -403,6 +517,8 @@
     "name": "BigtableTableAdmin.TestIamPermissions",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Returns the subset of the given permissions that the caller holds on a table, authorized view or backup.",
     "notes": "Policies persist with etags and update_mask, require existing resources and are removed with the table."
   },
   {
@@ -410,55 +526,71 @@
     "name": "BigtableTableAdmin.UndeleteTable",
     "area": "RPC methods",
     "local": "available",
-    "notes": "DeleteTable is blocked by table/authorized-view deletion protection and soft-deletes the table; UndeleteTable restores data within 7 days, enables deletion protection, and is AlreadyExists when a live table with the same ID exists."
+    "other": "unavailable",
+    "description": "Restores a table that was accidentally deleted, as long as it is still within the deletion retention period.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-updateauthorizedview",
     "name": "BigtableTableAdmin.UpdateAuthorizedView",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Updates honor update_mask (empty = fields set in the request, '*' = all) and etags; deletes honor etags and deletion protection."
+    "other": "unavailable",
+    "description": "Changes the subsets of a table that an authorized view exposes, or its deletion protection setting.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-updatebackup",
     "name": "BigtableTableAdmin.UpdateBackup",
     "area": "RPC methods",
     "local": "available",
-    "notes": "UpdateBackup validates expire_time with the create rules and allows hot_to_standard_time changes only on HOT backups; backup_type is immutable."
+    "other": "unavailable",
+    "description": "Updates a pending or completed backup's mutable settings, such as its expiration time.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-updateschemabundle",
     "name": "BigtableTableAdmin.UpdateSchemaBundle",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Proto (FileDescriptorSet) and Avro (JSON) bundles with validation, 10 per table, 4MB, immutable oneof structure, backward-compatibility checks overridable by ignore_warnings, etags and pagination."
+    "other": "unavailable",
+    "description": "Replaces the protocol buffer definitions held in a schema bundle.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtabletableadmin-updatetable",
     "name": "BigtableTableAdmin.UpdateTable",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Supported mask paths (change_stream_config[.retention_period], deletion_protection, row_key_schema, automated_backup_policy[.*], tiered_storage_config) persist across restart and return an UpdateTableMetadata LRO; column_families is Unimplemented and '*' is InvalidArgument; disabling the change stream purges its records."
+    "other": "limited",
+    "description": "Updates table settings such as deletion protection, change stream retention or automated backup policy, as selected by an update mask.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtable-checkandmutaterow",
     "name": "Bigtable.CheckAndMutateRow",
     "area": "RPC methods",
     "local": "available",
-    "notes": "The predicate is evaluated on the (view-restricted) row and only the chosen branch is validated and applied atomically; transactional routing is required for registered app profiles."
+    "other": "limited",
+    "description": "Applies one of two sets of mutations to a row depending on whether a filter matches it, in one atomic step.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtable-executequery",
     "name": "Bigtable.ExecuteQuery",
     "area": "RPC methods",
     "local": "available",
-    "notes": "GoogleSQL for Bigtable queries are parsed, type-checked and executed by the local engine; prepared queries are self-describing and report PREPARED_QUERY_EXPIRED after schema changes."
+    "other": "unavailable",
+    "description": "Runs a SQL query that was prepared earlier and streams the result rows back to the client.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtable-generateinitialchangestreampartitions",
     "name": "Bigtable.GenerateInitialChangeStreamPartitions",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Returns the partitions that together cover a table's key space, from which a change stream reader starts reading.",
     "notes": "Tables with change_stream_config expose one full-keyspace partition (single local tablet); tables without it are FailedPrecondition."
   },
   {
@@ -466,20 +598,26 @@
     "name": "Bigtable.MutateRow",
     "area": "RPC methods",
     "local": "available",
-    "notes": "All mutations are validated before any is applied; a failing request leaves the row and the change stream untouched."
+    "other": "limited",
+    "description": "Applies a list of changes to one row atomically: writing cells, deleting cells, or deleting whole column families or the row.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtable-mutaterows",
     "name": "Bigtable.MutateRows",
     "area": "RPC methods",
     "local": "available",
-    "notes": "Entries commit in one transaction with per-entry statuses: invalid entries report their own code and are not applied, valid entries are applied, and duplicate row keys in one batch apply in request order."
+    "other": "limited",
+    "description": "Applies changes to many rows in one request; each row's changes are atomic and the response reports a status for every row.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtable-pingandwarm",
     "name": "Bigtable.PingAndWarm",
     "area": "RPC methods",
     "local": "limited",
+    "other": "limited",
+    "description": "Warms up the connection and the instance metadata for a client before it starts sending real requests.",
     "notes": "Validates the instance name, the instance when strict admin mode is on, and the app profile; there is no distributed metadata cache to warm, so success is a no-op."
   },
   {
@@ -487,13 +625,17 @@
     "name": "Bigtable.PrepareQuery",
     "area": "RPC methods",
     "local": "available",
-    "notes": "GoogleSQL for Bigtable queries are parsed, type-checked and executed by the local engine; prepared queries are self-describing and report PREPARED_QUERY_EXPIRED after schema changes."
+    "other": "unavailable",
+    "description": "Parses and plans a SQL query, returning a prepared query and the shape of its result for later execution.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtable-readchangestream",
     "name": "Bigtable.ReadChangeStream",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Streams the changes made to one range of a table's key space, including user writes and garbage collection deletions.",
     "notes": "Records come from a transactional outbox written with each row commit: one DataChange per commit with grouped chunks, USER and GARBAGE_COLLECTION types, DeleteFromRow expanded to DeleteFromFamily per family, opaque continuation tokens, heartbeats with low watermarks, retention-checked start_time and CloseStream OK at end_time."
   },
   {
@@ -501,13 +643,17 @@
     "name": "Bigtable.ReadModifyWriteRow",
     "area": "RPC methods",
     "local": "available",
-    "notes": "All rules are validated before any is applied; increments require 8-byte big-endian values (FailedPrecondition otherwise) and aggregate families are rejected with InvalidArgument."
+    "other": "limited",
+    "description": "Atomically appends bytes to, or adds a number to, the latest value of each named column, and returns the new values.",
+    "notes": ""
   },
   {
     "id": "bigtable-rpc-methods-bigtable-readrows",
     "name": "Bigtable.ReadRows",
     "area": "RPC methods",
     "local": "available",
+    "other": "limited",
+    "description": "Streams rows from a table in key order, selected by key or key range and optionally filtered or limited.",
     "notes": ""
   },
   {
@@ -515,6 +661,8 @@
     "name": "Bigtable.SampleRowKeys",
     "area": "RPC methods",
     "local": "limited",
+    "other": "limited",
+    "description": "Returns row keys sampled across a table, with approximate data offsets, so clients can split work into similar-sized ranges.",
     "notes": "SampleRowKeys honors row_range and returns the table's initial split keys plus one sample every 512KiB of stored data, ending with the range end key or the empty end-of-table key carrying the total offset."
   },
   {
@@ -522,6 +670,8 @@
     "name": "Operations.GetOperation",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Returns the latest state of a long-running operation, such as whether it has finished and its result or error.",
     "notes": "Every LRO-returning admin RPC registers a durable operation (operations/<resource>/locations/local/operations/<n>) with its documented metadata type."
   },
   {
@@ -529,6 +679,8 @@
     "name": "Operations.ListOperations",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Lists the long-running operations that belong to a project, optionally filtered, one page at a time.",
     "notes": "ListOperations filters by name prefix and done=true&#124; false, paginates, rejects other filters and answers return_partial_success with Unimplemented."
   },
   {
@@ -536,6 +688,8 @@
     "name": "Operations.WaitOperation",
     "area": "RPC methods",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Blocks until a long-running operation finishes or a timeout passes, then returns its latest state.",
     "notes": "Wait returns the completed operation immediately, Delete removes it, and Cancel is a no-op for done operations."
   },
   {
@@ -543,69 +697,89 @@
     "name": "ReadRowsRequest.table_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Table targets and row sets with overlapping keys and ranges are merged and de-duplicated in key order."
+    "other": "available",
+    "description": "Names the table to read from, in the form projects/PROJECT/instances/INSTANCE/tables/TABLE.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readrowsrequest-rows",
     "name": "ReadRowsRequest.rows",
     "area": "Request fields",
     "local": "available",
-    "notes": "Table targets and row sets with overlapping keys and ranges are merged and de-duplicated in key order."
+    "other": "available",
+    "description": "Selects which rows to read, as a set of individual row keys and key ranges; when unset, every row is read.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readrowsrequest-filter",
     "name": "ReadRowsRequest.filter",
     "area": "Request fields",
     "local": "available",
-    "notes": "Filters are validated before reading and evaluated without mutating stored data, including Interleave duplicates, Sink, ValueBitmask and label rules."
+    "other": "limited",
+    "description": "Applies a row filter to each row read, so only matching cells are returned or their contents are transformed.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readrowsrequest-rows-limit",
     "name": "ReadRowsRequest.rows_limit",
     "area": "Request fields",
     "local": "available",
-    "notes": "Negative rows_limit is InvalidArgument; reversed scans return rows in descending order and honor the limit."
+    "other": "available",
+    "description": "Caps how many rows are returned before the read stops; zero, the default, means no limit.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readrowsrequest-reversed",
     "name": "ReadRowsRequest.reversed",
     "area": "Request fields",
     "local": "available",
-    "notes": "Negative rows_limit is InvalidArgument; reversed scans return rows in descending order and honor the limit."
+    "other": "available",
+    "description": "Reads rows in descending key order instead of the default ascending order, starting from the end of the key range.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readrowsrequest-request-stats-view",
     "name": "ReadRowsRequest.request_stats_view",
     "area": "Request fields",
     "local": "available",
-    "notes": "REQUEST_STATS_FULL sends a final response holding only request_stats; NONE sends none."
+    "other": "available",
+    "description": "Chooses how much statistics information about the read the server sends back with the final response.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readrowsrequest-authorized-view-name",
     "name": "ReadRowsRequest.authorized_view_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Reads through an authorized view return only rows matching its row prefixes and cells in its family subsets."
+    "other": "unavailable",
+    "description": "Names an authorized view to read through instead of the table, which limits the read to the data the view exposes.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readrowsrequest-app-profile-id",
     "name": "ReadRowsRequest.app_profile_id",
     "area": "Request fields",
     "local": "available",
-    "notes": "App profiles resolve against registered instances (NotFound when missing); Data Boost profiles reject reversed reads."
+    "other": "unavailable",
+    "description": "Names the app profile that decides how the read is routed; the default profile is used when it is empty.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readrowsrequest-materialized-view-name",
     "name": "ReadRowsRequest.materialized_view_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "materialized_view_name reads the view's derived rows after bringing the view up to date."
+    "other": "unavailable",
+    "description": "Names a materialized view to read from instead of a table, returning the view's precomputed rows.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-samplerowkeysrequest-table-name",
     "name": "SampleRowKeysRequest.table_name",
     "area": "Request fields",
     "local": "limited",
+    "other": "limited",
+    "description": "Names the table whose row keys are sampled, in the form projects/PROJECT/instances/INSTANCE/tables/TABLE.",
     "notes": "Table-targeted sampling restricted to row_range returns split keys and 512KiB samples inside the range."
   },
   {
@@ -613,6 +787,8 @@
     "name": "SampleRowKeysRequest.row_range",
     "area": "Request fields",
     "local": "limited",
+    "other": "unavailable",
+    "description": "Limits the sampled row keys to a single range of the key space instead of the whole table.",
     "notes": "Table-targeted sampling restricted to row_range returns split keys and 512KiB samples inside the range."
   },
   {
@@ -620,202 +796,260 @@
     "name": "SampleRowKeysRequest.authorized_view_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Exactly one of table_name, authorized_view_name or materialized_view_name is required; a missing view is NotFound."
+    "other": "unavailable",
+    "description": "Names an authorized view to sample instead of a table, so only keys inside the view are returned.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-samplerowkeysrequest-app-profile-id",
     "name": "SampleRowKeysRequest.app_profile_id",
     "area": "Request fields",
     "local": "available",
-    "notes": "App profiles resolve like other data RPCs (NotFound when missing on a registered instance)."
+    "other": "unavailable",
+    "description": "Names the app profile used to route the sampling request; the default profile is used when it is empty.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-samplerowkeysrequest-materialized-view-name",
     "name": "SampleRowKeysRequest.materialized_view_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "materialized_view_name reads the view's derived rows after bringing the view up to date."
+    "other": "unavailable",
+    "description": "Names a materialized view whose row keys are sampled instead of a table's.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-mutaterowrequest-table-name",
     "name": "MutateRowRequest.table_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Mutations are validated as a unit and applied atomically to the target row."
+    "other": "available",
+    "description": "Names the table that holds the row to change, in the form projects/PROJECT/instances/INSTANCE/tables/TABLE.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-mutaterowrequest-row-key",
     "name": "MutateRowRequest.row_key",
     "area": "Request fields",
     "local": "available",
-    "notes": "Mutations are validated as a unit and applied atomically to the target row."
+    "other": "available",
+    "description": "Gives the key of the one row that receives the mutations.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-mutaterowrequest-mutations",
     "name": "MutateRowRequest.mutations",
     "area": "Request fields",
     "local": "available",
-    "notes": "Mutations are validated as a unit and applied atomically to the target row."
+    "other": "limited",
+    "description": "Lists the changes to apply to the row, in order, as one atomic update; at least one mutation is required.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-mutaterowrequest-authorized-view-name",
     "name": "MutateRowRequest.authorized_view_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Writes outside the authorized view are PermissionDenied (DeleteFromRow always."
+    "other": "unavailable",
+    "description": "Names an authorized view to write through instead of the table, which restricts the write to data the view exposes.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-mutaterowrequest-app-profile-id",
     "name": "MutateRowRequest.app_profile_id",
     "area": "Request fields",
     "local": "available",
-    "notes": "Missing profiles on registered instances are NotFound and Data Boost profiles reject writes with FailedPrecondition."
+    "other": "unavailable",
+    "description": "Names the app profile used to route the write; the default profile is used when it is empty.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-mutaterowsrequest-table-name",
     "name": "MutateRowsRequest.table_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Entries are validated and applied independently with per-entry status codes in one transaction."
+    "other": "available",
+    "description": "Names the table that all the entries are written to, in the form projects/PROJECT/instances/INSTANCE/tables/TABLE.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-mutaterowsrequest-entries",
     "name": "MutateRowsRequest.entries",
     "area": "Request fields",
     "local": "available",
-    "notes": "Entries are validated and applied independently with per-entry status codes in one transaction."
+    "other": "limited",
+    "description": "Lists the rows to change, each with its own key and mutations; every entry is atomic but entries may apply in any order.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-mutaterowsrequest-authorized-view-name",
     "name": "MutateRowsRequest.authorized_view_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Entries outside the authorized view fail individually with PermissionDenied."
+    "other": "unavailable",
+    "description": "Names an authorized view to write through instead of the table, so every entry must fall inside the view.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-mutaterowsrequest-app-profile-id",
     "name": "MutateRowsRequest.app_profile_id",
     "area": "Request fields",
     "local": "available",
-    "notes": "Missing profiles on registered instances are NotFound and Data Boost profiles reject writes."
+    "other": "unavailable",
+    "description": "Names the app profile used to route the bulk write; the default profile is used when it is empty.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-checkandmutaterowrequest-table-name",
     "name": "CheckAndMutateRowRequest.table_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "The predicate selects a branch; only that branch is validated and applied atomically."
+    "other": "available",
+    "description": "Names the table that holds the row to check and change, in the form projects/PROJECT/instances/INSTANCE/tables/TABLE.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-checkandmutaterowrequest-row-key",
     "name": "CheckAndMutateRowRequest.row_key",
     "area": "Request fields",
     "local": "available",
-    "notes": "The predicate selects a branch; only that branch is validated and applied atomically."
+    "other": "available",
+    "description": "Gives the key of the single row that is checked and then conditionally mutated.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-checkandmutaterowrequest-predicate-filter",
     "name": "CheckAndMutateRowRequest.predicate_filter",
     "area": "Request fields",
     "local": "available",
-    "notes": "The predicate selects a branch; only that branch is validated and applied atomically."
+    "other": "limited",
+    "description": "Gives the filter run against the row; if it yields at least one cell the true mutations apply, otherwise the false ones.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-checkandmutaterowrequest-true-mutations",
     "name": "CheckAndMutateRowRequest.true_mutations",
     "area": "Request fields",
     "local": "available",
-    "notes": "The predicate selects a branch; only that branch is validated and applied atomically."
+    "other": "limited",
+    "description": "Lists the changes applied to the row when the predicate filter yields at least one cell.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-checkandmutaterowrequest-false-mutations",
     "name": "CheckAndMutateRowRequest.false_mutations",
     "area": "Request fields",
     "local": "available",
-    "notes": "The predicate selects a branch; only that branch is validated and applied atomically."
+    "other": "limited",
+    "description": "Lists the changes applied to the row when the predicate filter yields no cells.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-checkandmutaterowrequest-authorized-view-name",
     "name": "CheckAndMutateRowRequest.authorized_view_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Through an authorized view the predicate only sees in-view data."
+    "other": "unavailable",
+    "description": "Names an authorized view to use instead of the table, so both the check and the changes see only the view's data.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-checkandmutaterowrequest-app-profile-id",
     "name": "CheckAndMutateRowRequest.app_profile_id",
     "area": "Request fields",
     "local": "available",
-    "notes": "Registered profiles must use single-cluster routing with transactional writes; multi-cluster profiles are FailedPrecondition."
+    "other": "unavailable",
+    "description": "Names the app profile used to route the conditional write; the default profile is used when it is empty.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readmodifywriterowrequest-table-name",
     "name": "ReadModifyWriteRowRequest.table_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Rules are validated as a unit and applied atomically."
+    "other": "available",
+    "description": "Names the table that holds the row to modify, in the form projects/PROJECT/instances/INSTANCE/tables/TABLE.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readmodifywriterowrequest-row-key",
     "name": "ReadModifyWriteRowRequest.row_key",
     "area": "Request fields",
     "local": "available",
-    "notes": "Rules are validated as a unit and applied atomically."
+    "other": "available",
+    "description": "Gives the key of the row whose latest cell values are read and modified.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readmodifywriterowrequest-rules",
     "name": "ReadModifyWriteRowRequest.rules",
     "area": "Request fields",
     "local": "available",
-    "notes": "Rules are validated as a unit and applied atomically."
+    "other": "limited",
+    "description": "Lists the append or increment rules to apply to the row's cells, in order, as one atomic read-modify-write.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readmodifywriterowrequest-authorized-view-name",
     "name": "ReadModifyWriteRowRequest.authorized_view_name",
     "area": "Request fields",
     "local": "available",
-    "notes": "Rules targeting cells outside the authorized view are PermissionDenied."
+    "other": "unavailable",
+    "description": "Names an authorized view to modify through instead of the table, which limits the rules to cells the view exposes.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-readmodifywriterowrequest-app-profile-id",
     "name": "ReadModifyWriteRowRequest.app_profile_id",
     "area": "Request fields",
     "local": "available",
-    "notes": "Registered profiles must use single-cluster routing with transactional writes; multi-cluster profiles are FailedPrecondition."
+    "other": "unavailable",
+    "description": "Names the app profile used to route the read-modify-write; the default profile is used when it is empty.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-createtablerequest-parent",
     "name": "CreateTableRequest.parent",
     "area": "Request fields",
     "local": "available",
-    "notes": "Parent, table ID and table schema are validated and persisted."
+    "other": "limited",
+    "description": "Names the instance in which the new table is created, in the form projects/PROJECT/instances/INSTANCE.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-createtablerequest-table-id",
     "name": "CreateTableRequest.table_id",
     "area": "Request fields",
     "local": "available",
-    "notes": "Parent, table ID and table schema are validated and persisted."
+    "other": "limited",
+    "description": "Gives the ID of the new table, which becomes the last part of its full name and must be unique within the instance.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-createtablerequest-table",
     "name": "CreateTableRequest.table",
     "area": "Request fields",
     "local": "available",
-    "notes": "Parent, table ID and table schema are validated and persisted."
+    "other": "limited",
+    "description": "Describes the table to create, including its column families, garbage collection rules, timestamp granularity and settings.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-createtablerequest-initial-splits",
     "name": "CreateTableRequest.initial_splits",
     "area": "Request fields",
     "local": "available",
-    "notes": "Initial splits must be non-empty, are persisted across restart and are reported by SampleRowKeys."
+    "other": "unavailable",
+    "description": "Lists row keys at which to pre-split the table into tablets when it is created, which can spread early load.",
+    "notes": ""
   },
   {
     "id": "bigtable-request-fields-columnfamily-gc-rule",
     "name": "ColumnFamily.gc_rule",
     "area": "Request fields",
     "local": "limited",
+    "other": "limited",
+    "description": "Sets the garbage collection rule that decides which old cell versions in the family Bigtable deletes automatically.",
     "notes": "Nested union/intersection rules use production semantics; max_age below 1ms and rules over 500 bytes are rejected."
   },
   {
@@ -823,13 +1057,17 @@
     "name": "ColumnFamily.value_type",
     "area": "Request fields",
     "local": "available",
-    "notes": "Aggregate types (sum/min/max over Int64; HLL++ uses the always-built GoogleSQL engine) are immutable after creation; AddToCell/MergeToCell require them and SetCell is rejected on them."
+    "other": "limited",
+    "description": "Declares the data type of cell values in the family, including aggregate types whose cells combine values on write.",
+    "notes": ""
   },
   {
     "id": "bigtable-row-filters-chain",
     "name": "chain",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Passes the row through a list of filters in order, so each filter sees only the cells the previous filter kept.",
     "notes": ""
   },
   {
@@ -837,13 +1075,17 @@
     "name": "interleave",
     "area": "Row filters",
     "local": "available",
-    "notes": "Duplicate cells are retained and count toward later limits."
+    "other": "available",
+    "description": "Runs several filters on the same row in parallel and merges all their results, keeping duplicates when filters overlap.",
+    "notes": ""
   },
   {
     "id": "bigtable-row-filters-condition",
     "name": "condition",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Picks which filter to apply to a row by first running a predicate filter and checking whether it returns any cell.",
     "notes": ""
   },
   {
@@ -851,13 +1093,17 @@
     "name": "sink",
     "area": "Row filters",
     "local": "available",
-    "notes": "Sink inside Condition is rejected."
+    "other": "unavailable",
+    "description": "Sends the cells that reach it straight to the final output of the read, bypassing the rest of the enclosing filters.",
+    "notes": ""
   },
   {
     "id": "bigtable-row-filters-pass-all-filter",
     "name": "pass_all_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps every cell of the row regardless of input, which is equivalent to applying no filter at all.",
     "notes": ""
   },
   {
@@ -865,6 +1111,8 @@
     "name": "block_all_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Drops every cell regardless of input, which is useful for temporarily disabling one part of a larger filter.",
     "notes": ""
   },
   {
@@ -872,6 +1120,8 @@
     "name": "row_key_regex_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps only the rows whose key fully matches a regular expression written in RE2 syntax.",
     "notes": ""
   },
   {
@@ -879,6 +1129,8 @@
     "name": "row_sample_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps each row with a given probability between 0 and 1, which returns a random sample of the table.",
     "notes": ""
   },
   {
@@ -886,6 +1138,8 @@
     "name": "family_name_regex_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps only the cells whose column family name fully matches a regular expression.",
     "notes": ""
   },
   {
@@ -893,6 +1147,8 @@
     "name": "column_qualifier_regex_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps only the cells whose column qualifier fully matches a regular expression.",
     "notes": ""
   },
   {
@@ -900,6 +1156,8 @@
     "name": "column_range_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps cells in one column family whose qualifiers fall between a start and an end qualifier, each inclusive or exclusive.",
     "notes": ""
   },
   {
@@ -907,6 +1165,8 @@
     "name": "timestamp_range_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps cells whose timestamps fall in a half-open range, with the start included and the end excluded.",
     "notes": ""
   },
   {
@@ -914,6 +1174,8 @@
     "name": "value_regex_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps only the cells whose stored value fully matches a regular expression written in RE2 syntax.",
     "notes": ""
   },
   {
@@ -921,6 +1183,8 @@
     "name": "value_range_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps cells whose value falls between a start and an end value, each bound inclusive or exclusive.",
     "notes": ""
   },
   {
@@ -928,6 +1192,8 @@
     "name": "cells_per_row_offset_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "limited",
+    "description": "Skips the first N cells of each row and returns the remaining cells, counting in the order they are stored.",
     "notes": ""
   },
   {
@@ -935,6 +1201,8 @@
     "name": "cells_per_row_limit_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "limited",
+    "description": "Keeps only the first N cells of each row, counting in the order they are stored, and drops the rest.",
     "notes": ""
   },
   {
@@ -942,6 +1210,8 @@
     "name": "cells_per_column_limit_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Keeps only the N most recent versions of each column, which is useful for reading just the latest value.",
     "notes": ""
   },
   {
@@ -949,6 +1219,8 @@
     "name": "strip_value_transformer",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Replaces every cell value with an empty value while keeping keys, columns and timestamps, which saves bandwidth when only the cell existence matters.",
     "notes": ""
   },
   {
@@ -956,6 +1228,8 @@
     "name": "apply_label_transformer",
     "area": "Row filters",
     "local": "available",
+    "other": "available",
+    "description": "Adds a text label to every cell it passes, so results from different interleaved filters can be told apart.",
     "notes": ""
   },
   {
@@ -963,6 +1237,8 @@
     "name": "value_bitmask_filter",
     "area": "Row filters",
     "local": "available",
+    "other": "unavailable",
+    "description": "Keeps cells whose value has all the bits of a mask set; the mask must be exactly as long as the value.",
     "notes": ""
   },
   {
@@ -970,34 +1246,44 @@
     "name": "max_num_versions",
     "area": "Garbage-collection rules",
     "local": "available",
-    "notes": "Rule semantics are implemented; production asynchronous timing is a separate capability below."
+    "other": "available",
+    "description": "Keeps at most N newest versions of each cell in a column and lets the older versions be deleted.",
+    "notes": ""
   },
   {
     "id": "bigtable-garbage-collection-rules-max-age",
     "name": "max_age",
     "area": "Garbage-collection rules",
     "local": "available",
-    "notes": "Rule semantics are implemented; production asynchronous timing is a separate capability below."
+    "other": "available",
+    "description": "Lets cells older than a given duration be deleted, measured from each cell's timestamp.",
+    "notes": ""
   },
   {
     "id": "bigtable-garbage-collection-rules-intersection",
     "name": "intersection",
     "area": "Garbage-collection rules",
     "local": "available",
-    "notes": "Rule semantics are implemented; production asynchronous timing is a separate capability below."
+    "other": "unavailable",
+    "description": "Combines rules so that a cell is deleted only when every one of the rules says it can be deleted.",
+    "notes": ""
   },
   {
     "id": "bigtable-garbage-collection-rules-union",
     "name": "union",
     "area": "Garbage-collection rules",
     "local": "available",
-    "notes": "Rule semantics are implemented; production asynchronous timing is a separate capability below."
+    "other": "available",
+    "description": "Combines rules so that a cell is deleted as soon as any one of the rules says it can be deleted.",
+    "notes": ""
   },
   {
     "id": "bigtable-mutations-set-cell",
     "name": "set_cell",
     "area": "Mutations",
     "local": "available",
+    "other": "available",
+    "description": "Writes a value into one cell, identified by column family, column qualifier and timestamp.",
     "notes": ""
   },
   {
@@ -1005,20 +1291,26 @@
     "name": "add_to_cell",
     "area": "Mutations",
     "local": "available",
-    "notes": "Requires an aggregate family; local HLL++ format limits still apply."
+    "other": "limited",
+    "description": "Adds an input value to the aggregate stored in a cell of an aggregate column family, without reading the cell first.",
+    "notes": ""
   },
   {
     "id": "bigtable-mutations-merge-to-cell",
     "name": "merge_to_cell",
     "area": "Mutations",
     "local": "available",
-    "notes": "Requires an aggregate family; local HLL++ format limits still apply."
+    "other": "limited",
+    "description": "Merges an already aggregated intermediate value, such as a HyperLogLog++ sketch, into the aggregate stored in a cell.",
+    "notes": ""
   },
   {
     "id": "bigtable-mutations-delete-from-column",
     "name": "delete_from_column",
     "area": "Mutations",
     "local": "available",
+    "other": "available",
+    "description": "Deletes the versions of a single column, optionally only those inside a timestamp range.",
     "notes": ""
   },
   {
@@ -1026,6 +1318,8 @@
     "name": "delete_from_family",
     "area": "Mutations",
     "local": "available",
+    "other": "available",
+    "description": "Deletes every cell of one column family from the row.",
     "notes": ""
   },
   {
@@ -1033,6 +1327,8 @@
     "name": "delete_from_row",
     "area": "Mutations",
     "local": "available",
+    "other": "available",
+    "description": "Deletes all of the row's cells in every column family, which removes the row.",
     "notes": ""
   },
   {
@@ -1040,6 +1336,8 @@
     "name": "append_value",
     "area": "Read-modify-write",
     "local": "available",
+    "other": "available",
+    "description": "Appends bytes to the end of the latest value of a cell, creating the cell if it does not exist, and returns the result.",
     "notes": ""
   },
   {
@@ -1047,6 +1345,8 @@
     "name": "increment_amount",
     "area": "Read-modify-write",
     "local": "available",
+    "other": "available",
+    "description": "Adds a signed 64-bit amount to the latest value of a cell, read as a big-endian integer, and returns the new value.",
     "notes": ""
   },
   {
@@ -1054,27 +1354,35 @@
     "name": "Sum<Int64>",
     "area": "Aggregate types",
     "local": "available",
-    "notes": "Local typed Int64 aggregate family."
+    "other": "available",
+    "description": "A column family type whose cells hold a running sum of the 64-bit integers added to them.",
+    "notes": ""
   },
   {
     "id": "bigtable-aggregate-types-min-int64",
     "name": "Min<Int64>",
     "area": "Aggregate types",
     "local": "available",
-    "notes": "Local typed Int64 aggregate family."
+    "other": "unavailable",
+    "description": "A column family type whose cells hold the smallest 64-bit integer written to them so far.",
+    "notes": ""
   },
   {
     "id": "bigtable-aggregate-types-max-int64",
     "name": "Max<Int64>",
     "area": "Aggregate types",
     "local": "available",
-    "notes": "Local typed Int64 aggregate family."
+    "other": "unavailable",
+    "description": "A column family type whose cells hold the largest 64-bit integer written to them so far.",
+    "notes": ""
   },
   {
     "id": "bigtable-aggregate-types-hll",
     "name": "HLL++",
     "area": "Aggregate types",
     "local": "limited",
+    "other": "unavailable",
+    "description": "A column family type whose cells hold a HyperLogLog++ sketch that estimates how many distinct values were added.",
     "notes": "Local sketch bytes are not production-compatible."
   },
   {
@@ -1082,69 +1390,89 @@
     "name": "Strict instance existence checks",
     "area": "Behaviors",
     "local": "available",
-    "notes": "LocalCloud standalone enables strict-admin by default."
+    "other": "unavailable",
+    "description": "Requests that name an instance, cluster or table that does not exist fail with a not-found error instead of being accepted.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-table-deletion-protection",
     "name": "Table deletion protection",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Deletion protection is supported locally; restart persistence is a separate row."
+    "other": "available",
+    "description": "A table can be flagged so that delete requests for it fail until the flag is removed.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-deletion-protection-across-restart",
     "name": "Deletion protection across restart",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Database retention required."
+    "other": "unavailable",
+    "description": "A table's deletion protection setting is stored durably and stays in force through restarts and maintenance.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-soft-deleted-table-recovery",
     "name": "Soft-deleted table recovery",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Seven-day local undelete window."
+    "other": "unavailable",
+    "description": "A deleted table is kept for a retention period during which it can be restored together with its data.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-backup-row-snapshots",
     "name": "Backup row snapshots",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Snapshots are independent of subsequent source changes."
+    "other": "unavailable",
+    "description": "A backup captures a consistent copy of a table's data that does not change when the source table is modified later.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-backup-schema-snapshots",
     "name": "Backup schema snapshots",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Schema restored from the backup manifest."
+    "other": "unavailable",
+    "description": "A backup records the table's column families and garbage collection rules so that a restore can recreate them.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-backup-expiry-validation",
     "name": "Backup expiry validation",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Expiry and edition limits validated."
+    "other": "unavailable",
+    "description": "Every backup needs an expiration time that must fall inside an allowed window, after which the backup is deleted automatically.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-backup-type-validation",
     "name": "Backup type validation",
     "area": "Behaviors",
     "local": "available",
-    "notes": "HOT/STANDARD local metadata and rules."
+    "other": "unavailable",
+    "description": "Backups can be standard or hot, and a hot backup can be set to convert to a standard backup at a chosen time.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-backup-copy-restrictions",
     "name": "Backup copy restrictions",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Source readiness and copy-of-copy restrictions."
+    "other": "unavailable",
+    "description": "A backup can be copied to another cluster, subject to rules such as the source being ready and limits on the copy's expiration.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-automated-backup-scheduling",
     "name": "Automated backup scheduling",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "A table can have an automated backup policy that creates backups on a schedule and keeps them for a set retention period.",
     "notes": "Policy metadata does not run a scheduler."
   },
   {
@@ -1152,55 +1480,71 @@
     "name": "Change-stream enable/disable",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Opt-in per table; disable purges records."
+    "other": "unavailable",
+    "description": "Change streams are switched on or off for a table by setting or clearing its change stream retention period.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-change-stream-retention-purge",
     "name": "Change-stream retention purge",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Records expire within the configured local retention."
+    "other": "unavailable",
+    "description": "Change records are kept for the table's configured retention period and are removed once they are older than it.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-grouped-change-records-per-row-commit",
     "name": "Grouped change records per row commit",
     "area": "Behaviors",
     "local": "available",
-    "notes": "One committed row change groups its mutations."
+    "other": "unavailable",
+    "description": "Mutations written to a row together are reported together as one data change record in the stream.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-change-stream-continuation-tokens",
     "name": "Change-stream continuation tokens",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Resume without replaying committed records."
+    "other": "unavailable",
+    "description": "A reader receives opaque tokens that let it resume the stream from where it stopped without missing or repeating changes.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-change-stream-heartbeats",
     "name": "Change-stream heartbeats",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Heartbeat and token behavior."
+    "other": "unavailable",
+    "description": "The stream periodically sends heartbeat messages with a continuation token and low watermark, even when no data changes.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-gc-change-records",
     "name": "GC change records",
     "area": "Behaviors",
     "local": "available",
-    "notes": "GC-triggered deletions appear in the stream."
+    "other": "unavailable",
+    "description": "Cells removed by garbage collection appear in the change stream as records marked as coming from garbage collection.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-range-deletion-change-records",
     "name": "Range-deletion change records",
     "area": "Behaviors",
     "local": "available",
-    "notes": "DropRowRange emits change records."
+    "other": "unavailable",
+    "description": "Rows removed with the DropRowRange admin call are captured in the change stream as data change records.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-change-stream-partition-splits",
     "name": "Change-stream partition splits",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "When a tablet splits, the stream of its partition ends and tells readers which new partitions to read instead.",
     "notes": "LocalCloud uses one partition."
   },
   {
@@ -1208,6 +1552,8 @@
     "name": "Change-stream partition merges",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "When tablets merge, the streams of the merged partitions end and readers continue on the new, larger partition.",
     "notes": "LocalCloud uses one partition."
   },
   {
@@ -1215,20 +1561,26 @@
     "name": "Authorized-view row-prefix restrictions",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Subset enforcement is separate from IAM identities."
+    "other": "unavailable",
+    "description": "An authorized view can limit readers and writers to rows whose keys start with chosen prefixes.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-authorized-view-family-restrictions",
     "name": "Authorized-view family restrictions",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Only selected families are readable."
+    "other": "unavailable",
+    "description": "An authorized view can expose only chosen column families of a table.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-authorized-view-qualifier-restrictions",
     "name": "Authorized-view qualifier restrictions",
     "area": "Behaviors",
     "local": "available",
+    "other": "unavailable",
+    "description": "An authorized view can expose only chosen column qualifiers or qualifier prefixes within a column family.",
     "notes": ""
   },
   {
@@ -1236,41 +1588,53 @@
     "name": "Authorized-view write restrictions",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Out-of-view writes fail with PermissionDenied."
+    "other": "unavailable",
+    "description": "Writes made through an authorized view are rejected when they touch rows, families or columns that the view does not expose.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-protobuf-schema-validation",
     "name": "Protobuf schema validation",
     "area": "Behaviors",
     "local": "available",
-    "notes": "FileDescriptorSet validation."
+    "other": "unavailable",
+    "description": "The protocol buffer descriptors in a schema bundle are validated when the bundle is created or updated.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-prepared-query-parameters",
     "name": "Prepared-query parameters",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Prepare, bind and execute through the Go SDK."
+    "other": "unavailable",
+    "description": "A prepared SQL query declares named parameters whose values are supplied each time the query is executed.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-prepared-query-refresh-after-schema-changes",
     "name": "Prepared-query refresh after schema changes",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Expired prepared queries can be refreshed."
+    "other": "unavailable",
+    "description": "A prepared query expires after schema changes or over time, and the client prepares it again to keep executing it.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-logical-view-query-execution",
     "name": "Logical-view query execution",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Validated stored SQL executes locally."
+    "other": "unavailable",
+    "description": "Reading a logical view runs its stored SQL query against the underlying table data at read time.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-parameterized-logical-view-definitions",
     "name": "Parameterized logical-view definitions",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "A parameterized logical view reads caller-supplied string parameters with VIEW_PARAMETERS to scope its results to a user or tenant.",
     "notes": "view_parameters is unsupported."
   },
   {
@@ -1278,6 +1642,8 @@
     "name": "CMV GROUP BY definitions",
     "area": "Behaviors",
     "local": "limited",
+    "other": "unavailable",
+    "description": "A continuous materialized view can group rows by chosen columns and keep aggregates such as counts and sums up to date.",
     "notes": "See function table."
   },
   {
@@ -1285,6 +1651,8 @@
     "name": "CMV ORDER BY secondary indexes",
     "area": "Behaviors",
     "local": "limited",
+    "other": "unavailable",
+    "description": "A continuous materialized view can use ORDER BY to store rows under a different key, acting as an asynchronous secondary index.",
     "notes": "See function table."
   },
   {
@@ -1292,6 +1660,8 @@
     "name": "CMV read refresh",
     "area": "Behaviors",
     "local": "limited",
+    "other": "unavailable",
+    "description": "A continuous materialized view is maintained in the background, so reads see source changes after a short delay.",
     "notes": "Production maintenance is asynchronous; local views recompute before reading."
   },
   {
@@ -1299,13 +1669,17 @@
     "name": "CMV definitions across restart",
     "area": "Behaviors",
     "local": "available",
-    "notes": "Definitions reload from SQL."
+    "other": "unavailable",
+    "description": "A continuous materialized view definition is stored durably and keeps being maintained through service restarts.",
+    "notes": ""
   },
   {
     "id": "bigtable-behaviors-production-compatible-hll-sketch-bytes",
     "name": "Production-compatible HLL++ sketch bytes",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "HyperLogLog++ sketches in aggregate cells are stored as bytes in a standard encoding that the HLL_COUNT functions can read and merge.",
     "notes": "LocalCloud byte format is local."
   },
   {
@@ -1313,6 +1687,8 @@
     "name": "Asynchronous GC timing",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "limited",
+    "description": "Garbage collection runs in the background on its own schedule, so cells past their rules can stay readable for a while.",
     "notes": "Production GC is asynchronous; local reads hide expired cells and writes collect them."
   },
   {
@@ -1320,6 +1696,8 @@
     "name": "IAM identity enforcement",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Each request is checked against IAM policies, and callers without the needed permission are denied.",
     "notes": "LocalCloud policy APIs are permissive."
   },
   {
@@ -1327,6 +1705,8 @@
     "name": "Authenticated service connections",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Clients authenticate with Google credentials, so every request carries the identity of a user or service account.",
     "notes": "Production checks identities; the standalone emulator is unauthenticated."
   },
   {
@@ -1334,6 +1714,8 @@
     "name": "Replication across clusters",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Writes made in one cluster of an instance are copied automatically to its other clusters, which can be in different zones or regions.",
     "notes": "Single-process local model."
   },
   {
@@ -1341,6 +1723,8 @@
     "name": "Cluster failover",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "When a cluster becomes unavailable, requests can be redirected to another cluster of the instance, automatically or by manual change.",
     "notes": "No distributed cluster topology."
   },
   {
@@ -1348,6 +1732,8 @@
     "name": "Real autoscaling",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "A cluster can add and remove nodes automatically to keep CPU and storage utilization near configured targets.",
     "notes": "LocalCloud stores configuration metadata only."
   },
   {
@@ -1355,6 +1741,8 @@
     "name": "Real node capacity",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Each node adds serving capacity, so a cluster's node count determines the read and write throughput and storage it can handle.",
     "notes": "Cluster node counts do not provision hardware."
   },
   {
@@ -1362,6 +1750,8 @@
     "name": "Cloud Monitoring integration",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Bigtable publishes usage and performance metrics, such as CPU load and request latency, to Cloud Monitoring.",
     "notes": "Read request stats do not reproduce Cloud Monitoring."
   },
   {
@@ -1369,6 +1759,8 @@
     "name": "Key Visualizer",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Key Visualizer shows heatmaps of how read and write activity is spread across the row-key space over time, revealing hot spots.",
     "notes": "Not emulated."
   },
   {
@@ -1376,6 +1768,8 @@
     "name": "Data Boost compute isolation",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Data Boost serves large read-only workloads on separate serverless compute, so they do not slow down production traffic.",
     "notes": "Routing validation is not isolated serverless compute."
   },
   {
@@ -1383,6 +1777,8 @@
     "name": "CMEK key custody",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Customer-managed encryption keys let a cluster's data be encrypted with a key that the customer controls in Cloud KMS.",
     "notes": "No managed key custody."
   },
   {
@@ -1390,6 +1786,8 @@
     "name": "ListLocations",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Lists the Google Cloud locations where Bigtable is available to a project.",
     "notes": "Locations service is not registered in LocalCloud."
   },
   {
@@ -1397,6 +1795,8 @@
     "name": "RouteLookup",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the target that a client should send requests for a given key to, using the gRPC route lookup protocol.",
     "notes": "RouteLookupService is not registered."
   },
   {
@@ -1404,6 +1804,8 @@
     "name": "TLS encryption in transit",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Traffic between clients and Bigtable is encrypted in transit with TLS.",
     "notes": "Default standalone listener uses plaintext gRPC."
   },
   {
@@ -1411,6 +1813,8 @@
     "name": "CMV CLUSTER_ATTRIBUTE routing",
     "area": "Behaviors",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "CLUSTER_ATTRIBUTE returns an attribute of the cluster processing a continuous materialized view query, so a view can be limited to one cluster.",
     "notes": ""
   },
   {
@@ -1418,6 +1822,8 @@
     "name": "ABS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the absolute value of a number, and raises an error when negating the most negative integer would overflow.",
     "notes": ""
   },
   {
@@ -1425,6 +1831,8 @@
     "name": "ACOS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the inverse cosine of a number between -1 and 1, as an angle in radians from 0 to pi.",
     "notes": ""
   },
   {
@@ -1432,6 +1840,8 @@
     "name": "ACOSH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the inverse hyperbolic cosine of a number that is at least 1.",
     "notes": ""
   },
   {
@@ -1439,6 +1849,8 @@
     "name": "ANY_VALUE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the expression's value from one arbitrarily chosen row of a group, when it does not matter which row supplies it.",
     "notes": ""
   },
   {
@@ -1446,6 +1858,8 @@
     "name": "APPROX_COUNT_DISTINCT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Estimates how many distinct values a column holds, faster and with less memory than an exact count of distinct values.",
     "notes": ""
   },
   {
@@ -1453,6 +1867,8 @@
     "name": "APPROX_QUANTILES",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns approximate quantile boundaries of a column's values, from the approximate minimum through to the maximum.",
     "notes": ""
   },
   {
@@ -1460,6 +1876,8 @@
     "name": "APPROX_TOP_COUNT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the most frequent values of a column together with their approximate occurrence counts.",
     "notes": ""
   },
   {
@@ -1467,6 +1885,8 @@
     "name": "APPROX_TOP_SUM",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the values with the largest approximate total of an associated weight column, along with those totals.",
     "notes": ""
   },
   {
@@ -1474,6 +1894,8 @@
     "name": "ARRAY_AGG",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Collects the values of a group of rows into a single array in no guaranteed order, optionally de-duplicated and with NULLs ignored or kept.",
     "notes": ""
   },
   {
@@ -1481,6 +1903,8 @@
     "name": "ARRAY_CONCAT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Joins one or more arrays of the same type into a single array, in the order given.",
     "notes": ""
   },
   {
@@ -1488,6 +1912,8 @@
     "name": "ARRAY_CONCAT_AGG",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Concatenates the arrays from all the rows of a group into one single array, optionally ignoring duplicate arrays.",
     "notes": ""
   },
   {
@@ -1495,6 +1921,8 @@
     "name": "ARRAY_FILTER",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a new array holding only the elements for which a lambda condition is true, in their original order.",
     "notes": ""
   },
   {
@@ -1502,6 +1930,8 @@
     "name": "ARRAY_FIRST",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the first element of an array, and raises an error if the array is empty.",
     "notes": ""
   },
   {
@@ -1509,6 +1939,8 @@
     "name": "ARRAY_INCLUDES",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE when an array contains a given search value, and NULL when either argument is NULL.",
     "notes": ""
   },
   {
@@ -1516,6 +1948,8 @@
     "name": "ARRAY_INCLUDES_ALL",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE only when every value in a list of search values is present in an array.",
     "notes": ""
   },
   {
@@ -1523,6 +1957,8 @@
     "name": "ARRAY_INCLUDES_ANY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE when at least one value from a list of search values is present in an array.",
     "notes": ""
   },
   {
@@ -1530,6 +1966,8 @@
     "name": "ARRAY_IS_DISTINCT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE when an array has no repeated elements, using the same equality rules as SELECT DISTINCT.",
     "notes": ""
   },
   {
@@ -1537,6 +1975,8 @@
     "name": "ARRAY_LAST",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the last element of an array, and raises an error if the array is empty.",
     "notes": ""
   },
   {
@@ -1544,6 +1984,8 @@
     "name": "ARRAY_LAST_N",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns an array holding the last N elements of an input array, and raises an error if N is negative.",
     "notes": ""
   },
   {
@@ -1551,6 +1993,8 @@
     "name": "ARRAY_LENGTH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the number of elements in an array: zero for an empty array and NULL when the array is NULL.",
     "notes": ""
   },
   {
@@ -1558,6 +2002,8 @@
     "name": "ARRAY_OFFSET",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the zero-based position of the first, or optionally the last, element equal to a search value, or NULL if none matches.",
     "notes": ""
   },
   {
@@ -1565,6 +2011,8 @@
     "name": "ARRAY_OFFSETS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns an array of the zero-based positions of every element equal to a search value, which is empty when none matches.",
     "notes": ""
   },
   {
@@ -1572,6 +2020,8 @@
     "name": "ARRAY_REVERSE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns a copy of an array with the order of its elements reversed, so the last element comes first.",
     "notes": ""
   },
   {
@@ -1579,6 +2029,8 @@
     "name": "ARRAY_SLICE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the run of consecutive elements between a start and an end offset, both inclusive, as a new array.",
     "notes": ""
   },
   {
@@ -1586,6 +2038,8 @@
     "name": "ARRAY_TO_STRING",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Joins the elements of an array into one string with a delimiter, replacing NULL elements with optional text or skipping them.",
     "notes": ""
   },
   {
@@ -1593,6 +2047,8 @@
     "name": "ARRAY_TRANSFORM",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a new array of the same length in which a lambda expression has been applied to every element.",
     "notes": ""
   },
   {
@@ -1600,6 +2056,8 @@
     "name": "ASCII",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the ASCII code of the first character or byte of a value, or 0 when the value is empty.",
     "notes": ""
   },
   {
@@ -1607,6 +2065,8 @@
     "name": "ASIN",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the inverse sine of a number between -1 and 1, as an angle in radians between minus and plus pi over two.",
     "notes": ""
   },
   {
@@ -1614,6 +2074,8 @@
     "name": "ASINH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the inverse hyperbolic sine of a number; it is defined for every input.",
     "notes": ""
   },
   {
@@ -1621,6 +2083,8 @@
     "name": "ATAN",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the inverse tangent of a number, as an angle in radians between minus and plus pi over two.",
     "notes": ""
   },
   {
@@ -1628,6 +2092,8 @@
     "name": "ATAN2",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the inverse tangent of the ratio of its two arguments, using their signs to pick the correct quadrant.",
     "notes": ""
   },
   {
@@ -1635,6 +2101,8 @@
     "name": "ATANH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the inverse hyperbolic tangent of a number strictly between -1 and 1.",
     "notes": ""
   },
   {
@@ -1642,6 +2110,8 @@
     "name": "AVG",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the arithmetic mean of the non-NULL numeric values in a group of rows.",
     "notes": ""
   },
   {
@@ -1649,6 +2119,8 @@
     "name": "BIT_AND",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the bitwise AND of all non-NULL integer or bytes values in a group of rows.",
     "notes": ""
   },
   {
@@ -1656,6 +2128,8 @@
     "name": "BIT_OR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the bitwise OR of all non-NULL integer or bytes values in a group of rows.",
     "notes": ""
   },
   {
@@ -1663,6 +2137,8 @@
     "name": "BIT_XOR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the bitwise XOR of all non-NULL integer or bytes values in a group of rows.",
     "notes": ""
   },
   {
@@ -1670,6 +2146,8 @@
     "name": "BYTE_LENGTH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the number of bytes in a string or bytes value, which differs from its character count for non-ASCII text.",
     "notes": ""
   },
   {
@@ -1677,6 +2155,8 @@
     "name": "CASE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Evaluates conditions in order and returns the result paired with the first one that is true, or an optional default.",
     "notes": ""
   },
   {
@@ -1684,6 +2164,8 @@
     "name": "CAST",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a value to a specified type, and raises an error at run time if the conversion is not possible.",
     "notes": ""
   },
   {
@@ -1691,6 +2173,8 @@
     "name": "CEIL",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the smallest whole number that is greater than or equal to the input.",
     "notes": ""
   },
   {
@@ -1698,6 +2182,8 @@
     "name": "CEILING",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "A synonym of CEIL: rounds a number up to the nearest whole number that is not smaller than it.",
     "notes": ""
   },
   {
@@ -1705,6 +2191,8 @@
     "name": "CHAR_LENGTH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the number of characters in a string, counting each Unicode character once.",
     "notes": ""
   },
   {
@@ -1712,6 +2200,8 @@
     "name": "CHR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the one-character string for a Unicode code point, an empty string for 0, and an error for invalid code points.",
     "notes": ""
   },
   {
@@ -1719,6 +2209,8 @@
     "name": "CLUSTER_ATTRIBUTE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns an attribute of the cluster that is processing a continuous materialized view query, such as its cluster ID.",
     "notes": ""
   },
   {
@@ -1726,6 +2218,8 @@
     "name": "CODE_POINTS_TO_BYTES",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Builds a bytes value from an array of integers between 0 and 255, one byte per integer.",
     "notes": ""
   },
   {
@@ -1733,6 +2227,8 @@
     "name": "CODE_POINTS_TO_STRING",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Builds a string from an array of Unicode code points, one character per integer.",
     "notes": ""
   },
   {
@@ -1740,6 +2236,8 @@
     "name": "CONCAT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Joins one or more strings, or one or more bytes values, into one value, and returns NULL if any input is NULL.",
     "notes": ""
   },
   {
@@ -1747,6 +2245,8 @@
     "name": "CORR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the Pearson correlation coefficient of two numeric columns over a group of rows.",
     "notes": ""
   },
   {
@@ -1754,6 +2254,8 @@
     "name": "COS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the cosine of an angle given in radians, as a value between -1 and 1.",
     "notes": ""
   },
   {
@@ -1761,6 +2263,8 @@
     "name": "COSH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the hyperbolic cosine of a number, and raises an error if the result overflows.",
     "notes": ""
   },
   {
@@ -1768,6 +2272,8 @@
     "name": "COSINE_DISTANCE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the cosine distance between two vectors of equal length, which measures how far apart their directions are.",
     "notes": ""
   },
   {
@@ -1775,6 +2281,8 @@
     "name": "COT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the cotangent of an angle given in radians, and raises an error when the angle is zero.",
     "notes": ""
   },
   {
@@ -1782,6 +2290,8 @@
     "name": "COTH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the hyperbolic cotangent of a number, and raises an error when the number is zero.",
     "notes": ""
   },
   {
@@ -1789,13 +2299,17 @@
     "name": "COUNT",
     "area": "SQL functions and syntax",
     "local": "available",
-    "notes": "Supported in continuous materialized views."
+    "other": "unavailable",
+    "description": "Returns the number of rows in a group, or the number of rows where an expression is not NULL.",
+    "notes": ""
   },
   {
     "id": "bigtable-sql-functions-and-syntax-countif",
     "name": "COUNTIF",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the number of rows in a group for which a Boolean condition is true.",
     "notes": ""
   },
   {
@@ -1803,6 +2317,8 @@
     "name": "COVAR_POP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the population covariance of two numeric columns over a group of rows.",
     "notes": ""
   },
   {
@@ -1810,6 +2326,8 @@
     "name": "COVAR_SAMP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the sample covariance of two numeric columns over a group of rows.",
     "notes": ""
   },
   {
@@ -1817,6 +2335,8 @@
     "name": "CSC",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the cosecant of an angle given in radians, and raises an error when the angle is zero.",
     "notes": ""
   },
   {
@@ -1824,6 +2344,8 @@
     "name": "CSCH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the hyperbolic cosecant of a number, and raises an error when the number is zero.",
     "notes": ""
   },
   {
@@ -1831,6 +2353,8 @@
     "name": "CUME_DIST",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the fraction of rows in a window partition that come at or before the current row in the ordering.",
     "notes": ""
   },
   {
@@ -1838,6 +2362,8 @@
     "name": "CURRENT_DATE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the current date, using UTC unless a time zone is specified.",
     "notes": ""
   },
   {
@@ -1845,6 +2371,8 @@
     "name": "CURRENT_TIMESTAMP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the current date and time as a timestamp value in UTC.",
     "notes": ""
   },
   {
@@ -1852,6 +2380,8 @@
     "name": "DATE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Builds a date from a year, month and day, or extracts the date part of a timestamp or datetime.",
     "notes": ""
   },
   {
@@ -1859,6 +2389,8 @@
     "name": "DATE_ADD",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Adds a number of days, weeks, months, quarters or years to a date and returns the resulting date.",
     "notes": ""
   },
   {
@@ -1866,6 +2398,8 @@
     "name": "DATE_DIFF",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the number of date-part boundaries, such as days or months, between two dates, truncating any fraction.",
     "notes": ""
   },
   {
@@ -1873,6 +2407,8 @@
     "name": "DATE_FROM_UNIX_DATE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts an integer count of days since 1970-01-01 into the corresponding calendar date.",
     "notes": ""
   },
   {
@@ -1880,6 +2416,8 @@
     "name": "DATE_SUB",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Subtracts a number of days, weeks, months, quarters or years from a date and returns the resulting date.",
     "notes": ""
   },
   {
@@ -1887,6 +2425,8 @@
     "name": "DATE_TRUNC",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Rounds a date down to the start of a chosen part, such as its week, month, quarter or year.",
     "notes": ""
   },
   {
@@ -1894,6 +2434,8 @@
     "name": "DENSE_RANK",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the rank of the current row within its window partition, giving tied rows the same rank and leaving no gaps.",
     "notes": ""
   },
   {
@@ -1901,6 +2443,8 @@
     "name": "DIV",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the integer part of dividing one integer by another, and raises an error on division by zero.",
     "notes": ""
   },
   {
@@ -1908,6 +2452,8 @@
     "name": "ENDS_WITH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE when a value ends with the given suffix, for both strings and bytes.",
     "notes": ""
   },
   {
@@ -1915,6 +2461,8 @@
     "name": "EUCLIDEAN_DISTANCE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the straight-line distance between two vectors of equal length.",
     "notes": ""
   },
   {
@@ -1922,6 +2470,8 @@
     "name": "EXP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns e raised to the power of a number, giving zero on underflow and an error on overflow.",
     "notes": ""
   },
   {
@@ -1929,6 +2479,8 @@
     "name": "EXTRACT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Pulls one part, such as the year, month, day or hour, out of a date or timestamp value.",
     "notes": ""
   },
   {
@@ -1936,6 +2488,8 @@
     "name": "FIRST_VALUE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the value of an expression from the first row of the current window frame.",
     "notes": ""
   },
   {
@@ -1943,6 +2497,8 @@
     "name": "FLOOR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the largest whole number that is less than or equal to the input.",
     "notes": ""
   },
   {
@@ -1950,6 +2506,8 @@
     "name": "FORMAT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Builds a string from a format pattern with printf-style specifiers and the values that fill them.",
     "notes": ""
   },
   {
@@ -1957,6 +2515,8 @@
     "name": "FORMAT_DATE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a date to a string using a format pattern made of year, month and day elements.",
     "notes": ""
   },
   {
@@ -1964,6 +2524,8 @@
     "name": "FORMAT_TIMESTAMP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a timestamp to a string using a format pattern, optionally in a given time zone.",
     "notes": ""
   },
   {
@@ -1971,6 +2533,8 @@
     "name": "FROM_BASE32",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Decodes a base32-encoded string into a bytes value.",
     "notes": ""
   },
   {
@@ -1978,6 +2542,8 @@
     "name": "FROM_BASE64",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Decodes a base64-encoded string into a bytes value.",
     "notes": ""
   },
   {
@@ -1985,6 +2551,8 @@
     "name": "FROM_HEX",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Decodes a hexadecimal string into a bytes value, and raises an error for characters outside the hexadecimal range.",
     "notes": ""
   },
   {
@@ -1992,6 +2560,8 @@
     "name": "GENERATE_ARRAY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns an array of integers or floating-point numbers from a start to an end value, stepping by a given increment.",
     "notes": ""
   },
   {
@@ -1999,6 +2569,8 @@
     "name": "GENERATE_DATE_ARRAY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns an array of dates from a start date to an end date, stepping by a given interval, one day by default.",
     "notes": ""
   },
   {
@@ -2006,6 +2578,8 @@
     "name": "GENERATE_TIMESTAMP_ARRAY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns an array of timestamps from a start to an end timestamp, spaced by a given interval.",
     "notes": ""
   },
   {
@@ -2013,6 +2587,8 @@
     "name": "GREATEST",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the largest of its arguments, or NULL when any argument is NULL.",
     "notes": ""
   },
   {
@@ -2020,6 +2596,8 @@
     "name": "HLL_COUNT.EXTRACT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the estimated number of distinct values recorded in one HyperLogLog++ sketch.",
     "notes": ""
   },
   {
@@ -2027,27 +2605,35 @@
     "name": "HLL_COUNT.INIT",
     "area": "SQL functions and syntax",
     "local": "available",
-    "notes": "Supported in continuous materialized views."
+    "other": "unavailable",
+    "description": "Aggregates input values into a new HyperLogLog++ sketch, returned as bytes, that can later be merged or counted.",
+    "notes": ""
   },
   {
     "id": "bigtable-sql-functions-and-syntax-hll-count-merge",
     "name": "HLL_COUNT.MERGE",
     "area": "SQL functions and syntax",
     "local": "available",
-    "notes": "Supported in continuous materialized views."
+    "other": "unavailable",
+    "description": "Merges several HyperLogLog++ sketches and returns the estimated distinct count across all of them.",
+    "notes": ""
   },
   {
     "id": "bigtable-sql-functions-and-syntax-hll-count-merge-partial",
     "name": "HLL_COUNT.MERGE_PARTIAL",
     "area": "SQL functions and syntax",
     "local": "available",
-    "notes": "Supported in continuous materialized views."
+    "other": "unavailable",
+    "description": "Merges several HyperLogLog++ sketches into one new sketch, returned as bytes, without computing a count.",
+    "notes": ""
   },
   {
     "id": "bigtable-sql-functions-and-syntax-ieee-divide",
     "name": "IEEE_DIVIDE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Divides two numbers and returns infinity or NaN instead of raising an error when the divisor is zero.",
     "notes": ""
   },
   {
@@ -2055,6 +2641,8 @@
     "name": "IF",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Evaluates a condition and returns the first value when it is true, otherwise the second value.",
     "notes": ""
   },
   {
@@ -2062,6 +2650,8 @@
     "name": "IFERROR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Evaluates an expression and returns its result, or returns a replacement value if evaluating it raises an error.",
     "notes": ""
   },
   {
@@ -2069,6 +2659,8 @@
     "name": "IFNULL",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns a replacement value when an expression is NULL, and otherwise returns the expression itself.",
     "notes": ""
   },
   {
@@ -2076,6 +2668,8 @@
     "name": "INITCAP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Capitalizes the first letter of each word in a string and lowercases the rest, using default or custom word delimiters.",
     "notes": ""
   },
   {
@@ -2083,6 +2677,8 @@
     "name": "INSTR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the 1-based position of a substring within a value, with optional start and occurrence, or 0 if it is not found.",
     "notes": ""
   },
   {
@@ -2090,6 +2686,8 @@
     "name": "ISERROR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE if evaluating an expression raises an error, and FALSE otherwise.",
     "notes": ""
   },
   {
@@ -2097,6 +2695,8 @@
     "name": "IS_INF",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE if a floating-point value is positive or negative infinity.",
     "notes": ""
   },
   {
@@ -2104,6 +2704,8 @@
     "name": "IS_NAN",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE if a floating-point value is NaN, meaning not a number.",
     "notes": ""
   },
   {
@@ -2111,6 +2713,8 @@
     "name": "JSON_EXTRACT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the JSON value at a path as a JSON-formatted string; an older function superseded by JSON_QUERY.",
     "notes": ""
   },
   {
@@ -2118,6 +2722,8 @@
     "name": "JSON_EXTRACT_SCALAR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the scalar JSON value at a path as an unquoted string; an older function superseded by JSON_VALUE.",
     "notes": ""
   },
   {
@@ -2125,6 +2731,8 @@
     "name": "JSON_QUERY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the JSON value found at a path inside a JSON string, as a JSON-formatted string.",
     "notes": ""
   },
   {
@@ -2132,6 +2740,8 @@
     "name": "JSON_QUERY_ARRAY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the JSON array found at a path as an array of JSON-formatted strings, one per element.",
     "notes": ""
   },
   {
@@ -2139,6 +2749,8 @@
     "name": "JSON_VALUE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the scalar JSON value found at a path as an unquoted string, or NULL if the value is not a scalar.",
     "notes": ""
   },
   {
@@ -2146,6 +2758,8 @@
     "name": "LAG",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the value of an expression from a row that comes a given number of rows before the current row in its window.",
     "notes": ""
   },
   {
@@ -2153,6 +2767,8 @@
     "name": "LAST_DAY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the last day of the month, or of another chosen period such as the year or week, that contains a date.",
     "notes": ""
   },
   {
@@ -2160,6 +2776,8 @@
     "name": "LAST_VALUE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the value of an expression from the last row of the current window frame.",
     "notes": ""
   },
   {
@@ -2167,6 +2785,8 @@
     "name": "LEAD",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the value of an expression from a row that comes a given number of rows after the current row in its window.",
     "notes": ""
   },
   {
@@ -2174,6 +2794,8 @@
     "name": "LEAST",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the smallest of its arguments, or NULL when any argument is NULL.",
     "notes": ""
   },
   {
@@ -2181,6 +2803,8 @@
     "name": "LEFT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the leftmost characters of a string, or the leftmost bytes of a bytes value, up to the requested length.",
     "notes": ""
   },
   {
@@ -2188,6 +2812,8 @@
     "name": "LENGTH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the length of a value, counted in characters for strings and in bytes for bytes values.",
     "notes": ""
   },
   {
@@ -2195,6 +2821,8 @@
     "name": "LN",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the natural logarithm of a number, and raises an error if the number is zero or negative.",
     "notes": ""
   },
   {
@@ -2202,6 +2830,8 @@
     "name": "LOG",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the natural logarithm of a number, or its logarithm to a given base when a base is supplied.",
     "notes": ""
   },
   {
@@ -2209,6 +2839,8 @@
     "name": "LOG10",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the base-10 logarithm of a number, and raises an error if the number is zero or negative.",
     "notes": ""
   },
   {
@@ -2216,6 +2848,8 @@
     "name": "LOGICAL_AND",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE only if a Boolean expression is true for every non-NULL row in a group.",
     "notes": ""
   },
   {
@@ -2223,6 +2857,8 @@
     "name": "LOGICAL_OR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE if a Boolean expression is true for at least one non-NULL row in a group.",
     "notes": ""
   },
   {
@@ -2230,6 +2866,8 @@
     "name": "LOWER",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts the letters in a string to lowercase, or the ASCII letters in a bytes value.",
     "notes": ""
   },
   {
@@ -2237,6 +2875,8 @@
     "name": "LPAD",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Pads the start of a value with a repeating pattern until it reaches a target length, or truncates it if it is longer.",
     "notes": ""
   },
   {
@@ -2244,6 +2884,8 @@
     "name": "LTRIM",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Removes the given characters, or spaces by default, from the start of a string or bytes value.",
     "notes": ""
   },
   {
@@ -2251,6 +2893,8 @@
     "name": "MAP_CONTAINS_KEY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns whether a map holds an entry for a given key.",
     "notes": ""
   },
   {
@@ -2258,6 +2902,8 @@
     "name": "MAP_EMPTY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE when a map has no entries and FALSE otherwise.",
     "notes": ""
   },
   {
@@ -2265,6 +2911,8 @@
     "name": "MAP_ENTRIES",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the entries of a map as an array of key and value structs ordered by ascending key.",
     "notes": ""
   },
   {
@@ -2272,6 +2920,8 @@
     "name": "MAP_KEYS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the keys of a map as an array, sorted in ascending order.",
     "notes": ""
   },
   {
@@ -2279,6 +2929,8 @@
     "name": "MAP_VALUES",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the values of a map as an array, ordered by their keys in ascending order.",
     "notes": ""
   },
   {
@@ -2286,20 +2938,26 @@
     "name": "MAX",
     "area": "SQL functions and syntax",
     "local": "available",
-    "notes": "Supported in continuous materialized views."
+    "other": "unavailable",
+    "description": "Returns the largest non-NULL value of an expression across a group of rows.",
+    "notes": ""
   },
   {
     "id": "bigtable-sql-functions-and-syntax-min",
     "name": "MIN",
     "area": "SQL functions and syntax",
     "local": "available",
-    "notes": "Supported in continuous materialized views."
+    "other": "unavailable",
+    "description": "Returns the smallest non-NULL value of an expression across a group of rows.",
+    "notes": ""
   },
   {
     "id": "bigtable-sql-functions-and-syntax-mod",
     "name": "MOD",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the remainder of dividing one number by another, with the sign of the dividend, and an error when the divisor is zero.",
     "notes": ""
   },
   {
@@ -2307,6 +2965,8 @@
     "name": "NORMALIZE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a string to one of the four Unicode normalization forms, NFC by default.",
     "notes": ""
   },
   {
@@ -2314,6 +2974,8 @@
     "name": "NORMALIZE_AND_CASEFOLD",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Normalizes a string and applies case folding so that comparisons ignore letter case and equivalent character forms.",
     "notes": ""
   },
   {
@@ -2321,6 +2983,8 @@
     "name": "NTH_VALUE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the value of an expression from the Nth row of the current window frame, or NULL if that row does not exist.",
     "notes": ""
   },
   {
@@ -2328,6 +2992,8 @@
     "name": "NTILE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Divides the rows of a window partition into a given number of roughly equal buckets and returns each row's bucket number.",
     "notes": ""
   },
   {
@@ -2335,6 +3001,8 @@
     "name": "NULLIF",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns NULL when two expressions are equal, and otherwise returns the first expression.",
     "notes": ""
   },
   {
@@ -2342,6 +3010,8 @@
     "name": "NULLIFERROR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Evaluates an expression and returns its result, or NULL if evaluating it raises an error.",
     "notes": ""
   },
   {
@@ -2349,6 +3019,8 @@
     "name": "OCTET_LENGTH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "An alias of BYTE_LENGTH that returns the number of bytes in a string or bytes value.",
     "notes": ""
   },
   {
@@ -2356,6 +3028,8 @@
     "name": "PARSE_DATE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a string to a date by reading it with a format pattern.",
     "notes": ""
   },
   {
@@ -2363,6 +3037,8 @@
     "name": "PARSE_TIMESTAMP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a string to a timestamp by reading it with a format pattern, optionally in a given time zone.",
     "notes": ""
   },
   {
@@ -2370,6 +3046,8 @@
     "name": "PERCENTILE_CONT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a percentile of a set of values, interpolating between the nearest values when it falls between two.",
     "notes": ""
   },
   {
@@ -2377,6 +3055,8 @@
     "name": "PERCENTILE_DISC",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the first value in sorted order whose cumulative distribution reaches or exceeds a given percentile.",
     "notes": ""
   },
   {
@@ -2384,6 +3064,8 @@
     "name": "PERCENT_RANK",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the relative rank of the current row within its window partition as a fraction between 0 and 1.",
     "notes": ""
   },
   {
@@ -2391,6 +3073,8 @@
     "name": "POW",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the first number raised to the power of the second, giving zero if the result underflows.",
     "notes": ""
   },
   {
@@ -2398,6 +3082,8 @@
     "name": "POWER",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "A synonym of POW that raises a number to a given power.",
     "notes": ""
   },
   {
@@ -2405,6 +3091,8 @@
     "name": "RAND",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns a pseudo-random floating-point number from 0 up to but not including 1.",
     "notes": ""
   },
   {
@@ -2412,6 +3100,8 @@
     "name": "RANK",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the rank of the current row within its window partition, giving tied rows the same rank and skipping the ranks after them.",
     "notes": ""
   },
   {
@@ -2419,6 +3109,8 @@
     "name": "REGEXP_CONTAINS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE if any part of a value matches a regular expression.",
     "notes": ""
   },
   {
@@ -2426,6 +3118,8 @@
     "name": "REGEXP_EXTRACT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the first substring of a value that matches a regular expression, or its first capturing group when it has one.",
     "notes": ""
   },
   {
@@ -2433,6 +3127,8 @@
     "name": "REGEXP_EXTRACT_ALL",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns an array of every non-overlapping substring of a value that matches a regular expression.",
     "notes": ""
   },
   {
@@ -2440,6 +3136,8 @@
     "name": "REGEXP_INSTR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the 1-based position of a regular expression match in a value, with optional start position and occurrence.",
     "notes": ""
   },
   {
@@ -2447,6 +3145,8 @@
     "name": "REGEXP_REPLACE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns a string in which every substring matching a regular expression is replaced with a replacement.",
     "notes": ""
   },
   {
@@ -2454,6 +3154,8 @@
     "name": "REPEAT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns a string or bytes value made by repeating the original value a given number of times.",
     "notes": ""
   },
   {
@@ -2461,6 +3163,8 @@
     "name": "REPLACE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Replaces every occurrence of a pattern in a string or bytes value with a replacement.",
     "notes": ""
   },
   {
@@ -2468,6 +3172,8 @@
     "name": "REVERSE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns a string with its characters in reverse order, or a bytes value with its bytes in reverse order.",
     "notes": ""
   },
   {
@@ -2475,6 +3181,8 @@
     "name": "RIGHT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the rightmost characters of a string, or the rightmost bytes of a bytes value, up to the requested length.",
     "notes": ""
   },
   {
@@ -2482,6 +3190,8 @@
     "name": "ROUND",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Rounds a number to the nearest whole number, or to a given number of decimal places, with halves rounded away from zero.",
     "notes": ""
   },
   {
@@ -2489,6 +3199,8 @@
     "name": "ROW_NUMBER",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a sequential number for each row in a window partition, starting at 1 and following the window ordering.",
     "notes": ""
   },
   {
@@ -2496,6 +3208,8 @@
     "name": "RPAD",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Pads the end of a value with a repeating pattern until it reaches a target length, or truncates it if it is longer.",
     "notes": ""
   },
   {
@@ -2503,6 +3217,8 @@
     "name": "RTRIM",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Removes the given characters, or spaces by default, from the end of a string or bytes value.",
     "notes": ""
   },
   {
@@ -2510,6 +3226,8 @@
     "name": "S2_CELLIDFROMPOINT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the ID of the S2 grid cell that covers a point on the Earth's surface.",
     "notes": ""
   },
   {
@@ -2517,6 +3235,8 @@
     "name": "S2_COVERINGCELLIDS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns an array of S2 cell IDs that together cover a geography, which supports indexing geographic data by cell.",
     "notes": ""
   },
   {
@@ -2524,6 +3244,8 @@
     "name": "SAFE_ADD",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Adds two numbers like the plus operator, but returns NULL instead of raising an error on overflow.",
     "notes": ""
   },
   {
@@ -2531,6 +3253,8 @@
     "name": "SAFE_CAST",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a value to a specified type like CAST, but returns NULL instead of raising an error when the conversion fails.",
     "notes": ""
   },
   {
@@ -2538,6 +3262,8 @@
     "name": "SAFE_CONVERT_BYTES_TO_STRING",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a bytes value to a string, replacing any invalid UTF-8 sequences with the Unicode replacement character.",
     "notes": ""
   },
   {
@@ -2545,6 +3271,8 @@
     "name": "SAFE_DIVIDE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Divides two numbers like the division operator, but returns NULL instead of raising an error such as division by zero.",
     "notes": ""
   },
   {
@@ -2552,6 +3280,8 @@
     "name": "SAFE_MULTIPLY",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Multiplies two numbers like the multiplication operator, but returns NULL instead of raising an error on overflow.",
     "notes": ""
   },
   {
@@ -2559,6 +3289,8 @@
     "name": "SAFE_NEGATE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Negates a number like the unary minus operator, but returns NULL instead of raising an error on overflow.",
     "notes": ""
   },
   {
@@ -2566,6 +3298,8 @@
     "name": "SAFE_SUBTRACT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Subtracts one number from another like the minus operator, but returns NULL instead of raising an error on overflow.",
     "notes": ""
   },
   {
@@ -2573,6 +3307,8 @@
     "name": "SEC",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the secant of an angle given in radians, which is the reciprocal of its cosine.",
     "notes": ""
   },
   {
@@ -2580,6 +3316,8 @@
     "name": "SECH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the hyperbolic secant of a number, which is the reciprocal of its hyperbolic cosine.",
     "notes": ""
   },
   {
@@ -2587,6 +3325,8 @@
     "name": "SIGN",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns -1, 0 or +1 depending on whether a number is negative, zero or positive.",
     "notes": ""
   },
   {
@@ -2594,6 +3334,8 @@
     "name": "SIN",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the sine of an angle given in radians, as a value between -1 and 1.",
     "notes": ""
   },
   {
@@ -2601,6 +3343,8 @@
     "name": "SINH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the hyperbolic sine of a number, and raises an error if the result overflows.",
     "notes": ""
   },
   {
@@ -2608,6 +3352,8 @@
     "name": "SOUNDEX",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the Soundex phonetic code of a string, which gives similar-sounding words the same code.",
     "notes": ""
   },
   {
@@ -2615,6 +3361,8 @@
     "name": "SPLIT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Splits a string or bytes value into an array of parts at each occurrence of a delimiter.",
     "notes": ""
   },
   {
@@ -2622,6 +3370,8 @@
     "name": "SQRT",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the square root of a number, and raises an error if the number is negative.",
     "notes": ""
   },
   {
@@ -2629,6 +3379,8 @@
     "name": "STARTS_WITH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns TRUE when a value begins with the given prefix, for both strings and bytes.",
     "notes": ""
   },
   {
@@ -2636,6 +3388,8 @@
     "name": "STDDEV",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the sample standard deviation of a numeric column across a group of rows; a synonym of STDDEV_SAMP.",
     "notes": ""
   },
   {
@@ -2643,6 +3397,8 @@
     "name": "STDDEV_POP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the population standard deviation of a numeric column across a group of rows.",
     "notes": ""
   },
   {
@@ -2650,6 +3406,8 @@
     "name": "STDDEV_SAMP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the sample standard deviation, using the n minus 1 correction, of a numeric column across a group of rows.",
     "notes": ""
   },
   {
@@ -2657,6 +3415,8 @@
     "name": "STRING",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a timestamp to a string, optionally rendered in a given time zone.",
     "notes": ""
   },
   {
@@ -2664,6 +3424,8 @@
     "name": "STRING_AGG",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Joins the non-NULL string or bytes values of a group of rows into one value, separated by a delimiter that defaults to a comma.",
     "notes": ""
   },
   {
@@ -2671,6 +3433,8 @@
     "name": "STRPOS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the 1-based position of the first occurrence of a substring in a value, or 0 if it does not occur.",
     "notes": ""
   },
   {
@@ -2678,6 +3442,8 @@
     "name": "ST_ACCUM",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Aggregates the geography values of a group of rows into an array of geographies.",
     "notes": ""
   },
   {
@@ -2685,6 +3451,8 @@
     "name": "ST_ANGLE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the angle in radians between two lines defined by three point geographies, measured clockwise from the first line.",
     "notes": ""
   },
   {
@@ -2692,6 +3460,8 @@
     "name": "ST_AREA",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the area in square meters covered by the polygons in a geography.",
     "notes": ""
   },
   {
@@ -2699,6 +3469,8 @@
     "name": "ST_ASBINARY",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a geography to its well-known binary representation as a bytes value.",
     "notes": ""
   },
   {
@@ -2706,6 +3478,8 @@
     "name": "ST_ASGEOJSON",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a geography to a GeoJSON geometry string.",
     "notes": ""
   },
   {
@@ -2713,6 +3487,8 @@
     "name": "ST_ASKML",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a geography to a string in KML geometry format.",
     "notes": ""
   },
   {
@@ -2720,6 +3496,8 @@
     "name": "ST_ASTEXT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a geography to its well-known text representation as a string.",
     "notes": ""
   },
   {
@@ -2727,6 +3505,8 @@
     "name": "ST_AZIMUTH",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the azimuth in radians of the line segment from one point geography to another, measured clockwise from north.",
     "notes": ""
   },
   {
@@ -2734,6 +3514,8 @@
     "name": "ST_BOUNDARY",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a geography made from the boundaries of the components of the input geography.",
     "notes": ""
   },
   {
@@ -2741,6 +3523,8 @@
     "name": "ST_BOUNDINGBOX",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the bounding box of a geography as a struct with its minimum and maximum longitude and latitude.",
     "notes": ""
   },
   {
@@ -2748,6 +3532,8 @@
     "name": "ST_BUFFER",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a geography covering all points within a given distance of the input, approximated with a number of segments.",
     "notes": ""
   },
   {
@@ -2755,6 +3541,8 @@
     "name": "ST_BUFFERWITHTOLERANCE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a geography covering all points within a given distance of the input, approximated to within a tolerance.",
     "notes": ""
   },
   {
@@ -2762,6 +3550,8 @@
     "name": "ST_CENTROID",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the centroid of a geography, the center of mass of its components, as a point geography.",
     "notes": ""
   },
   {
@@ -2769,6 +3559,8 @@
     "name": "ST_CLOSESTPOINT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the point on the first geography that is closest to the second geography.",
     "notes": ""
   },
   {
@@ -2776,6 +3568,8 @@
     "name": "ST_CONTAINS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if the first geography contains the second, so no point of the second lies outside it and their interiors intersect.",
     "notes": ""
   },
   {
@@ -2783,6 +3577,8 @@
     "name": "ST_CONVEXHULL",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the smallest convex geography that covers the input geography.",
     "notes": ""
   },
   {
@@ -2790,6 +3586,8 @@
     "name": "ST_COVEREDBY",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if no point of the first geography lies outside the second geography.",
     "notes": ""
   },
   {
@@ -2797,6 +3595,8 @@
     "name": "ST_COVERS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if no point of the second geography lies outside the first geography.",
     "notes": ""
   },
   {
@@ -2804,6 +3604,8 @@
     "name": "ST_DIFFERENCE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the part of the first geography that does not intersect the second geography.",
     "notes": ""
   },
   {
@@ -2811,6 +3613,8 @@
     "name": "ST_DIMENSION",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the dimension of the highest-dimensional element of a geography: 0 for points, 1 for lines and 2 for polygons.",
     "notes": ""
   },
   {
@@ -2818,6 +3622,8 @@
     "name": "ST_DISJOINT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if two geographies have no points in common.",
     "notes": ""
   },
   {
@@ -2825,6 +3631,8 @@
     "name": "ST_DISTANCE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the shortest distance in meters between two geographies.",
     "notes": ""
   },
   {
@@ -2832,6 +3640,8 @@
     "name": "ST_DUMP",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns an array of the simple geographies, such as single points, lines and polygons, that make up a geography.",
     "notes": ""
   },
   {
@@ -2839,6 +3649,8 @@
     "name": "ST_DUMPPOINTS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns an array of point geographies, one for every point and vertex in a geography.",
     "notes": ""
   },
   {
@@ -2846,6 +3658,8 @@
     "name": "ST_DWITHIN",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if any points of two geographies are within a given distance of each other.",
     "notes": ""
   },
   {
@@ -2853,6 +3667,8 @@
     "name": "ST_ENDPOINT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the last point of a linestring geography as a point geography.",
     "notes": ""
   },
   {
@@ -2860,6 +3676,8 @@
     "name": "ST_EQUALS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if two geographies represent the same set of points.",
     "notes": ""
   },
   {
@@ -2867,6 +3685,8 @@
     "name": "ST_EXTENT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the bounding box that contains all the geographies of a group of rows.",
     "notes": ""
   },
   {
@@ -2874,6 +3694,8 @@
     "name": "ST_EXTERIORRING",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the outermost ring of a polygon geography as a linestring.",
     "notes": ""
   },
   {
@@ -2881,6 +3703,8 @@
     "name": "ST_GEOGFROM",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a string or bytes value in a supported format, such as WKT, WKB or GeoJSON, into a geography.",
     "notes": ""
   },
   {
@@ -2888,6 +3712,8 @@
     "name": "ST_GEOGFROMGEOJSON",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a GeoJSON geometry string into a geography.",
     "notes": ""
   },
   {
@@ -2895,6 +3721,8 @@
     "name": "ST_GEOGFROMKML",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a string in KML geometry format into a geography value.",
     "notes": ""
   },
   {
@@ -2902,6 +3730,8 @@
     "name": "ST_GEOGFROMTEXT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a well-known text string into a geography.",
     "notes": ""
   },
   {
@@ -2909,6 +3739,8 @@
     "name": "ST_GEOGFROMWKB",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts well-known binary bytes, or a hexadecimal well-known binary string, into a geography.",
     "notes": ""
   },
   {
@@ -2916,6 +3748,8 @@
     "name": "ST_GEOGPOINT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Creates a point geography from a longitude and a latitude in degrees.",
     "notes": ""
   },
   {
@@ -2923,6 +3757,8 @@
     "name": "ST_GEOGPOINTFROMGEOHASH",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a point geography at the center of the bounding box that a GeoHash string describes.",
     "notes": ""
   },
   {
@@ -2930,6 +3766,8 @@
     "name": "ST_GEOHASH",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Converts a point geography to a GeoHash string, which encodes the location as a short text code.",
     "notes": ""
   },
   {
@@ -2937,6 +3775,8 @@
     "name": "ST_GEOMETRYTYPE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the OGC geometry type of a geography, such as ST_Point, ST_LineString or ST_Polygon.",
     "notes": ""
   },
   {
@@ -2944,6 +3784,8 @@
     "name": "ST_HAUSDORFFDISTANCE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the discrete Hausdorff distance between two geographies, a measure of how far apart their shapes are.",
     "notes": ""
   },
   {
@@ -2951,6 +3793,8 @@
     "name": "ST_HAUSDORFFDWITHIN",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if the Hausdorff distance between two geographies is within a given distance.",
     "notes": ""
   },
   {
@@ -2958,6 +3802,8 @@
     "name": "ST_INTERIORRINGS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the interior rings, which are the holes, of a polygon geography as an array of linestrings.",
     "notes": ""
   },
   {
@@ -2965,6 +3811,8 @@
     "name": "ST_INTERSECTION",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the set of points that two geographies have in common.",
     "notes": ""
   },
   {
@@ -2972,6 +3820,8 @@
     "name": "ST_INTERSECTS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if two geographies share at least one point.",
     "notes": ""
   },
   {
@@ -2979,6 +3829,8 @@
     "name": "ST_INTERSECTSBOX",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if a geography intersects a rectangle given by its longitude and latitude bounds.",
     "notes": ""
   },
   {
@@ -2986,6 +3838,8 @@
     "name": "ST_ISCLOSED",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if every element of a non-empty geography is closed, meaning it has an empty boundary.",
     "notes": ""
   },
   {
@@ -2993,6 +3847,8 @@
     "name": "ST_ISCOLLECTION",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if a geography contains more than one point, linestring or polygon in total.",
     "notes": ""
   },
   {
@@ -3000,6 +3856,8 @@
     "name": "ST_ISEMPTY",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if a geography contains no points, meaning it is the empty geography.",
     "notes": ""
   },
   {
@@ -3007,6 +3865,8 @@
     "name": "ST_ISRING",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if a geography is a closed linestring that does not cross itself.",
     "notes": ""
   },
   {
@@ -3014,6 +3874,8 @@
     "name": "ST_LENGTH",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the total length in meters of the lines in a geography.",
     "notes": ""
   },
   {
@@ -3021,6 +3883,8 @@
     "name": "ST_LINEINTERPOLATEPOINT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the point at a given fraction of the way along a linestring geography.",
     "notes": ""
   },
   {
@@ -3028,6 +3892,8 @@
     "name": "ST_LINELOCATEPOINT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the fraction of a linestring's length that lies between its start and the point on it closest to a given point.",
     "notes": ""
   },
   {
@@ -3035,6 +3901,8 @@
     "name": "ST_LINESUBSTRING",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the part of a single linestring that lies between a starting and an ending fraction of its length.",
     "notes": ""
   },
   {
@@ -3042,6 +3910,8 @@
     "name": "ST_MAKELINE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Creates a linestring by connecting the points, and the vertices of linestrings, of the input geographies in order.",
     "notes": ""
   },
   {
@@ -3049,6 +3919,8 @@
     "name": "ST_MAKEPOLYGON",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Constructs a polygon from a linestring shell and optional linestring holes.",
     "notes": ""
   },
   {
@@ -3056,6 +3928,8 @@
     "name": "ST_MAKEPOLYGONORIENTED",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Constructs a polygon from an array of linestrings, using the vertex order to set each ring's orientation.",
     "notes": ""
   },
   {
@@ -3063,6 +3937,8 @@
     "name": "ST_MAXDISTANCE",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the longest distance in meters between a pair of points, one from each of two non-empty geographies.",
     "notes": ""
   },
   {
@@ -3070,6 +3946,8 @@
     "name": "ST_NPOINTS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "An alias of ST_NUMPOINTS that returns the number of vertices in a geography.",
     "notes": ""
   },
   {
@@ -3077,6 +3955,8 @@
     "name": "ST_NUMGEOMETRIES",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the number of geometries, such as points, lines and polygons, in a geography.",
     "notes": ""
   },
   {
@@ -3084,6 +3964,8 @@
     "name": "ST_NUMPOINTS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the total number of vertices across all the elements of a geography.",
     "notes": ""
   },
   {
@@ -3091,6 +3973,8 @@
     "name": "ST_PERIMETER",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the length in meters of the boundaries of the polygons in a geography.",
     "notes": ""
   },
   {
@@ -3098,6 +3982,8 @@
     "name": "ST_POINTN",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the point at a given position among the vertices of a linestring geography.",
     "notes": ""
   },
   {
@@ -3105,6 +3991,8 @@
     "name": "ST_REGIONSTATS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Computes statistics, such as sum or mean, over the raster pixels that intersect a geography.",
     "notes": ""
   },
   {
@@ -3112,6 +4000,8 @@
     "name": "ST_SIMPLIFY",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a simplified version of a geography with fewer vertices, within a given tolerance.",
     "notes": ""
   },
   {
@@ -3119,6 +4009,8 @@
     "name": "ST_SNAPTOGRID",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns a geography with every vertex snapped to a longitude and latitude grid of a given size.",
     "notes": ""
   },
   {
@@ -3126,6 +4018,8 @@
     "name": "ST_STARTPOINT",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the first point of a linestring geography as a point geography.",
     "notes": ""
   },
   {
@@ -3133,6 +4027,8 @@
     "name": "ST_TOUCHES",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if two geographies intersect only at their boundaries, with no shared interior points.",
     "notes": ""
   },
   {
@@ -3140,6 +4036,8 @@
     "name": "ST_UNION",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns the set of points that belong to any of the input geographies.",
     "notes": ""
   },
   {
@@ -3147,6 +4045,8 @@
     "name": "ST_UNION_AGG",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Aggregates the geographies of a group of rows and returns the union of all their points.",
     "notes": ""
   },
   {
@@ -3154,6 +4054,8 @@
     "name": "ST_WITHIN",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Returns TRUE if the first geography lies inside the second, so that no point of it falls outside the second.",
     "notes": ""
   },
   {
@@ -3161,6 +4063,8 @@
     "name": "SUBSTR",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns part of a string or bytes value, starting at a position and optionally limited to a given length.",
     "notes": ""
   },
   {
@@ -3168,6 +4072,8 @@
     "name": "SUBSTRING",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "An alias of SUBSTR that returns a portion of a string or bytes value from a starting position.",
     "notes": ""
   },
   {
@@ -3175,13 +4081,17 @@
     "name": "SUM",
     "area": "SQL functions and syntax",
     "local": "available",
-    "notes": "Supported in continuous materialized views."
+    "other": "unavailable",
+    "description": "Returns the sum of the non-NULL values of an expression across a group of rows.",
+    "notes": ""
   },
   {
     "id": "bigtable-sql-functions-and-syntax-tan",
     "name": "TAN",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the tangent of an angle given in radians, and raises an error if the result overflows.",
     "notes": ""
   },
   {
@@ -3189,6 +4099,8 @@
     "name": "TANH",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the hyperbolic tangent of a number, a value between -1 and 1.",
     "notes": ""
   },
   {
@@ -3196,6 +4108,8 @@
     "name": "TIMESTAMP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Builds a timestamp from a string, a date or a datetime, optionally interpreting it in a given time zone.",
     "notes": ""
   },
   {
@@ -3203,6 +4117,8 @@
     "name": "TIMESTAMP_ADD",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Adds a whole number of time units, such as seconds, minutes, hours or days, to a timestamp.",
     "notes": ""
   },
   {
@@ -3210,6 +4126,8 @@
     "name": "TIMESTAMP_DIFF",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the number of whole units, at a chosen granularity, between two timestamps.",
     "notes": ""
   },
   {
@@ -3217,6 +4135,8 @@
     "name": "TIMESTAMP_FROM_UNIX_MICROS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts microseconds since the Unix epoch into a timestamp, and returns a timestamp argument unchanged.",
     "notes": ""
   },
   {
@@ -3224,6 +4144,8 @@
     "name": "TIMESTAMP_FROM_UNIX_MILLIS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts milliseconds since the Unix epoch into a timestamp, and returns a timestamp argument unchanged.",
     "notes": ""
   },
   {
@@ -3231,6 +4153,8 @@
     "name": "TIMESTAMP_FROM_UNIX_SECONDS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts seconds since the Unix epoch into a timestamp, and returns a timestamp argument unchanged.",
     "notes": ""
   },
   {
@@ -3238,6 +4162,8 @@
     "name": "TIMESTAMP_MICROS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts an integer number of microseconds since 1970-01-01 UTC into a timestamp.",
     "notes": ""
   },
   {
@@ -3245,6 +4171,8 @@
     "name": "TIMESTAMP_MILLIS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts an integer number of milliseconds since 1970-01-01 UTC into a timestamp.",
     "notes": ""
   },
   {
@@ -3252,6 +4180,8 @@
     "name": "TIMESTAMP_SECONDS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts an integer number of seconds since 1970-01-01 UTC into a timestamp.",
     "notes": ""
   },
   {
@@ -3259,6 +4189,8 @@
     "name": "TIMESTAMP_SUB",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Subtracts a whole number of time units, such as seconds, minutes, hours or days, from a timestamp.",
     "notes": ""
   },
   {
@@ -3266,6 +4198,8 @@
     "name": "TIMESTAMP_TRUNC",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Rounds a timestamp down to the start of a chosen granularity, such as hour, day or month.",
     "notes": ""
   },
   {
@@ -3273,6 +4207,8 @@
     "name": "TO_BASE32",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Encodes a bytes value as a base32 text string, which stores or transmits binary data as text.",
     "notes": ""
   },
   {
@@ -3280,6 +4216,8 @@
     "name": "TO_BASE64",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Encodes a bytes value as a base64 text string, which stores or transmits binary data as text.",
     "notes": ""
   },
   {
@@ -3287,6 +4225,8 @@
     "name": "TO_CODE_POINTS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a string or bytes value into an array holding the code point or byte value of each character.",
     "notes": ""
   },
   {
@@ -3294,6 +4234,8 @@
     "name": "TO_FLOAT32",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts four big-endian bytes holding an IEEE 754 single-precision number into a 32-bit floating-point value.",
     "notes": ""
   },
   {
@@ -3301,6 +4243,8 @@
     "name": "TO_FLOAT64",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts eight big-endian bytes holding an IEEE 754 double-precision number into a 64-bit floating-point value.",
     "notes": ""
   },
   {
@@ -3308,6 +4252,8 @@
     "name": "TO_HEX",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Encodes a bytes value as a hexadecimal string with two digits per byte.",
     "notes": ""
   },
   {
@@ -3315,6 +4261,8 @@
     "name": "TO_INT64",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts eight big-endian bytes holding a signed integer into a 64-bit integer value.",
     "notes": ""
   },
   {
@@ -3322,6 +4270,8 @@
     "name": "TO_JSON_STRING",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a value of any supported type to its JSON text form.",
     "notes": ""
   },
   {
@@ -3329,6 +4279,8 @@
     "name": "TO_VECTOR32",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts bytes holding big-endian 32-bit floating-point numbers into an array of 32-bit floats.",
     "notes": ""
   },
   {
@@ -3336,6 +4288,8 @@
     "name": "TO_VECTOR64",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts bytes holding big-endian 64-bit floating-point numbers into an array of 64-bit floats.",
     "notes": ""
   },
   {
@@ -3343,6 +4297,8 @@
     "name": "TRANSLATE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Replaces each character of a value found in a source set with the character at the same position in a target set.",
     "notes": ""
   },
   {
@@ -3350,6 +4306,8 @@
     "name": "TRIM",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Removes the given characters, or spaces by default, from both the start and the end of a string or bytes value.",
     "notes": ""
   },
   {
@@ -3357,6 +4315,8 @@
     "name": "TRUNC",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Rounds a number toward zero to a whole number or to a given number of decimal places.",
     "notes": ""
   },
   {
@@ -3364,6 +4324,8 @@
     "name": "UNICODE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the Unicode code point of the first character of a string, or 0 for an empty string.",
     "notes": ""
   },
   {
@@ -3371,6 +4333,8 @@
     "name": "UNIX_DATE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts a date into the number of days since 1970-01-01.",
     "notes": ""
   },
   {
@@ -3378,6 +4342,8 @@
     "name": "UNIX_MICROS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the number of microseconds from the Unix epoch to a timestamp.",
     "notes": ""
   },
   {
@@ -3385,6 +4351,8 @@
     "name": "UNIX_MILLIS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the number of milliseconds since the Unix epoch for a timestamp, rounding down.",
     "notes": ""
   },
   {
@@ -3392,6 +4360,8 @@
     "name": "UNIX_SECONDS",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the number of seconds since the Unix epoch for a timestamp, rounding down.",
     "notes": ""
   },
   {
@@ -3399,6 +4369,8 @@
     "name": "UNPACK",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Expands a table read with history into one row per timestamped cell value, putting each cell timestamp in a column named _timestamp.",
     "notes": ""
   },
   {
@@ -3406,6 +4378,8 @@
     "name": "UPPER",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Converts the letters in a string to uppercase, or the ASCII letters in a bytes value.",
     "notes": ""
   },
   {
@@ -3413,6 +4387,8 @@
     "name": "VARIANCE",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the sample variance of a numeric column across a group of rows; a synonym of VAR_SAMP.",
     "notes": ""
   },
   {
@@ -3420,6 +4396,8 @@
     "name": "VAR_POP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the population variance of a numeric column across a group of rows.",
     "notes": ""
   },
   {
@@ -3427,6 +4405,8 @@
     "name": "VAR_SAMP",
     "area": "SQL functions and syntax",
     "local": "available",
+    "other": "unavailable",
+    "description": "Returns the sample variance, using the n minus 1 correction, of a numeric column across a group of rows.",
     "notes": ""
   },
   {
@@ -3434,6 +4414,8 @@
     "name": "VIEW_PARAMETERS",
     "area": "SQL functions and syntax",
     "local": "unavailable",
+    "other": "unavailable",
+    "description": "Reads a caller-supplied string parameter, such as a user ID, inside a logical view definition to scope what the view returns.",
     "notes": ""
   }
 ]

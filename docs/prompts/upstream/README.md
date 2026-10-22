@@ -11,9 +11,10 @@ repository. After an upstream change is committed, refresh the site with
 | --- | --- | --- |
 | `bigquery-emulator-on-duckdb` | [bigquery-resolve-unknowns.md](bigquery-resolve-unknowns.md) | Resolve the `?` rows, duplicates and bad references |
 | `cloud-spanner-emulator` | [spanner.md](spanner.md) | Merge the persistence rows, re-check the Google baseline, stable IDs |
-| `little_bigtable` | [bigtable.md](bigtable.md) | Restore the Google emulator column, assess two unknowns, stable IDs |
+| `little_bigtable` | [bigtable.md](bigtable.md) | Assess two unknowns, stable IDs (the Google emulator column is restored) |
 | `firestore-go` | [firestore.md](firestore.md) | Reconcile the two inventories, export the curated rows, assess Google unknowns |
 | `localcloud-fake-gcs-server` | [gcs.md](gcs.md) | Machine-readable export, failing host-matching test |
+| every repository | [descriptions.md](descriptions.md) | A description for every compared feature; Bigtable: the Google Cloud Bigtable emulator column |
 
 ## The document contract the site relies on
 
@@ -45,7 +46,11 @@ so a change here is never silently dropped.
 7. **Every LocalCloud mark is assessed.** A `?` in the LocalCloud column is an open task, and
    the site hides those rows until it is resolved. Competitor `?` rows are fine, but each is a
    missed chance to show a real advantage.
-8. **Commit the document before syncing.** The importer reads the committed file and records
+8. **Every compared row has a description** of the production feature itself (a `Description`
+   column, or the `description` field of the CSV), written for developers and free of
+   emulator, evidence and repository wording. The site shows it as the row's details, followed
+   by the limit text when there is one. See [descriptions.md](descriptions.md).
+9. **Commit the document before syncing.** The importer reads the committed file and records
    its digest.
 
 ## Working rules for every prompt below
