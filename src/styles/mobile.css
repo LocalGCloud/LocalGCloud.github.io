@@ -70,7 +70,7 @@
  & .site-section--hero{padding-top:.25rem}
  & .site-panel,& .docs-article,& .blog-article{background:var(--surface)}
  & .service-hero-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
- & .site-page .service-hero-intro{min-width:0;padding:1.25rem;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--surface)}
+ & .site-page .service-hero-intro{display:block;min-width:0;padding:1.25rem;border:1px solid var(--line);border-radius:var(--radius-panel);background:var(--surface)}
  & .site-page .service-title-row{gap:.875rem;align-items:center}
  & .site-page .service-title-row h1{font-size:clamp(1.6rem,6vw,2.25rem);line-height:1.1}
  & .site-page .service-hero-icon{flex:0 0 4rem;background:#e3eeff;border-radius:1rem;padding:.65rem}
@@ -82,7 +82,7 @@
  & .mobile-service-context>summary{min-height:3rem;padding-block:.75rem;color:var(--accent-strong);font-size:.875rem;cursor:pointer}
  & .mobile-service-context>summary::after{content:' +';font-weight:700}
  & .mobile-service-context[open]>summary::after{content:' −'}
- & .service-hero-connection{margin-top:.75rem}
+ & .service-hero-connection{grid-column:auto;grid-row:auto;margin-top:.75rem}
  & .docs-shell{grid-template-columns:minmax(0,1fr)}
  & .docs-sidebar{display:none}
  & .docs-mobile-nav{display:block}

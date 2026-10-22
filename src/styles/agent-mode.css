@@ -58,7 +58,7 @@ html:root[data-audience="agents"]{
  & [data-service-name]{display:block;padding:0!important;margin-block:24px}
  & [data-service-name] span:has(>img),& [data-service-name]>.mt-5{display:none}
  & [data-service-name]>p{display:block;overflow:visible;-webkit-line-clamp:unset;line-height:1.8}
- & .site-page .service-hero-intro{padding:0!important;border:0!important;background:none!important}
+ & .site-page .service-hero-intro{display:block!important;padding:0!important;border:0!important;background:none!important}
  & .site-section{border:0!important}
  & .desktop-content :is(.border,[class*="rounded-"]){border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important}
  & .service-hero-grid{display:block!important}

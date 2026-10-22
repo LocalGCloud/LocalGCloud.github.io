@@ -595,27 +595,19 @@ for (const release of releaseData.releases) {
 if (/\/releases\/tag\//.test(changelogHtml)) errors.push('changelog must link the GitHub releases list, not individual release pages');
 if (!changelogHtml.includes(`href="${productFacts.cliReleasesUrl}"`)) errors.push('changelog must link the GitHub releases list');
 
-// /compare/emulators/ publishes the alternatives table with its review date, and every fact about
-// another product links the official source it was checked against. Facts about other
-// products go stale, so an old review warns rather than fails.
-const compareHtml = htmlPages.get('compare/emulators/index.html') ?? '';
-const compareTable = compareHtml.match(/<table\b[^>]*data-alternatives-table="full"[\s\S]*?<\/table>/)?.[0] ?? '';
-if (!compareTable) errors.push('compare/emulators/index.html must publish the full alternatives table');
-else {
-  if (!compareTable.includes(`data-reviewed-at="${alternativesReviewedAt}"`) || !compareHtml.includes(`<time datetime="${alternativesReviewedAt}"`)) errors.push(`the /compare/emulators/ table must show its review date ${alternativesReviewedAt}`);
-  for (const option of alternatives) {
-    if (!compareTable.includes(option.name)) errors.push(`the /compare/emulators/ table omits ${option.name}`);
-    for (const [row, cell] of Object.entries(option.cells)) {
-      // A generic category (community emulators) names no projects and links nothing;
-      // every named product cites its source.
-      if (option.generic && cell.sources.length) errors.push(`alternatives: ${option.id}.${row} is a generic category and must not link a project`);
-      if (!option.generic && !cell.sources.length) errors.push(`alternatives: ${option.id}.${row} has no source`);
-      for (const { href } of cell.sources) {
-        if (option.id !== 'localcloud' && !href.startsWith('https://')) errors.push(`alternatives: ${option.id}.${row} must cite an official https source, not ${href}`);
-        if (!compareTable.includes(`href="${href}"`)) errors.push(`the /compare/emulators/ table omits the source ${href} for ${option.id}.${row}`);
-      }
-      if (/\$\d|\bprice\s*:/i.test(cell.text)) errors.push(`alternatives: ${option.id}.${row} states a price; describe plans, not amounts`);
+// Every fact about another product in src/data/alternatives.ts cites the official source it was
+// checked against (the homepage summary and the LocalStack page are built from it). Facts about
+// other products go stale, so an old review warns rather than fails.
+for (const option of alternatives) {
+  for (const [row, cell] of Object.entries(option.cells)) {
+    // A generic category (community emulators) names no projects and links nothing;
+    // every named product cites its source.
+    if (option.generic && cell.sources.length) errors.push(`alternatives: ${option.id}.${row} is a generic category and must not link a project`);
+    if (!option.generic && !cell.sources.length) errors.push(`alternatives: ${option.id}.${row} has no source`);
+    for (const { href } of cell.sources) {
+      if (option.id !== 'localcloud' && !href.startsWith('https://')) errors.push(`alternatives: ${option.id}.${row} must cite an official https source, not ${href}`);
     }
+    if (/\$\d|\bprice\s*:/i.test(cell.text)) errors.push(`alternatives: ${option.id}.${row} states a price; describe plans, not amounts`);
   }
 }
 const reviewAgeDays = (Date.now() - Date.parse(`${alternativesReviewedAt}T00:00:00Z`)) / 86_400_000;
@@ -669,6 +661,7 @@ for (const question of homepageFaqJson?.mainEntity ?? []) {
 }
 if (!homepageFaqJson) errors.push('homepage must publish FAQPage JSON-LD for its FAQ');
 if (!homepageMain.includes('data-alternatives-table="compact"')) errors.push('the homepage comparison answer must include the compact alternatives table');
+if (!homepageMain.includes(`data-reviewed-at="${alternativesReviewedAt}"`) || !homepageMain.includes(`<time datetime="${alternativesReviewedAt}"`)) errors.push(`the homepage comparison table must show its review date ${alternativesReviewedAt}`);
 
 // Named community baselines belong in the requested source-backed emulator comparisons.
 // Other pages retain the general competitor-name policy and existing component credits.

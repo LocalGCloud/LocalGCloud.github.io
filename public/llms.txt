@@ -116,7 +116,7 @@ The proprietary Public Preview License permits individuals and organizations, in
 - Google ships separate emulators for Bigtable, Datastore, Firestore, Pub/Sub and Spanner through the Google Cloud CLI, and the Firebase Local Emulator Suite for Firebase products. The Google Cloud CLI has no BigQuery or Cloud Storage emulator.
 - Single-service community emulators typically cover one Google Cloud service each, such as BigQuery or Cloud Storage; coverage and fidelity vary by project.
 - LocalCloud runs 25 Google Cloud services, including BigQuery and Cloud Storage, in one Docker container, using Google's Firestore emulator and a Spanner emulator built from Google's open-source emulator.
-- [Full comparison with sources](https://local.cloud/compare/emulators/#local-options), reviewed 2026-10-05, and [LocalStack for Google Cloud](https://local.cloud/localstack-for-google-cloud/).
+- [Emulator feature comparisons](https://local.cloud/compare/emulators/) and [LocalStack for Google Cloud](https://local.cloud/localstack-for-google-cloud/), with sources reviewed 2026-10-05.
 
 ## Contact
 

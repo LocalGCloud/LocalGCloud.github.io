@@ -1,8 +1,7 @@
 ---
 import LandingLayout from '../../../layouts/LandingLayout.astro';
-import AlternativesTable from '../../../components/AlternativesTable.astro';
 import EmulatorComparisonDetails from '../../../components/EmulatorComparisonDetails.astro';
-import { alternativesReviewedAt, alternativesReviewedLabel, comparisonSummary } from '../../../data/alternatives';
+import { alternativesReviewedLabel } from '../../../data/alternatives';
 import { comparisonPages } from '../../../data/agenticContent';
 import { emulatorComparisons } from '../../../data/emulatorComparisons';
 import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../../data/productFacts';
@@ -56,16 +55,5 @@ const moreComparisons = [...comparisonPages, {
         {page.quickFacts.length > 0 && <ul class="site-list mt-4">{page.quickFacts.slice(0, 2).map(fact => <li>{fact}</li>)}</ul>}
       </article>)}
     </div>
-  </div></section>
-  <section class="site-section" id="local-options" aria-labelledby="local-options-heading"><div class="container">
-    <div class="max-w-[48rem]">
-      <span class="site-kicker">Local options for Google Cloud</span>
-      <h2 class="mt-3" id="local-options-heading">LocalCloud, LocalStack and Google's emulators</h2>
-      <p class="mt-4 leading-7 text-[var(--text-2)]">{comparisonSummary.join(' ')}</p>
-    </div>
-    <div class="mt-8"><AlternativesTable variant="full" /></div>
-    <p class="mt-4 text-sm leading-6 text-[var(--text-2)]">
-      Reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time> against each project's official documentation, pricing page or repository. Plans and features change; follow the source links for current terms.
-    </p>
   </div></section>
 </LandingLayout>

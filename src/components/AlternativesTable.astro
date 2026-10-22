@@ -8,27 +8,20 @@ import {
   compactRowIds,
 } from '../data/alternatives';
 
-interface Props {
-  // "full" lists every option and fact with its source (on /compare/emulators/); "compact"
-  // is the homepage summary, which links to the full table for sources.
-  variant?: 'full' | 'compact';
-}
-
-const { variant = 'full' } = Astro.props;
-const full = variant === 'full';
-const columns = full ? alternatives : alternatives.filter((option) => compactAlternativeIds.includes(option.id));
-const rows = full ? comparisonRows : comparisonRows.filter((row) => compactRowIds.includes(row.id));
+// The homepage summary of how LocalCloud compares with the other local options.
+const columns = alternatives.filter((option) => compactAlternativeIds.includes(option.id));
+const rows = comparisonRows.filter((row) => compactRowIds.includes(row.id));
 const label = 'Local options for Google Cloud development compared';
 ---
 
 {/* The visible note sits outside the scrolling region so it stays readable on narrow screens. */}
 <p class="alternatives-table__note">
-  Sources reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time>{full ? '; each fact about a named product links its source.' : '.'}
+  Sources reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time>.
 </p>
 <div class="alternatives-table site-panel overflow-x-auto" tabindex="0" role="region" aria-label={label}>
   <table
-    class:list={['w-full text-left text-sm', full ? 'min-w-[68rem]' : 'min-w-[44rem]']}
-    data-alternatives-table={variant}
+    class="w-full min-w-[44rem] text-left text-sm"
+    data-alternatives-table="compact"
     data-reviewed-at={alternativesReviewedAt}
   >
     <caption class="sr-only">{label}, sources reviewed {alternativesReviewedLabel}</caption>
@@ -36,7 +29,7 @@ const label = 'Local options for Google Cloud development compared';
       <tr>
         <td class="p-4"></td>
         {columns.map((option) => (
-          <th scope="col" class:list={['p-4 font-semibold text-[var(--text)]', option.id === 'localcloud' && 'alternatives-table__ours']}>{full ? option.name : option.shortName}</th>
+          <th scope="col" class:list={['p-4 font-semibold text-[var(--text)]', option.id === 'localcloud' && 'alternatives-table__ours']}>{option.shortName}</th>
         ))}
       </tr>
     </thead>
@@ -44,19 +37,11 @@ const label = 'Local options for Google Cloud development compared';
       {rows.map((row) => (
         <tr class="border-b border-[var(--border)] align-top last:border-b-0">
           <th scope="row" class="p-4 font-semibold text-[var(--text)]">{row.label}</th>
-          {columns.map((option) => {
-            const cell = option.cells[row.id];
-            return (
-              <td class:list={['p-4 leading-6', option.id === 'localcloud' ? 'alternatives-table__ours text-[var(--text)]' : 'text-[var(--text-2)]']}>
-                {cell.text}
-                {full && cell.sources.length > 0 && (
-                  <span class="alternatives-table__sources">
-                    Source: {cell.sources.map((item, index) => <>{index > 0 && ' · '}<a href={item.href}>{item.label}</a></>)}
-                  </span>
-                )}
-              </td>
-            );
-          })}
+          {columns.map((option) => (
+            <td class:list={['p-4 leading-6', option.id === 'localcloud' ? 'alternatives-table__ours text-[var(--text)]' : 'text-[var(--text-2)]']}>
+              {option.cells[row.id].text}
+            </td>
+          ))}
         </tr>
       ))}
     </tbody>
@@ -73,19 +58,5 @@ const label = 'Local options for Google Cloud development compared';
 
   .alternatives-table__ours {
     background: var(--surface-2);
-  }
-
-  .alternatives-table__sources {
-    display: block;
-    margin-top: 0.4rem;
-    color: var(--text-2);
-    font-size: var(--fs-label);
-    line-height: 1.6;
-  }
-
-  .alternatives-table__sources a {
-    color: var(--accent-strong);
-    text-decoration: underline;
-    text-underline-offset: 0.18em;
   }
 </style>

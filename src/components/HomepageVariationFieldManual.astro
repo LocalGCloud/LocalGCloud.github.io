@@ -381,7 +381,7 @@ for (const column of atlasColumns) {
             <summary>{entry.question}</summary>
             <div class="field-faq__answer">
               <p>{entry.answer}</p>
-              {entry.showsComparison && <AlternativesTable variant="compact" />}
+              {entry.showsComparison && <AlternativesTable />}
               <p class="field-faq__links">
                 {entry.links.map((link, linkIndex) => <>{linkIndex > 0 && ' · '}<a href={link.href}>{link.label}</a></>)}
               </p>

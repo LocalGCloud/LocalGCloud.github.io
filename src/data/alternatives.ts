@@ -141,7 +141,7 @@ export const alternatives: Alternative[] = [
 	},
 ];
 
-// The homepage FAQ shows these rows and columns; /compare/emulators/ shows everything.
+// The homepage FAQ shows these rows and columns.
 export const compactRowIds: ComparisonRowId[] = ["services", "bigqueryStorage", "data", "license", "cost"];
 export const compactAlternativeIds: Alternative["id"][] = ["localcloud", "gcloud", "localstack", "community"];
 

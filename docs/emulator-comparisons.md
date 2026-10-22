@@ -1,8 +1,7 @@
 # Service emulator comparisons
 
 The public workspace is `/compare/emulators/`; `/compare/` redirects to it, and the page
-also lists the other comparison pages and the sourced LocalStack, Google and community
-table. Service tabs on the left select a
+also lists the other comparison pages. Service tabs on the left select a
 shared detail pane on the right; on mobile the tabs sit above the content. Service
 guides link to `?service=<slug>`, and Back/Forward restores the selection. Existing
 standalone service comparison URLs remain available, including without JavaScript.

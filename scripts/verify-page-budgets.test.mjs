@@ -68,8 +68,7 @@ const rawDocumentBytes = 21_800;
 const markdownTwinBytes = 15_400;
 // 2026-10-09: complete CI and MCP setup guides need their measured sizes plus 5%;
 // keep the default twin/HTML/JS limits for other pages and bound the expanded corpus.
-// compare/emulators.md carries the category table of five services, 2026-10-22.
-const guideDocumentBytes = { 'docs/github-actions.md': 31_300, 'docs/mcp.md': 17_200, 'compare/emulators.md': 17_900 };
+const guideDocumentBytes = { 'docs/github-actions.md': 31_300, 'docs/mcp.md': 17_200 };
 const githubActionsGzipBytes = 44_300;
 // 2026-10-16: client examples and connection exports across all 25 supported service
 // guides brought the measured technical corpus to 342,155 bytes.

@@ -574,13 +574,32 @@ h2 {
 }
 
 @media (min-width: 1280px) {
+  /* The breadcrumb and title span both columns, so nothing sits beside the title; the intro text and the
+     Connection box start together on the row below. */
   .service-hero-grid {
     grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.85fr);
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 2rem;
+    row-gap: 0;
   }
 
-  .service-hero-intro,
+  .service-hero-intro {
+    display: contents;
+  }
+
+  .service-hero-intro > nav[aria-label="Breadcrumb"],
+  .service-hero-intro > .service-title-row {
+    grid-column: 1 / -1;
+  }
+
+  .service-hero-intro > :not(nav[aria-label="Breadcrumb"], .service-title-row) {
+    grid-column: 1;
+  }
+
   .service-hero-connection {
-    grid-area: auto;
+    grid-column: 2;
+    grid-row: 3 / span 2;
+    margin-top: 1.25rem;
   }
 }
 

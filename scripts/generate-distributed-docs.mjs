@@ -202,7 +202,7 @@ ${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source pro
 ## How LocalCloud compares
 
 ${comparisonSummary.map((line) => `- ${line}`).join("\n")}
-- [Full comparison with sources](${site}compare/emulators/#local-options), reviewed ${alternativesReviewedAt}, and [LocalStack for Google Cloud](${site}localstack-for-google-cloud/).
+- [Emulator feature comparisons](${site}compare/emulators/) and [LocalStack for Google Cloud](${site}localstack-for-google-cloud/), with sources reviewed ${alternativesReviewedAt}.
 
 ## Contact
 
