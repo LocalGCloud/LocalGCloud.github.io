@@ -10,6 +10,8 @@ Safeguards, all fail-closed so a changed document layout stops the sync instead 
   * only committed documents are accepted (the digest of each is recorded);
   * every table is matched by header role, never by column position, and unknown marks are errors;
   * parsed counts must equal the totals the document itself states;
+  * every compared row must carry a description of the production feature (what visitors read first in
+    Details); descriptions and limit notes are scanned for internal wording before they are written;
   * notes are rewritten for visitors and scanned for internal wording before they are written.
 
 Internal detail (evidence labels, file references, revisions, source text) never reaches the
@@ -43,8 +45,10 @@ STATES = {'✓': 'available', '√': 'available', '✗': 'unavailable', '×': 'u
           '◐': 'limited', '△': 'limited', '?': 'unknown', '—': 'na', '○': 'no-effect'}
 MARK = re.compile(r'^(✓|√|✗|×|X|◐|△|\?|—|○)†?$')
 
-# Where a service's notes are engineering evidence rather than guidance, visitors see them only for these results.
-NOTE_STATES = {'firestore': {'limited', 'unavailable', 'no-effect'}, 'bigquery': {'limited'}}
+# Where a service's notes are engineering evidence rather than guidance, visitors see them only for these results
+# (a note an adapter marks keep_note is a limit in its own right and is always shown).
+NOTE_STATES = {'firestore': {'limited', 'unavailable', 'no-effect'}, 'bigquery': {'limited'},
+               'bigtable': {'limited', 'unavailable', 'no-effect'}}
 
 # LocalCloud rows with no result of their own say nothing to a visitor; they stay in the document.
 HIDE_UNASSESSED_LOCAL = True
@@ -202,6 +206,45 @@ def check_wording(service, rows):
         raise SyncError(f'{service}: {len(offenders)} notes still carry internal wording ({shown}); extend DROP/TERMS in polish()')
 
 
+# A description is prose about the production feature, so only wording that identifies this repository's
+# internals or the emulators is refused (names such as TestIamPermissions or [OFFSET] are legitimate prose).
+DESCRIPTION_LEAKS = [r'\bEvidence:', r'github\.com', r'https?://', r'/Users/', r'\b[\w-]+\.(?:go|py|cc|mjs)\b',
+                     r'(?:^|\s)[\w-]+/[\w./-]+\.(?:md|csv|json)\b', r'\b[0-9a-f]{40}\b', r'\bjay[-_]', r'LocalGCloud',
+                     r'AGENTS|CLAUDE|graft\b', r'\bfork\b', r'\bupstream\b', r'\bgoccy\b', r'\bLocalCloud\b',
+                     r'\blittle[- ]bigtable\b', r'\bfake-gcs-server\b', r'\bsource evidence\b', r'\bTODO\b', r'\bTBD\b']
+DESCRIPTION_LENGTH = (24, 400)
+SHARED_DESCRIPTION = 4  # this many differently named features with one sentence reads as filler
+
+
+def describe(text):
+    """A description as a visitor reads it: plain text, one line, ending in a full stop."""
+    text = re.sub(r'\s+', ' ', plain(text or '')).strip()
+    return text + '.' if text and text[-1] not in '.!?' else text
+
+
+def check_descriptions(service, raw_rows):
+    """Every compared row (published or not) needs a clean description; returns shared-sentence warnings."""
+    missing = [row['name'] for row in raw_rows if not row['description']]
+    if missing:
+        raise SyncError(f'{service}: {len(missing)} rows have no description (first: {", ".join(missing[:5])}); the document must '
+                        'describe every compared feature, see docs/prompts/upstream/descriptions.md')
+    problems = []
+    for row in raw_rows:
+        text, low, high = row['description'], *DESCRIPTION_LENGTH
+        if re.sub(r'\W+', '', text).lower() == re.sub(r'\W+', '', row['name']).lower():
+            problems.append(f'{row["name"]!r} only repeats its name')
+        elif not low <= len(text) <= high:
+            problems.append(f'{row["name"]!r} has a description of {len(text)} characters')
+        else:
+            problems += [f'{row["name"]!r} ~ {pattern}' for pattern in DESCRIPTION_LEAKS if re.search(pattern, text, re.I)]
+    if problems:
+        raise SyncError(f'{service}: {len(problems)} unusable descriptions ({"; ".join(problems[:8])})')
+    names = defaultdict(set)
+    for row in raw_rows:
+        names[row['description']].add(re.sub(r'[^a-z0-9]+', ' ', row['name'].lower()).strip())
+    return sorted((len(who), text) for text, who in names.items() if len(who) >= SHARED_DESCRIPTION)
+
+
 def slug(text):
     return re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-') or 'feature'
 
@@ -210,25 +253,27 @@ def slug(text):
 
 def gcs_rows(text):
     spec = {'id': r'^ID$', 'name': r'^Production GCS capability$', 'production': r'^GCS$', 'competitor': r'^Upstream$',
-            'local': r'^Fork$', 'notes': r'^Implementation evidence'}
+            'local': r'^Fork$', 'notes': r'^Implementation evidence', 'description?': r'^Description$'}
     out = []
     for row in feature_rows('gcs', text, spec):
         out.append(dict(id=plain(cell(row, 'id')), name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
                         local=state(cell(row, 'local'), f'gcs line {row["line"]}'),
-                        other=state(cell(row, 'competitor'), f'gcs line {row["line"]}'), note=cell(row, 'notes')))
+                        other=state(cell(row, 'competitor'), f'gcs line {row["line"]}'), note=cell(row, 'notes'),
+                        description=describe(cell(row, 'description'))))
     return out
 
 
 def firestore_rows(text):
     spec = {'name': r'^Individual production feature$', 'production': r'^Production$', 'competitor': r'^Google emulator$',
             'default': r'^(?:Go default|Compatibility(?: profile)?)$', 'local': r'^(?:Go production|Extended(?: profile)?)$',
-            'notes': r'^Emulator evidence'}
+            'notes': r'^Emulator evidence', 'description?': r'^Description$'}
     out = []
     for row in feature_rows('firestore', text, spec):
         where = f'firestore line {row["line"]}'
         out.append(dict(name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
                         local=state(cell(row, 'local'), where), other=state(cell(row, 'competitor'), where),
-                        default=state(cell(row, 'default'), where), note=cell(row, 'notes')))
+                        default=state(cell(row, 'default'), where), note=cell(row, 'notes'),
+                        description=describe(cell(row, 'description'))))
     return out
 
 
@@ -243,8 +288,9 @@ BIGTABLE_AREAS = {
 
 def bigtable_rows(text):
     spec = {'name': r'^(?:RPC|Field|Capability|SQL name)$', 'production': r'^Production$', 'local': r'^Local(?: query)?$',
-            'competitor?': r'^Google(?: emulator)?(?: query)?$', 'notes?': r'^Local contract or limit$', 'form?': r'^Local form$', 'cmv_production?': r'^Production CMV aggregate$',
-            'cmv_local?': r'^Local CMV aggregate$'}
+            'competitor?': r'^(?:Google Cloud Bigtable emulator|CBT emulator|Google(?: emulator)?(?: query)?)$',
+            'notes?': r'^Local contract or limit$', 'form?': r'^Local form$', 'cmv_production?': r'^Production CMV aggregate$',
+            'cmv_local?': r'^Local CMV aggregate$', 'description?': r'^Description$'}
     out = []
     for row in feature_rows('bigtable', text, spec):
         where = f'bigtable line {row["line"]}'
@@ -253,27 +299,28 @@ def bigtable_rows(text):
         name = plain(cell(row, 'name'))
         if top in ('RPC methods', 'Request fields') and len(path) > 1:
             name = f'{path[1].rsplit(".", 1)[-1]}.{name}'
-        note = cell(row, 'notes')
+        note, keep_note = cell(row, 'notes'), False
         if 'form' in row['roles']:
             form = plain(cell(row, 'form')).lower()
             production, local = (state(cell(row, c), where) for c in ('cmv_production', 'cmv_local'))
             note = ''
-            if form == 'aggregate' and production == 'available':
-                note = 'Supported in continuous materialized views.' if local == 'available' else 'Not available in continuous materialized views.'
+            if form == 'aggregate' and production == 'available' and local != 'available':
+                note, keep_note = 'Not available in continuous materialized views.', True
         other = state(cell(row, 'competitor'), where) if 'competitor' in row['roles'] else None
-        out.append(dict(name=name, area=top, local=state(cell(row, 'local'), where), other=other, note=note.strip()))
+        out.append(dict(name=name, area=top, local=state(cell(row, 'local'), where), other=other, note=note.strip(),
+                        keep_note=keep_note, description=describe(cell(row, 'description'))))
     return out
 
 
 def spanner_rows(text):
     spec = {'name': r'^Production feature / behavior$', 'competitor': r'^Google emulator\b', 'local': r'^Extended$',
-            'notes': r'^Scope / difference$'}
+            'notes': r'^Scope / difference$', 'description?': r'^Description$'}
     out = []
     for row in feature_rows('spanner', text, spec):
         where = f'spanner line {row["line"]}'
         out.append(dict(name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
                         local=state(cell(row, 'local'), where), other=state(cell(row, 'competitor'), where),
-                        note=cell(row, 'notes')))
+                        note=cell(row, 'notes'), description=describe(cell(row, 'description'))))
     return out
 
 
@@ -284,7 +331,8 @@ BIGQUERY_CATEGORIES = {'Expression': 'Expressions', 'Scripting & Procedural': 'S
                        'RowAccessPolicies': 'Row access policies', 'Function': 'Functions', 'Type': 'Types',
                        'Operator': 'Operators', 'Clauses': 'Clauses', 'Tables': 'Tables'}
 BIGQUERY_STATES = {'implemented': 'available', 'partial': 'limited', 'unsupported': 'unavailable', 'unknown': 'unknown'}
-BIGQUERY_COLUMNS = ['capability_id', 'feature_name', 'surface', 'category', 'local_development', 'goccy_status', 'local_limitations']
+BIGQUERY_COLUMNS = ['capability_id', 'feature_name', 'description', 'surface', 'category', 'local_development', 'goccy_status',
+                    'local_limitations']
 
 
 def bigquery_rows(text):
@@ -302,7 +350,7 @@ def bigquery_rows(text):
         category = BIGQUERY_CATEGORIES.get(entry['category'].replace('&amp;', '&'), entry['category'])
         area = surface if entry['surface'].startswith('storage_') else f'{surface} / {category}'
         out.append(dict(id=entry['capability_id'], name=entry['feature_name'], area=area, local=local, other=other,
-                        note=entry['local_limitations']))
+                        note=entry['local_limitations'], description=describe(entry['description'])))
     return out
 
 
@@ -366,7 +414,7 @@ def stated(service, documents, rows):
                     raise SyncError('bigtable: the coverage metrics table lacks a column the importer needs; update stated()')
                 return sum(number(cells[index]) for _, cells in table['rows'])
             expected = {'total': total(column(r'^Documented rows$'))}
-            for key, prefix in (('local', 'Local'), ('other', 'Google')):
+            for key, prefix in (('local', 'Local'), ('other', r'Google(?: emulator)?')):
                 columns = {name: column(rf'^{prefix} {mark}$') for name, mark in (('available', '✓'), ('limited', '◐'), ('unavailable', '✗'), ('unknown', r'\?'))}
                 if all(i is not None for i in columns.values()):
                     expected[key] = {name: total(i) for name, i in columns.items()}
@@ -430,8 +478,9 @@ def assemble(service, raw_rows):
             row['other'] = raw['other']
         if 'default' in raw:
             row['default'] = raw['default']
+        row['description'] = raw.get('description', '')
         row['notes'] = polish(service, raw['note'])
-        if row['local'] not in NOTE_STATES.get(service, STATES.values()):
+        if row['local'] not in NOTE_STATES.get(service, STATES.values()) and not raw.get('keep_note'):
             row['notes'] = ''
         rows.append(row)
     check_wording(service, rows)
@@ -483,12 +532,14 @@ def build(service, dependencies):
         documents.append({'path': name, 'commit': commit, 'sha256': hashlib.sha256(raw).hexdigest()})
     parsed = ADAPTERS[service](texts[path])
     expected = stated(service, texts, parsed)
+    shared = check_descriptions(service, parsed)
     rows, hidden = assemble(service, parsed)
     if not rows:
         raise SyncError(f'{service}: nothing left to publish')
     reviewed = next(filter(None, (re.search(r'\b(20\d\d-\d\d-\d\d)\b', texts[name][:6000]) for name in texts)), None)
     provenance = {'repository': repository, 'revision': revision, 'reviewed': reviewed and reviewed[1], 'documents': documents,
-                  'documented': {'rows': len(parsed), **{k: v for k, v in expected.items() if k != 'total'}}, 'hidden': hidden}
+                  'documented': {'rows': len(parsed), **{k: v for k, v in expected.items() if k != 'total'}}, 'hidden': hidden,
+                  'sharedDescriptions': [{'features': count, 'description': text} for count, text in shared]}
     return rows, summarize(rows), provenance
 
 
@@ -522,6 +573,8 @@ def sync(dependencies, check=False):
         print(f'{service:9s} documented {details["documented"]["rows"]:5d} -> shown {metrics["total"]:5d}  '
               f'advantages {metrics["exclusive"]:4d}  broader {metrics["broader"]:3d}  '
               f'(unassessed {hidden["unassessed"]}, repeated {hidden["repeated"]}, competitor {"yes" if metrics["hasCompetitor"] else "no"})')
+        for item in details['sharedDescriptions']:
+            print(f'  warning: {item["features"]} different {service} features share the description "{item["description"][:90]}"')
     if drift:
         print('\n'.join(['Out of date:', *drift]), file=sys.stderr)
         return 1

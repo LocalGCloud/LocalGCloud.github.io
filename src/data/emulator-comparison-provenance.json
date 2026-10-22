@@ -1,13 +1,13 @@
 {
   "gcs": {
     "repository": "localcloud-fake-gcs-server",
-    "revision": "67e227c369b506a2383223e31db208976fe11b83",
+    "revision": "480cc7bcc3ae1f63bcb5b23f0eae87dd6b4fcb18",
     "reviewed": "2026-10-20",
     "documents": [
       {
         "path": "docs/upstream-comparison.md",
-        "commit": "67e227c369b506a2383223e31db208976fe11b83",
-        "sha256": "7b13a9f4dd6381e942cef1919a0da2ec4be4e32d1109259cba15d23bd0a81b5a"
+        "commit": "480cc7bcc3ae1f63bcb5b23f0eae87dd6b4fcb18",
+        "sha256": "f5f85b77206debc4646612ed67d03a37554d7875cfa829eeac8122a90bdca8bf"
       }
     ],
     "documented": {
@@ -26,22 +26,23 @@
     "hidden": {
       "unassessed": 0,
       "repeated": 0
-    }
+    },
+    "sharedDescriptions": []
   },
   "firestore": {
     "repository": "firestore-go",
-    "revision": "2d4cee87e126210064f82a43feb81cad83cf576a",
+    "revision": "b10466d9b61ba5f1f4fcbb262cae2a2253887eb0",
     "reviewed": "2026-10-20",
     "documents": [
       {
         "path": "docs/emulator-comparison.md",
-        "commit": "6978a94b6f15f6c57b1f976a60757c748c11e5ff",
-        "sha256": "0e44f0bb5b85df366892405f9537f62b282afbf1fccc833e813fd4de56b3c3c5"
+        "commit": "2197b1dbe54b25664ebc84ec79c27756e39ee278",
+        "sha256": "59688cd31975c47118cc18ddd4203ffaf33eef77a1d18a911dce6e4dd44c7a26"
       },
       {
         "path": "docs/emulator-comparison-metrics.md",
-        "commit": "6978a94b6f15f6c57b1f976a60757c748c11e5ff",
-        "sha256": "f084e7947d62084d676aed4d5e56d3202675b4ad172552ce817410e726616acd"
+        "commit": "b10466d9b61ba5f1f4fcbb262cae2a2253887eb0",
+        "sha256": "8eba6c7e1e27f5eca7fbc15c162bfe94f36263e8b938c1c501f5083042eebde8"
       }
     ],
     "documented": {
@@ -78,17 +79,18 @@
     "hidden": {
       "unassessed": 0,
       "repeated": 0
-    }
+    },
+    "sharedDescriptions": []
   },
   "bigtable": {
     "repository": "little_bigtable",
-    "revision": "ed8c06e71d5abcc67423bb993067441de0e43789",
+    "revision": "96bbab6cdb9c41a201c3813604afa8fa0645392d",
     "reviewed": "2026-10-20",
     "documents": [
       {
         "path": "EMULATOR_COMPARISON.md",
-        "commit": "ed8c06e71d5abcc67423bb993067441de0e43789",
-        "sha256": "29c7d55bd53e28d88ab9458a3cc2e5f0eb9a86760f274187a48a2c41faa644db"
+        "commit": "96bbab6cdb9c41a201c3813604afa8fa0645392d",
+        "sha256": "f982e1f04a4882d4dfb3843036942ae8d095bb222739d75a3e60b4a9874aaea2"
       }
     ],
     "documented": {
@@ -98,22 +100,29 @@
         "limited": 39,
         "unavailable": 116,
         "unknown": 2
+      },
+      "other": {
+        "available": 41,
+        "limited": 33,
+        "unavailable": 419,
+        "unknown": 0
       }
     },
     "hidden": {
       "unassessed": 2,
       "repeated": 0
-    }
+    },
+    "sharedDescriptions": []
   },
   "spanner": {
     "repository": "cloud-spanner-emulator",
-    "revision": "a2e0c2fcd9eed2bd24ed57c8d48221b2fd498c7f",
+    "revision": "bf6e7f0fda67e76299866a8c4f0cf1176a30dbf4",
     "reviewed": "2026-10-20",
     "documents": [
       {
         "path": "docs/emulator-comparison.md",
-        "commit": "a2e0c2fcd9eed2bd24ed57c8d48221b2fd498c7f",
-        "sha256": "d5523abb75ac80de0d36a15d7260dae10f22738bc2b6a59abbd81bc389789aaa"
+        "commit": "bf6e7f0fda67e76299866a8c4f0cf1176a30dbf4",
+        "sha256": "4a7e726e524ff99e875db5b569b64a3ba28e92494dd4911401e0b5e734d5b3e1"
       }
     ],
     "documented": {
@@ -138,17 +147,18 @@
     "hidden": {
       "unassessed": 0,
       "repeated": 0
-    }
+    },
+    "sharedDescriptions": []
   },
   "bigquery": {
     "repository": "bigquery-emulator-on-duckdb",
-    "revision": "5e42c9cb57c377b8d8ec855390251976556bf7aa",
+    "revision": "7f280eb60c65bc2aba4d941e8516ee5a7e86cb9a",
     "reviewed": "2026-09-28",
     "documents": [
       {
         "path": "docs/comparison-features.csv",
-        "commit": "5e42c9cb57c377b8d8ec855390251976556bf7aa",
-        "sha256": "6fe4eb3dcdc7d5f1b53df6c2a9846a73d8975bd1e8403ee294b310f304b7eb10"
+        "commit": "7f280eb60c65bc2aba4d941e8516ee5a7e86cb9a",
+        "sha256": "5b149a1e09fb9464134d2d25cfb71996a6d9a9089e0cc67add563fee255f9cef"
       },
       {
         "path": "docs/COMPARISON.md",
@@ -174,6 +184,7 @@
     "hidden": {
       "unassessed": 309,
       "repeated": 23
-    }
+    },
+    "sharedDescriptions": []
   }
 }

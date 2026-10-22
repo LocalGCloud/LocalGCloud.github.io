@@ -17,7 +17,7 @@ export function presentComparisonNotes(text) {
 export function selectComparisonRows(rows, { mode = 'advantages', query = '', area = '' } = {}) {
   const term = query.toLowerCase().trim();
   return rows.filter(row => (!area || row.area === area)
-    && (!term || [row.name, row.id, row.area, row.notes].join(' ').toLowerCase().includes(term))
+    && (!term || [row.name, row.id, row.area, row.description, row.notes].join(' ').toLowerCase().includes(term))
     && (mode === 'all' || row.local === 'available'
       && (mode === 'broader' ? row.other === 'limited' : ['unavailable', 'no-effect'].includes(row.other))));
 }

@@ -33,7 +33,10 @@ export function initEmulatorComparisons(scope = document) {
             node.lastElementChild.textContent = comparisonStates[value];
           });
           tr.querySelectorAll('[data-comparison-profile]').forEach(node => node.hidden = !row.default || row.default === row.local);
-          tr.querySelector('p').textContent = presentComparisonNotes(row.notes);
+          const [description, limit] = tr.querySelectorAll('td:last-child > p');
+          description.textContent = row.description;
+          limit.hidden = !row.notes;
+          limit.textContent = row.notes ? `Note: ${presentComparisonNotes(row.notes)}` : '';
           return tr;
         }));
         status.textContent = rows.length ? `Showing ${rows.length} matching rows.` : 'No matching features. Try another filter.';
