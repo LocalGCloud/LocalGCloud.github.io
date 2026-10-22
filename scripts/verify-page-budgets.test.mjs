@@ -69,7 +69,9 @@ const markdownTwinBytes = 15_400;
 // 2026-10-09: complete CI and MCP setup guides need their measured sizes plus 5%;
 // keep the default twin/HTML/JS limits for other pages and bound the expanded corpus.
 const guideDocumentBytes = { 'docs/github-actions.md': 31_300, 'docs/mcp.md': 17_200 };
-const githubActionsGzipBytes = 44_300;
+// 2026-10-22: merging the release/installer docs with the comparison work measured 44,313
+// (45,813 with the agent allowance); the earlier limit left 13 bytes over, so allow 200 more.
+const githubActionsGzipBytes = 44_500;
 // 2026-10-16: client examples and connection exports across all 25 supported service
 // guides brought the measured technical corpus to 342,155 bytes.
 // Approved agent task navigation, service prerequisites, and observable example outcomes
