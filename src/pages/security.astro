@@ -69,7 +69,7 @@ const imageCommands = [
 
       <h2 id="signed-releases">Signed CLI releases</h2>
       <p>
-        Every <a href={productFacts.cliReleasesUrl}>CLI release</a> publishes archives for macOS and Linux on amd64 and arm64, a <code>SHA256SUMS</code> file, and Sigstore bundles. The bundles are signed by the CLI's GitHub Actions release workflow, so cosign can confirm the files came from that workflow at a release tag. The install script checks each archive against <code>SHA256SUMS</code> before it installs anything.
+        Every <a href={productFacts.cliReleasesUrl}>CLI release</a> publishes archives for macOS on arm64 and Linux on amd64 and arm64, a <code>SHA256SUMS</code> file, and Sigstore bundles. The bundles are signed by the CLI's GitHub Actions release workflow, so cosign can confirm the files came from that workflow at a release tag. The install script checks each archive against <code>SHA256SUMS</code> before it installs anything.
       </p>
       {commands.map((command) => (
         <div class="security-command">

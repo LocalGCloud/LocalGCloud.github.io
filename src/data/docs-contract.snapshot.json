@@ -136,7 +136,7 @@
     "installCommand": "curl -fsSL https://local.cloud/install.sh | sh",
     "homebrewCommand": "brew install LocalGCloud/tap/localcloud",
     "supportedHosts": [
-      "macOS 13+ on arm64 or amd64",
+      "macOS 13+ on arm64",
       "Linux with glibc 2.35+ on arm64 or amd64"
     ],
     "requiresDocker": true,

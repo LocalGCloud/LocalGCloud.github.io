@@ -38,10 +38,10 @@ This tutorial installs the LocalCloud CLI, starts a persistent local runtime, co
 ## Prerequisites
 
 - Docker Desktop, Colima, or Docker Engine is installed **and running**.
-- A supported native CLI host: macOS 13+ or Linux with glibc 2.35+, on ARM64 or AMD64.
+- A supported native CLI host: macOS 13+ on Apple Silicon, or Linux with glibc 2.35+ on ARM64 or AMD64.
 - `curl`, `tar`, `sed`, `sort`, and either `sha256sum` or `shasum`.
 
-The CLI is a standalone executable and does not require Python. Windows users should use the [manual Docker fallback](#manual-docker-path).
+The CLI is a standalone executable and does not require Python. Windows users and Intel Macs should use the [manual Docker fallback](#manual-docker-path); CLI releases after 0.1.11 have no Intel Mac build.
 
 ## Install the CLI
 
