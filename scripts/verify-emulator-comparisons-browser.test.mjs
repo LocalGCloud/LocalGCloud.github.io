@@ -418,12 +418,14 @@ test('availability marks keep accessible labels, notes stay inline and profile d
   await settled(page);
   await choose(page, 'all');
   await openAll(page);
-  for (const [state, label, mark, color] of [['available', 'Available', '✓', 'rgb(19, 115, 51)'], ['unavailable', 'Not available', '✕', 'rgb(234, 67, 53)']]) {
+  for (const [state, label, mark] of [['available', 'Available', '✓'], ['unavailable', 'Not available', '✕']]) {
     const output = await page.$eval(`${activeTable} .comparison-state[data-state="${state}"]`, node => {
       const mark = node.querySelector('.comparison-mark');
       return { label: node.querySelector('.comparison-label').textContent, hiddenMark: mark.getAttribute('aria-hidden'), mark: getComputedStyle(mark, '::before').content, color: getComputedStyle(mark, '::before').color };
     });
-    assert.deepEqual(output, { label, hiddenMark: 'true', mark: `"${mark}"`, color });
+    const { color, ...accessible } = output;
+    assert.deepEqual(accessible, { label, hiddenMark: 'true', mark: `"${mark}"` });
+    assert.ok(contrastRatio(color, 'rgb(241, 243, 244)') >= 4.5, `${state} marks meet WCAG AA`);
   }
   const client = await page.createCDPSession();
   const { nodes } = await client.send('Accessibility.getFullAXTree');
