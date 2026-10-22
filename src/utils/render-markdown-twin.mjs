@@ -16,7 +16,9 @@ const isNoise = (node) =>
 	node.getAttribute?.("aria-hidden") === "true" ||
 	node.getAttribute?.("role") === "tablist" ||
 	node.hasAttribute?.("data-agent-visual") ||
-	node.hasAttribute?.("data-agent-only");
+	node.hasAttribute?.("data-agent-only") ||
+	// Content that exists only to be revealed by a control, such as a category the default filter hides.
+	node.hasAttribute?.("data-markdown-skip");
 
 export function converter(pageUrl) {
 	const absolute = (href) => (href.startsWith("#") ? `${pageUrl}${href}` : new URL(href, pageUrl).toString());

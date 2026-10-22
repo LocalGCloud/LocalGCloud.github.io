@@ -31,13 +31,13 @@
   },
   "firestore": {
     "repository": "firestore-go",
-    "revision": "b10466d9b61ba5f1f4fcbb262cae2a2253887eb0",
+    "revision": "f9031112196df9402041e671977f136bf083466b",
     "reviewed": "2026-10-20",
     "documents": [
       {
         "path": "docs/emulator-comparison.md",
-        "commit": "2197b1dbe54b25664ebc84ec79c27756e39ee278",
-        "sha256": "59688cd31975c47118cc18ddd4203ffaf33eef77a1d18a911dce6e4dd44c7a26"
+        "commit": "f9031112196df9402041e671977f136bf083466b",
+        "sha256": "d70ef3fa21617a6999408f917d4c36e03cea3f9372a3f39838a0f218f9c173db"
       },
       {
         "path": "docs/emulator-comparison-metrics.md",

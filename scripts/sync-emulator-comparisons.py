@@ -27,6 +27,7 @@ import subprocess
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 INVENTORIES = ROOT / 'src/data/emulator-comparisons'
@@ -245,6 +246,37 @@ def check_descriptions(service, raw_rows):
     return sorted((len(who), text) for text, who in names.items() if len(who) >= SHARED_DESCRIPTION)
 
 
+# Visitors may follow one link per feature, to Google's own documentation. Hosts are listed so a typo or a link to a
+# repository, a test or an unofficial page can never reach the site.
+DOCS_HOSTS = {'cloud.google.com', 'docs.cloud.google.com', 'firebase.google.com', 'developers.google.com'}
+
+
+def link_definitions(text):
+    """Reference-style link targets at the end of a document: {'g-bi': 'https://...'}."""
+    return {label.lower(): url for label, url in re.findall(r'^\[([^\]]+)\]:\s*<?(https?://[^\s>]+)', text, re.M)}
+
+
+def docs_url(cell_text, definitions):
+    """The first official Google documentation link in a table cell, or '' (inline, reference-style or bare)."""
+    found = re.findall(r'\]\((https?://[^)\s]+)\)|<(https?://[^>\s]+)>|(?<![(\[<])\b(https?://[^\s|)\]>]+)', cell_text)
+    urls = [next(part for part in match if part) for match in found]
+    urls += [definitions[label.lower()] for label in re.findall(r'\]\[([^\]]+)\]', cell_text) if label.lower() in definitions]
+    urls += [definitions[label.lower()] for label in re.findall(r'(?<!\])\[([^\]]+)\](?![\[(:])', cell_text) if label.lower() in definitions]
+    for url in urls:
+        parts = urlsplit(url.rstrip('.,;'))
+        if parts.scheme == 'https' and parts.hostname in DOCS_HOSTS:
+            return parts.geturl()
+    return ''
+
+
+def check_docs(service, raw_rows):
+    """Every compared row links the Google documentation page that explains the feature."""
+    missing = [row['name'] for row in raw_rows if not row['docs']]
+    if missing:
+        raise SyncError(f'{service}: {len(missing)} rows lack an official Google documentation link (first: {", ".join(missing[:5])}); '
+                        f'the document needs an official reference on https://{{{",".join(sorted(DOCS_HOSTS))}}}, see docs/emulator-comparisons.md')
+
+
 def slug(text):
     return re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-') or 'feature'
 
@@ -253,27 +285,29 @@ def slug(text):
 
 def gcs_rows(text):
     spec = {'id': r'^ID$', 'name': r'^Production GCS capability$', 'production': r'^GCS$', 'competitor': r'^Upstream$',
-            'local': r'^Fork$', 'notes': r'^Implementation evidence', 'description?': r'^Description$'}
-    out = []
+            'local': r'^Fork$', 'notes': r'^Implementation evidence', 'description?': r'^Description$',
+            'docs?': r'^Official Google reference$'}
+    out, links = [], link_definitions(text)
     for row in feature_rows('gcs', text, spec):
         out.append(dict(id=plain(cell(row, 'id')), name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
                         local=state(cell(row, 'local'), f'gcs line {row["line"]}'),
                         other=state(cell(row, 'competitor'), f'gcs line {row["line"]}'), note=cell(row, 'notes'),
-                        description=describe(cell(row, 'description'))))
+                        description=describe(cell(row, 'description')), docs=docs_url(cell(row, 'docs'), links)))
     return out
 
 
 def firestore_rows(text):
     spec = {'name': r'^Individual production feature$', 'production': r'^Production$', 'competitor': r'^Google emulator$',
             'default': r'^(?:Go default|Compatibility(?: profile)?)$', 'local': r'^(?:Go production|Extended(?: profile)?)$',
-            'notes': r'^Emulator evidence', 'description?': r'^Description$'}
-    out = []
+            'notes': r'^Emulator evidence', 'description?': r'^Description$',
+            'docs?': r'^Official production reference$'}
+    out, links = [], link_definitions(text)
     for row in feature_rows('firestore', text, spec):
         where = f'firestore line {row["line"]}'
         out.append(dict(name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
                         local=state(cell(row, 'local'), where), other=state(cell(row, 'competitor'), where),
                         default=state(cell(row, 'default'), where), note=cell(row, 'notes'),
-                        description=describe(cell(row, 'description'))))
+                        description=describe(cell(row, 'description')), docs=docs_url(cell(row, 'docs'), links)))
     return out
 
 
@@ -290,8 +324,8 @@ def bigtable_rows(text):
     spec = {'name': r'^(?:RPC|Field|Capability|SQL name)$', 'production': r'^Production$', 'local': r'^Local(?: query)?$',
             'competitor?': r'^(?:Google Cloud Bigtable emulator|CBT emulator|Google(?: emulator)?(?: query)?)$',
             'notes?': r'^Local contract or limit$', 'form?': r'^Local form$', 'cmv_production?': r'^Production CMV aggregate$',
-            'cmv_local?': r'^Local CMV aggregate$', 'description?': r'^Description$'}
-    out = []
+            'cmv_local?': r'^Local CMV aggregate$', 'description?': r'^Description$', 'docs?': r'^Official Google reference$'}
+    out, links = [], link_definitions(text)
     for row in feature_rows('bigtable', text, spec):
         where = f'bigtable line {row["line"]}'
         path = heading_path(row)
@@ -308,19 +342,21 @@ def bigtable_rows(text):
                 note, keep_note = 'Not available in continuous materialized views.', True
         other = state(cell(row, 'competitor'), where) if 'competitor' in row['roles'] else None
         out.append(dict(name=name, area=top, local=state(cell(row, 'local'), where), other=other, note=note.strip(),
-                        keep_note=keep_note, description=describe(cell(row, 'description'))))
+                        keep_note=keep_note, description=describe(cell(row, 'description')),
+                        docs=docs_url(cell(row, 'docs'), links)))
     return out
 
 
 def spanner_rows(text):
     spec = {'name': r'^Production feature / behavior$', 'competitor': r'^Google emulator\b', 'local': r'^Extended$',
-            'notes': r'^Scope / difference$', 'description?': r'^Description$'}
-    out = []
+            'notes': r'^Scope / difference$', 'description?': r'^Description$', 'docs?': r'^Official Spanner reference$'}
+    out, links = [], link_definitions(text)
     for row in feature_rows('spanner', text, spec):
         where = f'spanner line {row["line"]}'
         out.append(dict(name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
                         local=state(cell(row, 'local'), where), other=state(cell(row, 'competitor'), where),
-                        note=cell(row, 'notes'), description=describe(cell(row, 'description'))))
+                        note=cell(row, 'notes'), description=describe(cell(row, 'description')),
+                        docs=docs_url(cell(row, 'docs'), links)))
     return out
 
 
@@ -332,7 +368,7 @@ BIGQUERY_CATEGORIES = {'Expression': 'Expressions', 'Scripting & Procedural': 'S
                        'Operator': 'Operators', 'Clauses': 'Clauses', 'Tables': 'Tables'}
 BIGQUERY_STATES = {'implemented': 'available', 'partial': 'limited', 'unsupported': 'unavailable', 'unknown': 'unknown'}
 BIGQUERY_COLUMNS = ['capability_id', 'feature_name', 'description', 'surface', 'category', 'local_development', 'goccy_status',
-                    'local_limitations']
+                    'local_limitations', 'google_documentation']
 
 
 def bigquery_rows(text):
@@ -350,7 +386,8 @@ def bigquery_rows(text):
         category = BIGQUERY_CATEGORIES.get(entry['category'].replace('&amp;', '&'), entry['category'])
         area = surface if entry['surface'].startswith('storage_') else f'{surface} / {category}'
         out.append(dict(id=entry['capability_id'], name=entry['feature_name'], area=area, local=local, other=other,
-                        note=entry['local_limitations'], description=describe(entry['description'])))
+                        note=entry['local_limitations'], description=describe(entry['description']),
+                        docs=docs_url(entry['google_documentation'], {})))
     return out
 
 
@@ -479,6 +516,7 @@ def assemble(service, raw_rows):
         if 'default' in raw:
             row['default'] = raw['default']
         row['description'] = raw.get('description', '')
+        row['docs'] = raw.get('docs', '')
         row['notes'] = polish(service, raw['note'])
         if row['local'] not in NOTE_STATES.get(service, STATES.values()) and not raw.get('keep_note'):
             row['notes'] = ''
@@ -503,9 +541,9 @@ def assemble(service, raw_rows):
 
 def summarize(rows):
     has_competitor = any('other' in row for row in rows)
-    advantages = [r for r in rows if r['local'] == 'available' and r.get('other') in ('unavailable', 'no-effect')]
-    broader = [r for r in rows if r['local'] == 'available' and r.get('other') == 'limited']
-    return {'total': len(rows), 'exclusive': len(advantages), 'broader': len(broader), 'hasCompetitor': has_competitor}
+    # Only in LocalCloud: it works here (with or without a documented limit) and the compared emulator lacks it.
+    advantages = [r for r in rows if r['local'] in ('available', 'limited') and r.get('other') in ('unavailable', 'no-effect')]
+    return {'total': len(rows), 'exclusive': len(advantages), 'hasCompetitor': has_competitor}
 
 
 # ----------------------------------------------------------------------------- reading the repositories
@@ -533,6 +571,7 @@ def build(service, dependencies):
     parsed = ADAPTERS[service](texts[path])
     expected = stated(service, texts, parsed)
     shared = check_descriptions(service, parsed)
+    check_docs(service, parsed)
     rows, hidden = assemble(service, parsed)
     if not rows:
         raise SyncError(f'{service}: nothing left to publish')
@@ -571,7 +610,7 @@ def sync(dependencies, check=False):
     for service, (_, metrics, details) in outputs.items():
         hidden = details['hidden']
         print(f'{service:9s} documented {details["documented"]["rows"]:5d} -> shown {metrics["total"]:5d}  '
-              f'advantages {metrics["exclusive"]:4d}  broader {metrics["broader"]:3d}  '
+              f'only in LocalCloud {metrics["exclusive"]:4d}  '
               f'(unassessed {hidden["unassessed"]}, repeated {hidden["repeated"]}, competitor {"yes" if metrics["hasCompetitor"] else "no"})')
         for item in details['sharedDescriptions']:
             print(f'  warning: {item["features"]} different {service} features share the description "{item["description"][:90]}"')

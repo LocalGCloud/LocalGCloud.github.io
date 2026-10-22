@@ -1,26 +1,32 @@
 # Service emulator comparisons
 
-The public workspace is `/compare/emulators/`. Service tabs on the left select a
+The public workspace is `/compare/emulators/`; `/compare/` redirects to it, and the page
+also lists the other comparison pages and the sourced LocalStack, Google and community
+table. Service tabs on the left select a
 shared detail pane on the right; on mobile the tabs sit above the content. Service
 guides link to `?service=<slug>`, and Back/Forward restores the selection. Existing
 standalone service comparison URLs remain available, including without JavaScript.
 Use LocalCloud service names in the headings and table columns. Keep introductions
 and configuration notes concise.
 
-The initial HTML and Markdown twin contain a small preview. On entry, the browser
-loads only the selected service's build-hashed inventory and displays every matching
-row on one page. The existing filters search the complete inventory without
-pagination. The JSON comparison view appears in the For agents audience only.
+Each service lists its **categories**, the document's own sections, collapsed by default
+with a count ("31 features · 12 only in LocalCloud"). The initial HTML and Markdown twin
+hold only the category headers; the browser loads the selected service's build-hashed
+inventory and draws a category's features when it opens. A search covers the complete
+inventory and opens every category that has a match. The two filters are "Only in
+LocalCloud" (the default) and "All features". The JSON comparison view appears in the
+For agents audience only.
 
-Keep the detail header, metric counts and filters compact so feature rows are
-visible on entry. Available and unavailable states use green checks and red crosses
-with readable screen-reader and Markdown labels. Other states keep their text; the
-site never labels a result "Partial" (a limited result reads "Scoped"). Every row
-shows what the production feature is, inline in Details, and, when the result differs
-from production, a "Note:" line after it. Comparison notes appear as plain text below
-the table. Apply the same presentation to server previews and loaded rows. Firestore
-uses one mark when its Compatibility and Extended profiles agree; show both labeled
-results only where they differ. The raw JSON retains both profiles.
+The header says "N features in total · M only available in LocalCloud (not in <the
+emulator compared>)". Available and unavailable states use green checks and red crosses
+with readable screen-reader and Markdown labels. **A limited result (◐) shows the same
+green check as a supported one**: the mark says the feature works and the "Note:" line
+says how far, so the site never labels a result "Partial" or "Scoped". Every row shows
+what the production feature is, inline in Details, then a link to Google's own
+documentation page for it, then, when the result differs from production, a "Note:" line.
+Comparison notes appear as plain text below the groups. Firestore uses one mark when its
+Compatibility and Extended profiles agree; show both labeled results only where they
+differ. The raw JSON retains both profiles and the limited states.
 
 A service whose document has no competitor column shows LocalCloud's own results with
 no mode choice, no competitor column and no advantage counts. When its document gains a
@@ -28,9 +34,10 @@ competitor column, the next sync turns those on by itself. The competitor name a
 baseline are in `src/data/emulatorComparisons.ts`; confirm them against the document's
 baseline section.
 
-Only **Available locally + Not available/Accepted, no effect in the competitor** qualifies
-for the advantages filter. Scoped competitor behavior has a separate filter. Unknown and
-not-applicable values never imply a competitor gap. Firestore retains compatibility and
+**Only in LocalCloud** means the feature works locally (✓, or ◐ with a documented limit) and
+the competitor explicitly lacks it (✗, or accepted with no effect). A competitor that
+supports it only in part, an unknown result and a not-applicable one never imply a gap, so
+none of them count. Firestore retains compatibility and
 extended-profile values; the latter requires its documented configuration and is not a
 production-deployment claim.
 
@@ -61,15 +68,22 @@ how many rows were left out; it is not imported by any page.
 
 ### What a visitor sees, and what they do not
 
-- **Never published:** the production baseline column, official reference links,
-  repository and test links, revisions, branch names, evidence labels, file names and
-  the source documents themselves. A leak scan stops the sync if any of it survives
+- **Never published:** the production baseline column, repository and test links,
+  revisions, branch names, evidence labels, file names and the source documents
+  themselves. The one outbound link per feature is Google's own documentation (below). A leak scan stops the sync if any of it survives
   into a note, and `scripts/verify-emulator-comparisons.test.mjs` checks the data again.
 - **Every row is described.** The documents carry a `Description` for each compared
   feature (the `description` column of the BigQuery CSV): one or two sentences on what the
   production feature is or does, with no mention of any emulator. It is the first thing
   Details shows, so the cell is never empty, and the filters search it. The contract is in
   `docs/prompts/upstream/descriptions.md`.
+- **Every row links Google's documentation.** The documents carry an official reference per
+  feature (`Official Google reference`, `Official production reference` or `Official Spanner
+  reference`; the `google_documentation` column of the BigQuery CSV). The importer takes
+  the first link in that cell, resolving reference-style links such as `[x][g-bi]` against
+  the definitions at the end of the document, and keeps it only if it is `https` on
+  `cloud.google.com`, `docs.cloud.google.com`, `firebase.google.com` or
+  `developers.google.com`. Details shows it as "Google Cloud docs ↗" (or "Firebase docs").
 - **Notes are rewritten for visitors.** Link labels, evidence phrases and engineering
   terms are removed, "fork"/"upstream" become the product or competitor name, and
   nothing is invented: if only evidence remains, the note is empty. Some services show
@@ -95,6 +109,8 @@ The sync is fail-closed, so a changed document layout stops it instead of droppi
   cells, duplicate document IDs and unknown marks;
 - parsed counts that differ from the totals the document states (per column and state);
 - a document that no longer states its totals where the importer looks;
+- a compared row without an official Google documentation link, or whose only link is to a
+  repository, a test, an unofficial page or a look-alike host;
 - a compared row without a description, a description that only repeats the feature name,
   is too short or too long, or carries internal wording (rows the site hides included);
 - any internal wording left in a note after rewriting.

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
-import { comparisonStates, presentComparisonNotes, selectComparisonRows } from '../src/utils/emulator-comparisons.mjs';
+import { comparisonMarkState, comparisonStates, docsLabel, groupComparisonRows, groupLabel, presentComparisonNotes, selectComparisonRows } from '../src/utils/emulator-comparisons.mjs';
 
 const json = path => JSON.parse(readFileSync(new URL('../' + path, import.meta.url), 'utf8'));
 const metrics = json('src/data/emulator-comparisons/index.json');
@@ -26,19 +26,50 @@ test('rendered vocabulary preserves SQL meaning', () => {
     'partial index; source-name resolution; verification open; validation: limited; Behavior boundary: limit');
 });
 
-test('advantages require explicit baseline absence; unknowns and scoped local behavior never count', () => {
+test('only in LocalCloud needs an explicit baseline absence; a limited LocalCloud result still counts and unknowns never do', () => {
   const rows = [
     { id: 'gap', local: 'available', other: 'unavailable' },
     { id: 'no-effect', local: 'available', other: 'no-effect' },
     { id: 'unassessed', local: 'available', other: 'unknown' },
     { id: 'scoped', local: 'limited', other: 'unavailable' },
-    { id: 'broader', local: 'available', other: 'limited' },
+    { id: 'limited-elsewhere', local: 'available', other: 'limited' },
     { id: 'shared', local: 'available', other: 'available' },
     { id: 'na', local: 'available', other: 'na' },
+    { id: 'missing-here', local: 'unavailable', other: 'unavailable' },
   ];
-  assert.deepEqual(selectComparisonRows(rows).map(row => row.id), ['gap', 'no-effect']);
-  assert.deepEqual(selectComparisonRows(rows, { mode: 'broader' }).map(row => row.id), ['broader']);
+  assert.deepEqual(selectComparisonRows(rows).map(row => row.id), ['gap', 'no-effect', 'scoped']);
   assert.equal(selectComparisonRows(rows, { mode: 'all' }).length, rows.length);
+  assert.deepEqual(selectComparisonRows(rows, { mode: 'all', query: 'LIMITED-ELSE' }).map(row => row.id), ['limited-elsewhere']);
+});
+
+test('a documented limit reads as supported, so Scoped never appears as a result', () => {
+  assert.equal(comparisonMarkState('limited'), 'available');
+  assert.equal(comparisonStates.limited, comparisonStates.available);
+  assert.ok(!Object.values(comparisonStates).includes('Scoped'));
+  for (const state of ['available', 'unavailable', 'unknown', 'na', 'no-effect']) assert.equal(comparisonMarkState(state), state);
+});
+
+test('rows group by category in document order with the counts a header states', () => {
+  const rows = [
+    { id: 'a', area: 'Buckets', local: 'available', other: 'unavailable' },
+    { id: 'b', area: 'Objects', local: 'available', other: 'available' },
+    { id: 'c', area: 'Buckets', local: 'limited', other: 'no-effect' },
+    { id: 'd', area: 'Buckets', local: 'available', other: 'available' },
+  ];
+  const groups = groupComparisonRows(rows);
+  assert.deepEqual(groups.map(({ area, total, exclusive }) => [area, total, exclusive]), [['Buckets', 3, 2], ['Objects', 1, 0]]);
+  assert.deepEqual(groups[0].rows.map(row => row.id), ['a', 'c', 'd']);
+  assert.equal(groupLabel(groups[0]), '2 only in LocalCloud');
+  assert.equal(groupLabel(groups[0], { mode: 'all' }), '3 features · 2 only in LocalCloud');
+  assert.equal(groupLabel(groups[1], { mode: 'all' }), '1 feature · 0 only in LocalCloud');
+  assert.equal(groupLabel(groups[0], { hasCompetitor: false }), '3 features');
+});
+
+test('documentation links are labelled by the family of Google documentation they open', () => {
+  assert.equal(docsLabel('https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/insert'), 'Google Cloud docs');
+  assert.equal(docsLabel('https://cloud.google.com/bigquery/docs/reference/standard-sql/functions-and-operators#abs'), 'Google Cloud docs');
+  assert.equal(docsLabel('https://firebase.google.com/docs/firestore/quotas'), 'Firebase docs');
+  assert.equal(docsLabel('https://developers.google.com/workspace'), 'Google docs');
 });
 
 for (const service of services) {
@@ -58,6 +89,7 @@ for (const service of services) {
       'every document row is either published or accounted for as hidden');
     for (const row of rows) {
       assert.ok(row.name && row.area, row.id);
+      assert.match(row.docs, /^https:\/\/(?:docs\.cloud\.google\.com|cloud\.google\.com|firebase\.google\.com|developers\.google\.com)\/[^\s]+$/, `${row.id}: every feature links Google's own documentation`);
       assert.equal(typeof row.notes, 'string');
       assert.ok(row.description.length >= 24 && row.description.length <= 400, `${row.id}: every feature has a description a visitor can read`);
       assert.match(row.description, /[.!?]$/, row.id);
@@ -66,14 +98,17 @@ for (const service of services) {
       if (hasCompetitor) assert.ok(row.other in comparisonStates, row.id);
       assert.ok(!row.default || row.default in comparisonStates);
     }
-    assert.deepEqual(counts, { total: rows.length, exclusive: selectComparisonRows(rows).length, broader: selectComparisonRows(rows, { mode: 'broader' }).length });
+    assert.deepEqual(counts, { total: rows.length, exclusive: selectComparisonRows(rows).length });
+    assert.equal(groupComparisonRows(rows).reduce((sum, group) => sum + group.total, 0), rows.length, 'every row sits in a category');
+    assert.equal(groupComparisonRows(rows).reduce((sum, group) => sum + group.exclusive, 0), counts.exclusive);
     const last = rows.at(-1);
-    assert.ok(selectComparisonRows(rows, { mode: 'all', query: last.id, area: last.area }).some(row => row.id === last.id), 'search covers the complete inventory');
+    assert.ok(selectComparisonRows(rows, { mode: 'all', query: last.id }).some(row => row.id === last.id), 'search covers the complete inventory');
   });
 
   test(`${service}: published rows carry no internal wording`, () => {
     for (const row of inventory(service)) {
       for (const pattern of internal) assert.ok(!pattern.test(row.notes), `${row.id} notes match ${pattern}`);
+      assert.ok(!/https?:\/\//.test(`${row.name} ${row.area} ${row.notes} ${row.description}`), `${row.id}: links live only in the docs field`);
       for (const pattern of descriptionInternal) assert.ok(!pattern.test(row.description), `${row.id} description matches ${pattern}`);
       for (const pattern of identifying) assert.ok(!pattern.test(`${row.name} ${row.area}`), `${row.id} name or area matches ${pattern}`);
     }

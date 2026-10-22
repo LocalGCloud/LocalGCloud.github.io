@@ -1,13 +1,14 @@
 import indexed from './emulator-comparisons/index.json';
 
-const metrics = indexed as Record<string, { total: number; exclusive: number; broader: number; hasCompetitor: boolean }>;
+const metrics = indexed as Record<string, { total: number; exclusive: number; hasCompetitor: boolean }>;
 
 // Visitor-facing rows written by scripts/sync-emulator-comparisons.py. `other` is absent for services
 // whose comparison document has no competitor column (then `hasCompetitor` is false and the competitor
 // details below stay unused); `default` only where a second profile exists. `description` says what the production
-// feature is and is always present; `notes` states how the result differs and is often empty.
+// feature is and `docs` is Google's own documentation page for it; both are always present. `area` is the category the
+// page groups features under. `notes` states how the result differs and is often empty.
 export interface ComparisonRow {
-  id: string; name: string; area: string; local: string; other?: string; default?: string; description: string; notes: string;
+  id: string; name: string; area: string; local: string; other?: string; default?: string; description: string; docs: string; notes: string;
 }
 interface ComparisonDefinition {
   id: string; slug: string; name: string; engine: string; competitor?: string; baseline: string; baselineUrl: string;

@@ -50,7 +50,14 @@ so a change here is never silently dropped.
    column, or the `description` field of the CSV), written for developers and free of
    emulator, evidence and repository wording. The site shows it as the row's details, followed
    by the limit text when there is one. See [descriptions.md](descriptions.md).
-9. **Commit the document before syncing.** The importer reads the committed file and records
+9. **Every compared row links its official Google documentation** in the reference column
+   (`Official Google reference`, `Official production reference`, `Official Spanner reference`, or
+   `google_documentation` in the BigQuery CSV): one page that explains the feature, or the closest
+   parent page when production documents no page of its own. The link is `https` on
+   `cloud.google.com`, `docs.cloud.google.com`, `firebase.google.com` or `developers.google.com`;
+   never a repository, a proto file, a blog or a test. The site shows it as the row's documentation
+   link. Reference-style links (`[name][id]` with `[id]: https://...` at the end) are fine.
+10. **Commit the document before syncing.** The importer reads the committed file and records
    its digest.
 
 ## Working rules for every prompt below

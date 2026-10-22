@@ -25,6 +25,10 @@ GCS = """# Cloud Storage
 | ◐ Partial or limited | 0 | 1 | 0 |
 | ✗ Absent production contract | 0 | 1 | 1 |
 | Total rows | 2 | 2 | 2 |
+
+[g-bi]: https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/insert
+[g-lock]: https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/lockRetentionPolicy
+[buckets]: internal/buckets.go
 """
 
 # Same content with the columns reordered and renamed noise around them: roles, not positions, identify columns.
@@ -144,6 +148,35 @@ class Tables(unittest.TestCase):
             sync.bigquery_rows('capability_id,feature_name\nx,y\n')
 
 
+class DocsLinks(unittest.TestCase):
+    links = {'g-bi': 'https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/insert'}
+
+    def test_inline_reference_shortcut_bare_and_bracketed_links_resolve(self):
+        for cell in ['[Reference](https://docs.cloud.google.com/a)', '[buckets.insert][g-bi]', '[G-BI]', 'see https://cloud.google.com/b.', '<https://firebase.google.com/c>']:
+            self.assertTrue(sync.docs_url(cell, self.links), cell)
+        self.assertEqual(sync.docs_url('[x][g-bi]', self.links), self.links['g-bi'])
+        self.assertEqual(sync.docs_url('see https://cloud.google.com/b.', {}), 'https://cloud.google.com/b')
+        self.assertEqual(sync.docs_url('<https://firebase.google.com/c>', {}), 'https://firebase.google.com/c')
+
+    def test_only_https_pages_on_google_documentation_hosts_reach_the_site(self):
+        for cell in ['[x](https://github.com/googleapis/googleapis/blob/master/a.proto)', '[x](http://docs.cloud.google.com/a)',
+                     '[x](https://docs.cloud.google.com.example.org/a)', '[x](https://evilcloud.google.com/a)', '[x][missing]', '', '—']:
+            self.assertEqual(sync.docs_url(cell, self.links), '', cell)
+
+    def test_the_first_official_link_wins_over_an_unofficial_one(self):
+        cell = '[source](https://github.com/x/y) and [docs](https://docs.cloud.google.com/z) and [more](https://cloud.google.com/q)'
+        self.assertEqual(sync.docs_url(cell, {}), 'https://docs.cloud.google.com/z')
+
+    def test_the_gcs_document_resolves_its_reference_style_links(self):
+        rows = sync.gcs_rows(GCS)
+        self.assertEqual([r['docs'] for r in rows], [self.links['g-bi'], 'https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/lockRetentionPolicy'])
+
+    def test_a_row_without_an_official_link_stops_the_sync(self):
+        with self.assertRaisesRegex(sync.SyncError, '1 rows lack an official Google documentation link .first: Lock retention'):
+            sync.check_docs('gcs', [dict(name='Create bucket', docs='https://docs.cloud.google.com/a'), dict(name='Lock retention', docs='')])
+        sync.check_docs('gcs', [dict(name='Create bucket', docs='https://docs.cloud.google.com/a')])
+
+
 class Descriptions(unittest.TestCase):
     def raw(self, name, description, **extra):
         return dict(name=name, description=description, **extra)
@@ -156,7 +189,7 @@ class Descriptions(unittest.TestCase):
 
     def test_descriptions_reach_the_published_rows_before_the_notes(self):
         rows, _ = sync.assemble('gcs', [dict(name='A', area='B', local='available', other='unavailable', note='', description='Does the thing.')])
-        self.assertEqual(list(rows[0]), ['id', 'name', 'area', 'local', 'other', 'description', 'notes'])
+        self.assertEqual(list(rows[0]), ['id', 'name', 'area', 'local', 'other', 'description', 'docs', 'notes'])
         self.assertEqual(rows[0]['description'], 'Does the thing.')
 
     def test_a_row_without_a_description_stops_the_sync(self):
@@ -216,13 +249,14 @@ class Descriptions(unittest.TestCase):
             ('ABS', 'unavailable', 'Returns the absolute value of a number.')])
         expected = sync.stated('bigtable', {sync.DOCUMENTS['bigtable'][1]: text}, rows)
         self.assertEqual(expected['other'], {'available': 1, 'limited': 0, 'unavailable': 2, 'unknown': 0})
-        self.assertEqual(sync.summarize(sync.assemble('bigtable', rows)[0]), {'total': 3, 'exclusive': 1, 'broader': 0, 'hasCompetitor': True})
+        self.assertEqual(sync.summarize(sync.assemble('bigtable', rows)[0]), {'total': 3, 'exclusive': 2, 'hasCompetitor': True})
 
     def test_bigquery_descriptions_come_from_the_csv_column(self):
         header = ','.join(sync.BIGQUERY_COLUMNS)
-        row = 'sql.function.abs,ABS,Returns the absolute value of a number.,sql,Function,implemented,implemented,'
+        row = 'sql.function.abs,ABS,Returns the absolute value of a number.,sql,Function,implemented,implemented,,https://cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#abs'
         rows = sync.bigquery_rows(header + '\n' + row + '\n')
         self.assertEqual(rows[0]['description'], 'Returns the absolute value of a number.')
+        self.assertEqual(rows[0]['docs'], 'https://cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#abs')
 
     def test_spanner_scorecards_carry_the_column(self):
         text = """### Data API and sessions
@@ -288,8 +322,9 @@ class Assembly(unittest.TestCase):
     def test_summary_counts_only_explicit_baseline_gaps(self):
         rows, _ = sync.assemble('spanner', [
             self.raw('gap'), self.raw('no effect', other='no-effect'), self.raw('unassessed', other='unknown'),
-            self.raw('scoped', local='limited'), self.raw('broader', other='limited'), self.raw('shared', other='available')])
-        self.assertEqual(sync.summarize(rows), {'total': 6, 'exclusive': 2, 'broader': 1, 'hasCompetitor': True})
+            self.raw('scoped', local='limited'), self.raw('limited elsewhere', other='limited'), self.raw('shared', other='available')])
+        # A limited LocalCloud result still works and the baseline lacks it, so it is only in LocalCloud.
+        self.assertEqual(sync.summarize(rows), {'total': 6, 'exclusive': 3, 'hasCompetitor': True})
 
     def test_bigtable_shows_contracts_only_where_they_limit_and_always_the_materialized_view_gap(self):
         text = """### Documented production RPCs
