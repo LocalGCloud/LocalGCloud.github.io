@@ -79,7 +79,7 @@
       "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:bbfaa4e6957189ca64d1149008cfa5211bef1c0c791ecfa6887cf514448de989",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:c4abbf92bd0a0e03511e9fec4a5750bdba151e7def263f7294819b0338cd19b8",
       "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:193ad4c0f2eb444a7a8c5170db4145874f4d283d8a1c2f175e4ae27e3228c73c",
-      "public/install.sh": "sha256:2c660fac584a1db052ef80956c0001fa6d71034fceb1e6617f81965741bcc796"
+      "public/install.sh": "sha256:0a7c2cd4f50aa0512ddeeb1574a8f66f70697853a47da3e78d288dcab1858956"
     },
     "worktreeSources": []
   },

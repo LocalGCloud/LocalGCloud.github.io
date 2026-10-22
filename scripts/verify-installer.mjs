@@ -275,6 +275,13 @@ esac
 `;
   await writeFile(join(mockBin, 'uname'), mockedUname, { mode: 0o755 });
   await chmod(join(mockBin, 'uname'), 0o755);
+  // Apple Silicon answers hw.optional.arm64 with 1; an Intel Mac has no such value.
+  const mockedSysctl = `#!/bin/sh
+[ "\${1:-}" = -n ] && [ "\${2:-}" = hw.optional.arm64 ] && [ -n "\${MOCK_SYSCTL_ARM64:-}" ] || exit 1
+printf '%s\\n' "$MOCK_SYSCTL_ARM64"
+`;
+  await writeFile(join(mockBin, 'sysctl'), mockedSysctl, { mode: 0o755 });
+  await chmod(join(mockBin, 'sysctl'), 0o755);
 
   const baseEnvironment = {
     HOME: home,
@@ -617,6 +624,58 @@ esac
     (error) => { if (error.code !== 'ENOENT') throw error; },
   );
 
+  const intelMac = { ...baseEnvironment, MOCK_UNAME_M: 'x86_64' };
+  for (const args of [[], ['--version', '0.1.12']]) {
+    const intelDir = join(home, 'intel-bin');
+    requestedPaths.length = 0;
+    const intel = await runInstaller(
+      ['--install-dir', intelDir, '--no-start', '--no-modify-path', ...args],
+      intelMac,
+      { expectFailure: true },
+    );
+    assert(
+      intel.stderr.includes('error: Intel Macs are not supported by LocalCloud CLI releases after 0.1.11'),
+      `Intel Mac ${args.join(' ') || 'latest'} install was not refused: ${intel.stderr}`,
+    );
+    assert(intel.stderr.includes('rerun with --version 0.1.11'), 'Intel Mac refusal omitted the last Intel build');
+    assert(requestedPaths.length === 0, 'Intel Mac refusal downloaded a release asset');
+    await assertPathMissing(intelDir, 'Intel Mac refusal touched the destination');
+  }
+
+  requestedPaths.length = 0;
+  const pinnedIntel = await runInstaller(
+    ['--install-dir', join(home, 'intel-pinned-bin'), '--no-start', '--no-modify-path', '--version', '0.1.1'],
+    intelMac,
+    { expectFailure: true },
+  );
+  assert(
+    requestedPaths.includes('/releases/download/v0.1.1/localcloud-darwin-amd64.tar.gz'),
+    `Intel Mac --version 0.1.1 did not request the Intel archive: ${pinnedIntel.stderr}`,
+  );
+
+  requestedPaths.length = 0;
+  const rosettaDir = join(home, 'rosetta-bin');
+  const rosetta = await runInstaller(
+    ['--install-dir', rosettaDir, '--no-start', '--no-modify-path'],
+    { ...intelMac, MOCK_SYSCTL_ARM64: '1' },
+  );
+  assert(rosetta.stdout.includes('Installed LocalCloud CLI 0.1.0'), 'Rosetta shell install did not succeed');
+  assert(
+    requestedPaths.includes(`/releases/latest/download/${assetName}`),
+    'Rosetta shell on Apple Silicon did not get the arm64 archive',
+  );
+
+  requestedPaths.length = 0;
+  await runInstaller(
+    ['--install-dir', join(home, 'linux-amd64-bin'), '--no-start', '--no-modify-path'],
+    { ...baseEnvironment, MOCK_UNAME_S: 'Linux', MOCK_UNAME_M: 'x86_64', MOCK_SYSCTL_ARM64: '1' },
+    { expectFailure: true },
+  );
+  assert(
+    requestedPaths.includes('/releases/latest/download/localcloud-linux-amd64.tar.gz'),
+    'Linux x86_64 did not request the linux-amd64 archive',
+  );
+
   const uninstall = await runInstaller(['--uninstall'], baseEnvironment);
   assert(uninstall.stdout.includes('persistent volumes remain intact'), 'uninstall did not explain retained runtime state');
   assert(uninstall.stdout.includes('Removed LocalCloud alias lc -> localcloud.'), 'uninstall did not report managed alias removal');
@@ -633,7 +692,7 @@ esac
   assert(!zshrcAfterUninstall.includes('# >>> LocalCloud installer >>>'), 'uninstall left the PATH block in place');
   assert((await readFile(join(runtimeData, 'preserved.txt'), 'utf8')) === 'persistent data\n', 'uninstall changed runtime data');
 
-  console.log('Installer verification passed: aliases, collisions, repair, install, pinning, prompts, preservation, platform rejection, and uninstall.');
+  console.log('Installer verification passed: aliases, collisions, repair, install, pinning, prompts, preservation, platform rejection, Intel Mac refusal, Rosetta, and uninstall.');
 } finally {
   if (server) await new Promise((resolve) => server.close(resolve));
   await rm(root, { recursive: true, force: true });

@@ -9,6 +9,8 @@ MANAGED_MARKER=.localcloud-script-install
 PATH_BLOCK_START='# >>> LocalCloud installer >>>'
 PATH_BLOCK_END='# <<< LocalCloud installer <<<'
 MANUAL_URL=https://local.cloud/docs/#manual-docker-path
+# The last release with an Intel macOS archive.
+LAST_INTEL_MAC_VERSION=0.1.11
 
 requested_version=
 install_dir=${LOCALCLOUD_INSTALL_DIR:-}
@@ -128,6 +130,22 @@ semantic_version() {
             ''|*[!0-9]*) return 1 ;;
         esac
     done
+}
+
+# Whether semantic version $1 is newer than $2.
+version_newer() {
+    semantic_version "$2" || return 1
+    base_major=$major
+    base_minor=$minor
+    base_patch=$patch
+    semantic_version "$1" || return 1
+    if [ "$major" -ne "$base_major" ]; then
+        [ "$major" -gt "$base_major" ]
+    elif [ "$minor" -ne "$base_minor" ]; then
+        [ "$minor" -gt "$base_minor" ]
+    else
+        [ "$patch" -gt "$base_patch" ]
+    fi
 }
 
 shell_quote() {
@@ -524,6 +542,17 @@ case $(uname -m 2>/dev/null || true) in
         "Use the manual Docker instructions at $MANUAL_URL."
        ;;
 esac
+if [ "$platform" = darwin ] && [ "$architecture" = amd64 ]; then
+    # A shell running under Rosetta on Apple Silicon reports x86_64.
+    if [ "$(sysctl -n hw.optional.arm64 2>/dev/null || true)" = 1 ]; then
+        architecture=arm64
+    elif [ -z "$requested_version" ] \
+        || version_newer "$requested_version" "$LAST_INTEL_MAC_VERSION"; then
+        fail \
+            "Intel Macs are not supported by LocalCloud CLI releases after $LAST_INTEL_MAC_VERSION" \
+            "Use the manual Docker instructions at $MANUAL_URL, or rerun with --version $LAST_INTEL_MAC_VERSION for the last Intel build, whose lc mcp does not start."
+    fi
+fi
 
 asset="localcloud-${platform}-${architecture}.tar.gz"
 release_root=${LOCALCLOUD_RELEASE_BASE_URL:-$DEFAULT_RELEASE_ROOT}
