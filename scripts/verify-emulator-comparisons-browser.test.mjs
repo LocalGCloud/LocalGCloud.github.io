@@ -42,6 +42,36 @@ const settled = page => page.waitForFunction(selector => {
 const status = page => page.$eval(`${activeTable} [data-comparison-status]`, node => node.textContent);
 const choose = async (page, mode) => { await page.click(`${activeTable} input[value="${mode}"]`); await settled(page); };
 
+function contrastRatio(foreground, background) {
+  const luminance = color => {
+    const channels = color.match(/[\d.]+/g).map(Number).map(value => color.startsWith('rgb(') ? value / 255 : value);
+    const linear = channels.map(value => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4);
+    return linear[0] * .2126 + linear[1] * .7152 + linear[2] * .0722;
+  };
+  const values = [luminance(foreground), luminance(background)];
+  return (Math.max(...values) + .05) / (Math.min(...values) + .05);
+}
+
+for (const width of [390, 1440]) {
+  test(`comparison controls reserve their space before binding at ${width}px`, async t => {
+    const page = await open(t, '/compare/emulators/', width);
+    await settled(page);
+    const positions = await page.evaluate(() => {
+      const content = document.querySelector('.comparison-content');
+      const table = content.querySelector('table');
+      const controls = [document.querySelector('[data-comparison-tabs]'), content.querySelector('[data-comparison-controls]')];
+      const top = () => [content.getBoundingClientRect().top, table.getBoundingClientRect().top];
+      const ready = top();
+      controls.forEach(node => { node.hidden = true; });
+      const pending = top();
+      controls.forEach(node => { node.hidden = false; });
+      return { ready, pending, link: getComputedStyle(document.querySelector('.comparison-notes a')).textDecorationLine };
+    });
+    assert.deepEqual(positions.pending, positions.ready, 'binding must not move the content or table');
+    assert.match(positions.link, /underline/, 'source links are distinguishable without relying on color');
+  });
+}
+
 const names = { 'cloud-storage': 'LocalCloud GCS', firestore: 'LocalCloud Firestore', bigtable: 'LocalCloud Bigtable', spanner: 'LocalCloud Spanner', bigquery: 'LocalCloud BigQuery' };
 // Counts come from the checked-in inventories so a refreshed document never needs this file edited.
 const ids = { 'cloud-storage': 'gcs', firestore: 'firestore', bigtable: 'bigtable', spanner: 'spanner', bigquery: 'bigquery' };
@@ -99,7 +129,7 @@ for (const slug of Object.keys(ids)) {
       assert.match(row.supportedClass, group.supported ? /comparison-count--supported/ : /comparison-count--zero/);
       assert.match(row.missingClass, group.missing ? /comparison-count--missing/ : /comparison-count--zero/);
       if (group.supported) assert.equal(row.supportedColor, 'rgb(19, 115, 51)');
-      if (group.missing) assert.equal(row.missingColor, 'rgb(234, 67, 53)');
+      if (group.missing) assert.ok(contrastRatio(row.missingColor, 'rgb(241, 243, 244)') >= 4.5, 'missing counts meet WCAG AA on category rows');
       assert.equal(row.details, '', 'the Details cell of a category row stays empty');
       assert.equal(row.cells, service.hasCompetitor ? 4 : 3);
     }
