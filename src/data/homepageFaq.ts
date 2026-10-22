@@ -27,7 +27,7 @@ export const homepageFaq: HomepageFaqEntry[] = [
 		question: "How does LocalCloud compare with LocalStack and Google's own emulators?",
 		answer: comparisonSummary.join(" "),
 		links: [
-			{ label: "Full comparison with sources", href: "/compare/" },
+			{ label: "Full comparison with sources", href: "/compare/emulators/#local-options" },
 			{ label: "LocalStack for Google Cloud", href: "/localstack-for-google-cloud/" },
 		],
 		showsComparison: true,

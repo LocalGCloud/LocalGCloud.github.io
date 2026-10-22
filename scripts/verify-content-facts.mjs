@@ -595,16 +595,16 @@ for (const release of releaseData.releases) {
 if (/\/releases\/tag\//.test(changelogHtml)) errors.push('changelog must link the GitHub releases list, not individual release pages');
 if (!changelogHtml.includes(`href="${productFacts.cliReleasesUrl}"`)) errors.push('changelog must link the GitHub releases list');
 
-// /compare/ publishes the alternatives table with its review date, and every fact about
+// /compare/emulators/ publishes the alternatives table with its review date, and every fact about
 // another product links the official source it was checked against. Facts about other
 // products go stale, so an old review warns rather than fails.
-const compareHtml = htmlPages.get('compare/index.html') ?? '';
+const compareHtml = htmlPages.get('compare/emulators/index.html') ?? '';
 const compareTable = compareHtml.match(/<table\b[^>]*data-alternatives-table="full"[\s\S]*?<\/table>/)?.[0] ?? '';
-if (!compareTable) errors.push('compare/index.html must publish the full alternatives table');
+if (!compareTable) errors.push('compare/emulators/index.html must publish the full alternatives table');
 else {
-  if (!compareTable.includes(`data-reviewed-at="${alternativesReviewedAt}"`) || !compareHtml.includes(`<time datetime="${alternativesReviewedAt}"`)) errors.push(`the /compare/ table must show its review date ${alternativesReviewedAt}`);
+  if (!compareTable.includes(`data-reviewed-at="${alternativesReviewedAt}"`) || !compareHtml.includes(`<time datetime="${alternativesReviewedAt}"`)) errors.push(`the /compare/emulators/ table must show its review date ${alternativesReviewedAt}`);
   for (const option of alternatives) {
-    if (!compareTable.includes(option.name)) errors.push(`the /compare/ table omits ${option.name}`);
+    if (!compareTable.includes(option.name)) errors.push(`the /compare/emulators/ table omits ${option.name}`);
     for (const [row, cell] of Object.entries(option.cells)) {
       // A generic category (community emulators) names no projects and links nothing;
       // every named product cites its source.
@@ -612,7 +612,7 @@ else {
       if (!option.generic && !cell.sources.length) errors.push(`alternatives: ${option.id}.${row} has no source`);
       for (const { href } of cell.sources) {
         if (option.id !== 'localcloud' && !href.startsWith('https://')) errors.push(`alternatives: ${option.id}.${row} must cite an official https source, not ${href}`);
-        if (!compareTable.includes(`href="${href}"`)) errors.push(`the /compare/ table omits the source ${href} for ${option.id}.${row}`);
+        if (!compareTable.includes(`href="${href}"`)) errors.push(`the /compare/emulators/ table omits the source ${href} for ${option.id}.${row}`);
       }
       if (/\$\d|\bprice\s*:/i.test(cell.text)) errors.push(`alternatives: ${option.id}.${row} states a price; describe plans, not amounts`);
     }
@@ -733,10 +733,10 @@ for (const file of htmlPages.keys()) {
   const setup = file.match(/^(agents\/[^/]+\/)index\.html$/)?.[1];
   if (setup && !agentsHubLinks.has(`/${setup}`)) errors.push(`the /agents/ hub must list /${setup}`);
 }
-for (const hub of ['/services/', '/workflows/', '/compare/', '/glossary/', '/blog/']) {
+for (const hub of ['/services/', '/workflows/', '/compare/emulators/', '/glossary/', '/blog/']) {
   if (!agentsHubLinks.has(hub)) errors.push(`the /agents/ hub must link the ${hub} hub`);
 }
-const repeatedHubPages = [...agentsHubLinks].filter((href) => /^\/(?:workflows|compare|glossary|blog)\/[^/]+\/$/.test(href));
+const repeatedHubPages = [...agentsHubLinks].filter((href) => href !== '/compare/emulators/' && /^\/(?:workflows|compare|glossary|blog)\/[^/]+\/$/.test(href));
 if (repeatedHubPages.length) errors.push(`the /agents/ hub repeats pages its section hubs list: ${repeatedHubPages.join(', ')}`);
 
 // Overlapping pages that stay separate (the pairs in src/data/relatedPages.ts; plan R7 merged

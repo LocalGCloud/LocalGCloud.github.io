@@ -25,7 +25,7 @@ const contentSources = {
   'src/pages/glossary/[slug].astro': agenticPage,
   'src/pages/workflows/[slug].astro': agenticPage,
   'src/pages/agents/index.astro': agenticIndex,
-  'src/pages/compare/index.astro': [...agenticIndex, 'src/data/alternatives.ts'],
+  'src/pages/compare/emulators/index.astro': ['src/data/alternatives.ts', 'src/data/agenticContent.ts'],
   'src/pages/glossary/index.astro': agenticIndex,
   'src/pages/workflows/index.astro': agenticIndex,
   'src/pages/ai/index.astro': ['src/data/agenticFacts.ts', 'src/data/agenticMarkdown.ts'],

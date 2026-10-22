@@ -476,7 +476,7 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 		slug: "google-emulators",
 		path: "/compare/google-emulators/",
 		parentLabel: "Compare",
-		parentPath: "/compare/",
+		parentPath: "/compare/emulators/",
 		eyebrow: "Comparison",
 		title: "LocalCloud vs Google Cloud Emulators for Agents",
 		description:
@@ -586,7 +586,7 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 		slug: "e2b-vercel-sandboxes",
 		path: "/compare/e2b-vercel-sandboxes/",
 		parentLabel: "Compare",
-		parentPath: "/compare/",
+		parentPath: "/compare/emulators/",
 		eyebrow: "Comparison",
 		title: "LocalCloud vs E2B and Hosted Sandboxes for GCP Agents",
 		description:
@@ -664,7 +664,7 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 		slug: "bigquery-emulator-alternatives",
 		path: "/compare/bigquery-emulator-alternatives/",
 		parentLabel: "Compare",
-		parentPath: "/compare/",
+		parentPath: "/compare/emulators/",
 		eyebrow: "Comparison",
 		title: "BigQuery Emulator Alternatives for Agents",
 		description:

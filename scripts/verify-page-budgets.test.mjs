@@ -54,6 +54,9 @@ const startupScriptBytes = 45_000;
 // 2026-10-15: load/idle warming for three desktop destinations adds 358 minified
 // bytes to the shared router and removes their network wait from the first click.
 const desktopPrefetchBytes = 400;
+// 2026-10-21: the comparison table renderer also sets each row's description and optional
+// note, 98 minified bytes on the pages that load it; the shared ceiling stays as is.
+const emulatorComparisonBytes = 120;
 const rawDocumentBytes = 21_800;
 // The Markdown twins of docs and service pages and the llms-full.txt bundle built from them
 // have their own ceilings: the largest twin measured on 2026-10-05, plus 10%, and the bundle
@@ -104,6 +107,7 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     const isHome = file === join(dist, 'index.html');
     const limits = {...htmlBudget, styleBytes:htmlBudget.styleBytes+mobileStyleBytes, startupScriptBytes};
     if (html.includes('data-desktop-manifest=')) limits.startupScriptBytes += desktopPrefetchBytes;
+    if (html.includes('data-emulator-comparison')) limits.startupScriptBytes += emulatorComparisonBytes;
     if (html.includes('data-agent-markdown')) for (const [metric, extra] of Object.entries(agentDocumentBytes)) limits[metric] += extra;
     if (html.includes('data-code-copy-template')) limits.rawBytes += codeCopyTemplateBytes;
     if (html.includes('data-example-verification')) for (const [metric, extra] of Object.entries(serviceInstructionBytes)) limits[metric] += extra;
