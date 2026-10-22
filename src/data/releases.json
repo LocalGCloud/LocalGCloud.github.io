@@ -2,6 +2,23 @@
   "repository": "https://github.com/LocalGCloud/localcloud-cli",
   "releases": [
     {
+      "version": "0.1.13",
+      "tag": "v0.1.13",
+      "title": "LocalCloud CLI 0.1.13",
+      "publishedAt": "2026-10-22",
+      "prerelease": false,
+      "url": "https://github.com/LocalGCloud/localcloud-cli/releases/tag/v0.1.13",
+      "summary": "Default runtime image: agentcloud/localcloud:latest. Supported hosts: macOS 13+ on Apple Silicon and Linux with glibc 2.35+ (Ubuntu 22.04 equivalent).",
+      "platforms": [
+        "Linux amd64",
+        "Linux arm64",
+        "macOS arm64"
+      ],
+      "checksums": true,
+      "sigstore": true,
+      "homebrewFormula": true
+    },
+    {
       "version": "0.1.12",
       "tag": "v0.1.12",
       "title": "LocalCloud CLI 0.1.12",
