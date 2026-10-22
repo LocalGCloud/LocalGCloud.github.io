@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import test, { before, after } from 'node:test';
 import puppeteer from 'puppeteer-core';
-import { comparisonPreviewSize, presentComparisonNotes } from '../src/utils/emulator-comparisons.mjs';
+import { comparisonMarkState, groupComparisonRows, presentComparisonNotes, resultsText } from '../src/utils/emulator-comparisons.mjs';
 
 const dist = new URL('../dist/', import.meta.url);
 const origin = 'https://local.cloud';
@@ -47,35 +47,81 @@ const names = { 'cloud-storage': 'LocalCloud GCS', firestore: 'LocalCloud Firest
 const ids = { 'cloud-storage': 'gcs', firestore: 'firestore', bigtable: 'bigtable', spanner: 'spanner', bigquery: 'bigquery' };
 const metrics = JSON.parse(readFileSync(new URL('../src/data/emulator-comparisons/index.json', import.meta.url), 'utf8'));
 const stats = slug => metrics[ids[slug]];
-// Services without a competitor column list every feature on entry and offer no mode choice.
-const advantages = Object.fromEntries(Object.keys(ids).map(slug => [slug, stats(slug).hasCompetitor ? stats(slug).exclusive : stats(slug).total]));
-for (const [slug, count] of Object.entries(Object.fromEntries(Object.keys(ids).map(slug => [slug, stats(slug).total])))) {
-  test(`${slug}: all matching rows on one page, filters and concise service naming`, { timeout: 30000 }, async t => {
+const inventory = slug => JSON.parse(readFileSync(new URL(`../src/data/emulator-comparisons/${ids[slug]}.json`, import.meta.url), 'utf8'));
+const defaultMode = slug => stats(slug).hasCompetitor ? 'advantages' : 'all';
+// The categories a mode lists, in document order; a category with no feature only LocalCloud has is hidden in advantages mode.
+const categories = (slug, mode = defaultMode(slug)) => groupComparisonRows(inventory(slug)).filter(group => mode === 'all' || group.exclusive > 0);
+const featureCount = (groups, mode) => groups.reduce((sum, group) => sum + (mode === 'all' ? group.total : group.exclusive), 0);
+const entryStatus = (slug, mode = defaultMode(slug)) => { const groups = categories(slug, mode); return resultsText(featureCount(groups, mode), groups.length, mode); };
+const visibleGroups = page => page.$$eval(`${activeTable} [data-comparison-group]`, nodes => nodes.filter(node => !node.hidden).length);
+const openGroups = page => page.$$eval(`${activeTable} [data-comparison-group][open]`, nodes => nodes.length);
+const rowCount = page => page.$$eval(`${activeTable} tbody tr`, rows => rows.length);
+// Opens every listed category and waits until each one has drawn its features.
+const openAll = async page => {
+  await page.$$eval(`${activeTable} [data-comparison-group]:not([hidden])`, nodes => nodes.forEach(node => { node.open = true; }));
+  await page.waitForFunction(selector => [...document.querySelectorAll(`${selector} [data-comparison-group]:not([hidden])`)].every(node => node.querySelector('tbody')?.children.length), {}, activeTable);
+};
+
+for (const slug of Object.keys(ids)) {
+  test(`${slug}: categories start collapsed, open to documented features and filter by search`, { timeout: 60000 }, async t => {
     const page = await open(t, `/compare/emulators/${slug}/?view=classic`);
     await settled(page);
-    assert.equal(await page.$$eval('tbody tr', rows => rows.length), advantages[slug], 'entry loads every advantage automatically');
-    assert.equal(await page.$eval('thead th:nth-child(2)', node => node.textContent.trim()), names[slug]);
-    assert.equal(await page.$$eval('main time', nodes => nodes.length), 0);
-    assert.equal(await page.$$eval('[data-comparison-next], [data-comparison-previous]', nodes => nodes.length), 0);
+    const service = stats(slug), mode = defaultMode(slug), groups = categories(slug);
+    assert.equal(await visibleGroups(page), groups.length, 'one category per document section that has something to show');
+    assert.equal(await openGroups(page), 0, 'categories are collapsed by default');
+    assert.equal(await rowCount(page), 0, 'no feature rows until a category opens');
+    assert.equal(await status(page), entryStatus(slug));
+    assert.deepEqual(await page.$$eval(`${activeTable} .comparison-group-name`, nodes => nodes.filter(node => !node.closest('[hidden]')).map(node => node.textContent)), groups.map(group => group.area));
+    const meta = await page.$eval('.comparison-meta', node => node.textContent.replace(/\s+/g, ' ').trim());
+    assert.equal(meta.replace(/ \(not in [^)]+\)$/, ''), `${service.total.toLocaleString('en-US')} features in total · ${service.exclusive.toLocaleString('en-US')} only available in LocalCloud`);
+    assert.match(meta, /\(not in [^)]+\)$/, 'the line names the emulator the count is measured against');
+    assert.equal(await page.$$eval('select', nodes => nodes.length), 0, 'categories replace the area filter');
+    assert.equal(await page.$$eval('input[value="broader"]', nodes => nodes.length), 0);
+    assert.equal(await page.$$eval('[data-comparison-controls] input[type="radio"]', radios => radios.length), service.hasCompetitor ? 2 : 1);
     assert.equal(await page.$eval('[data-comparison-agent]', node => getComputedStyle(node).display), 'none');
     assert.ok(!await page.$eval('main', node => node.innerText.includes('JSON comparison view')));
-    if (stats(slug).hasCompetitor) await choose(page, 'all');
-    else assert.equal(await page.$$eval('[data-comparison-controls] input[type="radio"]', radios => radios.length), 1, 'no mode choice without a competitor');
-    assert.match(await status(page), new RegExp(`Showing ${count} matching rows`));
-    assert.equal(await page.$$eval('tbody tr', rows => rows.length), count, 'All features renders the entire inventory');
-    assert.equal(await page.$$eval('thead th', cells => cells.length), stats(slug).hasCompetitor ? 4 : 3);
-    const area = await page.$eval('select', select => select.options[1].value);
-    await page.select('select', area); await settled(page);
-    assert.ok(await page.$$eval('tbody th small', (nodes, area) => nodes.length > 0 && nodes.every(node => node.textContent === area), area));
-    await page.select('select', ''); await settled(page);
-    await page.type('input[type="search"]', 'no-such-feature-xyz'); await settled(page);
-    assert.match(await status(page), /No matching features/);
-    assert.equal(await page.$$eval('tbody tr', rows => rows.length), 0);
-    await page.$eval('input[type="search"]', input => { input.value = ''; input.dispatchEvent(new Event('input', { bubbles: true })); }); await settled(page);
-    assert.match(await status(page), new RegExp(`Showing ${count} matching rows`));
+
+    await page.click(`${activeTable} [data-comparison-group]:not([hidden]) summary`);
+    await page.waitForSelector(`${activeTable} [data-comparison-group][open] tbody tr`);
+    assert.equal(await rowCount(page), mode === 'all' ? groups[0].total : groups[0].exclusive, 'a category lists the features its header counts');
+    assert.equal(await page.$eval(`${activeTable} thead th:nth-child(2)`, node => node.textContent.trim()), names[slug]);
+    assert.equal(await page.$$eval(`${activeTable} thead th`, cells => cells.length), service.hasCompetitor ? 4 : 3);
+    assert.equal(await page.$$eval(`${activeTable} tbody th small`, nodes => nodes.length), 0, 'the category is the header, not repeated under each feature');
+    const sources = new Map(inventory(slug).map(row => [row.id, row]));
+    const shown = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => {
+      const link = row.querySelector('.comparison-doc a');
+      return { id: row.dataset.featureId, description: row.querySelector('td:last-child > p:first-child').textContent, href: link?.href, target: link?.target, rel: link?.rel, label: link?.firstElementChild.textContent, hidden: row.querySelector('.comparison-doc').hidden };
+    }));
+    for (const row of shown) {
+      const source = sources.get(row.id);
+      assert.ok(row.description.length > 20 && row.description === source.description, `${row.id}: the description explains the feature`);
+      assert.equal(row.hidden, false, `${row.id}: every feature links its documentation`);
+      assert.equal(row.href, new URL(source.docs).href);
+      assert.equal(row.target, '_blank');
+      assert.match(row.rel, /noopener/);
+      assert.match(row.label, /^(?:Google Cloud|Firebase|Google) docs$/);
+    }
     assert.equal(await page.$eval('.comparison-table td', node => getComputedStyle(node).paddingTop), '10px', 'dynamic rows retain compact table styling');
-    assert.equal(await page.$$eval('tbody details', nodes => nodes.length), 0);
-    assert.ok(await page.$$eval('tbody td:last-child > p:first-child', (nodes, expected) => nodes.length === expected && nodes.every(node => node.textContent.length > 20), count), 'every row explains the feature');
+    assert.equal(await page.$$eval('main details details', nodes => nodes.length), 0);
+
+    if (service.hasCompetitor) {
+      await choose(page, 'all');
+      assert.equal(await visibleGroups(page), categories(slug, 'all').length);
+      assert.equal(await rowCount(page), groups[0].total, 'All features lists every feature in the open category');
+      assert.equal(await status(page), entryStatus(slug, 'all'));
+    }
+    await page.type(`${activeTable} input[type="search"]`, 'no-such-feature-xyz'); await settled(page);
+    assert.match(await status(page), /No matching features/);
+    assert.equal(await visibleGroups(page), 0);
+    await page.$eval(`${activeTable} input[type="search"]`, input => { input.value = ''; input.dispatchEvent(new Event('input', { bubbles: true })); }); await settled(page);
+    assert.equal(await status(page), entryStatus(slug, service.hasCompetitor ? 'all' : mode));
+
+    const last = inventory(slug).at(-1);
+    await page.type(`${activeTable} input[type="search"]`, last.id); await settled(page);
+    assert.ok(await page.$(`${activeTable} [data-comparison-group][open] tr[data-feature-id="${last.id}"]`), 'a search opens the category holding the match');
+    assert.match(await status(page), /^\d[\d,]* matching features? in \d+ categor(?:y|ies)\.$/);
+    await page.$eval(`${activeTable} input[type="search"]`, input => { input.value = ''; input.dispatchEvent(new Event('input', { bubbles: true })); }); await settled(page);
+    assert.equal(await openGroups(page), 1, 'categories a search opened close again; the one the reader opened stays');
   });
 }
 
@@ -83,6 +129,7 @@ test('mobile filters search the complete inventory and restore shared URL state'
   const page = await open(t, '/compare/emulators/bigquery/?features=all&q=sql.function.abs&view=mobile&audience=humans&page=2', 390);
   await settled(page);
   assert.ok(await page.$eval('tbody', body => body.textContent.includes('ABS')));
+  assert.equal(await openGroups(page), await visibleGroups(page), 'every category with a match is open');
   assert.ok((await page.url()).includes('view=mobile'));
   assert.ok(!new URL(page.url()).searchParams.has('page'), 'obsolete pagination parameters are removed');
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'only the table region scrolls horizontally');
@@ -96,15 +143,15 @@ test('Desktop service-to-comparison navigation and return remount the controls',
   await page.click('main a[href*="/compare/emulators/?service=bigtable"]');
   await settled(page);
   assert.equal(await page.evaluate(() => window.comparisonNavigationMarker), marker, 'Desktop navigation keeps the shell');
-  assert.match(await status(page), new RegExp(`Showing ${advantages.bigtable} matching rows`));
+  assert.equal(await status(page), entryStatus('bigtable'));
   await page.click('[data-comparison-service="bigtable"] a.comparison-guide');
   await page.waitForSelector('[data-service-heading]');
   await page.click('main a[href*="/compare/emulators/?service=bigtable"]');
   await settled(page);
-  assert.match(await status(page), new RegExp(`Showing ${advantages.bigtable} matching rows`));
+  assert.equal(await status(page), entryStatus('bigtable'));
 });
 
-test('blocked inventory fetch keeps the preview and can retry', { timeout: 30000 }, async t => {
+test('blocked inventory fetch keeps the category list and can retry', { timeout: 30000 }, async t => {
   let client;
   const page = await open(t, '/compare/emulators/spanner/?view=classic', 1440, true, async page => {
     client = await page.createCDPSession();
@@ -113,29 +160,33 @@ test('blocked inventory fetch keeps the preview and can retry', { timeout: 30000
   });
   await settled(page);
   assert.match(await status(page), /Could not load/);
-  assert.equal(await page.$$eval('tbody tr', rows => rows.length), comparisonPreviewSize);
+  assert.equal(await visibleGroups(page), categories('spanner').length, 'the category headers need no download');
   await client.send('Network.setBlockedURLs', { urls: [] });
-  await choose(page, 'broader');
-  assert.match(await status(page), new RegExp(`Showing ${stats('spanner').broader} matching rows`));
+  await choose(page, 'all');
+  assert.equal(await status(page), entryStatus('spanner', 'all'));
+  await page.click(`${activeTable} [data-comparison-group]:not([hidden]) summary`);
+  await page.waitForSelector(`${activeTable} [data-comparison-group][open] tbody tr`);
+  assert.equal(await rowCount(page), categories('spanner', 'all')[0].total);
 });
 
-test('without JavaScript the preview remains available without download links', { timeout: 30000 }, async t => {
+test('without JavaScript the categories remain listed with their counts and no download links', { timeout: 30000 }, async t => {
   const page = await open(t, '/compare/emulators/firestore/?view=classic', 390, false);
-  assert.equal(await page.$$eval('tbody tr', rows => rows.length), comparisonPreviewSize);
-  assert.ok(await page.$eval('main', node => node.textContent.includes('Compatibility:')));
+  const groups = categories('firestore');
+  assert.equal(await page.$$eval('main details', nodes => nodes.filter(node => !node.hidden).length), groups.length);
+  assert.deepEqual(await page.$$eval('main details', nodes => nodes.filter(node => !node.hidden).map(node => node.querySelector('.comparison-group-count').textContent)), groups.map(group => `${group.exclusive} only in LocalCloud`));
   assert.equal(await page.$$eval('main a[download]', links => links.length), 0);
   assert.equal(await page.$eval('[data-comparison-controls]', node => node.hidden), true);
-  assert.equal(await page.$eval('.comparison-state[data-state="available"] .comparison-mark', node => getComputedStyle(node, '::before').content), '"✓"');
-  assert.ok(await page.$$eval('tbody td:last-child > p:first-child', nodes => nodes.length === 10 && nodes.every(node => node.textContent.length > 20)), 'the static preview shows each row with its description inline');
-  assert.equal(await page.$$eval('main details', nodes => nodes.length), 0);
+  assert.equal(await page.$$eval('tbody tr', rows => rows.length), 0);
+  assert.ok(await page.$eval('main', node => node.textContent.includes('Enable JavaScript to list these features')));
 });
 
-test('agent audience exposes the complete JSON view', { timeout: 30000 }, async t => {
+test('agent audience exposes the complete JSON view with a documentation link for every row', { timeout: 30000 }, async t => {
   const page = await open(t, '/compare/emulators/bigquery/?view=classic&audience=agents');
   await settled(page);
   assert.notEqual(await page.$eval('[data-comparison-agent]', node => getComputedStyle(node).display), 'none');
   const data = await page.$eval('[data-comparison-agent] a', async link => (await fetch(link.href)).json());
   assert.equal(data.length, stats('bigquery').total);
+  assert.ok(data.every(row => /^https:\/\/(?:docs\.)?cloud\.google\.com\//.test(row.docs)));
   assert.equal(await page.$$eval('[data-comparison-agent] a', links => links.length), 1, 'source documents are not published');
   await page.click('.agent-document-header [data-target-audience="humans"]');
   await page.waitForFunction(() => document.documentElement.dataset.audience !== 'agents');
@@ -153,6 +204,8 @@ test('one-page workspace switches every service, loads on demand and restores hi
   assert.equal(inventories.length, 1, 'deep link loads only the selected inventory');
   assert.match(inventories[0], /bigquery\./);
   assert.equal(await page.$$eval('[role="tab"]', tabs => tabs.length), 5);
+  assert.deepEqual(await page.$$eval('[role="tab"] small', nodes => nodes.map(node => node.textContent)),
+    Object.keys(ids).map(slug => `${stats(slug).total.toLocaleString('en-US')} features · ${stats(slug).exclusive.toLocaleString('en-US')} only in LocalCloud`));
   assert.equal(await page.$eval('[role="tablist"]', node => node.getAttribute('aria-orientation')), 'vertical');
   const layout = await page.evaluate(() => {
     const tabs = document.querySelector('[role="tablist"]').getBoundingClientRect();
@@ -163,17 +216,18 @@ test('one-page workspace switches every service, loads on demand and restores hi
   const duplicates = await page.$$eval('main [id]', nodes => nodes.map(node => node.id).filter((id, index, ids) => ids.indexOf(id) !== index));
   assert.deepEqual(duplicates, [], 'shared content has unique IDs');
   await choose(page, 'all');
-  assert.equal(await page.$$eval(`${activeTable} tbody tr`, rows => rows.length), stats('bigquery').total);
+  assert.equal(await visibleGroups(page), categories('bigquery', 'all').length);
   await page.evaluate(() => window.workspaceMarker = 'retained');
-  for (const [slug, count] of Object.entries(advantages)) {
+  for (const slug of Object.keys(ids)) {
     await page.click(`[data-service-tab="${slug}"]`);
     await settled(page);
     assert.equal(new URL(page.url()).pathname, '/compare/emulators/');
     assert.equal(new URL(page.url()).searchParams.get('service'), slug);
     assert.equal(await page.evaluate(() => window.workspaceMarker), 'retained', 'tab switches never navigate');
-    assert.equal(await page.$eval(`${activeTable} thead th:nth-child(2)`, node => node.textContent.trim()), names[slug]);
+    assert.equal(await page.$eval(`[data-comparison-service="${slug}"] .comparison-heading`, node => node.textContent.trim()), names[slug]);
     if (stats(slug).hasCompetitor) await choose(page, 'advantages');
-    assert.equal(await page.$$eval(`${activeTable} tbody tr`, rows => rows.length), count);
+    assert.equal(await visibleGroups(page), categories(slug).length);
+    assert.equal(await status(page), entryStatus(slug));
   }
   assert.equal(inventories.length, 5, 'each service loads once');
   await page.goBack();
@@ -194,7 +248,7 @@ test('one-page workspace switches every service, loads on demand and restores hi
   assert.equal(inventories.length, 5, 'revisiting a service reuses its inventory');
 });
 
-test('mobile workspace keeps tabs above the table and retains view and audience', { timeout: 30000 }, async t => {
+test('mobile workspace keeps tabs above the categories and retains view and audience', { timeout: 30000 }, async t => {
   const page = await open(t, '/compare/emulators/?service=firestore&view=mobile&audience=agents', 390);
   await settled(page);
   assert.equal(await page.$eval('[role="tablist"]', node => node.getAttribute('aria-orientation')), 'horizontal');
@@ -216,11 +270,11 @@ test('Desktop tab switches stay in the content pane and Back restores the select
   await page.click('[data-service-tab="spanner"]'); await settled(page);
   assert.equal(new URL(page.url()).pathname, '/compare/emulators/');
   assert.equal(await page.evaluate(() => window.workspaceMarker), 'desktop');
-  assert.match(await status(page), new RegExp(`Showing ${stats('spanner').exclusive} matching rows`));
+  assert.equal(await status(page), entryStatus('spanner'));
   await page.goBack();
   await page.waitForFunction(() => document.querySelector('[role="tab"][aria-selected="true"]')?.dataset.serviceTab === 'firestore');
   await settled(page);
-  assert.match(await status(page), new RegExp(`Showing ${stats('firestore').exclusive} matching rows`));
+  assert.equal(await status(page), entryStatus('firestore'));
 });
 
 test('a slow inactive inventory cannot overwrite the active service filters or URL', { timeout: 30000 }, async t => {
@@ -238,39 +292,57 @@ test('a slow inactive inventory cannot overwrite the active service filters or U
   await page.click('[data-service-tab="spanner"]');
   await page.waitForFunction(() => typeof window.releaseInventory === 'function');
   await page.click('[data-service-tab="firestore"]'); await settled(page);
-  await choose(page, 'broader');
+  await choose(page, 'all');
   await page.evaluate(() => window.releaseInventory());
   await page.waitForFunction(() => !document.querySelector('[data-comparison-service="spanner"] [data-emulator-comparison]').hasAttribute('aria-busy'));
   assert.equal(new URL(page.url()).searchParams.get('service'), 'firestore');
-  assert.equal(new URL(page.url()).searchParams.get('features'), 'broader');
-  assert.match(await status(page), new RegExp(`Showing ${stats('firestore').broader} matching rows`));
+  assert.equal(new URL(page.url()).searchParams.get('features'), 'all');
+  assert.equal(await status(page), entryStatus('firestore', 'all'));
 });
 
-test('workspace without JavaScript retains the preview and real service links', { timeout: 30000 }, async t => {
+test('workspace without JavaScript retains the category list and real service links', { timeout: 30000 }, async t => {
   const page = await open(t, '/compare/emulators/?view=classic', 390, false);
-  assert.equal(await page.$$eval(`${activeTable} tbody tr`, rows => rows.length), comparisonPreviewSize);
+  assert.equal(await page.$$eval(`${activeTable} [data-comparison-group]`, nodes => nodes.filter(node => !node.hidden).length), categories('cloud-storage').length);
   assert.equal(await page.$eval('[role="tablist"]', tabs => tabs.hidden), true, 'interactive tabs stay hidden without JavaScript');
   assert.equal(await page.$eval('main a[href*="/compare/emulators/firestore/"]', node => new URL(node.href).pathname), '/compare/emulators/firestore/');
 });
 
-test('compact comparison shows rows immediately in Desktop, Classic and Mobile', { timeout: 30000 }, async t => {
+test('the first categories show immediately in Desktop, Classic and Mobile', { timeout: 30000 }, async t => {
   for (const [view, width] of [['desktop', 1440], ['classic', 1440], ['mobile', 390]]) {
     const page = await open(t, `/compare/emulators/?service=bigtable&view=${view}`, width);
     await page.setViewport({ width, height: 900 });
     await settled(page);
-    const position = await page.$eval(`${activeTable} tbody tr`, row => ({ top: row.getBoundingClientRect().top, bottom: row.getBoundingClientRect().bottom }));
-    assert.ok(position.top > 0 && position.bottom < (view === 'mobile' ? 780 : 700), `${view}: the first row is visible with room for more rows (${JSON.stringify(position)})`);
+    const position = await page.$eval(`${activeTable} [data-comparison-group]:not([hidden]) summary`, node => ({ top: node.getBoundingClientRect().top, bottom: node.getBoundingClientRect().bottom }));
+    assert.ok(position.top > 0 && position.bottom < (view === 'mobile' ? 780 : 700), `${view}: the first category is visible with room for more (${JSON.stringify(position)})`);
     assert.equal(await page.$eval('[data-comparison-service="bigtable"] .comparison-heading', node => getComputedStyle(node).fontSize), '20px');
-    assert.equal(await page.$$eval('[data-comparison-workspace] details', nodes => nodes.length), 0);
   }
 });
 
-test('availability marks retain accessible labels, all notes stay inline and profile duplicates disappear', { timeout: 30000 }, async t => {
-  const markdown = readFileSync(new URL('../dist/compare/emulators/cloud-storage.md', import.meta.url), 'utf8');
-  assert.match(markdown, /Available/); assert.match(markdown, /Not available/);
+test('a documented limit reads as a green check, never as a separate Scoped result', { timeout: 60000 }, async t => {
   const page = await open(t, '/compare/emulators/?view=classic');
   await settled(page);
   await choose(page, 'all');
+  await openAll(page);
+  const sources = new Map(inventory('cloud-storage').map(row => [row.id, row]));
+  assert.ok([...sources.values()].some(row => row.local === 'limited') && [...sources.values()].some(row => row.other === 'limited'), 'the sample contains limited results on both sides');
+  const marks = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => ({ id: row.dataset.featureId, states: [...row.querySelectorAll('.comparison-state')].filter(node => !node.closest('[hidden]')).map(node => node.dataset.state) })));
+  for (const row of marks) {
+    const source = sources.get(row.id);
+    assert.deepEqual(row.states, [comparisonMarkState(source.local), comparisonMarkState(source.other)], `${row.id}: a limited result shows the supported mark`);
+  }
+  assert.equal(await page.$$eval(`${activeTable} .comparison-state[data-state="limited"]`, nodes => nodes.length), 0);
+  assert.ok(!await page.$eval('main', node => node.innerText.includes('Scoped')));
+  const limited = [...sources.values()].find(row => row.local === 'limited' && row.notes);
+  assert.ok(await page.$eval(`${activeTable} tr[data-feature-id="${limited.id}"]`, row => row.querySelector('.comparison-limit').textContent.startsWith('Note: ')), 'the limit stays visible as a note');
+});
+
+test('availability marks keep accessible labels, notes stay inline and profile duplicates disappear', { timeout: 60000 }, async t => {
+  const markdown = readFileSync(new URL('../dist/compare/emulators/cloud-storage.md', import.meta.url), 'utf8');
+  for (const group of categories('cloud-storage')) assert.ok(markdown.includes(group.area), `${group.area}: the Markdown twin lists each category`);
+  const page = await open(t, '/compare/emulators/?view=classic');
+  await settled(page);
+  await choose(page, 'all');
+  await openAll(page);
   for (const [state, label, mark, color] of [['available', 'Available', '✓', 'rgb(19, 115, 51)'], ['unavailable', 'Not available', '✕', 'rgb(234, 67, 53)']]) {
     const output = await page.$eval(`${activeTable} .comparison-state[data-state="${state}"]`, node => {
       const mark = node.querySelector('.comparison-mark');
@@ -282,42 +354,45 @@ test('availability marks retain accessible labels, all notes stay inline and pro
   const { nodes } = await client.send('Accessibility.getFullAXTree');
   assert.ok(nodes.some(node => !node.ignored && node.name?.value === 'Available'));
   assert.ok(nodes.some(node => !node.ignored && node.name?.value === 'Not available'));
-  const inventory = JSON.parse(readFileSync(new URL('../src/data/emulator-comparisons/gcs.json', import.meta.url)));
+  const source = inventory('cloud-storage');
   const details = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => {
-    const [description, limit] = row.lastElementChild.querySelectorAll(':scope > p');
+    const [description, , limit] = row.lastElementChild.querySelectorAll(':scope > p');
     return { id: row.dataset.featureId, description: description.textContent, limit: limit && !limit.hidden ? limit.textContent : '' };
   }));
-  for (const row of inventory) {
+  assert.equal(details.length, source.length);
+  for (const row of source) {
     const shown = details.find(item => item.id === row.id);
     assert.equal(shown.description, row.description, `${row.id}: the description is always shown`);
     assert.equal(shown.limit, row.notes ? `Note: ${presentComparisonNotes(row.notes)}` : '', `${row.id}: the limit note follows it when there is one`);
   }
-  assert.equal(await page.$$eval('[data-comparison-workspace] details', nodes => nodes.length), 0);
   await page.click('[data-service-tab="firestore"]'); await settled(page);
+  await choose(page, 'all');
+  await openAll(page);
   const profiles = await page.$$eval(`${activeTable} tbody tr`, rows => {
     const cell = rows.find(row => row.querySelector('th > span').textContent === 'Required composite-index rejection for queries').querySelector('td');
     return [...cell.querySelectorAll('.comparison-state')].map(node => ({ state: node.dataset.state, label: node.querySelector('.comparison-label').textContent }));
   });
   assert.deepEqual(profiles, [{ state: 'available', label: 'Available' }, { state: 'unavailable', label: 'Not available' }]);
-  await choose(page, 'all');
   assert.ok(await page.$eval(`${activeTable} .comparison-state[data-state="unknown"]`, node => node.textContent.includes('Not assessed')));
-  const firestore = JSON.parse(readFileSync(new URL('../src/data/emulator-comparisons/firestore.json', import.meta.url)));
+  const firestore = inventory('firestore');
   const visibleProfiles = await page.$$eval(`${activeTable} tbody tr`, rows => rows.map(row => ({ id: row.dataset.featureId,
     states: [...row.querySelector('td').querySelectorAll('.comparison-state')].filter(node => !node.closest('[hidden]')).map(node => node.dataset.state) })));
   for (const row of firestore) {
-    assert.deepEqual(visibleProfiles.find(result => result.id === row.id).states, row.default === row.local ? [row.local] : [row.local, row.default]);
+    const local = comparisonMarkState(row.local), other = comparisonMarkState(row.default);
+    assert.deepEqual(visibleProfiles.find(result => result.id === row.id).states, other === local ? [local] : [local, other]);
   }
 });
 
 test('the longest comparison note and description remain fully visible as plain text', { timeout: 30000 }, async t => {
-  const inventory = JSON.parse(readFileSync(new URL('../src/data/emulator-comparisons/bigquery.json', import.meta.url)));
-  const row = inventory.reduce((longest, row) => row.notes.length > longest.notes.length ? row : longest);
+  const rows = inventory('bigquery');
+  const row = rows.reduce((longest, row) => row.notes.length > longest.notes.length ? row : longest);
   const page = await open(t, `/compare/emulators/?service=bigquery&features=all&q=${encodeURIComponent(row.id)}&view=mobile`, 390);
   await settled(page);
   const read = selector => page.$eval(`${activeTable} tbody td:last-child > ${selector}`, node => ({ text: node.textContent, display: getComputedStyle(node).display, clipped: node.scrollHeight > node.clientHeight + 1 }));
-  const text = await read('.comparison-limit'), description = await read('p:first-child');
+  const text = await read('.comparison-limit'), description = await read('p:first-child'), doc = await read('.comparison-doc');
   assert.equal(text.text, `Note: ${presentComparisonNotes(row.notes)}`);
   assert.equal(description.text, row.description);
-  for (const part of [text, description]) { assert.notEqual(part.display, 'none'); assert.equal(part.clipped, false); }
-  assert.equal(await page.$$eval('[data-comparison-workspace] details', nodes => nodes.length), 0);
+  assert.match(doc.text, /^(?:Google Cloud|Firebase|Google) docs ↗/);
+  for (const part of [text, description, doc]) { assert.notEqual(part.display, 'none'); assert.equal(part.clipped, false); }
+  assert.equal(await page.$$eval('[data-comparison-workspace] details details', nodes => nodes.length), 0);
 });

@@ -7,6 +7,7 @@
     "other": "available",
     "default": "available",
     "description": "Lets one project hold several Firestore databases, each with its own database ID, so documents, indexes and Security Rules in one database stay separate from the others.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/manage-databases",
     "notes": ""
   },
   {
@@ -17,6 +18,7 @@
     "other": "available",
     "default": "available",
     "description": "Reads a single document by its full resource path and returns its fields with its create and update times, or a not-found error when no document exists there.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/get",
     "notes": ""
   },
   {
@@ -27,6 +29,7 @@
     "other": "available",
     "default": "available",
     "description": "Creates a new document in a collection, using a caller-supplied or server-generated document ID, and fails if a document already exists at that path.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/createDocument",
     "notes": ""
   },
   {
@@ -37,6 +40,7 @@
     "other": "available",
     "default": "available",
     "description": "Updates or inserts a document at a path. With an update mask, only the listed fields change, and listed fields missing from the input are removed.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/patch",
     "notes": ""
   },
   {
@@ -47,6 +51,7 @@
     "other": "available",
     "default": "available",
     "description": "Deletes the document at a path, optionally only if a precondition holds, such as the document existing or having a particular update time.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/delete",
     "notes": ""
   },
   {
@@ -57,6 +62,7 @@
     "other": "available",
     "default": "available",
     "description": "Lists the documents in a collection under a parent path one page at a time, with optional page size, field mask and read time.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/list",
     "notes": ""
   },
   {
@@ -67,6 +73,7 @@
     "other": "available",
     "default": "available",
     "description": "Reads many documents by path in one request and streams back each document found or a marker for each missing one, optionally inside a transaction or at a past time.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/batchGet",
     "notes": ""
   },
   {
@@ -77,6 +84,7 @@
     "other": "available",
     "default": "available",
     "description": "Applies a list of writes atomically, so all of them take effect or none do, and returns a result for each write along with the commit time.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/commit",
     "notes": ""
   },
   {
@@ -87,6 +95,7 @@
     "other": "available",
     "default": "available",
     "description": "Applies a batch of writes without atomicity, in any order and at most one per document, and returns a separate status for each write.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/batchWrite",
     "notes": ""
   },
   {
@@ -97,6 +106,7 @@
     "other": "available",
     "default": "available",
     "description": "Limits a read to the fields listed in a document mask, so the returned document contains only those fields instead of the whole document.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -107,6 +117,7 @@
     "other": "available",
     "default": "available",
     "description": "Addresses a field inside nested maps with a dot-separated path, and quotes field names containing special characters with backticks so any field can be referenced.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -117,6 +128,7 @@
     "other": "available",
     "default": "available",
     "description": "Sets a field to the time at which the server processed the request, rather than a time supplied by the client.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -127,6 +139,7 @@
     "other": "available",
     "default": "available",
     "description": "Atomically adds a number to a numeric field on the server, and sets the field to that number when it is missing or not numeric.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -137,6 +150,7 @@
     "other": "available",
     "default": "available",
     "description": "Appends elements to an array field only when they are not already in it, and starts a new array when the field is missing or not an array.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -147,6 +161,7 @@
     "other": "available",
     "default": "available",
     "description": "Removes every occurrence of the given elements from an array field, and leaves an empty array when the field is missing or not an array.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -157,6 +172,7 @@
     "other": "available",
     "default": "available",
     "description": "Stores whole numbers as 64-bit signed integers and fractional numbers as 64-bit double-precision floats, as two distinct numeric value types.",
+    "docs": "https://firebase.google.com/docs/firestore/manage-data/data-types",
     "notes": ""
   },
   {
@@ -167,6 +183,7 @@
     "other": "available",
     "default": "available",
     "description": "Stores a latitude and longitude pair as a geographic point value and returns the same point when the document is read back.",
+    "docs": "https://firebase.google.com/docs/firestore/manage-data/data-types",
     "notes": ""
   },
   {
@@ -177,6 +194,7 @@
     "other": "available",
     "default": "available",
     "description": "Stores a reference to another document as a field value, holding the full resource path of that document.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -187,6 +205,7 @@
     "other": "available",
     "default": "available",
     "description": "Allows a document to be written in a subcollection even though its parent document was never created, because a subcollection path does not require its parent to exist.",
+    "docs": "https://firebase.google.com/docs/firestore/data-model",
     "notes": ""
   },
   {
@@ -197,6 +216,7 @@
     "other": "available",
     "default": "available",
     "description": "Lists the IDs of the collections directly under a document or the database root as they were at a chosen past read time.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -207,6 +227,7 @@
     "other": "available",
     "default": "available",
     "description": "Returns only documents whose field is exactly equal to a given value, such as a string, number or reference.",
+    "docs": "https://firebase.google.com/docs/firestore/manage-data/data-types",
     "notes": ""
   },
   {
@@ -217,6 +238,7 @@
     "other": "available",
     "default": "available",
     "description": "Matches documents whose field is less than, at most, greater than, at least, or not equal to a value, and can combine bounds to select a range.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": ""
   },
   {
@@ -227,6 +249,7 @@
     "other": "available",
     "default": "available",
     "description": "Matches documents whose field equals any one of the values in a list given in the filter.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": ""
   },
   {
@@ -237,6 +260,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Matches documents where the field exists, is not null, and differs from every value in a list given in the filter.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": "Unsupported combinations retained."
   },
   {
@@ -247,6 +271,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Combines several filters with a logical OR, so a document matches when at least one of them is true.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": "Combination restrictions remain."
   },
   {
@@ -257,6 +282,7 @@
     "other": "available",
     "default": "available",
     "description": "Matches documents whose array field holds a given value as one of its elements.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": ""
   },
   {
@@ -267,6 +293,7 @@
     "other": "available",
     "default": "available",
     "description": "Matches documents whose array field holds at least one of the values in a list of candidates.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": ""
   },
   {
@@ -277,6 +304,7 @@
     "other": "available",
     "default": "available",
     "description": "Queries all collections that share one collection ID, wherever they sit in the database, as a single query.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": ""
   },
   {
@@ -287,6 +315,7 @@
     "other": "available",
     "default": "available",
     "description": "Sorts query results by one or more fields, each ascending or descending, with later fields breaking ties between earlier ones.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": ""
   },
   {
@@ -297,6 +326,7 @@
     "other": "available",
     "default": "available",
     "description": "Starts or ends a query at a position given by field values, either just before or just after them, so ordered results can be read in pages.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": ""
   },
   {
@@ -307,6 +337,7 @@
     "other": "available",
     "default": "available",
     "description": "Restricts a query to return no more than a chosen number of documents, counted from the start of the sort order.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": ""
   },
   {
@@ -317,6 +348,7 @@
     "other": "available",
     "default": "available",
     "description": "Skips a given number of leading documents of a query before returning results, though skipped documents still count as reads.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -327,6 +359,7 @@
     "other": "available",
     "default": "available",
     "description": "Filters or orders a query on the document key, written __name__, for example to select a range of document IDs.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/queries",
     "notes": ""
   },
   {
@@ -337,6 +370,7 @@
     "other": "available",
     "default": "available",
     "description": "Returns how many documents match a query, without reading and returning the documents themselves.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/aggregation-queries",
     "notes": ""
   },
   {
@@ -347,6 +381,7 @@
     "other": "available",
     "default": "available",
     "description": "Returns the total of a numeric field across all documents matching a query.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/aggregation-queries",
     "notes": ""
   },
   {
@@ -357,6 +392,7 @@
     "other": "available",
     "default": "available",
     "description": "Returns the arithmetic mean of a numeric field across all documents matching a query.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/aggregation-queries",
     "notes": ""
   },
   {
@@ -367,6 +403,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Computes several aggregations, such as count, sum and average, over the same query in a single request.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/aggregation-queries",
     "notes": "shared-field/window restrictions."
   },
   {
@@ -377,6 +414,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Splits a collection group query into partitions by returning cursors at the split points, so separate workers can run the pieces in parallel.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/partitionQuery",
     "notes": ""
   },
   {
@@ -387,6 +425,7 @@
     "other": "available",
     "default": "available",
     "description": "Sorts the documents of a list request by an order-by string such as priority desc, instead of the default order by document name.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/list",
     "notes": ""
   },
   {
@@ -397,6 +436,7 @@
     "other": "unavailable",
     "default": "available",
     "description": "Returns the next page of an ordered list request when given the page token from the previous response, keeping the same sort order.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/list",
     "notes": ""
   },
   {
@@ -407,6 +447,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Lists documents in reverse document-name order by ordering on __name__ descending, with no field-based ordering.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/list",
     "notes": ""
   },
   {
@@ -417,6 +458,7 @@
     "other": "available",
     "default": "available",
     "description": "Lists documents from all collections directly under a parent when no collection ID is given, instead of from one named collection.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/list",
     "notes": ""
   },
   {
@@ -427,6 +469,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Applies a field-based sort to a list request that covers every collection under a parent because no collection ID was given.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/list",
     "notes": ""
   },
   {
@@ -437,6 +480,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "With show-missing set, a list across all collections under a parent also returns nonexistent documents that have nested subdocuments, as entries with a key but no fields.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.documents/list",
     "notes": ""
   },
   {
@@ -447,6 +491,7 @@
     "other": "available",
     "default": "available",
     "description": "Finds the stored vectors closest to a query vector by straight-line Euclidean distance, where a smaller distance means a closer match.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/vector-search",
     "notes": ""
   },
   {
@@ -457,6 +502,7 @@
     "other": "available",
     "default": "available",
     "description": "Finds the stored vectors most similar to a query vector by the angle between them, using cosine distance, which ignores vector length.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/vector-search",
     "notes": ""
   },
   {
@@ -467,6 +513,7 @@
     "other": "available",
     "default": "available",
     "description": "Finds the stored vectors most similar to a query vector by their dot product, which reflects both the angle between them and their lengths.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/vector-search",
     "notes": ""
   },
   {
@@ -477,6 +524,7 @@
     "other": "available",
     "default": "available",
     "description": "Keeps only nearest-neighbor results whose distance passes a set threshold, so weakly related documents are left out of the results.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/vector-search",
     "notes": ""
   },
   {
@@ -487,6 +535,7 @@
     "other": "available",
     "default": "available",
     "description": "Writes each nearest-neighbor result's computed distance into a chosen output field of the returned document.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/vector-search",
     "notes": ""
   },
   {
@@ -497,6 +546,7 @@
     "other": "unavailable",
     "default": "available",
     "description": "Runs a nearest-neighbor search on a vector field stored inside a map, addressed by its dotted field path.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/vector-search",
     "notes": ""
   },
   {
@@ -507,6 +557,7 @@
     "other": "available",
     "default": "available",
     "description": "Opens a listen stream on specific documents and first sends their current contents, before streaming any later changes.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -517,6 +568,7 @@
     "other": "available",
     "default": "available",
     "description": "Opens a listen stream on a query and first sends every matching document, followed by a marker that the result set is current.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -527,6 +579,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Streams only the documents added, modified or removed since the previous snapshot of a listened target, instead of resending the whole result.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -537,6 +590,7 @@
     "other": "available",
     "default": "available",
     "description": "Keeps a listener on a limited query full: when a document drops out of the results, the next matching document is brought in to take its place.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -547,6 +601,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Lets a listener reconnect with a resume token and receive only the changes made since that token, instead of the full result set.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -557,6 +612,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Starts a listen target after a chosen read time, so the stream sends only changes made since then, given the client already holds the earlier state.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -567,6 +623,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Tells the server how many documents the client last held for a target, so the server can check whether the resumed result set still matches.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -577,6 +634,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Sends a Bloom filter holding the names of all documents that match a listened target, which a client can use to find cached documents that no longer match.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -587,6 +645,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Lets a client resume a Write stream with its stream ID and the token of the last response it received, continuing from that position in the stream.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -597,6 +656,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Creates a composite index over several fields of a collection group, starting a long-running build, and returns the operation that tracks it.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -607,6 +667,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Reads one composite index by name, returning its query scope, fields and current state.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -617,6 +678,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Lists the composite indexes of a collection group one page at a time, optionally narrowed by a filter.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -627,6 +689,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Deletes a composite index by name, so queries can no longer be served from it.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -637,6 +700,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Sets a field's index to ascending order, which serves equality, range and ascending-sort queries on that field.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.fields",
     "notes": ""
   },
   {
@@ -647,6 +711,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Sets a field's index to descending order, which serves equality, range and descending-sort queries on that field.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.fields",
     "notes": ""
   },
   {
@@ -657,6 +722,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Sets a field's index to array-contains mode, which serves array-contains and array-contains-any queries on the elements of an array field.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.fields",
     "notes": ""
   },
   {
@@ -667,6 +733,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Turns off some or all automatic single-field indexes for a field, overriding the default indexing that every field otherwise gets.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.fields",
     "notes": ""
   },
   {
@@ -677,6 +744,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Reports that a field has no index settings of its own and follows the configuration of its ancestor field.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.fields",
     "notes": ""
   },
   {
@@ -687,6 +755,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Fails a query that needs a composite index which does not exist, with an error that describes the index to create.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/index-overview",
     "notes": ""
   },
   {
@@ -697,6 +766,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Fails an aggregation query, such as count or sum, when no index covers its filters and ordering, with an error naming the missing index.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/index-overview",
     "notes": ""
   },
   {
@@ -707,6 +777,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Fails a real-time listener on a query when an index it needs is missing, so the listener receives an error instead of results.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/index-overview",
     "notes": ""
   },
   {
@@ -717,6 +788,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Answers a query with several equality filters by merging separate single-field indexes, which avoids needing a dedicated composite index.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/index-overview",
     "notes": ""
   },
   {
@@ -727,6 +799,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Builds a new composite index in the background as a long-running operation, with the index in a creating state until it becomes ready.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.indexes",
     "notes": ""
   },
   {
@@ -737,6 +810,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Serves queries from an index only once its state is READY, never while it is still being built.",
+    "docs": "https://firebase.google.com/docs/firestore/query-data/index-overview",
     "notes": ""
   },
   {
@@ -747,6 +821,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Marks an index whose creation went wrong as NEEDS_REPAIR, a state with no active build operation where the most recent build failed.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.indexes",
     "notes": ""
   },
   {
@@ -757,6 +832,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Requests cancellation of an in-progress index build by cancelling the long-running operation that is creating the index, on a best-effort basis.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.indexes",
     "notes": ""
   },
   {
@@ -767,6 +843,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Applies a change to a field's index configuration as a long-running operation, so the new settings take effect only when it finishes.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.fields/patch",
     "notes": ""
   },
   {
@@ -777,6 +854,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Rejects a write that would give one document more index entries, across all of its indexes, than the per-document maximum allows.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -787,6 +865,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Rejects a write when a single index entry of a document would be larger than the maximum index entry size.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -797,6 +876,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Rejects a write when the combined size of all index entries of one document would exceed the per-document maximum.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -807,6 +887,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Indexes only the leading bytes of a very large field value, so queries on it can return inconsistent results, while the stored value stays complete.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -817,6 +898,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Creates a flat vector index on a vector field with a fixed number of dimensions, so nearest-neighbor queries can run on that field.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/vector-search",
     "notes": ""
   },
   {
@@ -827,6 +909,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Fails a nearest-neighbor query when no vector index covers its vector field and dimension, with an error describing the index to create.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/vector-search",
     "notes": ""
   },
   {
@@ -837,6 +920,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Returns the plan Firestore would use for a query, including the indexes it would read, without running the query.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain",
     "notes": ""
   },
   {
@@ -847,6 +931,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Runs a query and returns execution statistics, such as the time taken and the read operations performed, along with its results.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain",
     "notes": ""
   },
   {
@@ -857,6 +942,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Returns the plan Firestore would use for an aggregation query such as count, sum or average, without running it.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain",
     "notes": ""
   },
   {
@@ -867,6 +953,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Executes an aggregation query and reports how it ran, such as its duration and read operations, along with the aggregate results.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain",
     "notes": ""
   },
   {
@@ -877,6 +964,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Lists the indexes chosen for a query, each with its query scope and indexed properties, in the plan summary of an Explain report.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain-report-reference",
     "notes": ""
   },
   {
@@ -887,6 +975,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Reports how many index entries a query scanned while running, as one of the debug statistics of an analyze report.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain-report-reference",
     "notes": ""
   },
   {
@@ -897,6 +986,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Reports how many documents a query scanned while running, as one of the debug statistics of an analyze report.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain-report-reference",
     "notes": ""
   },
   {
@@ -907,6 +997,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Reports billing metrics for an analyzed query, such as billable documents, billable index entries and the minimum query cost.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain-report-reference",
     "notes": "Explicitly marks billing not simulated."
   },
   {
@@ -917,6 +1008,7 @@
     "other": "available",
     "default": "available",
     "description": "Runs reads and writes in a transaction that locks the documents it reads, so other writers must wait until the transaction finishes.",
+    "docs": "https://firebase.google.com/docs/firestore/transaction-data-contention",
     "notes": ""
   },
   {
@@ -927,6 +1019,7 @@
     "other": "available",
     "default": "available",
     "description": "Starts a read-only transaction whose reads all see one consistent snapshot of the database, and which cannot write.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -937,6 +1030,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Runs a read-write transaction without locking the documents it reads, and applies its writes only if none of those documents changed, otherwise retrying.",
+    "docs": "https://firebase.google.com/docs/firestore/transaction-data-contention",
     "notes": ""
   },
   {
@@ -947,6 +1041,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Sets the database-wide default concurrency mode, optimistic or pessimistic, that read-write transactions use unless one chooses otherwise.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases#ConcurrencyMode",
     "notes": ""
   },
   {
@@ -957,6 +1052,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Lets a single read-write transaction choose optimistic or pessimistic locking instead of the database default.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/transaction-data-contention",
     "notes": ""
   },
   {
@@ -967,6 +1063,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Rejects a write that would make a document larger than the maximum document size.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": "Selected boundaries, not every production limit."
   },
   {
@@ -977,6 +1074,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Rejects a single field value, such as a long string or bytes value, that is larger than the maximum size allowed for one value.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -987,6 +1085,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Rejects a document whose maps are nested deeper than the maximum allowed depth.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -997,6 +1096,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Rejects a request whose body is larger than the maximum API request size.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -1007,6 +1107,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Computes a document's stored size from its name, field names and values using documented per-type byte sizes, which count toward the document size limit.",
+    "docs": "https://firebase.google.com/docs/firestore/storage-size",
     "notes": ""
   },
   {
@@ -1017,6 +1118,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Limits how many field transforms, such as increments or array unions, a single document can have in one commit or transaction.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -1027,6 +1129,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Limits the size of a document's full resource name, so a path that is too long is rejected.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -1037,6 +1140,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Reads data as of a past read_time, which must be a microsecond-precision timestamp inside the allowed retention window.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -1047,6 +1151,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Makes concurrent transactions behave as if they ran one at a time, so none can observe the intermediate state of another.",
+    "docs": "https://firebase.google.com/docs/firestore/transaction-data-contention",
     "notes": ""
   },
   {
@@ -1057,6 +1162,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Times out and fails a transaction that stays open for more than 270 seconds in total.",
+    "docs": "https://firebase.google.com/docs/firestore/manage-data/transactions",
     "notes": ""
   },
   {
@@ -1067,6 +1173,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Times out and fails a transaction that has no reads or writes for 60 seconds.",
+    "docs": "https://firebase.google.com/docs/firestore/manage-data/transactions",
     "notes": ""
   },
   {
@@ -1077,6 +1184,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Fails a transaction that exceeds the 20-second lock deadline, after which Firestore releases the locks the transaction was holding.",
+    "docs": "https://firebase.google.com/docs/firestore/manage-data/transactions",
     "notes": ""
   },
   {
@@ -1087,6 +1195,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Turns point-in-time recovery on or off for a database, which controls whether past versions of its data are retained for recovery.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/pitr",
     "notes": ""
   },
   {
@@ -1097,6 +1206,7 @@
     "other": "unknown",
     "default": "limited",
     "description": "Keeps past versions of documents for one hour by default, so reads can target any recent time within that hour.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": ""
   },
   {
@@ -1107,6 +1217,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "With point-in-time recovery enabled, keeps past versions of documents for up to seven days, so reads can target a time in that window.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/pitr",
     "notes": ""
   },
   {
@@ -1117,6 +1228,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Requires a read time older than one hour to be a whole-minute timestamp inside the point-in-time recovery window.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/pitr",
     "notes": ""
   },
   {
@@ -1127,6 +1239,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Enables time-to-live on a timestamp field of a collection group, so documents are deleted automatically once the time in that field has passed.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/ttl",
     "notes": ""
   },
   {
@@ -1137,6 +1250,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Reads a field's configuration, including whether a TTL policy is set on it and what state that policy is in.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.fields/get",
     "notes": ""
   },
   {
@@ -1147,6 +1261,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Lists the fields that have a TTL policy by filtering a listing of field configurations, one page at a time.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.collectionGroups.fields/list",
     "notes": ""
   },
   {
@@ -1157,6 +1272,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Removes the TTL policy from a field, so documents are no longer deleted automatically based on its timestamp.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/ttl",
     "notes": ""
   },
   {
@@ -1167,6 +1283,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Deletes documents in the background after the timestamp in their TTL field has passed, without any delete request from a client.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/ttl",
     "notes": ""
   },
   {
@@ -1177,6 +1294,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Deleting an expired document through TTL does not delete the subcollections beneath it, which stay in place.",
+    "docs": "https://firebase.google.com/docs/firestore/ttl",
     "notes": ""
   },
   {
@@ -1187,6 +1305,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Creates a schedule that backs up a database automatically every day or every week, with a retention period for the backups it takes.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.backupSchedules",
     "notes": ""
   },
   {
@@ -1197,6 +1316,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Reads one backup schedule by name, returning its recurrence, retention period and creation time.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.backupSchedules",
     "notes": ""
   },
   {
@@ -1207,6 +1327,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Lists all backup schedules defined for a database.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.backupSchedules",
     "notes": ""
   },
   {
@@ -1217,6 +1338,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Changes an existing backup schedule, such as how long its backups are retained, using an update mask.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.backupSchedules",
     "notes": ""
   },
   {
@@ -1227,6 +1349,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Deletes a backup schedule so it takes no further backups, while the backups it already created are kept.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases.backupSchedules",
     "notes": ""
   },
   {
@@ -1237,6 +1360,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Takes a backup of the database once a day under a daily schedule, keeping each backup for the schedule's retention period.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/backups",
     "notes": ""
   },
   {
@@ -1247,6 +1371,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Takes a backup of the database once a week, on the chosen day of the week, under a weekly schedule.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/backups",
     "notes": ""
   },
   {
@@ -1257,6 +1382,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Reads the metadata of one backup, such as its source database, snapshot time, expiry time and state.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/backups",
     "notes": ""
   },
   {
@@ -1267,6 +1393,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Lists the backups of a project in a location, with the metadata of each one.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/backups",
     "notes": ""
   },
   {
@@ -1277,6 +1404,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Deletes a single backup by name, so it can no longer be used to restore a database.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/backups",
     "notes": ""
   },
   {
@@ -1287,6 +1415,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Removes a backup automatically once its expiration time has passed.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/backups",
     "notes": ""
   },
   {
@@ -1297,6 +1426,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Creates a new database from an existing backup, in the same location as that backup, as a long-running operation.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases/restore",
     "notes": ""
   },
   {
@@ -1307,6 +1437,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Creates a new database from a point-in-time snapshot of an existing database, taken at a whole-minute time inside the recovery window.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases/clone",
     "notes": ""
   },
   {
@@ -1317,6 +1448,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Exports documents to a Cloud Storage location as a long-running operation, either all collections or only the collection IDs listed.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases/exportDocuments",
     "notes": "Private snapshots are separate."
   },
   {
@@ -1327,6 +1459,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Imports documents into a database from files in Cloud Storage that an earlier export wrote, overwriting existing documents of the same name.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases/importDocuments",
     "notes": "No managed-format interchange."
   },
   {
@@ -1337,6 +1470,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Creates a Firestore database in Native mode, Standard edition, with a chosen database ID and location, as a long-running operation.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -1347,6 +1481,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Reads one database's settings, such as its location, type, concurrency mode, recovery settings and delete protection.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -1357,6 +1492,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Lists all Firestore databases in a project, each with its settings.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -1367,6 +1503,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Turns delete protection on or off for a database, which blocks deleting it while protection is enabled.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -1377,6 +1514,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Deletes a database, but refuses to do so while its delete protection is enabled.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -1387,6 +1525,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Gets or lists the status of long-running operations, such as index builds, exports and restores, that were started on a database.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -1397,6 +1536,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Asks the server to cancel a running long-running operation, such as an index build, on a best-effort basis.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
     "notes": ""
   },
   {
@@ -1407,6 +1547,7 @@
     "other": "available",
     "default": "available",
     "description": "Checks each client read and write of a document against the deployed Security Rules, allowing it only when a matching rule grants access.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules",
     "notes": ""
   },
   {
@@ -1417,6 +1558,7 @@
     "other": "available",
     "default": "available",
     "description": "Allows a query only when Security Rules would grant access to every document it could return, judged from the query's own constraints rather than its results.",
+    "docs": "https://firebase.google.com/docs/firestore/security/rules-query",
     "notes": ""
   },
   {
@@ -1427,6 +1569,7 @@
     "other": "unknown",
     "default": "available",
     "description": "Applies a separate Security Rules release to each database in a project, so the rules of one database do not affect another.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.releases",
     "notes": ""
   },
   {
@@ -1437,6 +1580,7 @@
     "other": "available",
     "default": "available",
     "description": "Represents a resource location as a typed Path value in a rule, and fills the variables of a path pattern from a map with the bind method.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules.Path",
     "notes": ""
   },
   {
@@ -1447,6 +1591,7 @@
     "other": "unavailable",
     "default": "available",
     "description": "Converts a string such as true into a boolean value in a rule expression, using the bool function.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules.Boolean",
     "notes": ""
   },
   {
@@ -1457,6 +1602,7 @@
     "other": "unavailable",
     "default": "available",
     "description": "Returns true when a number in a rule expression is positive or negative infinity.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules.math",
     "notes": ""
   },
   {
@@ -1467,6 +1613,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Caps how many document lookups, such as get and exists calls, one request's rule evaluation may make, with a higher cap for multi-document requests.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -1477,6 +1624,7 @@
     "other": "available",
     "default": "available",
     "description": "Allows a function defined in Security Rules to take at most seven arguments.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -1487,6 +1635,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Allows a function defined in Security Rules to declare at most ten let variable bindings.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -1497,6 +1646,7 @@
     "other": "available",
     "default": "available",
     "description": "Allows at most twenty path capture variables across the nested match statements of Security Rules.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
     "notes": ""
   },
   {
@@ -1507,6 +1657,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Splits a string at each match of a regular expression and returns the pieces as a list.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules.String",
     "notes": "Unicode/compile diagnostics remain bounded."
   },
   {
@@ -1517,6 +1668,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Replaces every match of a regular expression in a string with a substitution string and returns the result.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules.String",
     "notes": "Bounded string/regular-expression contracts."
   },
   {
@@ -1527,6 +1679,7 @@
     "other": "limited",
     "default": "limited",
     "description": "Returns true when the whole string matches a regular expression.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules.String",
     "notes": "Bounded string/regular-expression contracts."
   },
   {
@@ -1537,6 +1690,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Creates an immutable ruleset from rules source and returns it under a unique generated name; nothing enforces it until a release refers to it.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.rulesets/create",
     "notes": ""
   },
   {
@@ -1547,6 +1701,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Reads one ruleset by its resource name, returning its source files.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.rulesets/get",
     "notes": ""
   },
   {
@@ -1557,6 +1712,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Lists the rulesets of a project one page at a time, returning only their metadata and optionally filtered.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.rulesets/list",
     "notes": ""
   },
   {
@@ -1567,6 +1723,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Deletes a ruleset by its resource name, which fails while a release still refers to it.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.rulesets/delete",
     "notes": ""
   },
   {
@@ -1577,6 +1734,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Creates a named release that refers to a ruleset, so that rules-enabled services such as Firestore can enforce that ruleset.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.releases/create",
     "notes": ""
   },
   {
@@ -1587,6 +1745,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Reads one release by its resource name, returning the ruleset it points to and its create and update times.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.releases/get",
     "notes": ""
   },
   {
@@ -1597,6 +1756,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Lists the releases of a project one page at a time, optionally filtered by release name or ruleset name.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.releases/list",
     "notes": ""
   },
   {
@@ -1607,6 +1767,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Updates an existing release to point to a different ruleset, which switches the rules in force for its target.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.releases/patch",
     "notes": ""
   },
   {
@@ -1617,6 +1778,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Deletes a release by its resource name, ending the link between its target and the ruleset.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.releases/delete",
     "notes": ""
   },
   {
@@ -1627,6 +1789,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Checks Security Rules source, or an existing ruleset, for syntax and semantic problems and runs test cases against it, returning issues and results.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects/test",
     "notes": ""
   },
   {
@@ -1637,6 +1800,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Makes a rules test report only the expressions that were visited during evaluation, each with its location and evaluated value.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects/test",
     "notes": ""
   },
   {
@@ -1647,6 +1811,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Makes a rules test return detailed reporting on the expressions evaluated for each test case, with where each appears and what it evaluated to.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects/test",
     "notes": ""
   },
   {
@@ -1657,6 +1822,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Returns the compiled executable form of the ruleset a release points to, which an enforcement engine can run.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.releases/getExecutable",
     "notes": ""
   },
   {
@@ -1667,6 +1833,7 @@
     "other": "limited",
     "default": "unavailable",
     "description": "Runs a pipeline query, built from ordered stages such as where, sort and aggregate, on an Enterprise edition database and returns the results.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
     "notes": "Current edition option; Google stage coverage not established."
   },
   {
@@ -1677,6 +1844,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "A pipeline stage that runs text or geospatial searches within a collection or collection group, and must come first in the pipeline.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/pipeline/stages/transformation/search",
     "notes": "Current Google limitation."
   },
   {
@@ -1687,6 +1855,7 @@
     "other": "unknown",
     "default": "limited",
     "description": "Creates a database encrypted with a customer-managed Cloud KMS key named in its configuration, instead of a Google-managed key.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/cmek",
     "notes": "Configured host key service accepts KMS references; no key material or cryptographic encryption in this engine."
   },
   {
@@ -1697,6 +1866,7 @@
     "other": "unknown",
     "default": "limited",
     "description": "Allows or denies each Firestore request from server client libraries and APIs according to the IAM roles and permissions granted to the caller.",
+    "docs": "https://firebase.google.com/docs/firestore/security/iam",
     "notes": "Host IAM admission; standalone credentials and host enforcement are not the complete managed IAM service."
   },
   {
@@ -1707,6 +1877,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Replicates a database's data across several regions of a multi-region location, so it stays available if one region fails.",
+    "docs": "https://firebase.google.com/docs/firestore/locations",
     "notes": "Cloud infrastructure guarantee; neither emulator provides physical replication."
   },
   {
@@ -1717,6 +1888,7 @@
     "other": "unknown",
     "default": "limited",
     "description": "Makes requests to a CMEK database fail with FAILED_PRECONDITION while its key version is disabled or destroyed or Firestore may not use the key.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/cmek",
     "notes": "Configured engine enforces host key availability."
   },
   {
@@ -1727,6 +1899,7 @@
     "other": "unknown",
     "default": "limited",
     "description": "When the Cloud KMS key is rotated, re-encrypts the database with the key's latest primary version, keeping the old version available until that finishes.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/cmek",
     "notes": "Durable reference-state transitions; no cryptographic re-encryption claim."
   },
   {
@@ -1737,6 +1910,7 @@
     "other": "unknown",
     "default": "unavailable",
     "description": "Encrypts backups of a CMEK database with the key version in use when they are taken, and lets a restore keep that encryption, use a new key, or use Google default encryption.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/cmek",
     "notes": "Source/destination key checks; compatibility recovery only."
   },
   {
@@ -1747,6 +1921,7 @@
     "other": "unknown",
     "default": "limited",
     "description": "Rejects Firestore requests from mobile and web apps that lack a valid App Check token proving they come from your genuine app, once enforcement is on.",
+    "docs": "https://firebase.google.com/docs/app-check/enable-enforcement",
     "notes": "No Google attestation/token verification."
   },
   {
@@ -1757,6 +1932,7 @@
     "other": "available",
     "default": "limited",
     "description": "Runs a function when a document is first created at a matching path, passing the new document's data to the function.",
+    "docs": "https://firebase.google.com/docs/functions/firestore-events",
     "notes": "Firebase integration documented."
   },
   {
@@ -1767,6 +1943,7 @@
     "other": "available",
     "default": "limited",
     "description": "Runs a function when an existing document changes, passing the document's values from before and after the change.",
+    "docs": "https://firebase.google.com/docs/functions/firestore-events",
     "notes": "Not standalone managed Functions compute."
   },
   {
@@ -1777,6 +1954,7 @@
     "other": "available",
     "default": "limited",
     "description": "Runs a function when a document is deleted, passing the document's data as it was just before the deletion.",
+    "docs": "https://firebase.google.com/docs/functions/firestore-events",
     "notes": ""
   },
   {
@@ -1787,6 +1965,7 @@
     "other": "unavailable",
     "default": "unavailable",
     "description": "Commits to a Monthly Uptime Percentage for regional and multi-region Firestore databases and gives financial credits when it is not met.",
+    "docs": "https://cloud.google.com/firestore/sla",
     "notes": "Managed service guarantee; local emulator tests cannot supply an SLA."
   }
 ]

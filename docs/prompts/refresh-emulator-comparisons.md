@@ -27,7 +27,7 @@ a git worktree on a named branch, commit, rebase onto `main`, fast-forward `main
 python3 scripts/sync-emulator-comparisons.py --check ../local_cloud_dependencies
 ```
 
-It prints, per service, documented rows, rows shown, advantages, broader behaviors, rows
+It prints, per service, documented rows, rows shown, rows only in LocalCloud, rows
 hidden as unassessed or repeated, and whether the document has a competitor column, and it
 lists what is out of date. If nothing is out of date, say so and stop.
 
@@ -49,6 +49,7 @@ fix the cause in the importer, never by weakening a check:
 | `parsed rows do not match the document's own totals` | a table was renamed, split, or its columns changed, so rows were skipped or misread | open the document, update that service's role patterns (`spec`) in its adapter, re-run; the totals must then match exactly |
 | `no longer states its totals where the importer looks` | the metrics table moved or was reworded | update `stated()` for that service |
 | `the document repeats the row ID` | duplicate IDs upstream | report upstream |
+| `rows lack an official Google documentation link` | a feature was added without a reference on a Google documentation host, or its link points at a repository or an unofficial page | report upstream with the feature names and add the official page to the document's reference column; never write links on the site |
 | `rows have no description` / `unusable descriptions` | a feature was added without its `Description`, or it is blank filler, too short or leaks internal wording | report upstream with the feature names; never write descriptions on the site |
 | `notes still carry internal wording` | new evidence phrasing leaked into notes | extend `DROP` or `TERMS` for that service; never edit `LEAKS` to let it pass |
 | `lacks columns` (BigQuery CSV) | the generator changed its columns | update `BIGQUERY_COLUMNS` and the adapter |
@@ -61,7 +62,7 @@ change, using a small inline document that reproduces the new shape.
 Compare the new inventories with the previous ones (`git diff --stat`, then by row ID) and
 write a short summary per service:
 
-- documented vs shown rows; advantages and broader behaviors before and after;
+- documented vs shown rows; rows only in LocalCloud before and after;
 - rows added, removed, renamed (ID changes) and whose status changed, with the largest swings;
 - `hidden.unassessed` and `hidden.repeated`: each hidden unassessed LocalCloud row is a gap in
   the document, so list the biggest groups for the upstream owners;
@@ -75,7 +76,7 @@ write a short summary per service:
 - a change of baseline (emulator version or commit, production reference date). Update the
   `baseline`, `baselineUrl` and `scope` text so it still matches the document.
 
-A swing above roughly 10% in rows or advantages for one service is a signal to re-read that
+A swing above roughly 10% in rows or only-in-LocalCloud counts for one service is a signal to re-read that
 document before accepting it; say so in your report rather than assuming it is right.
 Do not "fix" a surprising count by changing a rule in the importer; explain it.
 
@@ -85,11 +86,13 @@ Do not "fix" a surprising count by changing a rule in the importer; explain it.
 pages are editorial. Check them against the changed documents. Rules:
 
 - Positive, capability-oriented wording; follow `docs/site-marketing-principles.md`. Two
-  categories only: never label anything "Partial" (limited results read "Scoped").
+  categories only: never label anything "Partial" or "Scoped"; a limited result shows the same
+  green check as a supported one and explains the limit in its note.
 - Name only what the naming policy allows: the competitor emulators on the comparison pages
   are already exempt in `scripts/verify-content-facts.mjs`; do not name any other project.
-- No person or branch names, no private-repository links, no official reference links and no
-  commit hashes in anything a visitor can see.
+- No person or branch names, no private-repository links, no repository, test or unofficial
+  links and no commit hashes in anything a visitor can see. The only outbound link is each
+  feature's official Google documentation page, taken from the document.
 - Firestore: the Extended profile drives advantages and requires its documented
   configuration; keep that stated.
 - Counts are inventory rows, not a feature count or a benchmark; keep the existing caveat.

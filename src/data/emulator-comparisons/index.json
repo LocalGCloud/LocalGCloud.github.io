@@ -1,32 +1,27 @@
 {
   "gcs": {
     "total": 227,
-    "exclusive": 52,
-    "broader": 2,
+    "exclusive": 68,
     "hasCompetitor": true
   },
   "firestore": {
     "total": 179,
-    "exclusive": 36,
-    "broader": 6,
+    "exclusive": 37,
     "hasCompetitor": true
   },
   "bigtable": {
     "total": 491,
-    "exclusive": 270,
-    "broader": 25,
+    "exclusive": 302,
     "hasCompetitor": true
   },
   "spanner": {
     "total": 757,
-    "exclusive": 177,
-    "broader": 39,
+    "exclusive": 178,
     "hasCompetitor": true
   },
   "bigquery": {
     "total": 1121,
-    "exclusive": 50,
-    "broader": 5,
+    "exclusive": 55,
     "hasCompetitor": true
   }
 }

@@ -6,6 +6,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Creates a new bucket in a project under a globally unique name, with its location, storage class and optional default access settings.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/insert",
     "notes": "Basic creation works; project validation and full resource fields differ."
   },
   {
@@ -15,6 +16,7 @@
     "local": "available",
     "other": "limited",
     "description": "Lists the buckets in a project and returns each bucket's resource with its name, location and settings.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/list",
     "notes": "fake-gcs-server lists globally; LocalCloud filters recorded ownership."
   },
   {
@@ -24,6 +26,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Reads one bucket's metadata resource, including its location, storage class, labels and settings such as versioning.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/get",
     "notes": "Metadata subset; project number and etag are placeholders."
   },
   {
@@ -33,6 +36,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Changes only the bucket fields included in the request, such as labels, versioning or the default object hold, and leaves the rest as they were.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/patch",
     "notes": "versioning/default hold subset."
   },
   {
@@ -42,6 +46,7 @@
     "local": "available",
     "other": "available",
     "description": "Permanently deletes a bucket after all of its objects have been removed.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/delete",
     "notes": ""
   },
   {
@@ -51,6 +56,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "A successful bucket deletion returns HTTP status 204 No Content with an empty response body.",
+    "docs": "https://docs.cloud.google.com/storage/docs/deleting-buckets",
     "notes": ""
   },
   {
@@ -60,6 +66,7 @@
     "local": "available",
     "other": "available",
     "description": "Refuses to delete a bucket that still contains objects and returns an error instead of removing the bucket or its contents.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/delete",
     "notes": ""
   },
   {
@@ -69,6 +76,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Checks a new bucket name against the naming rules, such as length limits, allowed characters, no IP address form and no goog prefix.",
+    "docs": "https://docs.cloud.google.com/storage/docs/buckets#naming",
     "notes": "Local format checks; not global uniqueness/domain ownership validation."
   },
   {
@@ -78,6 +86,7 @@
     "local": "available",
     "other": "available",
     "description": "Narrows a bucket listing to buckets whose names begin with a given string.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/list",
     "notes": ""
   },
   {
@@ -87,6 +96,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns a long bucket listing in pages, using a maximum page size and a page token to continue from the previous page.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/list",
     "notes": ""
   },
   {
@@ -96,6 +106,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Attaches a newly created bucket to the project named in the request, making that project the bucket's owner.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/insert",
     "notes": "JSON creates only; no project existence/number resolution."
   },
   {
@@ -105,6 +116,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Scopes a bucket listing to one project, so only buckets owned by the project named in the request are returned.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/list",
     "notes": "Exact recorded project string; seeded/gRPC-created buckets are unattributed."
   },
   {
@@ -114,6 +126,7 @@
     "local": "limited",
     "other": "limited",
     "description": "A bucket setting that keeps older generations of an object as noncurrent versions when it is overwritten or deleted, so they can be listed and restored.",
+    "docs": "https://docs.cloud.google.com/storage/docs/object-versioning",
     "notes": "Memory only; no filesystem version history."
   },
   {
@@ -123,6 +136,7 @@
     "local": "limited",
     "other": "limited",
     "description": "A bucket setting that places an event-based hold on every new object, which cannot be deleted or replaced until the hold is released.",
+    "docs": "https://docs.cloud.google.com/storage/docs/object-holds",
     "notes": "Flag stored; per-object event hold/enforcement not modeled."
   },
   {
@@ -132,6 +146,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns where a bucket stores its data and whether hierarchical namespace is on: its name, location, location type and namespace setting.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/getStorageLayout",
     "notes": ""
   },
   {
@@ -141,6 +156,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Creates a bucket with hierarchical namespace turned on, which organizes objects into real folders and allows atomic folder renames. It can be chosen only at creation.",
+    "docs": "https://docs.cloud.google.com/storage/docs/hns-overview",
     "notes": "Reports enabled: false."
   },
   {
@@ -150,6 +166,7 @@
     "local": "available",
     "other": "available",
     "description": "Lists the access control entries on a bucket, each pairing an entity such as a user or group with a role.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/bucketAccessControls/list",
     "notes": ""
   },
   {
@@ -159,6 +176,7 @@
     "local": "available",
     "other": "available",
     "description": "Reads the single access control entry that grants one named entity a role on a bucket.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/bucketAccessControls/get",
     "notes": ""
   },
   {
@@ -168,6 +186,7 @@
     "local": "available",
     "other": "available",
     "description": "Adds an access control entry to a bucket, granting a user, group, domain or special group a role such as reader or owner.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/bucketAccessControls/insert",
     "notes": ""
   },
   {
@@ -177,6 +196,7 @@
     "local": "available",
     "other": "available",
     "description": "Replaces the role of an existing bucket access control entry for an entity, using a full PUT request.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/bucketAccessControls/update",
     "notes": ""
   },
   {
@@ -186,6 +206,7 @@
     "local": "available",
     "other": "available",
     "description": "Removes the access control entry for a named entity from a bucket, ending the access that entry granted.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/bucketAccessControls/delete",
     "notes": ""
   },
   {
@@ -195,6 +216,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Lets a create request name a predefined ACL set, such as private or publicRead, which expands into the full list of bucket access entries.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/insert",
     "notes": "public/authenticated scopes only."
   },
   {
@@ -204,6 +226,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Updates a bucket's metadata with a PUT request, which can change fields the request does not mention; patch is generally preferred.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/update",
     "notes": "PATCH exists, bucket PUT is not registered."
   },
   {
@@ -213,6 +236,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "A bucket setting listing the origins, methods and response headers that browsers may use for cross-origin requests, plus a preflight cache time.",
+    "docs": "https://docs.cloud.google.com/storage/docs/cross-origin",
     "notes": "Global emulator CORS headers are not per-bucket CORS policy."
   },
   {
@@ -222,6 +246,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "The location chosen when a bucket is created, a region, dual-region or multi-region, which sets where its data is stored and affects availability, price and latency.",
+    "docs": "https://docs.cloud.google.com/storage/docs/locations",
     "notes": "One configured response location, no placement semantics."
   },
   {
@@ -231,6 +256,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Rules that automatically act on objects when conditions such as age or number of newer versions are met, for example deleting them or changing their storage class.",
+    "docs": "https://docs.cloud.google.com/storage/docs/lifecycle",
     "notes": "No lifecycle configuration or executor."
   },
   {
@@ -240,6 +266,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "A bucket setting that sets the minimum time objects must be kept before they can be deleted or replaced, given as a retention period in seconds.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets",
     "notes": "Bucket retention policy not modeled."
   },
   {
@@ -249,6 +276,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Permanently locks a bucket's retention policy so it can no longer be removed or shortened. The request must name the bucket's current metageneration.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/lockRetentionPolicy",
     "notes": "No lockRetentionPolicy route."
   },
   {
@@ -258,6 +286,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "A bucket setting that keeps deleted objects recoverable for a set number of seconds before they are permanently removed; zero turns it off.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets",
     "notes": "softDeletePolicy not modeled."
   },
   {
@@ -267,6 +296,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Brings a soft-deleted bucket back to live status, identified by its generation number, with its metadata but not its objects.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/restore",
     "notes": "No bucket restore route."
   },
   {
@@ -276,6 +306,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Changes part of a single bucket access control entry for an entity with a PATCH request, rather than replacing the whole entry.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/bucketAccessControls/patch",
     "notes": "PUT supported; ACL PATCH absent."
   },
   {
@@ -285,6 +316,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns an object's metadata, such as its size, content type, checksums, generation and storage class, without its data.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/get",
     "notes": ""
   },
   {
@@ -294,6 +326,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns an object's stored bytes rather than its metadata when a get request asks for media content.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/get",
     "notes": ""
   },
   {
@@ -303,6 +336,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns only the headers of an object, such as size, content type and checksums, with no body, using an XML API HEAD request.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/head-object",
     "notes": ""
   },
   {
@@ -312,6 +346,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns only a requested byte range of an object through the Range header, useful for resuming a download or reading part of a file.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/get",
     "notes": ""
   },
   {
@@ -321,6 +356,7 @@
     "local": "available",
     "other": "available",
     "description": "Decompresses an object stored with gzip content encoding while serving it, unless the client says it accepts gzip, so the client receives the original bytes.",
+    "docs": "https://docs.cloud.google.com/storage/docs/transcoding",
     "notes": ""
   },
   {
@@ -330,6 +366,7 @@
     "local": "available",
     "other": "available",
     "description": "Serves a gzip-encoded object still compressed, with a gzip content-encoding header, when the request accepts gzip or the object is marked no-transform.",
+    "docs": "https://docs.cloud.google.com/storage/docs/transcoding",
     "notes": ""
   },
   {
@@ -339,6 +376,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Lets an authenticated download request override the content type or content disposition returned for that one response without changing the stored object.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/get-object-download",
     "notes": "Local override handling; authenticated XML/RSA restrictions differ."
   },
   {
@@ -348,6 +386,7 @@
     "local": "available",
     "other": "available",
     "description": "Retrieves the objects stored in a bucket as a list of object resources with their metadata.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": ""
   },
   {
@@ -357,6 +396,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns only objects whose names begin with a given prefix, for example everything under a folder-like path.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": ""
   },
   {
@@ -366,6 +406,7 @@
     "local": "available",
     "other": "available",
     "description": "Groups object names at a delimiter, usually a slash, returning names without the delimiter as items and shared leading parts as prefixes, to mimic directories.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": ""
   },
   {
@@ -375,6 +416,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns only objects whose names match a glob pattern, which can use wildcards to select names across path levels.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": ""
   },
   {
@@ -384,6 +426,7 @@
     "local": "available",
     "other": "available",
     "description": "Responds with an error when the matchGlob value in a listing request is not a valid glob pattern.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": ""
   },
   {
@@ -393,6 +436,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns only objects whose names sort at or after the given value, an inclusive lower bound that begins a name range.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": ""
   },
   {
@@ -402,6 +446,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns only objects whose names sort before the given value, an exclusive upper bound that ends a name range.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": ""
   },
   {
@@ -411,6 +456,7 @@
     "local": "available",
     "other": "available",
     "description": "When listing with a delimiter, also returns the metadata of objects whose names end with that delimiter, in addition to listing them as prefixes.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": ""
   },
   {
@@ -420,6 +466,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Returns a long object listing in pages, with a maximum page size and a page token for the next page; each page counts objects and prefixes together.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": "object-only maxResults limit does not account for prefixes."
   },
   {
@@ -429,6 +476,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Includes every stored generation of each object, not only the live one, as separate results ordered by increasing generation when versions are requested.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
     "notes": "Memory versioning only."
   },
   {
@@ -438,6 +486,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Reads the metadata or data of one particular generation of an object, identified by its generation number, rather than the latest version.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/get",
     "notes": "Memory versioning only."
   },
   {
@@ -447,6 +496,7 @@
     "local": "available",
     "other": "available",
     "description": "Removes an object and its metadata from a bucket; with versioning or soft delete turned on, the data can remain recoverable.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/delete",
     "notes": ""
   },
   {
@@ -456,6 +506,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "A successful object deletion returns HTTP status 204 No Content with an empty response body.",
+    "docs": "https://docs.cloud.google.com/storage/docs/deleting-objects",
     "notes": ""
   },
   {
@@ -465,6 +516,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Permanently deletes one specific generation of an object by naming its generation number, leaving other generations in place.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/delete",
     "notes": "Filesystem has no history."
   },
   {
@@ -474,6 +526,7 @@
     "local": "available",
     "other": "available",
     "description": "Copies a source object to a destination name in a single request, optionally overriding metadata; the copy does not keep the source object's ACLs.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/copy",
     "notes": ""
   },
   {
@@ -483,6 +536,7 @@
     "local": "available",
     "other": "available",
     "description": "Copies a source object to a destination in one or more calls, returning a rewrite token to continue until the work is done, and can override metadata.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/rewrite",
     "notes": ""
   },
   {
@@ -492,6 +546,7 @@
     "local": "available",
     "other": "available",
     "description": "Concatenates up to 32 existing objects from one bucket into a single new object in that bucket, leaving the sources unchanged by default.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/compose",
     "notes": ""
   },
   {
@@ -501,6 +556,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Updates only the metadata fields named in the request, such as custom metadata or retention, and leaves other fields unchanged.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/patch",
     "notes": "Selected mutable fields; contexts/complete retention semantics differ."
   },
   {
@@ -510,6 +566,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Updates an object's metadata with a PUT request, which can change metadata fields that the request does not mention; patch is generally preferred.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/update",
     "notes": "Supported metadata subset; broader production resource not modeled."
   },
   {
@@ -519,6 +576,7 @@
     "local": "available",
     "other": "available",
     "description": "Lets a client that cannot send PATCH use a POST request with the method override header set to PATCH to apply a patch-style update.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api",
     "notes": "POST override to PATCH."
   },
   {
@@ -528,6 +586,7 @@
     "local": "available",
     "other": "available",
     "description": "Lets users attach their own key and value pairs to an object, sent as x-goog-meta headers in the XML API, and returns them with the object.",
+    "docs": "https://docs.cloud.google.com/storage/docs/metadata",
     "notes": ""
   },
   {
@@ -537,6 +596,7 @@
     "local": "available",
     "other": "available",
     "description": "Records the object's media type, such as image/png, which tells browsers and clients how to interpret its bytes.",
+    "docs": "https://docs.cloud.google.com/storage/docs/metadata",
     "notes": ""
   },
   {
@@ -546,6 +606,7 @@
     "local": "available",
     "other": "available",
     "description": "Records that an object's bytes are compressed, for example with gzip, while the content type still describes the underlying file.",
+    "docs": "https://docs.cloud.google.com/storage/docs/metadata",
     "notes": ""
   },
   {
@@ -555,6 +616,7 @@
     "local": "available",
     "other": "available",
     "description": "Records how a browser should present the object, such as showing it inline or offering it as a download with a given file name.",
+    "docs": "https://docs.cloud.google.com/storage/docs/metadata",
     "notes": ""
   },
   {
@@ -564,6 +626,7 @@
     "local": "available",
     "other": "available",
     "description": "Records the language or languages an object is intended for, using language codes such as en or fr.",
+    "docs": "https://docs.cloud.google.com/storage/docs/metadata",
     "notes": ""
   },
   {
@@ -573,6 +636,7 @@
     "local": "available",
     "other": "available",
     "description": "Records caching directives such as max-age or no-transform that control whether caches may store the object and for how long.",
+    "docs": "https://docs.cloud.google.com/storage/docs/metadata",
     "notes": ""
   },
   {
@@ -582,6 +646,7 @@
     "local": "available",
     "other": "available",
     "description": "Records a user-chosen timestamp on an object, used by lifecycle rules that act a number of days after that time; once set it cannot be moved earlier.",
+    "docs": "https://docs.cloud.google.com/storage/docs/metadata",
     "notes": ""
   },
   {
@@ -591,6 +656,7 @@
     "local": "available",
     "other": "available",
     "description": "Controls how much of an object's metadata a response includes: full returns every property, while noAcl leaves out the owner and access control list.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/get",
     "notes": ""
   },
   {
@@ -600,6 +666,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Sets a per-object retention mode, unlocked or locked, and a retain-until time before which the object cannot be deleted or replaced.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/patch",
     "notes": ""
   },
   {
@@ -609,6 +676,7 @@
     "local": "available",
     "other": "available",
     "description": "Lists the access control entries on an object, each granting an entity a role on that object.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objectAccessControls/list",
     "notes": ""
   },
   {
@@ -618,6 +686,7 @@
     "local": "available",
     "other": "available",
     "description": "Reads the single access control entry for a named entity on an object, for the latest generation or a specified one.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objectAccessControls/get",
     "notes": ""
   },
   {
@@ -627,6 +696,7 @@
     "local": "available",
     "other": "available",
     "description": "Adds an access control entry to an object, granting a user, group or special group a role such as reader or owner on it.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objectAccessControls/insert",
     "notes": ""
   },
   {
@@ -636,6 +706,7 @@
     "local": "available",
     "other": "available",
     "description": "Replaces the role of an existing object access control entry for an entity, using a full PUT request.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objectAccessControls/update",
     "notes": ""
   },
   {
@@ -645,6 +716,7 @@
     "local": "available",
     "other": "available",
     "description": "Removes the access control entry for a named entity from an object, ending the access that entry granted.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objectAccessControls/delete",
     "notes": ""
   },
   {
@@ -654,6 +726,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Looks up an object's access control entry for one specific generation of the object by passing its generation number, instead of the latest version.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objectAccessControls/get",
     "notes": "Memory history."
   },
   {
@@ -663,6 +736,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Applies a predefined access set such as private, publicRead or bucketOwnerRead to an object when it is uploaded, copied or composed.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/insert",
     "notes": "Emulator ACL model."
   },
   {
@@ -672,6 +746,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Lists the objects in a bucket through the XML API as a ListBucketResult document, with Contents entries, common prefixes and truncation markers.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/get-bucket-list",
     "notes": "Basic list/prefix/delimiter; continuation/version-listing fields incomplete."
   },
   {
@@ -681,6 +756,7 @@
     "local": "available",
     "other": "available",
     "description": "Downloads an object through the XML API from an address where the bucket name forms part of the host name and the object name is the path.",
+    "docs": "https://docs.cloud.google.com/storage/docs/request-endpoints",
     "notes": ""
   },
   {
@@ -690,6 +766,7 @@
     "local": "available",
     "other": "available",
     "description": "Downloads an object through the XML API from an address where the bucket name is the first segment of the path after the host.",
+    "docs": "https://docs.cloud.google.com/storage/docs/request-endpoints",
     "notes": ""
   },
   {
@@ -699,6 +776,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Deletes an object with an XML API DELETE request sent to an address whose host name begins with the bucket name.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/delete-object",
     "notes": ""
   },
   {
@@ -708,6 +786,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Changes part of a single object access control entry with a PATCH request, rather than replacing the whole entry.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objectAccessControls/patch",
     "notes": "PUT supported; ACL PATCH absent."
   },
   {
@@ -717,6 +796,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Restores a soft-deleted object by creating a new live copy in the same bucket from a named generation, with the metadata it had before deletion.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/restore",
     "notes": "No object restore route."
   },
   {
@@ -726,6 +806,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Starts a long-running operation that restores many soft-deleted objects at once, filtered by a name glob or a soft-deletion time range.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/bulkRestore",
     "notes": "No bulkRestore route."
   },
   {
@@ -735,6 +816,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Raises an object's metageneration counter by one each time its metadata changes, starting at 1 for each new generation, so conditional requests can detect changes.",
+    "docs": "https://docs.cloud.google.com/storage/docs/metadata",
     "notes": "Metageneration fixed at 1."
   },
   {
@@ -744,6 +826,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Encrypts an object with a symmetric Cloud KMS key you control, named per request or set as the bucket default, instead of a Google-managed key.",
+    "docs": "https://docs.cloud.google.com/storage/docs/encryption/customer-managed-keys",
     "notes": "No KMS encryption path."
   },
   {
@@ -753,6 +836,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Encrypts an object with your own AES-256 key supplied in request headers on each operation; Google keeps only a hash of the key afterwards.",
+    "docs": "https://docs.cloud.google.com/storage/docs/encryption/customer-supplied-keys",
     "notes": "No CSEK encryption path."
   },
   {
@@ -762,6 +846,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Lists the default object access control entries of a bucket, which apply to new objects created in the bucket without their own ACL.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/defaultObjectAccessControls/list",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -771,6 +856,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Reads the default object access control entry for one named entity on a bucket.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/defaultObjectAccessControls/get",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -780,6 +866,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Adds an entry to a bucket's default object ACL, granting an entity a role on new objects that are created without an ACL.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/defaultObjectAccessControls/insert",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -789,6 +876,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Replaces the role in an existing default object ACL entry for an entity, using a full PUT request.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/defaultObjectAccessControls/update",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -798,6 +886,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Changes part of a default object ACL entry for an entity with a PATCH request, rather than replacing the whole entry.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/defaultObjectAccessControls/patch",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -807,6 +896,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Removes the default object ACL entry for an entity, so new objects no longer receive that grant.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/defaultObjectAccessControls/delete",
     "notes": "No defaultObjectAcl route."
   },
   {
@@ -816,6 +906,7 @@
     "local": "available",
     "other": "available",
     "description": "Uploads an object's bytes in a single request, sending no metadata, with the object name given as a query parameter.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/insert",
     "notes": ""
   },
   {
@@ -825,6 +916,7 @@
     "local": "available",
     "other": "available",
     "description": "Uploads an object's data together with its metadata in one multipart request, so content type and custom metadata are set at creation.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/insert",
     "notes": ""
   },
   {
@@ -834,6 +926,7 @@
     "local": "available",
     "other": "available",
     "description": "Starts a resumable upload by sending the object name and optional metadata, and returns a session URI that later requests use to send the data.",
+    "docs": "https://docs.cloud.google.com/storage/docs/performing-resumable-uploads",
     "notes": ""
   },
   {
@@ -843,6 +936,7 @@
     "local": "available",
     "other": "available",
     "description": "Sends data to the session URI in chunks with a Content-Range header, receiving a 308 response until the final chunk completes the object with 200 or 201.",
+    "docs": "https://docs.cloud.google.com/storage/docs/performing-resumable-uploads",
     "notes": ""
   },
   {
@@ -852,6 +946,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Cancels an unfinished resumable upload by sending DELETE to its session URI; the JSON API answers 499 and the session cannot be used again.",
+    "docs": "https://docs.cloud.google.com/storage/docs/performing-resumable-uploads",
     "notes": "Handler returns JSON API's 499 status but does not invalidate the stored upload session."
   },
   {
@@ -861,6 +956,7 @@
     "local": "available",
     "other": "available",
     "description": "Uploads one object from an HTML form with a POST request, where the form carries the object name, an optional signed policy and the file as its last field.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/post-object-forms",
     "notes": ""
   },
   {
@@ -870,6 +966,7 @@
     "local": "available",
     "other": "available",
     "description": "Uploads content that is already gzip-compressed, usually with its content encoding set to gzip, so it is stored compressed and can be transcoded on download.",
+    "docs": "https://docs.cloud.google.com/storage/docs/transcoding",
     "notes": ""
   },
   {
@@ -879,6 +976,7 @@
     "local": "available",
     "other": "available",
     "description": "Produces a base64 MD5 hash of an object's data, returned in its metadata, for checking integrity; composite objects do not have one.",
+    "docs": "https://docs.cloud.google.com/storage/docs/data-validation",
     "notes": ""
   },
   {
@@ -888,6 +986,7 @@
     "local": "available",
     "other": "available",
     "description": "Produces a CRC32C checksum of an object's data, returned in its metadata, which is the recommended hash for integrity checks.",
+    "docs": "https://docs.cloud.google.com/storage/docs/data-validation",
     "notes": ""
   },
   {
@@ -897,6 +996,7 @@
     "local": "available",
     "other": "available",
     "description": "Rejects an upload whose data does not match the MD5 hash declared in the request, so corrupted transfers are not stored.",
+    "docs": "https://docs.cloud.google.com/storage/docs/data-validation",
     "notes": ""
   },
   {
@@ -906,6 +1006,7 @@
     "local": "available",
     "other": "available",
     "description": "Rejects an upload whose data does not match the CRC32C checksum declared in the request, failing the write instead of storing corrupted data.",
+    "docs": "https://docs.cloud.google.com/storage/docs/data-validation",
     "notes": ""
   },
   {
@@ -915,6 +1016,7 @@
     "local": "available",
     "other": "available",
     "description": "Runs a request only if the object's current generation equals the given number; zero means it succeeds only when no live object exists.",
+    "docs": "https://docs.cloud.google.com/storage/docs/request-preconditions",
     "notes": ""
   },
   {
@@ -924,6 +1026,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Runs a request only if the object's current generation differs from the given number, which guards against acting on one particular version.",
+    "docs": "https://docs.cloud.google.com/storage/docs/request-preconditions",
     "notes": "Generic handler accepts missing object for some NotMatch checks."
   },
   {
@@ -933,6 +1036,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Runs a request only if the object's metageneration equals the given number, which detects metadata changes made since it was read.",
+    "docs": "https://docs.cloud.google.com/storage/docs/request-preconditions",
     "notes": "Metageneration is fixed at 1."
   },
   {
@@ -942,6 +1046,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Runs a request only if the object's metageneration differs from the given number, which shows whether metadata has changed since it was last read.",
+    "docs": "https://docs.cloud.google.com/storage/docs/request-preconditions",
     "notes": "Metageneration is fixed at 1."
   },
   {
@@ -951,6 +1056,7 @@
     "local": "available",
     "other": "available",
     "description": "Makes a copy or rewrite proceed only if the source object's generation matches ifSourceGenerationMatch, so the intended version is the one copied.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/rewrite",
     "notes": ""
   },
   {
@@ -960,6 +1066,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Makes a copy or rewrite proceed only if the source object's metageneration matches ifSourceMetagenerationMatch.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/rewrite",
     "notes": "Fixed metageneration."
   },
   {
@@ -969,6 +1076,7 @@
     "local": "available",
     "other": "available",
     "description": "Combines several JSON API calls into one HTTP request, up to 100 calls in a multipart body, and returns one response part for each call.",
+    "docs": "https://docs.cloud.google.com/storage/docs/batch",
     "notes": ""
   },
   {
@@ -978,6 +1086,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Applies the Authorization header of the outer batch request to every inner call unless a call sets its own, so credentials are given once.",
+    "docs": "https://docs.cloud.google.com/storage/docs/batch",
     "notes": "LocalCloud copies standard Authorization; local identity headers are not GCS features."
   },
   {
@@ -987,6 +1096,7 @@
     "local": "available",
     "other": "available",
     "description": "Turns request headers beginning with x-goog-meta- into the custom metadata of the uploaded object, through the XML API.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/reference-headers",
     "notes": ""
   },
   {
@@ -996,6 +1106,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Treats Amazon S3 style x-amz-meta headers on an XML API upload as custom metadata, matching x-goog-meta headers, for S3 interoperability.",
+    "docs": "https://docs.cloud.google.com/storage/docs/aws-simple-migration",
     "notes": "XML S3-interoperability spelling; not full S3 support."
   },
   {
@@ -1005,6 +1116,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates a checksum declared on the final request of a resumable upload against the whole object assembled from all of its chunks.",
+    "docs": "https://docs.cloud.google.com/storage/docs/data-validation",
     "notes": "Retains full session entry."
   },
   {
@@ -1014,6 +1126,7 @@
     "local": "limited",
     "other": "available",
     "description": "Lets whoever holds a resumable upload's session URI continue that upload without further credentials, because the URI acts as an authentication token.",
+    "docs": "https://docs.cloud.google.com/storage/docs/resumable-uploads#session-uris",
     "notes": "LocalCloud additionally checks initiating key revocation and optional callback."
   },
   {
@@ -1023,6 +1136,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Renames an object within its bucket by moving it from a source name to a destination name, replacing any object already at the destination.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "route/data movement implemented; atomicity, retention and projection gaps below."
   },
   {
@@ -1032,6 +1146,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Performs the whole move as one atomic transaction, so either every step completes or no change is made.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "locks/rollback exist; multiple disk writes are not a crash-atomic transaction."
   },
   {
@@ -1041,6 +1156,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Moves the source only when its generation matches ifSourceGenerationMatch, guarding against moving a version that changed since it was read.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": ""
   },
   {
@@ -1050,6 +1166,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Moves only when the live destination object has the generation given in ifGenerationMatch; zero means the destination must not already exist.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": ""
   },
   {
@@ -1059,6 +1176,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Moves the source only when its metageneration matches ifSourceMetagenerationMatch, guarding against metadata changed since it was read.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "Fixed metageneration."
   },
   {
@@ -1068,6 +1186,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Moves only when the live destination object's metageneration matches ifMetagenerationMatch.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "Fixed metageneration."
   },
   {
@@ -1077,6 +1196,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Keeps the source object's data and metadata on the destination, apart from its name, generation, metageneration and timestamps.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": ""
   },
   {
@@ -1086,6 +1206,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Gives the destination object a new generation number and resets its metageneration to 1, because the move creates a new object.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": ""
   },
   {
@@ -1095,6 +1216,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Leaves both the source and the destination unchanged when a move fails because a precondition is not met.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": ""
   },
   {
@@ -1104,6 +1226,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Determines which Pub/Sub notification event is published for the object at its original name when a move takes it away.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "Source delete/archive path."
   },
   {
@@ -1113,6 +1236,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Publishes an object finalize notification for the destination object that a move creates.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": ""
   },
   {
@@ -1122,6 +1246,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Publishes a delete or archive notification for an existing object at the destination name when a move replaces it.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": ""
   },
   {
@@ -1131,6 +1256,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Moves the source only when its generation differs from ifSourceGenerationNotMatch.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "Metadata conditions use fixed metageneration."
   },
   {
@@ -1140,6 +1266,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Moves only when a live destination object exists whose generation differs from ifGenerationNotMatch.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "Metadata conditions use fixed metageneration."
   },
   {
@@ -1149,6 +1276,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Moves the source only when its metageneration differs from ifSourceMetagenerationNotMatch.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "Metadata conditions use fixed metageneration."
   },
   {
@@ -1158,6 +1286,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Moves only when the live destination object's metageneration differs from ifMetagenerationNotMatch.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "Metadata conditions use fixed metageneration."
   },
   {
@@ -1167,6 +1296,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Fails a move with a 403 retention error when the source or a live destination object is under an object or bucket retention policy.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/move",
     "notes": "Move path has no object/bucket retention-policy check."
   },
   {
@@ -1176,6 +1306,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Checks that the caller holds the IAM permission each JSON or XML request needs on the bucket or object, and rejects the request if it does not.",
+    "docs": "https://docs.cloud.google.com/storage/docs/access-control/iam",
     "notes": "Requires external callback; open by default; subset of permissions."
   },
   {
@@ -1185,6 +1316,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Requires the delete permission as well as create when an upload replaces an existing object.",
+    "docs": "https://docs.cloud.google.com/storage/docs/access-control/iam-permissions",
     "notes": "Create + delete checks when callback configured."
   },
   {
@@ -1194,6 +1326,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Requires permission to read every source object, as well as create permission on the destination, when composing objects.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/compose",
     "notes": "Source get checks delegated to callback."
   },
   {
@@ -1203,6 +1336,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Requires the IAM administration permissions to read or change ACLs on buckets and objects, such as getIamPolicy and setIamPolicy.",
+    "docs": "https://docs.cloud.google.com/storage/docs/access-control/iam-permissions",
     "notes": "Callback checks selected getIamPolicy/setIamPolicy routes."
   },
   {
@@ -1212,6 +1346,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Treats a request signed with an HMAC key as made by the service account or user that owns the key, so that identity's IAM permissions apply.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/hmackeys",
     "notes": "Verified identity delegated; no complete service-account model."
   },
   {
@@ -1221,6 +1356,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Returns the IAM policy of a bucket: its role bindings, optional conditions, policy version and etag.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/getIamPolicy",
     "notes": "Callback integration does not implement policy API."
   },
   {
@@ -1230,6 +1366,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Replaces a bucket's IAM policy with the one supplied, granting or removing roles for members.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/setIamPolicy",
     "notes": "Callback integration does not implement policy API."
   },
   {
@@ -1239,6 +1376,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Returns which of the listed permissions the caller holds on a bucket, without needing any permission itself.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/testIamPermissions",
     "notes": "Callback integration does not implement policy API."
   },
   {
@@ -1248,6 +1386,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "A bucket setting that disables ACLs so access is controlled only through IAM, and that cannot be turned off once it has been on for 90 days.",
+    "docs": "https://docs.cloud.google.com/storage/docs/uniform-bucket-level-access",
     "notes": "Uniform access configuration/enforcement not modeled."
   },
   {
@@ -1257,6 +1396,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "A bucket or organization setting that stops buckets and objects from being made public through IAM or ACLs, so allUsers grants have no effect.",
+    "docs": "https://docs.cloud.google.com/storage/docs/public-access-prevention",
     "notes": "Public access prevention configuration not modeled."
   },
   {
@@ -1266,6 +1406,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Creates an HMAC key for a service account and returns the key's access ID and its secret in the response.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/create",
     "notes": "Generates keys; validates email shape/project suffix rather than an existing Google account."
   },
   {
@@ -1275,6 +1416,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Returns metadata for the HMAC keys in a project, without their secrets.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/list",
     "notes": ""
   },
   {
@@ -1284,6 +1426,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Returns the metadata of one HMAC key by its access ID, including its state and service account, but not its secret.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/get",
     "notes": ""
   },
   {
@@ -1293,6 +1436,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Changes an HMAC key's state to active or inactive; permanent removal is done with the delete method.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/update",
     "notes": ""
   },
   {
@@ -1302,6 +1446,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Permanently removes an HMAC key whose state is inactive, making it unusable and unrecoverable.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/delete",
     "notes": ""
   },
   {
@@ -1311,6 +1456,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Returns an error if a request tries to delete an HMAC key that is still active, so a key must be made inactive first.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/delete",
     "notes": ""
   },
   {
@@ -1320,6 +1466,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Narrows an HMAC key listing to the keys that belong to one service account, identified by its email address.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/list",
     "notes": ""
   },
   {
@@ -1329,6 +1476,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Returns a long HMAC key listing in pages, using a maximum page size and a page token to continue.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/list",
     "notes": ""
   },
   {
@@ -1338,6 +1486,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Includes keys in the DELETED state in an HMAC key listing, which are left out by default.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/list",
     "notes": ""
   },
   {
@@ -1347,6 +1496,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Accepts an etag with a key update and applies the change only if it matches the key's current etag, guarding against overwriting a concurrent change.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys/update",
     "notes": ""
   },
   {
@@ -1356,6 +1506,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Shows an HMAC key's secret only in the response that creates it; later reads return metadata alone, so a lost secret cannot be retrieved.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/projects/hmacKeys",
     "notes": ""
   },
   {
@@ -1365,6 +1516,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Limits each service account to 10 HMAC keys that are not deleted; deleted keys do not count toward the limit.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/hmackeys",
     "notes": ""
   },
   {
@@ -1374,6 +1526,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Deletes a service account's HMAC keys when the account itself is deleted, though they may keep working for a short time afterwards.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/hmackeys",
     "notes": "No service-account lifecycle integration."
   },
   {
@@ -1383,6 +1536,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Checks the signature on a signed URL created with an RSA private key using GOOG4-RSA-SHA256, so only URLs signed by a valid key are accepted.",
+    "docs": "https://docs.cloud.google.com/storage/docs/access-control/signed-urls",
     "notes": "GOOG4-RSA-SHA256 exempted."
   },
   {
@@ -1392,6 +1546,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Rejects a signed URL once its expiration time has passed; a V4 URL can be valid for at most 7 days.",
+    "docs": "https://docs.cloud.google.com/storage/docs/access-control/signed-urls",
     "notes": ""
   },
   {
@@ -1401,6 +1556,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates an Authorization header of the form GOOG1 followed by an access ID and a V2 signature computed with an HMAC key's secret.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/reference-headers",
     "notes": ""
   },
   {
@@ -1410,6 +1566,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates an Authorization header of the form AWS followed by an access ID and a V2 signature, as sent by S3 style clients.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/reference-headers",
     "notes": ""
   },
   {
@@ -1419,6 +1576,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates a V2 signed URL that carries GoogleAccessId, Expires and Signature query parameters and is signed with an HMAC key.",
+    "docs": "https://docs.cloud.google.com/storage/docs/access-control/signed-urls-v2",
     "notes": ""
   },
   {
@@ -1428,6 +1586,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates an Authorization header that uses GOOG4-HMAC-SHA256, whose signature is made with a signing key derived from an HMAC secret.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/signatures",
     "notes": ""
   },
   {
@@ -1437,6 +1596,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates an Authorization header that uses AWS4-HMAC-SHA256, the Amazon S3 style V4 signature accepted for XML API interoperability.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/signatures",
     "notes": ""
   },
   {
@@ -1446,6 +1606,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates a V4 signed URL made with GOOG4-HMAC-SHA256 and its X-Goog-Algorithm, Credential, Date, Expires, SignedHeaders and Signature query parameters.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/signatures",
     "notes": ""
   },
   {
@@ -1455,6 +1616,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates a signed URL made with the AWS4-HMAC-SHA256 algorithm of Amazon S3 style V4 signing, accepted by the XML API for interoperability.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/signatures",
     "notes": ""
   },
   {
@@ -1464,6 +1626,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Rejects an HMAC signed URL whose expiration time has already passed, so access ends when the URL expires.",
+    "docs": "https://docs.cloud.google.com/storage/docs/access-control/signed-urls",
     "notes": ""
   },
   {
@@ -1473,6 +1636,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Checks that the timestamp in a signed request's date header falls within an allowed window around the server's current time, rejecting stale or future requests.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/signatures",
     "notes": "15 minutes."
   },
   {
@@ -1482,6 +1646,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Checks that the signature covers the headers named in the signed headers list, including the mandatory host header, so those headers cannot be altered.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/canonical-requests",
     "notes": "Host required."
   },
   {
@@ -1491,6 +1656,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Checks the payload hash declared in a V4 request against the body, and also allows the value UNSIGNED-PAYLOAD to skip hashing the payload.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/canonical-requests",
     "notes": "Unsigned payload is permitted by the Google contract."
   },
   {
@@ -1500,6 +1666,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Includes the Content-MD5 header in the signed data when a request has one, so a changed body digest invalidates the signature.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/reference-headers",
     "notes": ""
   },
   {
@@ -1509,6 +1676,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates an HTML form upload policy signed with the V2 scheme, using the GoogleAccessId, Base64 policy and signature form fields.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/post-object-v2",
     "notes": ""
   },
   {
@@ -1518,6 +1686,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Validates an HTML form upload policy signed with the V4 scheme, using the x-goog-algorithm, credential, date and signature form fields.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/post-object-forms",
     "notes": ""
   },
   {
@@ -1527,6 +1696,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Rejects a form upload when the policy document's expiration time has passed, so a form stops working after its validity window.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/signatures",
     "notes": ""
   },
   {
@@ -1536,6 +1706,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Requires a form field to equal the exact value given in a policy condition, such as a fixed content type or object name.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/post-object-forms",
     "notes": ""
   },
   {
@@ -1545,6 +1716,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Requires a form field to start with the value given in a starts-with policy condition, such as an object name prefix.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/post-object-forms",
     "notes": ""
   },
   {
@@ -1554,6 +1726,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Requires the uploaded file's size to fall between the minimum and maximum bytes set by a content-length-range policy condition.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/post-object-forms",
     "notes": ""
   },
   {
@@ -1563,6 +1736,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Requires a form policy to contain conditions covering every submitted form field, including bucket and key, so uploads cannot be redirected.",
+    "docs": "https://docs.cloud.google.com/storage/docs/xml-api/post-object-forms",
     "notes": ""
   },
   {
@@ -1572,6 +1746,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Rejects a request signed with an access ID that does not exist or whose HMAC key is inactive or deleted.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/hmackeys",
     "notes": "And."
   },
   {
@@ -1581,6 +1756,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Rejects a request whose XML API authentication data is malformed, such as a broken Authorization header or missing signature parameters.",
+    "docs": "https://docs.cloud.google.com/storage/docs/authentication/canonical-requests",
     "notes": "Exercised without optional IAM callback."
   },
   {
@@ -1590,6 +1766,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Creates a notification configuration on a bucket that sends Pub/Sub messages to a topic for chosen events, with a payload format and optional filters.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications/insert",
     "notes": "API exists; production response fields and configuration quotas incomplete."
   },
   {
@@ -1599,6 +1776,7 @@
     "local": "available",
     "other": "available",
     "description": "Returns all notification configurations defined on a bucket.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications/list",
     "notes": ""
   },
   {
@@ -1608,6 +1786,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Returns one notification configuration of a bucket by its ID, including its topic, event types and payload format.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications/get",
     "notes": "Selected response fields; etag/selfLink missing."
   },
   {
@@ -1617,6 +1796,7 @@
     "local": "available",
     "other": "available",
     "description": "Deletes a notification configuration by its ID so the bucket stops publishing messages for it.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications/delete",
     "notes": ""
   },
   {
@@ -1626,6 +1806,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Publishes a message to the configured Pub/Sub topic whenever a matching change happens to an object in the bucket.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": "Publishing implemented; production delivery guarantees differ."
   },
   {
@@ -1635,6 +1816,7 @@
     "local": "available",
     "other": "available",
     "description": "Limits a configuration to chosen event types, for example only finalize and delete; an empty list sends every event type.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications",
     "notes": ""
   },
   {
@@ -1644,6 +1826,7 @@
     "local": "available",
     "other": "available",
     "description": "Limits a configuration to objects whose names start with a given prefix, so other objects do not trigger messages.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications",
     "notes": ""
   },
   {
@@ -1653,6 +1836,7 @@
     "local": "available",
     "other": "available",
     "description": "Sends a payload that is the object's metadata resource as a UTF-8 JSON string in the message body.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications",
     "notes": ""
   },
   {
@@ -1662,6 +1846,7 @@
     "local": "available",
     "other": "available",
     "description": "Sends the message with no payload, leaving only the event details in the message attributes.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications",
     "notes": ""
   },
   {
@@ -1671,6 +1856,7 @@
     "local": "available",
     "other": "available",
     "description": "Adds user-defined key and value pairs to the attributes of every message that a configuration publishes.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications",
     "notes": ""
   },
   {
@@ -1680,6 +1866,7 @@
     "local": "available",
     "other": "available",
     "description": "Fires when a new object, or a new generation of an existing object, is successfully created, including by copy, rewrite or restore.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": ""
   },
   {
@@ -1689,6 +1876,7 @@
     "local": "available",
     "other": "available",
     "description": "Fires when an object is permanently deleted, including when it is replaced or removed by a lifecycle rule.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": ""
   },
   {
@@ -1698,6 +1886,7 @@
     "local": "available",
     "other": "available",
     "description": "Fires when the metadata of an existing object changes, for example after a patch or update.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": ""
   },
   {
@@ -1707,6 +1896,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Fires when a live object becomes noncurrent, which happens only in a bucket with Object Versioning, for example on overwrite or delete.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": "Requires memory versioning."
   },
   {
@@ -1716,6 +1906,7 @@
     "local": "limited",
     "other": "unavailable",
     "description": "Rejects a new configuration whose Pub/Sub topic is malformed, does not exist or cannot be published to by Cloud Storage.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications/insert",
     "notes": "Validates topic syntax; production topic existence/publish permissions are not checked here."
   },
   {
@@ -1725,6 +1916,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Rejects a new configuration whose payload format is anything other than JSON_API_V1 or NONE.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications",
     "notes": ""
   },
   {
@@ -1734,6 +1926,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Rejects a new configuration that lists an event type Cloud Storage does not recognize.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/notifications",
     "notes": ""
   },
   {
@@ -1743,6 +1936,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Allows at most 10 custom attributes on one notification configuration and rejects a configuration that has more.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": "At most ten."
   },
   {
@@ -1752,6 +1946,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Cloud Storage guarantees at-least-once delivery of each notification to Pub/Sub, so duplicate messages are possible and order is not guaranteed.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": "LocalCloud retries persisted events, but object/outbox write gap can lose events."
   },
   {
@@ -1761,6 +1956,7 @@
     "local": "limited",
     "other": "limited",
     "description": "Retries publishing a notification that fails to reach Pub/Sub; one that stays undeliverable may be deleted after 7 days.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": "fake-gcs-server client retries within timeout; LocalCloud queue retries; Google failure lifecycle differs."
   },
   {
@@ -1770,6 +1966,7 @@
     "local": "available",
     "other": "limited",
     "description": "Builds each message's payload from the object's metadata after the triggering change, so it describes the object as of that event.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": "LocalCloud snapshots payload before async delivery."
   },
   {
@@ -1779,6 +1976,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "Adds a notificationConfig attribute to every message, identifying the configuration that produced it.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": ""
   },
   {
@@ -1788,6 +1986,7 @@
     "local": "available",
     "other": "unavailable",
     "description": "For delete events with a JSON payload, includes the object's metadata from before deletion plus a timeDeleted property.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": ""
   },
   {
@@ -1797,6 +1996,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Allows at most 100 notification configurations on a bucket in total.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": "No total configuration quota check."
   },
   {
@@ -1806,6 +2006,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Allows at most 10 notification configurations on a bucket that trigger on the same event type.",
+    "docs": "https://docs.cloud.google.com/storage/docs/pubsub-notifications",
     "notes": "No per-event configuration quota check."
   },
   {
@@ -1815,6 +2016,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Creates a folder in a bucket with hierarchical namespace, and can also create any missing parent folders when the recursive option is set.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/folders/insert",
     "notes": "No folders API."
   },
   {
@@ -1824,6 +2026,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Returns the metadata of one folder in a bucket with hierarchical namespace, identified by its name.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/folders/getfoldermetadata",
     "notes": "No folders API."
   },
   {
@@ -1833,6 +2036,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Lists the folders in a bucket with hierarchical namespace, optionally under a prefix that ends in a slash, one page at a time.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/folders/list",
     "notes": "No folders API."
   },
   {
@@ -1842,6 +2046,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Renames a folder and everything in it as a long-running operation that cannot be canceled once it has started.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/folders/rename",
     "notes": "No folders API."
   },
   {
@@ -1851,6 +2056,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Deletes a folder from a bucket with hierarchical namespace; the folder must be empty, and any managed folder attached to it is deleted too.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/folders/delete",
     "notes": "No folders API."
   },
   {
@@ -1860,6 +2066,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Creates a managed folder in a bucket, a named prefix that can carry its own IAM policy to control access to the objects under it.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/managedFolder/insert",
     "notes": "No managedFolders API."
   },
   {
@@ -1869,6 +2076,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Returns the metadata of one managed folder, identified by its path within the bucket.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/managedFolder/get",
     "notes": "No managedFolders API."
   },
   {
@@ -1878,6 +2086,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Lists the managed folders in a bucket, optionally only those whose names begin with a prefix, one page at a time.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/managedFolder/list",
     "notes": "No managedFolders API."
   },
   {
@@ -1887,6 +2096,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Deletes a managed folder; the allowNonEmpty option allows deleting it even while it still contains objects or other managed folders.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/managedFolder/delete",
     "notes": "No managedFolders API."
   },
   {
@@ -1896,6 +2106,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Returns the IAM policy attached to a managed folder, which controls access to the objects under it.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/managedFolder/getIamPolicy",
     "notes": "No managedFolders API."
   },
   {
@@ -1905,6 +2116,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Replaces the IAM policy attached to a managed folder, changing who can access the objects under it.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/managedFolder/setIamPolicy",
     "notes": "No managedFolders API."
   },
   {
@@ -1914,6 +2126,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Returns which of the listed permissions the caller holds on a managed folder.",
+    "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/managedFolder/testIamPermissions",
     "notes": "No managedFolders API."
   },
   {
@@ -1923,6 +2136,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Returns the metadata of one bucket named in the request, through the Storage v2 gRPC API.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1932,6 +2146,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Creates a new bucket in a project from the bucket details supplied in the request.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1941,6 +2156,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Permanently deletes a bucket that holds no objects, identified by its name in the request.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1950,6 +2166,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Updates a bucket by applying a patch-style change to only the fields named in the request.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1959,6 +2176,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Retrieves the buckets of a project, ordered lexicographically by name.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1968,6 +2186,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Retrieves an object's metadata, such as size, content type and checksums, without its data.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1977,6 +2196,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Deletes an object and its metadata; depending on versioning and soft delete, the deletion can be permanent or recoverable.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1986,6 +2206,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Updates an object's metadata, equivalent to the JSON API patch method.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -1995,6 +2216,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Retrieves the objects in a bucket that match the criteria in the request, such as a prefix or delimiter.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -2004,6 +2226,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Concatenates a list of existing objects into a new object in the same bucket.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -2013,6 +2236,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Retrieves an object's data as a stream of messages, and can start at an offset and stop at a limit.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -2022,6 +2246,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Stores a new object and its metadata, with the data sent from the client as a stream of messages.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -2031,6 +2256,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Starts a resumable write and returns an upload ID that later write calls use to continue the upload.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   },
   {
@@ -2040,6 +2266,7 @@
     "local": "unavailable",
     "other": "unavailable",
     "description": "Reports the persisted size of an object that is still being written, so an interrupted upload knows where to resume.",
+    "docs": "https://docs.cloud.google.com/storage/docs/reference/rpc/google.storage.v2",
     "notes": "Only legacy google.storage.v1 service registered."
   }
 ]
