@@ -1,6 +1,9 @@
 ---
 import LandingLayout from '../../../layouts/LandingLayout.astro';
+import AlternativesTable from '../../../components/AlternativesTable.astro';
 import EmulatorComparisonDetails from '../../../components/EmulatorComparisonDetails.astro';
+import { alternativesReviewedAt, alternativesReviewedLabel, comparisonSummary } from '../../../data/alternatives';
+import { comparisonPages } from '../../../data/agenticContent';
 import { emulatorComparisons } from '../../../data/emulatorComparisons';
 import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../../data/productFacts';
 const base = import.meta.env.BASE_URL;
@@ -8,13 +11,23 @@ const title = 'Emulator Feature Comparisons — LocalCloud';
 const description = 'Compare LocalCloud services with Google and community emulators. Explore feature tables and filter capabilities that add value to your local tests.';
 const url = new URL('compare/emulators/', productFacts.siteUrl).toString();
 const structuredData = [createWebPageSchema({ url, name: title, description }), createBreadcrumbSchema([
-  { name: 'Home', url: productFacts.siteUrl }, { name: 'Comparisons', url: new URL('compare/', productFacts.siteUrl).toString() }, { name: 'Emulator features', url },
+  { name: 'Home', url: productFacts.siteUrl }, { name: 'Emulator features', url },
 ])];
+// The LocalStack comparison lives at the URL people search for; it is listed with the rest.
+const moreComparisons = [...comparisonPages, {
+  path: '/localstack-for-google-cloud/',
+  eyebrow: 'Comparison',
+  h1: 'LocalStack for Google Cloud',
+  description: 'LocalStack emulates AWS; LocalCloud emulates Google Cloud. When each one fits, how SDK routing differs, and why multi-cloud teams run both.',
+  quickFacts: [
+    `LocalStack had no Google Cloud services as of ${alternativesReviewedLabel}.`,
+    'AWS SDK calls do not reach LocalCloud, and Google Cloud SDK calls do not reach LocalStack.',
+  ],
+}];
 ---
 <LandingLayout {title} {description} {structuredData}>
   <section class="site-section site-section--hero comparison-intro"><div class="container">
-    <a href={`${base}compare/`}>All comparisons</a>
-    <h1 class="mt-4 max-w-[48rem]">What LocalCloud really offers</h1>
+    <h1 class="max-w-[48rem]">What LocalCloud really offers</h1>
     <p class="mt-4 max-w-[48rem] text-lg leading-8 text-[var(--text-2)]">Go beyond basic CRUD operations. Choose a service to compare its features.</p>
   </div></section>
   <section class="site-section site-section--tight"><div class="container comparison-workspace" data-comparison-workspace>
@@ -32,5 +45,27 @@ const structuredData = [createWebPageSchema({ url, name: title, description }), 
         <EmulatorComparisonDetails {comparison} embedded preview={index === 0} />
       </div>)}
     </div>
+  </div></section>
+  <section class="site-section" id="more-comparisons" aria-labelledby="more-comparisons-heading"><div class="container">
+    <h2 id="more-comparisons-heading">More comparisons</h2>
+    <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {moreComparisons.map(page => <article class="site-panel min-w-0 p-6 [overflow-wrap:anywhere]">
+        <span class="site-kicker">{page.eyebrow}</span>
+        <h3 class="mt-3 text-xl"><a href={`${base}${page.path.slice(1)}`}>{page.h1}</a></h3>
+        <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{page.description}</p>
+        {page.quickFacts.length > 0 && <ul class="site-list mt-4">{page.quickFacts.slice(0, 2).map(fact => <li>{fact}</li>)}</ul>}
+      </article>)}
+    </div>
+  </div></section>
+  <section class="site-section" id="local-options" aria-labelledby="local-options-heading"><div class="container">
+    <div class="max-w-[48rem]">
+      <span class="site-kicker">Local options for Google Cloud</span>
+      <h2 class="mt-3" id="local-options-heading">LocalCloud, LocalStack and Google's emulators</h2>
+      <p class="mt-4 leading-7 text-[var(--text-2)]">{comparisonSummary.join(' ')}</p>
+    </div>
+    <div class="mt-8"><AlternativesTable variant="full" /></div>
+    <p class="mt-4 text-sm leading-6 text-[var(--text-2)]">
+      Reviewed <time datetime={alternativesReviewedAt}>{alternativesReviewedLabel}</time> against each project's official documentation, pricing page or repository. Plans and features change; follow the source links for current terms.
+    </p>
   </div></section>
 </LandingLayout>

@@ -185,7 +185,7 @@ const varyValues = (response) => (response.headers.get('Vary') || '').split(',')
 test('the twin route list maps docs, service and comparison pages to Markdown files and back', () => {
   for (const [page, twin] of [['/docs/', '/docs/index.md'], ['/docs/configuration/', '/docs/configuration.md'],
     ['/services/', '/services/index.md'], ['/services/cloud-run/', '/services/cloud-run.md'],
-    ['/compare/', '/compare/index.md'], ['/compare/google-emulators/', '/compare/google-emulators.md'],
+    ['/compare/emulators/', '/compare/emulators.md'], ['/compare/google-emulators/', '/compare/google-emulators.md'],
     ['/', '/index.md'], ['/pricing/', '/pricing.md'], ['/blog/', '/blog/index.md'], ['/blog/new-post/', '/blog/new-post.md'], ['/ai/', '/ai/index.md'],
     ['/services/bigquery/ai-agent-local-testing/', '/services/bigquery/ai-agent-local-testing.md']]) {
     assert.equal(markdownTwinPath(page), twin, page);
@@ -305,12 +305,17 @@ test('redirect rules target existing pages, never shadow pages, and never chain'
     .map((line) => line.split(/\s+/));
   // Compare path segments exactly; macOS file systems would match /ai/AGENTS.md to agents.md.
   const built = (path) => {
+    const segments = (path.endsWith('/') ? `${path}index.html` : path).split('/').filter(Boolean);
     let directory = new URL('../dist/', import.meta.url);
-    for (const segment of (path.endsWith('/') ? `${path}index.html` : path).split('/').filter(Boolean)) {
+    for (const [index, segment] of segments.entries()) {
       let entries;
       try { entries = readdirSync(directory); } catch { return false; }
       if (!entries.includes(segment)) return false;
       directory = new URL(`${segment}/`, directory);
+      // A folder without an index page serves nothing: /compare only holds other pages.
+      if (index === segments.length - 1) {
+        try { return readdirSync(directory).includes('index.html'); } catch { return true; }
+      }
     }
     return true;
   };

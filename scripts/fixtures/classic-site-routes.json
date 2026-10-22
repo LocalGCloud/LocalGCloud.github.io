@@ -67,10 +67,6 @@
       "canonical": "https://local.cloud/compare/google-emulators/"
     },
     {
-      "path": "compare/index.html",
-      "canonical": "https://local.cloud/compare/"
-    },
-    {
       "path": "compatibility/index.html",
       "canonical": "https://local.cloud/compatibility/"
     },

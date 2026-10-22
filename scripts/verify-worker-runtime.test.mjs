@@ -130,7 +130,7 @@ test('text and Markdown assets declare UTF-8 and preserve GET and HEAD bodies', 
 test('docs, service and comparison pages answer Accept: text/markdown with their Markdown twin', async () => {
   const vary = (response) => (response.headers.get('Vary') || '').split(',').map((value) => value.trim());
   for (const [page, twin] of [['/docs/', 'docs/index.md'], ['/docs/configuration/', 'docs/configuration.md'], ['/services/bigquery/', 'services/bigquery.md'],
-    ['/compare/', 'compare/index.md'], ['/compare/google-emulators/', 'compare/google-emulators.md'],
+    ['/compare/emulators/', 'compare/emulators.md'], ['/compare/google-emulators/', 'compare/google-emulators.md'],
     ['/', 'index.md'], ['/pricing/', 'pricing.md'], ['/blog/', 'blog/index.md'], ['/ai/', 'ai/index.md'], ['/compatibility/', 'compatibility.md']]) {
     const response = await get(page, { 'Accept': 'text/markdown, text/html;q=0.9' });
     assert.equal(response.status, 200, page);

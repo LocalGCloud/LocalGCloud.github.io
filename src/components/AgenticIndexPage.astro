@@ -3,8 +3,7 @@ import LandingLayout from '../layouts/LandingLayout.astro';
 import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
 import type { AgenticContentPage, ContentLink } from '../data/agenticContent';
 
-// A hub lists its own section's pages and may add a page that lives at another URL, such
-// as /localstack-for-google-cloud/ on /compare/.
+// A hub lists its own section's pages and may add a page that lives at another URL.
 type HubEntry = Pick<AgenticContentPage, 'path' | 'eyebrow' | 'h1' | 'description' | 'summary' | 'quickFacts'>;
 
 interface Props {
@@ -43,7 +42,7 @@ const structuredData = [createBreadcrumbSchema([{ name: 'Home', url: productFact
     </div>
   </section>
 
-  {/* Optional hub-specific content between the hero and the page list, such as the /compare/ table. */}
+  {/* Optional hub-specific content between the hero and the page list, such as a summary table. */}
   <slot />
 
   <section class="site-section">

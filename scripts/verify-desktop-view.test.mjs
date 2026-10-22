@@ -768,7 +768,7 @@ test('every content route exposes its generated Markdown version; error pages ar
     assert.ok(readFileSync(new URL('../dist/' + entry.path, import.meta.url), 'utf8').includes('href="'+twin+'"'), route);
     count++;
   }
-  assert.equal(count, 83);
+  assert.equal(count, 82);
 });
 
 

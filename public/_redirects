@@ -55,8 +55,13 @@
 /variation-field-manual/ / 301
 /prototypes/pricing /pricing/ 301
 /prototypes/pricing/ /pricing/ 301
-/compare/localgcp /compare/ 301
-/compare/localgcp/ /compare/ 301
+/compare/localgcp /compare/emulators/ 301
+/compare/localgcp/ /compare/emulators/ 301
+
+# The comparison hub was folded into the emulator comparison page
+/compare /compare/emulators/ 301
+/compare/ /compare/emulators/ 301
+/compare/index.md /compare/emulators.md 301
 
 # R7 service merges
 /bigquery-emulator /services/bigquery/ 301

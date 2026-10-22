@@ -26,7 +26,7 @@ export const expectedSearchRoutes = [
   { path: '/services/pubsub/', intent: 'Pub/Sub emulator' },
   { path: '/services/spanner/', intent: 'Spanner emulator' },
   { path: '/local-cloud-for-ai-agents/', intent: 'Local cloud sandbox for AI coding agents' },
-  { path: '/compare/', intent: 'LocalCloud alternatives and comparisons' },
+  { path: '/compare/emulators/', intent: 'LocalCloud alternatives and comparisons' },
   { path: '/compare/e2b-vercel-sandboxes/', intent: 'LocalCloud vs hosted agent sandboxes' },
   { path: '/agents/', intent: 'Agent sandbox setup routes' },
   { path: '/workflows/', intent: 'Agent and automation workflows' },
