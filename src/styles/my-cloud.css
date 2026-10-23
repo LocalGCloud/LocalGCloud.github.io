@@ -8,6 +8,7 @@
 .my-cloud-orbit{display:grid;place-items:center;width:3.75rem;height:3.75rem;margin-bottom:1.25rem;border:1px solid var(--line);border-radius:50%;background:var(--surface-2);color:var(--accent-strong);box-shadow:0 0 0 .5rem #598bce0d,0 0 0 1rem #598bce06;font-size:2rem}
 .my-cloud-body h2{margin:0 0 .75rem;font-size:1.7rem;letter-spacing:-.03em}
 .my-cloud-body h3{margin:1.25rem 0 .5rem;font-size:1rem}
+.my-cloud-body summary{margin:1.25rem 0 .5rem;font-size:1rem;font-weight:600;cursor:pointer}
 .my-cloud-body p{margin:.5rem 0;line-height:1.6}
 .my-cloud-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin:1.5rem 0 0}
 .my-cloud-actions a,.my-cloud-actions button,.my-cloud-body .copy-btn{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.5rem .85rem;border:1px solid var(--line);border-radius:.6rem;background:var(--surface-2);color:var(--text);cursor:pointer;text-decoration:none}

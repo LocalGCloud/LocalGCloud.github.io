@@ -33,24 +33,25 @@ const setupCommand = consoleQuickStart(docsContract);
       script.onerror = () => finish();
       document.head.append(script);
     });
-    const localPermission = async () => { for (const name of ['loopback-network', 'local-network-access']) try { return (await navigator.permissions.query({ name })).state; } catch {} };
+    const warm = () => {
+      loaded ||= Promise.all([load(link.dataset.myCloudScript), load(link.dataset.copyScript).catch(() => {})]);
+      loaded.catch(() => { loaded = undefined; });
+      return loaded;
+    };
+    // Load ahead of the click so it answers at once and the popup keeps its click activation.
+    for (const type of ['pointerenter', 'focus', 'touchstart']) link?.addEventListener(type, () => warm().catch(() => {}), { once: true, passive: true });
     link?.addEventListener('click', async (event) => {
       if (!dialog?.showModal || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       if (launching) return;
       launching = true;
-      // Reserve a tab to avoid popup blocking, unless a localhost prompt needs this page in front.
-      const permission = await localPermission();
-      const tab = dialog.open || permission === 'prompt' || permission === 'denied' ? null : window.open();
-      if (tab) tab.opener = null;
       try {
-        loaded ||= Promise.all([load(link.dataset.myCloudScript), load(link.dataset.copyScript).catch(() => {})]);
-        await loaded;
-        dialog.dispatchEvent(new CustomEvent('lc:my-cloud-open', { detail: { tab } }));
+        await warm();
+        dialog.dispatchEvent(new CustomEvent('lc:my-cloud-open'));
       } catch {
         loaded = undefined;
-        tab?.close();
-        dialog.innerHTML = '<form method="dialog"><h2 id="my-cloud-title">Start LocalCloud</h2><pre id="my-cloud-status"></pre><button>Close</button></form>';
+        dialog.innerHTML = '<form method="dialog"><h2 id="my-cloud-title">Start LocalCloud</h2><p>We couldn’t check localhost:5380. Already running? <a target="_blank" rel="noopener noreferrer">Open the console</a>. Otherwise run:</p><pre id="my-cloud-status"></pre><button>Close</button></form>';
+        dialog.querySelector('a').href = link.href;
         dialog.querySelector('pre').textContent = link.dataset.setupCommand;
         if (!dialog.open) dialog.showModal();
       } finally { launching = false; }

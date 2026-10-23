@@ -14,7 +14,7 @@ const settle = () => new Promise(setImmediate);
 function permissionHarness(t, state) {
   const previous = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
   const permission = { state };
-  Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { permissions: {
+  Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { userActivation: { isActive: true }, permissions: {
     async query() { if (!permission.state) throw new TypeError('Unsupported permission'); return permission; },
   } } });
   t.after(() => { if (previous) Object.defineProperty(globalThis, 'navigator', previous); else delete globalThis.navigator; });
@@ -26,11 +26,11 @@ function dialogHarness(t, permission = 'granted') {
   const listeners = new Map();
   const element = (name) => ({ addEventListener(event, handler) { listeners.set(name + ':' + event, handler); } });
   const link = { ...element('link'), href: myCloudURL, dataset: { setupCommand: consoleQuickStart(contract), setupGuide: '/docs/#install-the-cli', myCloudStyles: '/my-cloud.css', myCloudScript: '/_astro/my-cloud.mjs', copyScript: '/_astro/copy-buttons.mjs' } };
-  const code = {}, copy = { dataset: {} }, openLink = { classList: { remove() { this.running = false; }, toggle(_, value) { this.running = value; } } }, guide = {};
-  const status = { textContent: '' }, setup = { hidden: true }, retry = element('retry');
+  const code = {}, copy = { dataset: {} }, anchor = {}, openLink = { classList: { remove() { this.running = false; }, toggle(_, value) { this.running = value; } } }, guide = {};
+  const status = { textContent: '' }, setup = { hidden: true, open: false }, retry = element('retry');
   const dialog = { ...element('dialog'), dataset: {}, open: false,
     showModal() { this.open = true; },
-    querySelector(selector) { return ({ '[data-my-cloud-status]': status, '[data-my-cloud-setup]': setup, '[data-my-cloud-retry]': retry, 'code': code, 'pre': code, '.copy-btn': copy, '[data-my-cloud-open]': openLink, '[data-my-cloud-guide]': guide })[selector]; },
+    querySelector(selector) { return ({ '[data-my-cloud-status]': status, '[data-my-cloud-setup]': setup, '[data-my-cloud-retry]': retry, 'code': code, 'pre': code, 'a': anchor, '.copy-btn': copy, '[data-my-cloud-open]': openLink, '[data-my-cloud-guide]': guide })[selector]; },
     querySelectorAll() { return []; },
   };
   const previous = Object.getOwnPropertyDescriptor(globalThis, 'document');
@@ -39,12 +39,18 @@ function dialogHarness(t, permission = 'granted') {
     querySelector(selector) { return selector === '[data-my-cloud]' ? link : dialog; },
   } });
   t.after(() => { if (previous) Object.defineProperty(globalThis, 'document', previous); else delete globalThis.document; });
+  const opens = [], tabs = [], popup = { blocked: false };
+  const previousWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: {
+    open(url) { opens.push(url); if (popup.blocked) return null; const tab = { opener: {} }; tabs.push(tab); return tab; },
+  } });
+  t.after(() => { if (previousWindow) Object.defineProperty(globalThis, 'window', previousWindow); else delete globalThis.window; });
   const click = (overrides = {}) => {
     let prevented = false;
     listeners.get('link:click')({ button: 0, preventDefault() { prevented = true; }, ...overrides });
     return prevented;
   };
-  return { listeners, click, dialog, status, setup, retry, code, copy, link, openLink };
+  return { listeners, click, dialog, status, setup, retry, code, copy, link, openLink, anchor, opens, tabs, popup };
 }
 
 test('My cloud probes the fixed console without cookies, cache, or referrer using browser-compatible no-cors options', async (t) => {
@@ -65,17 +71,14 @@ test('network rejection, blocked access, and readable HTTP errors do not claim a
   assert.equal(await probeMyCloud(), false);
 });
 
-test('denied localhost permission explains the blocked check without probing, opening the console, or asking for setup', async (t) => {
+test('denied localhost permission explains the blocked check without probing or opening the console, and keeps setup collapsed', async (t) => {
   const h = dialogHarness(t, 'denied');
   const fetch = t.mock.method(globalThis, 'fetch', () => assert.fail('denied access must not be probed'));
-  let destination;
-  const tab = { location: { replace(url) { destination = url; } }, close() { this.closed = true; } };
   assert.equal(await probeMyCloud(), null);
-  await initMyCloud(() => {})({ detail: { tab } });
-  assert.equal(destination, undefined);
-  assert.equal(tab.closed, true);
+  await initMyCloud(() => {})();
+  assert.deepEqual(h.opens, []);
   assert.equal(h.dialog.open, true);
-  assert.equal(h.setup.hidden, true, 'an unchecked console is not a missing install');
+  assert.deepEqual([h.setup.hidden, h.setup.open], [false, false], 'when the browser cannot check, setup stays one click away instead of pushed open');
   assert.equal(fetch.mock.callCount(), 0);
 });
 
@@ -92,36 +95,38 @@ test('browsers without the permission API do not treat blocked probes as an offl
 });
 
 for (const permission of ['prompt', undefined]) {
-  test(`an inconclusive ${permission || 'unsupported'} permission check explains itself instead of navigating or asking for setup`, async (t) => {
+  test(`an inconclusive ${permission || 'unsupported'} permission check explains itself instead of navigating, and keeps setup collapsed`, async (t) => {
     const h = dialogHarness(t, permission === undefined ? null : permission);
     t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
-    const tab = { location: { replace() { assert.fail('no response means no automatic navigation'); } }, close() { this.closed = true; } };
-    await initMyCloud(() => {})({ detail: { tab } });
-    assert.equal(tab.closed, true);
+    await initMyCloud(() => {})();
+    assert.deepEqual(h.opens, [], 'no response means no automatic navigation');
     assert.equal(h.dialog.open, true);
-    assert.equal(h.setup.hidden, true);
+    assert.deepEqual([h.setup.hidden, h.setup.open], [false, false], 'when the browser cannot check, setup stays one click away instead of pushed open');
     assert.match(h.status.textContent, /browser couldn’t check localhost/);
   });
 }
 
-test('a first-use localhost prompt shows the dialog while it waits and then confirms the console', async (t) => {
-  const permission = permissionHarness(t, 'prompt');
+test('a first-use localhost prompt shows progress while it waits, then confirms the console without opening a tab', async (t) => {
   const h = dialogHarness(t, 'prompt');
+  t.mock.timers.enable({ apis: ['setTimeout'] });
   const requests = [];
   t.mock.method(globalThis, 'fetch', (_, { signal }) => new Promise((resolve, reject) => {
     requests.push({ resolve }); signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
   }));
-  const checking = initMyCloud(() => {})({ detail: { tab: null } });
+  const checking = initMyCloud(() => {})();
   await settle();
-  assert.equal(h.dialog.open, true, 'the page stays in front so the browser prompt is seen');
+  assert.equal(h.dialog.open, false, 'a quick answer never flashes the dialog');
+  assert.deepEqual(h.opens, [], 'nothing opens, and focus stays here, until the console answers');
+  t.mock.timers.tick(400);
+  assert.equal(h.dialog.open, true, 'a slow check, such as an open browser prompt, shows its progress');
   assert.match(h.status.textContent, /Checking localhost:5380/);
   assert.equal(h.retry.disabled, true);
   requests[0].resolve({ type: 'opaque' });
   await checking;
+  assert.deepEqual(h.opens, [], 'an answer after the dialog appeared stays in the dialog');
   assert.equal(h.setup.hidden, true);
   assert.match(h.status.textContent, /responding at localhost:5380/);
   assert.equal(h.openLink.classList.running, true);
-  void permission;
 });
 
 test('a first-use localhost prompt is given time to be answered before the check gives up', async (t) => {
@@ -131,7 +136,7 @@ test('a first-use localhost prompt is given time to be answered before the check
   t.mock.method(globalThis, 'fetch', (_, { signal }) => new Promise((_, reject) => {
     signal.addEventListener('abort', () => { aborted = true; reject(new Error('aborted')); }, { once: true });
   }));
-  initMyCloud(() => {})({ detail: { tab: null } });
+  initMyCloud(() => {})();
   await settle();
   t.mock.timers.tick(8000);
   await settle();
@@ -140,7 +145,7 @@ test('a first-use localhost prompt is given time to be answered before the check
   await settle();
   assert.equal(aborted, true);
   assert.equal(h.retry.disabled, false);
-  assert.equal(h.setup.hidden, true, 'an unanswered prompt is not a missing install');
+  assert.deepEqual([h.setup.hidden, h.setup.open], [false, false], 'when the browser cannot check, setup stays one click away instead of pushed open');
 });
 
 test('an older browser permission name still recognizes denied local access', async (t) => {
@@ -153,24 +158,40 @@ test('an older browser permission name still recognizes denied local access', as
   assert.equal(await probeMyCloud(), null);
 });
 
-test('blocked retries keep a manual console action, without setup or a false green check', async (t) => {
+test('blocked retries keep a manual console action and collapsed setup, without a false green check', async (t) => {
   const h = dialogHarness(t, 'denied');
-  await initMyCloud(() => {})({ detail: { tab: null } });
+  await initMyCloud(() => {})();
   await h.listeners.get('retry:click')();
-  assert.equal(h.setup.hidden, true);
+  assert.deepEqual([h.setup.hidden, h.setup.open], [false, false], 'when the browser cannot check, setup stays one click away instead of pushed open');
   assert.match(h.status.textContent, /browser couldn’t check localhost/);
   assert.equal(h.openLink.classList.running, false);
   assert.equal(h.openLink.textContent, 'Open console ↗');
 });
 
-test('a responding console opens the reserved tab without showing setup', async (t) => {
+test('a responding console opens in a new tab without showing the dialog or setup', async (t) => {
   const h = dialogHarness(t);
   t.mock.method(globalThis, 'fetch', async () => ({ type: 'basic', ok: true }));
-  let destination;
-  const tab = { closed: false, location: { replace(url) { destination = url; } }, close() { assert.fail('running tab must stay open'); } };
-  await initMyCloud(() => assert.fail('no dialog copy controls needed'))({ detail: { tab } });
-  assert.equal(destination, myCloudURL);
+  await initMyCloud(() => assert.fail('no dialog copy controls needed'))();
+  assert.deepEqual(h.opens, [myCloudURL]);
+  assert.equal(h.tabs[0].opener, null);
   assert.equal(h.dialog.open, false);
+});
+
+test('no tab opens, and the dialog stays hidden, while a quick check is still running', async (t) => {
+  const h = dialogHarness(t);
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  let answer;
+  t.mock.method(globalThis, 'fetch', () => new Promise((resolve) => { answer = resolve; }));
+  const checking = initMyCloud(() => {})();
+  await settle();
+  t.mock.timers.tick(399);
+  assert.deepEqual(h.opens, []);
+  assert.equal(h.dialog.open, false);
+  answer({ type: 'opaque' });
+  await checking;
+  t.mock.timers.tick(10);
+  assert.deepEqual(h.opens, [myCloudURL]);
+  assert.equal(h.dialog.open, false, 'the dialog timer is cancelled once the console answers');
 });
 
 test('the dialog appears only after a failed probe and retry confirms a responding console', async (t) => {
@@ -182,16 +203,15 @@ test('the dialog appears only after a failed probe and retry confirms a respondi
   assert.equal(fetch.mock.callCount(), 0, 'no background localhost probing');
   assert.equal(h.code.textContent, h.link.dataset.setupCommand);
   assert.equal(h.copy.dataset.copy, h.link.dataset.setupCommand);
-  const tab = { close() { this.closed = true; } };
-  const checking = open({ detail: { tab } });
+  const checking = open();
   await settle();
   assert.equal(h.dialog.open, false);
   assert.equal(h.retry.disabled, true);
   block();
   await checking;
-  assert.equal(tab.closed, true);
+  assert.deepEqual(h.opens, [], 'a console that is not running never gets a blank tab');
   assert.equal(h.dialog.open, true);
-  assert.equal(h.setup.hidden, false);
+  assert.deepEqual([h.setup.hidden, h.setup.open], [false, true], 'a console confirmed absent opens setup');
   assert.match(h.status.textContent, /Looks like.*container isn’t running/);
   assert.equal(h.retry.disabled, false);
   fetch.mock.mockImplementation(async () => ({ type: 'opaque' }));
@@ -209,12 +229,69 @@ test('the dialog appears only after a failed probe and retry confirms a respondi
 
 test('popup blocking leaves a direct console action with success feedback', async (t) => {
   const h = dialogHarness(t);
+  h.popup.blocked = true;
   t.mock.method(globalThis, 'fetch', async () => ({ type: 'opaque' }));
-  await initMyCloud(() => {})({ detail: { tab: null } });
+  await initMyCloud(() => {})();
+  assert.equal(h.opens.length, 1);
   assert.equal(h.dialog.open, true);
   assert.equal(h.setup.hidden, true);
   assert.equal(h.openLink.href, myCloudURL);
   assert.equal(h.openLink.classList.running, true);
+});
+
+test('an expired click skips the popup and leaves the direct console action', async (t) => {
+  const h = dialogHarness(t);
+  navigator.userActivation.isActive = false;
+  t.mock.method(globalThis, 'fetch', async () => ({ type: 'opaque' }));
+  await initMyCloud(() => {})();
+  assert.deepEqual(h.opens, [], 'a popup without a recent click would only trigger a blocked-popup notice');
+  assert.equal(h.dialog.open, true);
+  assert.equal(h.openLink.classList.running, true);
+});
+
+test('a second click during a running check keeps the first check, and its browser prompt, alive', async (t) => {
+  const h = dialogHarness(t);
+  const requests = [];
+  t.mock.method(globalThis, 'fetch', (_, { signal }) => new Promise((resolve, reject) => {
+    requests.push({ signal, resolve }); signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+  }));
+  const open = initMyCloud(() => {});
+  const first = open();
+  await settle();
+  await open();
+  assert.equal(requests.length, 1, 'a repeated click must not abort and re-issue the probe');
+  assert.equal(requests[0].signal.aborted, false);
+  requests[0].resolve({ type: 'opaque' });
+  await first;
+  assert.deepEqual(h.opens, [myCloudURL]);
+});
+
+test('closing the dialog mid-check opens no tab and leaves the dialog closed', async (t) => {
+  const h = dialogHarness(t);
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  t.mock.method(globalThis, 'fetch', (_, { signal }) => new Promise((_, reject) => {
+    signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+  }));
+  const checking = initMyCloud(() => {})();
+  await settle();
+  t.mock.timers.tick(400);
+  assert.equal(h.dialog.open, true);
+  h.dialog.open = false;
+  h.listeners.get('dialog:close')();
+  await checking;
+  t.mock.timers.tick(1000);
+  assert.deepEqual(h.opens, []);
+  assert.equal(h.dialog.open, false, 'a cancelled check never reopens the dialog');
+});
+
+test('setup stays collapsed until absence is confirmed', async (t) => {
+  const h = dialogHarness(t);
+  const fetch = t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('refused'); });
+  await initMyCloud(() => {})();
+  assert.deepEqual([h.setup.hidden, h.setup.open], [false, true]);
+  fetch.mock.mockImplementation(async () => ({ type: 'opaque' }));
+  await h.listeners.get('retry:click')();
+  assert.deepEqual([h.setup.hidden, h.setup.open], [true, false]);
 });
 
 test('setup keeps copy inside the command box and uses a focused popup without a titlebar', (t) => {
@@ -236,7 +313,7 @@ test('a stalled local request times out and offers setup', async (t) => {
   t.mock.timers.tick(8000);
   await settle();
   assert.equal(h.retry.disabled, false);
-  assert.equal(h.setup.hidden, false);
+  assert.deepEqual([h.setup.hidden, h.setup.open], [false, true], 'a console confirmed absent opens setup');
   assert.equal(h.dialog.open, true);
 });
 
@@ -257,7 +334,7 @@ test('closing or canceling aborts the probe and a stale result cannot overwrite 
   await settle();
   requests[0].resolve({ type: 'opaque' });
   await settle();
-  assert.equal(h.setup.hidden, false);
+  assert.deepEqual([h.setup.hidden, h.setup.open], [false, true], 'a console confirmed absent opens setup');
   assert.match(h.status.textContent, /Looks like/);
 });
 
@@ -268,63 +345,79 @@ test('unsupported dialog browsers retain the direct console link without probing
   assert.equal(h.listeners.has('link:click'), false);
 });
 
+const launcherSource = () => readFileSync(new URL('../src/components/MyCloudLauncher.astro', import.meta.url), 'utf8').match(/<script is:inline data-critical-bootstrap>([\s\S]*?)<\/script>/)[1];
+const launcherContext = (h, overrides) => ({ document, URL, setTimeout, clearTimeout,
+  CustomEvent: class { constructor(type, options) { this.type = type; this.detail = options?.detail; } },
+  window: { open() { assert.fail('the launcher never opens a tab before the console has answered'); } },
+  location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325', assign() { assert.fail('no fallback expected'); } },
+  ...overrides,
+});
+
 for (const assets of ['_astro/', 'src/scripts/']) {
-test(`the launcher loads ${assets} assets once and preserves modified clicks`, async (t) => {
+test(`the launcher loads ${assets} assets once, opens no tab itself, and preserves modified clicks`, async (t) => {
   const h = dialogHarness(t);
   h.link.dataset.myCloudAssets = assets;
   h.link.dataset.myCloudScript = '/' + assets + 'my-cloud.mjs';
   h.link.dataset.copyScript = '/' + assets + 'copy-buttons.mjs';
-  const source = readFileSync(new URL('../src/components/MyCloudLauncher.astro', import.meta.url), 'utf8').match(/<script is:inline data-critical-bootstrap>([\s\S]*?)<\/script>/)[1];
-  const script = transformSync(source, { loader: 'js' }).code;
-  let loads = 0, opens = 0, tabs = 0;
-  const tab = { opener: {} };
-  h.dialog.dispatchEvent = (event) => { assert.equal(event.type, 'lc:my-cloud-open'); assert.equal(event.detail.tab, tab); assert.equal(tab.opener, null); opens++; };
+  const script = transformSync(launcherSource(), { loader: 'js' }).code;
+  let loads = 0, opens = 0;
+  h.dialog.dispatchEvent = (event) => { assert.equal(event.type, 'lc:my-cloud-open'); opens++; };
   document.createElement = () => ({ remove() {} });
   document.head.append = (asset) => {
     assert.ok(asset.src.startsWith('http://127.0.0.1:4325/' + assets), 'script URLs use the page host, not a source-map URL');
     loads++; queueMicrotask(() => asset.onload());
   };
-  runInNewContext(script, { document, URL, setTimeout, clearTimeout, CustomEvent: class { constructor(type, options) { this.type = type; this.detail = options.detail; } },
-    window: { open(url, target) { assert.equal(url, undefined); assert.equal(target, undefined); tabs++; return tab; } },
-    location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325', assign() { assert.fail('no fallback expected'); } },
-  });
+  runInNewContext(script, launcherContext(h));
   assert.equal(loads, 0);
-  assert.equal(h.click({ ctrlKey: true }), false);
+  for (const modified of [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }]) {
+    assert.equal(h.click(modified), false, 'modified clicks keep the native link: ' + Object.keys(modified));
+  }
   assert.equal(loads, 0);
   assert.equal(h.click(), true);
   h.click();
   await settle();
-  assert.equal(tabs, 1, 'duplicate clicks during loading share one tab, reserved before loading or checking');
-  assert.equal(loads, 2); assert.equal(opens, 1);
+  assert.equal(loads, 2); assert.equal(opens, 1, 'duplicate clicks during loading start one check');
   h.click(); await settle();
   assert.equal(loads, 2); assert.equal(opens, 2);
 });
 
 }
 
-for (const state of ['prompt', 'denied']) {
-  test(`the launcher keeps the page in front when localhost access is ${state}`, async (t) => {
-    const h = dialogHarness(t, state);
-    const source = readFileSync(new URL('../src/components/MyCloudLauncher.astro', import.meta.url), 'utf8').match(/<script is:inline data-critical-bootstrap>([\s\S]*?)<\/script>/)[1];
-    let detail;
-    h.dialog.dispatchEvent = (event) => { detail = event.detail; };
-    document.createElement = () => ({ remove() {} });
-    document.head.append = (asset) => queueMicrotask(() => asset.onload());
-    runInNewContext(source, { document, URL, setTimeout, clearTimeout, navigator,
-      CustomEvent: class { constructor(type, options) { this.type = type; this.detail = options.detail; } },
-      window: { open() { assert.fail('a new tab would hide the browser prompt'); } },
-      location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325' },
-    });
-    h.click(); await settle();
-    assert.equal(detail.tab, null);
-  });
-}
+test('hovering, focusing or touching the link loads the assets ahead of the click, once, without checking anything', async (t) => {
+  const h = dialogHarness(t);
+  let loads = 0, opens = 0;
+  h.dialog.dispatchEvent = () => { opens++; };
+  document.createElement = () => ({ remove() {} });
+  document.head.append = (asset) => { loads++; queueMicrotask(() => asset.onload()); };
+  runInNewContext(launcherSource(), launcherContext(h));
+  for (const type of ['pointerenter', 'focus', 'touchstart']) {
+    h.listeners.get('link:' + type)(); await settle();
+  }
+  assert.equal(loads, 2, 'both assets load once, however the link is approached');
+  assert.equal(opens, 0, 'approaching the link never starts a localhost check');
+  h.click(); await settle();
+  assert.equal(loads, 2, 'the click reuses the assets that are already loaded');
+  assert.equal(opens, 1);
+});
+
+test('a failed hover load is retried by the click rather than left to fail silently', async (t) => {
+  const h = dialogHarness(t);
+  let loads = 0, opens = 0, fail = true;
+  h.dialog.dispatchEvent = () => { opens++; };
+  document.createElement = () => ({ remove() {} });
+  document.head.append = (asset) => { loads++; queueMicrotask(() => fail ? asset.onerror() : asset.onload()); };
+  runInNewContext(launcherSource(), launcherContext(h));
+  h.listeners.get('link:pointerenter')(); await settle();
+  assert.equal(h.dialog.open, false, 'a failed background load stays quiet');
+  fail = false;
+  h.click(); await settle();
+  assert.equal(opens, 1);
+  assert.equal(h.dialog.open, false);
+});
 
 for (const failedAsset of ['my-cloud', 'copy-buttons']) {
   test(`a failed ${failedAsset} asset never bypasses the localhost check`, async (t) => {
     const h = dialogHarness(t);
-    const source = readFileSync(new URL('../src/components/MyCloudLauncher.astro', import.meta.url), 'utf8').match(/<script is:inline data-critical-bootstrap>([\s\S]*?)<\/script>/)[1];
-    const tab = { close() { this.closed = true; }, location: { replace() { assert.fail('never navigate on an asset error'); } } };
     let checks = 0, copies = 0;
     h.dialog.dispatchEvent = () => { checks++; };
     document.createElement = () => ({ remove() {} });
@@ -333,16 +426,13 @@ for (const failedAsset of ['my-cloud', 'copy-buttons']) {
       if (asset.src.includes('copy-buttons')) copies++;
       queueMicrotask(() => asset.src.includes(failedAsset) ? asset.onerror() : asset.onload());
     };
-    runInNewContext(source, { document, URL, setTimeout, clearTimeout, CustomEvent: class {},
-      window: { open() { return tab; } },
-      location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325', assign() { assert.fail('never navigate on an asset error'); } },
-    });
+    runInNewContext(launcherSource(), launcherContext(h, { location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325', assign() { assert.fail('never navigate on an asset error'); } } }));
     h.click(); await settle();
     if (failedAsset === 'my-cloud') {
-      assert.equal(tab.closed, true);
       assert.equal(h.dialog.open, true, 'a failed module load still offers setup');
       assert.equal(checks, 0);
       assert.equal(h.code.textContent, h.link.dataset.setupCommand);
+      assert.equal(h.anchor.href, myCloudURL, 'a visitor whose console is already running can still open it');
       h.click(); await settle();
       assert.equal(copies, 2, 'failed modules can load again');
     } else {

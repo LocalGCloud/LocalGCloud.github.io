@@ -1,6 +1,6 @@
 export const myCloudURL = 'http://localhost:5380/';
 
-export async function localAccessPermission() {
+async function localAccessPermission() {
   for (const name of ['loopback-network', 'local-network-access']) {
     try { return (await navigator.permissions.query({ name })).state; } catch {}
   }
@@ -21,6 +21,14 @@ export async function probeMyCloud(signal) {
   }
 }
 
+// False when the browser would block the popup, so the dialog's own link takes over.
+function openConsole() {
+  if (navigator.userActivation?.isActive === false) return false;
+  const tab = window.open(myCloudURL);
+  try { if (tab) tab.opener = null; } catch {}
+  return Boolean(tab);
+}
+
 export function initMyCloud(bindCopyButtons) {
   const link = document.querySelector('[data-my-cloud]');
   const dialog = document.querySelector('[data-my-cloud-dialog]');
@@ -31,14 +39,14 @@ export function initMyCloud(bindCopyButtons) {
   dialog.innerHTML = `<form method="dialog" class="my-cloud-dismiss"><button type="submit" class="my-cloud-close" aria-label="Close My cloud">×</button></form>
     <div class="my-cloud-body"><div class="my-cloud-orbit" aria-hidden="true">☁</div><h2 id="my-cloud-title">Your cloud, right here.</h2>
     <p id="my-cloud-status" role="status" data-my-cloud-status></p>
-    <section data-my-cloud-setup hidden aria-labelledby="my-cloud-setup-title">
-      <h3 id="my-cloud-setup-title">Bring your cloud online</h3>
+    <details data-my-cloud-setup hidden>
+      <summary>Bring your cloud online</summary>
       <p>Install and start LocalCloud, then your console lives at <strong>localhost:5380</strong>. Requires Homebrew and running Docker. Already installed? Run just the second line.</p>
       <div class="my-cloud-command">
       <pre tabindex="0" aria-label="Install and start LocalCloud commands"><code></code></pre>
       <button type="button" class="copy-btn" aria-label="Copy install and start commands" data-analytics-label="my-cloud-setup"><span class="copy-label" aria-live="polite">Copy</span></button></div>
       <p class="my-cloud-note">If starting fails, run <code>lc doctor</code> to check your setup. <a data-my-cloud-guide>Setup guide</a></p>
-    </section>
+    </details>
     <div class="my-cloud-actions"><a class="btn-primary" data-my-cloud-open target="_blank" rel="noopener noreferrer" aria-live="polite">Open console ↗</a>
       <button type="button" class="btn-secondary" data-my-cloud-retry>Check again</button></div></div>`;
   const openLink = dialog.querySelector('[data-my-cloud-open]');
@@ -69,7 +77,9 @@ export function initMyCloud(bindCopyButtons) {
       : responding
       ? 'Your cloud is responding at localhost:5380. You can open it now.'
       : 'Looks like your local LocalCloud container isn’t running, or your browser couldn’t reach it.';
-    setup.hidden = responding !== false;
+    // Setup opens only for a confirmed absence; when the browser cannot check, it stays one click away.
+    setup.hidden = responding === true;
+    setup.open = responding === false;
     openLink.classList.toggle('is-running', responding === true);
     openLink.textContent = responding ? '✓ Working now · Open console ↗' : 'Open console ↗';
     retry.disabled = false;
@@ -80,15 +90,15 @@ export function initMyCloud(bindCopyButtons) {
   const stop = () => { pending?.abort(); pending = undefined; };
   dialog.addEventListener('close', stop);
   dialog.addEventListener('cancel', stop);
-  return async (event) => {
-    const tab = event?.detail?.tab;
+  return async () => {
     const show = () => { bindCopyButtons(dialog); if (!dialog.open) dialog.showModal(); };
-    // The browser's localhost prompt needs this page in front, so show the dialog while it waits.
-    if (!dialog.open && await localAccessPermission() === 'prompt') show();
-    const responding = await check();
-    if (responding === true && tab && !tab.closed) { tab.location.replace(myCloudURL); return; }
-    tab?.close();
+    // Stay on this page until the answer is known; only a slow check, such as an open browser prompt, needs feedback.
+    if (pending) return;
+    const slow = setTimeout(show, 400);
+    let responding;
+    try { responding = await check(); } finally { clearTimeout(slow); }
     if (responding === undefined) return;
+    if (responding === true && !dialog.open && openConsole()) return;
     show();
   };
 }
