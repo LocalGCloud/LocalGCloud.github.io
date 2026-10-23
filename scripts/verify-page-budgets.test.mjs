@@ -48,7 +48,7 @@ const agentHomeBytes = { rawBytes: 40_000, gzipBytes: 6_500, styleBytes: 18_500,
 // The separately added My Cloud dialog contributes ~5.7KB HTML, ~1KB CSS and
 // ~1.8KB processed JS. Keep its fixed allowance conditional on that widget.
 // The safe script-load failure dialog adds under 100B gzip; keep startup/CSS limits intact.
-const consoleDialogBytes = { rawBytes: 6_000, gzipBytes: 1_100, styleBytes: 1_500, scriptBytes: 2_500 };
+const consoleDialogBytes = { rawBytes: 6_000, gzipBytes: 1_200, styleBytes: 1_500, scriptBytes: 2_500 };
 // Desktop startup also fetches the controller, router, interactions and page filter modules.
 // Count each fetched file once, including files loaded by inline bootstraps rather than script tags.
 const startupScriptBytes = 45_000;

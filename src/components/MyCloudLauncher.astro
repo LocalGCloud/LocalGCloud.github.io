@@ -33,13 +33,15 @@ const setupCommand = consoleQuickStart(docsContract);
       script.onerror = () => finish();
       document.head.append(script);
     });
+    const localPermission = async () => { for (const name of ['loopback-network', 'local-network-access']) try { return (await navigator.permissions.query({ name })).state; } catch {} };
     link?.addEventListener('click', async (event) => {
       if (!dialog?.showModal || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       if (launching) return;
       launching = true;
-      // Reserve a tab before awaiting to avoid popup blocking.
-      const tab = dialog.open ? null : window.open();
+      // Reserve a tab to avoid popup blocking, unless a localhost prompt needs this page in front.
+      const permission = await localPermission();
+      const tab = dialog.open || permission === 'prompt' || permission === 'denied' ? null : window.open();
       if (tab) tab.opener = null;
       try {
         loaded ||= Promise.all([load(link.dataset.myCloudScript), load(link.dataset.copyScript).catch(() => {})]);

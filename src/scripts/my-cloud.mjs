@@ -1,6 +1,6 @@
 export const myCloudURL = 'http://localhost:5380/';
 
-async function localAccessPermission() {
+export async function localAccessPermission() {
   for (const name of ['loopback-network', 'local-network-access']) {
     try { return (await navigator.permissions.query({ name })).state; } catch {}
   }
@@ -53,12 +53,13 @@ export function initMyCloud(bindCopyButtons) {
   const check = async () => {
     pending?.abort();
     const controller = pending = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
     status.textContent = 'Checking localhost:5380… Allow local network access if your browser asks.';
     openLink.classList.remove('is-running');
     openLink.textContent = 'Open console ↗';
     retry.disabled = true;
     retry.textContent = 'Checking…';
+    // A first-use browser prompt waits on the visitor, so allow longer than a plain connection check.
+    const timer = setTimeout(() => controller.abort(), await localAccessPermission() === 'prompt' ? 30000 : 8000);
     const responding = await probeMyCloud(controller.signal);
     clearTimeout(timer);
     if (pending !== controller) return;
@@ -68,7 +69,7 @@ export function initMyCloud(bindCopyButtons) {
       : responding
       ? 'Your cloud is responding at localhost:5380. You can open it now.'
       : 'Looks like your local LocalCloud container isn’t running, or your browser couldn’t reach it.';
-    setup.hidden = responding === true;
+    setup.hidden = responding !== false;
     openLink.classList.toggle('is-running', responding === true);
     openLink.textContent = responding ? '✓ Working now · Open console ↗' : 'Open console ↗';
     retry.disabled = false;
@@ -81,12 +82,14 @@ export function initMyCloud(bindCopyButtons) {
   dialog.addEventListener('cancel', stop);
   return async (event) => {
     const tab = event?.detail?.tab;
+    const show = () => { bindCopyButtons(dialog); if (!dialog.open) dialog.showModal(); };
+    // The browser's localhost prompt needs this page in front, so show the dialog while it waits.
+    if (!dialog.open && await localAccessPermission() === 'prompt') show();
     const responding = await check();
     if (responding === true && tab && !tab.closed) { tab.location.replace(myCloudURL); return; }
     tab?.close();
     if (responding === undefined) return;
-    bindCopyButtons(dialog);
-    if (!dialog.open) dialog.showModal();
+    show();
   };
 }
 

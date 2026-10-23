@@ -65,7 +65,7 @@ test('network rejection, blocked access, and readable HTTP errors do not claim a
   assert.equal(await probeMyCloud(), false);
 });
 
-test('denied localhost permission shows setup without probing or opening the console', async (t) => {
+test('denied localhost permission explains the blocked check without probing, opening the console, or asking for setup', async (t) => {
   const h = dialogHarness(t, 'denied');
   const fetch = t.mock.method(globalThis, 'fetch', () => assert.fail('denied access must not be probed'));
   let destination;
@@ -75,7 +75,7 @@ test('denied localhost permission shows setup without probing or opening the con
   assert.equal(destination, undefined);
   assert.equal(tab.closed, true);
   assert.equal(h.dialog.open, true);
-  assert.equal(h.setup.hidden, false);
+  assert.equal(h.setup.hidden, true, 'an unchecked console is not a missing install');
   assert.equal(fetch.mock.callCount(), 0);
 });
 
@@ -92,17 +92,56 @@ test('browsers without the permission API do not treat blocked probes as an offl
 });
 
 for (const permission of ['prompt', undefined]) {
-  test(`an inconclusive ${permission || 'unsupported'} permission check shows setup instead of navigating`, async (t) => {
+  test(`an inconclusive ${permission || 'unsupported'} permission check explains itself instead of navigating or asking for setup`, async (t) => {
     const h = dialogHarness(t, permission === undefined ? null : permission);
     t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
     const tab = { location: { replace() { assert.fail('no response means no automatic navigation'); } }, close() { this.closed = true; } };
     await initMyCloud(() => {})({ detail: { tab } });
     assert.equal(tab.closed, true);
     assert.equal(h.dialog.open, true);
-    assert.equal(h.setup.hidden, false);
+    assert.equal(h.setup.hidden, true);
     assert.match(h.status.textContent, /browser couldn’t check localhost/);
   });
 }
+
+test('a first-use localhost prompt shows the dialog while it waits and then confirms the console', async (t) => {
+  const permission = permissionHarness(t, 'prompt');
+  const h = dialogHarness(t, 'prompt');
+  const requests = [];
+  t.mock.method(globalThis, 'fetch', (_, { signal }) => new Promise((resolve, reject) => {
+    requests.push({ resolve }); signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+  }));
+  const checking = initMyCloud(() => {})({ detail: { tab: null } });
+  await settle();
+  assert.equal(h.dialog.open, true, 'the page stays in front so the browser prompt is seen');
+  assert.match(h.status.textContent, /Checking localhost:5380/);
+  assert.equal(h.retry.disabled, true);
+  requests[0].resolve({ type: 'opaque' });
+  await checking;
+  assert.equal(h.setup.hidden, true);
+  assert.match(h.status.textContent, /responding at localhost:5380/);
+  assert.equal(h.openLink.classList.running, true);
+  void permission;
+});
+
+test('a first-use localhost prompt is given time to be answered before the check gives up', async (t) => {
+  const h = dialogHarness(t, 'prompt');
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  let aborted = false;
+  t.mock.method(globalThis, 'fetch', (_, { signal }) => new Promise((_, reject) => {
+    signal.addEventListener('abort', () => { aborted = true; reject(new Error('aborted')); }, { once: true });
+  }));
+  initMyCloud(() => {})({ detail: { tab: null } });
+  await settle();
+  t.mock.timers.tick(8000);
+  await settle();
+  assert.equal(aborted, false, 'the usual 8 second limit would hide the prompt before it is answered');
+  t.mock.timers.tick(22000);
+  await settle();
+  assert.equal(aborted, true);
+  assert.equal(h.retry.disabled, false);
+  assert.equal(h.setup.hidden, true, 'an unanswered prompt is not a missing install');
+});
 
 test('an older browser permission name still recognizes denied local access', async (t) => {
   permissionHarness(t, 'denied');
@@ -114,11 +153,11 @@ test('an older browser permission name still recognizes denied local access', as
   assert.equal(await probeMyCloud(), null);
 });
 
-test('blocked retries retain setup and a manual console action without a false green check', async (t) => {
+test('blocked retries keep a manual console action, without setup or a false green check', async (t) => {
   const h = dialogHarness(t, 'denied');
   await initMyCloud(() => {})({ detail: { tab: null } });
   await h.listeners.get('retry:click')();
-  assert.equal(h.setup.hidden, false);
+  assert.equal(h.setup.hidden, true);
   assert.match(h.status.textContent, /browser couldn’t check localhost/);
   assert.equal(h.openLink.classList.running, false);
   assert.equal(h.openLink.textContent, 'Open console ↗');
@@ -136,7 +175,8 @@ test('a responding console opens the reserved tab without showing setup', async 
 
 test('the dialog appears only after a failed probe and retry confirms a responding console', async (t) => {
   const h = dialogHarness(t);
-  const fetch = t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('blocked'); });
+  let block;
+  const fetch = t.mock.method(globalThis, 'fetch', () => new Promise((_, reject) => { block = () => reject(new TypeError('blocked')); }));
   const open = initMyCloud(() => {});
   initMyCloud(() => {});
   assert.equal(fetch.mock.callCount(), 0, 'no background localhost probing');
@@ -144,8 +184,10 @@ test('the dialog appears only after a failed probe and retry confirms a respondi
   assert.equal(h.copy.dataset.copy, h.link.dataset.setupCommand);
   const tab = { close() { this.closed = true; } };
   const checking = open({ detail: { tab } });
+  await settle();
   assert.equal(h.dialog.open, false);
   assert.equal(h.retry.disabled, true);
+  block();
   await checking;
   assert.equal(tab.closed, true);
   assert.equal(h.dialog.open, true);
@@ -250,15 +292,32 @@ test(`the launcher loads ${assets} assets once and preserves modified clicks`, a
   assert.equal(h.click({ ctrlKey: true }), false);
   assert.equal(loads, 0);
   assert.equal(h.click(), true);
-  assert.equal(tabs, 1, 'tab is reserved synchronously before loading or checking');
   h.click();
-  assert.equal(tabs, 1, 'duplicate clicks during loading share the same tab');
   await settle();
+  assert.equal(tabs, 1, 'duplicate clicks during loading share one tab, reserved before loading or checking');
   assert.equal(loads, 2); assert.equal(opens, 1);
   h.click(); await settle();
   assert.equal(loads, 2); assert.equal(opens, 2);
 });
 
+}
+
+for (const state of ['prompt', 'denied']) {
+  test(`the launcher keeps the page in front when localhost access is ${state}`, async (t) => {
+    const h = dialogHarness(t, state);
+    const source = readFileSync(new URL('../src/components/MyCloudLauncher.astro', import.meta.url), 'utf8').match(/<script is:inline data-critical-bootstrap>([\s\S]*?)<\/script>/)[1];
+    let detail;
+    h.dialog.dispatchEvent = (event) => { detail = event.detail; };
+    document.createElement = () => ({ remove() {} });
+    document.head.append = (asset) => queueMicrotask(() => asset.onload());
+    runInNewContext(source, { document, URL, setTimeout, clearTimeout, navigator,
+      CustomEvent: class { constructor(type, options) { this.type = type; this.detail = options.detail; } },
+      window: { open() { assert.fail('a new tab would hide the browser prompt'); } },
+      location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325' },
+    });
+    h.click(); await settle();
+    assert.equal(detail.tab, null);
+  });
 }
 
 for (const failedAsset of ['my-cloud', 'copy-buttons']) {

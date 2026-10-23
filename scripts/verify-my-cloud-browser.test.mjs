@@ -31,11 +31,16 @@ for (const permission of [undefined, 'denied', 'granted']) {
     const page = await browser.newPage();
     await page.setViewport({ width: 1440, height: 1000 });
     await page.setRequestInterception(true);
-    let probes = 0, blockProbe = permission !== 'granted';
+    let probes = 0, blockProbe = permission !== 'granted', heldProbe;
     page.on('request', async (request) => {
       const url = new URL(request.url());
       if (url.origin !== origin) {
-        if (request.url() === consoleURL) { probes++; if (blockProbe) await request.abort('connectionrefused'); else await request.continue(); }
+        if (request.url() === consoleURL) {
+          probes++;
+          if (!permission) heldProbe = request;
+          else if (blockProbe) await request.abort('connectionrefused');
+          else await request.continue();
+        }
         else await request.abort();
         return;
       }
@@ -63,12 +68,26 @@ for (const permission of [undefined, 'denied', 'granted']) {
       await page.click('[data-my-cloud-retry]');
       await page.waitForFunction(() => document.querySelector('[data-my-cloud-open]').classList.contains('is-running'));
       assert.equal(await page.$eval('[data-my-cloud-open]', link => link.textContent), '✓ Working now · Open console ↗');
+    } else if (!permission) {
+      const pages = (await browser.pages()).length;
+      await page.click('[data-my-cloud]');
+      await page.waitForFunction(() => document.querySelector('[data-my-cloud-dialog]').open);
+      assert.equal((await browser.pages()).length, pages, 'a new tab would hide the browser prompt for localhost access');
+      assert.match(await page.$eval('[data-my-cloud-status]', status => status.textContent), /Checking localhost:5380/);
+      await page.waitForFunction(() => document.querySelector('[data-my-cloud-dialog] [data-my-cloud-retry]').disabled);
+      const client = await browser.target().createCDPSession();
+      await client.send('Browser.setPermission', { permission: { name: 'loopback-network' }, setting: 'granted', origin });
+      await new Promise(resolve => { const wait = () => heldProbe ? resolve() : setTimeout(wait, 50); wait(); });
+      await heldProbe.continue();
+      await page.waitForFunction(() => document.querySelector('[data-my-cloud-open]').classList.contains('is-running'));
+      assert.equal(await page.$eval('[data-my-cloud-setup]', setup => setup.hidden), true, 'an answered prompt that finds the console never offers setup');
     } else {
       await page.click('[data-my-cloud]');
       await page.waitForFunction(() => document.querySelector('[data-my-cloud-dialog]').open);
-      assert.equal(await page.$eval('[data-my-cloud-setup]', setup => setup.hidden), false);
+      assert.equal(await page.$eval('[data-my-cloud-setup]', setup => setup.hidden), true, 'an unchecked console is not a missing install');
+      assert.match(await page.$eval('[data-my-cloud-status]', status => status.textContent), /browser couldn’t check localhost/);
       assert.ok(!browser.targets().some(target => target.url() === consoleURL), 'unconfirmed checks must not open localhost');
-      if (permission === 'denied') assert.equal(probes, 0, 'denied permission skips the probe');
+      assert.equal(probes, 0, 'denied permission skips the probe');
     }
   });
 }
