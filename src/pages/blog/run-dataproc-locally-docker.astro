@@ -202,7 +202,13 @@ const structuredData = [
       <h1 class="mt-4">How to Run Dataproc 3.0 Locally with Docker</h1>
       <p class="blog-meta"><span>Published <time datetime={publishDate}>{formatBlogDate(publishDate)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
       <p class="blog-deck">
-        Spinning up a cloud Dataproc cluster just to test a PySpark transformation or validate an SQL query wastes minutes in provisioning and quickly racks up GCP charges. With LocalCloud Dataproc images, developers and AI coding agents can run the exact Dataproc 3.0 component stack entirely on their local machines — with zero cloud credentials, zero billing risk, and zero external dependencies.
+        Testing a PySpark transformation should be as simple as changing code and running it again. When development depends on a cloud Dataproc cluster, even a small experiment brings provisioning, job submission, and <a href="https://cloud.google.com/products/managed-service-for-apache-spark/pricing">billable cloud resources</a> into the feedback loop. That overhead adds up while developers debug transformations, check SQL, and grow their integration suites.
+      </p>
+      <p class="mt-4 leading-8 text-[var(--text-2)]">
+        <a href="https://docs.cloud.google.com/dataproc/docs/resources/faq">Dataproc brings Apache Spark, Hadoop, and Hive into a managed cloud environment.</a> Many everyday checks concern the execution runtime: input data, transformation logic, schemas, dependencies, and expected results. LocalCloud packages these components for Docker, so you can run Dataproc-targeted workloads on your laptop or in CI. After downloading the image, tests using local data and local services can skip cloud cluster provisioning and run without Dataproc or Google Cloud compute charges.
+      </p>
+      <p class="mt-4 leading-8 text-[var(--text-2)]">
+        For AI coding agents, this turns testing into an on-demand tool. An agent can start a container, create test inputs, run a job, inspect results or tracebacks, and repeat across empty datasets, schema changes, and failure scenarios—without needing cloud credentials for those local checks. The result is a tighter build–run–verify loop: test more scenarios locally, then validate cloud integrations and production behavior on Google Cloud.
       </p>
       <div class="blog-actions">
         <a class="site-button site-button--primary" href="https://hub.docker.com/r/agentcloud/dataproc" target="_blank" rel="noopener noreferrer">View on Docker Hub</a>
