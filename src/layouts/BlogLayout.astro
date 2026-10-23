@@ -9,6 +9,7 @@ interface Props {
   structuredData?: JsonLd[];
   contents?: { id: string; label: string }[];
   index?: boolean;
+  wide?: boolean;
   /**
    * Set on every post (not the index): publishes the BlogPosting JSON-LD and the Open Graph
    * article times. The headline defaults to the title; the update date comes from the shared
@@ -16,7 +17,7 @@ interface Props {
    */
   article?: { publishedAt: string; headline?: string };
 }
-const { contents = [], index = false, article, structuredData = [], ...layoutProps } = Astro.props;
+const { contents = [], index = false, wide = false, article, structuredData = [], ...layoutProps } = Astro.props;
 const lastModified = article ? lastModifiedForRoute(Astro.url.pathname) : undefined;
 const modifiedAt = article && lastModified && lastModified > article.publishedAt ? lastModified : article?.publishedAt;
 const articleProps = article
@@ -39,7 +40,7 @@ const articleProps = article
 ---
 
 <LandingLayout {...layoutProps} {...articleProps}>
-  <div class:list={['blog-page', 'container', index && 'blog-page--index']}>
+  <div class:list={['blog-page', 'container', index && 'blog-page--index', wide && 'blog-page--wide']}>
     <div class="blog-hero"><slot name="hero" /></div>
     <div class="blog-body">
       {contents.length > 3 && (
@@ -95,6 +96,8 @@ const articleProps = article
   .blog-page .blog-prompt-list { display: grid; gap: 1rem; }
   .blog-page .reveal, .reveal-ready .blog-page .reveal { opacity: 1; transform: none; transition: none; }
   .blog-page--index .blog-prose, .blog-page--index .blog-hero .container { max-width: none; }
+  .blog-page.blog-page--wide .container { width: 100%; }
+  .blog-page--wide .blog-hero .container, .blog-page--wide .blog-prose { max-width: none; }
   .blog-page--index .blog-deck { max-width: 58ch; }
   .blog-posts { display: grid; gap: 1.25rem; margin-top: 1.5rem; }
   .blog-card { display: block; height: 100%; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease); }
@@ -109,10 +112,12 @@ const articleProps = article
   @media (min-width: 40rem) { .blog-posts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 68.75rem) {
     .blog-body:has(.blog-contents) { display: grid; grid-template-columns: minmax(0, 70ch) minmax(11rem, 16rem); justify-content: space-between; gap: 3rem; align-items: start; }
+    .blog-page--wide .blog-body:has(.blog-contents) { grid-template-columns: minmax(0, 1fr) 13rem; gap: 2rem; }
     .blog-contents { grid-column: 2; grid-row: 1; position: sticky; top: 6.5rem; max-height: calc(100vh - 8rem); overflow-y: auto; }
     .blog-prose { grid-column: 1; grid-row: 1; }
     .blog-contents details { border: 0; padding-top: 1.5rem; }
   }
+  .mobile-view .blog-page--wide .blog-body { display: flex; }
   @media (prefers-reduced-motion: reduce) { .blog-page a { transition: none; } }
 </style>
 

@@ -187,6 +187,7 @@ const structuredData = [
   description="Run Dataproc 3.0 with Spark 4.1, Hadoop 3.5, and Hive 4.2 locally in Docker, as one container or a 3-node cluster, for developers and AI agents."
   structuredData={structuredData}
   {contents}
+  wide
   article={{ publishedAt: publishDate, headline: 'How to Run Dataproc 3.0 Locally with Docker' }}
 >
   <Fragment slot="hero">
@@ -198,45 +199,43 @@ const structuredData = [
         <span>/</span>
         <span class="text-[var(--text)]">Run Dataproc 3.0 Locally with Docker</span>
       </nav>
-      <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>User Guide & Demo</span>
-      <h1 class="mt-4">How to Run Dataproc 3.0 Locally with Docker</h1>
-      <p class="blog-meta"><span>Published <time datetime={publishDate}>{formatBlogDate(publishDate)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-      <p class="blog-deck">
-        Testing a PySpark transformation should be as simple as changing code and running it again. When development depends on a cloud Dataproc cluster, even a small experiment brings provisioning, job submission, and <a href="https://cloud.google.com/products/managed-service-for-apache-spark/pricing">billable cloud resources</a> into the feedback loop. That overhead adds up while developers debug transformations, check SQL, and grow their integration suites.
-      </p>
-      <p class="mt-4 leading-8 text-[var(--text-2)]">
-        <a href="https://docs.cloud.google.com/dataproc/docs/resources/faq">Dataproc brings Apache Spark, Hadoop, and Hive into a managed cloud environment.</a> Many everyday checks concern the execution runtime: input data, transformation logic, schemas, dependencies, and expected results. LocalCloud packages these components for Docker, so you can run Dataproc-targeted workloads on your laptop or in CI. After downloading the image, tests using local data and local services can skip cloud cluster provisioning and run without Dataproc or Google Cloud compute charges.
-      </p>
-      <p class="mt-4 leading-8 text-[var(--text-2)]">
-        For AI coding agents, this turns testing into an on-demand tool. An agent can start a container, create test inputs, run a job, inspect results or tracebacks, and repeat across empty datasets, schema changes, and failure scenarios—without needing cloud credentials for those local checks. The result is a tighter build–run–verify loop: test more scenarios locally, then validate cloud integrations and production behavior on Google Cloud.
-      </p>
-      <div class="blog-actions">
-        <a class="site-button site-button--primary" href="https://hub.docker.com/r/agentcloud/dataproc" target="_blank" rel="noopener noreferrer">View on Docker Hub</a>
-        <a href="/services/dataproc/#ai-agent">Use with an AI agent</a>
-        <a href="/services/dataproc/">Dataproc Service</a>
+      <div class="dataproc-intro">
+        <div>
+          <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>User Guide & Demo</span>
+          <h1 class="mt-4">How to Run Dataproc 3.0 Locally with Docker</h1>
+          <p class="blog-meta"><span>Published <time datetime={publishDate}>{formatBlogDate(publishDate)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+          <p class="blog-deck">
+            Testing a PySpark transformation should be as simple as changing code and running it again. When development depends on a cloud Dataproc cluster, even a small experiment brings provisioning, job submission, and <a href="https://cloud.google.com/products/managed-service-for-apache-spark/pricing">billable cloud resources</a> into the feedback loop. That overhead adds up while developers debug transformations, check SQL, and grow their integration suites.
+          </p>
+          <p class="mt-4 leading-8 text-[var(--text-2)]">
+            <a href="https://docs.cloud.google.com/dataproc/docs/resources/faq">Dataproc brings Apache Spark, Hadoop, and Hive into a managed cloud environment.</a> Many everyday checks concern the execution runtime: input data, transformation logic, schemas, dependencies, and expected results. LocalCloud packages these components for Docker, so you can run Dataproc-targeted workloads on your laptop or in CI. After downloading the image, tests using local data and local services can skip cloud cluster provisioning and run without Dataproc or Google Cloud compute charges.
+          </p>
+          <p class="mt-4 leading-8 text-[var(--text-2)]">
+            For AI coding agents, this turns testing into an on-demand tool. An agent can start a container, create test inputs, run a job, inspect results or tracebacks, and repeat across empty datasets, schema changes, and failure scenarios—without needing cloud credentials for those local checks. The result is a tighter build–run–verify loop: test more scenarios locally, then validate cloud integrations and production behavior on Google Cloud.
+          </p>
+          <div class="blog-actions">
+            <a class="site-button site-button--primary" href="https://hub.docker.com/r/agentcloud/dataproc" target="_blank" rel="noopener noreferrer">View on Docker Hub</a>
+            <a href="/services/dataproc/#ai-agent">Use with an AI agent</a>
+            <a href="/services/dataproc/">Dataproc Service</a>
+          </div>
+        </div>
+        <aside class="dataproc-prompt site-panel" aria-labelledby="agent-prompt">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <span class="site-kicker">For AI coding agents</span>
+              <h2 class="mt-2" id="agent-prompt">Copy-paste prompt for Claude Code, Cursor, or Gemini CLI</h2>
+            </div>
+            <CopyButton text={agentPrompt} analyticsLabel="agentic-copy-dataproc-blog-prompt" />
+          </div>
+          <p class="text-sm text-[var(--text-2)]">
+            Give your coding agent this prompt to run local checks without Google Cloud credentials:
+          </p>
+          <pre class="blog-prompt"><code>{agentPrompt}</code></pre>
+        </aside>
       </div>
     </div>
   </article>
   </Fragment>
-
-  {/* Agent Prompt Box */}
-  <section class="site-section site-section--tight">
-    <div class="container container--narrow">
-      <div class="site-panel p-6 reveal">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <span class="site-kicker">For AI coding agents</span>
-            <h2 class="mt-2 text-xl font-semibold" id="agent-prompt">Copy-paste prompt for Claude Code, Cursor, or Gemini CLI</h2>
-          </div>
-          <CopyButton text={agentPrompt} analyticsLabel="agentic-copy-dataproc-blog-prompt" />
-        </div>
-        <p class="mt-3 text-sm text-[var(--text-2)]">
-          Give this prompt to your AI coding agent to execute a safe local verification loop without touching real Google Cloud credentials:
-        </p>
-        <pre class="blog-prompt mt-4 overflow-x-auto whitespace-pre-wrap rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-4 text-xs font-mono leading-6 text-[var(--text-2)]"><code>{agentPrompt}</code></pre>
-      </div>
-    </div>
-  </section>
 
   {/* Main Content Sections */}
   <section class="site-section">
@@ -683,3 +682,13 @@ const structuredData = [
     </div>
   </section>
 </BlogLayout>
+
+<style>
+  .dataproc-intro { display: grid; gap: 2rem; align-items: start; }
+  .dataproc-intro > * { min-width: 0; }
+  :global(.blog-page) .dataproc-prompt h2 { font-size: 1.25rem; line-height: 1.35; text-wrap: initial; }
+  :global(.blog-page) .dataproc-prompt pre { padding: 1rem; font-size: 0.8125rem; line-height: 1.65; }
+  @media (min-width: 68.75rem) {
+    :global(html:not(.mobile-view)) .dataproc-intro { grid-template-columns: minmax(0, 1fr) minmax(20rem, 24rem); }
+  }
+</style>
