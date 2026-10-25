@@ -1,5 +1,5 @@
 const themes = ['off', 'rain', 'sun', 'snow', 'autumn'];
-const names = { off: 'main theme', rain: 'Rainwash', sun: 'Sunlight', snow: 'Snowfall', autumn: 'Autumn leaves' };
+const names = { auto: 'Local weather', off: 'Main theme', rain: 'Rainwash', sun: 'Sunlight', snow: 'Snowfall', autumn: 'Autumn leaves' };
 
 export function initDesktopWeather(menu) {
   const root = document.documentElement;
@@ -14,23 +14,24 @@ export function initDesktopWeather(menu) {
   const panel = menu.querySelector('nav') || document.createElement('nav');
   panel.setAttribute('aria-label', 'Desktop theme');
   if (!panel.parentElement) menu.append(panel);
-  panel.innerHTML = `<label>Theme<select aria-label="Desktop theme" data-weather-select><option value="auto">Local weather</option><option value="off">Off — main theme</option><option value="rain">Rainwash</option><option value="sun">Sunlight</option><option value="snow">Snowfall</option><option value="autumn">Autumn leaves</option></select></label>
-    <label><span>Animate effects</span><input type="checkbox" data-weather-motion></label>
-    <label><span>Cloud visitor</span><input type="checkbox" data-weather-visitor></label>
-    <button type="button" data-weather-stop>Stop theme</button><span role="status" data-weather-status></span>
-    <small>Weather: <a href="https://www.met.no/en/free-meteorological-data/Licensing-and-crediting" target="_blank" rel="noopener noreferrer">MET Norway · CC BY 4.0</a>. Forecasts simplified into visual themes. Leaves follow the local season.</small>`;
-  const select = panel.querySelector('[data-weather-select]'), animate = panel.querySelector('[data-weather-motion]'), visit = panel.querySelector('[data-weather-visitor]'), stop = panel.querySelector('[data-weather-stop]'), status = panel.querySelector('[data-weather-status]');
-  select.value = choice;
-  animate.checked = read('lc-weather-motion') === 'play' || read('lc-weather-motion') !== 'pause' && !reduced.matches;
-  visit.checked = read('lc-weather-visitor') === 'true';
-  let weather='off', paused=!animate.checked, visitor=visit.checked, time=0, last=0, raf=0, width=1, height=1, shapes=[], drops=[];
-  let backdrop, edges, ctx, edge, styles, dirty=true, forecast, controller, refresh, revision=0;
   const shell = document.querySelector('[data-desktop-shell]');
+  panel.innerHTML = `<div data-weather-grid>${['auto', ...themes].map(theme => `<button type="button" data-weather-choice="${theme}" aria-label="${names[theme]}" aria-pressed="false"><span>${names[theme]}</span></button>`).join('')}</div>
+    <div data-weather-tools><button type="button" data-weather-visitor aria-label="Cloud visitor" title="Cloud visitor" aria-pressed="false">☁</button><a href="${shell.dataset.base || '/'}docs/privacy/#desktop-weather-themes" aria-label="Weather credits" title="Weather credits">ⓘ</a></div>
+    <span role="status" data-weather-status></span>`;
+  const pause = document.querySelector('[data-weather-pause]'), visit = panel.querySelector('[data-weather-visitor]'), status = panel.querySelector('[data-weather-status]');
+  let weather='off', paused=read('lc-weather-motion') === 'pause' || read('lc-weather-motion') !== 'play' && reduced.matches, visitor=read('lc-weather-visitor') === 'true', time=0, last=0, raf=0, width=1, height=1, shapes=[], drops=[];
+  let backdrop, edges, ctx, edge, styles, dirty=true, forecast, controller, refresh, revision=0;
   const observer = new MutationObserver(() => { dirty=true; schedule(); });
+  function sync() {
+    for (const tile of panel.querySelectorAll('[data-weather-choice]')) tile.setAttribute('aria-pressed', String(tile.dataset.weatherChoice === choice));
+    pause.disabled=choice==='off';pause.textContent=paused?'▶':'Ⅱ';
+    pause.title=paused?'Resume theme':'Pause theme';pause.setAttribute('aria-label',pause.title);pause.setAttribute('aria-pressed',String(paused));
+    visit.setAttribute('aria-pressed',String(visitor));
+  }
   function stylesheet() {
     if (styles) return;
     const link=styles=document.createElement('link');link.rel='stylesheet';link.href=menu.dataset.weather.split(' ')[1];
-    link.onerror=()=>{if(styles!==link)return;weather='off';select.value=choice='off';unmount();status.textContent='Theme styles unavailable. Using the main theme.';link.remove();styles=undefined;};
+    link.onerror=()=>{if(styles!==link)return;weather=choice='off';sync();unmount();status.textContent='Theme styles unavailable. Using the main theme.';link.remove();styles=undefined;};
     document.head.append(link);
   }
   function unmount() {
@@ -58,16 +59,17 @@ export function initDesktopWeather(menu) {
     if(!paused)schedule();
   }
   function paint() {
-    cancelAnimationFrame(raf);raf=0;last=0;paused=!animate.checked;visitor=visit.checked;
+    cancelAnimationFrame(raf);raf=0;last=0;
     if(weather==='off')unmount();else mount();
   }
   async function update() {
     const current=++revision;clearTimeout(refresh);controller?.abort();
-    stop.disabled=choice==='off';
+    sync();
     if(!human()){unmount();styles?.remove();styles=undefined;return;}
     stylesheet();
     if(document.hidden){cancelAnimationFrame(raf);raf=0;return;}
     if(choice!=='auto'){weather=choice;status.textContent=choice==='off'?'Main theme. Weather is off.':names[choice];paint();return;}
+    if(paused){status.textContent='Weather theme paused.';paint();return;}
     if(!forecast||forecast.expiresAt<=Date.now()) {
       weather='off';paint();status.textContent='Checking approximate local weather…';
       const requestController=controller=new AbortController();const timeout=setTimeout(()=>requestController.abort(),5000);
@@ -89,16 +91,16 @@ export function initDesktopWeather(menu) {
     refresh=setTimeout(update,Math.max(1800000,forecast.expiresAt-Date.now()));
   }
   const save = () => {
-    choice=select.value;
-    try {localStorage.setItem('lc-desktop-weather',choice);localStorage.setItem('lc-weather-motion',animate.checked?'play':'pause');localStorage.setItem('lc-weather-visitor',String(visit.checked));} catch {}
+    try {localStorage.setItem('lc-desktop-weather',choice);localStorage.setItem('lc-weather-motion',paused?'pause':'play');localStorage.setItem('lc-weather-visitor',String(visitor));} catch {}
     update();
   };
-  panel.addEventListener('change',save);
-  stop.addEventListener('click',()=>{select.value='off';save();menu.open=false;});
+  panel.addEventListener('click',event=>{const tile=event.target.closest('[data-weather-choice]');if(tile){choice=tile.dataset.weatherChoice;save();}});
+  pause.addEventListener('click',()=>{paused=!paused;save();});
+  visit.addEventListener('click',()=>{visitor=!visitor;save();});
   window.addEventListener('resize',()=>{dirty=true;schedule();});
   window.addEventListener('lc:audience-change',update);window.addEventListener('lc:view-change',update);
   document.addEventListener('lc:page-mounted',()=>{dirty=true;schedule();});document.addEventListener('visibilitychange',update);
-  reduced.addEventListener('change',event=>{if(event.matches){animate.checked=false;save();}});
+  reduced.addEventListener('change',event=>{if(event.matches){paused=true;save();}});
   const random=(a,b)=>a+Math.random()*(b-a);
   const reset=p=>{p.x=random(-30,width+30);p.y=random(-height*.5,-10);p.speed=random(.7,1.5);p.size=random(1,3);p.phase=random(0,6.28);return p;};
   function measure(){

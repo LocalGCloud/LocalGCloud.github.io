@@ -171,7 +171,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
       main.querySelector('[data-window-titlebar]>span').textContent='local.cloud — '+title;
       root.querySelector('[data-desktop-current]').textContent=title;
       root.querySelectorAll('[data-desktop-shortcut]').forEach(link=>{
-        const active=link.dataset.windowLabel===desktopSection(new URL(url).pathname,base);
+        const active=link.textContent.trim()===desktopSection(new URL(url).pathname,base);
         link.classList.toggle('is-active',active);if(active)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');
       });
       let md=root.querySelector('.desktop-markdown');

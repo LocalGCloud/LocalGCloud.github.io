@@ -77,15 +77,16 @@ function desktop({ theme = 'auto', reduced = false, transport = async () => Resp
   const listen = target => Object.assign(target, { events: new Map(), addEventListener(name, fn) { this.events.set(name, fn); } });
   const context2d = new Proxy({}, { get: (_, key) => key.startsWith('create') ? () => ({ addColorStop() {} }) : () => {}, set: () => true });
   const element = tag => {
-    const el = listen({ tag, dataset: {}, style: {}, removed: false, setAttribute() {}, remove() { this.removed = true; }, getContext: () => context2d, getBoundingClientRect: () => ({ x: 140, y: 80, width: 1000, height: 600 }), getClientRects: () => [1] });
+    const el = listen({ tag, dataset: {}, style: {}, attributes: {}, removed: false, setAttribute(name, value) { this.attributes[name] = value; }, remove() { this.removed = true; }, getContext: () => context2d, getBoundingClientRect: () => ({ x: 140, y: 80, width: 1000, height: 600 }), getClientRects: () => [1] });
     all.push(el);return el;
   };
-  const select = element('select'), animate = element('input'), visitor = element('input'), stop = element('button'), status = element('span');
-  const fields = { '[data-weather-select]': select, '[data-weather-motion]': animate, '[data-weather-visitor]': visitor, '[data-weather-stop]': stop, '[data-weather-status]': status };
-  const panel = listen({ parentElement: true, setAttribute() {}, querySelector: name => fields[name] }), menu = listen({ classList: { add() {} }, dataset: { weather: '/_astro/weather.mjs /_astro/weather.css' }, querySelector: () => panel, open: true });
+  const pause = element('button'), visitor = element('button'), status = element('span');
+  const tiles = ['auto', 'off', 'rain', 'sun', 'snow', 'autumn'].map(theme => Object.assign(element('button'), { dataset: { weatherChoice: theme } }));
+  const fields = { '[data-weather-visitor]': visitor, '[data-weather-status]': status };
+  const panel = listen({ parentElement: true, setAttribute() {}, querySelector: name => fields[name], querySelectorAll: () => tiles }), menu = listen({ classList: { add() {} }, dataset: { weather: '/_astro/weather.mjs /_astro/weather.css' }, querySelector: () => panel, open: true });
   const shell = element('shell'), background = element('background'), pageWindow = element('window');shell.dataset.base = '/';
   const root = { dataset: { siteView: 'desktop', audience: 'humans' } };
-  const document = listen({ documentElement: root, hidden: false, head: { append() {} }, body: { append() {} }, createElement: element, querySelector: name => name === '.desktop-background' ? background : shell, querySelectorAll: () => [pageWindow] });
+  const document = listen({ documentElement: root, hidden: false, head: { append() {} }, body: { append() {} }, createElement: element, querySelector: name => name === '[data-weather-pause]' ? pause : name === '.desktop-background' ? background : shell, querySelectorAll: () => [pageWindow] });
   background.after = () => {};
   const media = listen({ matches: reduced });
   const context = { document, window: { addEventListener: (name, fn) => events.set(name, fn) }, matchMedia: () => media,
@@ -96,13 +97,13 @@ function desktop({ theme = 'auto', reduced = false, transport = async () => Resp
   };
   const source = readFileSync(new URL('../src/scripts/weather.mjs', import.meta.url), 'utf8').replace(/^export /gm, '');
   runInNewContext(source, context);context.initDesktopWeather(menu);
-  return { root, menu, panel, fields, stored, frames, timers, events, media, all, canvases: () => all.filter(el => el.tag === 'canvas' && !el.removed) };
+  return { root, menu, panel, fields, pause, tiles, stored, frames, timers, events, media, all, choose: theme => panel.events.get('click')({ target: { closest: () => tiles.find(tile => tile.dataset.weatherChoice === theme) } }), canvases: () => all.filter(el => el.tag === 'canvas' && !el.removed) };
 }
 
 test('stop cancels pending automatic weather and a late reply cannot reactivate the theme', async () => {
   let release;
   const page = desktop({ transport: () => new Promise(resolve => { release = resolve; }) });
-  page.fields['[data-weather-stop]'].events.get('click')();
+  page.choose('off');
   release(Response.json({ theme: 'rain', expiresAt: Date.now() + 1800000 }));
   await new Promise(setImmediate);
   assert.equal(page.stored.get('lc-desktop-weather'), 'off');
@@ -122,12 +123,56 @@ test('manual themes respect reduced motion, stop completely, and detach from age
   assert.equal(page.root.dataset.desktopWeather, undefined);
   page.root.dataset.audience = 'humans';page.events.get('lc:audience-change')();
   assert.equal(page.root.dataset.desktopWeather, 'snow');
-  page.fields['[data-weather-stop]'].events.get('click')();
+  page.choose('off');
   assert.equal(page.canvases().length, 0);
   assert.equal(page.frames.size, 0);
   assert.equal(page.stored.get('lc-desktop-weather'), 'off');
   const blocked = desktop({ blocked: true });await new Promise(setImmediate);
   assert.equal(blocked.root.dataset.desktopWeather, 'rain');
+});
+
+test('theme tiles apply the chosen look and quick pause freezes it without changing the selection', () => {
+  const page = desktop({ theme: 'rain' });
+  page.pause.events.get('click')();
+  assert.equal(page.root.dataset.desktopWeather, 'rain');
+  assert.equal(page.stored.get('lc-desktop-weather'), 'rain');
+  assert.equal(page.stored.get('lc-weather-motion'), 'pause');
+  assert.equal(page.pause.attributes['aria-label'], 'Resume theme');
+  for (const [id, fn] of page.frames) { page.frames.delete(id); fn(100); }
+  assert.equal(page.frames.size, 0);
+  assert.equal(page.canvases().length, 2, 'pausing retains the current weather look');
+  for (const theme of ['sun', 'snow', 'autumn']) {
+    page.choose(theme);
+    assert.equal(page.root.dataset.desktopWeather, theme);
+    assert.deepEqual(page.tiles.filter(tile => tile.attributes['aria-pressed'] === 'true').map(tile => tile.dataset.weatherChoice), [theme]);
+  }
+  page.pause.events.get('click')();
+  assert.equal(page.stored.get('lc-weather-motion'), 'play');
+  assert.equal(page.pause.attributes['aria-label'], 'Pause theme');
+  assert.ok(page.frames.size > 0);
+  page.choose('off');
+  assert.equal(page.pause.disabled, true);
+  assert.equal(page.canvases().length, 0);
+});
+
+test('quick pause aborts automatic weather updates and ignores a pending response until resumed', async () => {
+  let release, signal, requests = 0;
+  const page = desktop({ transport: (_, options) => { requests++; signal = options.signal; return new Promise(resolve => { release = resolve; }); } });
+  page.pause.events.get('click')();
+  assert.ok(signal.aborted);
+  release(Response.json({ theme: 'rain', expiresAt: Date.now() + 1800000 }));
+  await new Promise(setImmediate);
+  assert.equal(page.root.dataset.desktopWeather, undefined);
+  assert.equal(page.stored.get('lc-desktop-weather'), 'auto');
+  assert.equal(page.stored.get('lc-weather-motion'), 'pause');
+  assert.equal(page.timers.size, 0);
+  page.events.get('lc:audience-change')();
+  assert.equal(requests, 1, 'a paused automatic theme makes no further requests');
+  page.pause.events.get('click')();
+  assert.equal(requests, 2);
+  release(Response.json({ theme: 'sun', expiresAt: Date.now() + 1800000 }));
+  await new Promise(setImmediate);
+  assert.equal(page.root.dataset.desktopWeather, 'sun');
 });
 
 test('cold-start weather waits for page load, the delay and idle time, and skips agent assets', async () => {
