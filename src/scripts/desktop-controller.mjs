@@ -14,6 +14,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
   }
   if (root.dataset.ready) return;
   root.dataset.ready = 'true';
+  initDesktopPopups();
   document.querySelectorAll('script[type="speculationrules"]').forEach(script=>script.remove());
   const styles = document.createElement('link');
   styles.rel = 'stylesheet';
@@ -202,4 +203,22 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
       initClassic();
     }
   }
+}
+
+// The native details name makes these disclosures mutually exclusive.
+export function initDesktopPopups(doc = document) {
+  const opened = () => doc.querySelector('details[name=desktop-popup][open]');
+  const closeOutside = event => {
+    const menu = opened();
+    if (menu && !menu.contains(event.target)) menu.open = false;
+  };
+  doc.addEventListener('click', closeOutside, true);
+  doc.addEventListener('focusin', closeOutside);
+  doc.addEventListener('keydown', event => {
+    const menu = opened();
+    if (event.key !== 'Escape' || !menu || doc.querySelector('dialog[open]')) return;
+    menu.open = false;
+    menu.querySelector('summary').focus();
+    event.preventDefault();
+  });
 }

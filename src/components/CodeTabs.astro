@@ -28,7 +28,10 @@ interface Props {
 }
 
 const { labels } = Astro.props;
-const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
+// Stable, page-local IDs keep tabs unique without randomizing every build's HTML.
+const locals = Astro.locals as { codeTabsCount?: number };
+locals.codeTabsCount = (locals.codeTabsCount ?? 0) + 1;
+const id = `ct-${locals.codeTabsCount}`;
 ---
 
 <div class="code-tabs" data-code-tabs={id}>

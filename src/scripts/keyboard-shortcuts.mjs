@@ -13,22 +13,22 @@
           }
 
           // Help modal
-          var helpModal = document.createElement('div');
+          var helpModal = document.createElement('dialog');
           helpModal.className = 'kbd-help';
           helpModal.hidden = true;
-          helpModal.setAttribute('role', 'dialog');
           helpModal.setAttribute('aria-label', 'Keyboard shortcuts');
-          helpModal.innerHTML = '<div class="kbd-help__backdrop"></div><div class="kbd-help__panel"><h2>Keyboard Shortcuts</h2><table><tbody><tr><td><kbd>/</kbd></td><td>Focus search</td></tr><tr><td><kbd>Cmd+K</kbd></td><td>Open search</td></tr><tr><td><kbd>J</kbd></td><td>Next page</td></tr><tr><td><kbd>K</kbd></td><td>Previous page</td></tr><tr><td><kbd>G</kbd> <kbd>H</kbd></td><td>Go home</td></tr><tr><td><kbd>G</kbd> <kbd>D</kbd></td><td>Go to docs</td></tr><tr><td><kbd>G</kbd> <kbd>S</kbd></td><td>Go to services</td></tr><tr><td><kbd>?</kbd></td><td>Show this help</td></tr><tr><td><kbd>Esc</kbd></td><td>Close modals</td></tr></tbody></table><button type="button" class="kbd-help__close" aria-label="Close">Got it</button></div>';
+          helpModal.innerHTML = '<div class="kbd-help__backdrop"></div><div class="kbd-help__panel"><h2>Keyboard Shortcuts</h2><table><tbody><tr><td><kbd>/</kbd></td><td>Focus search</td></tr><tr><td><kbd>Cmd+K</kbd></td><td>Open search</td></tr><tr><td><kbd>J</kbd></td><td>Next page</td></tr><tr><td><kbd>K</kbd></td><td>Previous page</td></tr><tr><td><kbd>G</kbd> <kbd>H</kbd></td><td>Go home</td></tr><tr><td><kbd>G</kbd> <kbd>D</kbd></td><td>Go to docs</td></tr><tr><td><kbd>G</kbd> <kbd>S</kbd></td><td>Go to services</td></tr><tr><td><kbd>?</kbd></td><td>Show this help</td></tr><tr><td><kbd>Esc</kbd></td><td>Close popups</td></tr></tbody></table><button type="button" class="kbd-help__close">Got it</button></div>';
           document.body.appendChild(helpModal);
 
           helpModal.querySelector('.kbd-help__backdrop')?.addEventListener('click', function() {
-            helpModal.hidden = true;
+            closeHelp();
           });
           helpModal.querySelector('.kbd-help__close')?.addEventListener('click', function() {
-            helpModal.hidden = true;
+            closeHelp();
           });
 
-          function closeHelp() { helpModal.hidden = true; }
+          function closeHelp() { if (helpModal.open) helpModal.close(); helpModal.hidden = true; }
+          helpModal.addEventListener('close', function() { if (!helpModal.open) helpModal.hidden = true; });
 
           document.addEventListener('keydown', function(e) {
             // Don't trigger shortcuts when typing in inputs
@@ -37,7 +37,7 @@
 
             // Escape closes help, including when another control has focus.
             if (e.key === 'Escape') {
-              closeHelp();
+              if (helpModal.open) { e.preventDefault(); closeHelp(); }
               return;
             }
 
@@ -54,9 +54,17 @@
             // ? to show help (not in inputs)
             if (e.key === '?' && !isEditing && !e.metaKey && !e.ctrlKey) {
               e.preventDefault();
-              helpModal.hidden = !helpModal.hidden;
+              if (helpModal.open) closeHelp();
+              else {
+                window.__lcSearch?.close();
+                helpModal.hidden = false;
+                helpModal.showModal();
+              }
               return;
             }
+
+            // Navigation shortcuts must not operate the page behind a modal.
+            if (document.querySelector('dialog[open]')) return;
 
             // G + key navigation (vim-style)
             if (e.key === 'g' && !isEditing && !e.metaKey && !e.ctrlKey) {

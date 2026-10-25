@@ -55,7 +55,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
     </a>
     <nav class="desktop-navigation" aria-label="Desktop navigation">
       <a href={base}>Home</a>
-      <details class="desktop-menu">
+      <details class="desktop-menu" name="desktop-popup">
         <summary>Explore</summary>
         <nav aria-label="Explore LocalCloud">
           <a href={base + 'services/'}>Service catalog</a>
@@ -67,7 +67,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
         </nav>
       </details>
       <a href={base + 'docs/'}>Docs</a>
-      <details class="desktop-menu">
+      <details class="desktop-menu" name="desktop-popup">
         <summary>Help</summary>
         <nav aria-label="LocalCloud help">
           <a href={base + 'docs/faq/'}>FAQ</a>
@@ -114,7 +114,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
         </nav>
       </header>
       <a class="agent-document-markdown" data-agent-markdown href={path === base ? base + 'ai/overview.md' : markdownPath ?? undefined} hidden={!markdownPath}>Read this page as Markdown ↗</a>
-      <header class="desktop-titlebar" data-window-titlebar tabindex="-1" aria-label="Current content window" data-pagefind-ignore>
+      <div class="desktop-titlebar" role="region" data-window-titlebar tabindex="-1" aria-label="Window controls" data-pagefind-ignore>
         <div class="desktop-controls">
           <button type="button" class="desktop-close" data-window-action="close" aria-label="Close current page window" title="Close window"></button>
           <button type="button" class="desktop-minimize" data-window-action="minimize" aria-label="Minimize current page window" title="Minimize window"></button>
@@ -123,7 +123,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
         <span>local.cloud — {pageLabel}</span>
         {markdownPath && <a href={markdownPath} target="_blank" rel="noopener noreferrer" class="desktop-markdown" aria-label=".md — read this page as Markdown">.md</a>}
         <a href={pagePath} target="_blank" rel="noopener noreferrer" class="desktop-open-tab" aria-label="Open tab — current page in a browser tab">Open tab</a>
-      </header>
+      </div>
       <div class="desktop-content" data-desktop-content>
         <template data-desktop-content-start></template>
         <slot />
@@ -135,7 +135,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
     <button type="button" data-desktop-back disabled aria-label="Back to previous page">Back</button>
     <button type="button" data-desktop-restore hidden>Show current page</button>
     <div data-desktop-tasks></div>
-    <details data-weather={weatherScript + ' ' + weatherStyles}><summary>Theme</summary></details>
+    <details name="desktop-popup" data-weather={weatherScript + ' ' + weatherStyles}><summary>Theme</summary></details>
     <a href={currentViewURL('classic')} data-view-choice="classic">Classic site</a>
     <a href={pagePath + '?view=mobile'} data-view-choice="mobile">Mobile view</a>
   </footer>
@@ -153,8 +153,8 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z" /></svg><span>About</span>
     </a>
   </nav>
-  <div class="lc-audience-dock" data-pagefind-ignore>
+  <aside class="lc-audience-dock" aria-label="Audience" data-pagefind-ignore>
     <AgentAudienceSwitch />
-  </div>
+  </aside>
 </div>
 <a href={currentViewURL('desktop')} class="site-view-switch" data-view-choice="desktop" data-pagefind-ignore>Desktop view</a>

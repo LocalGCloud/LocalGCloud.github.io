@@ -3,7 +3,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 import { runInNewContext } from 'node:vm';
 import { pickView, switchView, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic, initViewLinks, loadViewModule, getNavigation } from '../src/scripts/desktop-view.mjs';
-import { initDesktop } from '../src/scripts/desktop-controller.mjs';
+import { initDesktop, initDesktopPopups } from '../src/scripts/desktop-controller.mjs';
 import { initMobile } from '../src/scripts/mobile-view.mjs';
 import { markdownTwinPath } from '../src/utils/markdown-twins.mjs';
 import { initServiceFilters } from '../src/scripts/service-filter.mjs';
@@ -59,7 +59,7 @@ test('release performance checks include both Desktop suites',()=>{
 test('Classic G H/D/S keyboard navigation retains the selected mode',()=>{
   let key;
   const context={URL,location:{href:'https://local.cloud/docs/?view=classic'},CustomEvent:class{},setTimeout:()=>1,clearTimeout(){},Date,
-    document:{activeElement:null,querySelector:()=>({dataset:{base:'/'}}),getElementById:()=>null,createElement:()=>({setAttribute(){},querySelector:()=>null}),body:{appendChild(){}},addEventListener:(_,fn)=>key=fn,dispatchEvent:()=>true}};
+    document:{activeElement:null,querySelector:selector=>selector==='[data-base]'?{dataset:{base:'/'}}:null,getElementById:()=>null,createElement:()=>({setAttribute(){},addEventListener(){},querySelector:()=>null}),body:{appendChild(){}},addEventListener:(_,fn)=>key=fn,dispatchEvent:()=>true}};
   context.window=context;
   runInNewContext(readFileSync(new URL('../src/scripts/keyboard-shortcuts.mjs',import.meta.url),'utf8'),context);
   for(const [letter,path] of [['h','/'],['d','/docs/'],['s','/services/']]){
@@ -453,7 +453,7 @@ test('pending styles keep controls responsive, cancel stale clicks, and preserve
       if (id === 2) { frameCleared = true; return; }
       assert.equal(id, 1); cleared = true;
     }, initClassic() { classic = true; },
-    URL, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, location: { href: 'https://local.cloud/', assign(url) { assigned = url; } },
+    initDesktopPopups: () => initDesktopPopups(context.document), URL, pageWindowURL, desktopPageURL, readPageHistory, desktopSection, location: { href: 'https://local.cloud/', assign(url) { assigned = url; } },
     sessionStorage: { getItem: () => null }, history: { replaceState() {} },
     matchMedia: () => wide, window: { addEventListener() {} },
     document: { documentElement: html, createElement: () => ({}), head: { append: (link) => { styles = link; } }, querySelector: (selector) => selector === '[data-desktop-shell]' ? root : null, querySelectorAll: () => [], getElementById: () => null, addEventListener: (name, fn) => listeners.set(name, fn) },
@@ -778,4 +778,19 @@ test('development pages without a pinned route manifest keep native navigation',
     loadViewModule:()=>assert.fail('no content router should attach before a build pins its manifest'),
   });
   assert.equal(result,null);
+});
+
+test('built code tabs have unique page-local IDs and every control names an existing panel', () => {
+  const dist = new URL('../dist/', import.meta.url);
+  let checked = 0;
+  for (const file of readdirSync(dist, { recursive: true }).filter(file => file.endsWith('.html'))) {
+    const html = readFileSync(new URL(file, dist), 'utf8');
+    const ids = [...html.matchAll(/\bid="(ct-[^"]+)"/g)].map(match => match[1]);
+    if (!ids.length) continue;
+    checked++;
+    const unique = new Set(ids);
+    assert.equal(unique.size, ids.length, `${file}: code tab IDs must be unique`);
+    for (const [, id] of html.matchAll(/aria-(?:controls|labelledby)="(ct-[^"]+)"/g)) assert.ok(unique.has(id), `${file}: missing ${id}`);
+  }
+  assert.ok(checked > 1, 'check actual multi-page output, not only a fixture');
 });

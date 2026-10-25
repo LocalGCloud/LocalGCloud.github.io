@@ -96,7 +96,6 @@ export function initDesktopWeather(menu) {
     update();
   };
   panel.addEventListener('click',event=>{const tile=event.target.closest('[data-weather-choice]');if(tile){choice=tile.dataset.weatherChoice;save();}});
-  document.addEventListener('click',event=>{if(menu.open&&!menu.contains(event.target))menu.open=false;},true);
   pause.addEventListener('click',()=>{paused=!paused;save();});
   visit.addEventListener('click',()=>{visitor=!visitor;save();});
   window.addEventListener('resize',()=>{dirty=true;schedule();});

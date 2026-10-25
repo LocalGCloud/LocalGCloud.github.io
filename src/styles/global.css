@@ -1699,8 +1699,19 @@ h2 {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: min(18vh, 8rem);
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: min(18vh, 8rem) 0 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
 }
+
+.search-modal::backdrop, .kbd-help::backdrop { background: transparent; }
+.search-modal__hint a { text-decoration: underline; text-underline-offset: 0.15em; }
 
 .search-modal[hidden] {
   display: none;
@@ -1727,15 +1738,11 @@ h2 {
 }
 
 .search-modal__header {
-  padding: 0.75rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.search-modal__input-wrap {
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0 0.55rem;
+  padding: 0.75rem 1.3rem;
+  border-bottom: 1px solid var(--line);
 }
 
 .search-modal__icon {
@@ -1745,13 +1752,13 @@ h2 {
 
 .search-modal__input {
   flex: 1;
+  min-width: 0;
   border: none;
   background: transparent;
   color: var(--text);
   font-family: var(--font-body);
   font-size: var(--fs-body);
   line-height: 2.2;
-  outline: none;
 }
 
 .search-modal__input::placeholder {
@@ -1771,6 +1778,8 @@ h2 {
   color: var(--text-2);
   font-family: var(--font-mono);
   font-size: var(--fs-label);
+  cursor: pointer;
+  flex: none;
 }
 
 .search-modal__results {
@@ -2079,6 +2088,15 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
 }
 
 .kbd-help[hidden] {
@@ -2095,6 +2113,8 @@ h2 {
 .kbd-help__panel {
   position: relative;
   width: min(100% - 2rem, 28rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
   padding: 1.5rem;
   border-radius: var(--radius-feature);
   border: 1px solid var(--line);

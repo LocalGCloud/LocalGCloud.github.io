@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { forecastTheme, handleWeather } from '../worker/weather.mjs';
+import { initDesktopPopups } from '../src/scripts/desktop-controller.mjs';
 
 const now = Date.parse('2026-07-01T12:00:00Z');
 const forecast = (symbol, time = now) => ({ properties: { timeseries: [{ time: new Date(time).toISOString(), data: { next_1_hours: { summary: { symbol_code: symbol } } } }] } });
@@ -87,7 +88,7 @@ function desktop({ theme = 'auto', reduced = false, transport = async () => Resp
   menu.contains = target => target === menu || target === panel || target === pause || target === visitor || tiles.includes(target);
   const shell = element('shell'), background = element('background'), pageWindow = element('window');shell.dataset.base = '/';
   const root = { dataset: { siteView: 'desktop', audience: 'humans' } };
-  const document = listen({ documentElement: root, hidden: false, head: { append() {} }, body: { append() {} }, createElement: element, querySelector: name => name === '.desktop-background' ? background : shell, querySelectorAll: () => [pageWindow] });
+  const document = listen({ documentElement: root, hidden: false, head: { append() {} }, body: { append() {} }, createElement: element, querySelector: name => name === 'details[name=desktop-popup][open]' ? (menu.open ? menu : null) : name === 'dialog[open]' ? null : name === '.desktop-background' ? background : shell, querySelectorAll: name => name.includes('.desktop-menu') ? (menu.open ? [menu] : []) : [pageWindow] });
   background.after = () => {};
   const media = listen({ matches: reduced });
   const context = { document, window: { addEventListener: (name, fn) => events.set(name, fn) }, matchMedia: () => media,
@@ -97,7 +98,7 @@ function desktop({ theme = 'auto', reduced = false, transport = async () => Resp
     setTimeout(fn) { const id = ++sequence;timers.set(id, fn);return id; }, clearTimeout: id => timers.delete(id),
   };
   const source = readFileSync(new URL('../src/scripts/weather.mjs', import.meta.url), 'utf8').replace(/^export /gm, '');
-  runInNewContext(source, context);context.initDesktopWeather(menu);
+  runInNewContext(source, context);context.initDesktopWeather(menu);initDesktopPopups(document);
   return { root, menu, panel, fields, pause, tiles, stored, frames, timers, events, media, all, click: target => document.events.get('click')({ target }), choose: theme => panel.events.get('click')({ target: { closest: () => tiles.find(tile => tile.dataset.weatherChoice === theme) } }), canvases: () => all.filter(el => el.tag === 'canvas' && !el.removed) };
 }
 
@@ -194,18 +195,18 @@ test('cold-start weather waits for page load, the delay and idle time, and skips
   const source = readFileSync(new URL('../src/scripts/desktop-view.mjs', import.meta.url), 'utf8');
   const start = source.indexOf("if (typeof document !== 'undefined') {");
   const end = source.indexOf("  document.addEventListener('click', switchView);", start);
-  for (const audience of ['humans', 'agents']) {
+  for (const audience of ['humans', 'agents']) for (const loaded of [false, true]) {
     const windowEvents = new Map(), timers = [], idle = [], imports = [];
     const context = {
-      document: { documentElement: { dataset: { audience, siteView: 'desktop' } }, addEventListener() {}, querySelector: () => audience === 'humans' ? { dataset: { weather: '/_astro/weather.mjs /_astro/weather.css' } } : null },
+      document: { readyState: loaded ? 'complete' : 'loading', documentElement: { dataset: { audience, siteView: 'desktop' } }, addEventListener() {}, querySelector: () => audience === 'humans' ? { dataset: { weather: '/_astro/weather.mjs /_astro/weather.css' } } : null },
       window: { addEventListener: (name, fn) => windowEvents.set(name, fn), requestIdleCallback: fn => { idle.push(fn); return 1; } },
       setTimeout: (fn, delay) => { timers.push({ fn, delay }); }, console,
       loadModule: async path => { imports.push(path); return { initDesktopWeather() {} }; },
     };
     runInNewContext(source.slice(start, end).replace('import(', 'loadModule(') + '\n}', context);
     assert.equal(imports.length, 0);
-    assert.equal(timers.length, 0);
-    windowEvents.get('load')();
+    assert.equal(timers.length, loaded ? 1 : 0);
+    if (!loaded) windowEvents.get('load')();
     assert.equal(timers[0].delay, 1500);
     assert.equal(imports.length, 0);
     timers[0].fn();assert.equal(imports.length, 0);

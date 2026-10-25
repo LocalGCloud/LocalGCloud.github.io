@@ -39,7 +39,7 @@ async function inject(directory) {
     else if (entry.name.endsWith('.html')) {
       const html = await readFile(path, 'utf8');
       if (!html.includes('id="search-modal"')) continue;
-      const secured = html.replace(/<div\b[^>]*id="search-modal"[^>]*>/, (tag) => {
+      const secured = html.replace(/<dialog\b[^>]*id="search-modal"[^>]*>/, (tag) => {
         const clean = tag.replace(/\s+data-client-(?:src|integrity)="[^"]*"/g, '');
         return clean.slice(0, -1) + ` data-client-src="${clientSrc}" data-client-integrity="${integrity}">`;
       });

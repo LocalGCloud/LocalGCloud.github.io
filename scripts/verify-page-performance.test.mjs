@@ -548,6 +548,7 @@ function searchHarness(searchResults) {
   const captured = [];
   const context = {
     debounceTimer: null,
+    emptyResults: '<p>Type to search across all documentation pages</p>',
     input: { value: '', addEventListener: (event, callback) => { listeners[event] = callback; } },
     results: { querySelector: () => null },
     clearTimeout: (timer) => { if (timer) timer.cleared = true; },
@@ -590,19 +591,19 @@ const bigQueryResult = (excerpt = '<mark>BigQuery</mark>') => ({ data: async () 
 test('privacy and result links close search and release its scroll lock', () => {
   const source = readFileSync(new URL('../src/components/SearchModal.astro', import.meta.url), 'utf8').match(/<script[^>]*>([\s\S]*?)<\/script>/)[1];
   const listeners = new Map();
-  const modal = { hidden: true, querySelector: () => null, addEventListener: (event, handler) => listeners.set(event, handler) };
+  const modal = { hidden: true, open: false, showModal() { this.open = true; }, close() { this.open = false; }, querySelector: () => null, addEventListener: (event, handler) => listeners.set(event, handler) };
   const input = { value: '', addEventListener() {} };
-  const results = { innerHTML: '', addEventListener() {} };
+  const results = { innerHTML: '<p>Type to search</p>', addEventListener() {} };
   const context = { window: {}, setTimeout: () => 1, clearTimeout() {}, document: {
     getElementById: id => ({ 'search-modal': modal, 'search-input': input, 'search-results': results })[id],
-    body: { style: { overflow: '' } }, addEventListener() {},
+    body: { style: { overflow: '' } }, querySelector: () => null, addEventListener() {},
   } };
   runInNewContext(source, context);
   for (const link of [{ href: '/docs/privacy/' }, { href: '/services/bigquery/' }]) {
     context.window.__lcSearch.open();
     assert.equal(modal.hidden, false);assert.equal(context.document.body.style.overflow, 'hidden');
     input.value = 'private query';
-    listeners.get('click')({ target: { closest: selector => selector === 'a[href]' ? link : null } });
+    listeners.get('click')({ target: { closest: selector => selector.includes('a[href]') ? link : null } });
     assert.equal(modal.hidden, true);assert.equal(context.document.body.style.overflow, '');
     assert.equal(input.value, '');assert.match(results.innerHTML, /Type to search/);
   }
@@ -954,7 +955,7 @@ test('built homepage has local font preload, immediate styles, sized hero and no
     const allowed = endpointOrigin === site ? "'self'" : endpointOrigin;
     assert.ok(connectSources.includes(allowed), `connect-src must allow the beacon endpoint (${allowed})`);
   }
-  const modal = html.match(/<div\b[^>]*id="search-modal"[^>]*>/)[0];
+  const modal = html.match(/<dialog\b[^>]*id="search-modal"[^>]*>/)[0];
   const clientPath = modal.match(/data-client-src="([^"]+)"/)[1];
   const integrity = modal.match(/data-client-integrity="([^"]+)"/)[1];
   const clientBytes = readFileSync(resolve('dist', clientPath.slice(1)), 'utf8');

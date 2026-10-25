@@ -142,7 +142,7 @@ test('managed Mobile Back closes open search without disturbing other scroll loc
   const h=await harness(false,{}, {siteView:'mobile',views:['mobile']});
   await h.navigate('/b/');
   await h.navigate('/c/');
-  const modal={hidden:true,querySelector:()=>null,addEventListener(){}},input={value:'',addEventListener(){}},results={addEventListener(){}};
+  const modal={hidden:true,open:false,showModal(){this.open=true;},close(){this.open=false;},querySelector:()=>null,addEventListener(){}},input={value:'',addEventListener(){}},results={innerHTML:'Type to search',addEventListener(){}};
   h.context.document.getElementById=id=>({'search-modal':modal,'search-input':input,'search-results':results})[id];
   h.context.document.body={style:{overflow:''}};
   const source=readFileSync(new URL('../src/components/SearchModal.astro',import.meta.url),'utf8').match(/<script[^>]*>([\s\S]*?)<\/script>/)[1];

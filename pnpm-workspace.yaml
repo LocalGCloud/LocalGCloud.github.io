@@ -9,6 +9,9 @@ packageImportMethod: hardlink
 overrides:
   # Patch Miniflare's SVG decoder (GHSA-wq5f-xc86-pv6w).
   'miniflare>sharp@0.35.4': '0.35.5'
+  # Patch constrained-collection validation and the HTTP client's October advisories.
+  'zod@>=4.0.0 <4.6.6': '4.6.6'
+  'undici@>=8.0.0 <8.12.2': '8.12.2'
 
 allowBuilds:
   esbuild: true
