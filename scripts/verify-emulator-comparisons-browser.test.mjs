@@ -100,7 +100,66 @@ const openAll = async page => {
 const clickFirstCategory = async page => {
   await page.click(`${categoryRows}:not([hidden]) button`);
   await page.waitForSelector(`${activeTable} tr[data-feature-id]`);
+  await settled(page);
 };
+
+test('large categories paint before all rows are ready and cancelled batches cannot return', { timeout: 30000 }, async t => {
+  const page = await open(t, '/compare/emulators/bigquery/?features=all&view=classic', 390);
+  await settled(page);
+  const largest = categories('bigquery', 'all').reduce((a, b) => a.total > b.total ? a : b);
+  const firstPaint = await page.$eval(activeTable, async (root, area) => {
+    const category = [...root.querySelectorAll('[data-comparison-category]')].find(row => row.dataset.area === area);
+    const painted = new Promise(resolve => {
+      const observer = new MutationObserver(() => {
+        if (!root.querySelector('[data-feature-id]')) return;
+        observer.disconnect();
+        requestAnimationFrame(() => resolve({ rows: root.querySelectorAll('[data-feature-id]').length, busy: root.ariaBusy }));
+      });
+      observer.observe(root.querySelector('tbody'), { childList: true });
+    });
+    category.querySelector('button').click();
+    return painted;
+  }, largest.area);
+  assert.ok(firstPaint.rows > 0 && firstPaint.rows < largest.total, 'a frame shows the first results before the whole category is laid out');
+  assert.equal(firstPaint.busy, 'true', 'assistive technology can distinguish a complete table');
+  await page.$eval(`${categoryRows} button[aria-expanded="true"]`, button => button.click());
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  assert.equal(await rowCount(page), 0, 'a cancelled batch cannot reopen a closed category');
+  await settled(page);
+  await page.$eval(activeTable, (root, area) => [...root.querySelectorAll('[data-comparison-category]')].find(row => row.dataset.area === area).querySelector('button').click(), largest.area);
+  await settled(page);
+  const shown = await page.$$eval(`${activeTable} [data-feature-id]`, rows => rows.map(row => row.dataset.featureId));
+  assert.deepEqual(shown, inventory('bigquery').filter(row => row.area === largest.area).map(row => row.id), 'every row eventually appears once, in document order');
+});
+
+test('a new search cancels pending row batches and keeps only its latest results', { timeout: 30000 }, async t => {
+  const page = await open(t, '/compare/emulators/bigquery/?features=all&view=classic', 390);
+  await settled(page);
+  await page.$eval(activeTable, async root => {
+    const category = [...root.querySelectorAll('[data-comparison-category]')].sort((a, b) => Number(b.dataset.total) - Number(a.dataset.total))[0];
+    category.querySelector('button').click();
+    await Promise.resolve();
+    const input = root.querySelector('input[type="search"]');
+    for (const value of ['v', 'vector', 'no-such-feature-xyz']) {
+      input.value = value;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+  await settled(page);
+  assert.equal(await rowCount(page), 0);
+  assert.equal(await visibleGroups(page), 0);
+  assert.match(await status(page), /No matching features/);
+  assert.equal(new URL(page.url()).searchParams.get('q'), 'no-such-feature-xyz');
+  await page.$eval(`${activeTable} input[type="search"]`, input => { input.value = 'sql.function.abs'; input.dispatchEvent(new Event('input', { bubbles: true })); });
+  await settled(page);
+  assert.ok(await page.$(`${activeTable} [data-feature-id="sql.function.abs"]`), 'search still recovers after cancelled work');
+  await page.click(`${categoryRows}:not([hidden]) button`);
+  await settled(page);
+  assert.equal(await rowCount(page), 0, 'a reader can collapse a matching category while the search is active');
+  await page.click(`${categoryRows}:not([hidden]) button`);
+  await settled(page);
+  assert.ok(await page.$(`${activeTable} [data-feature-id="sql.function.abs"]`));
+});
 
 for (const slug of Object.keys(ids)) {
   test(`${slug}: categories are table rows that start collapsed, count what is supported and open to documented features`, { timeout: 60000 }, async t => {

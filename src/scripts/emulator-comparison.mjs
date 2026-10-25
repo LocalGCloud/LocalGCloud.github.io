@@ -1,73 +1,80 @@
 import { comparisonMarkState, comparisonStates, docsLabel, plural, presentComparisonNotes, resultsText, selectComparisonRows } from '../utils/emulator-comparisons.mjs';
 
+// Share selectors across row creation to keep the startup bundle compact.
+const find = (scope, selector) => scope.querySelector(selector);
+const findAll = (scope, selector) => scope.querySelectorAll(selector);
+
 export function initEmulatorComparisons(scope = document) {
-  scope.querySelectorAll('[data-emulator-comparison]').forEach(root => {
+  findAll(scope, '[data-emulator-comparison]').forEach(root => {
     if (root.dataset.bound || root.closest('[hidden]')) return;
     root.dataset.bound = 'true';
-    const controls = root.querySelector('[data-comparison-controls]');
-    const query = root.querySelector('input[type="search"]');
-    const status = root.querySelector('[data-comparison-status]');
-    const body = root.querySelector('tbody');
-    const categories = [...root.querySelectorAll('[data-comparison-category]')];
-    const rowTemplate = root.querySelector('[data-comparison-row]');
-    const hasCompetitor = !!root.querySelector('input[value="advantages"]');
+    const controls = find(root, '[data-comparison-controls]');
+    const query = find(root, 'input[type="search"]');
+    const status = find(root, '[data-comparison-status]');
+    const body = find(root, 'tbody');
+    const categories = [...findAll(root, '[data-comparison-category]')];
+    const rowTemplate = find(root, '[data-comparison-row]');
     const searchOpened = new Set();
-    let data, pending, request = 0;
-    const mode = () => root.querySelector('input:checked').value;
+    let data, pending, searchTimer, request = 0;
+    const mode = () => find(root, 'input:checked').value;
     const load = () => data || (pending ||= fetch(root.dataset.inventory, { signal: AbortSignal.timeout(10000) })
       .then(response => { if (!response.ok) throw Error('Inventory unavailable'); return response.json(); })
       .then(rows => data = rows).catch(error => { pending = undefined; throw error; }));
     const failure = () => { status.textContent = 'Could not load the full table. Change a filter to retry.'; };
-    const toggle = category => category.querySelector('button');
+    const toggle = category => find(category, 'button');
     const isOpen = category => toggle(category).ariaExpanded === 'true';
-    const featureRows = category => {
-      const rows = [];
-      for (let row = category.nextElementSibling; row && !row.hasAttribute('data-comparison-category'); row = row.nextElementSibling) rows.push(row);
-      return rows;
-    };
-    const clear = category => { featureRows(category).forEach(row => row.remove()); delete category.dataset.view; };
+    const clear = category => { while (category.nextElementSibling?.dataset.featureId) category.nextElementSibling.remove(); delete category.dataset.view; };
     const buildRow = row => {
       const tr = rowTemplate.content.firstElementChild.cloneNode(true);
       tr.dataset.featureId = row.id;
-      tr.querySelector('span').textContent = row.name;
-      tr.querySelectorAll('.comparison-state').forEach((node, index) => {
+      find(tr, 'span').textContent = row.name;
+      findAll(tr, '.comparison-state').forEach((node, index) => {
         const value = [row.local, row.default, row.other][index];
         if (!value) return;
         node.dataset.state = comparisonMarkState(value);
         node.lastElementChild.textContent = comparisonStates[value];
       });
-      tr.querySelectorAll('[data-comparison-profile]').forEach(node => node.hidden = !row.default || comparisonMarkState(row.default) === comparisonMarkState(row.local));
-      const [description, doc, limit] = tr.querySelectorAll('td:last-child > p');
+      findAll(tr, '[data-comparison-profile]').forEach(node => node.hidden = !row.default || comparisonMarkState(row.default) === comparisonMarkState(row.local));
+      const [description, doc, limit] = findAll(tr, 'td:last-child > p');
       description.textContent = row.description;
       doc.hidden = !row.docs;
-      if (row.docs) { doc.firstElementChild.href = row.docs; doc.querySelector('span').textContent = docsLabel(row.docs); }
+      if (row.docs) { doc.firstElementChild.href = row.docs; find(doc, 'span').textContent = docsLabel(row.docs); }
       limit.hidden = !row.notes;
       limit.textContent = row.notes ? `Note: ${presentComparisonNotes(row.notes)}` : '';
       return tr;
     };
     const view = () => `${mode()}|${query.value.trim()}`;
-    const fill = (category, rows) => {
-      if (category.dataset.view === view() && featureRows(category).length) return;
+    const fill = async (category, rows) => {
+      const key = view(), version = request;
+      if (category.dataset.view === key && category.nextElementSibling?.dataset.featureId) return;
       clear(category);
-      category.dataset.view = view();
-      category.after(...rows.map(buildRow));
+      let last = category;
+      for (let offset = 0; offset < rows.length; offset += 20) {
+        if (version !== request || !root.isConnected || root.closest('[hidden]')) return;
+        const batch = rows.slice(offset, offset + 20).map(buildRow);
+        last.after(...batch);
+        last = batch.at(-1);
+        // Yield between batches so input and rendering can continue.
+        if (offset + 20 < rows.length) await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+      }
+      category.dataset.view = key;
     };
     // A category lists its matching features once it is open; a search opens every category with a match.
-    const paint = (category, rows, term, current) => {
-      const visible = term ? rows.length > 0 : !hasCompetitor || current === 'all' || Number(category.dataset.exclusive) > 0;
+    const paint = (category, rows, term, current, autoOpen) => {
+      const visible = term ? rows.length > 0 : current === 'all' || Number(category.dataset.exclusive) > 0;
       category.hidden = !visible;
-      category.querySelector('small').textContent = term ? plural(rows.length, 'matching feature') : plural(Number(category.dataset.total), 'feature');
+      find(category, 'small').textContent = term ? plural(rows.length, 'matching feature') : plural(Number(category.dataset.total), 'feature');
       if (!visible) clear(category);
-      else if (term && !isOpen(category)) { searchOpened.add(category); toggle(category).ariaExpanded = 'true'; }
+      else if (term && autoOpen && !isOpen(category)) { searchOpened.add(category); toggle(category).ariaExpanded = 'true'; }
       else if (!term && searchOpened.has(category)) { searchOpened.delete(category); toggle(category).ariaExpanded = 'false'; clear(category); }
-      if (visible && rows && isOpen(category)) fill(category, rows);
       return visible;
     };
     const summary = (term, current, visible, features) => {
       if (term) return features ? `${plural(features, 'matching feature')} in ${plural(visible, 'category', 'categories')}.` : 'No matching features. Try another search.';
       return resultsText(features, visible, current);
     };
-    const render = async () => {
+    const render = async (autoOpen = true) => {
+      clearTimeout(searchTimer);
       const version = ++request;
       const term = query.value.trim(), current = mode();
       root.ariaBusy = 'true';
@@ -78,9 +85,11 @@ export function initEmulatorComparisons(scope = document) {
         }
         const rows = selectComparisonRows(await load(), { mode: current, query: term });
         if (version !== request || !root.isConnected || root.closest('[hidden]')) return;
-        const byArea = new Map();
-        for (const row of rows) byArea.set(row.area, [...(byArea.get(row.area) ?? []), row]);
-        const shown = categories.filter(category => paint(category, byArea.get(category.dataset.area) ?? [], term, current));
+        const byArea = Object.create(null);
+        for (const row of rows) (byArea[row.area] ||= []).push(row);
+        const shown = categories.filter(category => paint(category, byArea[category.dataset.area] ?? [], term, current, autoOpen));
+        await Promise.all(shown.filter(isOpen).map(category => fill(category, byArea[category.dataset.area] ?? [])));
+        if (version !== request || !root.isConnected || root.closest('[hidden]')) return;
         status.textContent = summary(term, current, shown.length, rows.length);
         const url = new URL(location.href);
         url.searchParams.delete('page');
@@ -94,24 +103,26 @@ export function initEmulatorComparisons(scope = document) {
         if (version === request) root.ariaBusy = null;
       }
     };
-    body.addEventListener('click', async event => {
+    body.addEventListener('click', event => {
       const category = event.target.closest('[data-comparison-category]');
       if (!category) return;
       const open = !isOpen(category);
       searchOpened.delete(category);
       toggle(category).ariaExpanded = String(open);
-      if (!open) { clear(category); return; }
-      try {
-        const rows = selectComparisonRows(await load(), { mode: mode(), query: query.value }).filter(row => row.area === category.dataset.area);
-        if (isOpen(category) && root.isConnected) fill(category, rows);
-      } catch { failure(); }
+      if (!open) clear(category);
+      render(false);
     });
     controls.hidden = false;
-    controls.addEventListener('input', render);
+    controls.addEventListener('input', event => {
+      clearTimeout(searchTimer);
+      ++request;
+      root.ariaBusy = 'true';
+      searchTimer = setTimeout(render, event.target === query ? 120 : 0);
+    });
     const restore = () => {
       const params = new URL(location.href).searchParams;
       const selected = ['all', 'advantages'].includes(params.get('features')) ? params.get('features') : root.dataset.defaultMode;
-      (root.querySelector(`input[value="${selected}"]`) || root.querySelector('input[type="radio"]')).checked = true;
+      (find(root, `input[value="${selected}"]`) || find(root, 'input[type="radio"]')).checked = true;
       query.value = params.get('q') || '';
       render();
     };
@@ -121,10 +132,10 @@ export function initEmulatorComparisons(scope = document) {
 }
 
 function initComparisonWorkspaces() {
-  document.querySelectorAll('[data-comparison-workspace]').forEach(workspace => {
-    const tabs = [...workspace.querySelectorAll('[data-service-tab]')];
-    const panels = workspace.querySelectorAll('[data-comparison-service]');
-    const tablist = workspace.querySelector('[data-comparison-tabs]');
+  findAll(document, '[data-comparison-workspace]').forEach(workspace => {
+    const tabs = [...findAll(workspace, '[data-service-tab]')];
+    const panels = findAll(workspace, '[data-comparison-service]');
+    const tablist = find(workspace, '[data-comparison-tabs]');
     tablist.hidden = false;
     const activate = (tab, push) => {
       if (push) {
@@ -140,7 +151,7 @@ function initComparisonWorkspaces() {
       });
       tablist.ariaOrientation = matchMedia('(min-width:64rem)').matches ? 'vertical' : 'horizontal';
       const panel = panels[tabs.indexOf(tab)];
-      const table = panel.querySelector('[data-emulator-comparison]');
+      const table = find(panel, '[data-emulator-comparison]');
       if (table.dataset.bound) table.dispatchEvent(new Event('lc:comparison-restore'));
       else initEmulatorComparisons(panel);
     };
