@@ -8,6 +8,7 @@ import { execFileSync } from 'node:child_process';
 import { finalizeCsp, createMappedScript } from './finalize-static-csp.mjs';
 import { transform } from 'esbuild';
 import { loadEnv } from 'vite';
+import sharp from 'sharp';
 import { resolvePosthogConfig } from '../src/utils/posthog-config.mjs';
 import { resolveCloudflareAnalyticsConfig } from '../src/utils/cloudflare-analytics-config.mjs';
 
@@ -913,6 +914,47 @@ test('docs, services and blog pages preload the body font and never lazy-load or
   assert.deepEqual(failures, []);
   const service = readFileSync(join(distRoot, 'services/bigquery/index.html'), 'utf8');
   assert.match(service, /<img\b[^>]*src="\/_astro\/bigquery\.[^"/]+\.svg"[^>]*loading="eager"/, 'the versioned service hero icon loads eagerly');
+});
+
+test('every built image reserves its dimensions and below-fold diagrams and gallery images stay lazy', () => {
+  const pages = (directory) => readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+    const path = join(directory, entry.name);
+    return entry.isDirectory() ? pages(path) : path.endsWith('.html') ? [path] : [];
+  });
+  const failures = [];
+  for (const page of pages(distRoot)) {
+    const html = readFileSync(page, 'utf8');
+    for (const [image] of html.matchAll(/<img\b[^>]*>/g)) {
+      if (!/\swidth="[1-9]\d*"/.test(image) || !/\sheight="[1-9]\d*"/.test(image)) failures.push(`${page}: unsized image ${image}`);
+    }
+  }
+  assert.deepEqual(failures, []);
+  for (const page of ['docs/mcp/index.html', 'blog/localcloud-mcp-agent-cloud/index.html', 'brand/icons/index.html']) {
+    const html = readFileSync(join(distRoot, page), 'utf8');
+    const images = [...html.matchAll(/<img\b[^>]*>/g)].map(([image]) => image)
+      .filter(image => image.includes('localcloud-mcp-flow.svg') || image.includes('max-h-full'));
+    assert.ok(images.length, `${page}: expected diagram or gallery images`);
+    if (page.startsWith('brand/')) {
+      assert.ok(images.length > 4, 'the gallery includes rows below the first');
+      assert.ok(images.slice(0, 4).every(image => image.includes('loading="eager"')), 'the first gallery row loads immediately');
+      assert.ok(images.slice(4).every(image => image.includes('loading="lazy"')), 'later gallery rows stay lazy');
+    } else {
+      assert.ok(images.every(image => image.includes('loading="lazy"')), `${page}: below-fold diagrams stay lazy`);
+    }
+  }
+});
+
+test('the MCP video poster is smaller WebP with exactly the original pixels and playback controls', async () => {
+  const original = readFileSync(new URL('../public/brand/localcloud-mcp-demo-poster.png', import.meta.url));
+  const html = readFileSync(join(distRoot, 'blog/localcloud-mcp-agent-cloud/index.html'), 'utf8');
+  const video = html.match(/<video\b[^>]*>/)?.[0];
+  assert.match(video, /\bcontrols\b/);
+  assert.match(video, /preload="metadata"/);
+  const poster = video.match(/poster="([^"]+)"/)?.[1];
+  assert.match(poster, /^\/_astro\/localcloud-mcp-demo-poster\.[^/]+\.webp$/);
+  const optimized = readFileSync(join(distRoot, poster));
+  assert.ok(optimized.length < original.length, 'the poster must save bytes');
+  assert.deepEqual(await sharp(optimized).raw().toBuffer({ resolveWithObject: true }), await sharp(original).raw().toBuffer({ resolveWithObject: true }), 'compression must preserve every decoded pixel');
 });
 
 test('built homepage has local font preload, immediate styles, sized hero and nonredundant brand marks', () => {

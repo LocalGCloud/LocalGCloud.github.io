@@ -112,7 +112,7 @@ const statusIcons = [
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {brandIcons.map((icon) => (
+        {brandIcons.map((icon, index) => (
           <div class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 flex flex-col justify-between hover:border-[var(--border-hover)] transition">
             <div>
               <div class="icon-preview-box h-32 rounded-xl flex items-center justify-center border border-[var(--line)] bg-white transition-colors duration-200 mb-4 p-3">
@@ -120,6 +120,10 @@ const statusIcons = [
                   src={`${base}${icon.file}`}
                   alt={icon.name}
                   class="max-h-full object-contain drop-shadow-sm"
+                  width={icon.size}
+                  height={icon.size}
+                  loading={index < 4 ? 'eager' : 'lazy'}
+                  decoding="async"
                   style={`width: ${icon.size}px; height: ${icon.size}px;`}
                 />
               </div>

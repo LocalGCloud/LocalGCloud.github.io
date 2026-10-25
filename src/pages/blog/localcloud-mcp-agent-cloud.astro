@@ -1,6 +1,7 @@
 ---
 import BlogLayout from '../../layouts/BlogLayout.astro';
 import CopyButton from '../../components/CopyButton.astro';
+import mcpDemoPoster from '../../assets/localcloud-mcp-demo-poster.webp?url';
 import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
 import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
 
@@ -107,7 +108,7 @@ const structuredData = [createBreadcrumbSchema([
       <pre><code>{runExample}</code></pre>
     </div>
     <p>The demonstrated result through CLI 0.1.9 and the full packaged runtime 0.1.5 candidate was:</p>
-    <video controls preload="metadata" width="1280" height="800" poster="/brand/localcloud-mcp-demo-poster.png" aria-label="Recorded LocalCloud MCP and SDK workflow verification">
+    <video controls preload="metadata" width="1280" height="800" poster={mcpDemoPoster} aria-label="Recorded LocalCloud MCP and SDK workflow verification">
       <source src="/brand/localcloud-mcp-demo.mp4" type="video/mp4" />
       <p><a href="/brand/localcloud-mcp-demo.mp4">Download the recorded verification run</a>. The complete text transcript follows.</p>
     </video>
