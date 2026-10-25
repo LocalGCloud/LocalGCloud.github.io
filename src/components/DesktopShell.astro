@@ -104,7 +104,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
   </nav>
 
   <div class="desktop-stage" data-desktop-stage>
-    <div class="desktop-history" data-desktop-history data-pagefind-ignore></div>
+    <nav class="desktop-history" aria-label="History" data-desktop-history data-pagefind-ignore></nav>
     <div id="desktop-main-window" class="desktop-window desktop-main" data-desktop-main data-desktop-window>
       <header class="agent-document-header" data-pagefind-ignore>
         <a href={base} class="agent-document-brand">local.cloud / agents</a>

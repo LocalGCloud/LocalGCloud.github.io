@@ -82,3 +82,6 @@
  }
 }
 @media(prefers-reduced-motion:reduce){.desktop-view .copy-btn__icon{transition:none!important}}
+
+/* Empty session history is not a navigation destination. */
+.desktop-history:empty { display: none; }

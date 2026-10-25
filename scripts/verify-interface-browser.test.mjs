@@ -77,6 +77,11 @@ test('shared dialogs, popups, narrow search and automatic weather work in a real
   await page.keyboard.press('Escape');
   assert.equal(await page.$eval(searchTrigger, button => button === document.activeElement), true, 'help restores focus');
 
+  await page.click('.desktop-navigation a[href="/docs/"]');
+  await page.waitForFunction(() => location.pathname === '/docs/' && !document.querySelector('[data-desktop-content]').hasAttribute('aria-busy'));
+  const accessibility = await (await page.createCDPSession()).send('Accessibility.getFullAXTree');
+  assert.ok(accessibility.nodes.some(node => node.role?.value === 'navigation' && node.name?.value === 'History'), 'recent-page previews belong to a named navigation landmark');
+
   const explore = '.desktop-navigation details:first-of-type';
   await page.click(explore + ' summary');
   await page.keyboard.press('Escape');
