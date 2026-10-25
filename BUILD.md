@@ -144,6 +144,11 @@ When running `pnpm run build`, the pipeline executes the following checks in seq
 
 ---
 
+The build also runs `pnpm run test:discovery` after Markdown generation to verify
+RSS coverage, experimental AI declarations, and HTML discovery links. See
+[Search and agent discovery](docs/site-discovery.md) for source ownership and
+operational indexing checks.
+
 ## 5. Separate Verification Suites
 
 ### Desktop and Classic Readiness

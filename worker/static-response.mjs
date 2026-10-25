@@ -152,14 +152,20 @@ export async function serveSite(request, env) {
   if (twin && (servedTwin || response.status === 304 || HTML.test(response.headers.get('Content-Type') || ''))) {
     response = varyOn(response, 'Accept');
   }
+  const twinSource = twinSourcePath(url.pathname);
+  if ([200, 206, 304].includes(response.status)) {
+    const isPage = twin && (servedTwin || response.status === 304 || HTML.test(response.headers.get('Content-Type') || ''));
+    if (isPage || twinSource || /^text\/markdown\b/.test(response.headers.get('Content-Type') || '')) {
+      const links = [response.headers.get('Link')].filter(Boolean);
+      links.push(`<https://${CANONICAL_HOST}/llms.txt>; rel="describedby"`);
+      if (servedTwin || twinSource) links.push(`<https://${CANONICAL_HOST}${twinSource || url.pathname}>; rel="canonical"`);
+      else if (isPage) links.push(`<https://${CANONICAL_HOST}${twin}>; rel="alternate"; type="text/markdown"`);
+      response = withHeaders(response, { Link: links.join(', ') });
+    }
+  }
   if (servedTwin) {
     return url.hostname === CANONICAL_HOST && !['/immersive-demo/', '/brand/icons/'].includes(url.pathname)
       ? response : withHeaders(response, { 'X-Robots-Tag': 'noindex' });
-  }
-  // A twin's own URL points search engines at the HTML page it mirrors.
-  const twinSource = twinSourcePath(url.pathname);
-  if (twinSource && response.status === 200) {
-    response = withHeaders(response, { Link: `<https://${CANONICAL_HOST}${twinSource}>; rel="canonical"` });
   }
   if (['/immersive-demo/', '/brand/icons/'].includes(twinSource || (servedTwin ? url.pathname : ''))) {
     response = withHeaders(response, { 'X-Robots-Tag': 'noindex' });

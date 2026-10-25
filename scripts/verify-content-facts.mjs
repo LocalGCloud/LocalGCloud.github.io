@@ -85,15 +85,15 @@ for (const [file, html] of htmlPages) {
 const llms = await readFile(publicPath('llms.txt'), 'utf8');
 for (const required of [
   productFacts.availabilityStatement,
-  new URL(productFacts.licensingPath, productFacts.siteUrl).toString(),
+  'https://local.cloud/docs/licensing.md',
   new URL(productFacts.pricingPath, productFacts.siteUrl).toString(),
-  'https://local.cloud/compatibility/',
-  'https://local.cloud/localstack-for-google-cloud/',
+  'https://local.cloud/compatibility.md',
+  'https://local.cloud/localstack-for-google-cloud.md',
   'https://local.cloud/ai/agents.md',
   'https://local.cloud/ai/agent-template.md',
   'https://local.cloud/ai/services.md',
-  'https://local.cloud/docs/',
-  'https://local.cloud/services/bigquery/',
+  'https://local.cloud/docs/index.md',
+  'https://local.cloud/services/bigquery.md',
 ]) {
   if (!llms.includes(required)) errors.push(`llms.txt must contain ${required}`);
 }
@@ -393,7 +393,7 @@ for (const [file, expected] of [
 // service registry table on /docs/configuration/.
 for (const file of ['llms.txt', 'ai/services.md']) {
   const rows = (agentText.get(file) ?? '').split('\n').filter((line) => line.startsWith('| '));
-  const listed = [...new Set(rows.flatMap((line) => [...line.matchAll(/https:\/\/local\.cloud\/services\/([a-z0-9-]+)\//g)].map((match) => match[1])))];
+  const listed = [...new Set(rows.flatMap((line) => [...line.matchAll(/https:\/\/local\.cloud\/services\/([a-z0-9-]+)(?:\/|\.md)/g)].map((match) => match[1])))];
   if (JSON.stringify(listed) !== JSON.stringify(localSlugs)) errors.push(`${file} must list its ${localSlugs.length} local services in the shared catalog order (servicesInCatalogOrder); found ${listed.join(', ') || 'none'}`);
 }
 const registryTable = htmlPages.get('docs/configuration/index.html')?.match(/<table\b[\s\S]*?<\/table>/g)?.find((table) => table.includes('<th>Service ID</th>')) ?? '';

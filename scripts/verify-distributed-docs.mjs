@@ -221,8 +221,8 @@ for (const path of ["public/llms.txt"]) {
 	);
 	for (const service of contract.services) {
 		const pattern = isLocal(service)
-			? `^\\| ${escapeRegExp(service.name)} \\| \`${service.id}\` \\|.*\\[guide\\]\\(https://local\\.cloud/services/[a-z0-9-]+/\\) \\|$`
-			: `^- \\[${escapeRegExp(service.name)}\\]\\(https://local\\.cloud/services/[a-z0-9-]+/\\) — unsupported$`;
+			? `^\\| ${escapeRegExp(service.name)} \\| \`${service.id}\` \\|.*\\[guide\\]\\(https://local\\.cloud/services/[a-z0-9-]+\\.md\\) \\|$`
+			: `^- \\[${escapeRegExp(service.name)}\\]\\(https://local\\.cloud/services/[a-z0-9-]+\\.md\\) — unsupported$`;
 		assert(new RegExp(pattern, "m").test(value), `${path} misstates ${service.name} or omits its guide link`);
 	}
 }

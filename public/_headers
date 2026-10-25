@@ -47,6 +47,11 @@
 /*.md
   Content-Type: text/markdown; charset=utf-8
 
+/rss.xml
+  Content-Type: application/rss+xml; charset=utf-8
+/changelog/rss.xml
+  Content-Type: application/rss+xml; charset=utf-8
+
 # The template downloads under its conventional name.
 /ai/agent-template.md
   Content-Disposition: attachment; filename="AGENTS.md"

@@ -1,0 +1,18 @@
+# Experimental: draft-car-ai-txt-wellknown-00 (not an Internet Standard).
+# Applies to public website content; software use remains subject to the linked license.
+# robots.txt governs crawler access. This declaration does not grant software rights.
+Site-Name: LocalCloud
+Site-URL: https://local.cloud/
+Description: localcloud is cloud for agents for developers, platform/DevOps engineers and teams running CI, plus AI coding agent users. Individuals, teams, nonprofits, and companies can build and test with 25 Google Cloud services on localhost in one Docker container, without a GCP account, credentials or billing. Free during the public preview.
+Contact: agent@local.cloud
+Training: allow
+Scraping: allow
+Indexing: allow
+Caching: allow
+Attribution: recommended
+AI-Disclosure: recommended
+# Cite the canonical local.cloud page and retain named author attribution.
+# Documentation index: https://local.cloud/llms.txt
+# Crawler policy: https://local.cloud/robots.txt
+# Software license: https://local.cloud/license.txt
+# Pricing and usage terms: https://local.cloud/pricing.md

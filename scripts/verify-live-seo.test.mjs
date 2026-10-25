@@ -46,12 +46,13 @@ async function verifyFixture(t, overrides = {}, custom = () => false) {
       return;
     }
     const html = path === '/' || path.endsWith('/');
-    response.setHeader('Content-Type', html ? 'text/html; charset=utf-8' : 'text/plain; charset=utf-8');
+    const rss = path.endsWith('/rss.xml');
+    response.setHeader('Content-Type', html ? 'text/html; charset=utf-8' : rss ? 'application/rss+xml; charset=utf-8' : 'text/plain; charset=utf-8');
     response.setHeader('X-Robots-Tag', 'noindex');
     if (html) response.setHeader('Cache-Control', 'public, max-age=0, must-revalidate, no-transform');
     const body = overrides[path] ?? (html
       ? `<html><head><link rel="canonical" href="${siteOrigin}${path}"></head><body>LocalCloud</body></html>`
-      : '# LocalCloud\nRaw agent documentation.\n');
+      : rss ? '<rss version="2.0"><channel><title>LocalCloud</title></channel></rss>' : '# LocalCloud\nRaw agent documentation.\n');
     if (html && /\bbr\b/.test(request.headers['accept-encoding'] ?? '')) {
       response.setHeader('Content-Encoding', 'br');
       response.end(brotliCompressSync(Buffer.from(body)));
@@ -92,6 +93,12 @@ test('rejects an empty raw document', async (t) => {
   const result = await verifyFixture(t, { '/llms.txt': '  \n' });
   assert.equal(result.code, 1);
   assert.match(result.stderr, /\/llms\.txt: raw document is empty/);
+});
+
+test('rejects plain text masquerading as a feed', async (t) => {
+  const result = await verifyFixture(t, { '/rss.xml': '# Not an RSS feed' });
+  assert.equal(result.code, 1);
+  assert.match(result.stderr, /\/rss\.xml: expected an RSS 2\.0 feed/);
 });
 
 test('continues to reject incorrect canonical URLs on HTML pages', async (t) => {

@@ -272,10 +272,10 @@ test('Markdown twins revalidate on their own ETag and answer HEAD', async () => 
 test('a twin URL names its HTML page as canonical, and preview hosts stay noindex', async () => {
   const env = { ASSETS: assets({ '/services/bigquery.md': twinAsset, '/docs/index.md': twinAsset, '/services/bigquery/': () => asset() }) };
   const direct = await serveSite(request(undefined, {}, 'https://local.cloud/services/bigquery.md'), env);
-  assert.equal(direct.headers.get('Link'), '<https://local.cloud/services/bigquery/>; rel="canonical"');
+  assert.equal(direct.headers.get('Link'), '<https://local.cloud/llms.txt>; rel="describedby", <https://local.cloud/services/bigquery/>; rel="canonical"');
   assert.equal(await direct.text(), markdown);
   const index = await serveSite(request(undefined, {}, 'https://local.cloud/docs/index.md'), env);
-  assert.equal(index.headers.get('Link'), '<https://local.cloud/docs/>; rel="canonical"');
+  assert.equal(index.headers.get('Link'), '<https://local.cloud/llms.txt>; rel="describedby", <https://local.cloud/docs/>; rel="canonical"');
   const preview = await serveSite(request(undefined, { headers: { 'Accept': 'text/markdown' } }, 'https://localcloud-site.example.workers.dev/services/bigquery/'), env);
   assert.equal(preview.headers.get('Content-Location'), '/services/bigquery.md');
   assert.equal(preview.headers.get('X-Robots-Tag'), 'noindex');
@@ -289,6 +289,25 @@ test('only local.cloud is indexable', async () => {
     const response = await serveSite(request('gzip', {}, url), env);
     assert.equal(response.headers.get('X-Robots-Tag'), 'noindex', url);
   }
+});
+
+test('discovery headers preserve existing links across HTML, Markdown, HEAD and revalidation', async () => {
+  const existing = '<https://local.cloud/security/>; rel="help"';
+  const env = { ASSETS: assets({
+    '/docs/': (req) => new Response(req.method === 'HEAD' ? null : html, { headers: { 'Content-Type': 'text/html', Link: existing } }),
+    '/docs/index.md': (req) => new Response(null, { status: req.headers.has('If-None-Match') ? 304 : 200, headers: { 'Content-Type': 'text/markdown', Link: existing } }),
+  }) };
+  for (const method of ['GET', 'HEAD']) {
+    const page = await serveSite(request(undefined, { method }), env);
+    assert.equal(page.headers.get('Link'), `${existing}, <https://local.cloud/llms.txt>; rel="describedby", <https://local.cloud/docs/index.md>; rel="alternate"; type="text/markdown"`);
+    for (const headers of [{ Accept: 'text/markdown' }, { Accept: 'text/markdown', 'If-None-Match': '"twin"' }]) {
+      const response = await serveSite(request(undefined, { method, headers }), env);
+      assert.equal(response.status, headers['If-None-Match'] ? 304 : 200);
+      assert.equal(response.headers.get('Link'), `${existing}, <https://local.cloud/llms.txt>; rel="describedby", <https://local.cloud/docs/>; rel="canonical"`);
+    }
+  }
+  const missing = await serveSite(request(undefined, {}, 'https://local.cloud/no-such-page/'), env);
+  assert.equal(missing.headers.get('Link'), null, '404s must not advertise a nonexistent twin');
 });
 
 test('asset requests use compression without contacting the analytics upstream', async () => {

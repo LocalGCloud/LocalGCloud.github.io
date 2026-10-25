@@ -41,6 +41,10 @@ for (const route of expectedSearchRoutes) {
     if (route.path !== '/' && !route.path.endsWith('/')) {
       if (!html.trim()) errors.push(`${route.path}: raw document is empty`);
       if (/^\s*(?:<!doctype\s+html\b|<html\b)/i.test(html)) errors.push(`${route.path}: raw document returned HTML`);
+      if (route.path.endsWith('/rss.xml')) {
+        if (!/^application\/rss\+xml\b/i.test(response.headers.get('content-type') ?? '')) errors.push(`${route.path}: RSS content-type is incorrect`);
+        if (!/<rss\b[^>]*version="2\.0"/.test(html)) errors.push(`${route.path}: expected an RSS 2.0 feed`);
+      }
       continue;
     }
     const canonical = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i)?.[1];
@@ -79,7 +83,7 @@ await check('compression', async () => {
 });
 
 await check('charset', async () => {
-  for (const path of ['/docs/', '/llms.txt', '/llms-full.txt', '/ai/agents.md', '/ai/services.md']) {
+  for (const path of ['/docs/', '/llms.txt', '/llms-full.txt', '/ai.txt', '/.well-known/ai.txt', '/rss.xml', '/changelog/rss.xml', '/ai/agents.md', '/ai/services.md']) {
     const response = await fetchOnce(path);
     if (!/charset=utf-8/i.test(response.headers.get('content-type') ?? '')) errors.push(`${path}: content-type ${response.headers.get('content-type')} has no charset=utf-8`);
     await response.arrayBuffer();

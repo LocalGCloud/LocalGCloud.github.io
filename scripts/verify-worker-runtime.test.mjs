@@ -113,7 +113,7 @@ test('clean and Classic URLs preserve complete HTML and AI discovery bytes',asyn
 });
 
 test('text and Markdown assets declare UTF-8 and preserve GET and HEAD bodies', async () => {
-  const paths = ['/llms.txt', '/llms-full.txt', '/robots.txt', '/license.txt', '/.well-known/security.txt', '/ai/agents.md', '/ai/services.md',
+  const paths = ['/llms.txt', '/llms-full.txt', '/ai.txt', '/.well-known/ai.txt', '/robots.txt', '/license.txt', '/.well-known/security.txt', '/ai/agents.md', '/ai/services.md',
     '/ai/agent-template.md', '/ai/resources.md', '/ai/compatibility.md', '/ai/docs.md',
     '/docs/index.md', '/docs/configuration.md', '/services/bigquery.md'];
   for (const path of paths) {
@@ -144,7 +144,22 @@ test('docs, service and comparison pages answer Accept: text/markdown with their
   assert.ok(vary(page).includes('Accept'));
   assert.match(await page.text(), /<link rel="alternate" type="text\/markdown" href="\/docs\/configuration\.md"/);
   const direct = await get('/docs/configuration.md');
-  assert.equal(direct.headers.get('Link'), '<https://local.cloud/docs/configuration/>; rel="canonical"');
+  assert.equal(direct.headers.get('Link'), '<https://local.cloud/llms.txt>; rel="describedby", <https://local.cloud/docs/configuration/>; rel="canonical"');
+});
+
+test('RSS and discovery metadata survive the production asset and Worker layers', async () => {
+  for (const path of ['/rss.xml', '/changelog/rss.xml']) {
+    for (const method of ['GET', 'HEAD']) {
+      const response = await get(path, {}, { method });
+      assert.equal(response.status, 200, `${method} ${path}`);
+      assert.equal(response.headers.get('Content-Type'), 'application/rss+xml; charset=utf-8');
+      assert.equal(await response.text(), method === 'HEAD' ? '' : distFile(path.slice(1)).toString('utf8'));
+    }
+  }
+  const page = await get('/pricing/', { 'Accept-Encoding': 'br' });
+  assert.equal(page.headers.get('Link'), '<https://local.cloud/llms.txt>; rel="describedby", <https://local.cloud/pricing.md>; rel="alternate"; type="text/markdown"');
+  const markdown = await get('/pricing/', { Accept: 'text/markdown' });
+  assert.equal(markdown.headers.get('Link'), '<https://local.cloud/llms.txt>; rel="describedby", <https://local.cloud/pricing/>; rel="canonical"');
 });
 
 // Every rule, so merged pages keep answering at their old URLs. verify-static-response.test.mjs

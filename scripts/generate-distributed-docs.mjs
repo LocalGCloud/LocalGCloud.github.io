@@ -5,6 +5,7 @@ import { productFacts } from "../src/data/productFacts.ts";
 import { inCatalogOrder, proTierLabel } from "../src/data/services.ts";
 import { presentContract } from "../src/utils/contract-presentation.mjs";
 import { cliQuickStart } from "../src/utils/quickstart.mjs";
+import { markdownTwinPath } from "../src/utils/markdown-twins.mjs";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
@@ -222,7 +223,39 @@ ${comparisonSummary.map((line) => `- ${line}`).join("\n")}
 - [Glossary](${site}glossary/)
 - [Blog](${site}blog/)
 - [CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases)
+- [Blog RSS feed](${site}rss.xml): published articles
+- [CLI release RSS feed](${site}changelog/rss.xml): release announcements
+- [Experimental AI usage declaration](${site}ai.txt): crawler preferences, attribution, and licensing references
 `;
-await write("public/llms.txt", llms);
+// Keep anchored links on HTML: explicit HTML IDs need not survive Markdown conversion.
+const markdownLlms = llms.replace(/\]\((https:\/\/local\.cloud\/[^\s)]+)\)/g, (link, href) => {
+	const url = new URL(href);
+	const twin = markdownTwinPath(url.pathname);
+	if (!twin || url.hash || url.search) return link;
+	url.pathname = twin;
+	return `](${url.href})`;
+});
+await write("public/llms.txt", markdownLlms);
+const aiDeclaration = `# Experimental: draft-car-ai-txt-wellknown-00 (not an Internet Standard).
+# Applies to public website content; software use remains subject to the linked license.
+# robots.txt governs crawler access. This declaration does not grant software rights.
+Site-Name: LocalCloud
+Site-URL: ${site}
+Description: ${productFacts.description}
+Contact: agent@local.cloud
+Training: allow
+Scraping: allow
+Indexing: allow
+Caching: allow
+Attribution: recommended
+AI-Disclosure: recommended
+# Cite the canonical local.cloud page and retain named author attribution.
+# Documentation index: ${site}llms.txt
+# Crawler policy: ${site}robots.txt
+# Software license: ${site}license.txt
+# Pricing and usage terms: ${site}pricing.md
+`;
+await write("public/ai.txt", aiDeclaration);
+await write("public/.well-known/ai.txt", aiDeclaration);
 // dist/llms-full.txt is built after `astro build` by scripts/generate-markdown-twins.mjs.
 console.log(`Generated public/llms.txt for ${localServices.length} local services.`);
