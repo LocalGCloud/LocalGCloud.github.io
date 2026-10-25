@@ -84,6 +84,7 @@ function desktop({ theme = 'auto', reduced = false, transport = async () => Resp
   const tiles = ['auto', 'off', 'rain', 'sun', 'snow', 'autumn'].map(theme => Object.assign(element('button'), { dataset: { weatherChoice: theme } }));
   const fields = { '[data-weather-pause]': pause, '[data-weather-visitor]': visitor, '[data-weather-status]': status };
   const panel = listen({ parentElement: true, setAttribute() {}, querySelector: name => fields[name], querySelectorAll: () => tiles }), menu = listen({ classList: { add() {} }, dataset: { weather: '/_astro/weather.mjs /_astro/weather.css' }, querySelector: () => panel, open: true });
+  menu.contains = target => target === menu || target === panel || target === pause || target === visitor || tiles.includes(target);
   const shell = element('shell'), background = element('background'), pageWindow = element('window');shell.dataset.base = '/';
   const root = { dataset: { siteView: 'desktop', audience: 'humans' } };
   const document = listen({ documentElement: root, hidden: false, head: { append() {} }, body: { append() {} }, createElement: element, querySelector: name => name === '.desktop-background' ? background : shell, querySelectorAll: () => [pageWindow] });
@@ -97,8 +98,22 @@ function desktop({ theme = 'auto', reduced = false, transport = async () => Resp
   };
   const source = readFileSync(new URL('../src/scripts/weather.mjs', import.meta.url), 'utf8').replace(/^export /gm, '');
   runInNewContext(source, context);context.initDesktopWeather(menu);
-  return { root, menu, panel, fields, pause, tiles, stored, frames, timers, events, media, all, choose: theme => panel.events.get('click')({ target: { closest: () => tiles.find(tile => tile.dataset.weatherChoice === theme) } }), canvases: () => all.filter(el => el.tag === 'canvas' && !el.removed) };
+  return { root, menu, panel, fields, pause, tiles, stored, frames, timers, events, media, all, click: target => document.events.get('click')({ target }), choose: theme => panel.events.get('click')({ target: { closest: () => tiles.find(tile => tile.dataset.weatherChoice === theme) } }), canvases: () => all.filter(el => el.tag === 'canvas' && !el.removed) };
 }
+
+test('outside clicks dismiss the chooser without stopping the theme, while inside clicks keep it open', () => {
+  const page = desktop({ theme: 'rain' });
+  for (const target of [page.menu, page.panel, page.pause, page.tiles[2]]) {
+    page.click(target);
+    assert.equal(page.menu.open, true);
+  }
+  page.click({});
+  assert.equal(page.menu.open, false);
+  assert.equal(page.root.dataset.desktopWeather, 'rain');
+  page.menu.open = true;
+  page.click({});
+  assert.equal(page.menu.open, false, 'outside dismissal also works after reopening');
+});
 
 test('stop cancels pending automatic weather and a late reply cannot reactivate the theme', async () => {
   let release;
