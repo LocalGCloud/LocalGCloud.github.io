@@ -1,9 +1,9 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-10-20",
+  "reviewedAt": "2026-10-25",
   "provenance": {
-    "runtimeRevision": "89ab19005f31cdad6b3956a3c73830bb29c88975",
-    "cliRevision": "0339e0134185338b6ee03eb89f4109bef33e4fcb",
+    "runtimeRevision": "8fbd495169892a2de723eaf15e68585617293eea",
+    "cliRevision": "0bf86df7a313cce54909ce2e28ee8cef1b707fa8",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -59,13 +59,13 @@
       }
     ],
     "sourceDigests": {
-      "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:0a724678530622a513f7dcdb22016f922d096676c8350629391e8fe6f990ee2e",
+      "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:ec1e67a8ce0813239e65fa0953fe8d1630a21abeb72cbd9303c31d0c174c11a2",
       "../localcloud/localcloud.defaults.yaml": "sha256:b4f2a50cbe372e3cb92c9ee6a4235bbde14276f4ac2ee03bd75aa141ed8a1c1a",
-      "../localcloud/documentation.yaml": "sha256:5c55e937d30bbba7ff7ec2799a726f706d30a2ac5056b35d5aa330218db5e145",
+      "../localcloud/documentation.yaml": "sha256:8bd8f19704db6e119f58913f9a49a5f5ae5c8bd823fdceac0b5a32fcb7176005",
       "../localcloud/docs/status/service-status.md": "sha256:ddad5257b8ba3b5fb4f12bfee0364fa7710e24a3afec22cae2255db33923538f",
       "../localcloud/docs/architecture/networking-and-tls.md": "sha256:b802e16849b303588a43b2862f8a94365662558eadb9b88bedae38fb4da94e32",
       "../localcloud/docs/guides/mcp-integration.md": "sha256:efba8366f8a625010982d9e10559722f998dfa5ff7c24cde053e8c745e1fa31c",
-      "../localcloud/specs/api/catalog.json": "sha256:dce067e1b3e98fd17b690a2761deaf96af83da840a7741a1e36cd31485ff5a94",
+      "../localcloud/specs/api/catalog.json": "sha256:e0862f512f90fe412fe76990daffcbc295ab56d2f5f874d2d7ad3bb9dcd4b311",
       "../localcloud/Dockerfile": "sha256:5c0c06b7caafb9799aba37281537104214df2ac9436697d436c1aa0addb8cf25",
       "../localcloud/LICENSE": "sha256:007c741ba18ddbea4cbd92b4f4b93135381b39e5a4af01ae5128f14b1d19c041",
       "../localcloud/docker/bigquery-start.sh": "sha256:0111bfdac9dae2b54c0c8972fb28eb26d20490284bb5b11444e740c9436707f1",
@@ -74,9 +74,9 @@
       "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java": "sha256:42f6d7b6c8e194ad9795f14b2175fb4a76f71abb6c5791b7319526a41f6d3c82",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java": "sha256:4978775941c8725a7fdfe1bab479ba7ceb76f30b0636d874fdc800164f3277b3",
       "../localcloud/localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java": "sha256:1d9a7a06b933cb3b086d4c2a2c5ba9d25714b91dc3ed1b211450ef425caee6d9",
-      "../localcloud-cli/README.md": "sha256:50046c2c2a44d36602a57a4f917b5a9bcda86954486bf6fb9f65fd0a5ddf93b2",
-      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:b96e4cb3b447e1d76cc5140165a946059d7a508a58273a3e5be1605b62774f78",
-      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:bbfaa4e6957189ca64d1149008cfa5211bef1c0c791ecfa6887cf514448de989",
+      "../localcloud-cli/README.md": "sha256:f4b95a4f4e2c2dd2b08e79784390b38e685f82a465996765d4eed512832d9ac1",
+      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:fde6a10a724262072de1de509079a732c70b05b178afe64eb4671b53424620cb",
+      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:e29a041c2d4a9eb8dc3ea990b6c68258f3965ad0eb1a01e9cfc1744d46ad8427",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:c4abbf92bd0a0e03511e9fec4a5750bdba151e7def263f7294819b0338cd19b8",
       "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:193ad4c0f2eb444a7a8c5170db4145874f4d283d8a1c2f175e4ae27e3228c73c",
       "public/install.sh": "sha256:0a7c2cd4f50aa0512ddeeb1574a8f66f70697853a47da3e78d288dcab1858956"
@@ -179,7 +179,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.12 from revision 0339e0134185338b6ee03eb89f4109bef33e4fcb. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.13 from revision 0bf86df7a313cce54909ce2e28ee8cef1b707fa8. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
@@ -1207,18 +1207,20 @@
       "status": "verified",
       "limitations": [
         "Coverage classifications are source records, not proof of full Google Cloud semantic parity or assembled-image qualification.",
-        "sql.ddl.partition-by: semantic-compatibility:The _PARTITIONTIME/_PARTITIONDATE pseudocolumns of ingestion-time partitioned tables are not readable: rows carry no local ingestion time",
         "sql.ddl.create-model-bqml: semantic-compatibility:STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally",
         "sql.function.st-snaptogrid: semantic-compatibility:Only points and empty values are snapped; lines, polygons and multi-part values need S2Builder IntLatLngSnapFunction, which the installed S2 bindings do not expose",
         "metadata.enterprise.create-model: semantic-compatibility:STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally",
-        "metadata.enterprise.column-level-security: semantic-compatibility:Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served",
+        "metadata.enterprise.column-level-security: semantic-compatibility:Taxonomy import/export and cross-location taxonomy replication are not served; custom masking routines do not apply to leaf fields nested in repeated records, and direct data policies do not attach to repeated fields",
+        "metadata.enterprise.connection-api-external-connection: semantic-compatibility:Served over REST only (the API's gRPC transport is not served); AWS, Azure, Spark and Salesforce Data Cloud connections are stored resources without local execution; Cloud SQL connections reach an instance only through an explicit BIGQUERY_EMULATOR_CLOUD_SQL_INSTANCE_ENDPOINTS mapping; connection IAM policies are unconditional version 1",
+        "metadata.advanced.ingestion-time-partitioning-partitiontime-partitiondate: semantic-compatibility:Partition decorators (table$YYYYMMDD) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME",
         "metadata.advanced.cloud-storage-csv-json-avro-parquet-orc-bigtable: semantic-compatibility:Bigtable external tables are not implemented; Google Sheets, HTTP(S) and local-file sources are also outside the native external-table path (see the child rows)",
-        "metadata.advanced.column-level-security-policy-tags: semantic-compatibility:Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served",
+        "metadata.advanced.column-level-security-policy-tags: semantic-compatibility:Taxonomy import/export and cross-location taxonomy replication are not served; custom masking routines do not apply to leaf fields nested in repeated records, and direct data policies do not attach to repeated fields",
         "metadata.advanced.ml-transform: semantic-compatibility:TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused",
         "client.spark.spark-bigquery-connector-storage-read: managed-authorization:Production Storage Read IAM is not emulated.|distributed-scale:Managed service scale and global availability are outside the pinned client profile.",
         "sql.ddl.transform: semantic-compatibility:TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused",
         "sql.function.s2-coveringcellids: semantic-compatibility:Multi-point, multi-linestring and mixed collections, and buffers on non-point values, are refused",
         "sql.function.st-union-agg: semantic-compatibility:Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused",
+        "sql.type.collatable-data-types: semantic-compatibility:Only 'und:ci' and '' collations exist; refused by name: collated STRUCT comparisons and casts beyond identity, GROUPING SETS/ROLLUP/CUBE, INTERSECT/EXCEPT DISTINCT, window MIN/MAX/COUNT(DISTINCT), STRING_AGG/ARRAY_AGG DISTINCT and ORDER BY ... COLLATE syntax over collated values; ICU root secondary-strength semantics and local error texts are not live-BigQuery qualified",
         "Google-managed reservations, fleet scale, replication, and IAM integrations require production validation."
       ],
       "evidence": [
@@ -2203,7 +2205,7 @@
           "label": "write log entries and list/filter entries",
           "status": "partial",
           "limitations": [
-            "Local ingestion exists; query/filter parity is limited."
+            "Local ingestion exists; query/filter parity is limited. An entry keeps the payload it was written with, a text payload, a JSON object or a proto_payload (a google.protobuf.Any, stored byte for byte with its type URL), and its operation. REST prints a proto_payload with its fields and \"@type\" for the types the server knows (google.cloud.audit.AuditLog); an Any of another type is returned intact over gRPC, and a REST list that contains one fails. Only the logName= and severity>= terms of a filter are applied, not fields of a proto_payload. An entry's http_request, trace, span_id, source_location and metadata are not kept."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -2278,7 +2280,7 @@
           "label": "create/list time series and descriptors",
           "status": "partial",
           "limitations": [
-            "A time series is identified by project, metric type, metric labels, resource type and resource labels. ListTimeSeries applies equality on metric.type, resource.type, metric.labels.KEY and resource.labels.KEY joined by AND, the interval, the FULL and HEADERS views, and page_size/page_token. A filter with any other operator applies only its metric.type value; aggregation and order_by are not applied. Metric descriptors are derived from written metric types."
+            "Every TypedValue case (bool, int64, double, string, distribution) and the metric_kind, value_type and unit of the TimeSeries are stored and returned as written; a series written without them returns them unset, and the first write that names one sets it. The Console and GraphQL plot a distribution as its mean. A time series is identified by project, metric type, metric labels, resource type and resource labels. ListTimeSeries applies equality on metric.type, resource.type, metric.labels.KEY and resource.labels.KEY joined by AND, the interval, the FULL and HEADERS views, and page_size/page_token. A filter with any other operator applies only its metric.type value; aggregation and order_by are not applied. Metric descriptors are derived from written metric types."
           ],
           "evidence": [
             "../localcloud/documentation.yaml"
@@ -3121,24 +3123,18 @@
   "bigqueryCoverage": {
     "total": 1537,
     "development": {
-      "unknown": 381,
-      "implemented": 1075,
-      "unsupported": 69,
-      "partial": 12
+      "unknown": 378,
+      "implemented": 1085,
+      "unsupported": 60,
+      "partial": 14
     },
     "production": {
-      "unknown": 381,
-      "implemented": 1075,
-      "unsupported": 69,
-      "partial": 12
+      "unknown": 378,
+      "implemented": 1085,
+      "unsupported": 60,
+      "partial": 14
     },
     "partialCapabilities": [
-      {
-        "id": "sql.ddl.partition-by",
-        "name": "PARTITION BY",
-        "boundary": "semantic-compatibility:The _PARTITIONTIME/_PARTITIONDATE pseudocolumns of ingestion-time partitioned tables are not readable: rows carry no local ingestion time",
-        "notes": "Derived compatibility detail outside canonical GoogleSQL census totals. Supported subset is durable partition metadata and ordinary table reads and writes; physical partition behavior and pseudocolumns are not implemented. 2026-09-28 validation: partial. Supported subset: time-unit column and integer-range partitioning. Remaining boundary: Ingestion-time partitioning (PARTITION BY _PARTITIONDATE/_PARTITIONTIME) and the _PARTITIONTIME/_PARTITIONDATE pseudocolumns are not supported: the pinned analyzer rejects the pseudocolumns in DDL."
-      },
       {
         "id": "sql.ddl.create-model-bqml",
         "name": "CREATE MODEL (BQML)",
@@ -3160,8 +3156,20 @@
       {
         "id": "metadata.enterprise.column-level-security",
         "name": "Column-level security",
-        "boundary": "semantic-compatibility:Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served",
-        "notes": "Bounded direct data-policy column access is implemented. Taxonomy policy-tag authorization is not emulated. 2026-09-28 validation: partial. Supported subset: policy tags and data policies on top-level columns enforce fine-grained reads and masking. Remaining boundary: Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served."
+        "boundary": "semantic-compatibility:Taxonomy import/export and cross-location taxonomy replication are not served; custom masking routines do not apply to leaf fields nested in repeated records, and direct data policies do not attach to repeated fields",
+        "notes": "Bounded direct data-policy column access is implemented. 2026-09-28 validation: partial. Supported subset: policy tags and data policies on top-level columns enforce fine-grained reads and masking. Remaining boundary: Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served. 2026-10-23 backlog: policy tags and direct data policies on leaf fields nested in RECORD and repeated RECORD columns are enforced (deny, mask, raw) across queries, views and read APIs, persist across restart, and a STRUCT column itself is refused as an attachment target; taxonomy import/export and cross-location replication remain unserved."
+      },
+      {
+        "id": "metadata.enterprise.connection-api-external-connection",
+        "name": "Connection API (EXTERNAL CONNECTION)",
+        "boundary": "semantic-compatibility:Served over REST only (the API's gRPC transport is not served); AWS, Azure, Spark and Salesforce Data Cloud connections are stored resources without local execution; Cloud SQL connections reach an instance only through an explicit BIGQUERY_EMULATOR_CLOUD_SQL_INSTANCE_ENDPOINTS mapping; connection IAM policies are unconditional version 1",
+        "notes": "2026-10-23 backlog: partial. The v1 REST resource lifecycle, input-only credentials, connection IAM and the shared DDL store are implemented and tested through httpx (the official google-cloud-bigquery-connection client is not in the test image). Remaining boundary: gRPC transport, execution for AWS/Azure/Spark/Salesforce Data Cloud connections, conditional connection IAM."
+      },
+      {
+        "id": "metadata.advanced.ingestion-time-partitioning-partitiontime-partitiondate",
+        "name": "Ingestion-time partitioning (PARTITIONTIME, PARTITIONDATE)",
+        "boundary": "semantic-compatibility:Partition decorators (table$YYYYMMDD) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME",
+        "notes": "2026-10-23 backlog: rows of ingestion-time partitioned tables store their partition time; pseudocolumns implemented. Provisional (not pinned against live BigQuery): rows are readable at once with their ingestion time (the write-optimized streaming buffer, where _PARTITIONTIME is NULL, is not modeled); explicit NULL _PARTITIONTIME is refused; pseudocolumn rows of INFORMATION_SCHEMA.COLUMNS have NULL ordinal_position; error wording for off-boundary values and missing aliases."
       },
       {
         "id": "metadata.advanced.cloud-storage-csv-json-avro-parquet-orc-bigtable",
@@ -3172,8 +3180,8 @@
       {
         "id": "metadata.advanced.column-level-security-policy-tags",
         "name": "Column-level security (policy tags)",
-        "boundary": "semantic-compatibility:Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served",
-        "notes": "2026-09-28 validation: partial. Supported subset: policy tags and data policies on top-level columns enforce fine-grained reads and masking. Remaining boundary: Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served."
+        "boundary": "semantic-compatibility:Taxonomy import/export and cross-location taxonomy replication are not served; custom masking routines do not apply to leaf fields nested in repeated records, and direct data policies do not attach to repeated fields",
+        "notes": "2026-09-28 validation: partial. Supported subset: policy tags and data policies on top-level columns enforce fine-grained reads and masking. Remaining boundary: Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served. 2026-10-23 backlog: policy tags and direct data policies on leaf fields nested in RECORD and repeated RECORD columns are enforced (deny, mask, raw) across queries, views and read APIs, persist across restart, and a STRUCT column itself is refused as an attachment target; taxonomy import/export and cross-location replication remain unserved."
       },
       {
         "id": "metadata.advanced.ml-transform",
@@ -3204,8 +3212,14 @@
         "name": "ST_UNION_AGG",
         "boundary": "semantic-compatibility:Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused",
         "notes": "Native source-overlay 2026-09-27: pinned aggregate signature 2061, point union with duplicate removal, empty/no rows, fail-closed nonpoint/all-NULL and modifier cases, REST GEOGRAPHY publication. The previous array-scan refusal does not describe this bounded native path. Grouped point inputs pass; GEOGRAPHY-valued UNNEST array scans remain refused by the relation spine. 2026-09-28 validation: partial. Supported subset: point-only and polygon-only groups union with S2. Remaining boundary: Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused."
+      },
+      {
+        "id": "sql.type.collatable-data-types",
+        "name": "Collatable data types",
+        "boundary": "semantic-compatibility:Only 'und:ci' and '' collations exist; refused by name: collated STRUCT comparisons and casts beyond identity, GROUPING SETS/ROLLUP/CUBE, INTERSECT/EXCEPT DISTINCT, window MIN/MAX/COUNT(DISTINCT), STRING_AGG/ARRAY_AGG DISTINCT and ORDER BY ... COLLATE syntax over collated values; ICU root secondary-strength semantics and local error texts are not live-BigQuery qualified",
+        "notes": "2026-10-23 backlog: partial: the documented collation-aware operations listed in the scope are implemented and tested; the refused shapes in the limitations stay explicit."
       }
     ],
-    "revision": "8ac079a9f21f869bfbec18b067bf90ef20b0a0f0"
+    "revision": "fc4f533c6acf158bb85122e530ce660fae415600"
   }
 }

@@ -413,7 +413,8 @@ test('availability marks keep accessible labels, notes stay inline and profile d
     assert.ok(markdown.includes(`${group.area} ${group.total} features`), `${group.area}: the Markdown twin lists each category with its size`);
     assert.ok(markdown.includes(`| ${group.supported} supported | ${group.missing} not supported |`), `${group.area}: and the two numbers`);
   }
-  assert.ok(!markdown.includes('Default object ACL operations'), 'categories the default filter hides stay out of the twin');
+  const listedCategories = markdown.split('\n').filter(line => line.startsWith('| ') && /\d+ features \|/.test(line)).map(line => line.split('|')[1].trim());
+  assert.deepEqual(listedCategories, categories('cloud-storage').map(group => `${group.area} ${group.total} features`), 'the twin lists exactly the categories in the default filter');
   const page = await open(t, '/compare/emulators/?view=classic');
   await settled(page);
   await choose(page, 'all');

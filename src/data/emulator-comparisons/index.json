@@ -1,17 +1,17 @@
 {
   "gcs": {
-    "total": 168,
-    "exclusive": 68,
+    "total": 226,
+    "exclusive": 126,
     "hasCompetitor": true
   },
   "firestore": {
-    "total": 176,
-    "exclusive": 37,
+    "total": 202,
+    "exclusive": 38,
     "hasCompetitor": true
   },
   "bigtable": {
-    "total": 376,
-    "exclusive": 302,
+    "total": 482,
+    "exclusive": 408,
     "hasCompetitor": true
   },
   "spanner": {
@@ -20,8 +20,8 @@
     "hasCompetitor": true
   },
   "bigquery": {
-    "total": 1112,
-    "exclusive": 55,
+    "total": 1117,
+    "exclusive": 58,
     "hasCompetitor": true
   }
 }

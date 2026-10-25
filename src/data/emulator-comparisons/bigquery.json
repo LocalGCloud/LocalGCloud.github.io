@@ -57,7 +57,7 @@
     "other": "unavailable",
     "description": "Restricts who can read individual columns by attaching policy tags from a taxonomy, which are then checked against IAM permissions.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/column-level-security-intro",
-    "notes": "Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served."
+    "notes": "Taxonomy import/export and cross-location taxonomy replication are not served; custom masking routines do not apply to leaf fields nested in repeated records, and direct data policies do not attach to repeated fields."
   },
   {
     "id": "metadata.advanced.create-table-as-clone-of",
@@ -110,6 +110,16 @@
     "notes": ""
   },
   {
+    "id": "metadata.advanced.ingestion-time-partitioning-partitiontime-partitiondate",
+    "name": "Ingestion-time partitioning (PARTITIONTIME, PARTITIONDATE)",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Partitions a table by the time rows were loaded and exposes the _PARTITIONTIME and _PARTITIONDATE pseudo-columns for filtering.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/partitioned-tables",
+    "notes": "Partition decorators (table$YYYYMMDD) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME."
+  },
+  {
     "id": "metadata.advanced.jobs-insert-with-copy-config",
     "name": "jobs.insert with copy config",
     "area": "Metadata / Advanced",
@@ -158,6 +168,16 @@
     "description": "Applies the preprocessing defined in a model's TRANSFORM clause to input data and returns the resulting feature columns.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-transform",
     "notes": "TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
+  },
+  {
+    "id": "metadata.advanced.pseudo-columns-partitiontime-partitiondate",
+    "name": "Pseudo-columns: PARTITIONTIME, PARTITIONDATE",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "Hidden columns on ingestion-time partitioned tables that hold the load time or date of each row and can be used in filters.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/querying-partitioned-tables",
+    "notes": ""
   },
   {
     "id": "metadata.advanced.restore-table-from-snapshot",
@@ -230,6 +250,26 @@
     "notes": ""
   },
   {
+    "id": "metadata.enterprise.authorized-datasets",
+    "name": "Authorized datasets",
+    "area": "Metadata / Enterprise",
+    "local": "available",
+    "other": "unavailable",
+    "description": "Authorizes every view in one dataset to read the tables of another dataset, without granting those views' users access to the source dataset.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/authorized-datasets",
+    "notes": ""
+  },
+  {
+    "id": "metadata.enterprise.authorized-views",
+    "name": "Authorized views",
+    "area": "Metadata / Enterprise",
+    "local": "available",
+    "other": "unavailable",
+    "description": "A view that has been granted access to a source dataset, so users can query the view without having access to its underlying tables.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/authorized-views",
+    "notes": ""
+  },
+  {
     "id": "metadata.enterprise.change-data-capture-cdc",
     "name": "Change Data Capture (CDC)",
     "area": "Metadata / Enterprise",
@@ -247,7 +287,17 @@
     "other": "unavailable",
     "description": "Controls which users can read sensitive columns by classifying them with policy tags and checking IAM access on each tag.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/column-level-security-intro",
-    "notes": "Policy tags on nested RECORD fields are refused; taxonomy import/export and cross-location replication are not served."
+    "notes": "Taxonomy import/export and cross-location taxonomy replication are not served; custom masking routines do not apply to leaf fields nested in repeated records, and direct data policies do not attach to repeated fields."
+  },
+  {
+    "id": "metadata.enterprise.connection-api-external-connection",
+    "name": "Connection API (EXTERNAL CONNECTION)",
+    "area": "Metadata / Enterprise",
+    "local": "limited",
+    "other": "unavailable",
+    "description": "Manages connection resources that store the settings and credentials BigQuery needs to reach external sources such as Cloud SQL, Spanner or Cloud Storage.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/bigqueryconnection/rest",
+    "notes": "Served over REST only (the API's gRPC transport is not served); AWS, Azure, Spark and Salesforce Data Cloud connections are stored resources without local execution; Cloud SQL connections reach an instance only through an explicit BIGQUERY_EMULATOR_CLOUD_SQL_INSTANCE_ENDPOINTS mapping; connection IAM policies are unconditional version 1."
   },
   {
     "id": "metadata.enterprise.create-model",
@@ -363,7 +413,7 @@
     "id": "metadata.enterprise.remote-functions",
     "name": "Remote functions",
     "area": "Metadata / Enterprise",
-    "local": "unavailable",
+    "local": "available",
     "other": "unknown",
     "description": "User-defined functions backed by a Cloud Run function or service that SQL queries call over a connection to run custom code.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/remote-functions",
@@ -1173,7 +1223,7 @@
     "id": "sql.ddl.alter-schema-set-default-collate",
     "name": "ALTER SCHEMA SET DEFAULT COLLATE",
     "area": "SQL / DDL",
-    "local": "unavailable",
+    "local": "available",
     "other": "unknown",
     "description": "Sets the default collation for tables created later in a dataset; existing tables and columns keep the collation they already have.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#alter_schema_collate_statement",
@@ -1283,20 +1333,10 @@
     "id": "sql.ddl.alter-table-set-default-collate",
     "name": "ALTER TABLE SET DEFAULT COLLATE",
     "area": "SQL / DDL",
-    "local": "unavailable",
+    "local": "available",
     "other": "unknown",
     "description": "Sets the default collation specification of a table, which new STRING columns inherit when they have no collation of their own.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#alter_table_collate_statement",
-    "notes": ""
-  },
-  {
-    "id": "sql.ddl.alter-table-set-default-collation",
-    "name": "ALTER TABLE SET DEFAULT COLLATION",
-    "area": "SQL / DDL",
-    "local": "unavailable",
-    "other": "unknown",
-    "description": "Alters the default collation specification of a table; only columns added afterwards pick up the new value.",
-    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
     "notes": ""
   },
   {
@@ -3033,11 +3073,11 @@
     "id": "sql.ddl.partition-by",
     "name": "PARTITION BY",
     "area": "SQL / DDL",
-    "local": "limited",
+    "local": "available",
     "other": "unknown",
     "description": "Clause that divides a table into partitions by a date, timestamp, datetime or integer range column, or by ingestion time, so queries can read fewer partitions.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
-    "notes": "The _PARTITIONTIME/_PARTITIONDATE pseudocolumns of ingestion-time partitioned tables are not readable: rows carry no local ingestion time."
+    "notes": ""
   },
   {
     "id": "sql.ddl.partition-by-cluster-by-options",
@@ -3156,6 +3196,16 @@
     "local": "available",
     "other": "unknown",
     "description": "Manually refreshes a materialized view so that it picks up the latest changes in its base tables, by calling the BQ.REFRESH_MATERIALIZED_VIEW procedure.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.remote",
+    "name": "REMOTE",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Clause that creates a function or model whose logic runs in an external service reached through a connection, not in code written in the statement.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
     "notes": ""
   },
@@ -9023,7 +9073,7 @@
     "id": "sql.select.collate",
     "name": "COLLATE",
     "area": "SQL / SELECT",
-    "local": "unavailable",
+    "local": "available",
     "other": "unknown",
     "description": "Applies a collation to STRING values: in ORDER BY it controls how values sort, and the COLLATE function returns a string that carries a given collation.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/string_functions#collate",
@@ -10393,11 +10443,11 @@
     "id": "sql.type.collatable-data-types",
     "name": "Collatable data types",
     "area": "SQL / Types",
-    "local": "unavailable",
+    "local": "limited",
     "other": "unknown",
     "description": "Types whose comparison and sorting can follow a collation: STRING values, string fields inside a STRUCT and string elements inside an ARRAY.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#collatable_data_types",
-    "notes": ""
+    "notes": "Only 'und:ci' and '' collations exist; refused by name: collated STRUCT comparisons and casts beyond identity, GROUPING SETS/ROLLUP/CUBE, INTERSECT/EXCEPT DISTINCT, window MIN/MAX/COUNT(DISTINCT), STRING_AGG/ARRAY_AGG DISTINCT and ORDER BY ... COLLATE syntax over collated values."
   },
   {
     "id": "sql.type.comparable-data-types",

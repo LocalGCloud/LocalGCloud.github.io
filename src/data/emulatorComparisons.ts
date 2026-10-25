@@ -24,7 +24,7 @@ const definitions: ComparisonDefinition[] = [
     competitor: 'fake-gcs-server', baseline: 'fake-gcs-server',
     baselineUrl: 'https://github.com/fsouza/fake-gcs-server/tree/3c29d20789f6475f65d2554ad6898c4afd7124bb',
     summary: 'Test permissions, HMAC credentials, object moves and notification recovery.',
-    scope: 'Permission checks require an HTTP authorization callback. HMAC verification covers supported XML routes; moves stay within one bucket.',
+    scope: 'Permission checks use an opt-in local evaluator or an external authorization callback. HMAC verification covers supported XML routes; moves stay within one bucket.',
   },
   {
     id: 'firestore', slug: 'firestore', name: 'Firestore', engine: 'LocalCloud Firestore',
@@ -38,7 +38,7 @@ const definitions: ComparisonDefinition[] = [
     competitor: 'Google Cloud Bigtable emulator', baseline: 'Google Cloud Bigtable emulator · client library v1.58.0',
     baselineUrl: 'https://docs.cloud.google.com/bigtable/docs/emulator',
     summary: 'Keep persistent data and test backups, restricted views, change streams and SQL.',
-    scope: 'Change streams use one local partition. IAM policies manage configuration without enforcing identity. Google emulator results come from its open-source implementation, not from a Cloud SDK bundle.',
+    scope: 'Change streams support local partition split/merge simulation. IAM permission enforcement is opt-in with --iam-enforce. Google emulator results use its open-source implementation.',
   },
   {
     id: 'spanner', slug: 'spanner', name: 'Spanner', engine: 'LocalCloud Spanner',

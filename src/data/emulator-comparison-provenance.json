@@ -1,13 +1,13 @@
 {
   "gcs": {
     "repository": "localcloud-fake-gcs-server",
-    "revision": "480cc7bcc3ae1f63bcb5b23f0eae87dd6b4fcb18",
-    "reviewed": "2026-10-20",
+    "revision": "558533d1df0484f4ee976634f65f3018cbb52b18",
+    "reviewed": "2026-10-23",
     "documents": [
       {
         "path": "docs/upstream-comparison.md",
-        "commit": "480cc7bcc3ae1f63bcb5b23f0eae87dd6b4fcb18",
-        "sha256": "f5f85b77206debc4646612ed67d03a37554d7875cfa829eeac8122a90bdca8bf"
+        "commit": "558533d1df0484f4ee976634f65f3018cbb52b18",
+        "sha256": "de2bedd26a97aa8daa311ea9d29dd24e03b28a0c6b97c86cec189d5cb867401d"
       }
     ],
     "documented": {
@@ -18,61 +18,61 @@
         "unavailable": 127
       },
       "local": {
-        "available": 122,
-        "limited": 46,
-        "unavailable": 59
+        "available": 222,
+        "limited": 4,
+        "unavailable": 1
       }
     },
     "hidden": {
       "unassessed": 0,
-      "unavailable": 59,
+      "unavailable": 1,
       "repeated": 0
     },
     "sharedDescriptions": []
   },
   "firestore": {
     "repository": "firestore-go",
-    "revision": "f9031112196df9402041e671977f136bf083466b",
-    "reviewed": "2026-10-20",
+    "revision": "62af8b301b88c1b0b68f2795d50f8f8b016aa38e",
+    "reviewed": "2026-10-23",
     "documents": [
       {
         "path": "docs/emulator-comparison.md",
-        "commit": "f9031112196df9402041e671977f136bf083466b",
-        "sha256": "d70ef3fa21617a6999408f917d4c36e03cea3f9372a3f39838a0f218f9c173db"
+        "commit": "62af8b301b88c1b0b68f2795d50f8f8b016aa38e",
+        "sha256": "e7d76bc38f9939152b217a643067ff2c5a505a1122a55f4eff3c081f3e08e862"
       },
       {
         "path": "docs/emulator-comparison-metrics.md",
-        "commit": "b10466d9b61ba5f1f4fcbb262cae2a2253887eb0",
-        "sha256": "8eba6c7e1e27f5eca7fbc15c162bfe94f36263e8b938c1c501f5083042eebde8"
+        "commit": "5b9334638156d1db82881f4b47dfefae48b8b21e",
+        "sha256": "e6cadfe37b78fffaeac2ed4a3cba289c3bef9dc5c30af7c5a737a9d393a3c866"
       }
     ],
     "documented": {
-      "rows": 179,
+      "rows": 205,
       "production": {
-        "available": 179,
+        "available": 205,
         "limited": 0,
         "unavailable": 0,
         "unknown": 0,
         "na": 0
       },
       "other": {
-        "available": 54,
-        "limited": 18,
-        "unavailable": 40,
-        "unknown": 67,
+        "available": 58,
+        "limited": 19,
+        "unavailable": 41,
+        "unknown": 87,
         "na": 0
       },
       "default": {
-        "available": 71,
-        "limited": 26,
-        "unavailable": 82,
+        "available": 75,
+        "limited": 29,
+        "unavailable": 101,
         "unknown": 0,
         "na": 0
       },
       "local": {
-        "available": 149,
-        "limited": 21,
-        "unavailable": 9,
+        "available": 159,
+        "limited": 40,
+        "unavailable": 6,
         "unknown": 0,
         "na": 0
       }
@@ -86,33 +86,33 @@
   },
   "bigtable": {
     "repository": "little_bigtable",
-    "revision": "96bbab6cdb9c41a201c3813604afa8fa0645392d",
+    "revision": "4318ad646ab9f90f9218362e02071e56d10af629",
     "reviewed": "2026-10-20",
     "documents": [
       {
         "path": "EMULATOR_COMPARISON.md",
-        "commit": "96bbab6cdb9c41a201c3813604afa8fa0645392d",
-        "sha256": "f982e1f04a4882d4dfb3843036942ae8d095bb222739d75a3e60b4a9874aaea2"
+        "commit": "c3ab5799e9ac3a5da5d5c0bd51843cbc56e89d8d",
+        "sha256": "bfaf90167320b58d62284917b40edd4c5220b124fa7138c7cf7e8b5a12e4eed4"
       }
     ],
     "documented": {
-      "rows": 493,
+      "rows": 494,
       "local": {
-        "available": 336,
-        "limited": 39,
-        "unavailable": 116,
-        "unknown": 2
+        "available": 415,
+        "limited": 67,
+        "unavailable": 11,
+        "unknown": 1
       },
       "other": {
         "available": 41,
         "limited": 33,
-        "unavailable": 419,
+        "unavailable": 420,
         "unknown": 0
       }
     },
     "hidden": {
-      "unassessed": 2,
-      "unavailable": 115,
+      "unassessed": 1,
+      "unavailable": 11,
       "repeated": 0
     },
     "sharedDescriptions": []
@@ -156,38 +156,38 @@
   },
   "bigquery": {
     "repository": "bigquery-emulator-on-duckdb",
-    "revision": "7f280eb60c65bc2aba4d941e8516ee5a7e86cb9a",
+    "revision": "fc4f533c6acf158bb85122e530ce660fae415600",
     "reviewed": "2026-09-28",
     "documents": [
       {
         "path": "docs/comparison-features.csv",
-        "commit": "7f280eb60c65bc2aba4d941e8516ee5a7e86cb9a",
-        "sha256": "5b149a1e09fb9464134d2d25cfb71996a6d9a9089e0cc67add563fee255f9cef"
+        "commit": "c18c769850b1c0ad482a1892e149110eb1534641",
+        "sha256": "e2eacf975463df3f9b48b2d8d61af8db9c28b7f6f1bf0aef75598c04f4075f34"
       },
       {
         "path": "docs/COMPARISON.md",
-        "commit": "5e42c9cb57c377b8d8ec855390251976556bf7aa",
-        "sha256": "d3b526fd0115e739ec2c46af84006ad13c822312b0a93b34e76c14e36ff362dc"
+        "commit": "5296aca0079585f9a40d3495c7c56b56ae7bf257",
+        "sha256": "8e8f5d37c62f78845fb5e4a7f3ec8bf304d211f5a1bf135428f7b292b66282bf"
       }
     ],
     "documented": {
-      "rows": 1453,
+      "rows": 1452,
       "local": {
-        "available": 1068,
-        "limited": 10,
-        "unavailable": 66,
-        "unknown": 309
+        "available": 1077,
+        "limited": 12,
+        "unavailable": 57,
+        "unknown": 306
       },
       "other": {
         "available": 454,
         "limited": 9,
         "unavailable": 74,
-        "unknown": 916
+        "unknown": 915
       }
     },
     "hidden": {
-      "unassessed": 309,
-      "unavailable": 9,
+      "unassessed": 306,
+      "unavailable": 6,
       "repeated": 23
     },
     "sharedDescriptions": []

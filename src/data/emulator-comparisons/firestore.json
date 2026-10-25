@@ -627,6 +627,17 @@
     "notes": ""
   },
   {
+    "id": "firestore-queries-aggregation-and-listeners-listen-server-assigned-target-ids",
+    "name": "Listen server-assigned target IDs",
+    "area": "Queries, aggregation and listeners",
+    "local": "available",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Lets a listen stream ask the server to number its targets, and removes any later target that names its own ID.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1#target",
+    "notes": ""
+  },
+  {
     "id": "firestore-queries-aggregation-and-listeners-listen-unchanged-names-bloom-filter",
     "name": "Listen unchanged_names Bloom filter",
     "area": "Queries, aggregation and listeners",
@@ -993,12 +1004,23 @@
     "id": "firestore-index-configuration-execution-and-explain-explain-billing-details",
     "name": "Explain billing_details",
     "area": "Index configuration, execution and Explain",
-    "local": "unavailable",
+    "local": "limited",
     "other": "unknown",
     "default": "unavailable",
     "description": "Reports billing metrics for an analyzed query, such as billable documents, billable index entries and the minimum query cost.",
     "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain-report-reference",
-    "notes": "Explicitly marks billing not simulated."
+    "notes": "Local Standard read rules over local counters, approximate for multi-range scans, not an invoice."
+  },
+  {
+    "id": "firestore-index-configuration-execution-and-explain-explain-read-operations",
+    "name": "Explain read_operations",
+    "area": "Index configuration, execution and Explain",
+    "local": "limited",
+    "other": "unavailable",
+    "default": "unavailable",
+    "description": "Reports the total billable read operations of an analyzed query in its execution statistics.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/query-explain-report-reference",
+    "notes": "Local Standard read rules over local counters; not an invoice."
   },
   {
     "id": "firestore-transactions-and-validation-pessimistic-read-write-transactions",
@@ -1152,7 +1174,29 @@
     "default": "limited",
     "description": "Makes concurrent transactions behave as if they ran one at a time, so none can observe the intermediate state of another.",
     "docs": "https://firebase.google.com/docs/firestore/transaction-data-contention",
-    "notes": ""
+    "notes": "Randomized serializability tests in three concurrency modes found no lost update."
+  },
+  {
+    "id": "firestore-transactions-and-validation-transaction-size-limit",
+    "name": "Transaction size limit",
+    "area": "Transactions and validation",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Fails a commit or transaction whose modified documents together exceed 10 MiB, counting a deleted document at its size, even when the request itself is small.",
+    "docs": "https://firebase.google.com/docs/firestore/manage-data/transactions",
+    "notes": "Document sizes only, index entries are not counted, so it can under-reject but never wrongly rejects."
+  },
+  {
+    "id": "firestore-transactions-and-validation-chronological-transaction-lock-hand-off",
+    "name": "Chronological transaction lock hand-off",
+    "area": "Transactions and validation",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Hands a released document lock to the earliest waiting request first, so queued writes are applied in arrival order.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/transaction-data-contention",
+    "notes": "Only requests that hold no locks queue in arrival order; a holder can still overtake a waiter."
   },
   {
     "id": "firestore-transactions-and-validation-transaction-270-second-lifetime-limit",
@@ -1186,6 +1230,50 @@
     "description": "Fails a transaction that exceeds the 20-second lock deadline, after which Firestore releases the locks the transaction was holding.",
     "docs": "https://firebase.google.com/docs/firestore/manage-data/transactions",
     "notes": ""
+  },
+  {
+    "id": "firestore-transactions-and-validation-request-tags",
+    "name": "Request tags",
+    "area": "Transactions and validation",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Accepts per-request tags used for usage monitoring and cost management, trimming, de-duplicating and limiting them without changing how the request runs.",
+    "docs": "https://docs.cloud.google.com/java/docs/reference/google-cloud-firestore/latest/com.google.firestore.v1.RequestOptions",
+    "notes": "Documented processing; diagnostics and per-tag usage only; unknown request options are rejected."
+  },
+  {
+    "id": "firestore-transactions-and-validation-request-labels-on-listen-write-and-batchwrite",
+    "name": "Request labels on Listen, Write and BatchWrite",
+    "area": "Transactions and validation",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Carries a map of labels on Listen, Write and BatchWrite requests that Firestore associates with the request.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1#listenrequest",
+    "notes": "Accepted and exposed to diagnostics, not interpreted; Google documents no key or value rules."
+  },
+  {
+    "id": "firestore-transactions-and-validation-per-database-usage-counters",
+    "name": "Per-database usage counters",
+    "area": "Transactions and validation",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Counts document reads, writes and deletes for each database, and for each request tag, per quota day.",
+    "docs": "https://firebase.google.com/docs/firestore/pricing",
+    "notes": "in-memory counters in Standard billing units that reset at midnight Pacific on the logical clock; not an invoice."
+  },
+  {
+    "id": "firestore-transactions-and-validation-free-tier-daily-quota-enforcement",
+    "name": "Free-tier daily quota enforcement",
+    "area": "Transactions and validation",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Refuses reads, writes and deletes with RESOURCE_EXHAUSTED once a database has used its free-tier daily allowance, until the quota resets at midnight Pacific time.",
+    "docs": "https://firebase.google.com/docs/firestore/quotas",
+    "notes": "opt-in Options.UsageQuota with host-chosen limits; counters are not durable; no plan, billing or ramp-up modeling."
   },
   {
     "id": "firestore-ttl-historical-reads-backups-and-recovery-enable-disable-point-in-time-recovery",
@@ -1433,34 +1521,78 @@
     "id": "firestore-ttl-historical-reads-backups-and-recovery-pitr-clonedatabase",
     "name": "PITR CloneDatabase",
     "area": "TTL, historical reads, backups and recovery",
-    "local": "unavailable",
+    "local": "limited",
     "other": "unknown",
     "default": "unavailable",
     "description": "Creates a new database from a point-in-time snapshot of an existing database, taken at a whole-minute time inside the recovery window.",
     "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases/clone",
-    "notes": ""
+    "notes": "Bounded Native Standard clone from whole-minute snapshots: documents as of the snapshot, composite indexes rebuilt READY, single-field overrides; TTL, PITR, protection and tags are not copied; index configuration is the source current configuration; cross-project snapshots unsupported."
   },
   {
     "id": "firestore-ttl-historical-reads-backups-and-recovery-managed-exportdocuments",
     "name": "Managed ExportDocuments",
     "area": "TTL, historical reads, backups and recovery",
-    "local": "unavailable",
+    "local": "limited",
     "other": "unknown",
     "default": "unavailable",
     "description": "Exports documents to a Cloud Storage location as a long-running operation, either all collections or only the collection IDs listed.",
     "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases/exportDocuments",
-    "notes": "Private snapshots are separate."
+    "notes": "Production profile with a host TransferStorage: consistent snapshot, snapshot_time, collection-group filter at any depth, progress, cancel, restart fails the operation; metadata and record encoding are emulator-private, so Google cannot import these exports."
   },
   {
     "id": "firestore-ttl-historical-reads-backups-and-recovery-managed-importdocuments",
     "name": "Managed ImportDocuments",
     "area": "TTL, historical reads, backups and recovery",
-    "local": "unavailable",
+    "local": "limited",
     "other": "unknown",
     "default": "unavailable",
     "description": "Imports documents into a database from files in Cloud Storage that an earlier export wrote, overwriting existing documents of the same name.",
     "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases/importDocuments",
-    "notes": "No managed-format interchange."
+    "notes": "Imports exports written by this engine only: overwrite by name, validate before the first write, index/history/listener/event effects with origin import; Google-produced exports are rejected, not parsed."
+  },
+  {
+    "id": "firestore-ttl-historical-reads-backups-and-recovery-cloud-storage-locations-for-export-and-import",
+    "name": "Cloud Storage locations for export and import",
+    "area": "TTL, historical reads, backups and recovery",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Writes export files to, and reads import files from, a Cloud Storage location addressed as gs://BUCKET/PATH.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/manage-data/export-import",
+    "notes": "A host-supplied TransferStorage and a local directory implementation only, no real Cloud Storage."
+  },
+  {
+    "id": "firestore-ttl-historical-reads-backups-and-recovery-export-and-import-cancellation-semantics",
+    "name": "Export and import cancellation semantics",
+    "area": "TTL, historical reads, backups and recovery",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Cancelling a running export or import does not undo it, and an export that did not complete cannot be imported.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/manage-data/export-import",
+    "notes": "An import keeps the batches already applied; the completion marker is written last; A cancelled export also removes its objects, which Google does not."
+  },
+  {
+    "id": "firestore-ttl-historical-reads-backups-and-recovery-import-of-google-produced-exports",
+    "name": "Import of Google-produced exports",
+    "area": "TTL, historical reads, backups and recovery",
+    "local": "unavailable",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Imports export files written by Google's managed export service, and writes export files that Google's managed import service can read.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/manage-data/export-import",
+    "notes": "Google's metadata schema and entity encoding are not publicly specified, so cross-import is rejected instead of claimed; Exports round-trip within this engine only."
+  },
+  {
+    "id": "firestore-ttl-historical-reads-backups-and-recovery-database-tag-bindings-on-create-restore-and-clone",
+    "name": "Database tag bindings on create, restore and clone",
+    "area": "TTL, historical reads, backups and recovery",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Binds Resource Manager tag key and value pairs to a database when it is created, restored or cloned; the bindings are input only, immutable and not returned when the database is read.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/tags",
+    "notes": "Syntax and the 50-binding limit are validated and stored, never echoed, immutable; No Resource Manager existence, IAM or inheritance checks."
   },
   {
     "id": "firestore-database-administration-and-rules-create-native-standard-databases-through-admin",
@@ -1537,6 +1669,61 @@
     "default": "unavailable",
     "description": "Asks the server to cancel a running long-running operation, such as an index build, on a best-effort basis.",
     "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.admin.v1",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-bulk-delete-documents-by-collection-group",
+    "name": "Bulk delete documents by collection group",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Starts a long-running operation that deletes, in batches, every document in the listed collection groups at any depth, or in all collection groups when none are listed.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/manage-data/bulk-delete",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-bulk-delete-leaves-later-writes-and-exposes-snapshot-time",
+    "name": "Bulk delete leaves later writes and exposes snapshot time",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Deletes only documents that existed when the operation started, never documents added or modified afterwards, and reports the read snapshot time that point-in-time recovery can use.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/manage-data/bulk-delete",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-bulk-delete-progress-and-cancellation",
+    "name": "Bulk delete progress and cancellation",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Reports estimated and completed work in documents and bytes while running, and a cancelled bulk delete stops without restoring the documents it already deleted.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/manage-data/bulk-delete",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-list-deleted-databases",
+    "name": "List deleted databases",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Includes deleted databases, with their deletion time, in the project database listing when the show-deleted option is set, and omits them otherwise.",
+    "docs": "https://docs.cloud.google.com/firestore/docs/reference/rest/v1/projects.databases/list",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-database-id-reuse-waiting-period",
+    "name": "Database ID reuse waiting period",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Refuses to create a database whose ID was deleted less than about five minutes earlier and allows it afterwards.",
+    "docs": "https://docs.cloud.google.com/firestore/native/docs/manage-databases",
     "notes": ""
   },
   {
@@ -1658,7 +1845,7 @@
     "default": "limited",
     "description": "Splits a string at each match of a regular expression and returns the pieces as a list.",
     "docs": "https://firebase.google.com/docs/reference/rules/rules.String",
-    "notes": "Unicode/compile diagnostics remain bounded."
+    "notes": "Unicode/compile diagnostics remain bounded; RE2 regression table."
   },
   {
     "id": "firestore-database-administration-and-rules-rules-string-replace-regex-substitution",
@@ -1669,7 +1856,7 @@
     "default": "limited",
     "description": "Replaces every match of a regular expression in a string with a substitution string and returns the result.",
     "docs": "https://firebase.google.com/docs/reference/rules/rules.String",
-    "notes": "Bounded string/regular-expression contracts."
+    "notes": "Bounded string/regular-expression contracts; RE2 regression table."
   },
   {
     "id": "firestore-database-administration-and-rules-rules-string-matches-regex",
@@ -1686,12 +1873,12 @@
     "id": "firestore-database-administration-and-rules-rules-rest-rulesets-create",
     "name": "Rules REST rulesets.create",
     "area": "Database administration and Rules",
-    "local": "available",
+    "local": "limited",
     "other": "unavailable",
     "default": "unavailable",
     "description": "Creates an immutable ruleset from rules source and returns it under a unique generated name; nothing enforces it until a release refers to it.",
     "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.rulesets/create",
-    "notes": ""
+    "notes": "Immutable single-file source; every file is validated and named in diagnostics, a second file is refused by name."
   },
   {
     "id": "firestore-database-administration-and-rules-rules-rest-rulesets-get",
@@ -1785,12 +1972,12 @@
     "id": "firestore-database-administration-and-rules-rules-rest-projects-test",
     "name": "Rules REST projects.test",
     "area": "Database administration and Rules",
-    "local": "available",
+    "local": "limited",
     "other": "unknown",
     "default": "unavailable",
     "description": "Checks Security Rules source, or an existing ruleset, for syntax and semantic problems and runs test cases against it, returning issues and results.",
     "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects/test",
-    "notes": ""
+    "notes": "multi-file refused by name."
   },
   {
     "id": "firestore-database-administration-and-rules-rules-source-test-visited-expression-reports",
@@ -1823,6 +2010,83 @@
     "default": "unavailable",
     "description": "Returns the compiled executable form of the ruleset a release points to, which an enforcement engine can run.",
     "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects.releases/getExecutable",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-rules-rest-multi-file-source-handling",
+    "name": "Rules REST multi-file Source handling",
+    "area": "Database administration and Rules",
+    "local": "limited",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Validates every file of a submitted Source and names the offending file in errors and issues; sources with more than one file are refused rather than merged.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/Source",
+    "notes": "per-file validation and diagnostics; How several cloud.firestore files compose is undocumented, so a second file is refused by name."
+  },
+  {
+    "id": "firestore-database-administration-and-rules-rules-rest-projects-test-source-only-validation",
+    "name": "Rules REST projects.test source-only validation",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "unknown",
+    "default": "unavailable",
+    "description": "Returns only compile issues when a test request carries a source but no test suite, which is how firebase-tools checks a file before deploying it.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rest/v1/projects/test",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-rules-language-isolated-from-cel-library",
+    "name": "Rules language isolated from CEL library",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "available",
+    "default": "available",
+    "description": "Rejects functions and methods the Security Rules language does not define, so a rule cannot call helpers from the evaluator's own expression library.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-rules-operator-precedence",
+    "name": "Rules operator precedence",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "limited",
+    "default": "limited",
+    "description": "Groups unparenthesized Security Rules operators in the documented order, so a condition mixing in, is and equality means what the language reference says.",
+    "docs": "https://firebase.google.com/docs/rules/rules-language",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-rules-allow-without-condition",
+    "name": "Rules allow without condition",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "available",
+    "default": "available",
+    "description": "Treats an allow statement with no condition as granting that method unconditionally, and accepts the condition's closing semicolon being omitted.",
+    "docs": "https://firebase.google.com/docs/rules/rules-language",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-rules-path-literals-with-hyphens-and-default-database",
+    "name": "Rules path literals with hyphens and default database",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "available",
+    "default": "available",
+    "description": "Parses path literals whose segments contain hyphens, dots, escapes or the (default) database name, such as /databases/(default)/documents/user-profiles/id.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules.Path",
+    "notes": ""
+  },
+  {
+    "id": "firestore-database-administration-and-rules-rules-request-resource-on-delete",
+    "name": "Rules request.resource on delete",
+    "area": "Database administration and Rules",
+    "local": "available",
+    "other": "available",
+    "default": "available",
+    "description": "Gives request.resource a null value on delete requests and omits request.query outside list requests, as the language reference describes.",
+    "docs": "https://firebase.google.com/docs/reference/rules/rules.firestore.Request",
     "notes": ""
   },
   {
@@ -1911,7 +2175,7 @@
     "default": "limited",
     "description": "Runs a function when a document is first created at a matching path, passing the new document's data to the function.",
     "docs": "https://firebase.google.com/docs/functions/firestore-events",
-    "notes": "Firebase integration documented."
+    "notes": "Firebase integration documented; retained events carry authtype/authid."
   },
   {
     "id": "firestore-production-security-editions-and-service-guarantees-document-updated-event-triggers",
@@ -1922,7 +2186,7 @@
     "default": "limited",
     "description": "Runs a function when an existing document changes, passing the document's values from before and after the change.",
     "docs": "https://firebase.google.com/docs/functions/firestore-events",
-    "notes": "Not standalone managed Functions compute."
+    "notes": "Not standalone managed Functions compute; retained events carry authtype/authid."
   },
   {
     "id": "firestore-production-security-editions-and-service-guarantees-document-deleted-event-triggers",
@@ -1933,6 +2197,28 @@
     "default": "limited",
     "description": "Runs a function when a document is deleted, passing the document's data as it was just before the deletion.",
     "docs": "https://firebase.google.com/docs/functions/firestore-events",
-    "notes": ""
+    "notes": "Retained events carry authtype/authid."
+  },
+  {
+    "id": "firestore-production-security-editions-and-service-guarantees-document-event-auth-context",
+    "name": "Document event auth context",
+    "area": "Production security, editions and service guarantees",
+    "local": "limited",
+    "other": "unknown",
+    "default": "limited",
+    "description": "Adds the type and ID of the principal that caused a document change to created, updated, deleted and written events, through the .withAuthContext event types.",
+    "docs": "https://docs.cloud.google.com/eventarc/docs/reference/supported-events",
+    "notes": "Principal recorded, persisted and exposed per mutation origin; TTL deletes are system; End-user and IAM values were not observed in production; delivery stays in the host."
+  },
+  {
+    "id": "firestore-production-security-editions-and-service-guarantees-document-written-event-triggers",
+    "name": "Document-written event triggers",
+    "area": "Production security, editions and service guarantees",
+    "local": "limited",
+    "other": "unknown",
+    "default": "limited",
+    "description": "Runs a function when a document is created, updated or deleted, passing its values from before and after the change.",
+    "docs": "https://firebase.google.com/docs/functions/firestore-events",
+    "notes": "Records match written and written.withAuthContext types; the host owns delivery."
   }
 ]
