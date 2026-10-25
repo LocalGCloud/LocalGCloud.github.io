@@ -17,7 +17,10 @@
       html.desktop-view[data-audience=humans][data-desktop-weather] .desktop-start{color:var(--bg)}
     }
 
-[data-weather] nav{display:grid!important;gap:.6rem;right:0;left:auto!important;width:19rem;min-width:0!important;max-width:calc(100vw - 2rem)}
+[data-weather]{position:relative;flex:none}
+[data-weather] summary{list-style:none;cursor:pointer;color:var(--accent-strong)}
+[data-weather] summary::-webkit-details-marker{display:none}
+[data-weather] nav{display:grid!important;gap:.6rem;top:auto!important;bottom:calc(100% + .6rem);right:0;left:auto!important;width:19rem;min-width:0!important;max-width:calc(100vw - 2rem);max-height:calc(100vh - 4rem);overflow:auto;font-size:.875rem}
 [data-weather-grid]{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
 html.desktop-view [data-weather] button[data-weather-choice]{position:relative;overflow:hidden;min-height:5.8rem;border:2px solid transparent;border-radius:.5rem;padding:.6rem;display:flex;align-items:end;font:inherit;font-weight:500;text-align:left;cursor:pointer;box-shadow:inset 0 0 0 1px #152d4930;background:var(--weather-tile-bg,linear-gradient(145deg,#e1eaff,#b8d2f6));color:#203b5c}
 [data-weather-choice] span{position:relative;z-index:1;background:#fff;padding:.15rem .4rem;border-radius:.25rem;color:#203b5c}
@@ -37,6 +40,6 @@ html.desktop-view [data-weather] button[data-weather-choice][aria-pressed=true]{
 [data-weather-tools] button,[data-weather-tools] a{display:grid!important;place-items:center;width:2rem;height:2rem;padding:0!important;border:1px solid var(--line);border-radius:.35rem;background:var(--surface);color:var(--text);font:inherit;cursor:pointer}
 [data-weather-visitor][aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent)}
 [data-weather-status]{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
-[data-weather-pause]{min-width:2rem}
+html.desktop-view [data-weather] button[data-weather-pause]{display:grid;place-items:center;width:3.5rem;height:3.5rem;margin:.2rem auto .4rem;padding:0;border:1px solid var(--line-strong);border-radius:50%;background:var(--surface);color:var(--text);font-size:2rem;line-height:1;cursor:pointer}
 .desktop-weather-backdrop,.desktop-weather-edges{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none}
 .desktop-weather-backdrop{z-index:0}.desktop-weather-edges{z-index:70}

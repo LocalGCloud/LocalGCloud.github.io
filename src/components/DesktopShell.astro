@@ -80,8 +80,6 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
     </nav>
     <span class="desktop-current" data-desktop-current aria-live="polite">{pageLabel}</span>
     <div class="desktop-toolbar-actions">
-      <button data-weather-pause aria-label="Pause theme" disabled>Ⅱ</button>
-      <details data-weather={weatherScript + ' ' + weatherStyles}><summary>Theme</summary></details>
       <button type="button" data-search-trigger title="Search documentation" aria-keyshortcuts="Meta+K Control+K">Search <kbd>⌘K</kbd></button>
       <a href={base + 'docs/#install-the-cli'} class="desktop-start">Get started</a>
     </div>
@@ -137,6 +135,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
     <button type="button" data-desktop-back disabled aria-label="Back to previous page">Back</button>
     <button type="button" data-desktop-restore hidden>Show current page</button>
     <div data-desktop-tasks></div>
+    <details data-weather={weatherScript + ' ' + weatherStyles}><summary>Theme</summary></details>
     <a href={currentViewURL('classic')} data-view-choice="classic">Classic site</a>
     <a href={pagePath + '?view=mobile'} data-view-choice="mobile">Mobile view</a>
   </footer>

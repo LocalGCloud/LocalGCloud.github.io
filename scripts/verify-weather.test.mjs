@@ -82,11 +82,11 @@ function desktop({ theme = 'auto', reduced = false, transport = async () => Resp
   };
   const pause = element('button'), visitor = element('button'), status = element('span');
   const tiles = ['auto', 'off', 'rain', 'sun', 'snow', 'autumn'].map(theme => Object.assign(element('button'), { dataset: { weatherChoice: theme } }));
-  const fields = { '[data-weather-visitor]': visitor, '[data-weather-status]': status };
+  const fields = { '[data-weather-pause]': pause, '[data-weather-visitor]': visitor, '[data-weather-status]': status };
   const panel = listen({ parentElement: true, setAttribute() {}, querySelector: name => fields[name], querySelectorAll: () => tiles }), menu = listen({ classList: { add() {} }, dataset: { weather: '/_astro/weather.mjs /_astro/weather.css' }, querySelector: () => panel, open: true });
   const shell = element('shell'), background = element('background'), pageWindow = element('window');shell.dataset.base = '/';
   const root = { dataset: { siteView: 'desktop', audience: 'humans' } };
-  const document = listen({ documentElement: root, hidden: false, head: { append() {} }, body: { append() {} }, createElement: element, querySelector: name => name === '[data-weather-pause]' ? pause : name === '.desktop-background' ? background : shell, querySelectorAll: () => [pageWindow] });
+  const document = listen({ documentElement: root, hidden: false, head: { append() {} }, body: { append() {} }, createElement: element, querySelector: name => name === '.desktop-background' ? background : shell, querySelectorAll: () => [pageWindow] });
   background.after = () => {};
   const media = listen({ matches: reduced });
   const context = { document, window: { addEventListener: (name, fn) => events.set(name, fn) }, matchMedia: () => media,

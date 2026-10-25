@@ -15,10 +15,11 @@ export function initDesktopWeather(menu) {
   panel.setAttribute('aria-label', 'Desktop theme');
   if (!panel.parentElement) menu.append(panel);
   const shell = document.querySelector('[data-desktop-shell]');
-  panel.innerHTML = `<div data-weather-grid>${['auto', ...themes].map(theme => `<button type="button" data-weather-choice="${theme}" aria-label="${names[theme]}" aria-pressed="false"><span>${names[theme]}</span></button>`).join('')}</div>
+  panel.innerHTML = `<button type="button" data-weather-pause aria-label="Pause theme">Ⅱ</button>
+    <div data-weather-grid>${['auto', ...themes].map(theme => `<button type="button" data-weather-choice="${theme}" aria-label="${names[theme]}" aria-pressed="false"><span>${names[theme]}</span></button>`).join('')}</div>
     <div data-weather-tools><button type="button" data-weather-visitor aria-label="Cloud visitor" title="Cloud visitor" aria-pressed="false">☁</button><a href="${shell.dataset.base || '/'}docs/privacy/#desktop-weather-themes" aria-label="Weather credits" title="Weather credits">ⓘ</a></div>
     <span role="status" data-weather-status></span>`;
-  const pause = document.querySelector('[data-weather-pause]'), visit = panel.querySelector('[data-weather-visitor]'), status = panel.querySelector('[data-weather-status]');
+  const pause = panel.querySelector('[data-weather-pause]'), visit = panel.querySelector('[data-weather-visitor]'), status = panel.querySelector('[data-weather-status]');
   let weather='off', paused=read('lc-weather-motion') === 'pause' || read('lc-weather-motion') !== 'play' && reduced.matches, visitor=read('lc-weather-visitor') === 'true', time=0, last=0, raf=0, width=1, height=1, shapes=[], drops=[];
   let backdrop, edges, ctx, edge, styles, dirty=true, forecast, controller, refresh, revision=0;
   const observer = new MutationObserver(() => { dirty=true; schedule(); });
