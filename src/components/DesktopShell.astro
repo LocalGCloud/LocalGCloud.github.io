@@ -13,6 +13,8 @@ const optimizedIcons: Record<string, typeof robotImage> = { 'AI Agents': robotIm
 import desktopNavigation from '../scripts/desktop-navigation.mjs?url';
 import desktopController from '../scripts/desktop-controller.mjs?url';
 import mobileScript from '../scripts/mobile-view.mjs?url';
+import weatherScript from '../scripts/weather.mjs?url';
+import weatherStyles from '../styles/weather.css?url';
 import { desktopSection } from '../scripts/desktop-view.mjs';
 import { markdownTwinPath } from '../utils/markdown-twins.mjs';
 import AgentAudienceSwitch from './AgentAudienceSwitch.astro';
@@ -44,7 +46,7 @@ const desktopIcons: Record<string, string> = {
 const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view=classic' : '');
 ---
 
-<div class="desktop-root" data-desktop-shell data-desktop-manifest="" data-base={base} data-page-label={pageLabel} data-page-styles={desktopPageStyles} data-navigation-script={desktopNavigation} data-controller-script={desktopController} data-mobile-script={mobileScript}>
+<div class="desktop-root" data-desktop-shell data-desktop-manifest="" data-base={base === '/' ? undefined : base} data-page-label={pageLabel} data-page-styles={desktopPageStyles} data-navigation-script={desktopNavigation} data-controller-script={desktopController} data-mobile-script={mobileScript}>
   <div class="desktop-background desktop-chrome" aria-hidden="true" data-pagefind-ignore></div>
   <header class="desktop-toolbar desktop-chrome" data-pagefind-ignore>
     <a href={base} class="desktop-brand" data-desktop-home aria-label="LocalCloud home">
@@ -78,6 +80,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
     </nav>
     <span class="desktop-current" data-desktop-current aria-live="polite">{pageLabel}</span>
     <div class="desktop-toolbar-actions">
+      <details data-weather={weatherScript + ' ' + weatherStyles}><summary>Theme</summary></details>
       <button type="button" data-search-trigger title="Search documentation" aria-keyshortcuts="Meta+K Control+K">Search <kbd>⌘K</kbd></button>
       <a href={base + 'docs/#install-the-cli'} class="desktop-start" data-desktop-open>Get started</a>
     </div>
@@ -86,7 +89,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
   <nav class="desktop-shortcuts desktop-shortcuts-left desktop-chrome" aria-label="Main desktop shortcuts" data-pagefind-ignore>
     {left.map((item) => (
       <a href={item.href} class:list={['desktop-shortcut', item.active && 'is-active']} data-desktop-shortcut data-window-label={item.label} aria-current={item.active ? 'page' : undefined}>
-        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '50px' : '44px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="44" height="44" alt="" loading="lazy" decoding="async" />
+        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '50px' : '44px'} data-desktop-icon={['home.svg', 'document.webp'].includes(desktopIcons[item.label]) ? undefined : desktopIcons[item.label].split('.')[0]} width="44" height="44" alt="" loading="lazy" decoding="async" />
         <span>{item.label}</span>
       </a>
     ))}
@@ -94,7 +97,7 @@ const currentViewURL = (view: string) => pagePath + (view === 'classic' ? '?view
   <nav class="desktop-shortcuts desktop-shortcuts-right desktop-chrome" aria-label="Tools and local installation" data-pagefind-ignore>
     {right.map((item) => (
       <a href={item.href} class="desktop-shortcut" data-desktop-shortcut data-window-label={item.label}>
-        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '50px' : '44px'} data-desktop-icon={base + 'icons/desktop/' + desktopIcons[item.label]} width="44" height="44" alt="" loading="lazy" decoding="async" />
+        <img src={optimizedIcons[item.label]?.src ?? desktopIconURLs['../../public/icons/desktop/' + desktopIcons[item.label]]} srcset={optimizedIcons[item.label]?.srcSet.attribute} sizes={item.label === 'AI Agents' ? '50px' : '44px'} data-desktop-icon={['home.svg', 'document.webp'].includes(desktopIcons[item.label]) ? undefined : desktopIcons[item.label].split('.')[0]} width="44" height="44" alt="" loading="lazy" decoding="async" />
         <span>{item.label}</span>
       </a>
     ))}

@@ -157,6 +157,15 @@ export async function initDesktop() {
 }
 
 if (typeof document !== 'undefined') {
+  const documentRoot = document.documentElement;
+  const weather = () => {
+    const menu = document.querySelector('.desktop-view[data-audience=humans] [data-weather]');
+    if (menu) import(menu.dataset.weather.split(' ')[0]).then(module => module.initDesktopWeather(menu)).catch(console.warn);
+  };
+  document.addEventListener('toggle', event => { if (event.target.hasAttribute('data-weather')) weather(); }, true);
+  window.addEventListener('lc:audience-change', weather);
+  const weatherLater = () => setTimeout(() => window.requestIdleCallback?.(weather) ?? weather(), 1500);
+  window.addEventListener('load', weatherLater, { once: true });
   document.addEventListener('click', switchView);
   let clickVersion = 0;
   window.addEventListener('lc:view-change', () => {
@@ -170,32 +179,32 @@ if (typeof document !== 'undefined') {
     const version = ++clickVersion;
     root.querySelector('[data-desktop-content]').setAttribute('aria-busy', 'true');
     getNavigation().then(navigate => {
-      if (version !== clickVersion || document.documentElement.dataset.siteView !== 'mobile') return;
+      if (version !== clickVersion || documentRoot.dataset.siteView !== 'mobile') return;
       if (navigate) return navigate(url);
       location.assign(url);
     });
     return true;
   };
   document.addEventListener('click', event => {
-    if (document.documentElement.dataset.siteView !== 'mobile' || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (documentRoot.dataset.siteView !== 'mobile' || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const link = event.target.closest('a');
     if (!link || link.hasAttribute('data-view-choice') || link.hasAttribute('download') || link.target && link.target !== '_self') return;
     if (goMobile(link.href)) event.preventDefault();
   }, { capture: true });
   document.addEventListener('lc:navigate', event => {
-    if (document.documentElement.dataset.siteView === 'mobile' && goMobile(event.detail?.href)) event.preventDefault();
+    if (documentRoot.dataset.siteView === 'mobile' && goMobile(event.detail?.href)) event.preventDefault();
   });
   window.addEventListener('hashchange', () => initViewLinks(new URL(location.href).searchParams.get('view')));
   const start = () => {
-    if (document.documentElement.dataset.siteView === 'classic') return initClassic();
-    if (document.documentElement.dataset.siteView === 'mobile') {
+    if (documentRoot.dataset.siteView === 'classic') return initClassic();
+    if (documentRoot.dataset.siteView === 'mobile') {
       const main = document.querySelector('[data-desktop-main]');
       if (main) main.hidden = false;
       document.querySelectorAll('script[type="speculationrules"]').forEach(script => script.remove());
       return initMobile().catch(error => {
-        if (document.documentElement.dataset.siteView === 'mobile') {
-          document.documentElement.classList.remove('mobile-view');
-          document.documentElement.dataset.siteView = 'classic';
+        if (documentRoot.dataset.siteView === 'mobile') {
+          documentRoot.classList.remove('mobile-view');
+          documentRoot.dataset.siteView = 'classic';
           initClassic();
         }
         console.error('Mobile view could not start', error);
@@ -208,15 +217,15 @@ if (typeof document !== 'undefined') {
     initDesktop().catch((error) => {
       const root = document.querySelector('[data-desktop-shell]');
       if (root) root.dataset.ready = 'failed';
-      if (document.documentElement.dataset.siteView === 'desktop') {
-        document.documentElement.classList.remove('desktop-view');
-        document.documentElement.dataset.siteView = 'classic';
+      if (documentRoot.dataset.siteView === 'desktop') {
+        documentRoot.classList.remove('desktop-view');
+        documentRoot.dataset.siteView = 'classic';
         initClassic();
       }
       console.error('Desktop view could not start', error);
     });
   };
-  window.addEventListener('lc:view-change', () => { if (document.readyState !== 'loading') start(); });
+  window.addEventListener('lc:view-change', () => { if (document.readyState !== 'loading') { start(); weather(); } });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 }

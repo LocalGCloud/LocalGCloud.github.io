@@ -1,13 +1,14 @@
 // Desktop window controls load only when the desktop presentation is selected.
 export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHistory, desktopSection, initClassic, getNavigation }) {
+  const documentRoot = document.documentElement;
   const root = document.querySelector('[data-desktop-shell]');
   const main = root?.querySelector('[data-desktop-main]');
   const deck = root?.querySelector('[data-desktop-history]');
   const tasks = root?.querySelector('[data-desktop-tasks]');
   if (!root || !main || !deck || !tasks) return;
   if (root.dataset.ready === 'failed') {
-    document.documentElement.classList.remove('desktop-view');
-    document.documentElement.dataset.siteView = 'classic';
+    documentRoot.classList.remove('desktop-view');
+    documentRoot.dataset.siteView = 'classic';
     initClassic();
     return;
   }
@@ -31,7 +32,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
       headline.append(desktopHeadline.cloneNode(true));headline.dataset.desktopHeadlineReady='true';
     }
     const hero = main.querySelector('[data-desktop-hero]');
-    if(hero && !hero.dataset.heroReady && document.documentElement.dataset.audience !== 'agents'){hero.after(hero.content.cloneNode(true));hero.dataset.heroReady='true';}
+    if(hero && !hero.dataset.heroReady && documentRoot.dataset.audience !== 'agents'){hero.after(hero.content.cloneNode(true));hero.dataset.heroReady='true';}
     const image = main.querySelector('.desktop-hero-art img');
     if (image) {
       image.dataset.desktopSizes ||= image.sizes;
@@ -67,7 +68,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
     if(main.hidden)show();
     const revision = navigationRevision;
     const active = () => revision === navigationRevision && wide.matches &&
-      (document.documentElement.dataset.siteView === 'desktop' || root.dataset.ready === 'failed' && document.documentElement.dataset.siteView === 'classic');
+      (documentRoot.dataset.siteView === 'desktop' || root.dataset.ready === 'failed' && documentRoot.dataset.siteView === 'classic');
     navigationReady.then(navigate => { if (active()) return navigate ? navigate(url) : (remember(),location.assign(url)); })
       .catch(() => { if (active()) location.assign(url); });
     return true;
@@ -81,7 +82,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
   const show = () => {
     main.hidden = false;
     restore.hidden = true;
-    if (document.documentElement.dataset.siteView === 'desktop') main.querySelector('[data-window-titlebar]').focus();
+    if (documentRoot.dataset.siteView === 'desktop') main.querySelector('[data-window-titlebar]').focus();
   };
   const renderHistory = () => {
     const previous = historyPages();
@@ -117,7 +118,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
   };
   renderHistory();
   window.addEventListener('pageshow', () => { if (main.hidden) show(); renderHistory(); });
-  window.addEventListener('pagehide', () => { if (wide.matches && document.documentElement.dataset.siteView === 'desktop') remember(); });
+  window.addEventListener('pagehide', () => { if (wide.matches && documentRoot.dataset.siteView === 'desktop') remember(); });
   const modeURL = desktopPageURL(location.href, location.href, base);
   if (modeURL) history.replaceState(history.state, '', modeURL);
   const syncTab = () => { root.querySelector('.desktop-open-tab').href = location.href; };
@@ -130,7 +131,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
   window.addEventListener('hashchange', () => syncURL(location.href));
 
   document.addEventListener('click', (event) => {
-    if (!wide.matches || document.documentElement.dataset.siteView !== 'desktop' || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (!wide.matches || documentRoot.dataset.siteView !== 'desktop' || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const link = event.target.closest('a');
     if (!link || link.hasAttribute('data-view-choice') || link.hasAttribute('download') || link.target && link.target !== '_self') return;
     const url = desktopPageURL(link.href, location.href, base);
@@ -139,7 +140,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
     go(url);
   }, { capture: true });
   document.addEventListener('lc:navigate', (event) => {
-    if (!wide.matches || document.documentElement.dataset.siteView !== 'desktop' || !desktopPageURL(event.detail?.href, location.href, base)) return;
+    if (!wide.matches || documentRoot.dataset.siteView !== 'desktop' || !desktopPageURL(event.detail?.href, location.href, base)) return;
     event.preventDefault();
     go(event.detail.href);
   });
@@ -162,7 +163,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
   });
   document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && main.hidden) show(); });
   wide.addEventListener('change', () => { ++navigationRevision; if (!wide.matches) show(); });
-  document.addEventListener('astro:before-swap',()=>{if(document.documentElement.dataset.siteView==='desktop')remember();});
+  document.addEventListener('astro:before-swap',()=>{if(documentRoot.dataset.siteView==='desktop')remember();});
   document.addEventListener('lc:page-synchronized',event=>syncURL(event.detail));
   document.addEventListener('lc:page-mounted',event=>{
     const {page,url}=event.detail;
@@ -176,7 +177,7 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
       let md=root.querySelector('.desktop-markdown');
       if(page.markdown&&!md){md=document.createElement('a');md.className='desktop-markdown';md.textContent='.md';md.target='_blank';md.rel='noopener noreferrer';md.setAttribute('aria-label','.md — read this page as Markdown');main.querySelector('[data-window-titlebar]').insertBefore(md,root.querySelector('.desktop-open-tab'));}
       if(md){md.hidden=!page.markdown;if(page.markdown)md.href=page.markdown;}
-      if(document.documentElement.dataset.siteView==='desktop')presentContent();
+      if(documentRoot.dataset.siteView==='desktop')presentContent();
       renderHistory();syncURL(url);
       root.querySelectorAll('.desktop-menu[open]').forEach(menu=>{menu.open=false;});
   });
@@ -191,13 +192,13 @@ export async function initDesktop({ pageWindowURL, desktopPageURL, readPageHisto
   });
 
   // Bind controls before the optional presentation finishes downloading.
-  if (await loaded) document.documentElement.classList.add('desktop-ready');
+  if (await loaded) documentRoot.classList.add('desktop-ready');
   else {
     root.dataset.ready = 'failed';
     main.hidden = false;
-    if (document.documentElement.dataset.siteView === 'desktop') {
-      document.documentElement.classList.remove('desktop-view');
-      document.documentElement.dataset.siteView = 'classic';
+    if (documentRoot.dataset.siteView === 'desktop') {
+      documentRoot.classList.remove('desktop-view');
+      documentRoot.dataset.siteView = 'classic';
       initClassic();
     }
   }

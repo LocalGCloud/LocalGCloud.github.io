@@ -678,7 +678,7 @@ test('normal hero artwork mounts once, when the human audience first needs it', 
   const hero = { dataset:{}, content:{ cloneNode:() => ({}) }, after:() => clones++ };
   const document = { documentElement:{ dataset:{ audience:'agents' } } };
   const main = { querySelector:selector => selector === '[data-desktop-hero]' ? hero : null };
-  const present = runInNewContext(source + '\npresentContent;', { document, main });
+  const present = runInNewContext(source + '\npresentContent;', { document, documentRoot: document.documentElement, main });
   present(); assert.equal(clones, 0);
   document.documentElement.dataset.audience = 'humans';
   present(); present(); assert.equal(clones, 1);

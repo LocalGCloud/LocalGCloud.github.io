@@ -3,8 +3,8 @@ layout: ../../layouts/DocsLayout.astro
 title: Privacy
 description: How LocalCloud uses basic usage information and web analytics, how to turn off runtime telemetry and website analytics, and how to contact us.
 author: LocalCloud
-updated: 2026-10-06
-reviewed: 2026-10-06
+updated: 2026-10-24
+reviewed: 2026-10-24
 ---
 
 # Privacy
@@ -46,6 +46,12 @@ Please do not include secrets, credentials, personal data, or customer data in s
 Every page has an **Analytics: On** control at the bottom of the footer. Select it to switch to **Analytics: Off**: the site then stops PostHog capture and session recording and no longer loads the PostHog or Cloudflare Web Analytics scripts in that browser, so it records no page views, searches, copies, clicks, or heatmaps from it. The choice is stored in your browser until you switch it back or clear site data.
 
 If your browser sends a Global Privacy Control or Do Not Track signal, the site treats analytics as off without any action from you, and the footer control shows **Analytics: Off** with the signal's name. The install script event above is counted by the server when the script is downloaded, so this browser setting does not apply to it.
+
+## Desktop weather themes
+
+The human Desktop view can match its background to approximate local weather. The page loads normally before this lookup starts. Cloudflare supplies an approximate location; our server rounds it to a coarse area and requests a forecast from [MET Norway](https://www.met.no/en/free-meteorological-data/Licensing-and-crediting). Your IP address, browser cookies, and exact coordinates are not forwarded to the weather provider. Forecasts are cached by area, and the browser receives only a visual theme and its refresh time.
+
+The **Theme** menu lets you choose a theme manually or select **Off — main theme**. **Stop theme** also disables automatic lookups and effects. Theme, animation, and optional visitor preferences are saved in your browser. The weather feature does not run in agent, Classic, or mobile view. Leaves follow the approximate local season rather than a weather measurement.
 
 ## Contact
 

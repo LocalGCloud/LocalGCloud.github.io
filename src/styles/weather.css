@@ -1,0 +1,27 @@
+@media(min-width:64rem){
+      html.desktop-view[data-audience=humans]:is([data-desktop-weather=rain],[data-desktop-weather=snow]){
+        --bg:#202c3c;--bg-2:#1e2a3a;--surface:#202c3c;--surface-2:#28394e;--surface-3:#34465b;
+        --code-bg:#192536;--code-text:#e3edfb;--chrome:#293b51;--line:#40566e;--line-strong:#57728e;
+        --text:#edf3fc;--text-2:#bfcddd;--text-3:#adbed1;--accent:#8db9ff;--accent-strong:#b0d0ff;--accent-soft:#2b4566;
+        --border:#40566e;--border-hover:#91baf0;--weather-shortcut:#edf5ff;
+      }
+      html.desktop-view[data-audience=humans][data-desktop-weather=rain]{--desktop-bg:radial-gradient(ellipse at 75% 15%,#7a9aad 0,transparent 55%),linear-gradient(145deg,#354c62,#506e83 58%,#91aeb6)}
+      html.desktop-view[data-audience=humans][data-desktop-weather=snow]{--desktop-bg:radial-gradient(ellipse at 70% 15%,#abc6d9 0,transparent 60%),linear-gradient(145deg,#4c6c88,#7eabc2 60%,#c4dce5);--surface:#23354a;--bg:#23354a;--chrome:#30495f}
+      html.desktop-view[data-audience=humans][data-desktop-weather=sun]{--desktop-bg:radial-gradient(ellipse at 90% 0,#fff0ba 0,transparent 45%),linear-gradient(145deg,#9dcddd,#d7e3d3 55%,#efd7a4);--weather-shortcut:#2b4656}
+      html.desktop-view[data-audience=humans][data-desktop-weather=autumn]{--desktop-bg:radial-gradient(ellipse at 90% 0,#ffe5ae 0,transparent 50%),linear-gradient(145deg,#93b5be,#c9bca4 55%,#b68762);--surface:#fffaf2;--bg:#fffaf2;--chrome:#f4ebdc;--line:#ddd0bb;--line-strong:#cdbd9e;--weather-shortcut:#39454a}
+      html.desktop-view[data-audience=humans][data-desktop-weather] .desktop-shortcut{color:var(--weather-shortcut)}
+      html.desktop-view[data-audience=humans][data-desktop-weather] .desktop-shortcut.is-active{background:#e4effd;color:#234773;border-color:#a0c2f1}
+      html.desktop-view[data-audience=humans][data-desktop-weather] :is(.field-hero .field-intro,.desktop-hero-proof,.desktop-hero-summary p){color:var(--text-2)!important}
+      html.desktop-view[data-audience=humans][data-desktop-weather] :is(.desktop-menu nav,.desktop-taskbar button,.field-install,.field-install pre,.field-install__copy,.lc-audience-dock>*){background:var(--surface-2);color:var(--text);border-color:var(--line)}
+      html.desktop-view[data-audience=humans][data-desktop-weather] .field-install code{color:var(--code-text)}
+    }
+
+[data-weather] nav{display:grid!important;gap:.65rem;right:0;left:auto!important;min-width:16rem!important}
+[data-weather] label{display:flex;align-items:center;gap:.5rem;justify-content:space-between}
+[data-weather] select,[data-weather] button{font:inherit;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:.35rem;padding:.4rem .6rem}
+[data-weather] select{max-width:10rem}
+[data-weather] input{accent-color:var(--accent)}
+[data-weather] [role=status],[data-weather] small{font-size:.75rem;color:var(--text-2);line-height:1.4}
+[data-weather] small a{display:inline!important;padding:0!important;text-decoration:underline}
+.desktop-weather-backdrop,.desktop-weather-edges{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none}
+.desktop-weather-backdrop{z-index:0}.desktop-weather-edges{z-index:70}

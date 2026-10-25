@@ -1,4 +1,5 @@
 import { serveSite } from './static-response.mjs';
+import { handleWeather } from './weather.mjs';
 
 const PREFIX = '/ingest';
 const API_HOST = 'us.i.posthog.com';
@@ -79,6 +80,7 @@ function trackInstallScript(request, response, env, ctx, sendUpstream) {
 // The injectable transport lets tests verify forwarding without sending real events.
 export async function handleRequest(request, env, sendUpstream = fetch, ctx = undefined) {
   const url = new URL(request.url);
+  if (url.pathname === '/api/weather') return handleWeather(request, sendUpstream);
   if (url.pathname !== PREFIX && !url.pathname.startsWith(`${PREFIX}/`)) {
     const response = await serveSite(request, env);
     trackInstallScript(request, response, env, ctx, sendUpstream);
