@@ -134,6 +134,11 @@ test('manual themes respect reduced motion, stop completely, and detach from age
   assert.equal(page.canvases().length, 2);
   for (const [id, fn] of page.frames) { page.frames.delete(id);fn(100); }
   assert.equal(page.frames.size, 0, 'reduced motion schedules no animation loop');
+  page.choose('rain');
+  assert.equal(page.pause.attributes['aria-label'], 'Resume theme');
+  for (const [id, fn] of page.frames) { page.frames.delete(id);fn(200); }
+  assert.equal(page.frames.size, 0, 'selecting a theme preserves reduced-motion preferences');
+  page.choose('snow');
   page.root.dataset.audience = 'agents';page.events.get('lc:audience-change')();
   assert.equal(page.canvases().length, 0);
   assert.equal(page.root.dataset.desktopWeather, undefined);
@@ -161,14 +166,26 @@ test('theme tiles apply the chosen look and quick pause freezes it without chang
     page.choose(theme);
     assert.equal(page.root.dataset.desktopWeather, theme);
     assert.deepEqual(page.tiles.filter(tile => tile.attributes['aria-pressed'] === 'true').map(tile => tile.dataset.weatherChoice), [theme]);
+    assert.equal(page.stored.get('lc-weather-motion'), 'play');
+    assert.equal(page.pause.attributes['aria-label'], 'Pause theme');
+    for (const [id, fn] of [...page.frames]) { page.frames.delete(id);fn(200); }
+    assert.ok(page.frames.size > 0, 'selecting an effect starts its animation without Resume');
   }
-  page.pause.events.get('click')();
   assert.equal(page.stored.get('lc-weather-motion'), 'play');
   assert.equal(page.pause.attributes['aria-label'], 'Pause theme');
   assert.ok(page.frames.size > 0);
   page.choose('off');
   assert.equal(page.pause.disabled, true);
   assert.equal(page.canvases().length, 0);
+});
+
+test('the default automatic theme runs as soon as its forecast arrives', async () => {
+  const page = desktop();
+  await new Promise(setImmediate);
+  assert.equal(page.root.dataset.desktopWeather, 'rain');
+  assert.equal(page.pause.attributes['aria-label'], 'Pause theme');
+  for (const [id, fn] of [...page.frames]) { page.frames.delete(id);fn(100); }
+  assert.ok(page.frames.size > 0, 'first-time visitors do not need to start the effect');
 });
 
 test('quick pause aborts automatic weather updates and ignores a pending response until resumed', async () => {

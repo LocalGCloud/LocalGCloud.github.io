@@ -95,7 +95,7 @@ export function initDesktopWeather(menu) {
     try {localStorage.setItem('lc-desktop-weather',choice);localStorage.setItem('lc-weather-motion',paused?'pause':'play');localStorage.setItem('lc-weather-visitor',String(visitor));} catch {}
     update();
   };
-  panel.addEventListener('click',event=>{const tile=event.target.closest('[data-weather-choice]');if(tile){choice=tile.dataset.weatherChoice;save();}});
+  panel.addEventListener('click',event=>{const tile=event.target.closest('[data-weather-choice]');if(tile){choice=tile.dataset.weatherChoice;paused=reduced.matches;save();}});
   pause.addEventListener('click',()=>{paused=!paused;save();});
   visit.addEventListener('click',()=>{visitor=!visitor;save();});
   window.addEventListener('resize',()=>{dirty=true;schedule();});
