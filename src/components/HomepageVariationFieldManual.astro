@@ -7,6 +7,7 @@ import agentIcon from '../../public/icons/personas/robot.svg?url';
 const desktopHero = await getImage(desktopHeroOptions);
 const mobileHero = await getImage(mobileHeroOptions);
 import MobileServiceLauncher from './MobileServiceLauncher.astro';
+import RollingHeadlineWord from './RollingHeadlineWord.astro';
 import ServiceIcon from './ServiceIcon.astro';
 import ServiceFilterBootstrap from './ServiceFilterBootstrap.astro';
 import CopyButton from './CopyButton.astro';
@@ -132,7 +133,7 @@ for (const column of atlasColumns) {
         <div class="field-hero__headline-wrapper">
           <h1 class="field-hero__headline">
             <span class="field-hero__headline-main" data-classic-copy>localcloud is</span>{' '}
-            <span class="field-hero__headline-tag" data-classic-copy>cloud for agents.</span>
+            <span class="field-hero__headline-tag" data-classic-copy>cloud for{' '}<RollingHeadlineWord /></span>
           </h1>
           <p class="field-intro" data-classic-copy>{definition}</p>
           <p class="field-intro--agent" data-agent-only>
@@ -141,11 +142,15 @@ for (const column of atlasColumns) {
           <dl class="agent-readme__facts" data-agent-only aria-label="Local development environment">
             {agentOverview.facts.map(item => <div><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
           </dl>
+          <label class="headline-motion" data-pagefind-ignore data-markdown-skip>
+            <input type="checkbox" data-headline-pause />
+            Pause heading animation
+          </label>
         </div>
         <p class="mobile-intro" data-mobile-only data-pagefind-ignore>{definition}</p>
         <figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="lazy" fetchpriority="high" decoding="async" /><figcaption class="hero-benefits">{heroBenefits.map((benefit) => <span>{benefit}</span>)}</figcaption></figure>
         <template data-desktop-headline data-desktop-copy data-pagefind-ignore>
-          <span data-desktop-copy data-pagefind-ignore>localcloud is <span class="field-hero__desktop-accent">cloud for agents.</span></span>
+          <span data-desktop-copy data-pagefind-ignore>localcloud is <span class="field-hero__desktop-accent">cloud for{' '}<RollingHeadlineWord /></span></span>
         </template>
         <p class="field-intro" data-desktop-copy data-pagefind-ignore>{definition}</p>
 
@@ -539,8 +544,25 @@ for (const column of atlasColumns) {
     gap: 0.08em;
   }
 
-  .field-hero__headline span {
+  .field-hero__headline > span {
     display: block;
+  }
+
+  .headline-motion { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html:not([data-audience="agents"])) .headline-motion {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      width: fit-content;
+      min-height: 2.75rem;
+      margin: .5rem auto 0;
+      font-size: .75rem;
+      color: var(--text-2);
+      cursor: pointer;
+    }
+    .headline-motion input { accent-color: var(--accent); }
   }
 
   .field-hero__headline-main {

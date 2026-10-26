@@ -9,7 +9,41 @@ const executablePath = ['/Applications/Google Chrome.app/Contents/MacOS/Google C
 const dist = new URL('../dist/', import.meta.url);
 const types = { '.html': 'text/html', '.mjs': 'application/javascript', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.woff2': 'font/woff2', '.wasm': 'application/wasm' };
 
-test('shared dialogs, popups, narrow search and automatic weather work in a real browser', { timeout: 90_000 }, async t => {
+async function verifyRollingHeadline(page) {
+  await page.waitForFunction(() => [...document.querySelectorAll('h1 .headline-drum')].some(element => element.getClientRects().length));
+  const frame = time => page.evaluate(time => {
+    const drum = [...document.querySelectorAll('h1 .headline-drum')].find(element => element.getClientRects().length);
+    const animations = drum.getAnimations({ subtree: true });
+    animations.forEach(animation => { animation.currentTime = time; });
+    const faces = [...drum.querySelectorAll('[data-word]')];
+    return {
+      count: animations.length,
+      words: faces.filter(face => +getComputedStyle(face).opacity > .99).map(face => face.dataset.word),
+      transform: getComputedStyle(faces[0]).transform,
+      width: drum.getBoundingClientRect().width,
+    };
+  }, time);
+  const first = await frame(0);
+  assert.equal(first.count, 3, 'native CSS animates three drum faces');
+  assert.deepEqual(first.words, ['agents.']);
+  for (const [time, word] of [[3100, 'developers.'], [6200, 'CI pipeline.'], [9300, 'agents.']]) {
+    const next = await frame(time);
+    assert.deepEqual(next.words, [word]);
+    assert.equal(next.width, first.width, 'word changes reserve the longest width');
+  }
+  assert.notEqual((await frame(2750)).transform, first.transform, 'the transition rotates in 3D');
+  await page.click('[data-headline-pause]');
+  assert.equal(await page.evaluate(() => [...document.querySelectorAll('h1 .headline-drum')].filter(element => element.getClientRects().length).every(element => element.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused'))), true);
+  await page.click('[data-headline-pause]');
+  await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  assert.equal(await page.$eval('h1', heading => heading.getAnimations({ subtree: true }).length), 0, 'reduced motion removes animation');
+  assert.equal(await page.$eval('.headline-motion', label => label.getClientRects().length), 0);
+  const accessibility = await (await page.createCDPSession()).send('Accessibility.getFullAXTree');
+  assert.ok(accessibility.nodes.some(node => node.role?.value === 'heading' && node.name?.value === 'localcloud is cloud for agents.'), 'accessible heading stays stable');
+  await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+}
+
+test('shared dialogs, rolling headline, narrow search and automatic weather work in a real browser', { timeout: 90_000 }, async t => {
   assert.ok(executablePath, 'Chrome is required for interface regression checks');
   const server = createServer((request, response) => {
     const path = new URL(request.url, 'http://localhost').pathname;
@@ -40,6 +74,7 @@ test('shared dialogs, popups, narrow search and automatic weather work in a real
     localStorage.setItem('lc-weather-motion', 'play');
   });
   await page.goto(base + '/', { waitUntil: 'load' });
+  await verifyRollingHeadline(page);
   await page.waitForSelector('.desktop-view.desktop-ready');
   // Chromium can expose browser-chrome traversal as body focus. Native inertness
   // must prevent every actual page control outside the modal from taking focus.
@@ -114,6 +149,17 @@ test('shared dialogs, popups, narrow search and automatic weather work in a real
   await page.focus('#site-nav-mobile a');
   await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'site-nav-toggle');
+  await page.goBack();
+  await page.waitForSelector('h1 .headline-drum');
+  await verifyRollingHeadline(page);
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 320, 'longest heading word fits on mobile after remount');
+  await page.goto(base + '/?view=classic', { waitUntil: 'load' });
+  await verifyRollingHeadline(page);
+  await page.goto(base + '/?audience=agents', { waitUntil: 'load' });
+  assert.equal(await page.$eval('h1', heading => heading.getAnimations({ subtree: true }).length), 0, 'agent document stays static');
+  await page.setJavaScriptEnabled(false);
+  await page.goto(base + '/?view=classic', { waitUntil: 'load' });
+  await verifyRollingHeadline(page);
   assert.deepEqual(errors, []);
 
   const automatic = await browser.newPage();
@@ -121,6 +167,7 @@ test('shared dialogs, popups, narrow search and automatic weather work in a real
   await automatic.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
   await automatic.evaluateOnNewDocument(() => {
     Object.defineProperty(navigator, 'doNotTrack', { get: () => '1' });
+    localStorage.setItem('lc-audience', 'humans');
     localStorage.setItem('lc-desktop-weather', 'auto'); localStorage.setItem('lc-weather-motion', 'play');
   });
   const forecast = automatic.waitForResponse(response => new URL(response.url()).pathname === '/api/weather');
