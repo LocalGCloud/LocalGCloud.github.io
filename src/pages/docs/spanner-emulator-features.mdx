@@ -11,10 +11,10 @@ export const spanner = getDocumentationService('spanner');
 
 # Spanner emulator feature reference
 
-LocalCloud integrates an extended Cloud Spanner emulator. GoogleSQL and PostgreSQL dialects run through the Spanner API; dialect support does not imply complete SQL, transaction, graph, search, authorization, backup, or change-stream parity.
+LocalCloud runs an extended Cloud Spanner emulator. GoogleSQL and PostgreSQL dialects run through the Spanner API; dialect support does not imply complete SQL, transaction, graph, search, authorization, backup, or change-stream parity.
 
 <Callout type="warning" title="Use the operation boundaries">
-The table below retains the runtime's recorded operation boundaries and limitations. Standalone dependency tests don't cover the LocalCloud image. Validate the exact client, operation, dialect, and image used by the application.
+The limits below apply to LocalCloud's Spanner. Test your exact client, operation, dialect and image.
 </Callout>
 
 ## Connections and persistence
@@ -28,11 +28,11 @@ The table below retains the runtime's recorded operation boundaries and limitati
 
 Use `localcloud env` for the actual mapped endpoints. Provision the instance, database, and schema before querying; a code example that refers to an uncreated database is not a complete quick start.
 
-## Current operation contract
+## Supported operations
 
-For task-oriented examples, use the [Spanner documented workflows](/services/spanner/#workflows). The reference below describes individual API areas.
+For task-oriented examples, use the [Spanner workflows](/services/spanner/#workflows). The reference below describes individual API areas.
 
-<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Spanner operation contract">
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Spanner supported operations">
 <table>
   <thead><tr><th>Operation area</th><th>Status</th><th>Boundary</th></tr></thead>
   <tbody>

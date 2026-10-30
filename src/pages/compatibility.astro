@@ -8,6 +8,8 @@ import { publishedServiceCount, servicesInCatalogOrder } from '../data/services'
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const pageUrl = new URL('compatibility/', productFacts.siteUrl).toString();
+// "Last updated October 2026", from the contract's review date (ISO YYYY-MM-DD).
+const lastUpdated = new Date(`${docsContract.reviewedAt}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 const title = `LocalCloud Compatibility — ${publishedServiceCount} Services`;
 const description = `See what runs locally for each of ${publishedServiceCount} LocalCloud services, including Spanner, BigQuery, and Bigtable: capabilities, API ports, and known limits.`;
 const structuredData = [
@@ -20,17 +22,17 @@ const structuredData = [
   <section class="site-section site-section--hero">
     <div class="container"><div class="max-w-[54rem]">
       <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Supported services</span>
-      <h1 class="mt-4">LocalCloud supported services and boundaries</h1>
-      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">Build and test Google Cloud applications locally with standard SDKs, real queries, and local execution workflows. Services marked Unsupported don't run locally yet. Select a service for its detailed API guide.</p>
+      <h1 class="mt-4">What runs locally in LocalCloud</h1>
+      <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">Build and test Google Cloud applications locally with standard SDKs, real queries, and local execution workflows. Services marked Unsupported don't run locally. Select a service for its detailed API guide.</p>
       <div class="mt-8 flex flex-wrap gap-3"><a href={`${base}services/`} class="site-button site-button--primary">Browse all {publishedServiceCount} guides</a><a href={`${base}docs/configuration/`} class="site-button site-button--secondary">Configure services</a></div>
-      <p class="mt-5 text-sm text-[var(--text-2)]">Reviewed against upstream documentation on <time datetime={docsContract.reviewedAt}>{docsContract.reviewedAt}</time>.</p>
+      <p class="mt-5 text-sm text-[var(--text-2)]">Last updated <time datetime={docsContract.reviewedAt}>{lastUpdated}</time>.</p>
     </div></div>
   </section>
 
-  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning" role="note"><div class="callout__body"><p class="callout__title">Local development and cloud production boundaries</p><div class="callout__content"><p>{productFacts.productionBoundary} Multi-region infrastructure, physical HSMs, and production SLAs require real Google Cloud. The table highlights local workflows and service-specific boundaries.</p></div></div></aside></div></section>
+  <section class="site-section site-section--tight"><div class="container"><aside class="callout callout--warning" role="note"><div class="callout__body"><p class="callout__title">Local development and Google Cloud production</p><div class="callout__content"><p>{productFacts.productionBoundary} Multi-region infrastructure, physical HSMs, and production SLAs require real Google Cloud.</p></div></div></aside></div></section>
 
   <section class="site-section"><div class="container">
-    <p class="mb-4 text-sm leading-6 text-[var(--text-2)]">Ports are container defaults. Run <code>localcloud env</code> for the endpoints published by your running instance. Enable resource-intensive services such as Firestore when needed.</p>
+    <p class="mb-4 text-sm leading-6 text-[var(--text-2)]">Ports are container defaults. Run <code>localcloud env</code> for the endpoints of your running instance. Firestore, GKE, and Cloud Run are opt-in: include them with <code>--services</code>.</p>
     <div class="overflow-x-auto reveal" tabindex="0" role="region" aria-label="LocalCloud service compatibility table">
       <table class="w-full min-w-[60rem] table-fixed text-left text-sm">
         <caption class="sr-only">LocalCloud service capabilities, default API ports, and development boundaries</caption>
@@ -50,7 +52,7 @@ const structuredData = [
                     {unsupported && <span class="site-chip site-chip--warn" data-unsupported-chip>Unsupported</span>}
                   </div>
                   <div class="mt-2 font-mono text-xs leading-5 text-[var(--text-2)]">{service.catalogState === 'coming-soon' ? 'No local endpoint' : service.endpointLabel}</div>
-                  {unsupported && service.catalogState !== 'coming-soon' && <p class="mt-1 text-xs text-[var(--text-2)]">Stub routes only</p>}
+                  {unsupported && service.catalogState !== 'coming-soon' && <p class="mt-1 text-xs text-[var(--text-2)]">Stub routes for SDK wiring</p>}
                 </th>
                 {unsupported ? (
                   <td colspan="2" class="py-5 leading-6 text-[var(--text-2)]">

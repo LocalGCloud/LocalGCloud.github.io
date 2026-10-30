@@ -128,11 +128,9 @@ For a persistent test environment, use [existing-runtime mode](#use-a-native-git
 
 ## Integrate an existing project: Feast
 
-The [Feast integration proposed in PR #6939](https://github.com/feast-dev/feast/pull/6939) uses Storage for the registry, Bigtable for the online store, and BigQuery for the offline store: `services: gcs,bigtable,bigquery`. The PR is under review.
+[Feast](https://github.com/feast-dev/feast) uses Cloud Storage for its registry, Bigtable for the online store and BigQuery for the offline store, so select `services: gcs,bigtable,bigquery`.
 
-Its refreshed GitHub workflow uses the pinned published `setup-localcloud` action, then runs the project's build and service tests against its exported SDK endpoints. Run it manually through `workflow_dispatch`; PR runs require repository Actions variable `LOCALCLOUD_CI_ENABLED=true`. Workflow comments and the PR description link to this guide for setup.
-
-For laptop testing, retain `python3 scripts/localcloud-test.py` and add `--full-suite` for the recorded regression scope. The laptop launcher owns its runtime; in CI, GitHub starts the native service container and the setup action attaches with `runtime-url`. Choose one owner per test environment. Feast's BigQuery endpoint wiring illustrates the SDK adaptation; keep each project's own test commands and service scope.
+Run the project's build and service tests against the SDK endpoints that the setup action exports. Keep each project's own test commands and service scope.
 
 ## Select the services your application needs
 
@@ -146,9 +144,9 @@ For laptop testing, retain `python3 scripts/localcloud-test.py` and add `--full-
     timeout: '180'
 ```
 
-Changing this list does **not** require an action release. Always set it explicitly: published v0.1.0 defaults to `gcs,pubsub,firestore`. The quick start selects `gcs,pubsub,bigquery` for its query test. Firestore is supported; select `firestore` when your tests need it and allow memory for its runtime.
+Always set it explicitly: published v0.1.0 defaults to `gcs,pubsub,firestore`. The quick start selects `gcs,pubsub,bigquery` for its query test. Firestore is supported; select `firestore` when your tests need it and allow memory for its runtime.
 
-The reference below uses the site's service catalog. Follow each guide for SDK connection details, supported operations, and runtime requirements. The catalog describes LocalCloud; it does not mean every service workflow has been tested through this action.
+The table lists each service ID. Follow each service guide for SDK setup, supported operations and runtime requirements. Listing a service does not mean its workflows have been tested through this action.
 
 <table>
   <thead><tr><th>Service guide</th><th>ID for services</th><th>Workflow notes</th></tr></thead>
@@ -162,7 +160,7 @@ The reference below uses the site's service catalog. Follow each guide for SDK c
           service.id === 'gke' ? 'Cluster execution requires k3d and Docker; use a configured runtime.' :
           service.id === 'cloudfunctions' ? 'Function execution requires your own execution target.' :
           service.id === 'sheets' ? 'Read-only auxiliary fixture API.' :
-          'See the service guide for SDK setup and operations.'}</td>
+          ''}</td>
       </tr>
     ))}
   </tbody>
@@ -172,11 +170,11 @@ See the [compatibility matrix](/compatibility/) for service operations and the [
 
 ### Docker-backed execution
 
-The automatic setup action currently sets `LOCALCLOUD_DOCKER_ACCESS=false` and does not mount a Docker socket. Selecting `cloudrun`, `dataproc`, or `gke` alone does not configure their execution dependencies. Provision an appropriate runtime using the relevant service guide, then connect with `runtime-url` if it exposes canonical ports. Automatic provisioning of these dependencies is tracked in the [action issues](https://github.com/cloud-orbitor/setup-localcloud/issues).
+The automatic setup action currently sets `LOCALCLOUD_DOCKER_ACCESS=false` and does not mount a Docker socket. Selecting `cloudrun`, `dataproc`, or `gke` alone does not configure their execution dependencies. Provision an appropriate runtime using the relevant service guide, then connect with `runtime-url` if it exposes canonical ports. 
 
 ## Pin the action and runtime independently
 
-Examples use published `v0.1.0`. For immutable pinning, use the full commit on its [release page](https://github.com/cloud-orbitor/setup-localcloud/releases/tag/v0.1.0); pin other actions similarly. Publishers can move version tags.
+Examples use published `v0.1.0`. For immutable pinning, use the full commit on its [release page](https://github.com/cloud-orbitor/setup-localcloud/releases/tag/v0.1.0), and pin other actions the same way. Version tags can be moved by their publisher.
 
 The action's default image is LocalCloud 0.1.5, pinned to the multi-architecture digest used below. To choose another runtime, pass `image: agentcloud/localcloud@sha256:<your-verified-digest>` under `with`. Replace the placeholder with a real digest; the action rejects mutable image tags.
 
@@ -232,7 +230,7 @@ jobs:
       - run: python -m pytest
 ```
 
-This workflow assumes your repository contains `requirements.txt` and pytest tests configured as described below. You can instead use the BigQuery install/query steps from the quick start. Keep the container's service selection and the action's selection aligned. Publish any additional listeners your tests need; BigQuery Storage gRPC, for example, also needs port 5389.
+This workflow assumes your repository contains `requirements.txt` and pytest tests. You can instead use the BigQuery install/query steps from the quick start. Keep the container's service selection and the action's selection aligned. Publish any additional listeners your tests need; BigQuery Storage gRPC, for example, also needs port 5389.
 
 Existing-runtime mode currently accepts `http://<host>:5380` with canonical service ports. It does not discover custom external port mappings. GitHub removes its service containers at the end of the job. See GitHub's [service container documentation](https://docs.github.com/en/actions/tutorials/use-containerized-services/use-docker-service-containers).
 
@@ -328,13 +326,13 @@ For another container, forward the environment and use reachable service address
 
 ### Optional MCP
 
-SDK tests do not require MCP. Published `v0.1.0` does not install the CLI or attach an MCP bridge; the default CLI bridge must not be assumed to target its CI container. The unreleased [MCP integration below](#attach-an-mcp-client) attaches to that runtime explicitly. See the [MCP guide](/docs/mcp/) for clients and separate write/destructive permissions.
+SDK tests don't need MCP. Published `v0.1.0` has no MCP bridge; the preview `mcp:` input adds one, as [described below](#attach-an-mcp-client). See the [MCP guide](/docs/mcp/) for clients and separate write and destructive permissions.
 
 ## Container jobs and running code inside the image
 
 With `container:`, native services use their service name and internal ports, such as `http://localcloud:5380`; test connectivity and SDK configuration for that network.
 
-To run code inside LocalCloud, preserve its entrypoint, wait for readiness, and provision your toolchain before `docker exec`. Build tools are not guaranteed to be bundled. See [manual Docker setup](/docs/#manual-docker-path) and the unreleased [application-container route](#run-an-application-container). Published `v0.1.0` did not qualify same-container toolchains.
+To run code inside LocalCloud, preserve its entrypoint, wait for readiness, and provision your toolchain before `docker exec`. Build tools are not guaranteed to be bundled. See [manual Docker setup](/docs/#manual-docker-path) and the preview [application-container route](#run-an-application-container). Same-container toolchains are not available in `v0.1.0`.
 
 ## Troubleshooting and cleanup
 
@@ -373,11 +371,11 @@ credentials:
   password: ${{ secrets.DOCKERHUB_TOKEN }}
 ```
 
-GitHub documents [service-container registry authentication](https://docs.github.com/en/actions/tutorials/use-containerized-services/use-docker-service-containers#authenticating-with-image-registries). A registry mirror and reliable anonymous CI distribution are being gathered in the [action backlog](https://github.com/cloud-orbitor/setup-localcloud/issues).
+GitHub documents [service-container registry authentication](https://docs.github.com/en/actions/tutorials/use-containerized-services/use-docker-service-containers#authenticating-with-image-registries).
 
 ## Preview: image reuse, container applications and MCP
 
-The features below have merged to the action's `main` branch through [PR #8](https://github.com/cloud-orbitor/setup-localcloud/pull/8), but are not in a published action release as of 2026-10-10. The examples above use published `v0.1.0`. The example follows `main`; replace it with the full reviewed commit from that pull request for immutable pinning. Check the [evidence ledger](https://github.com/cloud-orbitor/setup-localcloud/blob/main/docs/release-evidence.md) for runtime-specific results.
+These preview features are on the action's `main` branch and not yet in a release. Pin a full commit SHA before use. The examples above use published `v0.1.0`.
 
 ```yaml
 - name: Start the CI environment
@@ -400,7 +398,7 @@ The features below have merged to the action's `main` branch through [PR #8](htt
 
 The preview checks for the exact pinned image and platform locally before pulling. Persistent Docker runners can reuse that image across jobs; each job still creates fresh application state. Standard GitHub-hosted runners start fresh, so they need a restored cache or registry distribution for reuse across jobs.
 
-The action's [cache workflow](https://github.com/cloud-orbitor/setup-localcloud/blob/main/.github/workflows/cache.yml) demonstrates verified OCI cache creation and restore. Cache keys include the exact image and platform; do not cache credentials or application data. Measure restore/import time before enabling it widely. Native service images start before cache/login steps. For fork PRs, use a public image or a trusted restore-only cache because ordinary repository secrets are unavailable.
+The action's [cache workflow](https://github.com/cloud-orbitor/setup-localcloud/blob/main/.github/workflows/cache.yml) shows how to create and restore a verified OCI cache. Cache keys include the exact image and platform; do not cache credentials or application data. Measure restore/import time before enabling it widely. Native service images start before cache/login steps. For fork PRs, use a public image or a trusted restore-only cache because ordinary repository secrets are unavailable.
 
 ### Run an application container
 
@@ -426,10 +424,10 @@ For native container jobs, use the service-name gateway and explicitly permit MC
 
 The [integration directory](/docs/#integrations) links SDKs, CLI, Terraform, MCP, and fixtures. Other CI systems can use [Docker-only setup](#use-the-image-without-the-action-or-cli), replacing `GITHUB_ENV` and GitHub cleanup with their platform's mechanisms.
 
-## Workflow evidence and support
+## Support and licensing
 
-The action's [evidence ledger](https://github.com/cloud-orbitor/setup-localcloud/blob/main/docs/release-evidence.md) records exact action/image identities, SDK versions, tested workflows, and automatic cleanup checks. The Storage/Pub/Sub/BigQuery examples demonstrate a small application profile. Other service workflows need checks for the operations your application uses; the full catalog remains available for service selection.
+The Storage, Pub/Sub and BigQuery examples cover a small application profile. Other services need checks for the operations your application uses. Action source and issues are in [cloud-orbitor/setup-localcloud](https://github.com/cloud-orbitor/setup-localcloud).
 
-The action adapter is MIT-licensed. The separately distributed runtime is governed by the [LocalCloud license](/license/). Automatic mode disables runtime telemetry; existing-runtime preferences remain with its owner. See [privacy and outbound behavior](/docs/privacy/). Validate production-sensitive behavior against real Google Cloud before deployment.
+The action adapter is MIT-licensed. The separately distributed runtime is governed by the [LocalCloud license](/license/). Automatic mode disables runtime telemetry; existing-runtime preferences remain with its owner. See [privacy and outbound behavior](/docs/privacy/).
 
 Report integration issues in [cloud-orbitor/setup-localcloud](https://github.com/cloud-orbitor/setup-localcloud/issues), including the workflow, action commit, image digest, selected services, SDK versions, and sanitized error output. Do not include credentials.

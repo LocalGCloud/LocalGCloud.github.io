@@ -60,7 +60,7 @@ brew install LocalGCloud/tap/localcloud
   </Fragment>
 </CodeTabs>
 
-The install script downloads the appropriate macOS or Linux release, verifies its SHA-256 checksum, validates the exact archive members, and runs the executable to confirm its semantic version. Release automation separately publishes Sigstore bundles, but `install.sh` does not verify those bundles.
+The installer downloads the macOS or Linux release for your system, verifies its SHA-256 checksum before installing, checks the archive contents, and runs the executable to confirm its version. Each release also publishes Sigstore bundles; the installer does not verify those bundles, so follow the [security page](/security/) if you want to check them yourself.
 
 In an interactive terminal, the installer can offer to run diagnostics and start LocalCloud after you confirm. In automation or with `--no-start`, it prints absolute-path next steps instead. If it adds the CLI to your shell startup file, run the exact `source` command printed by the installer before continuing.
 
@@ -163,7 +163,7 @@ localcloud logs --tail 50
 
 ## Manual Docker path
 
-Use this fallback on unsupported CLI hosts or when you deliberately do not want the host CLI. The `latest` tag is mutable, so prefer the CLI for normal use and pin an image digest when repeatability matters.
+Use this fallback on unsupported CLI hosts or when you deliberately do not want the host CLI. Prefer the CLI for normal use. For repeatable runs, pin an image digest.
 
 ```bash
 docker volume create localcloud-data

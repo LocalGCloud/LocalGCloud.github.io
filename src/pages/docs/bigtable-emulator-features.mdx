@@ -11,10 +11,10 @@ export const bigtable = getDocumentationService('bigtable');
 
 # Bigtable emulator feature reference
 
-LocalCloud runs a separately maintained Bigtable emulator for row and administration APIs. The current Docker build pins a source commit.
+LocalCloud runs a Bigtable emulator for the data and admin APIs.
 
 <Callout type="warning" title="Test the paths you need">
-The runtime contract records each operation's concrete boundaries. The `latest` image tag is mutable; confirm the packaged dependency version and test the exact row, administration, and recovery paths you need.
+Pin an image digest and test the row, admin and recovery paths you need. The `latest` tag is mutable.
 </Callout>
 
 ## Connection and persistence
@@ -22,14 +22,14 @@ The runtime contract records each operation's concrete boundaries. The `latest` 
 | Surface | Canonical value | Boundary |
 | --- | --- | --- |
 | Primary API | gRPC on `localhost:5385` | Use `BIGTABLE_EMULATOR_HOST` from `localcloud env` for actual mapped ports. |
-| Backing store | PostgreSQL under the mounted LocalCloud volume | A standalone dependency's SQLite configuration is not the LocalCloud default. |
-| Console SQL | LocalCloud SQL-to-row-API translator | Separate from native GoogleSQL `PrepareQuery` / `ExecuteQuery` and session protocols. |
+| Backing store | PostgreSQL under the mounted LocalCloud volume | Data persists across restarts on the mounted volume. |
+| Console SQL | Translated to Bigtable row reads | Native GoogleSQL (`PrepareQuery` / `ExecuteQuery`) and session protocols are separate. |
 
-## Current operation contract
+## Supported operations
 
-Use the [Bigtable documented workflows](/services/bigtable/#workflows) for application scenarios; this table describes individual API areas.
+Use the [Bigtable workflows](/services/bigtable/#workflows) for application scenarios; this table describes individual API areas.
 
-<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Bigtable operation contract">
+<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Bigtable supported operations">
 <table>
   <thead><tr><th>Operation area</th><th>Status</th><th>Boundary</th></tr></thead>
   <tbody>
@@ -51,4 +51,4 @@ LocalCloud uses PostgreSQL-backed persistence. Test a restart against the mounte
 3. List backups through the native administration API when using filters, ordering, or pagination. The REST path ignores those options.
 4. Delete owned backups and clear resource deletion protection before deleting the instance or project. If cleanup fails, inspect the native API error and retained project record.
 
-For row-filter tests, `Sink` preserves cells past subsequent filters and is invalid inside a `Condition`. Verify writes through the native API when the Console does not surface a rejection. Validate managed replication and production authorization in Google Cloud.
+For row-filter tests, `Sink` cells bypass later filters, and `Sink` is invalid inside a `Condition`. Verify writes with the native API rather than the Console. Validate managed replication and production authorization in Google Cloud.

@@ -85,7 +85,7 @@ const faqItems = [
   },
   {
     q: 'Which coding agents work with LocalCloud?',
-    a: 'Any agent that can run shell commands and read environment variables. LocalCloud publishes setup pages for Claude Code, Codex-style CLIs, Cursor, and Gemini CLI, plus a raw AGENTS.md template agents can read directly.',
+    a: 'Any agent that can run shell commands and read environment variables. LocalCloud publishes setup pages for Claude Code, Codex CLI, Cursor, and Gemini CLI, plus a raw AGENTS.md template agents can read directly.',
   },
 ];
 
@@ -196,7 +196,7 @@ const agentPages = [
   <section class="site-section site-section--tight">
     <div class="container">
       <div class="site-section-heading reveal">
-        <span class="site-kicker">Honest comparison</span>
+        <span class="site-kicker">Comparison</span>
         <h2>Where each tool is the right answer</h2>
         <p>
           LocalCloud is not a replacement for a code sandbox, and a code sandbox is not a replacement for a local cloud. Pick by which boundary you are trying to close.
@@ -259,7 +259,7 @@ const agentPages = [
           <span class="site-kicker">Agent instructions</span>
           <h3 class="mt-3 text-lg">Machine-readable setup</h3>
           <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">
-            LocalCloud publishes a raw <a href={`${base}ai/agent-template.md`}>AGENTS.md template</a> and Markdown route index that agents can read directly, without parsing marketing HTML.
+            LocalCloud publishes a raw <a href={`${base}ai/agent-template.md`}>AGENTS.md template</a> and a Markdown index of every page, so agents can read setup steps directly as plain Markdown.
           </p>
         </article>
         <article class="site-panel site-panel--soft p-5 reveal">

@@ -69,7 +69,7 @@ const agentCiPrompt = `Read the LocalCloud Public Preview License and keep this 
 const faqItems = [
   {
     q: 'Does LocalCloud support GitHub Actions, GitLab CI, and Jenkins?',
-    a: 'Yes. This page has templates for all three. The Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Test runner networking and service-container behavior on your runner.',
+    a: 'Yes. This page has templates for all three, and CI use is free during the public preview. Check networking and service-container behavior on your runner before you rely on a template.',
   },
   {
     q: 'Will my tests behave differently in CI vs local development?',
@@ -104,10 +104,10 @@ const structuredData = [
   <section class="site-section site-section--hero">
     <div class="container">
       <div class="max-w-[48rem]">
-        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>Internal automation</span>
+        <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>CI integration tests</span>
         <h1 class="mt-4">Run LocalCloud in team CI</h1>
         <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          Run Google Cloud integration tests in CI against local endpoints. Keep the job isolated, pin the image, and validate against real Google Cloud separately. The Public Preview License permits ongoing internal CI for individuals and organizations, including for-profit companies.
+          Run Google Cloud integration tests in CI against local endpoints. Keep the job isolated, pin the image, and validate against real Google Cloud separately. CI use is free during the public preview, with no account or license key.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Review local setup</a>
@@ -117,7 +117,7 @@ const structuredData = [
       <div class="mt-12 grid gap-4 sm:grid-cols-3 reveal">
         <article class="site-panel site-panel--soft p-5">
           <div class="text-xl font-semibold text-[var(--text)]">Supported operations only</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Select only operations supported by the current compatibility contract.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Test the operations listed as supported in the <a href="/compatibility/" class="underline">compatibility matrix</a>.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-xl font-semibold text-[var(--text)]">Wait for health</div>
@@ -125,7 +125,7 @@ const structuredData = [
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="text-xl font-semibold text-[var(--text)]">Test on your runner</div>
-          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Treat these as templates until exercised with a pinned image on the selected CI runner.</p>
+          <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">Adapt these examples to your project and run them on your CI runner with a pinned image.</p>
         </article>
       </div>
     </div>
@@ -135,9 +135,9 @@ const structuredData = [
   <section class="site-section">
     <div class="container">
       <div class="reveal">
-        <h2>Technical examples for internal automation</h2>
+        <h2>CI templates</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          Use these templates only within the governing Public Preview License. Exercise networking, health, image identity, and cleanup on the exact runner.
+          Before you rely on a template, check networking, health checks, image pinning and cleanup on your runner.
         </p>
       </div>
 

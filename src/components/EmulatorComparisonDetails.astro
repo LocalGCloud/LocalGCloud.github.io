@@ -16,8 +16,8 @@ const Heading = embedded ? 'h2' : 'h1';
     <div class="comparison-meta">
       <p><strong>{comparison.total.toLocaleString('en-US')}</strong> features in total{comparison.hasCompetitor && <> · <strong>{comparison.exclusive.toLocaleString('en-US')}</strong> only available in LocalCloud (not in {comparison.competitor})</>}</p>
     </div>
-    {comparison.id === 'firestore' && <p class="comparison-profile-note">Matching profiles share one mark. Extended is opt-in; Compatibility follows Java emulator behavior.</p>}
+    {comparison.id === 'firestore' && <p class="comparison-profile-note">Compatibility mode matches the Google Firestore emulator; Extended mode is opt-in.</p>}
   </div>
 </header>
 <EmulatorComparisonTable {comparison} {embedded} />
-<div class:list={['comparison-notes', !embedded && 'container']}><p><strong>Comparison notes.</strong> {comparison.summary} {comparison.hasCompetitor ? <>Compared with <a href={comparison.baselineUrl}>{comparison.baseline}</a>.</> : <>Compared with the features of production Google Cloud {comparison.name}.</>} {comparison.scope} Features that neither {comparison.engine} nor {comparison.hasCompetitor ? comparison.competitor : 'production-only behavior'} supports are not listed. Counts describe documented rows and can overlap.</p></div>
+<div class:list={['comparison-notes', !embedded && 'container']}><p><strong>Comparison notes.</strong> {comparison.summary} {comparison.hasCompetitor ? <>Compared with <a href={comparison.baselineUrl}>{comparison.baseline}</a>.</> : <>Compared with the features of production Google Cloud {comparison.name}.</>} {comparison.scope} Category counts can overlap.</p></div>

@@ -53,12 +53,12 @@ export const serviceCategoryMeta: Record<
 	compute: {
 		label: "Compute & Runtime",
 		description:
-			"Function, container, cluster, VM, and AI control-plane workflows.",
+			"Function, container, cluster, VM and AI resource workflows.",
 	},
 	auxiliary: {
 		label: "Auxiliary Integration APIs",
 		description:
-			"Data lookup and fixture seeding APIs for other cloud services (e.g. BigQuery external tables); not offered as an individual Google Cloud service.",
+			"Lookup and fixture-seeding APIs that other local services use, such as BigQuery external tables.",
 	},
 };
 
@@ -239,7 +239,7 @@ export function getServiceSignalLabel(service: Service): string {
 	// Opt-in services (Firestore, GKE, Cloud Run) are supported; their descriptions and
 	// pages say how to enable them, so the signal stays positive.
 	const count = service.supported.length;
-	return `${count} documented ${count === 1 ? "workflow" : "workflows"}`;
+	return `${count} ${count === 1 ? "workflow" : "workflows"}`;
 }
 
 export function getServiceStatusLabel(service: Service): string {

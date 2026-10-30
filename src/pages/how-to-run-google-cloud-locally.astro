@@ -23,11 +23,11 @@ const faqItems = [
   },
   {
     q: 'Can I run this in CI/CD pipelines?',
-    a: 'Yes. The Public Preview License permits non-production internal CI for individuals and organizations, including for-profit companies. Review the license and test the exact runner before use.',
+    a: 'Yes. CI use is free during the public preview, with no account or license key. Test the workflow on your runner before relying on it.',
   },
   {
     q: 'How is LocalCloud licensed?',
-    a: 'The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for non-production development, testing, CI, evaluation, and internal pilots. Pro-tier services are included free during the preview.',
+    a: 'Yes. LocalCloud is free during the public preview for development, testing, CI, evaluation and internal pilots, including the Pro-tier services. See pricing and the license for details.',
   },
 ];
 
@@ -116,7 +116,7 @@ const structuredData = [
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4 reveal">
         <article class="site-panel site-panel--soft p-5">
           <div class="font-semibold text-[var(--text)]">Local request path</div>
-          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Supported requests target localhost endpoints. Review the governing license before use and stop rather than falling back to real Google Cloud.</p>
+          <p class="mt-2 text-sm leading-7 text-[var(--text-2)]">Supported requests go to localhost endpoints. If a client tries to reach real Google Cloud, fix its endpoint configuration before continuing.</p>
         </article>
         <article class="site-panel site-panel--soft p-5">
           <div class="font-semibold text-[var(--text)]">Local feedback loop</div>
@@ -252,14 +252,14 @@ localcloud status</code></pre>
   <section class="site-section site-section--tight">
     <div class="container">
       <div class="reveal">
-        <h2>Automating an internal development project</h2>
+        <h2>Automate your team's setup</h2>
         <p class="mt-4 max-w-[44rem] text-lg leading-8 text-[var(--text-2)]">
-          The Public Preview License permits individuals and organizations, including for-profit companies, to use containerized automation for ongoing internal development, testing, and CI.
+          Run the same LocalCloud setup in scripts and CI that every developer runs locally. Automation is free during the public preview.
         </p>
       </div>
       <div class="mt-8 site-panel p-6 reveal">
-        <h3 class="text-lg font-semibold text-[var(--text)]">Keep automation inside the preview boundary</h3>
-        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">For permitted internal automation, pin the image, wait on <code>/readiness</code>, export values from the running LocalCloud runtime, and stop rather than falling back to real Google Cloud. Customer-facing production use remains outside the preview grant.</p>
+        <h3 class="text-lg font-semibold text-[var(--text)]">Make automated runs repeatable</h3>
+        <p class="mt-4 text-sm leading-7 text-[var(--text-2)]">Pin the image, wait on <code>/readiness</code>, and export endpoint values from the running LocalCloud runtime. If a step would reach real Google Cloud, stop and fix the configuration. Customer-facing production use isn't covered by the preview license.</p>
       </div>
       <div class="mt-6 reveal">
         <p class="text-sm text-[var(--text-2)] leading-7">

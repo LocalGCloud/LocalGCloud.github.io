@@ -272,9 +272,6 @@ const bigqueryHistory = bigqueryFeatures;
 for (const phrase of [
 	"GoogleSQL",
 	"DuckDB",
-	// The matrix file lives in a private repository, so the page summarizes it without a link.
-	"versioned coverage matrix",
-	"recorded classifications",
 ]) {
 	assert(
 		bigqueryHistory.includes(phrase),
@@ -285,7 +282,6 @@ const bigtableFeatures = docs.get(
 	"src/pages/docs/bigtable-emulator-features.mdx",
 );
 for (const phrase of [
-	"Docker build pins a source commit",
 	"PostgreSQL under the mounted",
 	"bigtable.operations.map",
 	"data-bearing backup",
@@ -398,7 +394,7 @@ for (const key of [
 ])
 	assert(seed.includes(key), `seed guide omits ${key}`);
 assert(
-	seed.includes("Firestore has a seed registrar"),
+	seed.includes("`firestore` is disabled by default"),
 	"seed guide omits Firestore limitation",
 );
 

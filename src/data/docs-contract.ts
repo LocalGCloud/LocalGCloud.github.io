@@ -210,6 +210,18 @@ export interface DocumentationContract {
   services: DocumentationServiceContract[];
 }
 
+const PERSISTENCE_LABELS: Record<PersistenceScope, string> = {
+  volatile: 'Not kept across restarts',
+  metadata: 'Resource metadata kept across restarts',
+  'service-data': 'Kept across restarts',
+  stateless: 'No stored state',
+};
+
+/** Reader-facing label for a service's persistence scope. */
+export function persistenceLabel(scope: PersistenceScope): string {
+  return PERSISTENCE_LABELS[scope];
+}
+
 function loadDocumentationContract(value: unknown): DocumentationContract {
   if (!value || typeof value !== 'object') {
     throw new Error('Documentation contract snapshot must be an object');
@@ -220,12 +232,18 @@ function loadDocumentationContract(value: unknown): DocumentationContract {
   }
   // Pages read reader copy: the presentation layer rewrites QA-ledger prose (evidence
   // tags, classification counts, SHAs, "qualification pending" notes) in every field
-  // that renders. The snapshot itself stays byte-identical to upstream.
+  // that renders, then applies the reader copy in contract-reader-copy.mjs. The
+  // snapshot itself stays byte-identical to upstream.
   return presentContract(value as DocumentationContract);
 }
 
 // The build verifier performs exhaustive structural and semantic validation.
 export const docsContract = loadDocumentationContract(snapshot);
+
+/** Display names of services the local runtime does not run (cloud-only). */
+export const cloudOnlyServiceNames: string[] = docsContract.services
+  .filter((service) => service.status === 'unsupported' || service.status === 'unknown')
+  .map((service) => service.name);
 
 export const docsContractServicesById = new Map(
   docsContract.services.map((service) => [service.id, service] as const),

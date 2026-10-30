@@ -31,7 +31,7 @@ const pages: Record<string, RelatedPage> = {
 	},
 	"/docs/bigquery-emulator-features/": {
 		anchor: "BigQuery emulator feature reference",
-		note: "Endpoints, documented operations and runtime limits.",
+		note: "Endpoints, supported operations and runtime limits.",
 	},
 	"/gcp-integration-testing/": {
 		anchor: "GCP integration testing in CI",
@@ -70,7 +70,7 @@ const localServices = servicesInCatalogOrder.filter(
 for (const service of localServices) {
 	pages[`/services/${service.slug}/`] = {
 		anchor: `${service.name} service guide`,
-		note: "Local workflows, boundaries, and SDK examples for this service.",
+		note: "Local workflows, limits, and SDK examples for this service.",
 	};
 }
 

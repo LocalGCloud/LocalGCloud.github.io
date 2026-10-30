@@ -12,7 +12,7 @@ const language = example.filename?.endsWith('.py') ? 'python' : example.filename
     <h3 class="text-xl font-semibold">{example.title}</h3>
     <p class="mt-2 leading-7" data-example-summary>{example.summary}</p>
     <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">{example.description}</p>
-    {example.discovery && <p class="mt-2 text-sm" data-example-discovery>Discovery check · reads existing local state.</p>}
+    {example.discovery && <p class="mt-2 text-sm" data-example-discovery>Read-only: lists what already exists and creates nothing.</p>}
   </div>
   {example.setup && <details class="text-sm">
     <summary class="cursor-pointer font-semibold">SDK dependencies</summary>

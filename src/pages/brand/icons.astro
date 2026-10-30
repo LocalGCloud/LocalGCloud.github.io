@@ -2,6 +2,8 @@
 import LandingLayout from '../../layouts/LandingLayout.astro';
 import FeatureIcon from '../../components/FeatureIcon.astro';
 import StatusIcon from '../../components/StatusIcon.astro';
+import { availableServiceCount } from '../../data/services';
+import { productFacts } from '../../data/productFacts';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
@@ -59,7 +61,7 @@ const featureIcons = [
   { id: 'mock-free', title: 'Mock-Free Fidelity', desc: 'Verified emulation instead of brittle stubs' },
   { id: 'web-console', title: 'Web Console', desc: 'Visual state inspection and management UI' },
   { id: 'offline-first', title: 'Offline First', desc: 'Complete airplane mode & air-gapped development' },
-  { id: 'port-matrix', title: 'Port Matrix', desc: '20+ services routed across predictable ports' },
+  { id: 'port-matrix', title: 'Port Matrix', desc: `${availableServiceCount} services on predictable localhost ports` },
   { id: 'state-snapshot', title: 'State Snapshots', desc: 'Disk persistence and emulator state seeding' },
   { id: 'ci-pipeline', title: 'CI Pipeline', desc: 'Headless automation for GitHub Actions and CI' },
 ];
@@ -73,7 +75,7 @@ const statusIcons = [
 ] as const;
 ---
 
-{/* An internal asset sheet: kept out of search results, the sitemap and site search. */}
+{/* Brand asset sheet: kept out of search results, the sitemap and site search. */}
 <LandingLayout
   title="LocalCloud Brand and Project Icons"
   description="Explore the official icon suite for LocalCloud: app icons, CLI badges, feature symbols, and runtime status indicators."
@@ -84,24 +86,23 @@ const statusIcons = [
     <div class="max-w-3xl mb-12">
       <div class="flex items-center gap-2 mb-3">
         <span class="site-chip site-chip--accent font-mono text-xs uppercase">Brand Assets</span>
-        <span class="text-xs text-[var(--text-2)] font-mono">v1.0 • Monoline 1.8px • Vector SVG</span>
       </div>
       <h1 class="text-3xl sm:text-5xl font-semibold tracking-tight text-[var(--text)] mb-4">
         LocalCloud Brand & Project Icons
       </h1>
       <p class="text-base sm:text-lg text-[var(--text-2)] leading-relaxed">
-        The official visual iconography for LocalCloud: designed for developer tooling clarity,
-        scalable from 16px favicons to 512px app store launchers, matching the Google Cloud developer workbench aesthetic.
+        Official LocalCloud logos and icons for articles, talks and integrations. Every icon is an SVG
+        you can download below. Keep the marks unmodified, and email <a href={`mailto:${productFacts.contactEmail}`} class="text-[var(--accent-strong)] hover:underline">{productFacts.contactEmail}</a> with brand questions.
       </p>
     </div>
 
     {/* Background Switcher Control */}
     <div class="flex flex-wrap items-center gap-3 mb-8 p-3 rounded-xl border border-[var(--line)] bg-[var(--surface-2)] text-xs font-mono">
-      <span class="text-[var(--text)] font-semibold">Preview Canvas:</span>
-      <button class="bg-white border border-slate-200 px-3 py-1.5 rounded-xl text-slate-800 hover:border-[var(--accent)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#ffffff')">Light (#FFF)</button>
-      <button class="bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-xl text-slate-800 hover:border-[var(--accent)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#f4f7fb')">Studio (#F4F7FB)</button>
-      <button class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl text-white hover:border-[var(--brand-sky)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#12233d')">Navy (#12233D)</button>
-      <button class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl text-white hover:border-[var(--brand-sky)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#0f172a')">Terminal (#0F172A)</button>
+      <span class="text-[var(--text)] font-semibold">Preview background:</span>
+      <button class="bg-white border border-slate-200 px-3 py-1.5 rounded-xl text-slate-800 hover:border-[var(--accent)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#ffffff')">Light</button>
+      <button class="bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-xl text-slate-800 hover:border-[var(--accent)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#f4f7fb')">Studio</button>
+      <button class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl text-white hover:border-[var(--brand-sky)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#12233d')">Navy</button>
+      <button class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl text-white hover:border-[var(--brand-sky)] transition" onclick="document.querySelectorAll('.icon-preview-box').forEach(el => el.style.backgroundColor='#0f172a')">Terminal</button>
     </div>
 
     {/* SECTION 1: Brand & App Icons */}
@@ -149,7 +150,7 @@ const statusIcons = [
     <section class="mb-16">
       <div class="border-b border-[var(--line)] pb-4 mb-8">
         <h2 class="text-xl sm:text-2xl font-semibold text-[var(--text)]">2. Product Feature & Capability Icons</h2>
-        <p class="text-sm text-[var(--text-2)] mt-1">Precision 24×24 monoline vector icons matching the Developer Workbench visual style.</p>
+        <p class="text-sm text-[var(--text-2)] mt-1">24×24 line icons for LocalCloud features.</p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -200,55 +201,6 @@ const statusIcons = [
       </div>
     </section>
 
-    {/* SECTION 4: Component Usage Guide */}
-    <section class="rounded-2xl border border-[var(--line)] bg-[var(--surface-2)] p-6 sm:p-8">
-      <h3 class="text-lg font-semibold text-[var(--text)] mb-2">Usage in Code</h3>
-      <p class="text-sm text-[var(--text-2)] mb-6">
-        Easily include these icons in any Astro layout, MDX documentation page, or frontend component.
-      </p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="brand-terminal min-w-0 rounded-xl p-4">
-          <div class="brand-terminal__label mb-2 font-mono font-semibold text-xs uppercase tracking-wider">// Feature Icon Component</div>
-          <pre><code>{`import FeatureIcon from '../components/FeatureIcon.astro';
-
-<FeatureIcon name="local-runtime" size={24} />
-<FeatureIcon name="zero-cloud-bill" size={24} />
-<FeatureIcon name="instant-iteration" size={24} />`}</code></pre>
-        </div>
-
-        <div class="brand-terminal min-w-0 rounded-xl p-4">
-          <div class="brand-terminal__label mb-2 font-mono font-semibold text-xs uppercase tracking-wider">// Status Indicator Component</div>
-          <pre><code>{`import StatusIcon from '../components/StatusIcon.astro';
-
-<StatusIcon status="running" size={18} />
-<StatusIcon status="starting" size={18} />
-<StatusIcon status="error" size={18} />`}</code></pre>
-        </div>
-      </div>
-    </section>
   </div>
 </LandingLayout>
 
-<style>
-  .brand-terminal {
-    --terminal-bg: #191f29;
-    --terminal-ink: #e8eaed;
-    --terminal-muted: rgba(232, 234, 237, 0.72);
-    background: var(--terminal-bg);
-  }
-
-  .brand-terminal__label {
-    color: var(--terminal-muted);
-  }
-
-  .brand-terminal pre {
-    border-color: transparent;
-    background: transparent;
-  }
-
-  .brand-terminal pre code {
-    padding: 0;
-    color: var(--terminal-ink);
-  }
-</style>

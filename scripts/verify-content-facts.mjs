@@ -627,8 +627,7 @@ const homepageH1 = visibleText(homepageMain.match(/<h1\b[\s\S]*?<\/h1>/)?.[0] ??
 if (homepageH1 !== 'localcloud is cloud for agents.') errors.push(`homepage H1 reads "${homepageH1}"`);
 if (![homepageTitle, homepageDescription].every((text) => /cloud for agents/i.test(text))) errors.push('homepage title and description must name cloud for agents');
 const homepageDefinition = visibleText(homepageMain.match(/<\/h1>\s*<p\b[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '');
-if (!homepageDefinition.startsWith('localcloud is cloud for agents for developers, platform/DevOps engineers and teams running CI, plus AI coding agent users.') ||
-    !homepageDefinition.includes('Individuals, teams, nonprofits, and companies') ||
+if (!homepageDefinition.startsWith('localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines.') ||
     !homepageDefinition.includes(`${availableServiceCount} Google Cloud services on localhost in one Docker container`) ||
     !homepageDefinition.includes('Free during the public preview.')) {
   errors.push(`the paragraph under the homepage H1 must define cloud for agents, its audience, local service count and preview pricing: "${homepageDefinition.slice(0, 160)}"`);

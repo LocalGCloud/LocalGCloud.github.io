@@ -37,12 +37,10 @@ const classicStartCommand = 'lc doctor\nlc start --local-only';
 const heroBenefits = ['$0 cost', 'No setup', 'Fast development'];
 
 const heroSignals = [
-  { value: String(availableServiceCount), label: 'Google Cloud services', note: 'each with documented compatibility limits' },
+  { value: String(availableServiceCount), label: 'Google Cloud services', note: 'each with its workflows and limits listed' },
   { value: '1', label: 'Docker container', note: 'persistent data on localhost ports the CLI picks' },
 ];
 
-const formatDate = (date: string) =>
-  new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
 const telemetryVariable = `${docsContract.privacy.runtimeTelemetry.disableVariable}=false`;
 
 // Six short claims, each linked to the evidence a skeptical reader can check.
@@ -70,7 +68,7 @@ const trustClaims = [
   },
   {
     title: 'Published compatibility',
-    body: `Every service lists what runs locally and where its limits are, reviewed ${formatDate(docsContract.reviewedAt)}.`,
+    body: 'Every service lists what runs locally and the limits to plan around before you ship.',
     links: [{ label: 'Compatibility', href: `${base}compatibility/` }],
   },
   {

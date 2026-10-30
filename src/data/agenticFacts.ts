@@ -63,7 +63,7 @@ export const agenticFacts = {
 	terraformEnvCommand: "localcloud env --format terraform",
 	productionBoundary: productFacts.productionBoundary,
 	noCredentialBoundary:
-		"Use only local endpoint values. If a step would need real Google Cloud or real credentials, stop. The Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production internal development, testing, CI, evaluation, and pilots.",
+		"Use only local endpoint values. If a step would need real Google Cloud or real credentials, stop. LocalCloud is free for non-production development, testing and CI under the Public Preview License.",
 	releaseGuardrail:
 		"Before production deployment, unset LocalCloud emulator environment variables and validate behavior against real Google Cloud.",
 	evidence: {
@@ -166,9 +166,9 @@ export const agenticServiceMetadata: AgenticServiceMetadata[] = servicesInCatalo
 				service.catalogState === "coming-soon" || service.status === "unsupported" || service.status === "unknown"
 					? "Not available locally. Use Google Cloud for this service."
 					: !service.registryDefaultEnabled
-						? `Opt-in to save memory: add ${service.id} to localcloud start --services, which sets the exact list of services to run.`
+						? `Opt-in: start with localcloud start --services ${service.id} (plus any other services you need).`
 					: editorial.boundaries.length
-						? `Documented local workflows with these boundaries: ${joinClauses(editorial.boundaries.slice(0, 2))}.`
+						? `Limits: ${joinClauses(editorial.boundaries.slice(0, 2))}.`
 						: "Supported for local workflows; validate production behavior against real Google Cloud.",
 		};
 	},
@@ -191,10 +191,10 @@ export const agentPromptLibrary: AgentPrompt[] = [
 	},
 	{
 		id: "ci",
-		label: "Configure internal CI",
-		useCase: "Have an agent add a permitted non-production LocalCloud CI workflow.",
+		label: "Add a CI workflow",
+		useCase: "Have an agent add a non-production LocalCloud CI workflow.",
 		prompt:
-			"Read https://local.cloud/docs/licensing/ before changing this automation. Keep the workflow within the Public Preview License's non-production boundary. Propose the smallest change that starts LocalCloud, waits for readiness, exports emulator env vars, runs integration tests locally, and avoids real GCP secrets.",
+			"Read https://local.cloud/docs/licensing/ first. Then propose the smallest change that starts LocalCloud, waits for readiness, exports emulator env vars and runs integration tests locally, with no real GCP secrets.",
 	},
 	{
 		id: "troubleshoot",

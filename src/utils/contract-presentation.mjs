@@ -18,6 +18,8 @@
 //    status note (DROP) is dropped.
 // Plain JavaScript so Astro and Node scripts share it.
 
+import { applyReaderCopy } from "./contract-reader-copy.mjs";
+
 const SHA = /\b[0-9a-f]{40}\b/g;
 const IMAGE_DIGEST = /\s*\(sha256:[0-9a-f]{64}\)/g;
 // "[partial] ", "[prod_only] " at the start of an upstream limitation.
@@ -172,5 +174,5 @@ export function presentContract(contract) {
 		capability.boundary = presentContractText(capability.boundary);
 		capability.notes = presentContractText(capability.notes);
 	}
-	return value;
+	return applyReaderCopy(value);
 }

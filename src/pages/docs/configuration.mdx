@@ -119,7 +119,7 @@ services:
     - pubsub
 ```
 
-The registry contains {docsContract.services.length} API surfaces, including the auxiliary Google Sheets fixture integration. {docsContract.services.filter((service) => service.registryDefaultEnabled).length} are selected by default. Registry availability and default selection do not establish operation support or readiness. The currently unsupported entries are {registry.filter((service) => service.status === "unsupported").map((service) => service.name).join(", ")}. Check each service’s operation boundaries before use.
+The registry contains {docsContract.services.length} API surfaces, including the auxiliary Google Sheets fixture integration. {docsContract.services.filter((service) => service.registryDefaultEnabled).length} are selected by default. Starting a service doesn't mean every operation is supported. See the service catalog. The currently unsupported entries are {registry.filter((service) => service.status === "unsupported").map((service) => service.name).join(", ")}. Check each service’s operation boundaries before use.
 
 The default-disabled entries are {registry.filter((service) => !service.registryDefaultEnabled).map((service) => service.name).join(', ')}. Review the operation matrix before enabling them.
 
@@ -200,7 +200,7 @@ services:
 
 ## Environment variable overrides
 
-Documented runtime environment overrides can take precedence over corresponding runtime fields. Do not infer an override from a naming pattern; use the service configuration reference. `LOCALCLOUD_CONFIG`, CLI context flags, and runtime overrides have different owners.
+Environment variables override the settings below. Use the service configuration reference to confirm a variable exists; don't infer one from a naming pattern.
 
 | Variable | Default | Purpose |
 | :--- | :--- | :--- |
@@ -280,4 +280,4 @@ volumes:
 
 ## Sample data ownership
 
-Container startup owns automatic samples. Set `server.auto_seed: false` to disable bootstrap samples. The retired `host.seed` setting is accepted but ignored, and managed CLI lifecycle commands do not mount or apply `seed.yaml`. Use the [seed endpoints](/docs/seed-data/) for explicit fixtures and the Console Re-seed Data action for sample replacement.
+Sample data loads on first start. Set `server.auto_seed: false` to turn it off. The `host.seed` setting is ignored, and the CLI doesn't mount or apply `seed.yaml`. Use the [seed endpoints](/docs/seed-data/) for your own fixtures, and the Console's Re-seed Data action to replace the samples.

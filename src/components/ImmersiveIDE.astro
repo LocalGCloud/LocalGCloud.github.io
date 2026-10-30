@@ -147,13 +147,12 @@ const sidebarServices = services.filter(s =>
           </div>
         </div>
 
-        {/* Floating Intelligence Card */}
+        {/* Floating status card */}
         <div class="intelligence-card">
            <div class="card-header">
-             <div class="spark-icon">✨</div>
-             <strong>LocalCloud Intelligence</strong>
+             <strong>Query status</strong>
            </div>
-           <p class="card-text" id="agent-feedback">Ready to analyze your local data...</p>
+           <p class="card-text" id="agent-feedback">Waiting for a query…</p>
         </div>
 
       </div>
@@ -604,15 +603,6 @@ const sidebarServices = services.filter(s =>
     color: var(--accent);
   }
 
-  .spark-icon {
-    font-size: var(--fs-body);
-    animation: spark-wiggle 2s infinite;
-  }
-  @keyframes spark-wiggle {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.2) rotate(10deg); }
-  }
-
   .card-text {
     font-size: var(--fs-small);
     color: var(--text-2);
@@ -675,7 +665,7 @@ const sidebarServices = services.filter(s =>
         setTimeout(typeQuery, Math.random() * 40 + 30);
       } else {
         cursor.classList.add('blink');
-        agentMsg.textContent = "Query validated locally. Click 'RUN' to execute against the BigQuery emulator.";
+        agentMsg.textContent = "Query ready. Running it against the local BigQuery emulator…";
         setTimeout(executeSequence, 1200);
       }
     }
@@ -686,20 +676,20 @@ const sidebarServices = services.filter(s =>
       setTimeout(() => {
         if(!sqlEl.isConnected)return;
         loading.style.display = 'flex';
-        agentMsg.textContent = "LocalCloud BigQuery emulator is processing the request...";
+        agentMsg.textContent = "Running on localhost — no cloud project involved…";
         
         setTimeout(() => {
           if(!sqlEl.isConnected)return;
           loading.style.display = 'none';
           results.classList.add('visible');
-          agentMsg.textContent = "Execution complete. 10 rows returned from your local database in 14ms.";
+          agentMsg.textContent = "Done. 10 rows returned from local data in 14 ms, with nothing billed.";
         }, 1800);
       }, 400);
     }
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        agentMsg.textContent = "Detecting SQL context... drafting analytics query.";
+        agentMsg.textContent = "Writing a query against the local app_analytics dataset…";
         setTimeout(typeQuery, 800);
         observer.disconnect();
       }

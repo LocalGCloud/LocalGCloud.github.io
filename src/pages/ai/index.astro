@@ -93,8 +93,8 @@ const structuredData = [
           </div>
         </div>
 
-        <aside class="site-panel p-5 reveal" aria-label="Canonical LocalCloud facts">
-          <span class="site-kicker">Canonical facts</span>
+        <aside class="site-panel p-5 reveal" aria-label="Key LocalCloud facts">
+          <span class="site-kicker">Key facts</span>
           <dl class="mt-4 grid gap-3 text-sm">
             <div class="flex items-start justify-between gap-4 border-b border-[var(--line)] pb-3">
               <dt class="shrink-0 text-[var(--text-2)]">Docker image</dt>
@@ -124,7 +124,7 @@ const structuredData = [
     <section class="site-section site-section--tight">
       <div class="container">
         <div class="site-section-heading reveal">
-          <span class="site-kicker">Human explanation</span>
+          <span class="site-kicker">Why it matters</span>
           <h2>Why agents need this page</h2>
           <p>
             AI agents often discover code paths that expect Google Cloud. A repository that uses BigQuery, Pub/Sub, Cloud Storage, Spanner, Bigtable, or Terraform usually expects a real project, so an agent that follows that path blindly turns a local test into a credential request, a billing event, or a change to shared infrastructure. This page gives agents a safe default: start LocalCloud, route SDKs to localhost, prove behavior locally, and stop rather than silently using real cloud credentials.
@@ -246,7 +246,6 @@ const structuredData = [
                   <td class="p-4 align-top">
                     <a class="font-semibold text-[var(--text)]" href={`${base}services/${service.slug}/`}>{service.name}</a>
                     {!isSupported(service) && <span class="site-chip site-chip--warn ml-2">Unsupported</span>}
-                    <div class="mt-1 font-mono text-xs text-[var(--text-2)]">{service.implementation}</div>
                   </td>
                   <td class="p-4 align-top font-mono text-xs text-[var(--text-2)]">{isSupported(service) ? service.envVar : 'No local endpoint'}</td>
                   <td class="p-4 align-top text-[var(--text-2)]">{service.caveat}</td>
@@ -310,7 +309,7 @@ const structuredData = [
         <article class="site-panel p-6 reveal">
           <span class="site-kicker">Portable skills</span>
           <h2 class="mt-3">agent-skills/</h2>
-          <p class="mt-4 text-[var(--text-2)]">Reusable LocalCloud Agent Skills cover BigQuery, Pub/Sub, Terraform, internal automation, seed data, and SDK tests. Copy them into <code>.agents/skills/</code> for a permitted non-production project.</p>
+          <p class="mt-4 text-[var(--text-2)]">Reusable LocalCloud Agent Skills cover BigQuery, Pub/Sub, Terraform, internal automation, seed data, and SDK tests. Copy them into <code>.agents/skills/</code> for a non-production project.</p>
           <a class="site-button site-button--primary mt-5" href={agentSkillsUrl}>Open skills repository</a>
         </article>
       </div>

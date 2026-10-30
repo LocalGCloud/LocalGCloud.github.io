@@ -58,4 +58,4 @@ Return the files changed, emulator variables used, datasets/tables created, quer
 - LocalCloud services: <https://local.cloud/services/>
 - SDK examples: <https://local.cloud/docs/sdk-examples/>
 - BigQuery emulator alternatives: <https://local.cloud/compare/bigquery-emulator-alternatives/>
-- BigQuery coverage matrix: <https://local.cloud/docs/bigquery-emulator-features/#coverage-matrix>
+- BigQuery features with limits: <https://local.cloud/docs/bigquery-emulator-features/#features-with-limits>

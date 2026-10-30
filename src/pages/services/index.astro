@@ -77,7 +77,7 @@ const categoryGroups = serviceCatalogGroups;
                   <span class:list={['site-chip', getServiceSignalLabel(service) === 'Unsupported' ? 'site-chip--warn' : 'site-chip--accent']}>{getServiceSignalLabel(service)}</span>
                 </div>
                 <p class="mt-4 text-sm leading-7 text-[var(--text-2)]" title={service.description}>{service.marketingStatus === 'supported' ? serviceGuides[service.id].whenToUse : service.description}</p>
-                {service.marketingStatus === 'supported' && <p class="agent-catalog-connection">ID: <code>{service.id}</code> · {service.registryDefaultEnabled ? 'Starts by default' : 'Opt-in: include this ID in the exact enabled-service list'}<br /><code>{service.envVar.split('=')[0]}</code></p>}
+                {service.marketingStatus === 'supported' && <p class="agent-catalog-connection">ID: <code>{service.id}</code> · {service.registryDefaultEnabled ? 'Starts by default' : 'Opt-in: add this ID to --services'}<br /><code>{service.envVar.split('=')[0]}</code></p>}
                 <div class="mt-5 text-sm font-semibold text-[var(--text)]">{service.category === 'auxiliary' ? 'View integration guide' : 'View service guide'}</div>
               </a>
             ))}
@@ -90,8 +90,8 @@ const categoryGroups = serviceCatalogGroups;
       <div class="container">
         <aside class="callout callout--warning" role="note">
           <div class="callout__body">
-            <p class="callout__title">Technical availability is not a license grant</p>
-            <div class="callout__content"><p>The governing proprietary license controls permitted use. Review it before personal, employer, organization, commercial, internal-tool, or CI use. Validate production behavior separately against real Google Cloud.</p></div>
+            <p class="callout__title">Check the license for workplace and CI use</p>
+            <div class="callout__content"><p>The governing proprietary license sets what you may do. Review it before personal, employer, organization, commercial, internal-tool, or CI use. Validate production behavior separately in Google Cloud.</p></div>
           </div>
         </aside>
       </div>

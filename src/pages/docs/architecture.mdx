@@ -17,9 +17,7 @@ LocalCloud packages a Java gateway, the web console, local facades, and external
 
 ## Runtime identity and ownership
 
-The named Docker volume mounted at `/var/lib/localcloud` is the only durable runtime selector; the default is `localcloud-data`. The CLI verifies the configured image and selects the unique compatible container using that volume. Immutable container ID is live process identity. A recorded ID is only a revalidated tie-break hint.
-
-CLI-created container, network, and volume resources carry exact ownership labels. Ownership is independent per resource. The CLI can start, stop, restart, inspect, and use an attached compatible container, but it never removes or relabels a Docker resource it does not own. Ambiguous volume use, incompatible images, invalid labels, and shared-volume conflicts fail before mutation. `localcloud reset --all-projects` prints manual full-recreation steps and deletes nothing.
+The named Docker volume mounted at `/var/lib/localcloud` is the only durable runtime selector; the default is `localcloud-data`. The CLI checks the configured image and finds the compatible container that uses that volume. It stops before changing anything when the volume is ambiguous, the image is incompatible or labels are invalid. The CLI manages only containers it created and never removes Docker resources it doesn't own. `localcloud reset --all-projects` prints manual full-recreation steps and deletes nothing.
 
 Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env`, `/services`, `/seed`, `/reseed`, `/import`, `/reset`, `/terraform/readiness`, `/graphql`, `/api-docs`, and `/docs`.
 
@@ -43,9 +41,9 @@ A retained volume improves restart/container-replacement behavior only for store
 
 The host CLI may dynamically remap these ports if conflicts arise; generated endpoint output from `localcloud env` is authoritative for a running runtime.
 
-LocalCloud organizes its network ports into clean, continuous tiers:
+Ports are grouped as follows:
 
-- **5380–5405**: In-container published range (`5380–5394` active services and TLS, `5395–5405` reserved buffer for future service additions).
+- **5380–5405**: In-container published range (`5380–5394` active services and TLS, `5395–5405` reserved for future services).
 - **5406 & 5443–5465**: External companion & child host processes (`5406` Cloud SQL MySQL companion container, `5443–5465` GKE k3d child clusters with `5443` as primary).
 - **5410–5414**: Specialized & in-container loopback (`5410/udp` DNSmasq scoped DNS, `5411` Firestore private, `5412` BigQuery REST private, `5413` BigQuery Storage gRPC private, `5414` Supervisor XML-RPC private).
 

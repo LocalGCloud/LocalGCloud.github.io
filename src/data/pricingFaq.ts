@@ -28,7 +28,7 @@ export const pricingFaq: PricingFaqEntry[] = [
 	{
 		id: "preview-end",
 		question: "What happens when the public preview ends?",
-		answer: "LocalCloud Inc. may end or extend the public preview, and may offer later releases under different terms. Those terms apply only when you accept them or obtain a release under them. The license doesn't set a notice period; instead, every preview release you already have stays licensed under its terms after the preview ends.",
+		answer: "LocalCloud Inc. may end or extend the public preview, and may offer later releases under different terms. Those terms apply only when you accept them or obtain a release under them. Releases you already have keep their preview terms.",
 		source: { label: "License, Sections 2.3 and 8.4", href: `${productFacts.licensePath}#8-term-and-termination` },
 	},
 	{

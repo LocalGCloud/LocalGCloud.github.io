@@ -6,7 +6,7 @@ description: Load deterministic YAML fixtures through LocalCloud seed and reset 
 
 # Seed data
 
-LocalCloud accepts YAML fixture data at root operator endpoints. Seeding covers the service registrars listed below; it is not a migration, backup, or production-data tool.
+LocalCloud accepts YAML fixture data at root operator endpoints. It is not a migration, backup or production-data tool.
 
 ## Load and reload
 
@@ -32,8 +32,6 @@ Other routes:
 ### Flat service keys
 
 ```yaml
-# docs-example: seed-flat
-
 gcs:
   buckets:
     - name: localcloud-docs-bucket
@@ -51,8 +49,6 @@ pubsub:
 ### One-project `services` mapping
 
 ```yaml
-# docs-example: seed-services
-
 services:
   gcs:
     buckets:
@@ -83,8 +79,6 @@ BigQuery tables are top-level entries under `bigquery.tables`; every table names
 ### Multi-project mapping
 
 ```yaml
-# docs-example: seed-projects
-
 projects:
   local-gcp-project:
     services:
@@ -98,25 +92,15 @@ projects:
           - name: second-project-events
 ```
 
-## Supported seed registrars
+## Services that accept seed data
 
-The reviewed `SeedService` implementation registers `gcs`, `pubsub`, `bigquery`, `spanner`, `secretmanager`, `cloudtasks`, `memorystore`, `workflows`, `cloudscheduler` (alias `scheduler`), `cloudfunctions` (alias `functions`), `alloydb`, `dataproc`, `cloudiam` (alias `iam`), `cloudsql`, `bigtable`, `sheets`, `firestore`, and `kms`.
+Seed data loads into: `gcs`, `pubsub`, `bigquery`, `spanner`, `secretmanager`, `cloudtasks`, `memorystore`, `workflows`, `cloudscheduler` (alias `scheduler`), `cloudfunctions` (alias `functions`), `alloydb`, `dataproc`, `cloudiam` (alias `iam`), `cloudsql`, `bigtable`, `sheets`, `firestore` and `kms`. A service must be enabled before its seed data loads.
 
-A registrar can still be unavailable if its service is disabled, its tier is unavailable, or its implementation was not registered in the assembled runtime. **Firestore has a seed registrar** and is disabled by default. Enable it explicitly and consult its operation contract. A registrar or successful fixture import does not establish complete query, listener, or recovery fidelity.
-
-## Volatile restart mode
-
-```bash
-curl -fsS -X POST 'http://localhost:5380/seed?mode=volatile' \
-  -H 'Content-Type: application/yaml' \
-  --data-binary @seed.yaml
-```
-
-The current `VOLATILE_SEED_SERVICES` set is empty, so volatile mode selects no services. Pub/Sub now uses PostgreSQL persistence. Use normal explicit seeding for test-owned fixtures; retaining a volume is not a production durability guarantee.
+`firestore` is disabled by default. Enable it explicitly before seeding it, and check its operation limits. A successful import doesn't prove a service's full query, listener or recovery behavior. Test those with your application.
 
 ## Startup file
 
-Container startup and the Console own automatic samples. The CLI does not discover, mount, or apply seed files; `host.seed` is accepted but ignored. Set `server.auto_seed: false` to disable bootstrap samples. Manual Docker users can mount the seed and persistent data together:
+Sample data loads automatically on first start. Set `server.auto_seed: false` to turn it off. The CLI doesn't mount or apply seed files, and `host.seed` is ignored. For manual Docker, mount your seed file together with the data volume:
 
 ```bash
 docker volume create localcloud-data
@@ -129,7 +113,7 @@ docker run -d --name localcloud \
   agentcloud/localcloud:latest
 ```
 
-The `latest` image tag is mutable. Prefer `localcloud start`, and pin an image digest for release workflows.
+Prefer `localcloud start`. For repeatable runs, pin an image digest.
 
 ## Terraform interaction
 
@@ -141,4 +125,4 @@ The `latest` image tag is mutable. Prefer `localcloud start`, and pin an image d
 - Use fake secret payloads only; never copy production credentials or customer data.
 - Assert the data through the same SDK/API path the application uses.
 - Reset only the intended project and verify the response before continuing.
-- Validate production migrations, backup/recovery, and secret handling separately against real Google Cloud.
+- Validate production migrations, backup and recovery, and secret handling in Google Cloud.

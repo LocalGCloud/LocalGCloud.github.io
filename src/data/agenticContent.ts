@@ -158,18 +158,18 @@ export const agentSandboxPages: AgenticContentPage[] = withRelatedLinks([
 		path: "/agents/codex-cli-gcp-sandbox/",
 		parentLabel: "Agents",
 		parentPath: "/agents/",
-		eyebrow: "Codex-style CLI sandbox",
+		eyebrow: "Codex CLI sandbox",
 		title: "Codex CLI GCP Sandbox with LocalCloud",
 		description:
 			"Use LocalCloud as a local Google Cloud target for Codex-style terminal agents, with safe prompts, localhost SDK endpoints, and no cloud credentials.",
 		h1: "Codex CLI local GCP sandbox",
 		deck:
-			"For Codex-style coding CLIs, treat LocalCloud as the deterministic local cloud runtime and the CLI as the code-editing operator. The important contract is explicit: local Docker is allowed, real Google Cloud credentials are not required for default verification.",
+			"Codex-style CLIs edit code and run tests against LocalCloud. Default verification needs Docker, not Google Cloud credentials.",
 		promptIds: ["quickstart", "project-integration", "ci"],
 		quickFacts: [
 			"Works with terminal agents that can run Docker and project tests.",
-			"Keep setup instructions in prompt text because Codex-style CLIs differ by distribution.",
-			"Use /ai/agents.md as the stable remote operating contract.",
+			"Install and approval steps vary by client, so the prompts below are plain text you can paste.",
+			"Point the agent at /ai/agents.md for the full instructions.",
 		],
 		sections: [
 			{
@@ -228,7 +228,7 @@ export const agentSandboxPages: AgenticContentPage[] = withRelatedLinks([
 			},
 			{
 				kicker: "Repo instruction",
-				title: "Prefer a project-local note once proven",
+				title: "Add the note to the project after the first successful run.",
 				body:
 					"After the first successful LocalCloud run, ask Cursor to add concise project instructions only if the repository already uses an agent instruction file. The instruction should say localhost endpoints are the default local test target and production deploys require real GCP validation.",
 			},
@@ -341,7 +341,7 @@ export const githubActionsWorkflow = [
 	"      - uses: actions/checkout@v4",
 	"      - name: Start LocalCloud",
 	`        run: |`,
-	"          # Public preview permits non-production internal organization and team CI.",
+	"          # Non-production CI is covered by the Public Preview License.",
 	"          # Pin an image digest when the workflow must be repeatable.",
 	...agenticFacts.dockerQuickStart.run.split("\n").map((line) => (line ? `          ${line}` : "")),
 	`          for i in $(seq 1 60); do ${agenticFacts.dockerQuickStart.readiness} && exit 0; sleep 2; done`,
@@ -366,16 +366,16 @@ export const workflowPages: AgenticContentPage[] = withRelatedLinks([
 			"Run LocalCloud in a GitHub Actions workflow with readiness checks, pinned image identity, and localhost SDK endpoints.",
 		h1: "LocalCloud in GitHub Actions",
 		deck:
-			"The Public Preview License permits individuals and organizations, including for-profit companies, to run ongoing internal CI without payment or a license key.",
+			"Non-production CI is free under the Public Preview License, with no license key.",
 		promptIds: ["ci", "quickstart"],
 		quickFacts: [
 			"No GCP secrets are required for the local job.",
 			`Readiness gate: ${agenticFacts.readinessEndpoint}.`,
-			"Keep the workflow non-production and review the proprietary Public Preview License.",
+			"Keep the workflow non-production; see the license for terms.",
 		],
 		sections: [
 			{
-				kicker: "Eligible automation shape",
+				kicker: "Recommended pattern",
 				title: "Health before tests",
 				body:
 					"The workflow should fail fast if LocalCloud is not healthy. Do not let tests silently fall back to production SDK endpoints.",
@@ -559,17 +559,17 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 				[
 					"Best fit",
 					"Single-service fidelity where Google ships an emulator.",
-					"Multi-service testing, demos, and agent discovery. Individuals and companies can use it free of charge for non-production work during the public preview.",
+					"Multi-service testing, demos, and agent discovery. Free for non-production work during the public preview.",
 				],
 			],
 		},
 		limitations: [],
 		internalLinks: [
-			relatedLink("/gcp-emulator/", "LocalCloud positioning against fragmented GCP local development."),
+			relatedLink("/gcp-emulator/", "Why LocalCloud runs many services in one container."),
 			{
 				label: "Compatibility",
 				href: "/compatibility/",
-				note: "Current LocalCloud service boundaries.",
+				note: "Which services run locally, and their limits.",
 			},
 		],
 		sources: [
@@ -701,7 +701,7 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 				kicker: "How to compare",
 				title: "Test the queries you run, not a feature count",
 				body:
-					"A storage engine, an advertised feature count or a small benchmark can't establish BigQuery compatibility. A fair comparison needs the exact engine revisions, images, query corpus, reference outputs and a replay command; this site has no current comparison that tests the engines and the LocalCloud image together, so it ranks no option on speed or fidelity. Run representative queries through the API your application uses and assert the rows, errors and state changes.",
+					"Feature counts and small benchmarks don't prove BigQuery compatibility. Run the queries your application uses through the API it calls, and assert rows, errors and state changes.",
 			},
 		],
 		table: {
@@ -732,10 +732,10 @@ export const comparisonPages: AgenticContentPage[] = withRelatedLinks([
 			"Unsupported areas include BQML, AEAD encryption functions, security policy enforcement, and full GEOGRAPHY parity.",
 		],
 		internalLinks: [
-			relatedLink("/services/bigquery/", "Setup, documented workflows, and a prompt for AI agents."),
+			relatedLink("/services/bigquery/", "Setup, workflows you can test, and a prompt for AI agents."),
 		],
 		sources: [
-			relatedLink("/docs/bigquery-emulator-features/", "LocalCloud's operation contract and coverage matrix."),
+			relatedLink("/docs/bigquery-emulator-features/", "Supported BigQuery operations and features with limits."),
 			{
 				label: "Google BigQuery documentation",
 				href: "https://docs.cloud.google.com/bigquery/docs",
@@ -757,7 +757,7 @@ const glossarySummaries: Record<string, string> = {
 	"mcp-server":
 		"A Model Context Protocol (MCP) server exposes tools, resources, and prompts to AI agent clients through a structured protocol, as LocalCloud does at /mcp.",
 	"credentialless-agent-testing":
-		"Running an AI agent's generated code against local endpoints with no cloud credentials or billing project, so a mistake can't create cloud resources or charges.",
+		"Running an AI agent's code against local endpoints with no cloud credentials, so a mistake can't reach real Google Cloud resources or billing.",
 };
 const firstSentence = (text: string) => text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text;
 
@@ -784,7 +784,7 @@ const glossary = (
 	summary: firstSentence(definition),
 	promptIds: ["quickstart"],
 	quickFacts: [],
-	sections: items.length ? [{ kicker: "In LocalCloud", title: `${term} with LocalCloud`, items }] : [],
+	sections: items.length ? [{ kicker: "How LocalCloud handles it", title: `${term} with LocalCloud`, items }] : [],
 	limitations: [],
 	internalLinks: [
 		...links,
@@ -803,8 +803,8 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 		"GCP emulator",
 		"A local implementation of a Google Cloud service API used for development and testing before code touches real Google Cloud.",
 		[
-			"Also called a cloud emulator or service emulator. It emulates cloud service APIs, unlike a cloud-hosted device emulator, which runs a mobile operating system on remote hardware.",
-			"Can be official, third-party, custom, or a local facade.",
+			"Also called a cloud emulator or service emulator. It implements cloud service APIs locally.",
+			"Can be built by Google, third parties, or LocalCloud.",
 			"Usually requires SDK endpoint overrides.",
 			"Trades managed-cloud fidelity for speed and isolation; each emulator documents its supported calls and gaps, and production behavior is validated against Google Cloud.",
 		],
@@ -848,7 +848,7 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 		"Agentic CI",
 		"A CI workflow where an AI agent helps create or maintain validation steps, while the actual job remains deterministic, reviewable, and bounded.",
 		[
-			"LocalCloud jobs should fail closed on missing health or env vars.",
+			"Jobs should fail when LocalCloud is unhealthy or emulator variables are missing.",
 			"Do not mix local emulator checks with deployment secrets.",
 		],
 		[
@@ -876,10 +876,10 @@ export const glossaryPages: AgenticContentPage[] = withRelatedLinks([
 	glossary(
 		"credentialless-agent-testing",
 		"Credentialless agent testing",
-		"Running an AI agent's generated code against local service endpoints without providing cloud credentials, service-account keys, or a billing project, so a mistake cannot create cloud resources or charges.",
+		"Running an AI agent's generated code against local service endpoints without providing cloud credentials, service-account keys, or a billing project, so a mistake can't reach real Google Cloud resources or billing.",
 		[
 			"Removes the blast radius of an agent calling a destructive cloud API.",
-			"The same pattern serves human inner-loop development and demos.",
+			"The same setup works for local development and demos.",
 			"Does not remove the need to validate the same code against real Google Cloud before release, or replace production authorization tests.",
 			"Keep local automation credentialless and put real-cloud validation in a separate guarded step.",
 		],

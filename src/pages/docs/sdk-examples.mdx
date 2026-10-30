@@ -124,11 +124,11 @@ print(rows[0].message)
 client.close()
 ```
 
-See the [BigQuery guide](/docs/bigquery-emulator-features/) and [coverage matrix](/docs/bigquery-emulator-features/#coverage-matrix) for details on BQML, vector search, RLS, and the Storage Read API.
+See the [BigQuery guide](/docs/bigquery-emulator-features/) and [features with limits](/docs/bigquery-emulator-features/#features-with-limits) for details on BQML, vector search, RLS, and the Storage Read API.
 
 ## Bigtable: Python
 
-Create a test-owned instance and table, write a cell, and read the exact bytes back. This example follows the upstream Bigtable integration guide. Review [Bigtable workflows and boundaries](/services/bigtable/#workflows) before running it.
+Create a test-owned instance and table, write a cell, and read the exact bytes back. This example follows the Bigtable integration guide. Review [Bigtable workflows and boundaries](/services/bigtable/#workflows) before running it.
 
 ```python
 import os
@@ -225,10 +225,10 @@ Keep client project IDs consistent with the generated `GOOGLE_CLOUD_PROJECT` val
 
 ## Production validation
 
-Local checks cover only documented workflows. Before production deployment:
+Local checks cover the workflows listed for each service. Before production deployment:
 
 1. Start a clean process without LocalCloud emulator or custom-endpoint variables.
 2. Intentionally configure an isolated real Google Cloud project and credentials.
 3. Run production-bound integration tests for IAM, quotas, networking, regional behavior, concurrency, recovery, and unsupported operations.
 
-Do not treat protocol similarity or a passing emulator test as full Google Cloud parity. Organization and team-CI use must also comply with the governing proprietary license.
+Do not treat protocol similarity or a passing emulator test as full Google Cloud parity. See [Licensing](/docs/licensing/) for permitted use.

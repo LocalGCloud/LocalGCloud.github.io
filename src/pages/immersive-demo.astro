@@ -5,28 +5,32 @@ import Footer from '../components/Footer.astro';
 import ImmersiveIDE from '../components/ImmersiveIDE.astro';
 ---
 
-<BaseLayout title="LocalCloud — Immersive IDE Animation" description="Interactive demo showing how LocalCloud integrates with your IDE — run GCP services locally with real-time feedback, no cloud connection needed." noindex>
+<BaseLayout title="LocalCloud — Console demo" description="Watch a BigQuery query run against data on your own machine in the LocalCloud console — no Google Cloud project, credentials, or bill." noindex>
   <Header />
-  
+
   <main id="main-content" class="site-page">
     <div class="container">
       <header class="site-section-heading" style="text-align: center; align-items: center; margin-bottom: 4rem;">
-        <span class="site-eyebrow">Visual Experiment</span>
-        <h1>The Immersive Runtime</h1>
-        <p>A GitHub Copilot-inspired animation showcasing the LocalCloud terminal and real-time service status.</p>
+        <span class="site-eyebrow">Console demo</span>
+        <h1>Query BigQuery on your laptop</h1>
+        <p>This is the LocalCloud console. Run standard BigQuery SQL against data on your own machine — no Google Cloud project, credentials, or bill.</p>
       </header>
 
       <ImmersiveIDE />
 
       <section class="site-section">
         <div class="site-panel site-panel--soft" style="padding: 2rem;">
-          <h3>How it works</h3>
+          <h2>What you're seeing</h2>
           <ul class="site-list">
-            <li><strong>CSS Perspective:</strong> Uses <code>perspective</code> and <code>rotate</code> transforms to give the IDE window a 3D depth.</li>
-            <li><strong>Layered Glows:</strong> Radial gradients with high blur values (100px+) and <code>drift</code> animations create the immersive background.</li>
-            <li><strong>Floating Mascot:</strong> Uses <code>drop-shadow</code> and a custom keyframe animation to make the LocalCloud mark "drift" in 3D space.</li>
-            <li><strong>Intersection Observer:</strong> The typing animation only triggers when the component is scrolled into view.</li>
+            <li><strong>Your SQL, run locally:</strong> the query goes to LocalCloud's BigQuery emulator on <code>localhost:5388</code>. Your application reaches the same endpoint through the official client library and <code>BIGQUERY_EMULATOR_HOST</code>.</li>
+            <li><strong>0.0 GB billed:</strong> queries, loads and messages run on your machine, so nothing is metered.</li>
+            <li><strong>One console for every service:</strong> BigQuery, Cloud Storage, Pub/Sub, Spanner and Logging share one sidebar at <code>localhost:5380</code> after <code>localcloud start</code>.</li>
+            <li><strong>Realistic data from the start:</strong> load tables like <code>persons</code> from a <a href="/docs/seed-data/">seed file</a> so every developer and CI run begins from the same state.</li>
+            <li><strong>The same runtime for AI agents:</strong> coding agents reach these endpoints through <a href="/docs/mcp/"><code>localcloud mcp</code></a>, without cloud credentials.</li>
           </ul>
+          <p style="margin-top: 1.5rem;">
+            <a href="/docs/">Get started</a> · <a href="/docs/console/">Console guide</a> · <a href="/services/bigquery/">BigQuery locally</a>
+          </p>
         </div>
       </section>
     </div>

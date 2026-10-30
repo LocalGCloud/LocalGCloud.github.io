@@ -20,7 +20,7 @@ A local emulator can help with:
 - destructive tests against synthetic local data; and
 - development without giving the local process real Google Cloud credentials.
 
-It does not automatically provide zero cost, complete offline operation, identical CI results, or a safe production security boundary. LocalCloud can make outbound requests for configured telemetry, licensing, updates, live IAM, certificate probing, or scheduled HTTP work. The governing proprietary license also limits allowed personal, organization, commercial, and CI use.
+It does not automatically provide zero cost, complete offline operation, identical CI results, or a safe production security boundary. LocalCloud can make outbound requests for configured telemetry, licensing, updates, live IAM, certificate probing, or scheduled HTTP work. Permitted use is set out on the [Licensing page](/docs/licensing/).
 
 ## How routing works
 
@@ -38,7 +38,7 @@ If a default port is already in use, the CLI picks another one. Use the endpoint
 | Type | Meaning in LocalCloud |
 | --- | --- |
 | External emulator | A separate process supervised inside the container, such as BigQuery, Bigtable, Spanner, Cloud Storage, or Valkey. |
-| Extended emulator | An upstream-derived emulator with local additions, such as Spanner. |
+| Extended emulator | An emulator with LocalCloud additions, such as Spanner. |
 | Local facade | Gateway implementation of documented REST/gRPC workflows backed by local stores or processes. |
 | Operator surface | Root routes such as `/health`, `/services`, `/env`, `/seed`, and `/terraform/readiness`; these are not Google Cloud APIs. |
 

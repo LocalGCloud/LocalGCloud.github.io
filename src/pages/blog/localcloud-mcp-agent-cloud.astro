@@ -13,7 +13,7 @@ const contents = [
   { id: 'workflows', label: 'Three cloud workflows' },
   { id: 'run-example', label: 'Run the example' },
   { id: 'debug', label: 'Diagnose a failure' },
-  { id: 'boundaries', label: 'Local data and verification' },
+  { id: 'boundaries', label: 'Local data and production' },
 ];
 const connect = `brew install LocalGCloud/tap/localcloud
 lc --version
@@ -69,7 +69,7 @@ const structuredData = [createBreadcrumbSchema([
   </Fragment>
   <section class="site-section">
     <h2 id="connect">Install and connect</h2>
-    <p>Install <strong>LocalCloud CLI 0.1.9 or newer</strong> and have Docker running. Use runtime <strong>0.1.5 or newer</strong> for validated strict-client tool schemas. On macOS, or Linux with Homebrew:</p>
+    <p>Install <strong>LocalCloud CLI 0.1.9 or newer</strong> and have Docker running. Use runtime <strong>0.1.5 or newer</strong>, which strict MCP clients require. On macOS, or Linux with Homebrew:</p>
     <div class="site-panel mt-4">
       <CopyButton text={connect} analyticsLabel="mcp-blog-copy-install" />
       <pre><code>{connect}</code></pre>
@@ -107,22 +107,22 @@ const structuredData = [createBreadcrumbSchema([
       <CopyButton text={runExample} analyticsLabel="mcp-blog-copy-example-run" />
       <pre><code>{runExample}</code></pre>
     </div>
-    <p>The demonstrated result through CLI 0.1.9 and the full packaged runtime 0.1.5 candidate was:</p>
-    <video controls preload="metadata" width="1280" height="800" poster={mcpDemoPoster} aria-label="Recorded LocalCloud MCP and SDK workflow verification">
+    <p>A successful run looks like this (recorded with CLI 0.1.9 and runtime 0.1.5):</p>
+    <video controls preload="metadata" width="1280" height="800" poster={mcpDemoPoster} aria-label="Recorded run of the LocalCloud MCP and SDK example">
       <source src="/brand/localcloud-mcp-demo.mp4" type="video/mp4" />
-      <p><a href="/brand/localcloud-mcp-demo.mp4">Download the recorded verification run</a>. The complete text transcript follows.</p>
+      <p><a href="/brand/localcloud-mcp-demo.mp4">Download the recorded run</a>. The text output follows.</p>
     </video>
     <pre><code>{result}</code></pre>
     <p>When finished, use <code>lc stop --data-volume localcloud-mcp-demo</code> to stop the example runtime. Its named volume remains available for reuse.</p>
   </section>
   <section class="site-section">
     <h2 id="debug">Diagnose a failure</h2>
-    <p>Give the agent the failing assertion and ask it to inspect readiness, diagnostics, and recent requests before changing the test. A service can be present in the catalog while disabled in the running environment; use its current readiness and compatibility records.</p>
+    <p>Give the agent the failing assertion and ask it to inspect readiness, diagnostics, and recent requests before changing the test. A service can be listed in the catalog but not enabled in your runtime, so check readiness first.</p>
     <p>If an existing runtime predates 0.1.5, follow the <a href="/docs/mcp/">runtime upgrade and troubleshooting instructions</a>. Updating the CLI or installing another client configuration does not replace an existing container.</p>
   </section>
   <section class="site-section">
-    <h2 id="boundaries">Local data and verification</h2>
-    <p>The SDK workflows above passed through a published macOS ARM64 CLI and a full Linux ARM64 runtime image, without mounted source or JAR overlays. This local evidence is separate from Google Cloud production parity and verification on every platform.</p>
+    <h2 id="boundaries">Local data and production</h2>
+    <p>The workflows above were run with the published CLI on macOS (Apple Silicon) and the standard Linux ARM64 runtime image. Passing locally doesn't guarantee identical production behavior, so validate releases against Google Cloud.</p>
     <p>Use test-owned resources and explicit cleanup. The default data volume is shared; a logical project is not a security boundary between agents. Choose a separate named volume when you need an independent runtime. MCP management writes and destructive actions require explicit runtime permission settings.</p>
     <p><a href="/docs/mcp/">MCP setup guide</a> · <a href="/docs/sdk-examples/">More SDK examples</a> · <a href="https://github.com/LocalGCloud/localcloud-cli">CLI source and releases</a></p>
   </section>

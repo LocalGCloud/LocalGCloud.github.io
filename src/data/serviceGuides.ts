@@ -111,7 +111,7 @@ export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
     whenToUse: 'Use when an application depends on PostgreSQL SQL, drivers, and transactions, and its production deployment targets AlloyDB. Exercise resource provisioning alongside SQL application tests locally.',
     intro: 'AlloyDB is Google Cloud’s PostgreSQL-compatible database service. LocalCloud combines AlloyDB resource metadata with a local PostgreSQL connection for application tests.',
     typicalUses: ['PostgreSQL application backends', 'Database provisioning and connection tests'],
-    example: { title: 'Provision metadata and query PostgreSQL', steps: ['Create local cluster and instance metadata.', 'Connect the application to the documented PostgreSQL endpoint.', 'Create a table, insert a fixture, and query it back.'] },
+    example: { title: 'Provision metadata and query PostgreSQL', steps: ['Create local cluster and instance metadata.', 'Connect the application to the local PostgreSQL endpoint.', 'Create a table, insert a fixture, and query it back.'] },
     reference: 'https://docs.cloud.google.com/alloydb/docs/overview',
   },
   dataproc: {
@@ -126,28 +126,28 @@ export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
     whenToUse: 'Use when resource access depends on which user or service account is making a request, and policies must be managed and tested as part of provisioning.',
     intro: 'Identity and Access Management connects principals, roles, and permissions to resources. It defines who can perform which actions in a Google Cloud project.',
     typicalUses: ['Role and service-account provisioning', 'Policy-aware application tests'],
-    example: { title: 'Check a local allow policy', steps: ['Create a test service account and custom role.', 'Store an allow policy on a supported resource.', 'Exercise a documented permission check in the selected IAM mode.'] },
+    example: { title: 'Check a local allow policy', steps: ['Create a test service account and custom role.', 'Store an allow policy on a supported resource.', 'Exercise a permission check in the selected IAM mode.'] },
     reference: 'https://docs.cloud.google.com/iam/docs/overview',
   },
   cloudresourcemanager: {
     whenToUse: 'Use when automation needs to create, look up, or delete projects and carry their IDs through resource provisioning. Projects provide the scope for the rest of your setup.',
-    intro: 'Resource Manager organizes Google Cloud resources into projects, folders, and organizations. LocalCloud implements documented project lifecycle operations for local provisioning flows.',
+    intro: 'Resource Manager organizes Google Cloud resources into projects, folders, and organizations. LocalCloud supports project lifecycle operations for local provisioning flows.',
     typicalUses: ['Project provisioning', 'Project-scoped test environments'],
     example: { title: 'Create a disposable project', steps: ['Create a project through the supported API.', 'Poll its long-running operation until completion.', 'Read its metadata and remove it after the test.'] },
     reference: 'https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy',
   },
   serviceusage: {
     whenToUse: 'Use when provisioning clients check API availability or request service enablement before creating resources. Local preflight responses let you exercise those client flows.',
-    intro: 'Service Usage manages which Google APIs and services are enabled for a project. LocalCloud supplies the documented preflight responses used by provisioning clients.',
+    intro: 'Service Usage manages which Google APIs and services are enabled for a project. LocalCloud supplies the preflight responses that provisioning clients use.',
     typicalUses: ['API enablement preflight checks', 'Provisioning-client compatibility tests'],
-    example: { title: 'Test an API enablement preflight', steps: ['Request enablement for a service through the local facade.', 'Poll the returned operation.', 'Verify the response without treating it as runtime service activation.'] },
+    example: { title: 'Test an API enablement preflight', steps: ['Request enablement for a service through the local API.', 'Poll the returned operation.', 'Verify the response without treating it as runtime service activation.'] },
     reference: 'https://docs.cloud.google.com/service-usage/docs/overview',
   },
   cloudbilling: {
     whenToUse: "Use when provisioning automation needs to discover a billing account or verify a project's billing association. Local tests exercise the metadata flow with test-owned resources.",
     intro: 'Cloud Billing connects projects to billing accounts on Google Cloud. LocalCloud exposes selected account and project billing metadata for provisioning tests.',
     typicalUses: ['Billing-account lookup flows', 'Project billing-link metadata tests'],
-    example: { title: 'Check a project’s billing metadata', steps: ['Create the documented local billing metadata.', 'Read or update the project billing association.', 'Verify the returned account and billing-enabled fields.'] },
+    example: { title: 'Check a project’s billing metadata', steps: ['Create the local billing metadata.', 'Read or update the project billing association.', 'Verify the returned account and billing-enabled fields.'] },
     reference: 'https://docs.cloud.google.com/billing/docs/how-to/manage-billing-account',
   },
   logging: {
@@ -159,7 +159,7 @@ export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
   },
   monitoring: {
     whenToUse: 'Use when application health is expressed as numeric measurements over time, with labels identifying resources or components. Test metric ingestion and time-window queries with deterministic points.',
-    intro: 'Cloud Monitoring stores time-series metrics and supports observability for applications and infrastructure. LocalCloud provides documented metric writes, queries, and configuration metadata.',
+    intro: 'Cloud Monitoring stores time-series metrics and supports observability for applications and infrastructure. LocalCloud supports metric writes, queries, and configuration metadata.',
     typicalUses: ['Custom application metrics', 'Metric and alert-configuration tests'],
     example: { title: 'Write and query a custom metric', steps: ['Create a metric descriptor for completed requests.', 'Write timestamped points with consistent labels.', 'Query the time interval and verify the returned values.'] },
     reference: 'https://docs.cloud.google.com/monitoring/docs/monitoring-overview',
@@ -172,10 +172,10 @@ export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
     reference: 'https://docs.cloud.google.com/kubernetes-engine/docs/concepts/kubernetes-engine-overview',
   },
   compute: {
-    whenToUse: "Use when a workload needs control over a VM's operating system, attached disks, and network configuration. This scenario currently runs on Google Cloud; local VM execution is planned.",
-    intro: 'Compute Engine runs virtual machines with configurable CPU, memory, disks, and networking. Local VM execution is planned for LocalCloud and is not available yet.',
+    whenToUse: "Use when a workload needs control over a VM's operating system, attached disks, and network configuration. Run this workload on Google Cloud.",
+    intro: "Compute Engine runs virtual machines with configurable CPU, memory, disks, and networking. LocalCloud doesn't run VMs; use Google Cloud for them.",
     typicalUses: ['VM-hosted applications', 'Machine-image and infrastructure provisioning'],
-    example: { title: 'Example use on Google Cloud', steps: ['Create a VM from a chosen machine image.', 'Run the application and measure its resource use.', 'Stop and delete the VM after testing; LocalCloud cannot run this workflow yet.'] },
+    example: { title: 'Example use on Google Cloud', steps: ['Create a VM from a chosen machine image.', 'Run the application and measure its resource use.', 'Stop and delete the VM after testing, on Google Cloud.'] },
     reference: 'https://docs.cloud.google.com/compute/docs/overview',
   },
   cloudrun: {
@@ -187,7 +187,7 @@ export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
   },
   memorystore: {
     whenToUse: "Use when frequently accessed values, expiring entries, counters, or streams fit Redis commands and an in-memory access model. Choose key names and expiries around the application's cache or queue behavior.",
-    intro: 'Memorystore provides managed in-memory data services on Google Cloud. LocalCloud uses a Valkey runtime for documented Redis-compatible commands and instance metadata.',
+    intro: 'Memorystore provides managed in-memory data services on Google Cloud. LocalCloud uses a Valkey runtime for Redis-compatible commands and instance metadata.',
     typicalUses: ['Application caches and counters', 'Redis-compatible queues and streams'],
     example: { title: 'Test a cache hit and expiry', steps: ['Connect a Redis-compatible client to the local endpoint.', 'SET a test key with an expiry and GET its value.', 'Verify the cache-miss path after the key expires.'] },
     reference: 'https://docs.cloud.google.com/memorystore/docs/redis/memorystore-for-redis-overview',
@@ -196,14 +196,14 @@ export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
     whenToUse: 'Use when a process coordinates several API calls and needs explicit sequencing, branching, retries, and a queryable execution result.',
     intro: 'Workflows orchestrates a sequence of API calls and application steps. It makes retries, branching, and execution state explicit in a workflow definition.',
     typicalUses: ['Multi-step service orchestration', 'HTTP integrations with retry handling'],
-    example: { title: 'Coordinate two local HTTP services', steps: ['Deploy a definition using documented HTTP calls and expressions.', 'Start an execution with a small input payload.', 'Inspect step history and verify the returned result.'] },
+    example: { title: 'Coordinate two local HTTP services', steps: ['Deploy a definition that uses HTTP calls and expressions.', 'Start an execution with a small input payload.', 'Inspect step history and verify the returned result.'] },
     reference: 'https://docs.cloud.google.com/workflows/docs/overview',
   },
   vertexai: {
-    whenToUse: 'Use when an application calls managed model inference APIs or depends on cloud model-training workflows. Run these against Google Cloud for now; local inference is planned.',
-    intro: 'Vertex AI provides model development and AI inference APIs on Google Cloud. Local model execution and inference are planned for LocalCloud and are not available yet.',
+    whenToUse: 'Use when an application calls managed model inference APIs or depends on cloud model-training workflows. Run these against Google Cloud.',
+    intro: 'Vertex AI provides model development and AI inference APIs on Google Cloud. LocalCloud doesn\'t run models; use Google Cloud for inference and training.',
     typicalUses: ['Model inference and embeddings', 'Model training and evaluation'],
-    example: { title: 'Example use on Google Cloud', steps: ['Call an authorized model with a small test input.', 'Evaluate response quality and latency.', 'Run this against Google Cloud; local stub responses are not model inference.'] },
+    example: { title: 'Example use on Google Cloud', steps: ['Call an authorized model with a small test input.', 'Evaluate response quality and latency.', 'Run this against Google Cloud; LocalCloud stub responses are not model output.'] },
     reference: 'https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning',
   },
   kms: {
@@ -244,7 +244,7 @@ export const emulatorSearchPages: Readonly<Record<string, { title: string; descr
   },
   firestore: {
     title: 'Firestore Emulator — Run Firestore Locally | LocalCloud',
-    description: 'Run Firestore document and query workflows locally. Firestore is opt-in: add firestore to the --services list when you start LocalCloud.',
+    description: 'Run Firestore document and query workflows locally. Firestore is opt-in: run localcloud start --services firestore.',
   },
   gcs: {
     title: 'Cloud Storage Emulator — Run GCS Locally | LocalCloud',
@@ -302,7 +302,7 @@ export function getServiceCodeExamples(serviceId: string, sdkSource: string): Se
   return [...maintainedExamples, ...getServiceClientExamples(serviceId)].map(example => {
     const discovery = /^(List |Browse |Read structured log entries)/.test(example.title);
     const verification = example.verification ?? (discovery
-      ? 'The request succeeds. An empty list or no printed rows is valid before matching resources exist. Continue with the documented workflows for a resource test.'
+      ? 'The request succeeds. An empty list or no printed rows is valid before matching resources exist. Continue with the workflows on this page for a resource test.'
       : example.output
       ? `The command completes successfully and prints the expected output shown below.`
       : serviceId === 'memorystore'

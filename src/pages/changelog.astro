@@ -15,6 +15,16 @@ const shippedSentence = (release: CliRelease) => {
   const formula = release.homebrewFormula ? ', plus a Homebrew formula' : '';
   return `Archives for ${listNames(release.platforms)}${checks}${formula}.`;
 };
+// Each entry lists only what differs from the release before it; the latest release's details sit in the intro.
+const releaseNotes = (release: CliRelease, index: number) => {
+  const previous = cliReleases[index + 1];
+  const shipped = release.platforms.length > 0 ? shippedSentence(release) : '';
+  const notes = [
+    shipped && (!previous || shipped !== shippedSentence(previous)) ? shipped : '',
+    release.summary && release.summary !== previous?.summary ? release.summary : '',
+  ].filter(Boolean);
+  return notes.length || !previous ? notes : [`Same platforms and supported hosts as ${previous.version}.`];
+};
 const structuredData = [
   {
     '@context': 'https://schema.org',
@@ -44,6 +54,7 @@ const structuredData = [
       <p class="mt-5 text-lg leading-8 text-[var(--text-2)]">
         CLI releases, newest first. Downloads and checksums for every release are on GitHub. To check a release before you install it, follow the steps on the <a href={productFacts.securityPath}>security page</a>.
       </p>
+      {latestCliRelease.summary && <p class="mt-4 text-[var(--text-2)]">Latest release ({latestCliRelease.version}): {latestCliRelease.summary}</p>}
       <p class="mt-4"><a href="/changelog/rss.xml">Subscribe to CLI releases via RSS</a></p>
     </div>
   </section>
@@ -51,15 +62,14 @@ const structuredData = [
   <section class="site-section site-section--tight">
     <div class="container container--narrow">
       <ol class="changelog">
-        {cliReleases.map((release) => (
+        {cliReleases.map((release, index) => (
           <li class="changelog__entry site-panel" id={release.tag}>
             <div class="changelog__head">
               <h2>{release.title}</h2>
               <time datetime={release.publishedAt}>{formatDate(release.publishedAt)}</time>
             </div>
             <ul class="site-list">
-              {release.platforms.length > 0 && <li>{shippedSentence(release)}</li>}
-              {release.summary && <li>{release.summary}</li>}
+              {releaseNotes(release, index).map((note) => <li>{note}</li>)}
             </ul>
           </li>
         ))}

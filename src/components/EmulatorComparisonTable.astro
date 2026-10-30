@@ -33,7 +33,7 @@ const Heading = embedded ? 'h3' : 'h2';
     </div>
     <div class="comparison-table-meta">
       <p class="comparison-result" role="status" aria-live="polite" data-comparison-status>{resultsText(shown, listed.length, defaultMode)}</p>
-      <p>{hasCompetitor ? `Green counts what LocalCloud supports; red counts what ${comparison.competitor} lacks. Limits appear under Note.` : 'Green counts what LocalCloud supports. Limits appear under Note.'}</p>
+      <p>{hasCompetitor ? `Green counts what LocalCloud supports; red counts what ${comparison.competitor} lacks. Limits appear under Details.` : 'Green counts what LocalCloud supports. Limits appear under Details.'}</p>
     </div>
     <template data-comparison-row><tr class="comparison-feature"><th scope="row"><span></span></th><td><span data-comparison-profile hidden>Extended: </span><EmulatorComparisonStatus state="unknown" /><small data-comparison-profile hidden>Compatibility: <EmulatorComparisonStatus state="unknown" /></small></td>{hasCompetitor && <td><EmulatorComparisonStatus state="unknown" /></td>}<td><p></p><p class="comparison-doc" hidden><a target="_blank" rel="noopener noreferrer"><span></span> <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></p><p class="comparison-limit" hidden></p></td></tr></template>
     <div class="comparison-scroll" tabindex="0" role="region" aria-label={`${comparison.name} feature comparison table`}>
@@ -50,10 +50,10 @@ const Heading = embedded ? 'h3' : 'h2';
         </tbody>
       </table>
     </div>
-    <noscript><p class="mt-4">Enable JavaScript to list the features in each category, or use the JSON comparison view.</p></noscript>
+    <noscript><p class="mt-4">Enable JavaScript to list the features in each category, or download the comparison as JSON.</p></noscript>
     <aside class="mt-5 text-sm leading-6" data-comparison-agent>
-      <h3 class="font-medium">Agent data</h3>
-      <p><a href={comparison.dataUrl}>JSON comparison view</a></p>
+      <h3 class="font-medium">Data</h3>
+      <p><a href={comparison.dataUrl}>Download the comparison as JSON</a></p>
     </aside>
   </div>
 </section>

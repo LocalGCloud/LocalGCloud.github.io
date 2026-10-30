@@ -47,7 +47,7 @@ export const faqSections: FaqSection[] = [
       {
         question: 'Which SDK languages are supported?',
         answer:
-          "LocalCloud doesn't publish a per-language support matrix. Compatibility depends on client version, transport, endpoint handling, and emulator behavior; start from the SDK examples and validate your exact client and operation.",
+          'Compatibility depends on the client version, transport, endpoint handling and the operation. Start from the SDK examples in these docs, and test your exact client and operation.',
       },
       {
         question: 'How complete is BigQuery emulation?',
@@ -71,7 +71,7 @@ export const faqSections: FaqSection[] = [
       {
         question: 'How long does startup take?',
         answer:
-          "Gate automation on localcloud start status plus /readiness (or the workflow-specific readiness endpoint), not a fixed duration. Startup time isn't benchmarked across platforms.",
+          'Startup time depends on your machine and on whether the image is already cached. Gate automation on localcloud start status plus /readiness (or the workflow-specific readiness endpoint), not a fixed delay.',
       },
       {
         question: 'Is data persisted between restarts?',

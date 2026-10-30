@@ -11,7 +11,7 @@ import Callout from '../../components/Callout.astro';
 LocalCloud can exercise selected `hashicorp/google` resources locally. Support depends on the resource and routing mode; a successful local apply does not prove production Google Cloud behavior.
 
 <Callout type="warning" title="Check the supported resource list">
-The maintained examples use `hashicorp/google ~> 7.0` (including 7.34.0). Provider v7 requires a syntactically valid fake service-account JSON file; `/dev/null` is not sufficient. Some resources ignore custom endpoints and require transparent DNS/HTTPS routing plus a trusted LocalCloud CA.
+Tested with `hashicorp/google ~> 7.0` (7.34.0). Provider v7 requires a syntactically valid fake service-account JSON file; `/dev/null` is not sufficient. Some resources ignore custom endpoints and require transparent DNS/HTTPS routing plus a trusted LocalCloud CA.
 </Callout>
 
 ## Choose a routing mode
@@ -78,14 +78,30 @@ Use a generated private key and a syntactically valid service-account document. 
 ```bash
 mkdir -p .localcloud
 openssl genrsa -out .localcloud/fake-key.pem 2048 2>/dev/null
-node scripts/create-localcloud-fake-sa.mjs \
-  .localcloud/fake-key.pem \
-  .localcloud/fake-service-account.json
+python3 - <<'PY'
+import json
+import pathlib
+
+key = pathlib.Path('.localcloud/fake-key.pem').read_text()
+credential = {
+    'type': 'service_account',
+    'project_id': 'local-gcp-project',
+    'private_key_id': 'localcloud-fake-key',
+    'private_key': key,
+    'client_email': 'developer@localcloud.iam.gserviceaccount.com',
+    'client_id': '123456',
+    'auth_uri': 'http://localhost:5380/oauth2/auth',
+    'token_uri': 'http://localhost:5380/oauth2/token',
+    'auth_provider_x509_cert_url': 'http://localhost:5380/oauth2/v1/certs',
+    'client_x509_cert_url': 'http://localhost:5380/robot/v1/metadata/x509/developer%40localcloud.iam.gserviceaccount.com',
+}
+pathlib.Path('.localcloud/fake-service-account.json').write_text(json.dumps(credential, indent=2) + '\n')
+PY
 chmod 600 .localcloud/fake-key.pem .localcloud/fake-service-account.json
 export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.localcloud/fake-service-account.json"
 ```
 
-The referenced helper is provided in this site repository for a deterministic, JSON-safe credential fixture. Add `.localcloud/` to `.gitignore` in projects that copy this workflow.
+Add `.localcloud/` to `.gitignore` in projects that copy this workflow.
 
 ## Provider configuration
 
@@ -124,14 +140,14 @@ Important generated shapes include:
 | `GOOGLE_BIGTABLE_CUSTOM_ENDPOINT` | `http://localhost:5380/` | Terraform REST path uses the gateway; `BIGTABLE_EMULATOR_HOST` remains separately exported. |
 | `GOOGLE_SPANNER_CUSTOM_ENDPOINT` | `http://localhost:5387/v1/` | Port `5387` is REST/grpc-gateway, not PostgreSQL wire. |
 | `GOOGLE_CLOUD_TASKS_CUSTOM_ENDPOINT` | `http://localhost:5380/v2/` | Facade-specific version prefix. |
-| `GOOGLE_BIGQUERY_CUSTOM_ENDPOINT` | `http://localhost:5388/` | The maintained provider path ignores this override; use transparent routing. |
+| `GOOGLE_BIGQUERY_CUSTOM_ENDPOINT` | `http://localhost:5388/` | The provider ignores this override; use transparent routing. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | `/dev/null` in generated output | Override it with the valid fake JSON file for provider v7. |
 
-Do not hand-maintain a complete endpoint table; `/env?format=terraform` is derived from the enabled runtime registry and may include additional facade-specific paths.
+Generated from the services you enable; may include service-specific paths.
 
 ## Supported Terraform resources
 
-Maintained LocalCloud examples cover:
+Resources tested with LocalCloud:
 
 - `google_project`;
 - `google_secret_manager_secret`;
@@ -155,6 +171,6 @@ unset GOOGLE_APPLICATION_CREDENTIALS
 # Start a clean process before any real-Google-Cloud validation.
 ```
 
-Do not merely unset a few endpoint variables in a long-lived shell. Use a clean environment, explicitly configure an isolated real project and credentials, review the plan, and validate IAM, networking, and quota behavior against Google Cloud before release. Review the governing proprietary license before using LocalCloud.
+Do not merely unset a few endpoint variables in a long-lived shell. Use a clean environment, explicitly configure an isolated real project and credentials, review the plan, and validate IAM, networking, and quota behavior against Google Cloud before release. See [Licensing](/docs/licensing/) for permitted use.
 
 Confirm `/terraform/readiness` succeeds for the routing mode you selected before running `terraform plan` or `terraform apply`.

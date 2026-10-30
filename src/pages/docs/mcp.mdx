@@ -52,7 +52,7 @@ The [signed CLI releases](https://github.com/LocalGCloud/localcloud-cli/releases
 
 ### Runtime version and existing environments
 
-Use **runtime 0.1.5 or newer** for validated strict-client tool input and output schemas. CLI and runtime versions are independent; connecting MCP or updating the CLI reuses an existing container.
+Runtime **0.1.5 or newer** is required for strict MCP clients. CLI and runtime versions are independent; connecting MCP or updating the CLI reuses an existing container.
 
 Inspect `lc status`. To deliberately upgrade the selected runtime while retaining its named data volume:
 
@@ -80,7 +80,7 @@ Choose a direct registration below or the [GitHub plugin](#optional-github-plugi
 | Cline | Add the server through Cline's MCP settings editor |
 | Gemini CLI | `gemini mcp add --scope user localcloud "$(command -v localcloud)" mcp` |
 
-Use `--client claude-code` for Claude Code: the shorter `--client claude` alias configures **Claude Desktop**. CLI 0.1.9's `--client gemini` alias targets Antigravity, not Gemini CLI. Its `--client all` option writes the Cursor, Claude Code, Claude Desktop, Antigravity, and Windsurf configurations even when those applications are absent. Select the clients you use; configure Codex separately with `codex mcp add`.
+Use the client names in the table. `--client all` writes configuration for every listed app, including apps you haven't installed, so prefer a single client name. `--client claude` configures **Claude Desktop**; use `--client claude-code` for Claude Code. `--client gemini` targets Antigravity, so use the Gemini CLI command in the table for Gemini CLI.
 
 For desktop applications, use the absolute executable path from `command -v localcloud`. The LocalCloud installer resolves it automatically for user-scoped installations. Project-scoped installations use a bare command unless you pass `--command-path`. `/opt/homebrew/bin/localcloud` below is an Apple Silicon Homebrew example. Merge manual entries into your client's existing configuration so other MCP servers are preserved.
 
@@ -180,7 +180,7 @@ Run **MCP: List Servers** in the Command Palette, then start `localcloud`.
 
 ## Optional GitHub plugin setup
 
-The GitHub plugins include MCP and workflow guidance. Install one as an alternative to direct registration, disabling or removing the direct LocalCloud entry first. They require the installed CLI and Docker. GitHub installation is available independently of vendor directory review; it does not imply an approved official directory listing.
+The GitHub plugins include MCP and workflow guidance. Install one as an alternative to direct registration, disabling or removing the direct LocalCloud entry first. They require the installed CLI and Docker.
 
 ### Claude Code plugin
 
