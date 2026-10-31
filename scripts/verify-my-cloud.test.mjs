@@ -88,23 +88,44 @@ test('a first-use permission rejection is inconclusive, rather than an offline c
   assert.equal(await probeMyCloud(), null);
 });
 
+test('Chrome refusing at once, before it has asked about local access, means nothing is listening', async (t) => {
+  permissionHarness(t, 'prompt');
+  t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
+  assert.equal(await probeMyCloud(), false);
+});
+
+test('a dismissed first-use prompt, which rejects only after the visitor saw it, stays inconclusive', async (t) => {
+  permissionHarness(t, 'prompt');
+  t.mock.timers.enable({ apis: ['Date'] });
+  t.mock.method(globalThis, 'fetch', async () => { t.mock.timers.tick(2000); throw new TypeError('Failed to fetch'); });
+  assert.equal(await probeMyCloud(), null);
+});
+
 test('browsers without the permission API do not treat blocked probes as an offline cloud', async (t) => {
   permissionHarness(t, undefined);
   t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
   assert.equal(await probeMyCloud(), null);
 });
 
-for (const permission of ['prompt', undefined]) {
-  test(`an inconclusive ${permission || 'unsupported'} permission check explains itself instead of navigating, and keeps setup collapsed`, async (t) => {
-    const h = dialogHarness(t, permission === undefined ? null : permission);
-    t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
-    await initMyCloud(() => {})();
-    assert.deepEqual(h.opens, [], 'no response means no automatic navigation');
-    assert.equal(h.dialog.open, true);
-    assert.deepEqual([h.setup.hidden, h.setup.open], [false, false], 'when the browser cannot check, setup stays one click away instead of pushed open');
-    assert.match(h.status.textContent, /browser couldn’t check localhost/);
-  });
-}
+test('an inconclusive unsupported permission check explains itself instead of navigating, and keeps setup collapsed', async (t) => {
+  const h = dialogHarness(t, null);
+  t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
+  await initMyCloud(() => {})();
+  assert.deepEqual(h.opens, [], 'no response means no automatic navigation');
+  assert.equal(h.dialog.open, true);
+  assert.deepEqual([h.setup.hidden, h.setup.open], [false, false], 'when the browser cannot check, setup stays one click away instead of pushed open');
+  assert.match(h.status.textContent, /browser couldn’t check localhost/);
+});
+
+test('an unasked Chrome prompt with nothing listening offers setup straight away', async (t) => {
+  const h = dialogHarness(t, 'prompt');
+  t.mock.method(globalThis, 'fetch', async () => { throw new TypeError('Failed to fetch'); });
+  await initMyCloud(() => {})();
+  assert.deepEqual(h.opens, []);
+  assert.equal(h.dialog.open, true);
+  assert.deepEqual([h.setup.hidden, h.setup.open], [false, true]);
+  assert.match(h.status.textContent, /isn’t running/);
+});
 
 test('a first-use localhost prompt shows progress while it waits, then confirms the console without opening a tab', async (t) => {
   const h = dialogHarness(t, 'prompt');
@@ -131,7 +152,7 @@ test('a first-use localhost prompt shows progress while it waits, then confirms 
 
 test('a first-use localhost prompt is given time to be answered before the check gives up', async (t) => {
   const h = dialogHarness(t, 'prompt');
-  t.mock.timers.enable({ apis: ['setTimeout'] });
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
   let aborted = false;
   t.mock.method(globalThis, 'fetch', (_, { signal }) => new Promise((_, reject) => {
     signal.addEventListener('abort', () => { aborted = true; reject(new Error('aborted')); }, { once: true });

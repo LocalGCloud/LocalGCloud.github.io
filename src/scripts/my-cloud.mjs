@@ -7,7 +7,9 @@ async function localAccessPermission() {
 }
 
 export async function probeMyCloud(signal) {
-  if (await localAccessPermission() === 'denied') return null;
+  const permission = await localAccessPermission();
+  if (permission === 'denied') return null;
+  const started = Date.now();
   try {
     // shortcut: no-cors hides HTTP status; check response.ok when the console exposes CORS.
     const response = await fetch(myCloudURL, {
@@ -17,7 +19,11 @@ export async function probeMyCloud(signal) {
     return response.type === 'opaque' || response.ok;
   } catch {
     // Browser restrictions and network failures both reject fetch; only granted access proves a failed check.
-    return await localAccessPermission() === 'granted' ? false : null;
+    const after = await localAccessPermission();
+    if (after === 'granted') return false;
+    // Chrome asks only once something answers on the port, so a refusal arrives at once with the prompt unasked.
+    // A dismissed prompt also leaves 'prompt', but only after the visitor has seen it.
+    return permission === 'prompt' && after === 'prompt' && Date.now() - started < 250 ? false : null;
   }
 }
 
