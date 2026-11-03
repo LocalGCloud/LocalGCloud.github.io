@@ -67,7 +67,7 @@
     "other": "available",
     "description": "Refuses to delete a bucket that still contains objects and returns an error instead of removing the bucket or its contents.",
     "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/delete",
-    "notes": ""
+    "notes": "Noncurrent versions also keep it nonempty (409); live objects answer 412 where Google answers 409; XML multipart uploads in progress are aborted."
   },
   {
     "id": "B08",
@@ -227,7 +227,7 @@
     "other": "unavailable",
     "description": "Updates a bucket's metadata with a PUT request, which can change fields the request does not mention; patch is generally preferred.",
     "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/update",
-    "notes": "PUT resets omitted settings; ACLs, IAM and soft delete change only when named."
+    "notes": "PUT resets omitted settings; ACLs and soft delete change only when named; IAM configuration is reset unless named, and uniform access past its lock time refuses the reset with 400; a body naming another bucket is refused with 400."
   },
   {
     "id": "B28",
@@ -317,7 +317,7 @@
     "other": "available",
     "description": "Returns an object's metadata, such as its size, content type, checksums, generation and storage class, without its data.",
     "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/get",
-    "notes": ""
+    "notes": "selfLink and mediaLink name the request's host and scheme."
   },
   {
     "id": "O02",
@@ -347,7 +347,7 @@
     "other": "available",
     "description": "Returns only a requested byte range of an object through the Range header, useful for resuming a download or reading part of a file.",
     "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/get",
-    "notes": ""
+    "notes": "A ranged download the client keeps open no longer holds up other requests."
   },
   {
     "id": "O05",
@@ -407,7 +407,7 @@
     "other": "available",
     "description": "Groups object names at a delimiter, usually a slash, returning names without the delimiter as items and shared leading parts as prefixes, to mimic directories.",
     "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
-    "notes": ""
+    "notes": "multi-character delimiters collapse at the whole delimiter."
   },
   {
     "id": "O11",
@@ -457,7 +457,7 @@
     "other": "available",
     "description": "When listing with a delimiter, also returns the metadata of objects whose names end with that delimiter, in addition to listing them as prefixes.",
     "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/list",
-    "notes": ""
+    "notes": "Folder placeholders such as folder/ are stored, versioned and listed on both backends."
   },
   {
     "id": "O16",
@@ -537,7 +537,7 @@
     "other": "available",
     "description": "Copies a source object to a destination in one or more calls, returning a rewrite token to continue until the work is done, and can override metadata.",
     "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/objects/rewrite",
-    "notes": ""
+    "notes": "Storage class and custom time carry over unless the request names others."
   },
   {
     "id": "O24",
@@ -747,7 +747,7 @@
     "other": "limited",
     "description": "Lists the objects in a bucket through the XML API as a ListBucketResult document, with Contents entries, common prefixes and truncation markers.",
     "docs": "https://docs.cloud.google.com/storage/docs/xml-api/get-bucket-list",
-    "notes": "V1 markers and list-type=2 continuation, start-after, fetch-owner, encoding and both version-listing formats; Owner is the ACL owner entity."
+    "notes": "V1 markers and list-type=2 continuation, start-after, fetch-owner, encoding echoed as EncodingType in both listing versions, and both version-listing formats; Owner is the ACL owner entity."
   },
   {
     "id": "O45",
@@ -917,7 +917,7 @@
     "other": "available",
     "description": "Starts a resumable upload by sending the object name and optional metadata, and returns a session URI that later requests use to send the data.",
     "docs": "https://docs.cloud.google.com/storage/docs/performing-resumable-uploads",
-    "notes": ""
+    "notes": "The URL names the bucket and a body naming another is refused with 400."
   },
   {
     "id": "U04",
@@ -927,7 +927,7 @@
     "other": "available",
     "description": "Sends data to the session URI in chunks with a Content-Range header, receiving a 308 response until the final chunk completes the object with 200 or 201.",
     "docs": "https://docs.cloud.google.com/storage/docs/performing-resumable-uploads",
-    "notes": ""
+    "notes": "Status queries never finalize early, Range names the persisted bytes inclusively, chunks past them are refused and resent bytes are skipped; 308 replies have no body."
   },
   {
     "id": "U05",
@@ -1117,7 +1117,17 @@
     "other": "available",
     "description": "Lets whoever holds a resumable upload's session URI continue that upload without further credentials, because the URI acts as an authentication token.",
     "docs": "https://docs.cloud.google.com/storage/docs/resumable-uploads#session-uris",
-    "notes": "The session URI is the credential until expiry or cancellation, also after the initiating key is revoked; a configured authorization callback is still consulted."
+    "notes": "The session URI is the credential on the upload routes only, until expiry or cancellation, also after the initiating key is revoked; a configured authorization callback is still consulted."
+  },
+  {
+    "id": "U27",
+    "name": "XML API multipart uploads",
+    "area": "Uploads and conditional operations",
+    "local": "available",
+    "other": "unavailable",
+    "description": "Uploads one object in numbered parts through the XML API: an initiate request returns an upload ID, parts are sent separately, then a complete request joins them, or abort discards them.",
+    "docs": "https://docs.cloud.google.com/storage/docs/multipart-uploads",
+    "notes": "initiate, upload part, complete, abort, list parts and list uploads, with part size and ordering errors, persistence across restarts, encryption and lifecycle aborts; an empty completion is 400 MalformedXML; deleting the bucket aborts its uploads."
   },
   {
     "id": "M01",

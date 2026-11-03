@@ -1,7 +1,7 @@
 {
   "gcs": {
-    "total": 226,
-    "exclusive": 126,
+    "total": 227,
+    "exclusive": 127,
     "hasCompetitor": true
   },
   "firestore": {
@@ -15,13 +15,13 @@
     "hasCompetitor": true
   },
   "spanner": {
-    "total": 703,
-    "exclusive": 178,
+    "total": 712,
+    "exclusive": 177,
     "hasCompetitor": true
   },
   "bigquery": {
-    "total": 1117,
-    "exclusive": 58,
+    "total": 1363,
+    "exclusive": 65,
     "hasCompetitor": true
   }
 }

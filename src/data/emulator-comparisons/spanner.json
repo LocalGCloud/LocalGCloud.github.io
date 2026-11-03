@@ -1037,7 +1037,7 @@
     "other": "limited",
     "description": "Defines a named placement tied to a user-created instance partition, with an optional default leader region, telling Spanner where rows tagged with it are stored.",
     "docs": "https://docs.cloud.google.com/spanner/docs/create-manage-data-placements",
-    "notes": "Adds lifecycle/partition-existence validation."
+    "notes": "Adds instance-partition existence validation."
   },
   {
     "id": "spanner-schema-and-ddl-googlesql-alter-placement",
@@ -1064,10 +1064,10 @@
     "name": "PostgreSQL placement DDL",
     "area": "Schema and DDL",
     "local": "available",
-    "other": "unavailable",
+    "other": "limited",
     "description": "The PostgreSQL-dialect statements for geo-partitioning: CREATE PLACEMENT with a WITH clause of options, DROP PLACEMENT, and a PLACEMENT KEY column on tables.",
     "docs": "https://docs.cloud.google.com/spanner/docs/create-manage-data-placements",
-    "notes": "Translated placement lifecycle and placement-key DDL."
+    "notes": "Google's emulator lacks partition-existence checks and stores DEFAULT literally; LocalCloud fixes both."
   },
   {
     "id": "spanner-schema-and-ddl-placement-key-mutation-validation",
@@ -1094,20 +1094,20 @@
     "name": "INFORMATION_SCHEMA.PLACEMENTS",
     "area": "Schema and DDL",
     "local": "available",
-    "other": "unavailable",
+    "other": "available",
     "description": "A GoogleSQL schema view that lists each placement in the database by name, with a flag showing whether it is the default placement.",
     "docs": "https://docs.cloud.google.com/spanner/docs/information-schema#placements",
-    "notes": "Google's emulator v1.5.59 adds this too."
+    "notes": "Lists the default placement and each user placement."
   },
   {
     "id": "spanner-schema-and-ddl-information-schema-placement-options",
     "name": "INFORMATION_SCHEMA.PLACEMENT_OPTIONS",
     "area": "Schema and DDL",
     "local": "available",
-    "other": "unavailable",
+    "other": "available",
     "description": "A GoogleSQL schema view that lists the options set on each placement, such as instance_partition and default_leader, with each option's name, type and value.",
     "docs": "https://docs.cloud.google.com/spanner/docs/information-schema#placement-options",
-    "notes": "Google's emulator v1.5.59 adds this too."
+    "notes": "Includes default-placement instance_partition and default_leader rows."
   },
   {
     "id": "spanner-schema-and-ddl-interleave-in-parent",
@@ -1228,6 +1228,76 @@
     "description": "Database option whose only valid value is bit_reversed_positive; sequences and identity columns that name no kind use it, producing positive INT64 values that are not sequential.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#alter-database",
     "notes": "Validated default sequence kind."
+  },
+  {
+    "id": "spanner-schema-and-ddl-create-queue-statement",
+    "name": "CREATE QUEUE statement",
+    "area": "Schema and DDL",
+    "local": "available",
+    "other": "available",
+    "description": "Creates a queue, a table-like object that holds messages, with key columns, one Payload column, a primary key and options such as receive_mode, disable_send and disable_delivery.",
+    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#create-queue",
+    "notes": "Both dialects; LocalCloud persists queue messages with --data_dir."
+  },
+  {
+    "id": "spanner-schema-and-ddl-alter-queue-statement",
+    "name": "ALTER QUEUE statement",
+    "area": "Schema and DDL",
+    "local": "available",
+    "other": "available",
+    "description": "Changes an existing queue: sets options such as disable_send, disable_delivery and locality_group, changes ON DELETE or interleaving, and adds, drops or replaces its row deletion policy.",
+    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#alter-queue",
+    "notes": "Options, interleaving, ON DELETE and row deletion policy in both dialects. disable_send and disable_delivery are stored but have no effect."
+  },
+  {
+    "id": "spanner-schema-and-ddl-drop-queue-statement",
+    "name": "DROP QUEUE statement",
+    "area": "Schema and DDL",
+    "local": "available",
+    "other": "available",
+    "description": "Deletes a queue; with IF EXISTS, naming a queue that does not exist is not an error.",
+    "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#drop-queue",
+    "notes": "LocalCloud also prunes dropped queue messages from persistent storage."
+  },
+  {
+    "id": "spanner-schema-and-ddl-queue-receive-execution",
+    "name": "Queue RECEIVE execution",
+    "area": "Schema and DDL",
+    "local": "limited",
+    "other": "limited",
+    "description": "Calls the queue's RECEIVE table-valued function through ExecuteStreamingSQL to stream messages to a worker as a long-running query, each with a lease token and lease expiration time.",
+    "docs": "https://docs.cloud.google.com/spanner/docs/queues/queues-using",
+    "notes": "Mock leases: messages stay visible until acked; max_batch_size is a per-scan row limit; priority and per-placement filtering are no-ops. disable_delivery is ignored, stale reads are accepted, redelivery has no backoff and queue limits aren't enforced."
+  },
+  {
+    "id": "spanner-schema-and-ddl-queue-renewlease-execution",
+    "name": "Queue RENEWLEASE execution",
+    "area": "Schema and DDL",
+    "local": "limited",
+    "other": "limited",
+    "description": "Calls the queue's RENEWLEASE table-valued function with an array of lease tokens to extend the leases of messages being processed, so they are not redelivered on timeout.",
+    "docs": "https://docs.cloud.google.com/spanner/docs/queues/queues-using",
+    "notes": "Returns renewed mock tokens without validating or extending leases."
+  },
+  {
+    "id": "spanner-schema-and-ddl-queue-send-mutation",
+    "name": "Queue Send mutation",
+    "area": "Schema and DDL",
+    "local": "limited",
+    "other": "limited",
+    "description": "Adds a message to a queue through a client-library mutation that takes the message key, a payload and an optional delivery time, as an alternative to a DML INSERT.",
+    "docs": "https://docs.cloud.google.com/spanner/docs/queues/queues-using",
+    "notes": "Both dialects; optional deliver_time. disable_send isn't enforced: Send and INSERT still commit."
+  },
+  {
+    "id": "spanner-schema-and-ddl-queue-ack-mutation",
+    "name": "Queue Ack mutation",
+    "area": "Schema and DDL",
+    "local": "available",
+    "other": "available",
+    "description": "Acknowledges a processed message by removing it from its queue in a transaction, through a client-library mutation that names the queue and the message key.",
+    "docs": "https://docs.cloud.google.com/spanner/docs/queues/queues-using",
+    "notes": "Optional ignore_not_found; LocalCloud checks DELETE for creator_role sessions."
   },
   {
     "id": "spanner-types-and-values-bool-type",
@@ -6728,6 +6798,26 @@
     "description": "Lets SELECT, INSERT and UPDATE privileges be granted on chosen columns, so a role can read or change only those columns; DELETE cannot be limited to columns.",
     "docs": "https://docs.cloud.google.com/spanner/docs/reference/standard-sql/data-definition-language#grant_statement",
     "notes": "Both dialects; sessions without creator_role retain full access."
+  },
+  {
+    "id": "spanner-security-and-governance-grant-privileges-on-queue",
+    "name": "GRANT privileges ON QUEUE",
+    "area": "Security and governance",
+    "local": "available",
+    "other": "unavailable",
+    "description": "Gives a database role INSERT, SELECT or DELETE on a queue, allowing it to send, read or acknowledge messages; queue privileges cannot be limited to columns.",
+    "docs": "https://docs.cloud.google.com/spanner/docs/fgac-queues",
+    "notes": "Both dialects; listed in TABLE_PRIVILEGES. Google's emulator cannot parse the QUEUE target."
+  },
+  {
+    "id": "spanner-security-and-governance-execute-on-queue-receive-and-lease-renewal-functions",
+    "name": "EXECUTE on queue receive and lease-renewal functions",
+    "area": "Security and governance",
+    "local": "available",
+    "other": "no-effect",
+    "description": "Lets a database role call a queue's receive or lease-renewal table function, so it can consume messages without also holding SELECT on the queue.",
+    "docs": "https://docs.cloud.google.com/spanner/docs/fgac-queues",
+    "notes": "Per-placement receive functions use the RECEIVE_ grant; listed in ROUTINE_PRIVILEGES."
   },
   {
     "id": "spanner-operations-replication-availability-and-observability-table-count-limit-validation",

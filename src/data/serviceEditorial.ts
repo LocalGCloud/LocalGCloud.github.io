@@ -57,14 +57,14 @@ export interface ServiceCompatibilityEditorial {
 export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompatibilityEditorial>> = {
   gcs: {
     capabilities: [
-      { operations: ["gcs.buckets.lifecycle", "gcs.objects.lifecycle"], summary: "Bucket CRUD; object upload, download, listing, deletion, and versioning", workflow: "Create a bucket, upload a fixture, and assert its downloaded bytes. List and delete owned objects to test cleanup." },
+      { operations: ["gcs.buckets.lifecycle", "gcs.objects.lifecycle"], summary: "Bucket CRUD; object upload (including resumable and XML multipart), download, listing, deletion, and versioning", workflow: "Create a bucket, upload a fixture, and assert its downloaded bytes. Repeat with a resumable or XML multipart upload for large files, then list and delete owned objects to test cleanup." },
       { operations: ["gcs.bucket-iam", "gcs.object-iam"], summary: "Bucket IAM and mode-aware object authorization", workflow: "Set a bucket policy, then test allowed and denied object requests in the chosen IAM mode through direct listeners and the gateway." },
       { operations: ["gcs.notifications"], summary: "Object event delivery to local Pub/Sub topics, including archive events", workflow: "Create a Pub/Sub topic and bucket notification. Upload, update metadata, or delete an object, then assert the event type and object name." },
       { operations: ["gcs.hmac"], summary: "HMAC keys and signed XML requests", workflow: "Create a service-account HMAC key and sign XML requests. Rotate or revoke it, then assert that the old signature is rejected." },
     ],
     boundaries: [
-      "Object versioning and archive events run locally. Managed folders: use Google Cloud",
-      "Lifecycle, retention, hold, and encryption settings are stored and returned; validate enforcement in Google Cloud",
+      "Object versioning, archive events, folders, and managed folders run locally",
+      "Retention policies, object holds, and customer-managed keys from local Cloud KMS are enforced locally. Lifecycle rules are stored and returned; validate scheduled lifecycle actions in Google Cloud",
       "Notifications deliver to existing Pub/Sub topics. Ordering and atomic object-and-event delivery: validate in Google Cloud",
     ],
   },
@@ -86,12 +86,13 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
   },
   firestore: {
     capabilities: [
-      { operations: ["firestore.documents.crud"], summary: "Document CRUD", workflow: "Enable Firestore in the service list, create a document with a unique test ID, and read and update its fields. Delete the fixture and assert the missing-document path." },
-      { operations: ["firestore.queries.indexes"], summary: "Queries and single-field indexes", workflow: "Seed documents with different field values, run the filters and ordering used by the application, and compare the returned IDs. Test index setup separately from document creation." },
+      { operations: ["firestore.documents.crud"], summary: "Document CRUD, batched writes, transactions, and field transforms", workflow: "Enable Firestore in the service list, create a document with a unique test ID, and read and update its fields. Commit related writes in a transaction or apply a server timestamp or increment, then delete the fixture and assert the missing-document path." },
+      { operations: ["firestore.queries.indexes"], summary: "Queries, aggregations, real-time listeners, and index configuration", workflow: "Seed documents with different field values, run the filters, ordering, and aggregations used by the application, and compare the returned IDs. Attach a snapshot listener to assert the initial snapshot, and test index setup separately from document creation." },
     ],
     boundaries: [
       "Opt-in: run `localcloud start --services firestore`",
-      "Composite indexes, concurrent transactions, listeners, transforms, Security Rules, and triggers: validate in Google Cloud",
+      "The default profile follows the Google emulator: listeners, field transforms, transactions, and Security Rules run locally. Set `compatibilityProfile: production` in the Firestore service config to require composite indexes and to use TTL policies, point-in-time reads, and backups",
+      "Managed key custody, multi-region replication, and service guarantees: validate in Google Cloud",
     ],
   },
   bigtable: {
@@ -104,7 +105,7 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["bigtable.iam", "bigtable.cli.cbt", "bigtable.browser.console"], summary: "IAM policy storage, cbt, and Console browsing", workflow: "Read and update stored IAM policies, browse rows in the Console, and run the cbt commands used by your scripts. Check native API errors when a write or cleanup operation fails." },
     ],
     boundaries: [
-      "IAM policies are stored and returned but not enforced; change streams use a single partition. Query statistics, view parameters, and legacy snapshots: use Google Cloud",
+      "IAM policies are stored and returned but not enforced; change streams use a single partition. Raster statistics (ST_REGIONSTATS) and legacy table snapshots: use Google Cloud",
       "Sink bypasses later filters and is invalid inside Condition. HLL++ and multi-column view keys use local encodings; read them back with the native client",
       "Clean up by deleting owned backups and clearing deletion protection first. Check native API errors and retained project records after cleanup",
       "Filter, order, and pagination work on native backup listings; REST ignores them. Verify durability and row bytes with the native client",
@@ -135,11 +136,11 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["bigquery.sql.scripting"], summary: "Procedural scripts, stored procedures, and dynamic SQL", workflow: "Run a multi-statement script or stored procedure against fixtures, including dynamic SQL if needed. Check variable handling, statement results, and failure behavior." },
       { operations: ["bigquery.jobs.lifecycle"], summary: "Jobs, dry runs, scheduled queries, and selected ML models", workflow: "Submit a job, inspect its result and dry-run response, and test scheduled-query configuration. For a supported ML model, train on a small fixture and assert prediction output." },
       { operations: ["bigquery.materialized-views", "bigquery.information-schema"], summary: "Materialized views and INFORMATION_SCHEMA", workflow: "Create a materialized view and query it after changing source data. Use INFORMATION_SCHEMA to assert the metadata your migration or discovery tool relies on." },
-      { operations: ["bigquery.external-tables"], summary: "External tables over local Cloud Storage: CSV, JSONL, Parquet, Avro, ORC; EXTERNAL_QUERY", workflow: "Upload a supported CSV, JSONL, Parquet, Avro, or ORC fixture to local Storage, then query its external table. Exercise EXTERNAL_QUERY with the specific supported connection your application uses." },
+      { operations: ["bigquery.external-tables"], summary: "External tables over local Cloud Storage: CSV, JSONL, Parquet, Avro, ORC; temporary tableDefinitions; EXTERNAL_QUERY", workflow: "Upload a supported CSV, JSONL, Parquet, Avro, or ORC fixture to local Storage, then query its external table or pass it as a temporary tableDefinitions entry on the query job. Exercise EXTERNAL_QUERY with the specific supported connection your application uses." },
       { operations: ["bigquery.storage-api"], summary: "gRPC Storage Read/Write with Avro and Arrow", workflow: "Configure the separate gRPC Storage endpoint and CA trust, then read or write Avro or Arrow records. Compare schema and row contents independently of the REST query client." },
     ],
     boundaries: [
-      "Behavior varies with SQL, ML, and geography inputs; test your edge-case inputs. Ingestion-time pseudocolumn reads and nested policy tags: validate in Google Cloud",
+      "Behavior varies with SQL, ML, and geography inputs; test your edge-case inputs. Masking on nested repeated fields and policy-tag taxonomy import/export: validate in Google Cloud",
       "External tables read from local Cloud Storage. Native Bigtable, Sheets, HTTP, and local-file sources: use Google Cloud",
       "Reservations, production IAM, and fleet-scale behavior: use Google Cloud",
     ],
@@ -249,10 +250,10 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
   },
   serviceusage: {
     capabilities: [
-      { operations: ["serviceusage.services.enablement"], summary: "Service list/get/enable/batchEnable preflights and completed operation polling", workflow: "List available APIs, request enable or batchEnable, and inspect the completed operation. Use the response for provisioning preflights; select running services through LocalCloud runtime controls." },
+      { operations: ["serviceusage.services.enablement"], summary: "Service list/get/batchGet, enable and disable that switch local services, and completed operation polling", workflow: "List APIs and read their state, then disable a served API and confirm its calls are refused until you enable it again. Inspect the completed operation in provisioning preflights and Terraform service resources." },
     ],
     boundaries: [
-      "Enablement reports ENABLED. Start services with LocalCloud service controls",
+      "Enable and disable switch a service for the whole local runtime, not one project. IAM, Resource Manager, and Service Usage stay enabled, and Google APIs that LocalCloud does not serve report ENABLED",
       "Quotas, billing, and project-specific entitlements: validate in Google Cloud",
     ],
   },
@@ -357,7 +358,7 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["kms.cmek.secretmanager", "kms.inventory.protected-resources", "kms.autokey.key-handles"], summary: "Customer-managed encryption keys (CMEK) for Secret Manager, project inventory, and Autokey/KeyHandles", workflow: "Protect a Secret Manager secret with CMEK, then inspect its project-owned inventory entry. Exercise Autokey or KeyHandles for the supported global Secret Manager resource scope." },
     ],
     boundaries: [
-      "Software-protected keys run locally. Hardware key custody and Google authority: use Google Cloud",
+      "Software-protected keys run locally; HSM and external key versions are refused. EKM connection settings are stored and checked locally. Hardware key custody and Google authority: use Google Cloud",
       "Inventory and Autokey cover project-owned global Secret Manager resources. Folder ancestry and other protected resource types: use Google Cloud",
       "Key ring deletion differs from Google Cloud; validate it in Google Cloud",
     ],

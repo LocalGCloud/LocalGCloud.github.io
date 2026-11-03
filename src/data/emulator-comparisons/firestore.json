@@ -1856,7 +1856,7 @@
     "default": "limited",
     "description": "Replaces every match of a regular expression in a string with a substitution string and returns the result.",
     "docs": "https://firebase.google.com/docs/reference/rules/rules.String",
-    "notes": "Bounded string/regular-expression contracts; RE2 regression table."
+    "notes": "Bounded string/regular-expression contracts; RE2 regression table; a result over 1 MiB is an evaluation error."
   },
   {
     "id": "firestore-database-administration-and-rules-rules-string-matches-regex",
@@ -2131,7 +2131,7 @@
     "default": "limited",
     "description": "Makes requests to a CMEK database fail with FAILED_PRECONDITION while its key version is disabled or destroyed or Firestore may not use the key.",
     "docs": "https://docs.cloud.google.com/firestore/native/docs/cmek",
-    "notes": "Configured engine enforces host key availability."
+    "notes": "Configured engine enforces host key availability; a key-service UNAVAILABLE, RESOURCE_EXHAUSTED, ABORTED or DEADLINE_EXCEEDED reaches the caller as that retryable status instead of FAILED_PRECONDITION."
   },
   {
     "id": "firestore-production-security-editions-and-service-guarantees-cmek-key-version-rotation",
@@ -2153,7 +2153,7 @@
     "default": "unavailable",
     "description": "Encrypts backups of a CMEK database with the key version in use when they are taken, and lets a restore keep that encryption, use a new key, or use Google default encryption.",
     "docs": "https://docs.cloud.google.com/firestore/native/docs/cmek",
-    "notes": "Source/destination key checks; compatibility recovery only."
+    "notes": "Source/destination key checks; a restore that meets a transient key-service failure stays pending and retries; compatibility recovery only."
   },
   {
     "id": "firestore-production-security-editions-and-service-guarantees-app-check-enforcement-for-firestore",

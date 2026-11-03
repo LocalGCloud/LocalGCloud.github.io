@@ -23,7 +23,7 @@ const definitions: ComparisonDefinition[] = [
     id: 'gcs', slug: 'cloud-storage', name: 'Cloud Storage', engine: 'LocalCloud GCS',
     competitor: 'fake-gcs-server', baseline: 'fake-gcs-server',
     baselineUrl: 'https://github.com/fsouza/fake-gcs-server/tree/3c29d20789f6475f65d2554ad6898c4afd7124bb',
-    summary: 'Covers permissions, HMAC credentials, object moves and notification recovery.',
+    summary: 'Covers permissions, HMAC credentials, object moves, XML multipart uploads and notification recovery.',
     scope: 'Permission checks use an opt-in local evaluator or an external authorization callback. HMAC verification covers supported XML routes; moves stay within one bucket.',
   },
   {
@@ -42,10 +42,10 @@ const definitions: ComparisonDefinition[] = [
   },
   {
     id: 'spanner', slug: 'spanner', name: 'Spanner', engine: 'LocalCloud Spanner',
-    competitor: 'Google Spanner emulator', baseline: 'Google Spanner emulator v1.5.58',
-    baselineUrl: 'https://github.com/GoogleCloudPlatform/cloud-spanner-emulator/tree/a081a7e71aba5f4d05fc8c6b21ef1a269dcbac28',
+    competitor: 'Google Spanner emulator', baseline: 'Google Spanner emulator v1.5.59',
+    baselineUrl: 'https://github.com/GoogleCloudPlatform/cloud-spanner-emulator/tree/d357ec1d2b08ae92ce1da4c5078de82fda0c07ab',
     summary: 'Covers persisted databases, backup recovery, database roles and graph algorithms.',
-    scope: 'This comparison uses v1.5.58. Persistence and backups require --data_dir. Database roles enforce privileges; IAM policies do not.',
+    scope: 'This comparison uses v1.5.59. Persistence and backups require --data_dir. Database roles enforce privileges; IAM policies do not.',
   },
   {
     id: 'bigquery', slug: 'bigquery', name: 'BigQuery', engine: 'LocalCloud BigQuery',

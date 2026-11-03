@@ -20,6 +20,16 @@
     "notes": ""
   },
   {
+    "id": "metadata.advanced.authorized-views-datasets-routines",
+    "name": "Authorized views/datasets/routines",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unavailable",
+    "description": "Lets a view, dataset or routine query tables in another dataset on behalf of users who have no direct access to that source dataset.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/access-control",
+    "notes": "Authorized routines are refused: Dataset access routine entries fail with 400, and authorized dataset entries accept only targetTypes VIEWS (ROUTINES is refused)."
+  },
+  {
     "id": "metadata.advanced.auto-refresh-configurable-interval",
     "name": "Auto-refresh (configurable interval)",
     "area": "Metadata / Advanced",
@@ -40,6 +50,46 @@
     "notes": ""
   },
   {
+    "id": "metadata.advanced.biglake-tables-with-fine-grained-access",
+    "name": "BigLake tables (with fine-grained access)",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Tables over data in Cloud Storage and other stores that are read through a connection and can be secured with row-level and column-level access controls.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/biglake-intro",
+    "notes": "fine-grained access is not served on BigLake tables: row access policies over an external table are refused ('Row access policy source must be an ordinary physical table'), and column-level security and data masking on BigLake tables are untested; the connection is a reference only, with no delegated service-account credentials."
+  },
+  {
+    "id": "metadata.advanced.bigquery-storage-write-api-preferred",
+    "name": "BigQuery Storage Write API (preferred)",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "The recommended high-throughput API for writing rows to BigQuery tables as streams or batches over gRPC, with exactly-once delivery when stream offsets are used.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/write-api",
+    "notes": ""
+  },
+  {
+    "id": "metadata.advanced.cached-results",
+    "name": "Cached results",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Reuses the stored result of an identical earlier query for roughly 24 hours instead of running it again.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/cached-results",
+    "notes": "No query cache is kept, so a repeated identical query always runs again and reports cacheHit=false; BigQuery may answer it from cached results."
+  },
+  {
+    "id": "metadata.advanced.capability",
+    "name": "|>",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "The pipe operator, which passes the result of one query step into the next so a query can be written as a left-to-right sequence of operations.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/pipe-syntax",
+    "notes": ""
+  },
+  {
     "id": "metadata.advanced.changes",
     "name": "CHANGES",
     "area": "Metadata / Advanced",
@@ -48,6 +98,26 @@
     "description": "Table function that returns the rows inserted, updated or deleted in a table during a given time range, with extra columns for the change type and change timestamp.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/time-series-functions",
     "notes": ""
+  },
+  {
+    "id": "metadata.advanced.clustered-tables-up-to-4-columns",
+    "name": "Clustered tables (up to 4 columns)",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "limited",
+    "description": "Sorts a table's storage by up to four clustering columns so queries that filter or aggregate on those columns read less data.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/clustered-tables",
+    "notes": ""
+  },
+  {
+    "id": "metadata.advanced.column-based-partitioning-date-timestamp-datetime-int64-range",
+    "name": "Column-based partitioning (DATE, TIMESTAMP, DATETIME, INT64 range)",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "limited",
+    "description": "Divides a table into partitions by the values of a DATE, TIMESTAMP or DATETIME column, or by ranges of an INT64 column, so queries can read only some partitions.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/partitioned-tables",
+    "notes": "Partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition."
   },
   {
     "id": "metadata.advanced.column-level-security-policy-tags",
@@ -80,6 +150,16 @@
     "notes": ""
   },
   {
+    "id": "metadata.advanced.destination-table-creation",
+    "name": "Destination table creation",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "Writes query results to a table you name, creating it if needed, instead of to the temporary table BigQuery uses by default.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/writing-results",
+    "notes": ""
+  },
+  {
     "id": "metadata.advanced.differential-privacy-functions",
     "name": "Differential privacy functions",
     "area": "Metadata / Advanced",
@@ -100,6 +180,16 @@
     "notes": ""
   },
   {
+    "id": "metadata.advanced.export-to-bigtable-spanner-pub-sub-alloydb",
+    "name": "Export to Bigtable, Spanner, Pub/Sub, AlloyDB",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Uses EXPORT DATA to send query results to operational destinations such as Bigtable, Spanner, Pub/Sub or AlloyDB rather than to files.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/export-statements",
+    "notes": "Only Pub/Sub export through continuous queries is served; EXPORT DATA to Bigtable (CLOUD_BIGTABLE), Spanner (CLOUD_SPANNER) and AlloyDB is not implemented."
+  },
+  {
     "id": "metadata.advanced.for-system-time-as-of-timestamp",
     "name": "FOR SYSTEM_TIME AS OF timestamp",
     "area": "Metadata / Advanced",
@@ -110,6 +200,46 @@
     "notes": ""
   },
   {
+    "id": "metadata.advanced.graph-pattern-matching",
+    "name": "Graph pattern matching",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Finds nodes and edges in a property graph that fit a pattern, using MATCH inside GRAPH_TABLE, and returns their properties as rows.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-sql-queries",
+    "notes": "Quantified (variable-length) path patterns such as -->{1,3} and path search prefixes (ANY, ANY SHORTEST, ALL SHORTEST) are not supported; only fixed-length patterns match."
+  },
+  {
+    "id": "metadata.advanced.hive-partitioned-external-tables",
+    "name": "Hive partitioned external tables",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "External tables over Cloud Storage files laid out in Hive-style key=value directories, with the partition keys exposed as queryable columns.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/hive-partitioned-queries",
+    "notes": ""
+  },
+  {
+    "id": "metadata.advanced.hyperparameter-tuning",
+    "name": "Hyperparameter tuning",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Runs several training trials with different hyperparameter values during CREATE MODEL and keeps the model that scores best on an objective.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/hp-tuning-overview",
+    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|external-production-service:VIZIER_DEFAULT, the default tuning algorithm, trains only when a Vizier-compatible optimizer endpoint is configured; without one CREATE MODEL fails."
+  },
+  {
+    "id": "metadata.advanced.incremental-refresh",
+    "name": "Incremental refresh",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Updates a materialized view by processing only the base table changes since the last refresh instead of recomputing the whole query.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/materialized-views-use",
+    "notes": "No materialized data is kept and no incremental refresh runs: refresh only advances lastRefreshTime/refreshWatermark, and max_staleness never returns stale rows."
+  },
+  {
     "id": "metadata.advanced.ingestion-time-partitioning-partitiontime-partitiondate",
     "name": "Ingestion-time partitioning (PARTITIONTIME, PARTITIONDATE)",
     "area": "Metadata / Advanced",
@@ -118,6 +248,16 @@
     "description": "Partitions a table by the time rows were loaded and exposes the _PARTITIONTIME and _PARTITIONDATE pseudo-columns for filtering.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/partitioned-tables",
     "notes": "Partition decorators (table$YYYYMMDD) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME."
+  },
+  {
+    "id": "metadata.advanced.insertid",
+    "name": "insertId",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "An optional per-row identifier sent with streaming inserts that BigQuery uses to drop duplicate rows on a best-effort basis.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/streaming-data-into-bigquery",
+    "notes": ""
   },
   {
     "id": "metadata.advanced.jobs-insert-with-copy-config",
@@ -138,6 +278,36 @@
     "description": "Starts an extract job that exports table data to Cloud Storage as CSV, JSON, Avro or Parquet files.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/Job#jobconfigurationextract",
     "notes": ""
+  },
+  {
+    "id": "metadata.advanced.jobs-insert-with-query-config",
+    "name": "jobs.insert with query config",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "Starts a query job from SQL text, with options such as destination table, priority, query parameters and write disposition.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/Job#jobconfigurationquery",
+    "notes": ""
+  },
+  {
+    "id": "metadata.advanced.lightweight-copies-copy-on-write",
+    "name": "Lightweight copies, copy-on-write",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A table clone is a lightweight, writable copy of a table whose storage is shared with the base table until the data diverges.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/table-clones-intro",
+    "notes": "quota-or-billing:a clone stores a full physical copy of the base table's rows instead of sharing storage until the data diverges, so its storage is not delta-only."
+  },
+  {
+    "id": "metadata.advanced.lightweight-copy-on-write",
+    "name": "Lightweight, copy-on-write",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A table snapshot is a read-only copy of a table at a point in time that stores only the data that has since changed in the base table.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/table-snapshots-intro",
+    "notes": "quota-or-billing:a snapshot stores a full physical copy of its rows instead of sharing unchanged storage with the base table, so its storage is not delta-only."
   },
   {
     "id": "metadata.advanced.load-jobs-via-rest-api-jobs-insert-with-load-config",
@@ -167,7 +337,17 @@
     "other": "unavailable",
     "description": "Applies the preprocessing defined in a model's TRANSFORM clause to input data and returns the resulting feature columns.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-transform",
-    "notes": "TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
+    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
+  },
+  {
+    "id": "metadata.advanced.object-tables-for-unstructured-data",
+    "name": "Object tables (for unstructured data)",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Read-only tables over unstructured objects in Cloud Storage, such as images and documents, where each row describes one object and its metadata.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/object-table-introduction",
+    "notes": "ObjectRef functions (OBJ.MAKE_REF, OBJ.FETCH_METADATA, OBJ.GET_ACCESS_URL, OBJ.GET_READ_URL) and the EXTERNAL_OBJECT_TRANSFORM table function are missing ('Function not found'), so object contents cannot be read or signed through SQL; source URIs must be gs:// with * wildcards only (no [ ] patterns) and a table lists at most 10,000 objects; metadata caching options are not served."
   },
   {
     "id": "metadata.advanced.pseudo-columns-partitiontime-partitiondate",
@@ -178,6 +358,26 @@
     "description": "Hidden columns on ingestion-time partitioned tables that hold the load time or date of each row and can be used in filters.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/querying-partitioned-tables",
     "notes": ""
+  },
+  {
+    "id": "metadata.advanced.query-historical-data-up-to-7-days",
+    "name": "Query historical data (up to 7 days)",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "Reads a table's earlier state from within the time travel window, which covers up to the past seven days.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/time-travel",
+    "notes": ""
+  },
+  {
+    "id": "metadata.advanced.range-partitioning-int64",
+    "name": "Range partitioning (INT64)",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Divides a table into partitions by ranges of an INTEGER column, defined by a start value, an end value and an interval.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/partitioned-tables",
+    "notes": "Partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition."
   },
   {
     "id": "metadata.advanced.restore-table-from-snapshot",
@@ -200,6 +400,16 @@
     "notes": ""
   },
   {
+    "id": "metadata.advanced.schema-auto-detection",
+    "name": "Schema auto-detection",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "Infers column names and data types from input data rather than requiring an explicit schema.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/schema-detect",
+    "notes": ""
+  },
+  {
     "id": "metadata.advanced.search",
     "name": "SEARCH()",
     "area": "Metadata / Advanced",
@@ -207,6 +417,16 @@
     "other": "unknown",
     "description": "Checks whether a table, row or value contains the given search terms after tokenizing it, and is typically used with search indexes.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/search_functions#search",
+    "notes": ""
+  },
+  {
+    "id": "metadata.advanced.session-user",
+    "name": "SESSION_USER()",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "Returns the email address of the user who is running the current query.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/security_functions#session_user",
     "notes": ""
   },
   {
@@ -230,6 +450,26 @@
     "notes": ""
   },
   {
+    "id": "metadata.advanced.text-analyzers-tokenizers",
+    "name": "Text analyzers (tokenizers)",
+    "area": "Metadata / Advanced",
+    "local": "available",
+    "other": "unknown",
+    "description": "Configurable tokenizers that split text into terms for search indexes and for the SEARCH and TEXT_ANALYZE functions.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/text-analysis",
+    "notes": ""
+  },
+  {
+    "id": "metadata.advanced.time-unit-partitioning-daily-hourly-monthly-yearly",
+    "name": "Time-unit partitioning (daily, hourly, monthly, yearly)",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Divides a table into partitions by the hour, day, month or year of a DATE, TIMESTAMP or DATETIME column.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/partitioned-tables",
+    "notes": "Partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition."
+  },
+  {
     "id": "metadata.advanced.vector-search",
     "name": "VECTOR_SEARCH()",
     "area": "Metadata / Advanced",
@@ -238,6 +478,16 @@
     "description": "Finds the rows in a table that are closest to each query embedding, using a distance metric and optionally a vector index.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/search_functions#vector_search",
     "notes": ""
+  },
+  {
+    "id": "metadata.advanced.write-disposition-writetruncate-writeappend-writeempty",
+    "name": "Write disposition: WRITETRUNCATE, WRITEAPPEND, WRITEEMPTY",
+    "area": "Metadata / Advanced",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A load job setting for an existing destination table: WRITE_TRUNCATE replaces its data, WRITE_APPEND adds rows and WRITE_EMPTY fails if it has data.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/Job#jobconfigurationload",
+    "notes": "WRITE_EMPTY into a non-empty destination fails with invalidQuery 'LOAD destination <dataset>.<table> is not empty' rather than BigQuery's duplicate 'Already Exists' error; WRITE_TRUNCATE_DATA is refused."
   },
   {
     "id": "metadata.enterprise.audit-logs",
@@ -280,6 +530,16 @@
     "notes": ""
   },
   {
+    "id": "metadata.enterprise.column-default-values",
+    "name": "Column DEFAULT values",
+    "area": "Metadata / Enterprise",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Lets a column declare a default expression that is used when an inserted row leaves that column out.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/default-values",
+    "notes": "A default expression outside the documented forms (for example UPPER('a')) is accepted by CREATE TABLE and tables.insert and refused only when a write uses it, where BigQuery rejects it when the column is defined."
+  },
+  {
     "id": "metadata.enterprise.column-level-security",
     "name": "Column-level security",
     "area": "Metadata / Enterprise",
@@ -307,7 +567,7 @@
     "other": "unavailable",
     "description": "Creates and trains a BigQuery ML model in a dataset from SQL, using a chosen model type, a set of options and a training query.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create",
-    "notes": "STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
+    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
   },
   {
     "id": "metadata.enterprise.data-clean-rooms",
@@ -410,6 +670,26 @@
     "notes": ""
   },
   {
+    "id": "metadata.enterprise.multi-statement-transactions",
+    "name": "Multi-statement transactions",
+    "area": "Metadata / Enterprise",
+    "local": "limited",
+    "other": "unavailable",
+    "description": "Groups several statements between BEGIN TRANSACTION and COMMIT TRANSACTION so that their changes succeed or are rolled back together.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/transactions",
+    "notes": "After a statement fails at run time inside a transaction, COMMIT TRANSACTION is refused and statements that read or write tables are refused until ROLLBACK, so a handler cannot commit the earlier changes; CALL and EXECUTE IMMEDIATE inside a transaction are refused; transaction statements inside stored procedure bodies are refused."
+  },
+  {
+    "id": "metadata.enterprise.parameterized-types-numeric-p-s",
+    "name": "Parameterized types (NUMERIC(P S))",
+    "area": "Metadata / Enterprise",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Lets a STRING, BYTES, NUMERIC or BIGNUMERIC column declare a maximum length, or a precision and scale such as NUMERIC(10, 2).",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-types#parameterized_decimal_type",
+    "notes": "DDL refuses parameterized types inside ARRAY or STRUCT column types ('Parameterized types inside ARRAY or STRUCT column schemas') and refuses repeated NUMERIC/BIGNUMERIC columns such as ARRAY<NUMERIC>, which BigQuery accepts; such schemas can only be declared through tables.insert."
+  },
+  {
     "id": "metadata.enterprise.remote-functions",
     "name": "Remote functions",
     "area": "Metadata / Enterprise",
@@ -458,6 +738,16 @@
     "description": "Creates an index over the text in table columns so SEARCH queries can find terms without scanning the whole table.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/search-intro",
     "notes": ""
+  },
+  {
+    "id": "metadata.enterprise.session-variables",
+    "name": "Session variables (@@)",
+    "area": "Metadata / Enterprise",
+    "local": "limited",
+    "other": "unknown",
+    "description": "System variables written with a leading @@ that read or set properties of the current session, such as the time zone or query label.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/sessions-intro",
+    "notes": "Only @@project_id, @@row_count, @@error.message and @@error.statement_text are readable; other system variables such as @@time_zone, @@dataset_id, @@dataset_project_id, @@current_job_id, @@last_job_id, @@script.*, @@session_id and @@query_label are not available; assigning any system variable with SET is refused; system variables are declared to the analyzer only for multi-statement scripts, so a single-statement query that reads @@project_id is not served."
   },
   {
     "id": "metadata.enterprise.stackdriver-integration",
@@ -560,6 +850,16 @@
     "notes": ""
   },
   {
+    "id": "metadata.information-schema.capacity-commitments-by-project",
+    "name": "CAPACITY_COMMITMENTS_BY_PROJECT",
+    "area": "Metadata / INFORMATION_SCHEMA",
+    "local": "available",
+    "other": "unknown",
+    "description": "Lists the slot capacity commitments purchased in a project, with each commitment's plan, slot count and state.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-capacity-commitments",
+    "notes": ""
+  },
+  {
     "id": "metadata.information-schema.column-field-paths",
     "name": "COLUMN_FIELD_PATHS",
     "area": "Metadata / INFORMATION_SCHEMA",
@@ -568,6 +868,16 @@
     "description": "Lists every field nested inside STRUCT (RECORD) columns of the tables in a dataset, with its full field path, data type and description.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-intro",
     "notes": ""
+  },
+  {
+    "id": "metadata.information-schema.columns",
+    "name": "COLUMNS",
+    "area": "Metadata / INFORMATION_SCHEMA",
+    "local": "limited",
+    "other": "available",
+    "description": "Lists the columns of the tables and views in a dataset, with name, position, data type, nullability and partitioning or clustering details.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-columns",
+    "notes": "A dataset or region that holds an external table (or a table with no canonical local schema) refuses the whole view instead of listing its columns."
   },
   {
     "id": "metadata.information-schema.constraint-column-usage",
@@ -660,6 +970,16 @@
     "notes": ""
   },
   {
+    "id": "metadata.information-schema.partitions",
+    "name": "PARTITIONS",
+    "area": "Metadata / INFORMATION_SCHEMA",
+    "local": "limited",
+    "other": "unavailable",
+    "description": "Lists the partitions of the tables in a dataset, with each partition's row count, storage size and last modification time.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-partitions",
+    "notes": "last_modified_time is refused for a dataset holding an ingestion-time partitioned table or a table whose retained change history does not cover every row, and storage_tier is refused in that case for tables older than 90 days; total_billable_bytes is refused when the dataset uses PHYSICAL storage billing; __UNPARTITIONED__ is never split into ACTIVE and LONG_TERM rows; a table without local storage refuses the whole view."
+  },
+  {
     "id": "metadata.information-schema.reservation-changes",
     "name": "RESERVATION_CHANGES",
     "area": "Metadata / INFORMATION_SCHEMA",
@@ -717,6 +1037,16 @@
     "other": "available",
     "description": "Lists the datasets in a project, with each dataset's location and creation and modification times.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-intro",
+    "notes": ""
+  },
+  {
+    "id": "metadata.information-schema.schemata-options",
+    "name": "SCHEMATA_OPTIONS",
+    "area": "Metadata / INFORMATION_SCHEMA",
+    "local": "available",
+    "other": "unknown",
+    "description": "Lists the options set on each dataset, such as its default table expiration, description and labels.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-datasets-schemata-options",
     "notes": ""
   },
   {
@@ -790,6 +1120,16 @@
     "notes": ""
   },
   {
+    "id": "metadata.information-schema.table-options",
+    "name": "TABLE_OPTIONS",
+    "area": "Metadata / INFORMATION_SCHEMA",
+    "local": "limited",
+    "other": "available",
+    "description": "Lists the options set on the tables and views in a dataset as name and value pairs, such as expiration, description and labels.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-table-options",
+    "notes": "A dataset or region holding an external table refuses the whole view; external-table source options (format, uris and similar) are never listed."
+  },
+  {
     "id": "metadata.information-schema.table-snapshots",
     "name": "TABLE_SNAPSHOTS",
     "area": "Metadata / INFORMATION_SCHEMA",
@@ -808,6 +1148,16 @@
     "description": "Reports current storage use of tables and materialized views in a project, including live, long-term and time travel bytes.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-intro",
     "notes": ""
+  },
+  {
+    "id": "metadata.information-schema.tables",
+    "name": "TABLES",
+    "area": "Metadata / INFORMATION_SCHEMA",
+    "local": "limited",
+    "other": "available",
+    "description": "Lists the tables and views in a dataset, with each one's type, creation time and DDL statement.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-tables",
+    "notes": "The ddl column is refused (the query fails) for a dataset or region holding an external table, because external-table DDL is not generated."
   },
   {
     "id": "metadata.information-schema.vector-index-columns",
@@ -838,6 +1188,166 @@
     "description": "Lists the views in a dataset, with each view's name and its defining SQL query.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/information-schema-intro",
     "notes": ""
+  },
+  {
+    "id": "metadata.schema.nullable-mode",
+    "name": "NULLABLE",
+    "area": "Metadata / Schema",
+    "local": "available",
+    "other": "unknown",
+    "description": "The default column mode, which allows NULL values in the field.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-types",
+    "notes": ""
+  },
+  {
+    "id": "metadata.schema.record",
+    "name": "RECORD (schema API)",
+    "area": "Metadata / Schema",
+    "local": "available",
+    "other": "unknown",
+    "description": "A column type in the table schema API that holds nested fields, equivalent to STRUCT in SQL.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-types",
+    "notes": ""
+  },
+  {
+    "id": "metadata.schema.repeated-mode",
+    "name": "REPEATED",
+    "area": "Metadata / Schema",
+    "local": "available",
+    "other": "unknown",
+    "description": "A column mode in which the field holds an array of zero or more values of its type.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-types",
+    "notes": ""
+  },
+  {
+    "id": "metadata.schema.required-mode",
+    "name": "REQUIRED",
+    "area": "Metadata / Schema",
+    "local": "available",
+    "other": "unknown",
+    "description": "A column mode that requires every row to have a non-NULL value for the field.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-types",
+    "notes": ""
+  },
+  {
+    "id": "rest_v2.datasets.datasets-delete",
+    "name": "datasets.delete",
+    "area": "REST API / Datasets",
+    "local": "available",
+    "other": "available",
+    "description": "Deletes a dataset by its ID; the dataset must be empty unless the request asks to delete its contents as well.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/datasets/delete",
+    "notes": ""
+  },
+  {
+    "id": "rest_v2.datasets.datasets-get",
+    "name": "datasets.get",
+    "area": "REST API / Datasets",
+    "local": "available",
+    "other": "available",
+    "description": "Returns a dataset's metadata, including its location, labels, default expiration settings and access controls.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/datasets/get",
+    "notes": ""
+  },
+  {
+    "id": "rest_v2.datasets.datasets-insert",
+    "name": "datasets.insert",
+    "area": "REST API / Datasets",
+    "local": "limited",
+    "other": "available",
+    "description": "Creates a new, empty dataset in a project, with its location, labels and access controls.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/datasets/insert",
+    "notes": "isCaseInsensitive, defaultRoundingMode, externalDatasetReference and linkedDatasetSource are ignored rather than stored."
+  },
+  {
+    "id": "rest_v2.datasets.datasets-list",
+    "name": "datasets.list",
+    "area": "REST API / Datasets",
+    "local": "limited",
+    "other": "available",
+    "description": "Lists the datasets in a project that the caller has read access to, optionally filtered by label.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/datasets/list",
+    "notes": "maxResults and pageToken are ignored, so every dataset comes back in one page with no nextPageToken; the label filter parameter is ignored."
+  },
+  {
+    "id": "rest_v2.datasets.datasets-patch",
+    "name": "datasets.patch",
+    "area": "REST API / Datasets",
+    "local": "limited",
+    "other": "available",
+    "description": "Updates only the dataset fields supplied in the request and leaves the other fields unchanged.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/datasets/patch",
+    "notes": "isCaseInsensitive and defaultRoundingMode are ignored; If-Match etag preconditions are not checked."
+  },
+  {
+    "id": "rest_v2.datasets.datasets-update",
+    "name": "datasets.update",
+    "area": "REST API / Datasets",
+    "local": "limited",
+    "other": "available",
+    "description": "Replaces the entire dataset resource with the one supplied in the request.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/datasets/update",
+    "notes": "PUT has patch semantics: fields omitted from the body keep their stored values instead of being cleared; isCaseInsensitive and defaultRoundingMode are ignored; If-Match etag preconditions are not checked."
+  },
+  {
+    "id": "rest_v2.jobs.jobs-cancel",
+    "name": "jobs.cancel",
+    "area": "REST API / Jobs",
+    "local": "available",
+    "other": "available",
+    "description": "Requests that a running job be cancelled; the call returns at once and the caller polls the job to see whether cancellation completed.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/jobs/cancel",
+    "notes": ""
+  },
+  {
+    "id": "rest_v2.jobs.jobs-get",
+    "name": "jobs.get",
+    "area": "REST API / Jobs",
+    "local": "available",
+    "other": "available",
+    "description": "Returns information about one job, including its configuration, current status and statistics.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/jobs/get",
+    "notes": ""
+  },
+  {
+    "id": "rest_v2.jobs.jobs-getqueryresults",
+    "name": "jobs.getQueryResults",
+    "area": "REST API / Jobs",
+    "local": "limited",
+    "other": "available",
+    "description": "Returns the results of a query job one page at a time, optionally waiting for the job to finish.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/jobs/getQueryResults",
+    "notes": "timeoutMs is ignored, so the call never waits for a running job; a malformed pageToken is ignored rather than refused."
+  },
+  {
+    "id": "rest_v2.jobs.jobs-insert",
+    "name": "jobs.insert",
+    "area": "REST API / Jobs",
+    "local": "limited",
+    "other": "limited",
+    "description": "Starts a new asynchronous job of one of four kinds: query, load, copy or extract.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/jobs/insert",
+    "notes": "Legacy SQL is refused and a query that omits useLegacySql runs as GoogleSQL, where the REST API defaults to legacy SQL; cross-project defaultDataset is refused and cross-project destinationTable is refused; load jobs refuse options outside the implemented set (for example rangePartitioning, destinationEncryptionConfiguration, referenceFileSchemaUri) and copy jobs refuse destinationEncryptionConfiguration; the job runs before the call returns, so the response already reports state DONE."
+  },
+  {
+    "id": "rest_v2.jobs.jobs-list",
+    "name": "jobs.list",
+    "area": "REST API / Jobs",
+    "local": "limited",
+    "other": "available",
+    "description": "Lists the jobs started in a project, most recent first, with their state and basic information.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/jobs/list",
+    "notes": "Projection is ignored, so every listed job carries its full configuration; minCreationTime and maxCreationTime are ignored; only one stateFilter value is applied; a malformed pageToken restarts at the first page instead of being refused."
+  },
+  {
+    "id": "rest_v2.jobs.jobs-query",
+    "name": "jobs.query",
+    "area": "REST API / Jobs",
+    "local": "limited",
+    "other": "available",
+    "description": "Runs a SQL query synchronously and returns the results directly if it finishes within the timeout, or a job reference otherwise.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/jobs/query",
+    "notes": "Legacy SQL is refused and a query that omits useLegacySql runs as GoogleSQL, where the REST API defaults to legacy SQL; cross-project defaultDataset is refused; preserveNulls, destinationEncryptionConfiguration and other QueryRequest fields outside the admitted set are refused; timeoutMs is validated but the call always waits for the query, so jobComplete=false is never returned; jobTimeoutMs, maxSlots and reservation are recorded but not enforced."
   },
   {
     "id": "rest_v2.models.models-delete",
@@ -880,6 +1390,106 @@
     "notes": ""
   },
   {
+    "id": "rest_v2.projects.projects-getserviceaccount",
+    "name": "projects.getServiceAccount",
+    "area": "REST API / Projects",
+    "local": "limited",
+    "other": "available",
+    "description": "Returns the email address of the service account that BigQuery uses for a project when it works with Cloud KMS keys.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/projects/getServiceAccount",
+    "notes": "The email is bq-emulator@{projectId}.iam.gserviceaccount.com instead of the production encryption service account bq-{projectNumber}@bigquery-encryption.iam.gserviceaccount.com|managed-identity:no Google-managed service account stands behind the address, so it cannot be granted access to a Cloud KMS key."
+  },
+  {
+    "id": "rest_v2.projects.projects-list",
+    "name": "projects.list",
+    "area": "REST API / Projects",
+    "local": "limited",
+    "other": "available",
+    "description": "Lists the projects the caller has been granted access to, with their IDs and friendly names.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/projects/list",
+    "notes": "maxResults and pageToken are ignored and no nextPageToken is returned; numericId is published as a JSON number rather than a uint64 string|managed-authorization:every known project is listed whatever roles the caller holds on it."
+  },
+  {
+    "id": "rest_v2.routines.routines-delete",
+    "name": "routines.delete",
+    "area": "REST API / Routines",
+    "local": "limited",
+    "other": "unavailable",
+    "description": "Deletes a routine, which is a function or stored procedure, by its ID from a dataset.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/routines/delete",
+    "notes": "managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
+  },
+  {
+    "id": "rest_v2.routines.routines-get",
+    "name": "routines.get",
+    "area": "REST API / Routines",
+    "local": "limited",
+    "other": "unavailable",
+    "description": "Returns a routine's definition, including its arguments, return type, language and body.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/routines/get",
+    "notes": "managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
+  },
+  {
+    "id": "rest_v2.routines.routines-insert",
+    "name": "routines.insert",
+    "area": "REST API / Routines",
+    "local": "limited",
+    "other": "available",
+    "description": "Creates a new routine, either a function or a stored procedure, in a dataset.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/routines/insert",
+    "notes": "edition:JavaScript routines: full edition only (the lite edition answers 400 invalidQuery); SQL routines, procedures and table functions work in both editions.|languages other than SQL and JavaScript (for example PYTHON) are refused; JavaScript routines with importedLibraries are refused|managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
+  },
+  {
+    "id": "rest_v2.routines.routines-list",
+    "name": "routines.list",
+    "area": "REST API / Routines",
+    "local": "limited",
+    "other": "unavailable",
+    "description": "Lists the routines, which are functions and stored procedures, in a dataset that the caller has read access to.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/routines/list",
+    "notes": "readMask accepts only routineReference, routineType, language, creationTime, lastModifiedTime, etag, arguments, returnType, returnTableType, definitionBody, description and *; other masks are refused|managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
+  },
+  {
+    "id": "rest_v2.routines.routines-update",
+    "name": "routines.update",
+    "area": "REST API / Routines",
+    "local": "limited",
+    "other": "unavailable",
+    "description": "Replaces the entire routine resource with the definition supplied in the request.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/routines/update",
+    "notes": "edition:JavaScript routines: full edition only (the lite edition answers 400 invalidQuery); SQL routines, procedures and table functions work in both editions.|languages other than SQL and JavaScript (for example PYTHON) are refused; JavaScript routines with importedLibraries are refused|managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
+  },
+  {
+    "id": "rest_v2.row-access-policies.bigquery-rowaccesspolicies-delete",
+    "name": "bigquery.rowAccessPolicies.delete",
+    "area": "REST API / Row access policies",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Deletes a row access policy from a table, which removes its row filter for the principals it covered.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/rowAccessPolicies/delete",
+    "notes": "The force parameter is ignored: deleting the table's last policy succeeds without force=true, which widens access where production requires force."
+  },
+  {
+    "id": "rest_v2.row-access-policies.bigquery-rowaccesspolicies-get",
+    "name": "bigquery.rowAccessPolicies.get",
+    "area": "REST API / Row access policies",
+    "local": "available",
+    "other": "unknown",
+    "description": "Returns the definition of one row access policy, including its filter expression and the principals it applies to.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/rowAccessPolicies/get",
+    "notes": ""
+  },
+  {
+    "id": "rest_v2.row-access-policies.bigquery-rowaccesspolicies-update",
+    "name": "bigquery.rowAccessPolicies.update",
+    "area": "REST API / Row access policies",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Replaces the definition of an existing row access policy, such as its filter expression or the principals it applies to.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/rowAccessPolicies/update",
+    "notes": "A body that omits filterPredicate or grantees keeps the stored values instead of being refused, although filterPredicate is required."
+  },
+  {
     "id": "rest_v2.rowaccesspolicies.rowaccesspolicies-getiampolicy",
     "name": "rowAccessPolicies.getIamPolicy",
     "area": "REST API / Row access policies",
@@ -910,6 +1520,46 @@
     "notes": ""
   },
   {
+    "id": "rest_v2.tabledata.tabledata-insertall",
+    "name": "tabledata.insertAll",
+    "area": "REST API / Tabledata",
+    "local": "limited",
+    "other": "available",
+    "description": "Streams one or more rows into a table without a load job, with optional per-row insert IDs for best-effort de-duplication.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tabledata/insertAll",
+    "notes": "templateSuffix is ignored, so rows go to the named table and no table is created from the template; partition decorators (table$YYYYMMDD) are refused; there is no streaming buffer: tables.get reports no streamingBuffer, and UPDATE, DELETE and MERGE can change rows streamed moments earlier."
+  },
+  {
+    "id": "rest_v2.tabledata.tabledata-list",
+    "name": "tabledata.list",
+    "area": "REST API / Tabledata",
+    "local": "limited",
+    "other": "available",
+    "description": "Reads rows from a table one page at a time, optionally starting at a row offset and selecting some of the fields.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tabledata/list",
+    "notes": "A malformed pageToken silently restarts at the first row instead of being refused; the pageToken is only a row offset over an unordered scan, so rows written between pages shift page boundaries."
+  },
+  {
+    "id": "rest_v2.tables.tables-delete",
+    "name": "tables.delete",
+    "area": "REST API / Tables",
+    "local": "available",
+    "other": "available",
+    "description": "Deletes a table, along with any data it holds, from a dataset.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tables/delete",
+    "notes": ""
+  },
+  {
+    "id": "rest_v2.tables.tables-get",
+    "name": "tables.get",
+    "area": "REST API / Tables",
+    "local": "limited",
+    "other": "available",
+    "description": "Returns a table's metadata, such as its schema, size, partitioning and expiration, but not the rows themselves.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tables/get",
+    "notes": "The selectedFields and view (TableMetadataView) parameters are ignored, so the full resource is always returned; no streamingBuffer is reported for rows streamed by tabledata.insertAll."
+  },
+  {
     "id": "rest_v2.tables.tables-getiampolicy",
     "name": "tables.getIamPolicy",
     "area": "REST API / Tables",
@@ -918,6 +1568,36 @@
     "description": "Returns the IAM policy attached to a table or view, listing which principals hold which roles.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tables/getIamPolicy",
     "notes": ""
+  },
+  {
+    "id": "rest_v2.tables.tables-insert",
+    "name": "tables.insert",
+    "area": "REST API / Tables",
+    "local": "limited",
+    "other": "available",
+    "description": "Creates a new, empty table in a dataset, with its schema, partitioning and clustering settings.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tables/insert",
+    "notes": "tableConstraints (primary and foreign keys) and biglakeConfiguration in the request body are ignored; keys can be declared only through DDL."
+  },
+  {
+    "id": "rest_v2.tables.tables-list",
+    "name": "tables.list",
+    "area": "REST API / Tables",
+    "local": "limited",
+    "other": "available",
+    "description": "Lists the tables and views in a dataset that the caller has read access to, with each one's ID and type.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tables/list",
+    "notes": "List entries omit timePartitioning, rangePartitioning, clustering and expirationTime, which production tables.list returns for each table."
+  },
+  {
+    "id": "rest_v2.tables.tables-patch",
+    "name": "tables.patch",
+    "area": "REST API / Tables",
+    "local": "limited",
+    "other": "available",
+    "description": "Updates only the table fields supplied in the request, such as its description, schema additions or expiration time.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tables/patch",
+    "notes": "Relaxing a column from REQUIRED to NULLABLE is refused (schema updates may only append fields); the autodetect_schema parameter is ignored; If-Match etag preconditions are not checked."
   },
   {
     "id": "rest_v2.tables.tables-setiampolicy",
@@ -940,6 +1620,46 @@
     "notes": ""
   },
   {
+    "id": "rest_v2.tables.tables-update",
+    "name": "tables.update",
+    "area": "REST API / Tables",
+    "local": "limited",
+    "other": "available",
+    "description": "Replaces the entire table resource with the one supplied in the request.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tables/update",
+    "notes": "PUT has patch semantics: fields omitted from the body keep their stored values instead of being replaced; relaxing REQUIRED to NULLABLE is refused; If-Match etag preconditions are not checked."
+  },
+  {
+    "id": "rest_v2.upload.upload-multipart",
+    "name": "upload.multipart",
+    "area": "REST API / Upload",
+    "local": "limited",
+    "other": "available",
+    "description": "Uploads a file together with its metadata in a single multipart request, which suits small files loaded directly into a table.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/loading-data-local",
+    "notes": "A load configuration without sourceFormat is read as NEWLINE_DELIMITED_JSON, where production defaults to CSV; the load runs before the call returns."
+  },
+  {
+    "id": "rest_v2.upload.upload-resumable-content",
+    "name": "upload.resumable (content)",
+    "area": "REST API / Upload",
+    "local": "limited",
+    "other": "available",
+    "description": "Sends the file content in one or more requests to the session address of a resumable upload so an interrupted upload can continue.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/loading-data-local",
+    "notes": "A load configuration without sourceFormat is read as NEWLINE_DELIMITED_JSON, where production defaults to CSV; upload sessions are held in memory and are lost when the emulator restarts."
+  },
+  {
+    "id": "rest_v2.upload.upload-resumable-init",
+    "name": "upload.resumable (init)",
+    "area": "REST API / Upload",
+    "local": "limited",
+    "other": "available",
+    "description": "Starts a resumable upload by sending the job metadata, and returns the session address to which the file content is then sent.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/loading-data-local",
+    "notes": "A load configuration without sourceFormat is read as NEWLINE_DELIMITED_JSON, where production defaults to CSV; upload sessions are held in memory and are lost when the emulator restarts."
+  },
+  {
     "id": "sql.ctes-common-table-expressions.non-recursive-ctes",
     "name": "Non-recursive CTEs",
     "area": "SQL / CTEs (Common Table Expressions)",
@@ -950,6 +1670,26 @@
     "notes": ""
   },
   {
+    "id": "sql.ctes-common-table-expressions.with-cte-as",
+    "name": "WITH cte AS (...)",
+    "area": "SQL / CTEs (Common Table Expressions)",
+    "local": "available",
+    "other": "unknown",
+    "description": "Defines one named common table expression in a WITH clause so the query that follows can read its result by that name.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#with_clause",
+    "notes": ""
+  },
+  {
+    "id": "sql.ctes-common-table-expressions.with-cte1-as-cte2-as",
+    "name": "WITH cte1 AS (...), cte2 AS (...)",
+    "area": "SQL / CTEs (Common Table Expressions)",
+    "local": "available",
+    "other": "unknown",
+    "description": "Defines several comma-separated common table expressions in one WITH clause; each can use the ones declared before it, and the main query can use all of them.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#with_clause",
+    "notes": ""
+  },
+  {
     "id": "sql.ctes-common-table-expressions.with-recursive",
     "name": "WITH RECURSIVE",
     "area": "SQL / CTEs (Common Table Expressions)",
@@ -957,6 +1697,116 @@
     "other": "unknown",
     "description": "Adds the RECURSIVE keyword to a WITH clause so a CTE can refer to itself, repeating its recursive step on the previous rows until no new rows are produced.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax",
+    "notes": ""
+  },
+  {
+    "id": "sql.clauses.group-by",
+    "name": "GROUP BY",
+    "area": "SQL / Clauses",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Groups rows that share the same values in the listed columns or expressions into one output row per group, so aggregate functions can summarize each group.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#group_by_clause",
+    "notes": ""
+  },
+  {
+    "id": "sql.clauses.group-by-cube",
+    "name": "GROUP BY CUBE",
+    "area": "SQL / Clauses",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Produces aggregated rows for every combination of the listed grouping columns, including each subset and the grand total, which suits cross-tabulation reports.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#group_by_cube",
+    "notes": "grouping-set keys are limited to INT64, STRING, BOOL, BYTES and DATE (FLOAT64, NUMERIC, TIMESTAMP and other key types are refused); a computed key that can raise an error (k + 1) is refused."
+  },
+  {
+    "id": "sql.clauses.group-by-grouping-sets",
+    "name": "GROUP BY GROUPING SETS",
+    "area": "SQL / Clauses",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Computes aggregates for each explicitly listed set of grouping columns in a single query, instead of combining several GROUP BY queries with UNION.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#group_by_grouping_sets",
+    "notes": "grouping-set keys are limited to INT64, STRING, BOOL, BYTES and DATE (FLOAT64, NUMERIC, TIMESTAMP and other key types are refused); a computed key that can raise an error (k + 1) is refused."
+  },
+  {
+    "id": "sql.clauses.group-by-rollup",
+    "name": "GROUP BY ROLLUP",
+    "area": "SQL / Clauses",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Produces aggregated rows for each leading prefix of the listed grouping columns, from the most detailed level up to a grand total, giving subtotals along a hierarchy.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#group_by_rollup",
+    "notes": "grouping-set keys are limited to INT64, STRING, BOOL, BYTES and DATE (FLOAT64, NUMERIC, TIMESTAMP and other key types are refused); a computed key that can raise an error (k + 1) is refused."
+  },
+  {
+    "id": "sql.clauses.having",
+    "name": "HAVING",
+    "area": "SQL / Clauses",
+    "local": "available",
+    "other": "unknown",
+    "description": "Filters groups after GROUP BY or aggregation, keeping only groups whose condition is TRUE; the condition can use aggregate functions and SELECT aliases.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#having_clause",
+    "notes": ""
+  },
+  {
+    "id": "sql.clauses.ignore-nulls-aggregate",
+    "name": "IGNORE NULLS (aggregate)",
+    "area": "SQL / Clauses",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Modifier inside an aggregate function call that leaves NULL values out of the function's input, for example ARRAY_AGG(x IGNORE NULLS).",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/aggregate_functions#array_agg",
+    "notes": "APPROX_QUANTILES(... IGNORE NULLS) is refused (\"Function metadata or NULL modifiers unsupported\"); among aggregates only ARRAY_AGG accepts an explicit modifier."
+  },
+  {
+    "id": "sql.clauses.limit-offset",
+    "name": "LIMIT / OFFSET",
+    "area": "SQL / Clauses",
+    "local": "available",
+    "other": "unknown",
+    "description": "LIMIT caps how many rows a query returns and OFFSET skips a number of rows first; which rows come back is only predictable when an ORDER BY is applied.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#limit_and_offset_clause",
+    "notes": ""
+  },
+  {
+    "id": "sql.clauses.nulls-first-nulls-last",
+    "name": "NULLS FIRST / NULLS LAST",
+    "area": "SQL / Clauses",
+    "local": "available",
+    "other": "unknown",
+    "description": "Sort modifiers that place NULL values before or after all other values in an ORDER BY, overriding the default where NULL counts as the smallest value.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#order_by_clause",
+    "notes": ""
+  },
+  {
+    "id": "sql.clauses.order-by",
+    "name": "ORDER BY",
+    "area": "SQL / Clauses",
+    "local": "available",
+    "other": "unknown",
+    "description": "Sorts result rows by one or more expressions, each ascending or descending; in a graph query the ORDER BY statement only takes effect when immediately followed by LIMIT or OFFSET.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#order_by_clause",
+    "notes": ""
+  },
+  {
+    "id": "sql.clauses.respect-nulls",
+    "name": "RESPECT NULLS",
+    "area": "SQL / Clauses",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Modifier on a function call that lets NULL values take part in the function's input and result instead of being skipped.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/aggregate_functions#array_agg",
+    "notes": "APPROX_QUANTILES(... RESPECT NULLS) is refused (\"Function metadata or NULL modifiers unsupported\")."
+  },
+  {
+    "id": "sql.clauses.where",
+    "name": "WHERE",
+    "area": "SQL / Clauses",
+    "local": "available",
+    "other": "unknown",
+    "description": "Filters the rows produced by FROM, keeping only rows where the condition is TRUE and discarding rows where it is FALSE or NULL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#where_clause",
     "notes": ""
   },
   {
@@ -1250,6 +2100,16 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.alter-table",
+    "name": "ALTER TABLE",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Modifies an existing table, for example by setting options, adding or dropping columns, renaming it or changing its constraints.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": "ADD COLUMN of nested or repeated JSON/GEOGRAPHY, repeated NUMERIC/BIGNUMERIC, INTERVAL or parameterized types inside ARRAY/STRUCT is refused; RENAME COLUMN, SET OPTIONS and ALTER COLUMN cannot be combined with other actions in one statement."
+  },
+  {
     "id": "sql.ddl.alter-table-add-column",
     "name": "ALTER TABLE ADD COLUMN",
     "area": "SQL / DDL",
@@ -1258,6 +2118,16 @@
     "description": "Adds one or more new columns to an existing table schema; existing rows get NULL, or an empty array for repeated columns, in the new column.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#alter_table_add_column_statement",
     "notes": ""
+  },
+  {
+    "id": "sql.ddl.alter-table-add-column-drop-column",
+    "name": "ALTER TABLE ADD COLUMN, DROP COLUMN",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Covers the ALTER TABLE forms that add new columns to a table schema and remove existing columns from it.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": "ADD COLUMN of nested or repeated JSON/GEOGRAPHY, repeated NUMERIC/BIGNUMERIC, INTERVAL or parameterized types inside ARRAY/STRUCT is refused."
   },
   {
     "id": "sql.ddl.alter-table-add-foreign-key",
@@ -1470,6 +2340,16 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.biglake-external-tables",
+    "name": "BigLake external tables",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Tables over data in object storage such as Cloud Storage, read through a connection so that users need no direct access to the underlying objects.",
+    "docs": "https://cloud.google.com/bigquery/docs/biglake-intro",
+    "notes": "Metadata caching options (max_staleness, metadata_cache_mode) are refused; ICEBERG and DELTA_LAKE formats and s3:// / azure:// URIs are refused|managed-identity:the connection's service account is not used to authorize object reads."
+  },
+  {
     "id": "sql.ddl.booster-type",
     "name": "BOOSTER_TYPE",
     "area": "SQL / DDL",
@@ -1598,6 +2478,16 @@
     "description": "Defines one column of a table: its name and schema (a simple type, STRUCT or ARRAY), with optional key, default, NOT NULL and option clauses.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#column_name_and_column_schema",
     "notes": ""
+  },
+  {
+    "id": "sql.ddl.column-definitions-with-types-constraints-not-null-default",
+    "name": "Column definitions with types, constraints (NOT NULL, DEFAULT)",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Lists the columns of a new table, each with a data type and optional NOT NULL, DEFAULT, key and column option clauses.",
+    "docs": "https://cloud.google.com/bigquery/docs/default-values",
+    "notes": "INTERVAL columns, nested or repeated JSON and GEOGRAPHY columns, and repeated NUMERIC/BIGNUMERIC columns are refused; NOT NULL on nested STRUCT fields is refused; parameterized types inside ARRAY or STRUCT are refused."
   },
   {
     "id": "sql.ddl.column-option-list",
@@ -1750,6 +2640,36 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.create-function-if-not-exists",
+    "name": "CREATE FUNCTION IF NOT EXISTS",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Creates a user-defined function only if no function with that name exists, and otherwise leaves the existing one in place without an error.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.create-function-js-udf",
+    "name": "CREATE FUNCTION (JS UDF)",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "available",
+    "description": "Creates a user-defined function whose body is JavaScript code given as a string, with a required return type and an optional determinism hint.",
+    "docs": "https://cloud.google.com/bigquery/docs/user-defined-functions",
+    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|OPTIONS(library=...) and importedLibraries from Cloud Storage are refused (library_unavailable); NUMERIC and BIGNUMERIC inside ARRAY or STRUCT argument/return types are refused; only the description option is accepted."
+  },
+  {
+    "id": "sql.ddl.create-function-sql-udf",
+    "name": "CREATE FUNCTION (SQL UDF)",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "available",
+    "description": "Creates a user-defined function whose body is a SQL expression; the return type can be inferred and parameters can use ANY TYPE.",
+    "docs": "https://cloud.google.com/bigquery/docs/user-defined-functions",
+    "notes": "Fixed argument and return types are limited to INT64, FLOAT64, BOOL, STRING, BYTES, DATE, NUMERIC, BIGNUMERIC and ARRAY/STRUCT of them, so TIMESTAMP, DATETIME, TIME, JSON, GEOGRAPHY, INTERVAL and RANGE declarations are refused."
+  },
+  {
     "id": "sql.ddl.create-materialized-view",
     "name": "CREATE MATERIALIZED VIEW",
     "area": "SQL / DDL",
@@ -1787,7 +2707,7 @@
     "other": "unavailable",
     "description": "Creates and trains a BigQuery ML model from a SQL query, choosing among regression, classification, clustering, forecasting, imported and remote model types.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create",
-    "notes": "STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
+    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
   },
   {
     "id": "sql.ddl.create-model-if-not-exists",
@@ -1810,6 +2730,16 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.create-or-replace-function",
+    "name": "CREATE OR REPLACE FUNCTION",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Creates a user-defined function, replacing any function with the same name that already exists.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": ""
+  },
+  {
     "id": "sql.ddl.create-or-replace-materialized-view",
     "name": "CREATE OR REPLACE MATERIALIZED VIEW",
     "area": "SQL / DDL",
@@ -1827,6 +2757,36 @@
     "other": "unknown",
     "description": "Creates and trains a model, replacing an existing model with the same name in the dataset.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#create_or_replace_model",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.create-or-replace-procedure",
+    "name": "CREATE OR REPLACE PROCEDURE",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Creates a stored procedure, replacing any procedure with the same name that already exists.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.create-or-replace-table",
+    "name": "CREATE OR REPLACE TABLE",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Creates a table, replacing any table with the same name; it cannot turn an existing table into one with a different kind of partitioning.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.create-or-replace-view",
+    "name": "CREATE OR REPLACE VIEW",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Creates a view, replacing any view with the same name that already exists.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
     "notes": ""
   },
   {
@@ -1910,6 +2870,16 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.create-table-as-select",
+    "name": "CREATE TABLE AS SELECT",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Creates a table from the result of a query, taking column names and types from the query unless a column list is given.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": "Also INTERVAL, nested or repeated GEOGRAPHY and repeated NUMERIC/BIGNUMERIC)."
+  },
+  {
     "id": "sql.ddl.create-table-clone",
     "name": "CREATE TABLE CLONE",
     "area": "SQL / DDL",
@@ -1947,6 +2917,16 @@
     "other": "available",
     "description": "Creates a table function, also called a table-valued function, that takes parameters and returns a table produced by a SQL query.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#create_table_function_statement",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.create-table-if-not-exists",
+    "name": "CREATE TABLE IF NOT EXISTS",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Creates a table only if no table with that name exists, and otherwise leaves the existing table untouched without an error.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
     "notes": ""
   },
   {
@@ -2007,6 +2987,16 @@
     "other": "unknown",
     "description": "Creates a view, a saved query that runs when the view is queried, with optional column names and options.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#create_view_statement",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.create-view-if-not-exists",
+    "name": "CREATE VIEW IF NOT EXISTS",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Creates a view only if no view or other table resource with that name exists, and otherwise does nothing.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
     "notes": ""
   },
   {
@@ -2170,6 +3160,16 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.drop-function-drop-procedure",
+    "name": "DROP FUNCTION, DROP PROCEDURE",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Covers the statements that delete a persistent function or a stored procedure by name, each optionally guarded by IF EXISTS.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": ""
+  },
+  {
     "id": "sql.ddl.drop-materialized-view",
     "name": "DROP MATERIALIZED VIEW",
     "area": "SQL / DDL",
@@ -2270,6 +3270,26 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.drop-table-drop-table-if-exists",
+    "name": "DROP TABLE, DROP TABLE IF EXISTS",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Covers deleting a table, plus the IF EXISTS form that does nothing instead of failing when the table is absent.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.drop-table-if-exists",
+    "name": "DROP TABLE IF EXISTS",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Deletes a table if it exists; when no table has that name the statement has no effect and returns no error.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": ""
+  },
+  {
     "id": "sql.ddl.drop-vector-index",
     "name": "DROP VECTOR INDEX",
     "area": "SQL / DDL",
@@ -2287,6 +3307,16 @@
     "other": "unknown",
     "description": "Deletes a view from a dataset, identified by its name.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#drop_view_statement",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.drop-view-drop-view-if-exists",
+    "name": "DROP VIEW, DROP VIEW IF EXISTS",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Covers deleting a view, plus the IF EXISTS form that does nothing instead of failing when the view is absent.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
     "notes": ""
   },
   {
@@ -2490,6 +3520,16 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.hive-partitioning-options",
+    "name": "Hive partitioning options",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "External table options that describe a Hive-style partitioned layout, such as the common URI prefix and whether queries must filter on partition keys.",
+    "docs": "https://cloud.google.com/bigquery/docs/hive-partitioned-queries",
+    "notes": ""
+  },
+  {
     "id": "sql.ddl.holiday-region",
     "name": "HOLIDAY_REGION",
     "area": "SQL / DDL",
@@ -2558,6 +3598,16 @@
     "description": "Gives the Hugging Face user access token needed to deploy a gated or private model; the token needs read scope or broader.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model-open#hugging-face-token",
     "notes": ""
+  },
+  {
+    "id": "sql.ddl.in-out-inout-parameters",
+    "name": "IN, OUT, INOUT parameters",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Parameter modes of a stored procedure: IN passes a value in, OUT returns a value to the caller, and INOUT does both.",
+    "docs": "https://cloud.google.com/bigquery/docs/procedures",
+    "notes": "Transaction statements inside procedure bodies are refused; only strict_mode and description options are accepted."
   },
   {
     "id": "sql.ddl.include-drift",
@@ -2697,6 +3747,26 @@
     "other": "unknown",
     "description": "Sets the amount of L2 regularization applied, and can take a tuning range or a list of candidates during hyperparameter tuning.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#l2_reg",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.language-js",
+    "name": "LANGUAGE js",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Declares that the body of a user-defined function or aggregate function is written in JavaScript.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|OPTIONS(library=...) and importedLibraries from Cloud Storage are refused (library_unavailable); NUMERIC and BIGNUMERIC inside ARRAY or STRUCT argument/return types are refused; only the description option is accepted."
+  },
+  {
+    "id": "sql.ddl.language-python",
+    "name": "LANGUAGE python",
+    "area": "SQL / DDL",
+    "local": "unavailable",
+    "other": "unknown",
+    "description": "Declares that the body of a user-defined function is written in Python, run with a chosen runtime version and entry point.",
+    "docs": "https://cloud.google.com/bigquery/docs/user-defined-functions-python",
     "notes": ""
   },
   {
@@ -3010,6 +4080,36 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.object-tables",
+    "name": "Object tables",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Read-only tables over unstructured objects in Cloud Storage that expose object metadata, so the objects can be listed, queried and processed with SQL.",
+    "docs": "https://cloud.google.com/bigquery/docs/object-table-introduction",
+    "notes": "ObjectRef functions (OBJ.MAKE_REF, OBJ.FETCH_METADATA, OBJ.GET_ACCESS_URL, OBJ.GET_READ_URL) and EXTERNAL_OBJECT_TRANSFORM are missing; only the object_metadata and uris options are accepted (max_staleness, metadata_cache_mode refused); each URI allows one '*' wildcard."
+  },
+  {
+    "id": "sql.ddl.on-table-all-text-columns-column-list",
+    "name": "ON table(ALL TEXT COLUMNS | column_list)",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Names the table to index and which columns to cover, either every text column of the table or an explicit list of columns.",
+    "docs": "https://cloud.google.com/bigquery/docs/search-index",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.on-table-with-filter-using-expression",
+    "name": "ON table with FILTER USING (expression)",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Row access policy clause that names the table and gives the filter expression selecting which rows the policy principals can see.",
+    "docs": "https://cloud.google.com/bigquery/docs/managing-row-level-security",
+    "notes": ""
+  },
+  {
     "id": "sql.ddl.optimization-objective",
     "name": "OPTIMIZATION_OBJECTIVE",
     "area": "SQL / DDL",
@@ -3048,6 +4148,16 @@
     "description": "Clause that attaches a list of name and value settings to the object being created or altered, such as a table, view, dataset or model.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#options",
     "notes": ""
+  },
+  {
+    "id": "sql.ddl.options-uris-format",
+    "name": "OPTIONS( uris=[...], format='...', ... )",
+    "area": "SQL / DDL",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Option list of CREATE EXTERNAL TABLE that gives the Cloud Storage source URIs and the data format, plus any other format-specific settings.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
+    "notes": "Formats other than CSV, NEWLINE_DELIMITED_JSON, AVRO, ORC and PARQUET (GOOGLE_SHEETS, DATASTORE_BACKUP, DELTA_LAKE, ICEBERG, CLOUD_BIGTABLE) are refused in DDL; options outside the decoded list (for example max_staleness, metadata_cache_mode, file_set_spec_type, reference_file_schema_uri, sheet_range, expiration_timestamp) are refused; only gs:// URIs are accepted."
   },
   {
     "id": "sql.ddl.organization-set-options-list",
@@ -3117,6 +4227,16 @@
     "other": "unknown",
     "description": "Chooses the algorithm that computes the principal components in a PCA model: FULL eigendecomposition, RANDOMIZED PCA or AUTO.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-pca#pca_solver",
+    "notes": ""
+  },
+  {
+    "id": "sql.ddl.primary-key-foreign-key-constraints-informational-not-enforced",
+    "name": "Primary key / foreign key constraints (informational, not enforced)",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "Table constraints that declare primary keys and foreign key links between tables; BigQuery records them but does not enforce them when data is written.",
+    "docs": "https://cloud.google.com/bigquery/docs/primary-foreign-keys",
     "notes": ""
   },
   {
@@ -3360,6 +4480,16 @@
     "notes": ""
   },
   {
+    "id": "sql.ddl.table-definition-files-for-external-tables",
+    "name": "Table definition files for external tables",
+    "area": "SQL / DDL",
+    "local": "available",
+    "other": "unknown",
+    "description": "JSON definitions of external data, giving source URIs, format and schema, used with the bq tool to create external tables instead of DDL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/rest/v2/Job#JobConfigurationQuery",
+    "notes": ""
+  },
+  {
     "id": "sql.ddl.table-expiration",
     "name": "Table expiration",
     "area": "SQL / DDL",
@@ -3467,7 +4597,7 @@
     "other": "unknown",
     "description": "Clause that lists the feature preprocessing done during model creation and applies it again automatically at prediction and evaluation.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#transform",
-    "notes": "TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
+    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
   },
   {
     "id": "sql.ddl.tree-method",
@@ -3620,6 +4750,26 @@
     "notes": ""
   },
   {
+    "id": "sql.dml.delete-from",
+    "name": "DELETE FROM",
+    "area": "SQL / DML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "The DELETE form that includes the optional FROM keyword before the target table, as in DELETE FROM table_name WHERE condition.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax",
+    "notes": "Volatile WHERE predicates (RAND, GENERATE_UUID) are refused; a correlated WHERE subquery that can raise a runtime error is refused (DELETE subqueries require total sources)."
+  },
+  {
+    "id": "sql.dml.delete-where",
+    "name": "DELETE ... WHERE",
+    "area": "SQL / DML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "The mandatory WHERE condition of a DELETE, evaluated for each row; rows for which it is TRUE are removed and all others are kept.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax",
+    "notes": "Volatile WHERE predicates (RAND, GENERATE_UUID) are refused; a correlated WHERE subquery that can raise a runtime error is refused (DELETE subqueries require total sources)."
+  },
+  {
     "id": "sql.dml.delete-with-subquery",
     "name": "DELETE with subquery",
     "area": "SQL / DML",
@@ -3657,6 +4807,36 @@
     "other": "unknown",
     "description": "Adds new rows to a table, taking the rows either from literal VALUES lists or from the result of a query.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax#insert_statement",
+    "notes": ""
+  },
+  {
+    "id": "sql.dml.insert-into",
+    "name": "INSERT INTO",
+    "area": "SQL / DML",
+    "local": "available",
+    "other": "unknown",
+    "description": "INSERT with the optional INTO keyword before the target table name, followed by an optional column list and then the rows to add.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax",
+    "notes": ""
+  },
+  {
+    "id": "sql.dml.insert-into-select",
+    "name": "INSERT INTO ... SELECT",
+    "area": "SQL / DML",
+    "local": "available",
+    "other": "unknown",
+    "description": "Adds every row produced by a SELECT query to the target table, so data can be copied or reshaped from other tables in a single statement.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax",
+    "notes": ""
+  },
+  {
+    "id": "sql.dml.insert-into-values",
+    "name": "INSERT INTO ... VALUES",
+    "area": "SQL / DML",
+    "local": "available",
+    "other": "unknown",
+    "description": "Adds one or more rows written directly in the statement as parenthesized value lists, one list per row, matched to the listed columns.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax",
     "notes": ""
   },
   {
@@ -3760,6 +4940,16 @@
     "notes": ""
   },
   {
+    "id": "sql.dml.merge-into",
+    "name": "MERGE INTO",
+    "area": "SQL / DML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "MERGE with the optional INTO keyword before the target table that is changed using the rows of the USING source.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax",
+    "notes": "UPDATE and MERGE refuse a target table that has a column named rowid; a correlated WHERE subquery that can raise a runtime error is refused (UPDATE subqueries require total sources); volatile FROM/USING sources and volatile predicates (RAND, GENERATE_UUID) are refused; a statement whose written rows hold a non-finite FLOAT64 value (NaN, +/-inf) is refused."
+  },
+  {
     "id": "sql.dml.truncate",
     "name": "TRUNCATE",
     "area": "SQL / DML",
@@ -3780,6 +4970,16 @@
     "notes": ""
   },
   {
+    "id": "sql.dml.update-from",
+    "name": "UPDATE ... FROM",
+    "area": "SQL / DML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "UPDATE form with a FROM clause that joins the target table to other tables so new values can be computed from their columns; a target row may match at most one source row.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax",
+    "notes": "UPDATE and MERGE refuse a target table that has a column named rowid; a correlated WHERE subquery that can raise a runtime error is refused (UPDATE subqueries require total sources); volatile FROM/USING sources and volatile predicates (RAND, GENERATE_UUID) are refused; a statement whose written rows hold a non-finite FLOAT64 value (NaN, +/-inf) is refused."
+  },
+  {
     "id": "sql.dml.update-nested-fields",
     "name": "UPDATE nested fields",
     "area": "SQL / DML",
@@ -3798,6 +4998,16 @@
     "description": "Adds or removes entries in a column of repeated records, an ARRAY of STRUCT values, by rebuilding the array with ARRAY subqueries or ARRAY_CONCAT.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax#update_repeated_records",
     "notes": ""
+  },
+  {
+    "id": "sql.dml.update-set",
+    "name": "UPDATE ... SET",
+    "area": "SQL / DML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "The SET clause of UPDATE, a comma-separated list of column = expression assignments where the expression may be DEFAULT to restore the column default.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax",
+    "notes": "UPDATE and MERGE refuse a target table that has a column named rowid; a correlated WHERE subquery that can raise a runtime error is refused (UPDATE subqueries require total sources); volatile FROM/USING sources and volatile predicates (RAND, GENERATE_UUID) are refused; a statement whose written rows hold a non-finite FLOAT64 value (NaN, +/-inf) is refused."
   },
   {
     "id": "sql.dml.update-statement-using-join-between-three-tables",
@@ -4090,6 +5300,36 @@
     "notes": ""
   },
   {
+    "id": "sql.expressions.array-agg",
+    "name": "ARRAY_AGG",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Aggregate function that returns an array of the values from the input rows, with optional DISTINCT, NULL handling, ordering and a limit on the number of elements.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/aggregate_functions#array_agg",
+    "notes": "ARRAY_AGG as an analytic function (OVER (...)) is refused (asserted); an ARRAY_AGG over NUMERIC values cannot be written to a destination table (asserted)."
+  },
+  {
+    "id": "sql.expressions.array-construction",
+    "name": "Array construction",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Builds an array value from a list of elements, written as ARRAY[1, 2, 3] or just [1, 2, 3], optionally with an explicit element type such as ARRAY<INT64>[1, 2].",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#constructing_an_array",
+    "notes": "An array constructor over computed TIMESTAMP (asserted), INTERVAL (asserted), DATETIME, NUMERIC or BIGNUMERIC elements is refused before execution."
+  },
+  {
+    "id": "sql.expressions.between",
+    "name": "BETWEEN",
+    "area": "SQL / Expressions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Checks whether a value lies between a lower and an upper bound, both inclusive, and returns TRUE or FALSE; NOT BETWEEN gives the opposite check.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#comparison_operators",
+    "notes": ""
+  },
+  {
     "id": "sql.expressions.bitwise-operators",
     "name": "Bitwise operators",
     "area": "SQL / Expressions",
@@ -4100,6 +5340,36 @@
     "notes": ""
   },
   {
+    "id": "sql.expressions.case-when",
+    "name": "CASE WHEN",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Searched form of CASE that evaluates each WHEN condition in order and returns the result of the first one that is TRUE, otherwise the ELSE result or NULL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/conditional_expressions#case",
+    "notes": "CASE results of type DATETIME, TIMESTAMP, INTERVAL or JSON are refused before execution (no compiler contract; the INTERVAL refusal is asserted)."
+  },
+  {
+    "id": "sql.expressions.cast-safe-cast",
+    "name": "CAST / SAFE_CAST",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "CAST converts a value to another type and raises an error when it cannot; SAFE_CAST does the same but returns NULL instead of an error when the conversion fails.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions#cast",
+    "notes": "CAST ... FORMAT '...' is refused; a runtime CAST or SAFE_CAST of a STRING value to FLOAT64 is refused (Unqualified cast contract); other casts outside the registered source/target pairs are refused before execution."
+  },
+  {
+    "id": "sql.expressions.coalesce",
+    "name": "COALESCE",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns the value of the first expression in its argument list that is not NULL, or NULL if every argument is NULL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/conditional_expressions#coalesce",
+    "notes": "COALESCE over DATETIME values is refused (asserted), as are TIMESTAMP, INTERVAL (asserted) and JSON values, which have no compiler contract."
+  },
+  {
     "id": "sql.expressions.comparison-operators",
     "name": "Comparison operators",
     "area": "SQL / Expressions",
@@ -4107,6 +5377,116 @@
     "other": "unknown",
     "description": "Operators that compare two values and return a BOOL, such as less than, greater than, equal and not equal; ordering comparisons can honor a collation.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#comparison_operators",
+    "notes": ""
+  },
+  {
+    "id": "sql.expressions.if-cond-val1-val2",
+    "name": "IF(cond val1 val2)",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns the second argument when the condition is TRUE and the third otherwise, evaluating only the branch that is actually returned.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/conditional_expressions#if",
+    "notes": "IF over INTERVAL branch values is refused (asserted); JSON branch values have no compiler contract and are refused."
+  },
+  {
+    "id": "sql.expressions.ifnull",
+    "name": "IFNULL",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns its first argument if that is not NULL, and otherwise returns the second argument.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/conditional_expressions#ifnull",
+    "notes": "IFNULL over DATETIME, TIMESTAMP, INTERVAL (asserted) or JSON values is refused before execution (no compiler contract)."
+  },
+  {
+    "id": "sql.expressions.in-list",
+    "name": "IN list",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Checks whether a value equals any value in a parenthesized list, returning TRUE on a match; NOT IN reverses the check.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#in_operators",
+    "notes": "IN lists over DATE, TIME, DATETIME, TIMESTAMP or INTERVAL (asserted) values are refused before execution (no compiler contract)."
+  },
+  {
+    "id": "sql.expressions.is-null-is-not-null",
+    "name": "IS NULL / IS NOT NULL",
+    "area": "SQL / Expressions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Checks whether a value is NULL, returning TRUE or FALSE and never NULL itself; IS NOT NULL gives the opposite result.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#is_operators",
+    "notes": ""
+  },
+  {
+    "id": "sql.expressions.like-not-like",
+    "name": "LIKE / NOT LIKE",
+    "area": "SQL / Expressions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Matches a string against a pattern where a percent sign stands for any run of characters and an underscore for exactly one; NOT LIKE returns the opposite result.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#like_operator",
+    "notes": ""
+  },
+  {
+    "id": "sql.expressions.logical-operators-and-or-not",
+    "name": "Logical operators (AND OR NOT)",
+    "area": "SQL / Expressions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Combine or negate BOOL values using three-valued logic over TRUE, FALSE and NULL, so a NULL operand can make the result NULL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#logical_operators",
+    "notes": ""
+  },
+  {
+    "id": "sql.expressions.nullif",
+    "name": "NULLIF",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns NULL when its two arguments are equal, and otherwise returns the first argument.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/conditional_expressions#nullif",
+    "notes": "NULLIF over DATETIME, TIMESTAMP or INTERVAL (asserted) values is refused before execution (no compiler contract)."
+  },
+  {
+    "id": "sql.expressions.safe-function",
+    "name": "SAFE.function()",
+    "area": "SQL / Expressions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Putting the SAFE. prefix before a function name makes that call return NULL instead of raising an error, but it does not hide errors raised while evaluating the arguments.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/functions-reference#safe_prefix",
+    "notes": "SAFE. on functions outside the selected families is refused (for example SAFE.UPPER, SAFE.NORMALIZE, SAFE.PARSE_NUMERIC, SAFE.ST_GEOGPOINT, SAFE.JUSTIFY_DAYS, SAFE.TO_JSON, SAFE.HLL_COUNT.EXTRACT, SAFE.KEYS.KEYSET_FROM_JSON); a SAFE call whose operand can raise the same error as the call itself is refused (for example SAFE.LEFT(LEFT('a', -1), 1)); SAFE calls over non-immutable or uncaptured operands are refused."
+  },
+  {
+    "id": "sql.expressions.string-concatenation",
+    "name": "String concatenation (||)",
+    "area": "SQL / Expressions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Joins two or more STRING values, or two or more BYTES values, end to end into a single value, written with a double vertical bar between the operands.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#concatenation_operator",
+    "notes": ""
+  },
+  {
+    "id": "sql.expressions.struct-construction",
+    "name": "Struct construction",
+    "area": "SQL / Expressions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Builds a STRUCT value from fields, using tuple syntax such as (1, 'abc'), STRUCT(1 AS a, 'x' AS b), or a typed form like STRUCT<INT64, STRING>(1, 'abc').",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#constructing_a_struct",
+    "notes": ""
+  },
+  {
+    "id": "sql.expressions.struct-field-access-dot-notation",
+    "name": "STRUCT field access (dot notation)",
+    "area": "SQL / Expressions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Reads a field of a STRUCT by name with a dot, as in my_struct.field_name, and can chain through nested structs.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#field_access_operator",
     "notes": ""
   },
   {
@@ -4170,6 +5550,16 @@
     "notes": ""
   },
   {
+    "id": "sql.external.glob-patterns",
+    "name": "Glob patterns (*)",
+    "area": "SQL / External",
+    "local": "limited",
+    "other": "unknown",
+    "description": "An asterisk wildcard in a Cloud Storage path that lets one external table or load read every object whose name matches the pattern.",
+    "docs": "https://cloud.google.com/bigquery/docs/external-data-cloud-storage",
+    "notes": "'?' and '[...]' in a URI are treated as wildcard patterns rather than literal object-name characters."
+  },
+  {
     "id": "sql.external.google-sheets",
     "name": "Google Sheets",
     "area": "SQL / External",
@@ -4177,6 +5567,16 @@
     "other": "unknown",
     "description": "A Google Sheets spreadsheet queried in place as an external table, optionally limited to a sheet range and with a number of leading rows skipped.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/external-data-sources",
+    "notes": ""
+  },
+  {
+    "id": "sql.external.hive-partitioning",
+    "name": "Hive partitioning",
+    "area": "SQL / External",
+    "local": "available",
+    "other": "unknown",
+    "description": "Data laid out in key=value directory names, which an external table or load can expose as partition columns so queries can filter on them.",
+    "docs": "https://cloud.google.com/bigquery/docs/hive-partitioned-queries",
     "notes": ""
   },
   {
@@ -4227,6 +5627,36 @@
     "other": "unavailable",
     "description": "Lets BigQuery infer column names and types by sampling the source data, instead of requiring the schema to be declared up front.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/external-data-sources",
+    "notes": ""
+  },
+  {
+    "id": "sql.from.from",
+    "name": "FROM \\",
+    "area": "SQL / FROM",
+    "local": "available",
+    "other": "unknown",
+    "description": "The FROM clause names the table or other source a query reads; a path with dashes or other special characters is wrapped in backtick quotes.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#from_clause",
+    "notes": ""
+  },
+  {
+    "id": "sql.from.project-dataset-table",
+    "name": "project.dataset.table",
+    "area": "SQL / FROM",
+    "local": "available",
+    "other": "unknown",
+    "description": "A fully qualified table name made of project, dataset and table joined by dots, which picks a table in any project from FROM or DML.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#from_clause",
+    "notes": ""
+  },
+  {
+    "id": "sql.from.subqueries-in-from",
+    "name": "Subqueries in FROM",
+    "area": "SQL / FROM",
+    "local": "available",
+    "other": "unknown",
+    "description": "A parenthesized SELECT placed in the FROM clause, usually with an alias, whose result acts as an input table for the outer query.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#from_clause",
     "notes": ""
   },
   {
@@ -4490,6 +5920,16 @@
     "notes": ""
   },
   {
+    "id": "sql.function.asin-acos-atan-atan2",
+    "name": "ASIN / ACOS / ATAN / ATAN2",
+    "area": "SQL / Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Inverse trigonometric functions: ASIN, ACOS and ATAN return the angle in radians for a given sine, cosine or tangent, and ATAN2 takes two arguments and uses their signs to pick the quadrant.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions",
+    "notes": ""
+  },
+  {
     "id": "sql.function.asinh",
     "name": "ASINH",
     "area": "SQL / Functions",
@@ -4637,6 +6077,16 @@
     "other": "available",
     "description": "Rounds a number up and returns the smallest whole number that is not less than the input.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#ceil",
+    "notes": ""
+  },
+  {
+    "id": "sql.function.ceil-ceiling",
+    "name": "CEIL / CEILING",
+    "area": "SQL / Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Two names for the same rounding function: CEIL and CEILING each return the smallest whole number that is not less than the input.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#ceil",
     "notes": ""
   },
   {
@@ -5280,6 +6730,16 @@
     "notes": ""
   },
   {
+    "id": "sql.function.format-date.2490dc13",
+    "name": "FORMAT_DATE",
+    "area": "SQL / Functions",
+    "local": "limited",
+    "other": "available",
+    "description": "Formats a DATE as a string using a format string made of elements such as %Y, %m and %d.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/date_functions#format_date",
+    "notes": "The format string must be a literal (a column, parameter, subquery or computed format is refused); some format elements such as %J are refused; formats longer than 4096 UTF-8 bytes are refused."
+  },
+  {
     "id": "sql.function.format-datetime",
     "name": "FORMAT_DATETIME",
     "area": "SQL / Functions",
@@ -5288,6 +6748,26 @@
     "description": "Formats a DATETIME as a string using a format string made of date and time elements such as %Y, %m, %d and %H.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/datetime_functions#format_datetime",
     "notes": ""
+  },
+  {
+    "id": "sql.function.format-datetime.1f3b8f7b",
+    "name": "FORMAT_DATETIME",
+    "area": "SQL / Functions",
+    "local": "limited",
+    "other": "available",
+    "description": "Formats a DATETIME as a string using a format string made of date and time elements such as %Y, %m, %d and %H.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/datetime_functions#format_datetime",
+    "notes": "Format elements the emulator's temporal kernel does not implement (for example %E10S) are refused before execution."
+  },
+  {
+    "id": "sql.function.format-printf-style",
+    "name": "FORMAT (printf-style)",
+    "area": "SQL / Functions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Printf-style string formatting: a format string with percent specifiers that control type, width, precision and flags is filled in with the remaining arguments to produce a string.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/string_functions#format_string",
+    "notes": "FORMAT with an INTERVAL argument is refused before execution (asserted)."
   },
   {
     "id": "sql.function.format-time",
@@ -5300,6 +6780,16 @@
     "notes": ""
   },
   {
+    "id": "sql.function.format-time.5a71a345",
+    "name": "FORMAT_TIME",
+    "area": "SQL / Functions",
+    "local": "limited",
+    "other": "available",
+    "description": "Formats a TIME as a string using a format string made of time elements such as %H, %M and %S.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/time_functions#format_time",
+    "notes": "The format string must be a literal (a column, parameter or computed format is refused); some format elements are refused."
+  },
+  {
     "id": "sql.function.format-timestamp",
     "name": "FORMAT_TIMESTAMP",
     "area": "SQL / Functions",
@@ -5308,6 +6798,16 @@
     "description": "Formats a TIMESTAMP as a string using a format string of date and time elements, with an optional time zone for the display.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/timestamp_functions#format_timestamp",
     "notes": ""
+  },
+  {
+    "id": "sql.function.format-timestamp.f37725ad",
+    "name": "FORMAT_TIMESTAMP",
+    "area": "SQL / Functions",
+    "local": "limited",
+    "other": "available",
+    "description": "Formats a TIMESTAMP as a string using a format string of date and time elements, with an optional time zone for the display.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/timestamp_functions#format_timestamp",
+    "notes": "Format elements the emulator's temporal kernel does not implement (for example %E10S) are refused before execution."
   },
   {
     "id": "sql.function.from-base32",
@@ -5488,6 +6988,16 @@
     "description": "Divides two numbers and returns infinity or NaN instead of raising an error when the divisor is zero or the result overflows.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#ieee_divide",
     "notes": ""
+  },
+  {
+    "id": "sql.function.if",
+    "name": "IF",
+    "area": "SQL / Functions",
+    "local": "limited",
+    "other": "available",
+    "description": "As a function, IF returns one of two values depending on a condition; as a scripting statement, IF runs the first block of statements whose condition is true, with optional ELSEIF and ELSE blocks.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/conditional_expressions#if",
+    "notes": "IF over INTERVAL branch values is refused (asserted); JSON branch values have no compiler contract and are refused."
   },
   {
     "id": "sql.function.initcap",
@@ -6620,6 +8130,16 @@
     "notes": ""
   },
   {
+    "id": "sql.function.pow-power",
+    "name": "POW / POWER",
+    "area": "SQL / Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "POW and POWER are synonyms: each takes two numbers and returns the first raised to the power of the second.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#pow",
+    "notes": ""
+  },
+  {
     "id": "sql.function.power",
     "name": "POWER",
     "area": "SQL / Functions",
@@ -7060,6 +8580,16 @@
     "notes": ""
   },
   {
+    "id": "sql.function.sin-cos-tan",
+    "name": "SIN / COS / TAN",
+    "area": "SQL / Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Trigonometric functions that each take an angle in radians and return its sine (SIN), cosine (COS) or tangent (TAN).",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions",
+    "notes": ""
+  },
+  {
     "id": "sql.function.sinh",
     "name": "SINH",
     "area": "SQL / Functions",
@@ -7067,6 +8597,16 @@
     "other": "available",
     "description": "Takes a number and returns its hyperbolic sine as a FLOAT64 value, without raising an error.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#sinh",
+    "notes": ""
+  },
+  {
+    "id": "sql.function.sinh-cosh-tanh",
+    "name": "SINH / COSH / TANH",
+    "area": "SQL / Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Hyperbolic functions that each take a number and return its hyperbolic sine (SINH), hyperbolic cosine (COSH) or hyperbolic tangent (TANH).",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions",
     "notes": ""
   },
   {
@@ -7870,6 +9410,16 @@
     "notes": ""
   },
   {
+    "id": "sql.function.struct",
+    "name": "STRUCT",
+    "area": "SQL / Functions",
+    "local": "available",
+    "other": "available",
+    "description": "Builds a struct value from a list of expressions, optionally with field names. As a type, STRUCT is an ordered collection of typed fields.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-types#struct_type",
+    "notes": ""
+  },
+  {
     "id": "sql.function.substr",
     "name": "SUBSTR",
     "area": "SQL / Functions",
@@ -7877,6 +9427,16 @@
     "other": "available",
     "description": "Returns a substring of a STRING or BYTES value from a 1-based position, where a negative position counts back from the end, optionally limited to a length.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/string_functions#substr",
+    "notes": ""
+  },
+  {
+    "id": "sql.function.substr-substring",
+    "name": "SUBSTR / SUBSTRING",
+    "area": "SQL / Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "SUBSTR and SUBSTRING are synonyms: each returns the part of a STRING or BYTES value that starts at a given position, with an optional length.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/string_functions#substr",
     "notes": ""
   },
   {
@@ -8140,6 +9700,16 @@
     "notes": ""
   },
   {
+    "id": "sql.function.to-json-string.fb47f1e1",
+    "name": "TO_JSON_STRING",
+    "area": "SQL / Functions",
+    "local": "limited",
+    "other": "available",
+    "description": "Converts a SQL value of any type into its JSON text form as a STRING, with an optional flag to pretty-print the output.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/json_functions#to_json_string",
+    "notes": "TO_JSON_STRING over an INTERVAL value is refused before execution (asserted)."
+  },
+  {
     "id": "sql.function.translate",
     "name": "TRANSLATE",
     "area": "SQL / Functions",
@@ -8270,6 +9840,16 @@
     "notes": ""
   },
   {
+    "id": "sql.function.variance-var-pop-var-samp",
+    "name": "VARIANCE / VAR_POP / VAR_SAMP",
+    "area": "SQL / Functions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Variance aggregate functions: VAR_POP returns the population variance, VAR_SAMP returns the sample variance, and VARIANCE is an alias for VAR_SAMP.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/statistical_aggregate_functions",
+    "notes": "NUMERIC and BIGNUMERIC arguments are refused (only FLOAT64 overloads are registered); the DISTINCT modifier is refused; analytic calls over operands that can raise are refused."
+  },
+  {
     "id": "sql.function.vector-index-statistics",
     "name": "VECTOR_INDEX.STATISTICS",
     "area": "SQL / Functions",
@@ -8287,6 +9867,16 @@
     "other": "unavailable",
     "description": "Table function that searches an embeddings column of a base table for the nearest matches to query embeddings and returns the matching rows with their distances.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/search_functions#vector_search",
+    "notes": ""
+  },
+  {
+    "id": "sql.function.window-named-specifications",
+    "name": "WINDOW named specifications",
+    "area": "SQL / Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Defines named windows in the WINDOW clause, each with partitioning, ordering and frame settings, that OVER clauses of window functions can refer to by name.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls",
     "notes": ""
   },
   {
@@ -8340,6 +9930,16 @@
     "notes": ""
   },
   {
+    "id": "sql.join.left-join",
+    "name": "LEFT JOIN",
+    "area": "SQL / JOIN",
+    "local": "available",
+    "other": "unknown",
+    "description": "Shorthand for LEFT OUTER JOIN: keeps every row of the left input and fills the right input's columns with NULL when nothing matches.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#left_join",
+    "notes": ""
+  },
+  {
     "id": "sql.join.left-outer-join",
     "name": "LEFT [OUTER] JOIN",
     "area": "SQL / JOIN",
@@ -8360,6 +9960,16 @@
     "notes": ""
   },
   {
+    "id": "sql.join.right-join",
+    "name": "RIGHT JOIN",
+    "area": "SQL / JOIN",
+    "local": "available",
+    "other": "unknown",
+    "description": "Shorthand for RIGHT OUTER JOIN: keeps every row of the right input and fills the left input's columns with NULL when nothing matches.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#right_join",
+    "notes": ""
+  },
+  {
     "id": "sql.join.right-outer-join",
     "name": "RIGHT [OUTER] JOIN",
     "area": "SQL / JOIN",
@@ -8367,6 +9977,26 @@
     "other": "unknown",
     "description": "Returns all right-input rows joined to matching left-input rows, with NULLs for the left columns where there is no match; OUTER is optional.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#right_join",
+    "notes": ""
+  },
+  {
+    "id": "sql.join.self-join",
+    "name": "SELF JOIN",
+    "area": "SQL / JOIN",
+    "local": "available",
+    "other": "unknown",
+    "description": "Joins a table to itself under two different aliases, for example to compare rows of the same table or to relate each employee to a manager.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#join_types",
+    "notes": ""
+  },
+  {
+    "id": "sql.join.using",
+    "name": "USING",
+    "area": "SQL / JOIN",
+    "local": "available",
+    "other": "unknown",
+    "description": "Join shorthand that lists column names present in both inputs and compares them for equality, instead of writing a full ON expression.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#using_clause",
     "notes": ""
   },
   {
@@ -8760,6 +10390,16 @@
     "notes": ""
   },
   {
+    "id": "sql.order-by-limit.limit-with-optional-offset",
+    "name": "LIMIT with optional OFFSET",
+    "area": "SQL / ORDER BY / LIMIT",
+    "local": "available",
+    "other": "unknown",
+    "description": "Caps how many rows a query returns and, with OFFSET, skips a number of leading rows first; row order is only predictable when ORDER BY is used.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#limit_and_offset_clause",
+    "notes": ""
+  },
+  {
     "id": "sql.operator.all-different-predicate",
     "name": "ALL_DIFFERENT predicate",
     "area": "SQL / Operators",
@@ -8980,6 +10620,66 @@
     "notes": ""
   },
   {
+    "id": "sql.other-dql-features.sample",
+    "name": "SAMPLE",
+    "area": "SQL / Other DQL features",
+    "local": "available",
+    "other": "unknown",
+    "description": "Takes a random subset of a table's rows with TABLESAMPLE, useful for exploring or approximating answers over very large tables.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#tablesample_operator",
+    "notes": ""
+  },
+  {
+    "id": "sql.other-dql-features.tablesample-system-n-percent",
+    "name": "TABLESAMPLE SYSTEM (n PERCENT)",
+    "area": "SQL / Other DQL features",
+    "local": "available",
+    "other": "unknown",
+    "description": "Returns a random sample of roughly the stated percentage of a table, between 0 and 100, and the rows chosen can differ from run to run.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#tablesample_operator",
+    "notes": ""
+  },
+  {
+    "id": "sql.parameterized-queries.capability",
+    "name": "?",
+    "area": "SQL / Parameterized Queries",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A positional query parameter placeholder; values are bound in order of appearance, and positional and named parameters cannot be mixed in one query.",
+    "docs": "https://cloud.google.com/bigquery/docs/parameterized-queries",
+    "notes": "RANGE parameters are refused; TIMESTAMP values with a named time zone other than UTC or Etc/UTC are refused."
+  },
+  {
+    "id": "sql.parameterized-queries.param",
+    "name": "@param",
+    "area": "SQL / Parameterized Queries",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A named query parameter written as @ followed by a name, whose typed value is supplied separately from the SQL text; it cannot stand in for identifiers or table names.",
+    "docs": "https://cloud.google.com/bigquery/docs/parameterized-queries",
+    "notes": "RANGE parameters are refused; TIMESTAMP values with a named time zone other than UTC or Etc/UTC are refused."
+  },
+  {
+    "id": "sql.pipe-syntax.pipe-first-query-style",
+    "name": "Pipe-first query style",
+    "area": "SQL / Pipe Syntax",
+    "local": "available",
+    "other": "unknown",
+    "description": "Writes a query as a starting table followed by a chain of pipe operators, so each step reads in the order it runs instead of nesting clauses.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/pipe-syntax",
+    "notes": ""
+  },
+  {
+    "id": "sql.pipe-syntax.select-where-aggregate-order-by-etc",
+    "name": "|> SELECT, |> WHERE, |> AGGREGATE, |> ORDER BY, etc.",
+    "area": "SQL / Pipe Syntax",
+    "local": "available",
+    "other": "unknown",
+    "description": "Pipe operators such as SELECT, WHERE, AGGREGATE and ORDER BY, each taking the table produced by the previous step and returning a new table.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/pipe-syntax",
+    "notes": ""
+  },
+  {
     "id": "sql.select.aggregate-pipe",
     "name": "AGGREGATE pipe",
     "area": "SQL / SELECT",
@@ -9030,6 +10730,16 @@
     "notes": ""
   },
   {
+    "id": "sql.select.aliases-as",
+    "name": "Aliases (AS)",
+    "area": "SQL / SELECT",
+    "local": "available",
+    "other": "unknown",
+    "description": "Gives a table, column or expression a temporary name with AS, which is optional; the alias can then be used elsewhere in the query within the visibility rules.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#using_aliases",
+    "notes": ""
+  },
+  {
     "id": "sql.select.array-subqueries",
     "name": "Array subqueries",
     "area": "SQL / SELECT",
@@ -9040,6 +10750,16 @@
     "notes": ""
   },
   {
+    "id": "sql.select.array-subquery",
+    "name": "ARRAY subquery",
+    "area": "SQL / SELECT",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Subquery expression that turns the rows of a query into an array, giving an empty array for no rows and never NULL; written ARRAY(subquery) in SQL and ARRAY with braces around a graph query.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/subqueries#array_subquery_concepts",
+    "notes": "An ARRAY subquery with a volatile element (ARRAY(SELECT RAND())) is refused; an aggregate inside a correlated ARRAY source (ARRAY(SELECT SUM(x) FROM UNNEST(a) x)) is refused; a correlated ARRAY source whose WHERE can raise an error is refused; computed NUMERIC elements (ARRAY(SELECT x * NUMERIC '2' ...)) are refused; an ARRAY subquery over an error-capable outer source column is refused."
+  },
+  {
     "id": "sql.select.as-pipe",
     "name": "AS pipe",
     "area": "SQL / SELECT",
@@ -9047,6 +10767,16 @@
     "other": "unknown",
     "description": "Pipe operator that gives the current table a new alias, replacing existing table aliases, so later operators such as JOIN can qualify its columns.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/pipe-syntax#as_pipe_operator",
+    "notes": ""
+  },
+  {
+    "id": "sql.select.basic-select",
+    "name": "Basic SELECT",
+    "area": "SQL / SELECT",
+    "local": "available",
+    "other": "unknown",
+    "description": "The core query form: SELECT a list of columns or expressions FROM a table, returning one output row per input row unless rows are filtered or grouped.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#select_list",
     "notes": ""
   },
   {
@@ -9198,6 +10928,16 @@
     "description": "Pipe form of EXCEPT: returns rows of the input table that are absent from every query listed in parentheses after the operator, so several queries can be subtracted in one step.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/pipe-syntax#except_pipe_operator",
     "notes": ""
+  },
+  {
+    "id": "sql.select.exists-not-exists",
+    "name": "EXISTS / NOT EXISTS",
+    "area": "SQL / SELECT",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Checks whether a subquery returns at least one row, giving TRUE or FALSE and never NULL; NOT EXISTS reverses it, which is a common way to find rows with no match.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/subqueries#exists_subquery_concepts",
+    "notes": "EXISTS over a volatile select list (EXISTS(SELECT RAND())) is refused; EXISTS inside an untaken conditional branch whose subquery can raise (IF(FALSE, EXISTS(SELECT DIV(1,0)), TRUE)) is refused instead of returning TRUE; EXISTS correlated to an outer column computed by an error-capable expression is refused instead of evaluated."
   },
   {
     "id": "sql.select.exists-subqueries",
@@ -9400,6 +11140,16 @@
     "notes": ""
   },
   {
+    "id": "sql.select.in-subquery",
+    "name": "IN subquery",
+    "area": "SQL / SELECT",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Checks whether a value is in the result of a subquery that returns one comparable column; NOT IN reverses it, and graph queries use the same test with a graph query in braces.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/subqueries#in_subquery_concepts",
+    "notes": "An IN subquery with a volatile select list (1.0 IN (SELECT RAND())) is refused; STRUCT operands (STRUCT(1 AS x) IN (SELECT STRUCT(1 AS x))) are refused."
+  },
+  {
     "id": "sql.select.intersect",
     "name": "INTERSECT",
     "area": "SQL / SELECT",
@@ -9587,6 +11337,16 @@
     "other": "unknown",
     "description": "Rule in MATCH_RECOGNIZE measures: functions such as ARRAY_AGG and STRING_AGG read their input in the clause's ORDER BY order unless DISTINCT or an explicit ordering is given.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#order-sensitive_aggregate_functions",
+    "notes": ""
+  },
+  {
+    "id": "sql.select.parameterized-queries-param",
+    "name": "Parameterized queries (@param)",
+    "area": "SQL / SELECT",
+    "local": "available",
+    "other": "unknown",
+    "description": "Queries that use named placeholders such as @name, with the values supplied separately from the SQL text, so one query text can be reused with different values.",
+    "docs": "https://cloud.google.com/bigquery/docs/parameterized-queries",
     "notes": ""
   },
   {
@@ -9860,6 +11620,16 @@
     "notes": ""
   },
   {
+    "id": "sql.select.select-distinct-select-approxdistinct",
+    "name": "SELECT DISTINCT / SELECT APPROXDISTINCT",
+    "area": "SQL / SELECT",
+    "local": "available",
+    "other": "unknown",
+    "description": "Eliminates duplicate rows so every distinct combination of the selected values is returned only once.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#select_distinct",
+    "notes": ""
+  },
+  {
     "id": "sql.select.select-except",
     "name": "SELECT * EXCEPT",
     "area": "SQL / SELECT",
@@ -9928,6 +11698,16 @@
     "description": "In AGGREGATE, GROUP AND ORDER BY or ASC and DESC suffixes on group or aggregate items sort the output without a separate ORDER BY operator.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/pipe-syntax#shorthand_order_pipe_syntax",
     "notes": ""
+  },
+  {
+    "id": "sql.select.subqueries-scalar-table",
+    "name": "Subqueries (scalar / table)",
+    "area": "SQL / SELECT",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A query nested inside another: a scalar subquery gives a single value inside an expression, and a table subquery supplies rows in the FROM clause under an alias.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/subqueries",
+    "notes": "A scalar subquery that returns a STRUCT under LIMIT is refused (SELECT (SELECT STRUCT(1) LIMIT 1))."
   },
   {
     "id": "sql.select.table-function-calls",
@@ -10180,6 +11960,16 @@
     "notes": ""
   },
   {
+    "id": "sql.select.with-cte",
+    "name": "WITH (CTE)",
+    "area": "SQL / SELECT",
+    "local": "available",
+    "other": "unknown",
+    "description": "Starts a query with named subqueries, called common table expressions, that the main SELECT can reference by name instead of repeating or nesting them.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#with_clause",
+    "notes": ""
+  },
+  {
     "id": "sql.select.with-differential-privacy",
     "name": "WITH DIFFERENTIAL_PRIVACY",
     "area": "SQL / SELECT",
@@ -10187,6 +11977,16 @@
     "other": "unknown",
     "description": "SELECT modifier that makes aggregates differentially private, adding noise controlled by options such as epsilon, delta and max_groups_contributed, with a privacy unit.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax",
+    "notes": ""
+  },
+  {
+    "id": "sql.select.with-offset",
+    "name": "WITH OFFSET",
+    "area": "SQL / SELECT",
+    "local": "available",
+    "other": "unknown",
+    "description": "Optional part of UNNEST that adds a column with each element's zero-based position in the array; the column is named offset unless an alias is given.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#unnest_operator",
     "notes": ""
   },
   {
@@ -10300,6 +12100,16 @@
     "notes": ""
   },
   {
+    "id": "sql.scripting.begin-exception-when-error-then-end",
+    "name": "BEGIN / EXCEPTION WHEN ERROR THEN / END",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Error-handling form of a block: statements run in order, and if one fails the remainder is skipped and the statements after EXCEPTION WHEN ERROR THEN run instead.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#beginexceptionend",
+    "notes": "@@error.stack_trace and @@error.formatted_stack_trace are not available."
+  },
+  {
     "id": "sql.scripting.begin-transaction",
     "name": "BEGIN TRANSACTION",
     "area": "SQL / Scripting",
@@ -10320,6 +12130,26 @@
     "notes": ""
   },
   {
+    "id": "sql.scripting.call-procedure",
+    "name": "CALL procedure()",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A call that names a stored procedure followed by parentheses holding its arguments, running the procedure body as part of the script.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#call",
+    "notes": "Procedures in another project are refused; argument types outside the admitted script-variable types (for example JSON, GEOGRAPHY, INTERVAL, RANGE, nested STRUCT) are refused; a procedure called from outside its own dataset refuses body statements whose table, view, model or function names lack a dataset."
+  },
+  {
+    "id": "sql.scripting.commit",
+    "name": "COMMIT",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Makes the changes of the open transaction permanent and ends it; the statement fails if no transaction is open.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#commit_transaction",
+    "notes": "COMMIT in an exception handler after a runtime error inside the transaction is refused and the script fails with the transaction rolled back, whereas BigQuery commits the work done before the error."
+  },
+  {
     "id": "sql.scripting.continue",
     "name": "CONTINUE",
     "area": "SQL / Scripting",
@@ -10328,6 +12158,16 @@
     "description": "Skips the remaining statements of the current loop iteration and returns to the start of the loop; it is an error outside a loop.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#continue",
     "notes": ""
+  },
+  {
+    "id": "sql.scripting.create-procedure-begin-end",
+    "name": "CREATE PROCEDURE ... BEGIN ... END",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Defines a stored procedure whose body is a BEGIN and END block of statements, which can later be run with CALL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#create_procedure",
+    "notes": "Argument types outside the admitted script-variable types (for example JSON, GEOGRAPHY, INTERVAL, RANGE, nested STRUCT) are refused; procedures in another project are refused; procedures cannot be created through REST routines.insert."
   },
   {
     "id": "sql.scripting.declare",
@@ -10340,6 +12180,16 @@
     "notes": ""
   },
   {
+    "id": "sql.scripting.elseif",
+    "name": "ELSEIF",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "An additional condition inside IF that is checked when the earlier conditions are not TRUE, running its statement list if it is.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#if",
+    "notes": ""
+  },
+  {
     "id": "sql.scripting.execute-immediate",
     "name": "EXECUTE IMMEDIATE",
     "area": "SQL / Scripting",
@@ -10347,6 +12197,196 @@
     "other": "available",
     "description": "Runs a SQL string built at runtime as a statement, optionally storing results INTO variables and binding values through a USING list.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#execute_immediate",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.for-in-do-end-for",
+    "name": "FOR / IN / DO / END FOR",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Full loop form where each row of the query after IN is bound to the loop variable and the statements between DO and END FOR run once per row.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#for-in",
+    "notes": "The query's columns must be distinct and named, and each must fit a STRUCT field type admitted for script variables (INT64, STRING, BYTES, BOOL, DATE, TIME, FLOAT64), so queries returning TIMESTAMP, DATETIME, NUMERIC, BIGNUMERIC, ARRAY, STRUCT, JSON, GEOGRAPHY or INTERVAL columns, or anonymous columns, are refused; a loop variable named like a visible variable is refused."
+  },
+  {
+    "id": "sql.scripting.if-then-else-end-if",
+    "name": "IF / THEN / ELSE / END IF",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Conditional form that runs the statements after THEN when the condition is TRUE, otherwise the optional ELSE statements, and is closed by END IF.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#if",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.labels-on-blocks",
+    "name": "Labels on blocks",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "A name placed before BEGIN, LOOP, WHILE, FOR or REPEAT so that BREAK, LEAVE, CONTINUE or ITERATE can name the exact block or loop to exit or restart.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#labels",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.leave-iterate",
+    "name": "LEAVE / ITERATE",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "LEAVE is another name for BREAK and exits the loop; ITERATE is another name for CONTINUE and jumps to the next iteration.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#iterate",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.loop-end-loop",
+    "name": "LOOP / END LOOP",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "The full form of the unconditional loop, where the statements between LOOP and END LOOP repeat until one of them executes BREAK or LEAVE.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#loop",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.project-id",
+    "name": "@@project_id",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A read-only system variable holding the ID of the project that runs the current query; inside a procedure it is the project running the script, not the one owning the procedure.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/system-variables",
+    "notes": "@@project_id is declared to the analyzer only inside multi-statement queries, procedures and sessions with variables, so a standalone single-statement query that reads it fails with an analyzer error."
+  },
+  {
+    "id": "sql.scripting.raise-using-message",
+    "name": "RAISE USING MESSAGE",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Raises an error with a custom message text; without USING MESSAGE it re-raises the caught error and is only allowed inside an EXCEPTION clause.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#raise",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.repeat-until-end-repeat",
+    "name": "REPEAT / UNTIL / END REPEAT",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Runs the statements first and then checks the UNTIL condition, repeating the loop until that condition becomes TRUE.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#repeat",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.rollback",
+    "name": "ROLLBACK",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Undoes all changes made since the transaction began and ends it; the statement fails if no transaction is open.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#rollback_transaction",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.row-count",
+    "name": "@@row_count",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A read-only system variable that gives the number of rows affected by the previous DML statement in a multi-statement query.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/system-variables",
+    "notes": "@@row_count is declared to the analyzer only inside multi-statement queries, procedures and sessions with variables, so a standalone single-statement query that reads it fails with an analyzer error instead of returning NULL."
+  },
+  {
+    "id": "sql.scripting.set-variable",
+    "name": "SET variable",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Sets a declared script variable to the value of an expression, or assigns several variables together using parenthesized lists.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#set",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.variable-references",
+    "name": "Variable references",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Uses a declared script variable by name inside expressions, queries and later statements, within the block where it was declared.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#declare",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting.while-do-end-while",
+    "name": "WHILE / DO / END WHILE",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Loop form where the condition is checked before every pass and the statements between DO and END WHILE run while it stays TRUE.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#while",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting-procedural.call-procedure-name-args",
+    "name": "CALL procedure_name(args);",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Statement that runs a stored procedure, passing arguments by position, so reusable SQL logic can be invoked from a script.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#call",
+    "notes": "Procedures in another project are refused; argument types outside the admitted script-variable types (for example JSON, GEOGRAPHY, INTERVAL, RANGE, nested STRUCT) are refused; a procedure called from outside its own dataset refuses body statements whose table, view, model or function names lack a dataset."
+  },
+  {
+    "id": "sql.scripting-procedural.commit-transaction",
+    "name": "COMMIT TRANSACTION;",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Ends the open multi-statement transaction and makes all of its changes permanent, failing if no transaction is open.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#commit_transaction",
+    "notes": "COMMIT in an exception handler after a runtime error inside the transaction is refused and the script fails with the transaction rolled back, whereas BigQuery commits the work done before the error."
+  },
+  {
+    "id": "sql.scripting-procedural.declare-var-name-type-default-value",
+    "name": "DECLARE var_name [TYPE] [DEFAULT value];",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Creates a variable in a script, where the type can be left out when a DEFAULT expression lets BigQuery infer it; several names can share one declaration.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#declare",
+    "notes": "Variable types are limited to INT64, FLOAT64, BOOL, STRING, BYTES, DATE, TIME, DATETIME, TIMESTAMP, NUMERIC and BIGNUMERIC, STRUCTs whose fields are INT64, STRING, BYTES, BOOL, DATE, TIME or FLOAT64, and ARRAYs of those scalars (not TIMESTAMP or DATETIME) or STRUCTs, so JSON, GEOGRAPHY, INTERVAL, RANGE, nested STRUCT and ARRAY<TIMESTAMP> variables are refused; parameterized types such as STRING(10) are refused."
+  },
+  {
+    "id": "sql.scripting-procedural.execute-immediate-sql-string-into-vars-using-params",
+    "name": "EXECUTE IMMEDIATE sql_string [INTO vars] [USING params];",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Executes a dynamically built SQL string; INTO captures a returned row into variables and USING binds values to placeholders in the string.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#execute_immediate",
+    "notes": "USING values and INTO targets are limited to the admitted script-variable types, so JSON, GEOGRAPHY, INTERVAL, RANGE and nested composite values are refused."
+  },
+  {
+    "id": "sql.scripting-procedural.for-variable-in-query-do-end-for",
+    "name": "FOR variable IN (query) DO ... END FOR;",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Iterates over a query result one row at a time, with the loop variable giving field access to each row's columns inside the loop body.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#for-in",
+    "notes": "The query's columns must be distinct and named, and each must fit a STRUCT field type admitted for script variables (INT64, STRING, BYTES, BOOL, DATE, TIME, FLOAT64), so queries returning TIMESTAMP, DATETIME, NUMERIC, BIGNUMERIC, ARRAY, STRUCT, JSON, GEOGRAPHY or INTERVAL columns, or anonymous columns, are refused; a loop variable named like a visible variable is refused."
+  },
+  {
+    "id": "sql.scripting-procedural.if-condition-then-elseif-else-end-if",
+    "name": "IF condition THEN ... [ELSEIF ...] [ELSE ...] END IF;",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Runs the first statement list whose condition is TRUE among the IF, any ELSEIF and the final ELSE parts, and then continues after END IF.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#if",
     "notes": ""
   },
   {
@@ -10370,6 +12410,16 @@
     "notes": ""
   },
   {
+    "id": "sql.scripting-procedural.multi-statement-scripts-anonymous",
+    "name": "Multi-statement scripts (anonymous)",
+    "area": "SQL / Scripting",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A series of statements separated by semicolons that BigQuery runs as a single script job, in order, without needing to be wrapped in a stored procedure.",
+    "docs": "https://cloud.google.com/bigquery/docs/multi-statement-queries",
+    "notes": "Child jobs are recorded only for scripts without expression evaluation (no DECLARE, SET, IF, loops or handlers), and jobs.list parentJobId is refused for the others; scriptStatistics, @@script.* and @@current_job_id are absent; SET of system variables (such as @@time_zone or @@dataset_id) and system variables other than @@row_count, @@project_id and @@error.message/statement_text are refused."
+  },
+  {
     "id": "sql.scripting-procedural.raise",
     "name": "RAISE",
     "area": "SQL / Scripting",
@@ -10378,6 +12428,126 @@
     "description": "Raises an error in a script, stopping execution unless a surrounding EXCEPTION clause handles it; on its own inside a handler it re-raises the caught error.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#raise",
     "notes": ""
+  },
+  {
+    "id": "sql.scripting-procedural.repeat-until-condition-end-repeat",
+    "name": "REPEAT ... UNTIL condition END REPEAT;",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Do-until style loop: the body executes at least once and repeats until the condition after UNTIL is TRUE.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#repeat",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting-procedural.rollback-transaction",
+    "name": "ROLLBACK TRANSACTION;",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Cancels the open multi-statement transaction and discards its changes; often used inside an exception handler after an error.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#rollback_transaction",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting-procedural.set-var-name-expression",
+    "name": "SET var_name = expression;",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Evaluates an expression and stores the result in an already declared variable, replacing its previous value.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#set",
+    "notes": ""
+  },
+  {
+    "id": "sql.scripting-procedural.while-condition-do-end-while",
+    "name": "WHILE condition DO ... END WHILE;",
+    "area": "SQL / Scripting",
+    "local": "available",
+    "other": "unknown",
+    "description": "Repeats the loop body as long as the condition evaluates to TRUE, checking it before each iteration so the body may never run.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language#while",
+    "notes": ""
+  },
+  {
+    "id": "sql.set-operations.except-all-distinct",
+    "name": "EXCEPT {ALL | DISTINCT}",
+    "area": "SQL / Set operations",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns rows from the left query that are absent from the right query, written with either ALL, which keeps remaining duplicates, or DISTINCT, which returns each row once.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#set_operators",
+    "notes": "DISTINCT set operations accept only INT64, BOOL, STRING, BYTES, NUMERIC, BIGNUMERIC and DATE columns (FLOAT64, TIMESTAMP, DATETIME, TIME and INTERVAL columns are refused); DISTINCT set operations over inputs that can raise an error or are volatile are refused; BY NAME and  CORRESPONDING column matching and the FULL/LEFT/INNER outer set-operation modes are refused (only positional matching is lowered)."
+  },
+  {
+    "id": "sql.set-operations.intersect-all-distinct",
+    "name": "INTERSECT {ALL | DISTINCT}",
+    "area": "SQL / Set operations",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns rows found in both input queries, written with either ALL, which keeps duplicates up to their count in both inputs, or DISTINCT, which returns each shared row once.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#set_operators",
+    "notes": "DISTINCT set operations accept only INT64, BOOL, STRING, BYTES, NUMERIC, BIGNUMERIC and DATE columns (FLOAT64, TIMESTAMP, DATETIME, TIME and INTERVAL columns are refused); DISTINCT set operations over inputs that can raise an error or are volatile are refused; BY NAME and  CORRESPONDING column matching and the FULL/LEFT/INNER outer set-operation modes are refused (only positional matching is lowered)."
+  },
+  {
+    "id": "sql.set-operations.union-all-distinct",
+    "name": "UNION {ALL | DISTINCT}",
+    "area": "SQL / Set operations",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Combines the rows of two queries into one result, written with either ALL, which keeps every row, or DISTINCT, which removes duplicate rows.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#set_operators",
+    "notes": "BY NAME and  CORRESPONDING column matching and the FULL/LEFT/INNER outer set-operation modes are refused (only positional matching is lowered); UNION DISTINCT: DISTINCT set operations accept only INT64, BOOL, STRING, BYTES, NUMERIC, BIGNUMERIC and DATE columns (FLOAT64, TIMESTAMP, DATETIME, TIME and INTERVAL columns are refused); DISTINCT set operations over inputs that can raise an error or are volatile are refused."
+  },
+  {
+    "id": "sql.setops.except-distinct",
+    "name": "EXCEPT DISTINCT",
+    "area": "SQL / Set operations",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns each distinct row of the left query that does not appear in the right query, with duplicates removed from the result.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#set_operators",
+    "notes": "DISTINCT set operations accept only INT64, BOOL, STRING, BYTES, NUMERIC, BIGNUMERIC and DATE columns (FLOAT64, TIMESTAMP, DATETIME, TIME and INTERVAL columns are refused); DISTINCT set operations over inputs that can raise an error or are volatile are refused; BY NAME and  CORRESPONDING column matching and the FULL/LEFT/INNER outer set-operation modes are refused (only positional matching is lowered)."
+  },
+  {
+    "id": "sql.setops.intersect-distinct",
+    "name": "INTERSECT DISTINCT",
+    "area": "SQL / Set operations",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns each distinct row that appears in both queries, listing it once no matter how many times it occurs.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#set_operators",
+    "notes": "DISTINCT set operations accept only INT64, BOOL, STRING, BYTES, NUMERIC, BIGNUMERIC and DATE columns (FLOAT64, TIMESTAMP, DATETIME, TIME and INTERVAL columns are refused); DISTINCT set operations over inputs that can raise an error or are volatile are refused; BY NAME and  CORRESPONDING column matching and the FULL/LEFT/INNER outer set-operation modes are refused (only positional matching is lowered)."
+  },
+  {
+    "id": "sql.setops.union-all",
+    "name": "UNION ALL",
+    "area": "SQL / Set operations",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Appends the rows of the second query to those of the first, keeping every row including duplicates; columns are matched by position.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#set_operators",
+    "notes": "BY NAME and  CORRESPONDING column matching and the FULL/LEFT/INNER outer set-operation modes are refused (only positional matching is lowered)."
+  },
+  {
+    "id": "sql.setops.union-distinct",
+    "name": "UNION DISTINCT",
+    "area": "SQL / Set operations",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Appends the rows of the second query to those of the first and removes duplicate rows from the combined result.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#set_operators",
+    "notes": "DISTINCT set operations accept only INT64, BOOL, STRING, BYTES, NUMERIC, BIGNUMERIC and DATE columns (FLOAT64, TIMESTAMP, DATETIME, TIME and INTERVAL columns are refused); DISTINCT set operations over inputs that can raise an error or are volatile are refused; BY NAME and  CORRESPONDING column matching and the FULL/LEFT/INNER outer set-operation modes are refused (only positional matching is lowered)."
+  },
+  {
+    "id": "sql.subqueries.array-subqueries-in-select",
+    "name": "Array subqueries (in SELECT)",
+    "area": "SQL / Subqueries",
+    "local": "limited",
+    "other": "unknown",
+    "description": "An ARRAY expression wrapped around a subquery that returns one column, collecting the subquery's rows into a single array value for each outer row.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/subqueries#array_subquery_concepts",
+    "notes": "An ARRAY subquery with a volatile element (ARRAY(SELECT RAND())) is refused; an aggregate inside a correlated ARRAY source (ARRAY(SELECT SUM(x) FROM UNNEST(a) x)) is refused; a correlated ARRAY source whose WHERE can raise an error is refused; computed NUMERIC elements are refused."
   },
   {
     "id": "sql.subqueries.exists",
@@ -10400,6 +12570,16 @@
     "notes": ""
   },
   {
+    "id": "sql.subqueries.scalar-subqueries-in-select-where",
+    "name": "Scalar subqueries (in SELECT/WHERE)",
+    "area": "SQL / Subqueries",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A subquery returning one column and at most one row, used anywhere a single value is expected; no rows gives NULL and more than one row is an error.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/subqueries#scalar_subquery_concepts",
+    "notes": "A scalar subquery that returns a STRUCT under LIMIT is refused (SELECT (SELECT STRUCT(1) LIMIT 1))."
+  },
+  {
     "id": "sql.type.additional-details",
     "name": "Additional details",
     "area": "SQL / Types",
@@ -10408,6 +12588,16 @@
     "description": "Further rules for RANGE values, including that arithmetic operators cannot be applied to a range.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#additional_details",
     "notes": ""
+  },
+  {
+    "id": "sql.type.array-t",
+    "name": "ARRAY<T>",
+    "area": "SQL / Types",
+    "local": "limited",
+    "other": "unknown",
+    "description": "An ordered list of zero or more elements that all share type T; arrays of arrays are not allowed, though an array can hold structs that contain arrays.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#array_type",
+    "notes": "ARRAY<NUMERIC>, ARRAY<BIGNUMERIC> and ARRAY<GEOGRAPHY> columns are refused; a stored ARRAY column is refused under a filter whose predicate can raise (for example WHERE id+1=1) and when UNNEST reads it from a LIMITed subquery."
   },
   {
     "id": "sql.type.array-type",
@@ -10420,6 +12610,26 @@
     "notes": ""
   },
   {
+    "id": "sql.type.bignumeric",
+    "name": "BIGNUMERIC",
+    "area": "SQL / Types",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A decimal type with exact values, roughly 76 digits of precision and a scale of 38 digits after the decimal point, also named BIGDECIMAL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#decimal_types",
+    "notes": "An ARRAY<BIGNUMERIC> query result cannot be written to a destination table."
+  },
+  {
+    "id": "sql.type.bool-boolean",
+    "name": "BOOL / BOOLEAN",
+    "area": "SQL / Types",
+    "local": "available",
+    "other": "unknown",
+    "description": "Type name and alias for the data type holding TRUE or FALSE; the two spellings BOOL and BOOLEAN are interchangeable.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#boolean_type",
+    "notes": ""
+  },
+  {
     "id": "sql.type.boolean-type",
     "name": "Boolean type",
     "area": "SQL / Types",
@@ -10427,6 +12637,16 @@
     "other": "unknown",
     "description": "Section on the BOOL type: values are TRUE and FALSE, and when sorted a NULL comes first, then FALSE, then TRUE.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#boolean_type",
+    "notes": ""
+  },
+  {
+    "id": "sql.type.bytes",
+    "name": "BYTES",
+    "area": "SQL / Types",
+    "local": "available",
+    "other": "unknown",
+    "description": "Variable-length binary data, such as raw bytes or hashes, that is not interpreted as text and is written with a b prefix on literals.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#bytes_type",
     "notes": ""
   },
   {
@@ -10670,6 +12890,16 @@
     "notes": ""
   },
   {
+    "id": "sql.type.geography",
+    "name": "GEOGRAPHY",
+    "area": "SQL / Types",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A set of points, linestrings and polygons on the surface of the Earth, with coordinates as longitude and latitude on the WGS84 ellipsoid.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#geography_type",
+    "notes": ""
+  },
+  {
     "id": "sql.type.geography-type",
     "name": "Geography type",
     "area": "SQL / Types",
@@ -10760,6 +12990,16 @@
     "notes": ""
   },
   {
+    "id": "sql.type.interval",
+    "name": "INTERVAL",
+    "area": "SQL / Types",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A span of time such as 1 year 2 months or 3 days 4 hours, kept as separate year-month, day and time parts, without being tied to a calendar date.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#interval_type",
+    "notes": "INTERVAL query results cannot be written to a destination table and stored INTERVAL columns cannot be read; INTERVAL values are refused in IF, CASE, COALESCE, IFNULL, NULLIF, IN, IS DISTINCT FROM, LEAST, division, MAX, ANY_VALUE, ARRAY_AGG, COUNT(DISTINCT), array and struct constructors, ORDER BY, DISTINCT, GROUP BY, set operations, window partitions, scalar subqueries, FORMAT and TO_JSON_STRING."
+  },
+  {
     "id": "sql.type.interval-supported-date-and-time-parts",
     "name": "Interval-supported date and time parts",
     "area": "SQL / Types",
@@ -10778,6 +13018,16 @@
     "description": "Section on INTERVAL: a duration with year-month, day and time components in canonical form Y-M D H:M:S, not tied to any point in time.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#interval_type",
     "notes": ""
+  },
+  {
+    "id": "sql.type.json",
+    "name": "JSON",
+    "area": "SQL / Types",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Holds JSON data (objects, arrays, strings, numbers, booleans, null) as a native value that functions can query by path, rather than as plain text.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#json_type",
+    "notes": "IF, CASE, COALESCE and IFNULL over JSON values are refused (no compiler contract)."
   },
   {
     "id": "sql.type.json-type",
@@ -10838,6 +13088,16 @@
     "description": "An array can be NULL, but a NULL array is turned into an empty array when it is written to a table or returned as a result, although inside a query the two differ.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#array_nulls",
     "notes": ""
+  },
+  {
+    "id": "sql.type.numeric",
+    "name": "NUMERIC",
+    "area": "SQL / Types",
+    "local": "limited",
+    "other": "unknown",
+    "description": "A decimal type with exact values, 38 digits of precision and 9 digits after the decimal point, also named DECIMAL, suited to financial calculations.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#decimal_types",
+    "notes": "An ARRAY<NUMERIC> query result cannot be written to a destination table."
   },
   {
     "id": "sql.type.numeric-types",
@@ -10950,6 +13210,16 @@
     "notes": ""
   },
   {
+    "id": "sql.type.string",
+    "name": "STRING",
+    "area": "SQL / Types",
+    "local": "available",
+    "other": "unknown",
+    "description": "Variable-length text made of Unicode characters stored as UTF-8; length and substring functions count characters rather than bytes.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#string_type",
+    "notes": ""
+  },
+  {
     "id": "sql.type.string-type",
     "name": "String type",
     "area": "SQL / Types",
@@ -10958,6 +13228,16 @@
     "description": "Section on STRING: values must be valid UTF-8 and functions work on characters, with comparison by Unicode code point and no implicit casting to or from BYTES.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#string_type",
     "notes": ""
+  },
+  {
+    "id": "sql.type.struct-fields",
+    "name": "STRUCT<fields>",
+    "area": "SQL / Types",
+    "local": "limited",
+    "other": "available",
+    "description": "A container of ordered fields, each with a type and an optional name, and fields may be other structs or arrays; written like STRUCT<name STRING, age INT64>.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#struct_type",
+    "notes": "A stored STRUCT column is refused under a filter whose predicate can raise (for example WHERE id+1=0) and through a LIMITed CTE (ARRAY/STRUCT relational transport); STRUCT values from a LIMITed subquery or CTE, a scalar subquery with LIMIT or a UNION ALL over such a subquery are refused; STRUCT columns with a GEOGRAPHY field are refused."
   },
   {
     "id": "sql.type.struct-type",
@@ -11060,6 +13340,36 @@
     "notes": ""
   },
   {
+    "id": "sql.where.between-in-not-in",
+    "name": "BETWEEN, IN, NOT IN",
+    "area": "SQL / WHERE",
+    "local": "available",
+    "other": "unknown",
+    "description": "Filter predicates: BETWEEN checks that a value lies within an inclusive low and high bound, and IN or NOT IN checks whether a value is in a list or subquery result.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#in_operators",
+    "notes": ""
+  },
+  {
+    "id": "sql.where.is-true-is-false",
+    "name": "IS TRUE, IS FALSE",
+    "area": "SQL / WHERE",
+    "local": "available",
+    "other": "unknown",
+    "description": "Checks whether a boolean expression is exactly TRUE or exactly FALSE, so a NULL input is neither and yields FALSE rather than NULL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#is_operators",
+    "notes": ""
+  },
+  {
+    "id": "sql.where.standard-comparison-operators",
+    "name": "Standard comparison operators (=, !=, <, <=, >, >=)",
+    "area": "SQL / WHERE",
+    "local": "available",
+    "other": "unknown",
+    "description": "Operators that compare two values and return a boolean: equal, not equal, less than, less than or equal, greater than and greater than or equal; comparing with NULL gives NULL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/operators#comparison_operators",
+    "notes": ""
+  },
+  {
     "id": "sql.wildcardtables.table-suffix-pseudo-column",
     "name": "_TABLE_SUFFIX pseudo-column",
     "area": "SQL / WildcardTables",
@@ -11077,6 +13387,136 @@
     "other": "available",
     "description": "Queries every table whose name starts with the given prefix in one FROM item, such as events_*, treating the matched tables as a single combined set of rows.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax",
+    "notes": ""
+  },
+  {
+    "id": "sql.window-functions.aggregate-window-functions-sum-avg-etc-over-windows",
+    "name": "Aggregate window functions (SUM, AVG, etc. over windows)",
+    "area": "SQL / Window Functions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Aggregate functions like SUM, AVG, MIN, MAX and COUNT used with OVER, computing a value across a window of related rows while keeping every input row in the result.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/aggregate_functions",
+    "notes": "ARRAY_AGG ... OVER (...) is refused (\"Unqualified numbering function\"); CORR and other statistical windows over NUMERIC arguments are refused; STRING_AGG and FLOAT64 MIN/MAX windows whose result depends on tied peers or signed zeros fail with \"Non-deterministic order dependency\"."
+  },
+  {
+    "id": "sql.window-functions.navigation-firstvalue-lastvalue-nthvalue-lead-lag",
+    "name": "Navigation: FIRSTVALUE(), LASTVALUE(), NTHVALUE(), LEAD(), LAG()",
+    "area": "SQL / Window Functions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Functions FIRST_VALUE, LAST_VALUE, NTH_VALUE, LEAD and LAG that return a value from another row in the same window, such as the first, last, nth, next or previous row.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/navigation_functions",
+    "notes": "A result that depends on the order of tied ORDER BY peers fails with \"Non-deterministic order dependency\" where BigQuery returns one of the possible values; LEAD/LAG over ARRAY values are refused (\"Unqualified numbering function\")."
+  },
+  {
+    "id": "sql.window-functions.numbering-rownumber-rank-denserank-ntile-percentrank-cumedist",
+    "name": "Numbering: ROWNUMBER(), RANK(), DENSERANK(), NTILE(), PERCENTRANK(), CUMEDIST()",
+    "area": "SQL / Window Functions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Functions ROW_NUMBER, RANK, DENSE_RANK, NTILE, PERCENT_RANK and CUME_DIST that assign each row a position, rank, bucket or relative standing within its ordered partition.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/numbering_functions",
+    "notes": "NTILE over tied ORDER BY peers fails with \"Non-deterministic order dependency\" where BigQuery returns one of the possible results; numbering windows over a source carrying an INTERVAL column are refused."
+  },
+  {
+    "id": "sql.window-functions.over",
+    "name": "OVER ()",
+    "area": "SQL / Window Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "An empty window specification that treats the whole result set as a single partition, so a window function is computed over all rows at once.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls",
+    "notes": ""
+  },
+  {
+    "id": "sql.window-functions.over-partition-by-order-by",
+    "name": "OVER (PARTITION BY ... ORDER BY ...)",
+    "area": "SQL / Window Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Window specification that splits rows into partitions with PARTITION BY and orders rows inside each with ORDER BY, so running totals and ranks restart for every partition.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls",
+    "notes": ""
+  },
+  {
+    "id": "sql.window-functions.statistical-percentilecont-percentiledisc",
+    "name": "Statistical: PERCENTILECONT(), PERCENTILEDISC()",
+    "area": "SQL / Window Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Analytic functions PERCENTILE_CONT, which interpolates between values, and PERCENTILE_DISC, which returns an actual value from the data, for a percentile between 0 and 1.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/navigation_functions#percentile_cont",
+    "notes": ""
+  },
+  {
+    "id": "sql.window-functions.window-frames-rows-between-and-range-between-and",
+    "name": "Window frames: ROWS BETWEEN ... AND ..., RANGE BETWEEN ... AND ...",
+    "area": "SQL / Window Functions",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Frame clause that limits the rows a window function sees around the current row: ROWS counts physical rows before and after it, while RANGE uses a numeric span of the ORDER BY value.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls#def_window_frame",
+    "notes": "RANGE frames with offset bounds require exactly one INT64 ORDER BY key; FLOAT64, NUMERIC and BIGNUMERIC RANGE keys are refused."
+  },
+  {
+    "id": "sql.window-functions.window-w-as",
+    "name": "WINDOW w AS (...)",
+    "area": "SQL / Window Functions",
+    "local": "available",
+    "other": "unknown",
+    "description": "Defines a named window specification once in a WINDOW clause so several OVER clauses can refer to it by name instead of repeating partitioning and ordering.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#window_clause",
+    "notes": ""
+  },
+  {
+    "id": "storage_read_v1.bigquery-storage-read-api.arrow-and-avro-serialization-formats",
+    "name": "Arrow and Avro serialization formats",
+    "area": "Storage Read API",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Lets a read session return rows encoded as Apache Arrow record batches or as Avro blocks, whichever the client prefers.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/storage",
+    "notes": "Arrow buffer compression (LZ4_FRAME, ZSTD), response compression and picosecond timestamp precision options are refused with UNIMPLEMENTED."
+  },
+  {
+    "id": "storage_read_v1.bigquery-storage-read-api.column-projection-select-specific-columns",
+    "name": "Column projection (select specific columns)",
+    "area": "Storage Read API",
+    "local": "available",
+    "other": "unknown",
+    "description": "Lets a read session return only the selected columns of a table, so less data is read and transferred.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/storage",
+    "notes": ""
+  },
+  {
+    "id": "storage_read_v1.bigquery-storage-read-api.parallel-read-streams",
+    "name": "Parallel read streams",
+    "area": "Storage Read API",
+    "local": "available",
+    "other": "unknown",
+    "description": "Splits the data of a read session into several streams that a client or many workers can read at the same time to raise throughput.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/storage",
+    "notes": ""
+  },
+  {
+    "id": "storage_read_v1.bigquery-storage-read-api.row-filtering-pushdown-filters",
+    "name": "Row filtering (pushdown filters)",
+    "area": "Storage Read API",
+    "local": "available",
+    "other": "unknown",
+    "description": "Applies a SQL-style row restriction when a read session is created, so only matching rows are returned to the client.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/storage",
+    "notes": ""
+  },
+  {
+    "id": "storage_read_v1.bigquery-storage-read-api.snapshot-timestamp-based-reading-time-travel",
+    "name": "Snapshot/timestamp-based reading (time travel)",
+    "area": "Storage Read API",
+    "local": "unavailable",
+    "other": "unknown",
+    "description": "Creates a read session that reads a table as it was at a given snapshot time, so all streams see one consistent view of the data.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/storage",
     "notes": ""
   },
   {
@@ -11107,6 +13547,26 @@
     "other": "unavailable",
     "description": "Splits an existing read stream into two child streams so the remaining rows can be read by more workers.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/storage/rpc/google.cloud.bigquery.storage.v1#bigqueryread",
+    "notes": ""
+  },
+  {
+    "id": "storage_write_v1.bigquery-storage-write-api.protocol-buffer-or-arrow-serialization",
+    "name": "Protocol Buffer or Arrow serialization",
+    "area": "Storage Write API",
+    "local": "available",
+    "other": "unknown",
+    "description": "Appends rows to a write stream as protocol buffer messages or Arrow record batches, together with the schema that describes them.",
+    "docs": "https://cloud.google.com/bigquery/docs/write-api",
+    "notes": ""
+  },
+  {
+    "id": "storage_write_v1.bigquery-storage-write-api.stream-types-committed-pending-buffered",
+    "name": "Stream types: COMMITTED, PENDING, BUFFERED",
+    "area": "Storage Write API",
+    "local": "available",
+    "other": "unknown",
+    "description": "Write stream types: COMMITTED rows are visible at once, PENDING rows after a batch commit, and BUFFERED rows after they are flushed.",
+    "docs": "https://cloud.google.com/bigquery/docs/write-api",
     "notes": ""
   },
   {
