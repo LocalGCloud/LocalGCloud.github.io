@@ -159,7 +159,7 @@ The table lists each service ID. Follow each service guide for SDK setup, suppor
           ['cloudrun', 'dataproc'].includes(service.id) ? 'Execution requires Docker runtime access; use a configured runtime.' :
           service.id === 'gke' ? 'Cluster execution requires k3d and Docker; use a configured runtime.' :
           service.id === 'cloudfunctions' ? 'Function execution requires your own execution target.' :
-          service.id === 'sheets' ? 'Read-only auxiliary fixture API.' :
+          service.id === 'sheets' ? 'Auxiliary spreadsheet fixture API.' :
           ''}</td>
       </tr>
     ))}

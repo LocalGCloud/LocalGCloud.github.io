@@ -4,10 +4,22 @@ import { readFile, writeFile } from "node:fs/promises";
 import { parse } from "yaml";
 
 const root = new URL("../", import.meta.url);
-const runtimeRoot = new URL("../../localcloud/", import.meta.url);
+// The LocalCloud runtime publishes its documentation contract in docs/public-contract/ of
+// localcloud-go: curated public facts only (no source). The packaged defaults are configuration.
+const runtimeRoot = new URL("../../localcloud-go/", import.meta.url);
 const cliRoot = new URL("../../localcloud-cli/", import.meta.url);
 const bigqueryRoot = new URL("../../local_cloud_dependencies/bigquery-emulator-on-duckdb/", import.meta.url);
 const contractUrl = new URL("src/data/docs-contract.snapshot.json", root);
+const runtimePaths = {
+	defaults: "pkg/config/localcloud.defaults.yaml",
+	documentation: "docs/public-contract/documentation.yaml",
+	facts: "docs/public-contract/runtime-facts.yaml",
+	status: "docs/public-contract/service-status.md",
+	networking: "docs/public-contract/networking-and-tls.md",
+	mcp: "docs/public-contract/mcp-integration.md",
+	license: "LICENSE",
+};
+const runtimeSource = (key) => `../localcloud-go/${runtimePaths[key]}`;
 
 const read = (url) => readFile(url, "utf8");
 const revision = (url) =>
@@ -32,8 +44,9 @@ const sha256 = async (url) =>
 
 const contract = JSON.parse(await read(contractUrl));
 contract.schemaVersion = 4;
-const defaults = parse(await read(new URL("localcloud.defaults.yaml", runtimeRoot)));
-const documentation = parse(await read(new URL("documentation.yaml", runtimeRoot)));
+const defaults = parse(await read(new URL(runtimePaths.defaults, runtimeRoot)));
+const documentation = parse(await read(new URL(runtimePaths.documentation, runtimeRoot)));
+const facts = parse(await read(new URL(runtimePaths.facts, runtimeRoot)));
 const cliVersionSource = await read(
 	new URL("src/localcloud_cli/__init__.py", cliRoot),
 );
@@ -60,26 +73,16 @@ const localDateParts = Object.fromEntries(
 contract.reviewedAt = `${localDateParts.year}-${localDateParts.month}-${localDateParts.day}`;
 contract.provenance.runtimeRevision = revision(runtimeRoot);
 contract.provenance.cliRevision = revision(cliRoot);
+if (facts?.schema_version !== 1) throw new Error("Unsupported runtime facts schema");
+if (documentation?.schema_version !== 1) throw new Error("Unsupported public documentation schema");
 const sourceFiles = [
 	{ path: "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv", url: new URL("docs/coverage-matrix.csv", bigqueryRoot), repository: bigqueryRoot, repositoryPath: "docs/coverage-matrix.csv" },
-	{ path: "../localcloud/localcloud.defaults.yaml", url: new URL("localcloud.defaults.yaml", runtimeRoot), repository: runtimeRoot, repositoryPath: "localcloud.defaults.yaml" },
-	{ path: "../localcloud/documentation.yaml", url: new URL("documentation.yaml", runtimeRoot), repository: runtimeRoot, repositoryPath: "documentation.yaml" },
-	{ path: "../localcloud/docs/status/service-status.md", url: new URL("docs/status/service-status.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/status/service-status.md" },
-	{ path: "../localcloud/docs/architecture/networking-and-tls.md", url: new URL("docs/architecture/networking-and-tls.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/architecture/networking-and-tls.md" },
-	{ path: "../localcloud/docs/guides/mcp-integration.md", url: new URL("docs/guides/mcp-integration.md", runtimeRoot), repository: runtimeRoot, repositoryPath: "docs/guides/mcp-integration.md" },
-	{ path: "../localcloud/specs/api/catalog.json", url: new URL("specs/api/catalog.json", runtimeRoot), repository: runtimeRoot, repositoryPath: "specs/api/catalog.json" },
-	...[
-		"Dockerfile", "LICENSE", "docker/bigquery-start.sh", "docker/docker-entrypoint.sh",
-		"localcloud-server/src/main/java/com/localcloud/admin/SeedService.java",
-		"localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java",
-		"localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java",
-		"localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java",
-	].map((path) => ({ path: `../localcloud/${path}`, url: new URL(path, runtimeRoot), repository: runtimeRoot, repositoryPath: path })),
+	...Object.keys(runtimePaths).map((key) => ({ path: runtimeSource(key), url: new URL(runtimePaths[key], runtimeRoot), repository: runtimeRoot, repositoryPath: runtimePaths[key] })),
 	{ path: "../localcloud-cli/README.md", url: new URL("README.md", cliRoot), repository: cliRoot, repositoryPath: "README.md" },
 	{ path: "../localcloud-cli/src/localcloud_cli/config.py", url: new URL("src/localcloud_cli/config.py", cliRoot), repository: cliRoot, repositoryPath: "src/localcloud_cli/config.py" },
 	{ path: "../localcloud-cli/src/localcloud_cli/__init__.py", url: new URL("src/localcloud_cli/__init__.py", cliRoot), repository: cliRoot, repositoryPath: "src/localcloud_cli/__init__.py" },
 	...[
-		"src/localcloud_cli/constants.py", "src/localcloud_cli/docker_runtime.py",
+		"src/localcloud_cli/constants.py", "src/localcloud_cli/docker_runtime.py", "src/localcloud_cli/telemetry.py",
 	].map((path) => ({ path: `../localcloud-cli/${path}`, url: new URL(path, cliRoot), repository: cliRoot, repositoryPath: path })),
 	{ path: "public/install.sh", url: new URL("public/install.sh", root), repository: root, repositoryPath: "public/install.sh" },
 ];
@@ -93,7 +96,7 @@ contract.provenance.sourceDigests = Object.fromEntries(
 // refresh it with the digest recorded above (scripts/verify-policy-docs.mjs compares them).
 await writeFile(
 	new URL("src/data/legal/public-preview-license.txt", root),
-	await readFile(new URL("LICENSE", runtimeRoot)),
+	await readFile(new URL(runtimePaths.license, runtimeRoot)),
 );
 contract.provenance.worktreeSources = sourceFiles
 	.filter((source) => changed(source.repository, source.repositoryPath))
@@ -120,42 +123,18 @@ contract.cli.dockerSocketDefault = defaults.host.docker_socket;
 contract.cli.bindAddress = "0.0.0.0";
 contract.cli.quickStart = ["localcloud doctor", "localcloud start --local-only", 'eval "$(localcloud env)"', "localcloud console"];
 contract.operator.gatewayPort = defaults.server.gateway.port;
+const exposed = (suffix) => facts.image.exposed_ports.find((port) => port.endsWith(`/${suffix}`))?.replace(`/${suffix}`, "");
+if (!exposed("tcp") || !exposed("udp")) throw new Error("Runtime facts name no exposed TCP range or UDP port");
 contract.operator.publishedPorts = {
-	services: "5380-5405",
-	transparentDns: "53/udp -> 5410/udp",
+	services: exposed("tcp"),
+	transparentDns: `53/udp -> ${exposed("udp")}/udp`,
 	transparentHttp: `80 -> ${defaults.server.gateway.port}`,
 	transparentHttps: `443 -> tls.port (default ${defaults.tls.port})`,
 };
-contract.operator.manualDockerCommand = `docker volume create localcloud-data\n\ndocker run -d --name localcloud \\\n  -p 127.0.0.1:5380-5405:5380-5405 \\\n  -m 4g \\\n  -v localcloud-data:/var/lib/localcloud \\\n  agentcloud/localcloud:latest`;
+contract.operator.manualDockerCommand = `docker volume create localcloud-data\n\ndocker run -d --name localcloud \\\n  -p 127.0.0.1:${exposed("tcp")}:${exposed("tcp")} \\\n  -m 4g \\\n  -v localcloud-data:${facts.image.data_root} \\\n  ${facts.image.repository}:latest`;
 contract.cli.releaseBoundary = contract.provenance.worktreeSources.some((path) => path.startsWith("../localcloud-cli/"))
 	? `CLI ${cliVersion} behavior is documented from the current sibling source snapshot. Source digests identify working-tree changes not captured by cliRevision. Use localcloud --version to confirm the installed release.`
 	: `CLI behavior is documented for version ${cliVersion} from revision ${contract.provenance.cliRevision}. Use localcloud --version to confirm the installed release.`;
-
-const evidencePath = (value) => {
-	if (value === "../localcloud/services.yaml") {
-		return "../localcloud/localcloud.defaults.yaml";
-	}
-	if (
-		value.startsWith(
-			"../localcloud/localcloud-server/src/main/resources/compatibility/services/",
-		)
-	) {
-		return "../localcloud/documentation.yaml";
-	}
-	return value;
-};
-
-const replaceEvidence = (value) => {
-	if (Array.isArray(value)) {
-		return [...new Set(value.map(replaceEvidence))];
-	}
-	if (value && typeof value === "object") {
-		return Object.fromEntries(
-			Object.entries(value).map(([key, item]) => [key, replaceEvidence(item)]),
-		);
-	}
-	return typeof value === "string" ? evidencePath(value) : value;
-};
 
 const statusMap = {
 	supported: "verified",
@@ -165,31 +144,76 @@ const statusMap = {
 	prod_only: "unsupported",
 };
 
-const seedSource = await read(new URL("localcloud-server/src/main/java/com/localcloud/admin/SeedService.java", runtimeRoot));
-const seedServices = seedSource.match(/IMPLEMENTED_SEED_SERVICES = Set\.of\(([\s\S]*?)\);/)?.[1];
-const volatileServices = seedSource.match(/VOLATILE_SEED_SERVICES = Set\.of\(([\s\S]*?)\);/)?.[1];
-if (seedServices === undefined || volatileServices === undefined) throw new Error("Unable to read seed registrars");
-contract.seed.supportedServices = [...seedServices.matchAll(/"([a-z]+)"/g)].map((match) => match[1]);
-contract.seed.volatileServices = [...volatileServices.matchAll(/"([a-z]+)"/g)].map((match) => match[1]);
-contract.seed.defaultSeedFile = seedSource.match(/getOrDefault\("LOCALCLOUD_SEED_FILE", "([^"]+)"\)/)?.[1];
-if (!contract.seed.defaultSeedFile) throw new Error("Unable to read the default seed file");
+// Runtime facts the contract once scraped from source are explicit fields of runtime-facts.yaml,
+// which localcloud-go checks against its code (see that file's header).
+const factsEvidence = [runtimeSource("facts")];
+const seedFacts = facts.seed;
+contract.seed.endpoint = seedFacts.endpoint;
+contract.seed.reseedEndpoint = seedFacts.reseed_endpoint;
+contract.seed.importEndpoint = seedFacts.import_endpoint;
+contract.seed.seedFileVariable = seedFacts.file_variable;
+contract.seed.defaultSeedFile = seedFacts.default_file;
+contract.seed.terraformModeVariable = seedFacts.terraform_mode_variable;
+contract.seed.acceptedEnvelopes = seedFacts.accepted_envelopes.map(({ id, description }) => ({ id, description, evidence: factsEvidence }));
+contract.seed.supportedServices = [...seedFacts.supported_services];
+contract.seed.volatileServices = [...seedFacts.volatile_services];
 contract.seed.limitations = [
-	"Seed registrars do not establish supported application integrations; consult operation-level compatibility.",
-	"POST /reseed replaces sample resources in the selected project, including changes made inside them; unrelated resources are retained.",
+	...seedFacts.limitations,
 	"Managed CLI lifecycle commands do not mount or apply seed files; host.seed is accepted but ignored. Container bootstrap and Console reseeding own samples.",
-	"LOCALCLOUD_TERRAFORM_MODE=true skips seeding. Volatile mode currently has no eligible services.",
 ];
-contract.operator.endpoints.readiness = "/readiness";
-contract.privacy.runtimeTelemetry.limitations = [
-	"LOCALCLOUD_TELEMETRY=false disables regular runtime and Console reporting; a configured event API key still permits one telemetry_disabled startup event.",
-	"External lifecycle failures enqueue service_error events; registry snapshots have no exit code. The client uses normal TLS certificate verification.",
-	"Console summaries contain aggregate view, action, and error counts and are batched up to once per minute. Failed reports are queued locally for retry.",
+contract.seed.evidence = [...factsEvidence, "../localcloud-cli/src/localcloud_cli/config.py"];
+
+const endpointNames = {
+	health: "health", serviceHealth: "service_health", readiness: "readiness", environment: "environment",
+	services: "services", seed: "seed", reseed: "reseed", import: "import", reset: "reset",
+	terraformReadiness: "terraform_readiness", graphql: "graphql", openapi: "openapi",
+};
+contract.operator.endpoints = Object.fromEntries(Object.entries(endpointNames).map(([name, key]) => {
+	if (!facts.operator_endpoints[key]) throw new Error(`Runtime facts name no ${key} endpoint`);
+	return [name, facts.operator_endpoints[key]];
+}));
+
+contract.terraform.readinessEndpoint = facts.terraform.readiness_endpoint;
+contract.terraform.modeVariable = facts.terraform.mode_variable;
+contract.terraform.networkModes = [
+	{
+		id: "endpoint-only",
+		description: "Use generated custom endpoints for resources whose provider clients honor them.",
+		requirements: [`eval generated values from ${facts.terraform.environment_format} or localcloud env --format terraform`],
+		evidence: [...factsEvidence, "../localcloud-cli/README.md"],
+	},
+	{
+		id: "transparent-network",
+		description: "Use LocalCloud DNS/HTTP/HTTPS routing for clients that ignore custom endpoints.",
+		requirements: ["enable transparent networking", "trust the LocalCloud certificate", `set ${facts.terraform.mode_variable}=true`],
+		evidence: [runtimeSource("networking")],
+	},
 ];
-for (const event of ["service_error", "console_summary"]) {
-	if (!contract.privacy.runtimeTelemetry.events.includes(event)) contract.privacy.runtimeTelemetry.events.push(event);
+contract.terraform.evidence = [...factsEvidence, runtimeSource("networking"), "../localcloud-cli/README.md"];
+
+// The runtime image reports nothing; LocalCloud's usage reports come from the public CLI, which
+// honors the same opt-out variable on the host.
+const telemetry = facts.telemetry;
+if (telemetry.runtime_sends_usage_data !== false || !telemetry.ignored_variables.includes("LOCALCLOUD_TELEMETRY")) {
+	throw new Error("Runtime telemetry facts changed; review privacy.runtimeTelemetry before syncing");
 }
-// Certificate setup now imports explicitly mounted CAs; the remote probe was removed.
-contract.privacy.outboundBehaviors = contract.privacy.outboundBehaviors.filter((item) => item.id !== "ca-probe");
+contract.privacy.runtimeTelemetry = {
+	defaultEnabled: true,
+	destination: "https://us.i.posthog.com/i/v0/e/",
+	disableVariable: "LOCALCLOUD_TELEMETRY",
+	identifier: "Pseudonymous installation identifier kept by the CLI",
+	retryPersistence: true,
+	events: ["CLI startup errors as scrubbed one-line signatures", "hourly CLI heartbeat: CLI version, platform, configured services and command counts"],
+	limitations: [
+		"The runtime image sends no usage telemetry and does not read LOCALCLOUD_TELEMETRY; the Console sends no analytics.",
+		"The LocalCloud CLI sends its reports from start, restart, reset and stop; LOCALCLOUD_TELEMETRY=false or DO_NOT_TRACK in the CLI's environment stops them. Undelivered events are retried on a later run.",
+	],
+	evidence: [...factsEvidence, "../localcloud-cli/src/localcloud_cli/telemetry.py"],
+};
+contract.privacy.outboundBehaviors = facts.outbound_requests.map(({ id, default: defaultState, destination, control }) => ({
+	id, default: String(defaultState), destination, control, evidence: factsEvidence,
+}));
+contract.privacy.evidence = [...factsEvidence, "../localcloud-cli/src/localcloud_cli/telemetry.py", "src/layouts/BaseLayout.astro"];
 contract.privacy.websiteAnalytics.processor = "PostHog and Cloudflare Web Analytics";
 contract.privacy.websiteAnalytics.events = contract.privacy.websiteAnalytics.events
 	.filter((event) => event !== "autocapture interactions");
@@ -206,6 +230,11 @@ const envValue = (service) => {
 	const port = raw === "gateway" ? defaults.server.gateway.port : raw;
 	return `${service.envValuePrefix ?? ""}localhost:${port}`;
 };
+
+const documentationEvidence = [runtimeSource("documentation")];
+const serviceEvidence = [runtimeSource("defaults"), runtimeSource("documentation")];
+const persistenceScopes = new Set(["volatile", "metadata", "service-data", "stateless"]);
+const implementations = new Set(["google-official", "extended-official", "custom-emulator", "third-party-emulator", "local-facade"]);
 
 contract.services = contract.services.map((service) => {
 	const runtime = runtimeCatalog[service.id];
@@ -234,36 +263,40 @@ contract.services = contract.services.map((service) => {
 			label: operation.operation,
 			status,
 			limitations,
-			evidence: ["../localcloud/documentation.yaml"],
+			evidence: documentationEvidence,
 		};
 	});
 
 	const rawPort = servicePort(runtime);
+	const port = rawPort === "gateway" ? defaults.server.gateway.port : rawPort;
+	if (docs.port !== port || docs.env_var !== runtime.envVar || docs.name !== runtime.displayName) {
+		throw new Error(`${service.id} name, port or environment variable in documentation.yaml differs from the packaged defaults`);
+	}
 	const additionalPorts = { ...(runtime.additionalPorts ?? {}) };
 	if (runtime.gcloudPort && !additionalPorts.rest) additionalPorts.rest = runtime.gcloudPort;
 	if (runtime.grpcPort && !additionalPorts.grpc) additionalPorts.grpc = runtime.grpcPort;
 
+	const implementation = docs.implementation ?? (runtime.type === "facade" ? "local-facade" : service.implementation);
+	if (!implementations.has(implementation)) throw new Error(`Unknown implementation ${implementation} for ${service.id}`);
+	const persistence = docs.persistence;
+	if (!persistence || !persistenceScopes.has(persistence.scope) || !persistence.backing_store || !persistence.restart_behavior || !persistence.recovery_limitations?.length) {
+		throw new Error(`documentation.yaml has no complete persistence block for ${service.id}`);
+	}
+
 	return {
 		...service,
-		implementation: runtime.type === "facade" ? "local-facade" : service.implementation,
-		persistence: service.id === "pubsub" ? {
-			scope: "service-data",
-			backingStore: "PostgreSQL under /var/lib/localcloud/pgdata",
-			restartBehavior: "Topics, subscriptions, and queued messages persist in PostgreSQL. Delivery workers and active connections restart; qualify the exact replay and redelivery workflow.",
-			recoveryLimitations: ["A mounted volume does not provide production delivery, replication, or recovery guarantees; qualify the assembled image."],
-			qualification: "release-unverified",
-			evidence: ["../localcloud/documentation.yaml", "../localcloud/localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java"],
-		} : service.id === "firestore" ? {
-			scope: "service-data",
-			backingStore: "External emulator exports and checkpoint metadata beneath the mounted LocalCloud data root",
-			restartBehavior: "Historical isolated clean-restart evidence restored document contents but changed timestamps. Qualify recovery in the exact assembled image.",
-			recoveryLimitations: ["Checkpoints and seed registration do not establish timestamp, precondition, listener, or transaction fidelity."],
-			qualification: "release-unverified",
-			evidence: ["../localcloud/documentation.yaml"],
-		} : service.persistence,
+		implementation,
+		persistence: {
+			scope: persistence.scope,
+			backingStore: persistence.backing_store,
+			restartBehavior: persistence.restart_behavior,
+			recoveryLimitations: [...persistence.recovery_limitations],
+			qualification: service.persistence.qualification,
+			evidence: documentationEvidence,
+		},
 		availability: runtime.availability,
 		name: runtime.displayName,
-		port: rawPort === "gateway" ? defaults.server.gateway.port : rawPort,
+		port,
 		additionalPorts,
 		protocol: runtime.protocol,
 		type: runtime.type,
@@ -275,12 +308,9 @@ contract.services = contract.services.map((service) => {
 		assembledDefault: {
 			enabled: runtime.defaultEnabled,
 			qualification: "verified",
-			evidence: [
-				"../localcloud/localcloud.defaults.yaml",
-				"../localcloud/documentation.yaml",
-			],
+			evidence: serviceEvidence,
 			limitation:
-				"Default enablement follows the current runtime catalog and remains subject to license-tier gates.",
+				"Default enablement follows the current runtime catalog; no service is gated by license tier.",
 		},
 		status: statusMap[docs.coverage_status],
 		// The matrix records concrete gaps; upstream prose still has stale totals and global parity claims.
@@ -290,16 +320,36 @@ contract.services = contract.services.map((service) => {
 			"Google-managed reservations, fleet scale, replication, and IAM integrations require production validation.",
 		] : docs.limitations ?? [],
 		operations,
-		evidence: [
-			"../localcloud/localcloud.defaults.yaml",
-			"../localcloud/documentation.yaml",
-		],
+		evidence: serviceEvidence,
 		published: runtime.availability === "available",
 	};
 });
 
-const refreshed = replaceEvidence(contract);
-await writeFile(contractUrl, `${JSON.stringify(refreshed, null, 2)}\n`);
+// The engine revisions the runtime image is built from, as the runtime publishes them.
+contract.provenance.dependencyRevalidations = contract.provenance.dependencyRevalidations.map((dependency) => {
+	const engine = Object.values(facts.emulators).find((item) => item.repository === dependency.id);
+	if (!engine) throw new Error(`Runtime facts name no engine revision for ${dependency.id}`);
+	return { ...dependency, revision: engine.revision, evidence: [`../local_cloud_dependencies/${dependency.id}`, ...factsEvidence] };
+});
+
+contract.product.runtimeImage.repository = facts.image.repository;
+contract.product.runtimeImage.evidence = [...factsEvidence, "../localcloud-cli/src/localcloud_cli/config.py", "../localcloud-cli/.github/workflows/cli-release.yml"];
+contract.licensing.governingLicense = runtimeSource("license");
+contract.licensing.evidence = [runtimeSource("license"), ...factsEvidence];
+contract.licensing.technicalEnforcement = {
+	developmentBuild: "No build enforces a license key; every available service runs without one.",
+	enforcedBuild: `The runtime reports license state ${facts.licensing.enforcement} at ${facts.licensing.license_endpoint} and never contacts a license service.`,
+	serviceTiers: facts.licensing.service_tiers.trim(),
+	evidence: [runtimeSource("license"), ...factsEvidence],
+};
+
+// Every path the snapshot publishes must be a public contract file, packaged configuration, a
+// public sibling or this repository; the retired runtime and private source never appear.
+const published = JSON.stringify(contract);
+for (const forbidden of [/\.\.\/localcloud\//, /\.java\b/, /\.go\b"/, /localcloud-server/, /"[^"]*\bpkg\/(?!config\/localcloud\.defaults\.yaml)/]) {
+	if (forbidden.test(published)) throw new Error(`The snapshot would publish a retired or private path matching ${forbidden}`);
+}
+await writeFile(contractUrl, `${JSON.stringify(contract, null, 2)}\n`);
 console.log(
-	`Synced ${refreshed.services.length} services from runtime ${refreshed.provenance.runtimeRevision.slice(0, 12)} and CLI ${cliVersion}.`,
+	`Synced ${contract.services.length} services from runtime ${contract.provenance.runtimeRevision.slice(0, 12)} and CLI ${cliVersion}.`,
 );

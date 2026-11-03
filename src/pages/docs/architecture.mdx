@@ -6,7 +6,7 @@ description: "How LocalCloud works inside one container: the gateway, service pr
 
 # Architecture
 
-LocalCloud packages a Java gateway, the web console, local facades, and external emulator processes in one unified Docker container. “One container” does not mean every service shares the same protocol, process, storage engine, or compatibility level.
+LocalCloud packages a gateway, the web console, local facades, and external emulator processes in one unified Docker container. “One container” does not mean every service shares the same protocol, process, storage engine, or compatibility level.
 
 ## Request flow
 
@@ -19,21 +19,21 @@ LocalCloud packages a Java gateway, the web console, local facades, and external
 
 The named Docker volume mounted at `/var/lib/localcloud` is the only durable runtime selector; the default is `localcloud-data`. The CLI checks the configured image and finds the compatible container that uses that volume. It stops before changing anything when the volume is ambiguous, the image is incompatible or labels are invalid. The CLI manages only containers it created and never removes Docker resources it doesn't own. `localcloud reset --all-projects` prints manual full-recreation steps and deletes nothing.
 
-Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env`, `/services`, `/seed`, `/reseed`, `/import`, `/reset`, `/terraform/readiness`, `/graphql`, `/api-docs`, and `/docs`.
+Root operator routes include `/health`, `/health/{service}`, `/readiness`, `/env`, `/services`, `/seed`, `/reseed`, `/import`, `/reset`, `/terraform/readiness`, `/graphql`, `/api-docs`, and `/mcp`.
 
 ## Process and storage model
 
 | Component | Current Implementation | Persistence Boundary |
 | :--- | :--- | :--- |
-| **Gateway & Facades** | Java / Armeria services | Facade records use internal PostgreSQL beneath `/var/lib/localcloud/pgdata`; operation-specific limits apply. |
+| **Gateway & Facades** | Gateway process with in-process service facades | Facade records use internal PostgreSQL beneath `/var/lib/localcloud/pgdata`; operation-specific limits apply. |
 | **Cloud Storage** | `fake-gcs-server` process | Object blobs and bucket metadata stored beneath `/var/lib/localcloud/gcs-data`. |
-| **Pub/Sub** | In-process Java facade | Topics, subscriptions, and queued messages use PostgreSQL under `/var/lib/localcloud/pgdata`. Delivery workers and connections restart; test exact replay and redelivery behavior. |
-| **Firestore** | External emulator configuration | Documented local document/query workflows; opt-in. Test checkpoint, timestamp, listener, and transaction behavior with the exact image you run. |
+| **Pub/Sub** | In-process gateway facade | Topics, subscriptions, and queued messages use PostgreSQL under `/var/lib/localcloud/pgdata`. Delivery workers and connections restart; test exact replay and redelivery behavior. |
+| **Firestore** | Bundled Firestore emulator process | Per-project write-ahead log and checkpoint files beneath `/var/lib/localcloud/firestore`; opt-in. Test listener and transaction behavior with the exact image you run. |
 | **Bigtable** | Custom emulator process | Backed by PostgreSQL under the mounted data root. Port `5385`. |
 | **BigQuery** | Native GoogleSQL analysis + DuckDB execution | Supervised native in-container process; columnar DuckDB storage beneath `/var/lib/localcloud/bigquery-data`. Ports `5388` (REST) and `5389` (Storage Read gRPC with TLS). |
 | **Spanner** | Extended Cloud Spanner emulator | LevelDB row data plus JSON metadata beneath `/var/lib/localcloud/spanner-data`. Ports `5386` (gRPC) and `5387` (REST). |
 | **Memorystore** | Valkey-compatible process | Ports `5390` (plaintext) and `5394` (TLS). Check the documented RESP command and recovery subset. |
-| **AlloyDB & Cloud SQL** | PostgreSQL 16 (`5391`) + companion MySQL 8.4 (`5406`) | Native PostgreSQL 16 data plane shared by Cloud SQL and AlloyDB; MySQL 8.4 hosted via companion container. |
+| **AlloyDB & Cloud SQL** | PostgreSQL 17 (`5391`) + companion MySQL 8.4 (`5406`) | Native PostgreSQL 17 data plane shared by Cloud SQL and AlloyDB; MySQL 8.4 hosted via companion container. |
 
 A retained volume improves restart/container-replacement behavior only for stores that actually persist. It does not provide production replication, backups, disaster recovery, transaction parity, or durability guarantees.
 

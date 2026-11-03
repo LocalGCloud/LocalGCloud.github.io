@@ -85,7 +85,7 @@ User-facing content on `local.cloud` presents LocalCloud's value proposition to 
    - Only explicitly unsupported services (e.g. Vertex AI, Compute Engine) receive callout badges ("Unsupported" / "Cloud-only").
 3. **Operational Configuration ≠ Support Status:**
    - **Firestore** is fully supported (disabled by default to conserve workstation resources; opt-in with `--services firestore` or in `localcloud.yaml`). Never classify Firestore as unsupported.
-   - **Dataproc** is supported (runs clusters and serverless batch jobs via local Docker container runtimes).
+   - **Dataproc** is supported (runs clusters, and jobs submitted without a cluster, in local Docker containers).
 4. **Positive Capability Framing:**
    - Frame features around what developers and CI suites can achieve locally rather than internal audit limitations.
 
@@ -95,7 +95,7 @@ See [docs/site-marketing-principles.md](file:///Users/jsenjaliya/src/AI/localclo
 
 ### 2. Upstream Documentation Ingestion Workflow
 
-When syncing or reading technical documentation from upstream repositories (e.g., `localcloud`, `spanner`, `bigquery`, `dataproc`):
+When syncing or reading technical documentation from upstream repositories (e.g., `localcloud-go`, `spanner`, `bigquery`, `dataproc`; from `localcloud-go`, read only its `docs/public-contract/`, packaged defaults and `LICENSE`, never its private source):
 
 1. **Sync Contract:** Run `node scripts/sync-upstream-docs.mjs` and `UPSTREAM_DOCS_STRICT=1 node scripts/verify-upstream-docs.mjs` to update and verify `src/data/docs-contract.snapshot.json`. Sync from committed upstream work; regular builds only warn when upstream is ahead of the snapshot.
 2. **Apply Normalization:** Ensure `marketingStatus` in `src/data/services.ts` maps all active technical states (`verified`, `partial`, `release-unverified`) to `'supported'`.

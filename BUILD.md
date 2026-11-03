@@ -90,7 +90,7 @@ All content on `local.cloud` must strictly adhere to product marketing principle
    - Only explicitly unsupported services (e.g. Vertex AI, Compute Engine) receive callout badges ("Unsupported" / "Cloud-only").
 3. **Operational Configuration ≠ Support Status:**
    - **Firestore** is fully supported (disabled by default to conserve workstation memory; enabled on demand via `--services firestore` or in `localcloud.yaml`).
-   - **Dataproc** is supported (runs clusters and serverless batch jobs via local Docker container runtimes).
+   - **Dataproc** is supported (runs clusters, and jobs submitted without a cluster, in local Docker containers).
 4. **Positive Capability Framing:**
    - Focus on what developers and CI suites can achieve locally rather than internal audit limitations.
 
@@ -100,7 +100,7 @@ For architectural design details, see [docs/site-marketing-principles.md](file:/
 
 ### Refresh documentation from LocalCloud
 
-Use committed sibling repositories (`../localcloud`, `../localcloud-cli`, and the BigQuery dependency) when updating capabilities:
+Use committed sibling repositories (`../localcloud-go`, `../localcloud-cli`, and the BigQuery dependency) when updating capabilities. The runtime facts come only from the public contract that `../localcloud-go` publishes in `docs/public-contract/` (documentation, runtime facts, guides), its packaged `pkg/config/localcloud.defaults.yaml` and its root `LICENSE`; never read or cite its private source:
 
 ```bash
 node scripts/sync-upstream-docs.mjs
@@ -193,7 +193,7 @@ A page opened or prefetched before a deploy still names the previous deploy's ha
 node scripts/sync-upstream-docs.mjs
 UPSTREAM_DOCS_STRICT=1 node scripts/verify-upstream-docs.mjs
 ```
-Synchronizes `documentation.yaml` from `../localcloud` into `src/data/docs-contract.snapshot.json` and updates cryptographic hashes. Strict mode confirms the new snapshot matches upstream HEAD and that no source came from uncommitted upstream changes; sync from committed upstream work so later builds can re-verify every source.
+Synchronizes `docs/public-contract/documentation.yaml` and `runtime-facts.yaml` from `../localcloud-go` into `src/data/docs-contract.snapshot.json` and updates cryptographic hashes. Strict mode confirms the new snapshot matches upstream HEAD and that no source came from uncommitted upstream changes; sync from committed upstream work so later builds can re-verify every source.
 
 ### Context Graph Rebuild
 ```bash

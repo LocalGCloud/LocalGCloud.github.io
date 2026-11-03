@@ -22,7 +22,7 @@ const OPERATION_READER_COPY = {
   },
   'bigquery.storage-api': {
     limitations: [
-      "Storage Read/Write API (Avro, Arrow) on port 5389, including the Spark BigQuery connector's read path.",
+      'Storage Read and Write APIs (Avro, Arrow) over gRPC with TLS on port 5389. Clients need to trust the LocalCloud CA.',
     ],
   },
   'bigtable.admin.lifecycle': {
@@ -32,22 +32,22 @@ const OPERATION_READER_COPY = {
   },
   'bigtable.rows.data': {
     limitations: [
-      'Each mutation is validated before any cell is written, so a row changes atomically. MutateRows returns per-entry codes, and idempotency tokens are honored. Aggregate families (Sum, Min, Max, HLL++), every RowFilter, SampleRowKeys, authorized-view, materialized-view and app-profile targets, and the OpenTable, OpenAuthorizedView and OpenMaterializedView session protocol are supported. ReadRows does not emit last_scanned_row_key. Sink cells bypass later filters, and Sink is invalid inside Condition.',
+      'Each mutation is validated before any cell is written, so a row changes atomically. MutateRows returns per-entry codes, and idempotency tokens are honored. Aggregate families (Sum, Min, Max, HLL++), every RowFilter, SampleRowKeys, request stats, authorized-view, materialized-view and app-profile targets, and the OpenTable, OpenAuthorizedView and OpenMaterializedView session protocol are supported. ReadRows streams last_scanned_row_key progress responses. Sink cells bypass later filters, and Sink is invalid inside Condition.',
     ],
   },
   'bigtable.cli.cbt': {
     limitations: [
-      'Set BIGTABLE_EMULATOR_HOST and pass -project to cbt unless the project is set in .cbtrc or gcloud. GOOGLE_CLOUD_PROJECT alone does not select the project. Table commands also need -instance. Clear stored -admin-endpoint and -data-endpoint overrides so the emulator variable applies. Any project and instance ID is accepted without registration. For plaintext local use, -access-token=localcloud is optional for the tested cbt version and is not a Google credential. The data API accepts requests without credentials. Instance create, list, get and delete work over gRPC, and table and row commands work as expected.',
+      'Set BIGTABLE_EMULATOR_HOST and pass -project to cbt unless the project is set in .cbtrc or gcloud. GOOGLE_CLOUD_PROJECT alone does not select the project. Table commands also need -instance. Clear stored -admin-endpoint and -data-endpoint overrides so the emulator variable applies. In open and permissive IAM modes any project and instance ID is accepted without registration; in strict mode create the instance first. Instance create, list, get and delete work over gRPC, and table and row commands work as expected.',
     ],
   },
   'bigtable.browser.console': {
     limitations: [
-      'Browse rows, write cells and delete rows in the console. Instance, table and backup actions return emulator errors. Row writes and deletes, app profile and view changes, and instance or table edits made in the console are not fully validated by the emulator, so confirm them with the native client.',
+      'Browse rows, write cells and delete rows in the console, and manage instances, tables, app profiles, views and backups. Every console action goes to the emulator and shows its errors. Adding a row with an existing key is refused, and binary cell values are shown base64.',
     ],
   },
   'bigtable.persistence': {
     limitations: [
-      'Tables, views, backups, IAM policies, long-running operations and change-stream records persist in PostgreSQL. Data persists across restarts on the mounted volume. Table metadata migrates in place on first start, and that migration is one-way.',
+      'Tables, views, backups, IAM policies, long-running operations and change-stream records persist in PostgreSQL on the mounted volume and survive restarts.',
     ],
   },
   'bigtable.materialized-views': {
@@ -57,7 +57,7 @@ const OPERATION_READER_COPY = {
   },
   'bigtable.query.googlesql': {
     limitations: [
-      'GoogleSQL queries run through PrepareQuery and ExecuteQuery. Prepared-query tokens last one hour, and a schema change returns FailedPrecondition (PREPARED_QUERY_EXPIRED). Logical views are queryable. Query statistics and view parameters are not supported. The console SQL editor uses a separate translator.',
+      'GoogleSQL queries run through PrepareQuery and ExecuteQuery. A schema change returns FailedPrecondition (PREPARED_QUERY_EXPIRED). Logical views are queryable, including parameterized views. ST_REGIONSTATS is not available. The console SQL editor uses a separate translator.',
     ],
   },
   'bigtable.change-streams': {
@@ -67,12 +67,12 @@ const OPERATION_READER_COPY = {
   },
   'bigtable.snapshots-backups': {
     limitations: [
-      'Backups are immutable schema and row snapshots. Create, get, list (with filter, order and pagination), update, copy, delete and restore to a new table work, and UndeleteTable restores a deleted table within 7 days. Legacy table snapshot RPCs return Unimplemented; use backups for data protection.',
+      'Backups are immutable schema and row snapshots. Create, get, list (with filter, order and pagination), update, copy, delete and restore to a new table work, tables with an automated backup policy are backed up every 24 hours, and UndeleteTable restores a deleted table within 7 days. Legacy table snapshot RPCs return Unimplemented; use backups for data protection.',
     ],
   },
   'bigtable.iam': {
     limitations: [
-      'IAM policies persist with etags and update masks, but policies are permissive. TestIamPermissions grants every requested permission. The emulator is unauthenticated, so the direct gRPC listener does not enforce IAM either.',
+      'IAM policies persist with etags and update masks, but they are not evaluated: TestIamPermissions grants every requested permission. In strict IAM mode the gateway requires an identified caller on port 5385.',
     ],
   },
   'bigtable.safety.forward-compat': {
@@ -88,12 +88,12 @@ const OPERATION_READER_COPY = {
   },
   'spanner.sessions-transactions': {
     limitations: [
-      'Sessions (including batch-create and multiplexed), read-write, read-only and single-use transactions. SERIALIZABLE (default) and REPEATABLE_READ isolation. Lock waits follow wound-wait, bounded by --lock_wait_timeout_ms. Exclusive locks come from SELECT ... FOR UPDATE and LOCK_SCANNED_RANGES=exclusive. PENDING_COMMIT_TIMESTAMP and commit stats are supported. A deadlock aborts exactly one transaction, and unique indexes are checked at commit.',
+      'Sessions (including batch-create and multiplexed), read-write, read-only and single-use transactions. SERIALIZABLE (default) and REPEATABLE_READ isolation. Lock waits follow wound-wait. Exclusive locks come from SELECT ... FOR UPDATE and LOCK_SCANNED_RANGES=exclusive. Commit-timestamp columns and commit stats are supported. A deadlock aborts exactly one transaction, and unique indexes are checked at commit.',
     ],
   },
   'spanner.iam': {
     limitations: [
-      'IAM policies are stored durably and returned through native endpoints, with etag checks. Fine-grained access control (FGAC) is enforced for sessions created with a creator_role, on queries, DML, reads, mutations and change stream reads. Unauthenticated emulator connections bypass network IAM.',
+      'IAM policies are stored durably and returned through native endpoints, with etag checks, but they are not evaluated. Fine-grained access control (FGAC) is enforced for sessions created with a creator_role, on queries, DML, reads, mutations and change stream reads. In strict IAM mode the gateway requires an identified caller on ports 5386 and 5387.',
     ],
   },
 };
@@ -101,18 +101,18 @@ const OPERATION_READER_COPY = {
 /** @type {Record<string, string[]>} */
 const SERVICE_READER_COPY = {
   bigtable: [
-    'Tables, backups and IAM policies persist in PostgreSQL. IAM is permissive and is not enforced on the gRPC listener.',
-    'Change streams use one partition. The HLL++ and multi-column materialized-view row-key encodings differ from Cloud Bigtable.',
+    'Tables, backups and IAM policies persist in PostgreSQL. IAM policies are stored but not evaluated.',
+    'Change streams use one partition. Multi-column materialized-view row keys use a local encoding.',
     'Legacy table snapshot RPCs return Unimplemented. Use backups instead.',
-    'Row writes and some admin edits made in the console are not validated by the emulator. Confirm them with the native client.',
+    'Project checkpoints do not capture Bigtable data. Use backups to keep it.',
   ],
   spanner: [
     'PROTO and ENUM columns can be created, but a commit that writes a non-NULL value to one fails with UNIMPLEMENTED. Rows that leave them NULL are stored.',
-    'Database roles and FGAC are enforced for sessions created with a creator_role. Unauthenticated emulator connections bypass network IAM.',
-    'Change streams require ExecuteStreamingSql. With --data_dir, stream definitions, records and resume tokens survive restarts.',
-    'Backups require --data_dir and are full database copies. Customer-managed encryption keys (CMEK) are not implemented, so data is stored in plaintext.',
+    'Database roles and FGAC are enforced for sessions created with a creator_role. Stored IAM policies are not evaluated.',
+    'Change streams require ExecuteStreamingSql. Stream definitions, records and resume tokens survive restarts.',
+    'Backups are full database copies. Customer-managed encryption keys (CMEK) are not implemented, so data is stored in plaintext.',
     'Cloud-only infrastructure (TrueTime, multi-region quorums, physical split points, tablet distribution, cross-region migration and multi-tenant compute) does not apply to local development.',
-    'Exports and project checkpoints record Spanner instance and database names and table counts, not schema or rows. A checkpoint restore leaves Spanner unchanged, so use Spanner backups to keep data.',
+    'Project checkpoints do not capture Spanner. Use Spanner backups to keep data.',
   ],
 };
 

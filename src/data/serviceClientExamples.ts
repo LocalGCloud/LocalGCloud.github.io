@@ -387,7 +387,7 @@ gcloud pubsub subscriptions pull "$SUBSCRIPTION" --auto-ack --limit=1
   if (serviceId === 'sheets') examples.push({
     title: 'Read a spreadsheet range', label: 'HTTP',
     summary: 'Read a seeded spreadsheet range; Sheets lets an application consume human-maintained lookup tables.',
-    description: 'Use the ID and A1 range from a seeded spreadsheet. Google Sheets exposes read-only fixture values locally.',
+    description: 'Use the ID and A1 range from a seeded spreadsheet. Google Sheets serves fixture values locally through the values API.',
     environment: 'export SPREADSHEET_ID="your-seeded-spreadsheet-id"\nexport A1_RANGE="Sheet1!A1:B3"',
     code: 'curl --fail-with-body --get "${SHEETS_EMULATOR_HOST%/}/v4/spreadsheets/${SPREADSHEET_ID}/values/${A1_RANGE}"',
   });

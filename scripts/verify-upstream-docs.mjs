@@ -4,7 +4,18 @@ import { access, readFile } from "node:fs/promises";
 import { parse } from "yaml";
 
 const root = new URL("../", import.meta.url);
-const runtimeRoot = new URL("../../localcloud/", import.meta.url);
+// localcloud-go publishes the runtime's documentation contract in docs/public-contract/.
+const runtimeRoot = new URL("../../localcloud-go/", import.meta.url);
+const runtimePaths = {
+	defaults: "pkg/config/localcloud.defaults.yaml",
+	documentation: "docs/public-contract/documentation.yaml",
+	facts: "docs/public-contract/runtime-facts.yaml",
+	status: "docs/public-contract/service-status.md",
+	networking: "docs/public-contract/networking-and-tls.md",
+	mcp: "docs/public-contract/mcp-integration.md",
+	license: "LICENSE",
+};
+const runtimeSource = (key) => `../localcloud-go/${runtimePaths[key]}`;
 const cliRoot = new URL("../../localcloud-cli/", import.meta.url);
 const contract = JSON.parse(
 	await readFile(new URL("src/data/docs-contract.snapshot.json", root), "utf8"),
@@ -19,7 +30,7 @@ const exists = async (url) => {
 	}
 };
 
-if (!(await exists(new URL("localcloud.defaults.yaml", runtimeRoot)))) {
+if (!(await exists(new URL(runtimePaths.documentation, runtimeRoot)))) {
 	const message = "Upstream documentation verification skipped: sibling projects are not present.";
 	// CI never has the siblings, so make the skip visible in the run summary.
 	console.log(process.env.GITHUB_ACTIONS ? `::warning title=Upstream documentation::${message}` : message);
@@ -34,7 +45,7 @@ function report() {
 const assert = (condition, message) => {
 	if (!condition) throw new Error(`Upstream documentation: ${message}`);
 };
-assert(await exists(new URL("docs/guides/mcp-integration.md", runtimeRoot)), "runtime MCP guide is missing");
+assert(await exists(new URL(runtimePaths.mcp, runtimeRoot)), "runtime MCP guide is missing");
 const revision = (url) =>
 	execFileSync("git", ["rev-parse", "HEAD"], {
 		cwd: url,
@@ -64,7 +75,7 @@ assert(commitExists(runtimeRoot, runtimeRevision), "runtime revision does not ex
 assert(commitExists(cliRoot, cliRevision), "CLI revision does not exist");
 assert(commitExists(bigqueryRoot, contract.bigqueryCoverage.revision), "BigQuery coverage revision does not exist");
 for (const [name, repository, recorded] of [
-	["localcloud", runtimeRoot, runtimeRevision],
+	["localcloud-go", runtimeRoot, runtimeRevision],
 	["localcloud-cli", cliRoot, cliRevision],
 	["bigquery-emulator-on-duckdb", bigqueryRoot, contract.bigqueryCoverage.revision],
 ]) {
@@ -90,25 +101,20 @@ const readOptional = async (url) => {
 const digestOf = (bytes) => `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
 const upstreamPath = (path) =>
 	path.startsWith("../localcloud-cli/") ? [cliRoot, cliRevision, path.slice("../localcloud-cli/".length)]
-		: path.startsWith("../localcloud/") ? [runtimeRoot, runtimeRevision, path.slice("../localcloud/".length)]
+		: path.startsWith("../localcloud-go/") ? [runtimeRoot, runtimeRevision, path.slice("../localcloud-go/".length)]
 			: path.startsWith("../local_cloud_dependencies/bigquery-emulator-on-duckdb/") ? [bigqueryRoot, contract.bigqueryCoverage.revision, path.slice("../local_cloud_dependencies/bigquery-emulator-on-duckdb/".length)]
 				: null;
 
 const upstreamSources = new Map([
-	["../localcloud/localcloud.defaults.yaml", new URL("localcloud.defaults.yaml", runtimeRoot)],
-	["../localcloud/documentation.yaml", new URL("documentation.yaml", runtimeRoot)],
-	["../localcloud/docs/status/service-status.md", new URL("docs/status/service-status.md", runtimeRoot)],
-	["../localcloud/docs/architecture/networking-and-tls.md", new URL("docs/architecture/networking-and-tls.md", runtimeRoot)],
-	["../localcloud/docs/guides/mcp-integration.md", new URL("docs/guides/mcp-integration.md", runtimeRoot)],
-	["../localcloud/specs/api/catalog.json", new URL("specs/api/catalog.json", runtimeRoot)],
-	...["Dockerfile", "LICENSE", "docker/bigquery-start.sh", "docker/docker-entrypoint.sh", "localcloud-server/src/main/java/com/localcloud/admin/SeedService.java", "localcloud-server/src/main/java/com/localcloud/emulators/pubsub/PubSubStore.java", "localcloud-server/src/main/java/com/localcloud/admin/TelemetryService.java", "localcloud-server/src/main/java/com/localcloud/LocalCloudApplication.java"].map((path) => [`../localcloud/${path}`, new URL(path, runtimeRoot)]),
+	...Object.keys(runtimePaths).map((key) => [runtimeSource(key), new URL(runtimePaths[key], runtimeRoot)]),
 	["../localcloud-cli/README.md", new URL("README.md", cliRoot)],
 	["../localcloud-cli/src/localcloud_cli/config.py", new URL("src/localcloud_cli/config.py", cliRoot)],
 	["../localcloud-cli/src/localcloud_cli/__init__.py", new URL("src/localcloud_cli/__init__.py", cliRoot)],
-	...["src/localcloud_cli/constants.py", "src/localcloud_cli/docker_runtime.py"].map((path) => [`../localcloud-cli/${path}`, new URL(path, cliRoot)]),
+	...["src/localcloud_cli/constants.py", "src/localcloud_cli/docker_runtime.py", "src/localcloud_cli/telemetry.py"].map((path) => [`../localcloud-cli/${path}`, new URL(path, cliRoot)]),
 	["public/install.sh", new URL("public/install.sh", root)],
 	["../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv", new URL("../../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv", import.meta.url)],
 ]);
+assert(JSON.stringify([...upstreamSources.keys()].sort()) === JSON.stringify([...contract.provenance.sources].sort()), "the snapshot's provenance sources differ from the sources this check reads");
 // Each source resolves to the bytes the snapshot was synced from: the recorded commit or, for
 // files synced from uncommitted upstream changes, the working copy while it still matches.
 const sources = new Map();
@@ -143,9 +149,10 @@ const coverageMatches = coverageCandidates.some((csvBytes) => csvBytes &&
 if (!coverageMatches && worktreeSources.has(coveragePath)) warnings.push(`${coveragePath} was synced from uncommitted changes that no longer match upstream`);
 else assert(coverageMatches, "BigQuery coverage projection differs from the matrix at the recorded revision");
 
-const defaultsText = sourceText("../localcloud/localcloud.defaults.yaml");
-const documentationText = sourceText("../localcloud/documentation.yaml");
-if (!defaultsText || !documentationText) {
+const defaultsText = sourceText(runtimeSource("defaults"));
+const documentationText = sourceText(runtimeSource("documentation"));
+const factsText = sourceText(runtimeSource("facts"));
+if (!defaultsText || !documentationText || !factsText) {
 	report();
 	console.log("Upstream documentation integrity verified; service-level checks skipped (see warnings).");
 	process.exit(0);
@@ -153,6 +160,7 @@ if (!defaultsText || !documentationText) {
 const defaults = parse(defaultsText);
 const catalog = defaults.services.catalog;
 const documentation = parse(documentationText);
+const facts = parse(factsText);
 const statusMap = { supported: "verified", partial: "partial", unverified: "unknown", unsupported: "unsupported", prod_only: "unsupported" };
 assert(Object.keys(catalog).length === contract.services.length, "service count differs from localcloud.defaults.yaml");
 
@@ -184,27 +192,45 @@ for (const service of contract.services) {
 			limitations: service.id === "bigquery" && operation.id === "sql.query"
 				? ["Query coverage varies by capability and input. Review the dependency matrix, including partial and unsupported records; qualify semantics and errors with application queries."]
 				: operation.notes ? [operation.notes] : status === "unsupported" ? ["This operation is not available in LocalCloud."] : [],
-			evidence: ["../localcloud/documentation.yaml"],
+			evidence: [runtimeSource("documentation")],
 		};
 	});
 	assert(JSON.stringify(service.operations) === JSON.stringify(operations), `${service.id} operation status or boundaries differ`);
-	if (upstream.type === "facade") assert(service.implementation === "local-facade", `${service.id} facade implementation differs`);
+	assert(service.implementation === (docs.implementation ?? (upstream.type === "facade" ? "local-facade" : service.implementation)), `${service.id} implementation differs`);
+	assert(docs.port === expectedPort && docs.env_var === upstream.envVar && docs.name === upstream.displayName, `${service.id} name, port or environment variable in documentation.yaml differs from the packaged defaults`);
+	const persistence = docs.persistence ?? {};
+	assert(service.persistence.scope === persistence.scope && service.persistence.backingStore === persistence.backing_store
+		&& service.persistence.restartBehavior === persistence.restart_behavior
+		&& JSON.stringify(service.persistence.recoveryLimitations) === JSON.stringify(persistence.recovery_limitations), `${service.id} persistence differs`);
 }
 
 assert(contract.cli.dockerSocketDefault === defaults.host.docker_socket, "Docker access mode differs");
 const cliConfig = sourceText("../localcloud-cli/src/localcloud_cli/config.py") ?? "";
 if (cliConfig) assert(cliConfig.includes("local_only: bool = False") && contract.cli.bindAddress === "0.0.0.0", "CLI host binding default differs");
-const seedSource = sourceText("../localcloud/localcloud-server/src/main/java/com/localcloud/admin/SeedService.java") ?? "";
-if (seedSource) for (const [field, constant] of [["supportedServices", "IMPLEMENTED_SEED_SERVICES"], ["volatileServices", "VOLATILE_SEED_SERVICES"]]) {
-	const body = seedSource.match(new RegExp(`${constant} = Set\\.of\\(([\\s\\S]*?)\\);`))?.[1];
-	assert(body !== undefined, `cannot resolve ${constant}`);
-	assert(JSON.stringify(contract.seed[field]) === JSON.stringify([...body.matchAll(/"([a-z]+)"/g)].map((match) => match[1])), `${field} differs`);
+const seed = facts.seed;
+assert(JSON.stringify(contract.seed.supportedServices) === JSON.stringify(seed.supported_services), "seed services differ from runtime facts");
+assert(JSON.stringify(contract.seed.volatileServices) === JSON.stringify(seed.volatile_services), "volatile seed services differ from runtime facts");
+assert(contract.seed.defaultSeedFile === seed.default_file && contract.seed.seedFileVariable === seed.file_variable, "seed file default differs");
+assert(contract.seed.endpoint === seed.endpoint && contract.seed.reseedEndpoint === seed.reseed_endpoint && contract.seed.importEndpoint === seed.import_endpoint, "seed endpoints differ");
+assert(seed.limitations.every((limitation) => contract.seed.limitations.includes(limitation)), "seed limitations differ from runtime facts");
+for (const [name, key] of Object.entries({ health: "health", serviceHealth: "service_health", readiness: "readiness", environment: "environment", services: "services", seed: "seed", reseed: "reseed", import: "import", reset: "reset", terraformReadiness: "terraform_readiness", graphql: "graphql", openapi: "openapi" })) {
+	assert(contract.operator.endpoints[name] === facts.operator_endpoints[key], `operator endpoint ${name} differs from runtime facts`);
 }
-if (seedSource) assert(seedSource.includes(`getOrDefault("LOCALCLOUD_SEED_FILE", "${contract.seed.defaultSeedFile}")`), "seed file default differs");
+assert(contract.terraform.readinessEndpoint === facts.terraform.readiness_endpoint && contract.terraform.modeVariable === facts.terraform.mode_variable, "Terraform facts differ");
+assert(contract.licensing.governingLicense === runtimeSource("license"), "governing license path differs");
+assert(facts.telemetry.runtime_sends_usage_data === false && contract.privacy.runtimeTelemetry.limitations.some((item) => item.startsWith("The runtime image sends no usage telemetry")), "runtime telemetry facts differ");
+assert(JSON.stringify(contract.privacy.outboundBehaviors.map((item) => item.id)) === JSON.stringify(facts.outbound_requests.map((item) => item.id)), "outbound request facts differ");
+for (const dependency of contract.provenance.dependencyRevalidations) {
+	assert(Object.values(facts.emulators).some((engine) => engine.repository === dependency.id && engine.revision === dependency.revision), `${dependency.id} engine revision differs from runtime facts`);
+}
+const published = JSON.stringify(contract);
+for (const forbidden of [/\.\.\/localcloud\//, /\.java\b/, /\.go\b"/, /localcloud-server/, /"[^"]*\bpkg\/(?!config\/localcloud\.defaults\.yaml)/]) {
+	assert(!forbidden.test(published), `the snapshot publishes a retired or private path matching ${forbidden}`);
+}
 
 assert(contract.operator.gatewayPort === defaults.server.gateway.port, "gateway port differs");
-assert(contract.operator.publishedPorts.services === "5380-5405", "services published range differs");
-assert(contract.operator.publishedPorts.transparentDns === "53/udp -> 5410/udp", "transparent DNS mapping differs");
+assert(facts.image.exposed_ports.includes(`${contract.operator.publishedPorts.services}/tcp`), "services published range differs");
+assert(facts.image.exposed_ports.includes(contract.operator.publishedPorts.transparentDns.replace(/^53\/udp -> /, "")), "transparent DNS mapping differs");
 assert(contract.operator.publishedPorts.transparentHttp === `80 -> ${defaults.server.gateway.port}`, "transparent HTTP mapping differs");
 assert(contract.operator.publishedPorts.transparentHttps === `443 -> tls.port (default ${defaults.tls.port})`, "transparent HTTPS mapping differs");
 

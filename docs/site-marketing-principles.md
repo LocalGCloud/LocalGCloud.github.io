@@ -31,7 +31,7 @@ Presenting internal verification caveats verbatim (such as marking services "par
 
 ### Principle 3: Operational Configuration is NOT Support Status
 - **Disabled-by-default ≠ Unsupported:** Services such as **Firestore** are fully supported, but disabled by default to keep LocalCloud lightweight (conserving workstation RAM and CPU). They must be marked as **Supported** with a clear note explaining how to enable them (e.g., `localcloud start --services firestore` or via `localcloud.yaml`).
-- **Full Execution Emulators (e.g., Dataproc):** LocalCloud provides runtime container execution for Dataproc clusters and serverless batch jobs via Docker. Describe this capability proactively rather than highlighting internal virtualization differences.
+- **Full Execution Emulators (e.g., Dataproc):** LocalCloud provides runtime container execution for Dataproc clusters, and for jobs submitted without a cluster, via Docker. Describe this capability proactively rather than highlighting internal virtualization differences.
 - **Auxiliary Integration APIs (e.g., Google Sheets):** Utility services provided for other cloud services to use (such as BigQuery external tables and fixture seeding) are categorized as **Auxiliary Integration APIs**, not primary cloud services under Messaging & Workflow.
 
 ### Principle 4: Positive Capability Framing
@@ -51,7 +51,7 @@ The website codebase implements a multi-tier transformation pipeline to enforce 
 ```
 ┌────────────────────────────────────────────────────────┐
 │               Upstream Technical Repos                 │
-│  (localcloud/documentation.yaml, spanner, bq, etc.)     │
+│ (localcloud-go public contract, spanner, bq, etc.)     │
 └───────────────────────────┬────────────────────────────┘
                             │
                             │ scripts/sync-upstream-docs.mjs
@@ -83,7 +83,7 @@ The website codebase implements a multi-tier transformation pipeline to enforce 
 ### Layer Responsibilities
 
 1. **`scripts/sync-upstream-docs.mjs`:**
-   - Synchronizes raw `documentation.yaml` from the `localcloud` engine repository into `src/data/docs-contract.snapshot.json`.
+   - Synchronizes `docs/public-contract/documentation.yaml` and `runtime-facts.yaml` from the `localcloud-go` runtime repository into `src/data/docs-contract.snapshot.json`.
    - Generates sha256 checksums to verify integrity.
 
 2. **Transformation Layer (`src/data/services.ts`):**
@@ -118,7 +118,7 @@ When adding new services or syncing updates from upstream repositories, follow t
 3. **Review Service Editorial:**
    - Ensure the service entry in `src/data/serviceEditorial.ts` describes what developers can build and test.
    - Ensure Firestore is documented as enabled on-demand (`--services firestore`), not unsupported.
-   - Ensure Dataproc highlights cluster and serverless mode execution.
+   - Ensure Dataproc highlights cluster and on-demand job execution in local Docker containers.
 
 4. **Regenerate Distributed Docs & Verify:**
    ```bash

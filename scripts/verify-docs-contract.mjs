@@ -300,8 +300,13 @@ const servicesOverviewSource = routeSources.get('src/pages/docs/services-overvie
 assert(servicesOverviewSource.includes('<tbody>') && servicesOverviewSource.includes('service.endpointLabel'), 'services overview does not render semantic endpoint rows');
 assert(!servicesOverviewSource.includes(".join('\\\\n')"), 'services overview still emits pipe-delimited row text');
 
-for (const retiredPath of ['../localcloud/services.yaml', '../localcloud/localcloud-server/src/main/resources/compatibility/services/']) {
+// The retired runtime repository and private runtime source never appear; localcloud-go publishes
+// its contract under docs/public-contract/ and the packaged defaults are its only other source.
+for (const retiredPath of ['../localcloud/', 'localcloud-server/', '.java"']) {
   assert(!JSON.stringify(contract).includes(retiredPath), `retired evidence path remains: ${retiredPath}`);
+}
+for (const path of contract.provenance.sources.filter((source) => source.startsWith('../localcloud-go/'))) {
+  assert(path.startsWith('../localcloud-go/docs/public-contract/') || ['../localcloud-go/LICENSE', '../localcloud-go/pkg/config/localcloud.defaults.yaml'].includes(path), `${path} is not a public runtime contract file`);
 }
 
 console.log(`Documentation contract verified: ${contract.services.length} runtime surfaces, ${editorialEntries.size} overlays/icons, ${publicServiceIds.length} public service routes, ${contract.services.filter((service) => service.published && service.availability === "available" && !["unsupported", "unknown"].includes(service.status)).length} available agent-testing sections, schema v${contract.schemaVersion}.`);

@@ -59,18 +59,13 @@ To weigh LocalCloud against standalone emulators and real BigQuery, see [BigQuer
 
 These features work locally within the boundaries listed for each one. Test the exact feature, input shape and client your application uses.
 
-<p>{coverage.partialCapabilities.length} features work locally with the limits below.</p>
+<p>{coverage.partialCapabilities.length} features work locally with limits. The <a href="/compare/emulators/bigquery/">BigQuery comparison inventory</a> lists the boundary for each one.</p>
 
-<div className="docs-table-scroll" role="region" tabIndex={0} aria-label="BigQuery features with limits">
-<table>
-  <thead><tr><th>Feature</th><th>Boundary</th></tr></thead>
-  <tbody>
-    {coverage.partialCapabilities.map((capability) => (
-      <tr><td><strong>{capability.name}</strong></td><td>{capability.boundary}</td></tr>
-    ))}
-  </tbody>
-</table>
-</div>
+<ul className="docs-feature-list" aria-label="BigQuery features with limits">
+  {coverage.partialCapabilities.map((capability) => (
+    <li>{capability.name}</li>
+  ))}
+</ul>
 
 ### Anything not listed
 
@@ -87,4 +82,4 @@ Anything not listed on this page is untested. Run your own queries first. A succ
 
 Data and metadata live beneath the mounted BigQuery data directory. Verify the application's queries after restart; a mounted volume alone is not a recovery guarantee.
 
-Ingestion-time partition pseudocolumn reads, nested policy tags, and native Bigtable, Sheets, HTTP and local-file external sources are unavailable. Validate production IAM, billing, quotas, reservations, managed integrations and recovery in Google Cloud.
+Ingestion-time partition pseudocolumn reads and native Bigtable, Sheets, HTTP and local-file external sources are unavailable. Validate production IAM, billing, quotas, reservations, managed integrations and recovery in Google Cloud.

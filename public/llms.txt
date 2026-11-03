@@ -71,7 +71,7 @@ Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-i
 
 | Service | ID | Starts by default | Endpoints | Environment variable | Guide |
 | --- | --- | --- | --- | --- | --- |
-| Firestore | `firestore` | opt-in | gRPC :5384 | `FIRESTORE_EMULATOR_HOST=localhost:5384` | [guide](https://local.cloud/services/firestore.md) |
+| Firestore | `firestore` | opt-in | gRPC + HTTP/REST :5384 | `FIRESTORE_EMULATOR_HOST=localhost:5384` | [guide](https://local.cloud/services/firestore.md) |
 | Bigtable | `bigtable` | yes | gRPC :5385 | `BIGTABLE_EMULATOR_HOST=localhost:5385` | [guide](https://local.cloud/services/bigtable.md) |
 | Spanner | `spanner` | yes | gRPC :5386 · HTTP/REST :5387 | `SPANNER_EMULATOR_HOST=localhost:5386` | [guide](https://local.cloud/services/spanner.md) |
 | AlloyDB | `alloydb` | yes | gRPC :5380 | `ALLOYDB_EMULATOR_HOST=localhost:5380` | [guide](https://local.cloud/services/alloydb.md) |

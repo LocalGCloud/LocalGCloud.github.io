@@ -73,8 +73,8 @@ export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
     examples: [{ title: 'Run a deterministic GoogleSQL query', href: '/docs/sdk-examples/#bigquery-deterministic-query', install: 'google-cloud-bigquery', label: 'Python', description: 'Configure the REST endpoint and anonymous credentials, then query a hello-world message.' }],
   },
   sheets: {
-    whenToUse: 'Use when an application consumes small, human-maintained lookup tables through A1 ranges. Seed read-only spreadsheet fixtures locally to test how those rows are interpreted.',
-    intro: 'Google Sheets exposes spreadsheet data through an API. LocalCloud provides a read-only values API for testing applications that consume tabular fixtures.',
+    whenToUse: 'Use when an application consumes small, human-maintained lookup tables through A1 ranges. Seed or write spreadsheet fixtures locally to test how those rows are interpreted.',
+    intro: 'Google Sheets exposes spreadsheet data through an API. LocalCloud provides the values API (reads with values.get and values.batchGet, writes with values.update) for testing applications that consume tabular fixtures.',
     typicalUses: ['Spreadsheet-backed lookup data', 'Deterministic fixtures for data consumers'],
     example: { title: 'Read a configured lookup range', steps: ['Seed a spreadsheet and an exact A1 range.', 'Request that range with values.get or values.batchGet.', 'Check the returned rows in the consuming application.'] },
     reference: 'https://developers.google.com/workspace/sheets/api/guides/concepts',
@@ -115,10 +115,10 @@ export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
     reference: 'https://docs.cloud.google.com/alloydb/docs/overview',
   },
   dataproc: {
-    whenToUse: 'Use when a pipeline uses Spark or Hadoop to transform partitioned datasets, and you need to submit jobs or serverless batches through the Dataproc API.',
-    intro: 'Dataproc provides managed Spark and Hadoop execution on Google Cloud. LocalCloud runs supported cluster jobs and serverless batches through local Docker runtimes.',
+    whenToUse: 'Use when a pipeline uses Spark or Hadoop to transform partitioned datasets, and you need to submit jobs through the Dataproc API.',
+    intro: 'Dataproc provides managed Spark and Hadoop execution on Google Cloud. LocalCloud runs supported jobs on local Docker clusters, or in an on-demand container when no cluster is named.',
     typicalUses: ['Spark ETL and data transformations', 'Hadoop and batch-processing tests'],
-    example: { title: 'Run a small Spark transformation', steps: ['Prepare an input fixture and a Spark job.', 'Submit a supported cluster job or serverless batch locally.', 'Inspect job status and verify the transformed output.'] },
+    example: { title: 'Run a small Spark transformation', steps: ['Prepare an input fixture and a Spark job.', 'Submit a supported job to a local cluster.', 'Inspect job status and verify the transformed output.'] },
     reference: 'https://docs.cloud.google.com/managed-spark/docs/concepts/clusters-overview',
     examples: [{ title: 'Run Dataproc through local Docker', href: '/blog/run-dataproc-locally-docker/', label: 'Integration', description: 'Execution setup, job lifecycle, and Docker runtime boundaries.' }],
   },
@@ -308,7 +308,7 @@ export function getServiceCodeExamples(serviceId: string, sdkSource: string): Se
       : serviceId === 'memorystore'
       ? 'SET returns OK, GET returns Hello from LocalCloud!, and DEL removes the temporary key. The key also expires after 60 seconds.'
       : serviceId === 'sheets'
-      ? 'The response contains the values for the seeded spreadsheet ID and exact A1 range. Seed the fixture first; this read-only request does not create a spreadsheet.'
+      ? 'The response contains the values for the seeded spreadsheet ID and exact A1 range. Seed the fixture first; this read request does not create a spreadsheet.'
       : example.label === 'HTTP' && serviceId === 'bigquery'
       ? 'The query response contains a row whose value is 1. A successful HTTP status alone does not verify the query result.'
       : example.label === 'gcloud CLI' && serviceId === 'pubsub'
