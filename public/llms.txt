@@ -59,6 +59,7 @@ Every docs page, service guide and comparison also has a Markdown version: repla
 - [Terraform](https://local.cloud/docs/terraform.md): provider endpoint overrides
 - [Seed data](https://local.cloud/docs/seed-data.md): repeatable local fixtures
 - [Architecture](https://local.cloud/docs/architecture.md)
+- [Performance & benchmarks](https://local.cloud/docs/performance.md): latency, throughput, and cold boot benchmarks for AI agents and test suites
 - [Web console](https://local.cloud/docs/console.md)
 - [Service catalog](https://local.cloud/services/index.md)
 - [Compatibility and limitations](https://local.cloud/compatibility.md)

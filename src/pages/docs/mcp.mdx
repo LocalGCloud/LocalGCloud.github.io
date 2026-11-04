@@ -11,7 +11,7 @@ reviewed: 2026-10-09
 
 LocalCloud gives your coding agent a free local cloud environment for building, testing, and debugging Google Cloud applications. Through MCP, the agent can discover local services, obtain SDK configuration, inspect resources, query data, and diagnose application failures. Your application uses standard Google Cloud SDKs pointed at the local runtime.
 
-The MCP bridge is included in **LocalCloud CLI 0.1.9 and newer**. Docker runs the cloud environment on your machine; a live Google Cloud project is not required for these local workflows.
+The MCP bridge is included in **LocalCloud CLI 0.1.9 and newer**. Docker runs the cloud environment on your machine; a live Google Cloud project is not required for these local workflows. The bridge connects over stdio directly to the local gateway, executing tool calls in approximately **1 ms** (&lt; 1 ms, over 1,500 calls/second) with minimal overhead for agent loops ([performance benchmarks](/docs/performance/#tier-2-gateway-front-door-and-mcp-bridge)).
 
 Clients launch `localcloud mcp` over **stdio**. This page is setup documentation; do not enter `https://local.cloud/docs/mcp/` as an MCP server URL.
 

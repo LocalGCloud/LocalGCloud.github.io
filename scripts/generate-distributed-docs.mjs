@@ -174,6 +174,7 @@ Every docs page, service guide and comparison also has a Markdown version: repla
 - [Terraform](${site}docs/terraform/): provider endpoint overrides
 - [Seed data](${site}docs/seed-data/): repeatable local fixtures
 - [Architecture](${site}docs/architecture/)
+- [Performance & benchmarks](${site}docs/performance/): latency, throughput, and cold boot benchmarks for AI agents and test suites
 - [Web console](${site}docs/console/)
 - [Service catalog](${site}services/)
 - [Compatibility and limitations](${site}compatibility/)

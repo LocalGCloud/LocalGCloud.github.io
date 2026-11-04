@@ -146,6 +146,7 @@ const surfacePaths = [
 	"src/pages/docs/sdk-examples.mdx",
 	"src/pages/docs/console.mdx",
 	"src/pages/docs/architecture.mdx",
+	"src/pages/docs/performance.mdx",
 	"src/pages/docs/faq.mdx",
 	"src/pages/docs/seed-data.mdx",
 	"src/pages/docs/terraform.mdx",

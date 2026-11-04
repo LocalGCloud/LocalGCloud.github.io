@@ -103,6 +103,19 @@ Transparent networking is disabled by default. Docker access defaults to `auto`;
 - **Transparent networking** maps host `53/udp` to container `5410/udp`, host `80` to gateway `5380`, and host `443` to the configured native TLS port (`5381`). It requires scoped host DNS changes and certificate trust and is used only for clients that ignore custom endpoint variables.
 - **Docker socket access** grants the container control over the host Docker daemon. It is required only for runtime workflows that deliberately create subordinate containers or clusters (such as Cloud SQL MySQL or GKE k3d). In-container BigQuery runs natively via Supervisord and does not require Docker socket access.
 
+## Performance characteristics
+
+LocalCloud is engineered for low overhead so iterative agent loops and local integration test suites run without artificial delays. Key empirical characteristics measured with `agentcloud/localcloud:lite`:
+
+- **MCP tool calling**: The native stdio MCP bridge processes tool calls such as `localcloud_runtime_status` in **`1 ms`** (&lt; 1 ms typical latency), allowing AI coding agents to inspect local resources with negligible overhead.
+- **In-memory cache**: Memorystore processes GET and SET operations in **`1 ms`** (&lt; 1 ms).
+- **Database operations**: Cloud SQL (PostgreSQL) executes point reads and writes in **`2 ms`**, with batch inserts exceeding 39,000 rows/second.
+- **Object storage**: Cloud Storage completes object reads in **`2 ms`** and writes in **`5 ms`**.
+- **Messaging throughput**: Cloud Pub/Sub processes individual messages in **`3 ms`** and handles batch ingestion at over 10,000 messages/second.
+- **Fast cold boot**: Initializes PostgreSQL schema migrations and starts 22 local emulators in approximately **`5 seconds`** (warm start reconciles in **`~333 ms`**).
+
+For complete methodology, latency distributions, per-service throughput, and reproduction steps, see the full [Performance & benchmarks](/docs/performance/) guide.
+
 ## Outbound behavior
 
 LocalCloud is not categorically offline or zero-egress. Depending on configuration and feature use, the runtime can send telemetry, probe certificate storage, check image updates, validate licenses, validate live IAM bearer tokens, or dispatch scheduled/HTTP work. Core local workflows can continue offline after required images are present, but review [Privacy](/docs/privacy/) and disable or isolate outbound features according to your environment.

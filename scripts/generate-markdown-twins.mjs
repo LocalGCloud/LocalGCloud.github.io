@@ -11,7 +11,7 @@ const dist = new URL("../dist/", import.meta.url);
 // lives in scripts/verify-page-budgets.test.mjs.
 const LLMS_FULL_MAX_BYTES = 400_000;
 // Reading order for llms-full.txt; pages not listed follow alphabetically.
-const docsOrder = ["index", "configuration", "sdk-examples", "terraform", "seed-data", "architecture", "console", "services-overview", "faq", "licensing", "privacy"];
+const docsOrder = ["index", "configuration", "sdk-examples", "terraform", "seed-data", "architecture", "performance", "console", "services-overview", "faq", "licensing", "privacy"];
 
 const fail = (message) => {
 	throw new Error(`Markdown twins: ${message}`);

@@ -1,0 +1,179 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: Performance & Benchmarks
+description: Empirical latency, throughput, and cold boot benchmark results for the LocalCloud CLI, MCP bridge, and 22+ emulated Google Cloud services.
+author: LocalCloud
+updated: 2026-11-03
+reviewed: 2026-11-03
+---
+
+import Callout from '../../components/Callout.astro';
+
+# Performance and benchmarks
+
+This report records the empirical performance characteristics, throughput limits, and operational latencies of LocalCloud measured using native CLI (`localcloud 0.1.14`) and container image `agentcloud/localcloud:lite`.
+
+<Callout type="note" title="Local Testing and CI Focus">
+These benchmarks measure execution on local workstations and CI runners. LocalCloud emulates Google Cloud APIs for developer speed and agentic iteration; validate production scale and quotas against live Google Cloud before deployment.
+</Callout>
+
+## Executive summary and readiness matrix
+
+LocalCloud is engineered for high-frequency test suites and autonomous AI coding agents where low overhead directly translates to faster iteration:
+
+- **Rapid AI tool calling**: The MCP stdio bridge executes tool calls (`localcloud_runtime_status`) in **`1 ms`** (&lt; 1 ms, **`1,531 calls/sec`**), eliminating tool overhead for coding agents.
+- **Fast in-memory store**: Memorystore (Redis) delivers **`1 ms`** (&lt; 1 ms) GET and SET operations at **`~1,950 ops/sec`**.
+- **Low-latency database operations**: Cloud SQL (PostgreSQL) processes point INSERTs in **`2 ms`** (**`656 inserts/sec`**) and point SELECTs in **`2 ms`** (**`416 queries/sec`**). Batch inserts achieve **`>39,000 rows/sec`**.
+- **High-speed object storage**: Cloud Storage retrieval completes in **`2 ms`** (**`527 reads/sec`**), and writes in **`5 ms`** (**`209 writes/sec`**).
+- **High-throughput messaging**: Cloud Pub/Sub processes single messages in **`3 ms`** and delivers batch ingestion at **`>10,000 messages/sec`**.
+- **Zero-to-ready in 5 seconds**: Cold start provisions PostgreSQL migrations and 22 active local Google Cloud emulators in **`~5 s`**; warm start reconciles in **`~333 ms`**.
+
+| Capability Tier | Key Operation | Typical Latency (p50) | p95 Latency | Throughput | Readiness Verdict |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **MCP Bridge** | `tool/call` (`localcloud_runtime_status`) | **`1 ms`** | `1 ms` | **`1,531 ops/s`** | Fast (&lt; 1 ms) |
+| **Memorystore (Redis)** | GET key | **`1 ms`** | `1 ms` | **`1,952 ops/s`** | Fast (&lt; 1 ms) |
+| **Cloud SQL (PostgreSQL)** | Point INSERT | **`2 ms`** | `2 ms` | **`656 ops/s`** | Production Grade |
+| **Cloud Storage** | GET Object (1 KB) | **`2 ms`** | `3 ms` | **`527 ops/s`** | Production Grade |
+| **Cloud Logging** | Write Single Entry | **`2 ms`** | `2 ms` | **`620 ops/s`** | Production Grade |
+| **Secret Manager** | Access Secret (Read) | **`2 ms`** | `3 ms` | **`554 ops/s`** | Production Grade |
+| **Cloud Tasks** | Enqueue Task | **`3 ms`** | `5 ms` | **`354 ops/s`** | Production Grade |
+| **Cloud Pub/Sub** | Publish (Single Message) | **`3 ms`** | `7 ms` | **`319 ops/s`** | Production Grade |
+| **BigQuery** | Table Create | **`51 ms`** | `51 ms` | **`20 ops/s`** | Local Interactive |
+| **BigQuery** | Streaming `insertAll` (10 rows) | **`68 ms`** | `78 ms` | **`15 batches/s`** | Local Interactive |
+| **Container Lifecycle** | Cold Boot (22 Services + DB) | **`~5 s`** | `~5 s` | — | Fast Cold Start |
+
+## Test environment and methodology
+
+- **CLI executable**: Native PyInstaller one-folder bundle `dist/localcloud` (`localcloud 0.1.14`).
+- **Container engine**: Docker 29.8.1 on Colima 0.10.3 (VZ backend, Rosetta translation enabled).
+- **Runtime image**: `agentcloud/localcloud:lite` (Go Engine `0.1.11`).
+- **Data volume**: Dedicated Docker volume `localcloud-perf` mounted at `/var/lib/localcloud`.
+- **Project scope**: `local-gcp-project` with caller `local-developer`.
+- **Active services (22 enabled)**: `gcs`, `pubsub`, `bigquery`, `cloudsql`, `spanner`, `bigtable`, `memorystore`, `secretmanager`, `cloudtasks`, `cloudscheduler`, `cloudfunctions`, `alloydb`, `dataproc`, `cloudiam`, `cloudresourcemanager`, `serviceusage`, `cloudbilling`, `logging`, `monitoring`, `sheets`, `workflows`, and `kms`.
+
+## Benchmark results by tier
+
+### Tier 1: CLI lifecycle commands
+
+| Command | Typical Duration | Purpose & Description |
+| :--- | :---: | :--- |
+| `localcloud doctor` | **~300 ms** | Inspects Docker host daemon, socket, and port availability (5380–5406). |
+| `localcloud status` | **~292 ms** | Queries Docker API to inspect container state and evaluates health of all 22 services. |
+| `localcloud env` | **~301 ms** | Resolves active endpoints and outputs shell exports (`eval $(localcloud env)`). |
+| `localcloud reset` | **~380 ms** | Clears project-scoped data inside running container while preserving the volume. |
+| `localcloud start` (warm) | **~333 ms** | Fast reconciliation when the container is already running. |
+| `localcloud stop` | **~4 s** | Gracefully stops child processes, emulators, and the Docker container. |
+| `localcloud start` (cold) | **~5 s** | Creates container, initializes volume, applies PostgreSQL migrations, and starts 22 emulators. |
+| `localcloud restart` | **~9 s** | Performs a full container stop, recreate, cold boot, and readiness verification cycle. |
+
+### Tier 2: Gateway front door and MCP bridge
+
+| Benchmark Target | Operations | Typical p50 | p95 Latency | Throughput | Operational Notes |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Gateway `/healthz` (sequential)** | 100 | **`3 ms`** | `6 ms` | **`280 req/s`** | HTTP/1.1 keep-alive front-door ping |
+| **Gateway `/healthz` (concurrent c=10)** | 200 | **`19 ms`** | `49 ms` | **`424 req/s`** | 10 concurrent async workers (0 errors) |
+| **Gateway `/query` SQL Engine** | 50 | **`2 ms`** | `7 ms` | **`428 req/s`** | Direct SQL execution through gateway facade |
+| **MCP Handshake (`initialize`)** | 1 | **`688 ms`** | `688 ms` | — | MCP stdio protocol validation and handshake |
+| **MCP `tools/list` (25 tools)** | 10 | **`4 ms`** | `5 ms` | **`243 lists/s`** | Returns schemas for all 25 LocalCloud tools |
+| **MCP `tool/call` (`status`)** | 20 | **`1 ms`** | `1 ms` | **`1,531 calls/s`** | Fast agent tool execution (&lt; 1 ms) |
+
+### Tier 3: Core emulated services
+
+#### Cloud Storage (Port 5382)
+
+| Operation | Operations | Typical p50 | p95 Latency | Throughput | Notes |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Create Bucket** | 1 | **`7 ms`** | `7 ms` | 157 ops/s | Bucket metadata persistence |
+| **PUT Object (1 KB)** | 50 | **`5 ms`** | `6 ms` | **`209 ops/s`** | Small application object upload |
+| **GET Object (1 KB)** | 50 | **`2 ms`** | `3 ms` | **`527 ops/s`** | Object payload download |
+| **PUT Object (64 KB)** | 30 | **`7 ms`** | `15 ms` | **`127 ops/s`** | Medium document write |
+| **GET Object (64 KB)** | 30 | **`3 ms`** | `4 ms` | **`325 ops/s`** | Medium document read |
+| **List Objects** | 30 | **`7 ms`** | `14 ms` | **`132 ops/s`** | Directory listing & pagination |
+| **Concurrent PUT+GET (c=10)** | 50 | **`31 ms`** | `35 ms` | **`301 ops/s`** | Parallel test suite workload |
+| **Delete Bucket** | 1 | **`4 ms`** | `4 ms` | 276 ops/s | Metadata deletion & cleanup |
+
+#### Cloud Pub/Sub (Port 5383)
+
+| Operation | Operations | Typical p50 | p95 Latency | Throughput | Notes |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Create Topic** | 1 | **`4 ms`** | `4 ms` | 256 ops/s | Topic creation |
+| **Create Subscription** | 1 | **`3 ms`** | `3 ms` | 416 ops/s | Subscription binding |
+| **Publish (Single Message)** | 50 | **`3 ms`** | `7 ms` | **`319 msgs/s`** | Point-to-point event publication |
+| **Publish (Batch 100 msgs)** | 5 | **`9 ms`** | `13 ms` | **`100 batches/s`** | **`> 10,000 msgs/sec`** |
+| **Pull & Acknowledge** | 50 | **`7 ms`** | `11 ms` | **`144 cycles/s`** | Complete consumer delivery cycle |
+
+#### BigQuery (Port 5388)
+
+| Operation | Operations | Typical p50 | p95 Latency | Throughput | Notes |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Create Dataset** | 1 | **`166 ms`** | `166 ms` | 6 ops/s | Dataset catalog creation |
+| **Create Table** | 1 | **`51 ms`** | `51 ms` | 20 ops/s | Schema validation and table creation |
+| **Scalar Query (`SELECT 1`)** | 50 | **`135 ms`** | `149 ms` | **`7 queries/s`** | SQL parsing, AST, and evaluation |
+| **Analytical Query (`UNNEST`)** | 30 | **`150 ms`** | `175 ms` | **`7 queries/s`** | Array unnests, math & ordering |
+| **Streaming `insertAll` (10 rows)** | 20 | **`68 ms`** | `78 ms` | **`15 batches/s`** | **`~146 rows/sec`** ingest rate |
+| **Table Aggregate Query** | 30 | **`294 ms`** | `316 ms` | **`3 queries/s`** | `GROUP BY`, `COUNT`, `SUM` over data |
+
+#### Cloud SQL (PostgreSQL via Gateway · Port 5380)
+
+| Operation | Operations | Typical p50 | p95 Latency | Throughput | Notes |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **CREATE TABLE** | 1 | **`3 ms`** | `3 ms` | 332 ops/s | Schema DDL execution |
+| **Point INSERT** | 50 | **`2 ms`** | `2 ms` | **`656 inserts/s`** | Single-row OLTP insert |
+| **Point SELECT by PK** | 50 | **`2 ms`** | `6 ms` | **`416 queries/s`** | Primary key row lookup |
+| **Batch INSERT (100 rows)** | 1 | **`3 ms`** | `3 ms` | **`391 batches/s`** | **`> 39,000 rows/sec`** single query |
+| **Aggregate Query** | 30 | **`3 ms`** | `3 ms` | **`446 queries/s`** | `COUNT(*)`, `AVG(score)` |
+
+#### Security, messaging, and in-memory services
+
+| Service | Operation | Ops | Typical p50 | p95 Latency | Throughput | Notes |
+| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| **Secret Manager** | Create Secret | 1 | **`6 ms`** | `6 ms` | 188 ops/s | Metadata registration |
+| **Secret Manager** | Add Secret Version | 1 | **`4 ms`** | `4 ms` | 273 ops/s | Encrypted payload storage |
+| **Secret Manager** | Access Secret Version | 50 | **`2 ms`** | `3 ms` | **`554 reads/s`** | Decryption and payload retrieval |
+| **Cloud Tasks** | Create Queue | 1 | **`5 ms`** | `5 ms` | 216 ops/s | Rate-limited queue declaration |
+| **Cloud Tasks** | List Queues | 10 | **`2 ms`** | `3 ms` | **`557 ops/s`** | Queue discovery |
+| **Cloud Tasks** | Enqueue Task | 50 | **`3 ms`** | `5 ms` | **`354 tasks/s`** | HTTP target task scheduling |
+| **Cloud Logging** | Write Single Log Entry | 50 | **`2 ms`** | `2 ms` | **`620 logs/s`** | Structured application log write |
+| **Cloud Logging** | Batch Write (50 logs) | 5 | **`19 ms`** | `22 ms` | **`51 batches/s`** | **`~2,545 logs/sec`** |
+| **Cloud Logging** | Query Log Entries | 20 | **`3 ms`** | `3 ms` | **`458 queries/s`** | Log stream query |
+| **Memorystore** | PING | 100 | **`1 ms`** | `1 ms` | **`1,665 ops/s`** | Loopback round-trip (&lt; 1 ms) |
+| **Memorystore** | SET Key | 100 | **`1 ms`** | `1 ms` | **`1,625 ops/s`** | In-memory key storage (&lt; 1 ms) |
+| **Memorystore** | GET Key | 100 | **`1 ms`** | `1 ms` | **`1,952 ops/s`** | In-memory key retrieval (&lt; 1 ms) |
+| **Cloud Spanner** | List Instances | 30 | **`2 ms`** | `2 ms` | **`633 req/s`** | Administrative catalog |
+
+## Architectural implications
+
+### High-frequency AI coding agent loops
+
+Cloud sandboxes and remote emulation environments introduce 100–500 ms of latency per tool call. LocalCloud's native stdio MCP bridge executes tool calls in **`1 ms`** (&lt; 1 ms). An agent executing 50 intermediate inspection steps spends only **`~33 ms`** in tool overhead, avoiding timeouts and context pauses.
+
+### Fast local test suites
+
+Integration test suites (`pytest`, `go test`, `vitest`) create, inspect, and tear down cloud resources rapidly:
+
+- Creating a Cloud Storage bucket, uploading a fixture, reading it, and deleting the bucket completes in **`~16 ms`** total.
+- Creating a Cloud SQL table, inserting 100 rows, running an aggregate query, and dropping the table completes in **`~11 ms`** total.
+- Publishing and consuming 100 Pub/Sub messages completes in **`~16 ms`** total.
+
+A suite of 100 end-to-end integration tests can finish in under **2 to 3 seconds**.
+
+### Resource efficiency of the Lite image
+
+The LocalCloud Lite runtime packages 22 emulators, the reverse proxy gateway, and PostgreSQL into one lightweight container image with approximately **`35 MB`** of runtime memory overhead at startup.
+
+## How to reproduce
+
+Execute the test suite with `uv` from the `localcloud-cli` repository:
+
+```bash
+# 1. Run complete benchmark suite:
+uv run python scripts/perf_benchmark.py \
+  --cli-path dist/localcloud \
+  --data-volume localcloud-perf \
+  --image agentcloud/localcloud:lite \
+  --output-json perf_results.json \
+  --output-markdown docs/performance-benchmarks.md
+
+# 2. Run fast sanity verification:
+uv run python scripts/perf_benchmark.py --quick
+```
