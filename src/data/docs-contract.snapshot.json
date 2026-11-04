@@ -1,9 +1,9 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-11-03",
+  "reviewedAt": "2026-11-04",
   "provenance": {
-    "runtimeRevision": "75020cd1113ca5883e5dc27bb6d727e3ed94634b",
-    "cliRevision": "398299d445e89329744080c81a179a03c7763daf",
+    "runtimeRevision": "076e13ced7a77b9ff1cab14a7a94f1ad1724d0ae",
+    "cliRevision": "f7489a59100042bcdc08e487d1cb15e4ccfd7e8d",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -61,11 +61,11 @@
       "../localcloud-go/docs/public-contract/networking-and-tls.md": "sha256:13a5d12bc91151872d618604e4f9016a21a2a28b835b7142211c59518a49c9b4",
       "../localcloud-go/docs/public-contract/mcp-integration.md": "sha256:8940a090888db4880b0c99c5fbc44bddae14c78ddb31467b922cb8677dc78fff",
       "../localcloud-go/LICENSE": "sha256:007c741ba18ddbea4cbd92b4f4b93135381b39e5a4af01ae5128f14b1d19c041",
-      "../localcloud-cli/README.md": "sha256:c098b2ef8cfc82aad2cb8f80b69837be3fa1b38171a76ba47d20b95aa90a4155",
-      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:8cdc74718c87079aca4c4f7ed26591dc4d696460735443b4762033d880e3796a",
-      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:e29a041c2d4a9eb8dc3ea990b6c68258f3965ad0eb1a01e9cfc1744d46ad8427",
+      "../localcloud-cli/README.md": "sha256:6a530bd932eec6f8881ec672b906eb2495ffa313cce8f40933a72a2c76739890",
+      "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c708e606bac974960e7f6e58e38ae3d6276fe5923c75cdbad4ed8e643e08ca95",
+      "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:35abed49ecd98198c32f224a27370bfbc89b461716ca1fa1f86b67674001a7af",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:5822b0cfb386972f9a8d733f389513c3d9ebdb756afa5803e63e76cab1e38f78",
-      "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:e77235493d2f266f2088b4dac016bf22de499399cc1ebe3343a1005f672d7bdc",
+      "../localcloud-cli/src/localcloud_cli/docker_runtime.py": "sha256:5c18698073f7e3a56920e41591f2c158f1824e26698de9ea76c8dbae95373076",
       "../localcloud-cli/src/localcloud_cli/telemetry.py": "sha256:4c2d7ae2e7d77c9e1231c1e60d8a0a55ff1ccd26f62f45509a71936e541c1802",
       "public/install.sh": "sha256:0a7c2cd4f50aa0512ddeeb1574a8f66f70697853a47da3e78d288dcab1858956"
     },
@@ -166,7 +166,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.13 from revision 398299d445e89329744080c81a179a03c7763daf. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.14 from revision f7489a59100042bcdc08e487d1cb15e4ccfd7e8d. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
