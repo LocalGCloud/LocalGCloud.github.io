@@ -2156,6 +2156,17 @@
     "notes": "Source/destination key checks; a restore that meets a transient key-service failure stays pending and retries; compatibility recovery only."
   },
   {
+    "id": "firestore-production-security-editions-and-service-guarantees-cross-origin-browser-access",
+    "name": "Cross-origin browser access",
+    "area": "Production security, editions and service guarantees",
+    "local": "available",
+    "other": "available",
+    "default": "available",
+    "description": "Answers CORS preflight and actual requests from web pages on any site, naming the page origin with credentials, so web apps can call Firestore directly from the browser.",
+    "docs": "https://firebase.google.com/docs/firestore/quickstart",
+    "notes": ""
+  },
+  {
     "id": "firestore-production-security-editions-and-service-guarantees-app-check-enforcement-for-firestore",
     "name": "App Check enforcement for Firestore",
     "area": "Production security, editions and service guarantees",

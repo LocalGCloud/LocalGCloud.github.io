@@ -2,8 +2,8 @@
   "schemaVersion": 4,
   "reviewedAt": "2026-11-03",
   "provenance": {
-    "runtimeRevision": "50cb4105f09b6474327bd8dd72e5d58c0fa626ea",
-    "cliRevision": "fcceef1228cf7cc6e276595a138a6802c1dda2fd",
+    "runtimeRevision": "75020cd1113ca5883e5dc27bb6d727e3ed94634b",
+    "cliRevision": "398299d445e89329744080c81a179a03c7763daf",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -26,7 +26,7 @@
     "dependencyRevalidations": [
       {
         "id": "bigquery-emulator-on-duckdb",
-        "revision": "c083078c53a65e67d8f47fa3c0a68fa07b0bcbe4",
+        "revision": "60db8063262be8386d6be417904b1b11405ca14c",
         "qualification": "release-unverified",
         "evidence": [
           "../local_cloud_dependencies/bigquery-emulator-on-duckdb",
@@ -53,10 +53,10 @@
       }
     ],
     "sourceDigests": {
-      "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:7d2b3923ddf0482732405fc6d57466536ad78ba88b40da404e374e406f609e63",
-      "../localcloud-go/pkg/config/localcloud.defaults.yaml": "sha256:66c68d00db942669295590b50a35e28c8aea7af94900cb4b955d44132de7e7d5",
-      "../localcloud-go/docs/public-contract/documentation.yaml": "sha256:36a5ba2aafa2a0a06151e28621bc8a3ad2946f5ebf3c96f2ab4f5d659fd3e7e7",
-      "../localcloud-go/docs/public-contract/runtime-facts.yaml": "sha256:b077263a4ecf488c7d5d4e27bf2f447d1047dc8fca4cdcdc9407878d55e90f64",
+      "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:9537ce7131c7f2bbd62848c0abac67bc8dc936d244f52d6d6d0c5dec985bcacb",
+      "../localcloud-go/pkg/config/localcloud.defaults.yaml": "sha256:152bb2783c22fb3f9c54f3ccdcd13a3a755505b8929ae7de1586411edee70f5d",
+      "../localcloud-go/docs/public-contract/documentation.yaml": "sha256:e22eb212db93ce222cee29e8f2131bdb3921ee60cd1d207f537eb8d993bc15d5",
+      "../localcloud-go/docs/public-contract/runtime-facts.yaml": "sha256:7f35da377f290bd389223f3e119db346d4118dc901b54dbdd639438238330fd0",
       "../localcloud-go/docs/public-contract/service-status.md": "sha256:dba332f47866b963e60fa00d6624c985785fead33c897f4a2c0ba5aa09accb5c",
       "../localcloud-go/docs/public-contract/networking-and-tls.md": "sha256:13a5d12bc91151872d618604e4f9016a21a2a28b835b7142211c59518a49c9b4",
       "../localcloud-go/docs/public-contract/mcp-integration.md": "sha256:8940a090888db4880b0c99c5fbc44bddae14c78ddb31467b922cb8677dc78fff",
@@ -166,7 +166,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.13 from revision fcceef1228cf7cc6e276595a138a6802c1dda2fd. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.13 from revision 398299d445e89329744080c81a179a03c7763daf. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
@@ -454,7 +454,6 @@
         "Managed-folder IAM policies are stored and returned, but strict-mode decisions use project and bucket policies. Organization and folder inheritance, deny policies, custom role definitions and conditions on project bindings are not modeled.",
         "Lifecycle rules (Delete, SetStorageClass, AbortIncompleteMultipartUpload) are stored and returned, but LocalCloud does not run them on a schedule, so objects are not deleted or reclassified by age.",
         "New buckets have soft delete turned off unless a policy is set, where Cloud Storage defaults to 7 days. objects.bulkRestore is not served; restore soft-deleted objects one at a time.",
-        "Deleting a bucket that still holds live objects answers 412, where Cloud Storage answers 409. A bucket that holds only noncurrent generations answers 409.",
         "Bucket locations are validated against Google's location list and checked against Cloud KMS key locations, but data is not placed geographically. ipFilter is stored and reported but requests are not filtered. Global bucket-name uniqueness and domain-ownership verification are not checked.",
         "Customer-managed encryption uses LocalCloud's Cloud KMS keys: object data is encrypted with a data key that the Cloud KMS key wraps, and a disabled or unknown key is refused. In strict mode, grant roles/cloudkms.cryptoKeyEncrypterDecrypter on the key to service-storage@<project>.localcloud.internal. A denied key permission answers 403 forbidden. Customer-supplied keys sent over plain HTTP are not refused.",
         "Notifications publish to local Pub/Sub topics at least once, so a message can arrive twice, and ordering is not guaranteed. The topic must exist when the notification is created; with gcloud, create the topic first and pass --skip-topic-setup. Failed publications retry with a capped backoff, and a configuration that keeps failing for 7 days is deleted.",
@@ -810,7 +809,7 @@
         "Security Rules are evaluated for Firebase and mock callers. Set rulesFile in the Firestore service config to load a default Rules file of up to 1 MiB; a change to it applies after a Firestore restart. Rules regular-expression functions cover a bounded set of patterns.",
         "Managed exports and imports round-trip within LocalCloud only: an export written by Google cannot be imported, and LocalCloud's exports cannot be imported into Google Cloud. Exports write to local Cloud Storage.",
         "In strict IAM mode, service-account credentials are checked against project and database IAM on every call and stream message. gcp-live refuses Firestore requests because this build never contacts Google.",
-        "Browser requests to 5384 get CORS headers only for origins the gateway's browser policy admits (server.allowed_origins), and credentials are never granted.",
+        "Browser requests to 5384 are served only for origins the gateway's browser policy admits (loopback, the gateway's own origin and server.allowed_origins). Admitted origins get CORS headers with credentials allowed, so the Firebase JS SDK works; other origins are refused with 403, where Google accepts any origin.",
         "CMEK databases check the state of a LocalCloud Cloud KMS key, but documents are not encrypted with it. Multi-region replication, the availability SLA and managed key custody are cloud-only.",
         "The data directory uses format version 2 while LocalCloud is in preview. A directory from an older build is refused: Firestore stays stopped with failure_code data_directory_refused until the directory is moved or deleted."
       ],
@@ -1295,11 +1294,10 @@
         "rest_v2.datasets.datasets-patch: semantic-compatibility:isCaseInsensitive and defaultRoundingMode are ignored; If-Match etag preconditions are not checked",
         "rest_v2.datasets.datasets-update: semantic-compatibility:PUT has patch semantics: fields omitted from the body keep their stored values instead of being cleared; isCaseInsensitive and defaultRoundingMode are ignored; If-Match etag preconditions are not checked",
         "rest_v2.tables.tables-list: semantic-compatibility:list entries omit timePartitioning, rangePartitioning, clustering and expirationTime, which production tables.list returns for each table",
-        "rest_v2.tables.tables-get: semantic-compatibility:the selectedFields and view (TableMetadataView) parameters are ignored, so the full resource is always returned; no streamingBuffer is reported for rows streamed by tabledata.insertAll",
+        "rest_v2.tables.tables-get: semantic-compatibility:the selectedFields and view (TableMetadataView) parameters are ignored, so the full resource is always returned",
         "rest_v2.tables.tables-insert: semantic-compatibility:tableConstraints (primary and foreign keys) and biglakeConfiguration in the request body are ignored; keys can be declared only through DDL",
         "rest_v2.tables.tables-patch: semantic-compatibility:relaxing a column from REQUIRED to NULLABLE is refused (schema updates may only append fields); the autodetect_schema parameter is ignored; If-Match etag preconditions are not checked",
         "rest_v2.tables.tables-update: semantic-compatibility:PUT has patch semantics: fields omitted from the body keep their stored values instead of being replaced; relaxing REQUIRED to NULLABLE is refused; If-Match etag preconditions are not checked",
-        "rest_v2.tabledata.tabledata-insertall: semantic-compatibility:templateSuffix is ignored, so rows go to the named table and no table is created from the template; partition decorators (table$YYYYMMDD) are refused; there is no streaming buffer: tables.get reports no streamingBuffer, and UPDATE, DELETE and MERGE can change rows streamed moments earlier",
         "rest_v2.tabledata.tabledata-list: semantic-compatibility:a malformed pageToken silently restarts at the first row instead of being refused; the pageToken is only a row offset over an unordered scan, so rows written between pages shift page boundaries",
         "rest_v2.jobs.jobs-insert: semantic-compatibility:legacy SQL is refused and a query that omits useLegacySql runs as GoogleSQL, where the REST API defaults to legacy SQL; cross-project defaultDataset is refused and cross-project destinationTable is refused; load jobs refuse options outside the implemented set (for example rangePartitioning, destinationEncryptionConfiguration, referenceFileSchemaUri) and copy jobs refuse destinationEncryptionConfiguration; the job runs before the call returns, so the response already reports state DONE",
         "rest_v2.jobs.jobs-query: semantic-compatibility:legacy SQL is refused and a query that omits useLegacySql runs as GoogleSQL, where the REST API defaults to legacy SQL; cross-project defaultDataset is refused; preserveNulls, destinationEncryptionConfiguration and other QueryRequest fields outside the admitted set are refused; timeoutMs is validated but the call always waits for the query, so jobComplete=false is never returned; jobTimeoutMs, maxSlots and reservation are recorded but not enforced",
@@ -1360,10 +1358,10 @@
         "rest_v2.transfers-data-transfer-service.bigquery-transfers-update: semantic-compatibility:updateMask is required and paths outside displayName, destinationDatasetId, params, schedule, scheduleOptions, scheduleOptionsV2, disabled, emailPreferences and notificationPubsubTopic are refused, so serviceAccountName and encryptionConfiguration cannot be changed; only dataSourceId scheduled_query is accepted; every other data source is refused",
         "rest_v2.transfers-data-transfer-service.bigquery-transfers-run: semantic-compatibility:the runs execute before the call returns, so they come back in a terminal state instead of PENDING; only dataSourceId scheduled_query is accepted; every other data source is refused",
         "storage_read_v1.bigquery-storage-read-api.arrow-and-avro-serialization-formats: semantic-compatibility:Arrow buffer compression (LZ4_FRAME, ZSTD), response compression and picosecond timestamp precision options are refused with UNIMPLEMENTED",
-        "metadata.advanced.ingestion-time-partitioning-partitiontime-partitiondate: semantic-compatibility:Partition decorators (table$YYYYMMDD) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME",
-        "metadata.advanced.column-based-partitioning-date-timestamp-datetime-int64-range: semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition",
-        "metadata.advanced.time-unit-partitioning-daily-hourly-monthly-yearly: semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition",
-        "metadata.advanced.range-partitioning-int64: semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition",
+        "metadata.advanced.ingestion-time-partitioning-partitiontime-partitiondate: semantic-compatibility:Partition decorators (table$YYYYMMDD) are accepted only by tabledata.insertAll, so load, copy and query-destination writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME",
+        "metadata.advanced.column-based-partitioning-date-timestamp-datetime-int64-range: semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, copy or query-destination writes, so those writes cannot target or replace a single partition (tabledata.insertAll accepts daily decorators only, as BigQuery does)",
+        "metadata.advanced.time-unit-partitioning-daily-hourly-monthly-yearly: semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, copy or query-destination writes, so those writes cannot target or replace a single partition (tabledata.insertAll accepts daily decorators only, as BigQuery does)",
+        "metadata.advanced.range-partitioning-int64: semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, copy or query-destination writes, so those writes cannot target or replace a single partition (tabledata.insertAll accepts daily decorators only, as BigQuery does)",
         "metadata.advanced.lightweight-copy-on-write: quota-or-billing:a snapshot stores a full physical copy of its rows instead of sharing unchanged storage with the base table, so its storage is not delta-only",
         "metadata.advanced.lightweight-copies-copy-on-write: quota-or-billing:a clone stores a full physical copy of the base table's rows instead of sharing storage until the data diverges, so its storage is not delta-only",
         "metadata.advanced.incremental-refresh: semantic-compatibility:no materialized data is kept and no incremental refresh runs: refresh only advances lastRefreshTime/refreshWatermark, and max_staleness never returns stale rows",
@@ -3417,14 +3415,14 @@
   "bigqueryCoverage": {
     "total": 1537,
     "development": {
-      "implemented": 1220,
-      "partial": 169,
+      "implemented": 1221,
+      "partial": 168,
       "unknown": 86,
       "unsupported": 62
     },
     "production": {
-      "implemented": 1220,
-      "partial": 169,
+      "implemented": 1221,
+      "partial": 168,
       "unknown": 86,
       "unsupported": 62
     },
@@ -3828,8 +3826,8 @@
       {
         "id": "rest_v2.tables.tables-get",
         "name": "tables.get",
-        "boundary": "semantic-compatibility:the selectedFields and view (TableMetadataView) parameters are ignored, so the full resource is always returned; no streamingBuffer is reported for rows streamed by tabledata.insertAll",
-        "notes": "2026-11-03 evidence backfill: get_table reads no query parameters. Legacy alias `rest_v2.tables.bigquery-tables-get`."
+        "boundary": "semantic-compatibility:the selectedFields and view (TableMetadataView) parameters are ignored, so the full resource is always returned",
+        "notes": "2026-11-03 evidence backfill: get_table reads no query parameters. streamingBuffer: engine/streaming_buffer.py. Legacy alias `rest_v2.tables.bigquery-tables-get`."
       },
       {
         "id": "rest_v2.tables.tables-insert",
@@ -3848,12 +3846,6 @@
         "name": "tables.update",
         "boundary": "semantic-compatibility:PUT has patch semantics: fields omitted from the body keep their stored values instead of being replaced; relaxing REQUIRED to NULLABLE is refused; If-Match etag preconditions are not checked",
         "notes": "2026-11-03 evidence backfill: update_table delegates to patch_table; the cited test shows a PUT that omits view.useExplicitColumnNames keeps it. Legacy alias `rest_v2.tables.bigquery-tables-update`."
-      },
-      {
-        "id": "rest_v2.tabledata.tabledata-insertall",
-        "name": "tabledata.insertAll",
-        "boundary": "semantic-compatibility:templateSuffix is ignored, so rows go to the named table and no table is created from the template; partition decorators (table$YYYYMMDD) are refused; there is no streaming buffer: tables.get reports no streamingBuffer, and UPDATE, DELETE and MERGE can change rows streamed moments earlier",
-        "notes": "2026-11-03: partial. Row validation, skipInvalidRows, ignoreUnknownValues, schema-less tables (1bbb935b), concurrent inserts (c0811eda) and DML (cec20d03) on one table, and the per-table insertId window (c083078c) are implemented and tested. Remaining boundary: templateSuffix, partition decorators and the streaming buffer (observed on the c083078c image). Legacy alias `rest_v2.tabledata-tabledata.bigquery-tabledata-insertall` evidence: Imported from the former broad feature catalog."
       },
       {
         "id": "rest_v2.tabledata.tabledata-list",
@@ -4218,25 +4210,25 @@
       {
         "id": "metadata.advanced.ingestion-time-partitioning-partitiontime-partitiondate",
         "name": "Ingestion-time partitioning (PARTITIONTIME, PARTITIONDATE)",
-        "boundary": "semantic-compatibility:Partition decorators (table$YYYYMMDD) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME",
+        "boundary": "semantic-compatibility:Partition decorators (table$YYYYMMDD) are accepted only by tabledata.insertAll, so load, copy and query-destination writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME",
         "notes": "2026-10-23 backlog: rows of ingestion-time partitioned tables store their partition time; pseudocolumns implemented. Provisional (not pinned against live BigQuery): rows are readable at once with their ingestion time (the write-optimized streaming buffer, where _PARTITIONTIME is NULL, is not modeled); explicit NULL _PARTITIONTIME is refused; pseudocolumn rows of INFORMATION_SCHEMA.COLUMNS have NULL ordinal_position; error wording for off-boundary values and missing aliases."
       },
       {
         "id": "metadata.advanced.column-based-partitioning-date-timestamp-datetime-int64-range",
         "name": "Column-based partitioning (DATE, TIMESTAMP, DATETIME, INT64 range)",
-        "boundary": "semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition",
+        "boundary": "semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, copy or query-destination writes, so those writes cannot target or replace a single partition (tabledata.insertAll accepts daily decorators only, as BigQuery does)",
         "notes": "2026-11-03 evidence backfill: Same evidence as sql.ddl.partition-by; the decorator gap is the one recorded on metadata.advanced.ingestion-time-partitioning-partitiontime-partitiondate."
       },
       {
         "id": "metadata.advanced.time-unit-partitioning-daily-hourly-monthly-yearly",
         "name": "Time-unit partitioning (daily, hourly, monthly, yearly)",
-        "boundary": "semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition",
+        "boundary": "semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, copy or query-destination writes, so those writes cannot target or replace a single partition (tabledata.insertAll accepts daily decorators only, as BigQuery does)",
         "notes": "2026-11-03 evidence backfill: Units asserted per expression in test_partition_by_documented_expressions and per ingestion unit in test_partition_time_per_unit_and_select_star."
       },
       {
         "id": "metadata.advanced.range-partitioning-int64",
         "name": "Range partitioning (INT64)",
-        "boundary": "semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition",
+        "boundary": "semantic-compatibility:partition decorators (table$partition_id) are not accepted by load, copy or query-destination writes, so those writes cannot target or replace a single partition (tabledata.insertAll accepts daily decorators only, as BigQuery does)",
         "notes": "2026-11-03 evidence backfill: test_integer_range_partitioning asserts bucket placement, the REST resource, restart persistence and filter enforcement."
       },
       {
@@ -4444,6 +4436,6 @@
         "notes": "2026-10-23 backlog: partial: the documented collation-aware operations listed in the scope are implemented and tested; the refused shapes in the limitations stay explicit."
       }
     ],
-    "revision": "48b2ec74ee51cd85925c58dc8fac17adb0d70a8e"
+    "revision": "60db8063262be8386d6be417904b1b11405ca14c"
   }
 }

@@ -117,7 +117,7 @@
     "other": "limited",
     "description": "Divides a table into partitions by the values of a DATE, TIMESTAMP or DATETIME column, or by ranges of an INT64 column, so queries can read only some partitions.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/partitioned-tables",
-    "notes": "Partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition."
+    "notes": "Partition decorators (table$partition_id) are not accepted by load, copy or query-destination writes, so those writes cannot target or replace a single partition (tabledata.insertAll accepts daily decorators only, as BigQuery does)."
   },
   {
     "id": "metadata.advanced.column-level-security-policy-tags",
@@ -247,7 +247,7 @@
     "other": "unknown",
     "description": "Partitions a table by the time rows were loaded and exposes the _PARTITIONTIME and _PARTITIONDATE pseudo-columns for filtering.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/partitioned-tables",
-    "notes": "Partition decorators (table$YYYYMMDD) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME."
+    "notes": "Partition decorators (table$YYYYMMDD) are accepted only by tabledata.insertAll, so load, copy and query-destination writes cannot name a partition; DML writes to named partitions through _PARTITIONTIME."
   },
   {
     "id": "metadata.advanced.insertid",
@@ -377,7 +377,7 @@
     "other": "unknown",
     "description": "Divides a table into partitions by ranges of an INTEGER column, defined by a start value, an end value and an interval.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/partitioned-tables",
-    "notes": "Partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition."
+    "notes": "Partition decorators (table$partition_id) are not accepted by load, copy or query-destination writes, so those writes cannot target or replace a single partition (tabledata.insertAll accepts daily decorators only, as BigQuery does)."
   },
   {
     "id": "metadata.advanced.restore-table-from-snapshot",
@@ -467,7 +467,7 @@
     "other": "unknown",
     "description": "Divides a table into partitions by the hour, day, month or year of a DATE, TIMESTAMP or DATETIME column.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/partitioned-tables",
-    "notes": "Partition decorators (table$partition_id) are not accepted by load, insertAll, copy or query-destination writes, so non-DML writes cannot target or replace a single partition."
+    "notes": "Partition decorators (table$partition_id) are not accepted by load, copy or query-destination writes, so those writes cannot target or replace a single partition (tabledata.insertAll accepts daily decorators only, as BigQuery does)."
   },
   {
     "id": "metadata.advanced.vector-search",
@@ -1523,11 +1523,11 @@
     "id": "rest_v2.tabledata.tabledata-insertall",
     "name": "tabledata.insertAll",
     "area": "REST API / Tabledata",
-    "local": "limited",
+    "local": "available",
     "other": "available",
     "description": "Streams one or more rows into a table without a load job, with optional per-row insert IDs for best-effort de-duplication.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tabledata/insertAll",
-    "notes": "templateSuffix is ignored, so rows go to the named table and no table is created from the template; partition decorators (table$YYYYMMDD) are refused; there is no streaming buffer: tables.get reports no streamingBuffer, and UPDATE, DELETE and MERGE can change rows streamed moments earlier."
+    "notes": ""
   },
   {
     "id": "rest_v2.tabledata.tabledata-list",
@@ -1557,7 +1557,7 @@
     "other": "available",
     "description": "Returns a table's metadata, such as its schema, size, partitioning and expiration, but not the rows themselves.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/tables/get",
-    "notes": "The selectedFields and view (TableMetadataView) parameters are ignored, so the full resource is always returned; no streamingBuffer is reported for rows streamed by tabledata.insertAll."
+    "notes": "The selectedFields and view (TableMetadataView) parameters are ignored, so the full resource is always returned."
   },
   {
     "id": "rest_v2.tables.tables-getiampolicy",

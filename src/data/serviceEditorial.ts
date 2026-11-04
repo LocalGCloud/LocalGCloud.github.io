@@ -149,7 +149,7 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
     boundaries: [
       "Behavior varies with SQL, ML, and geography inputs; test your edge-case inputs. Policy-tag taxonomy import/export: validate in Google Cloud",
       "BigQuery ML, JavaScript UDFs, and EXTERNAL_QUERY on Cloud SQL, AlloyDB, PostgreSQL, and MySQL need the full image (localcloud start --full)",
-      "Streamed rows have no streaming buffer, so DML can change them at once. External tables read local Cloud Storage; Bigtable, Sheets, HTTP, and local-file sources: use Google Cloud",
+      "Streaming-buffer DML refusal is opt-in (streaming_buffer_flush_seconds). External tables read local Cloud Storage; Bigtable, Sheets, HTTP, and local-file sources: use Google Cloud",
       "Reservations, production IAM, and fleet-scale behavior: use Google Cloud",
     ],
   },

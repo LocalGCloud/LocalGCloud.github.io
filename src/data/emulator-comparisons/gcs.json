@@ -67,7 +67,7 @@
     "other": "available",
     "description": "Refuses to delete a bucket that still contains objects and returns an error instead of removing the bucket or its contents.",
     "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/delete",
-    "notes": "Noncurrent versions also keep it nonempty (409); live objects answer 412 where Google answers 409; XML multipart uploads in progress are aborted."
+    "notes": "Live objects, noncurrent versions and managed folders answer 409 conflict \"The bucket you tried to delete is not empty.\"; XML DELETE Bucket answers 409 BucketNotEmpty and gRPC FAILED_PRECONDITION; an unmet metageneration precondition stays 412; XML multipart uploads in progress are aborted."
   },
   {
     "id": "B08",
