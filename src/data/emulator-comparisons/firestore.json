@@ -1576,12 +1576,12 @@
     "id": "firestore-ttl-historical-reads-backups-and-recovery-import-of-google-produced-exports",
     "name": "Import of Google-produced exports",
     "area": "TTL, historical reads, backups and recovery",
-    "local": "unavailable",
+    "local": "available",
     "other": "unknown",
     "default": "unavailable",
     "description": "Imports export files written by Google's managed export service, and writes export files that Google's managed import service can read.",
     "docs": "https://docs.cloud.google.com/firestore/native/docs/manage-data/export-import",
-    "notes": "Google's metadata schema and entity encoding are not publicly specified, so cross-import is rejected instead of claimed; Exports round-trip within this engine only."
+    "notes": ""
   },
   {
     "id": "firestore-ttl-historical-reads-backups-and-recovery-database-tag-bindings-on-create-restore-and-clone",
@@ -2093,12 +2093,12 @@
     "id": "firestore-production-security-editions-and-service-guarantees-executepipeline-native-enterprise",
     "name": "ExecutePipeline (Native Enterprise)",
     "area": "Production security, editions and service guarantees",
-    "local": "unavailable",
+    "local": "available",
     "other": "limited",
-    "default": "unavailable",
+    "default": "limited",
     "description": "Runs a pipeline query, built from ordered stages such as where, sort and aggregate, on an Enterprise edition database and returns the results.",
     "docs": "https://docs.cloud.google.com/firestore/docs/reference/rpc/google.firestore.v1",
-    "notes": "Current edition option; Google stage coverage not established."
+    "notes": ""
   },
   {
     "id": "firestore-production-security-editions-and-service-guarantees-cmek-database-configuration",

@@ -1,7 +1,7 @@
 {
   "gcs": {
     "repository": "localcloud-fake-gcs-server",
-    "revision": "0a8101115d074c2becee71ecf8d7039da4230502",
+    "revision": "72d5f972c5f7e37632f77458fdc77b59845188b9",
     "reviewed": "2026-10-23",
     "documents": [
       {
@@ -32,18 +32,18 @@
   },
   "firestore": {
     "repository": "firestore-go",
-    "revision": "eae95eb9a6b9de875625cad82545c6e0f06cd7d9",
+    "revision": "75c8b4100a089b1be9c355ba198870c994a6cbef",
     "reviewed": "2026-11-03",
     "documents": [
       {
         "path": "docs/emulator-comparison.md",
-        "commit": "eae95eb9a6b9de875625cad82545c6e0f06cd7d9",
-        "sha256": "17ec795e0d8c6362f6dc204f6af0e006a6843087ccc1bc89169f25bac16431f8"
+        "commit": "3595860be2eabe0a80b603706a9335daceaeb7c0",
+        "sha256": "4490957369d85729f1eaa147854b14c89d8d92722817c9cdb31142d389b7bb7e"
       },
       {
         "path": "docs/emulator-comparison-metrics.md",
-        "commit": "eae95eb9a6b9de875625cad82545c6e0f06cd7d9",
-        "sha256": "621f9864e952915a441e29c0c22c9611538fd75caa608ce613516bb372ab4384"
+        "commit": "3595860be2eabe0a80b603706a9335daceaeb7c0",
+        "sha256": "1e34ec848adab7f9a60a9a71916e246981da088734d02bb96e1675b5e119a764"
       }
     ],
     "documented": {
@@ -64,15 +64,15 @@
       },
       "default": {
         "available": 76,
-        "limited": 29,
-        "unavailable": 101,
+        "limited": 30,
+        "unavailable": 100,
         "unknown": 0,
         "na": 0
       },
       "local": {
-        "available": 160,
+        "available": 162,
         "limited": 40,
-        "unavailable": 6,
+        "unavailable": 4,
         "unknown": 0,
         "na": 0
       }
@@ -86,7 +86,7 @@
   },
   "bigtable": {
     "repository": "little_bigtable",
-    "revision": "74e43b993629111f2d8bf1b8988b175b309a47c7",
+    "revision": "f5273aa1e0719e2f543498551667b8347f6b55ad",
     "reviewed": "2026-10-20",
     "documents": [
       {
@@ -156,7 +156,7 @@
   },
   "bigquery": {
     "repository": "bigquery-emulator-on-duckdb",
-    "revision": "60db8063262be8386d6be417904b1b11405ca14c",
+    "revision": "188a9d388a84f1ad009538338b20cf8240df34b8",
     "reviewed": "2026-09-28",
     "documents": [
       {
