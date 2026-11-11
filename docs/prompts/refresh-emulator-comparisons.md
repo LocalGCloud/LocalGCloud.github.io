@@ -21,7 +21,34 @@ a git worktree on a named branch, commit, rebase onto `main`, fast-forward `main
 - Use the repository state as it is now. Other agents may be committing upstream; do not
   chase newer commits mid-run. The provenance records exactly which document digests you used.
 
-## 2. See what changed
+## 2. Reconcile upstream metrics before checking site drift
+
+Review commits since each recorded revision in `src/data/emulator-comparison-provenance.json`.
+A bug fix does not automatically add a feature or change a status: trace it to the exact
+catalog row, implementation and owning tests. Review every dependency listed by the importer.
+Use only the runtime public contract, packaged defaults and license when inspecting localcloud-go.
+
+In BigQuery, run the catalog validator and the comparison generator's check before syncing:
+
+```sh
+python3 -m qualification.capability_catalog validate
+python3 -m qualification.capability_catalog report --check
+python3 -m qualification.emulator_comparison --check
+python3 -B -m unittest tests.test_emulator_comparison
+```
+
+The generator checks admitted ML table functions, preprocessing functions and model families
+against the comparison catalog. Include Full-edition ML, imports, forecasting, explainability,
+anomaly detection and configured providers; never use Lite's missing libraries to mark Full
+unsupported. Preserve exact scopes, official feature references, implementation symbols and
+owning test IDs. ML.DISTANCE remains available in both editions. Keep unsupported/unknown
+competitor evidence separate; unknown is never a competitor gap. Regenerate comparison docs
+from the catalog after authorized upstream corrections and commit them before site ingestion.
+If upstream edits are outside this run's authority, report the missing rows instead of silently
+publishing a stale comparison. Do not stop at a clean site drift check when upstream coverage
+checks fail. Preserve competitor review dates unless competitor evidence was actually reviewed.
+
+## 3. See what changed
 
 ```sh
 python3 scripts/sync-emulator-comparisons.py --check ../local_cloud_dependencies
@@ -31,7 +58,7 @@ It prints, per service, documented rows, rows shown, rows only in LocalCloud, ro
 hidden as unassessed, unavailable in both or repeated, and whether the document has a competitor column, and it
 lists what is out of date. If nothing is out of date, say so and stop.
 
-## 3. Sync
+## 4. Sync
 
 ```sh
 python3 scripts/sync-emulator-comparisons.py ../local_cloud_dependencies
@@ -57,7 +84,7 @@ fix the cause in the importer, never by weakening a check:
 Add or adjust a unit test in `scripts/test_sync_emulator_comparisons.py` for every importer
 change, using a small inline document that reproduces the new shape.
 
-## 4. Review the result like an editor
+## 5. Review the result like an editor
 
 Compare the new inventories with the previous ones (`git diff --stat`, then by row ID) and
 write a short summary per service:
@@ -66,10 +93,12 @@ write a short summary per service:
 - rows added, removed, renamed (ID changes) and whose status changed, with the largest swings;
 - `hidden.unassessed`, `hidden.unavailable` and `hidden.repeated`: each hidden unassessed LocalCloud row is a gap in
   the document, so list the biggest groups for the upstream owners;
+- retired profiles: retain historical counts only in provenance; do not publish a retired compatibility default as a current capability;
 - any service whose `hasCompetitor` flipped (a document that gains or loses its competitor column).
   The site then shows or hides the competitor column and advantage counts by itself; confirm that
   service's `competitor`, `baseline` and `baselineUrl` in `src/data/emulatorComparisons.ts` against
   the document's own baseline section;
+- BigQuery edition counts and boundaries: Full-only and mixed rows must retain their edition notes in the existing Details column, including implemented rows; compare Full/Lite counts in the generated upstream metrics;
 - descriptions: read about 20 new or changed ones per service against the feature they describe,
   and look at the `sharedDescriptions` warnings the sync prints. A wrong or filler description is
   an upstream defect; report it, do not edit the inventory;
@@ -80,7 +109,7 @@ A swing above roughly 10% in rows or only-in-LocalCloud counts for one service i
 document before accepting it; say so in your report rather than assuming it is right.
 Do not "fix" a surprising count by changing a rule in the importer; explain it.
 
-## 5. Keep the editorial layer true
+## 6. Keep the editorial layer true
 
 `src/data/emulatorComparisons.ts` (summary, scope, baseline) and the copy on the comparison
 pages are editorial. Check them against the changed documents. Rules:
@@ -97,7 +126,7 @@ pages are editorial. Check them against the changed documents. Rules:
   configuration; keep that stated.
 - Counts are inventory rows, not a feature count or a benchmark; keep the existing caveat.
 
-## 6. Verify
+## 7. Verify
 
 ```sh
 python3 -B -m unittest scripts/test_sync_emulator_comparisons.py
@@ -112,9 +141,9 @@ Everything must pass. If a Chrome test fails because a layout assumption changed
 for the new behavior only after checking the page in a browser. Never delete an assertion to
 make it pass.
 
-## 7. Report
+## 8. Report
 
-Finish with: what changed per service (the table from step 4), importer changes and tests
+Finish with: what changed per service (the table from step 5), importer changes and tests
 added, the upstream follow-ups (unassessed groups, duplicate IDs, documents that disagree with
 their own totals) and the exact commands you ran with their results. Mention anything you
 chose not to do and why.

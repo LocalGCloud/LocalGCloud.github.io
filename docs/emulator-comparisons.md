@@ -147,3 +147,9 @@ Inventory counts have different denominators and overlapping facets. Do not sum
 them into a product feature count or present them as a benchmark. A count describes the
 rows shown after the rules above, and a ✓ is evidence for the named behavior, not a
 released-image qualification.
+
+BigQuery counts describe the Full edition. Its source comparison also reconciles edition counts
+on the same denominator and refuses to omit admitted model families, ML table functions or
+preprocessing functions. Full-only and mixed-edition boundaries remain in Details, even for
+implemented rows. ML.DISTANCE is available in both editions. The refresh prompt checks these
+upstream inputs before treating a clean site inventory as current.

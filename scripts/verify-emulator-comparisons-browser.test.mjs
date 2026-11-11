@@ -103,6 +103,16 @@ const clickFirstCategory = async page => {
   await settled(page);
 };
 
+for (const width of [390, 1440]) {
+  test(`Full ML rows retain their edition boundary at ${width}px`, async t => {
+    const page = await open(t, '/compare/emulators/bigquery/?features=all&q=sql.function.ml-forecast&view=classic', width);
+    await settled(page);
+    const row = await page.$(`${activeTable} tr[data-feature-id="sql.function.ml-forecast"]`);
+    assert.ok(row, 'the new ML function is searchable in the full inventory');
+    assert.match(await row.evaluate(node => node.textContent), /Full edition only/i);
+  });
+}
+
 test('large categories paint before all rows are ready and cancelled batches cannot return', { timeout: 30000 }, async t => {
   const page = await open(t, '/compare/emulators/bigquery/?features=all&view=classic', 390);
   await settled(page);
@@ -466,7 +476,7 @@ test('a documented limit reads as a green check, never as a separate Scoped resu
   assert.ok(await page.$eval(`${activeTable} tr[data-feature-id="${limited.id}"]`, row => row.querySelector('.comparison-limit').textContent.startsWith('Note: ')), 'the limit stays visible as a note');
 });
 
-test('availability marks keep accessible labels, notes stay inline and profile duplicates disappear', { timeout: 60000 }, async t => {
+test('availability marks keep accessible labels, notes stay inline and retired profiles disappear', { timeout: 60000 }, async t => {
   const markdown = readFileSync(new URL('../dist/compare/emulators/cloud-storage.md', import.meta.url), 'utf8');
   for (const group of categories('cloud-storage')) {
     assert.ok(markdown.includes(`${group.area} ${group.total} features`), `${group.area}: the Markdown twin lists each category with its size`);
@@ -507,16 +517,17 @@ test('availability marks keep accessible labels, notes stay inline and profile d
   await openAll(page);
   const profiles = await page.$$eval(`${activeTable} tr[data-feature-id]`, rows => {
     const cell = rows.find(row => row.querySelector('th > span').textContent === 'Required composite-index rejection for queries').querySelector('td');
-    return [...cell.querySelectorAll('.comparison-state')].map(node => ({ state: node.dataset.state, label: node.querySelector('.comparison-label').textContent }));
+    return [...cell.querySelectorAll('.comparison-state')].filter(node => !node.closest('[hidden]'))
+      .map(node => ({ state: node.dataset.state, label: node.querySelector('.comparison-label').textContent }));
   });
-  assert.deepEqual(profiles, [{ state: 'available', label: 'Available' }, { state: 'unavailable', label: 'Not available' }]);
+  assert.deepEqual(profiles, [{ state: 'available', label: 'Available' }], 'the historical compatibility result is hidden');
   assert.ok(await page.$eval(`${activeTable} .comparison-state[data-state="unknown"]`, node => node.textContent.includes('Not assessed')));
   const firestore = inventory('firestore');
   const visibleProfiles = await page.$$eval(`${activeTable} tr[data-feature-id]`, rows => rows.map(row => ({ id: row.dataset.featureId,
     states: [...row.querySelector('td').querySelectorAll('.comparison-state')].filter(node => !node.closest('[hidden]')).map(node => node.dataset.state) })));
   for (const row of firestore) {
-    const local = comparisonMarkState(row.local), other = comparisonMarkState(row.default);
-    assert.deepEqual(visibleProfiles.find(result => result.id === row.id).states, other === local ? [local] : [local, other]);
+    const local = comparisonMarkState(row.local), other = row.default && comparisonMarkState(row.default);
+    assert.deepEqual(visibleProfiles.find(result => result.id === row.id).states, !other || other === local ? [local] : [local, other]);
   }
 });
 

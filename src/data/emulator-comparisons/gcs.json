@@ -1357,7 +1357,7 @@
     "other": "unavailable",
     "description": "Returns the IAM policy of a bucket: its role bindings, optional conditions, policy version and etag.",
     "docs": "https://docs.cloud.google.com/storage/docs/json_api/v1/buckets/getIamPolicy",
-    "notes": "Default legacy bindings, policy versions and etags."
+    "notes": "Default legacy bindings (object roles only for buckets created with uniform bucket-level access), policy versions and etags."
   },
   {
     "id": "A14",
@@ -1537,7 +1537,7 @@
     "other": "unavailable",
     "description": "Checks the signature on a signed URL created with an RSA private key using GOOG4-RSA-SHA256, so only URLs signed by a valid key are accepted.",
     "docs": "https://docs.cloud.google.com/storage/docs/access-control/signed-urls",
-    "notes": "Verified when signer public keys are configured; unverified otherwise."
+    "notes": "Verified when signer public keys are configured or -signing-certificates-url publishes the signer's certificates (Google's robot/v1/metadata/x509/<email> shape, cached for a minute); unverified otherwise, and for a signer with no keys when -serve-unknown-signers is set (the authorization callback is told unverifiedSigner)."
   },
   {
     "id": "H03",

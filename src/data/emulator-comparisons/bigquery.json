@@ -227,7 +227,7 @@
     "other": "unknown",
     "description": "Runs several training trials with different hyperparameter values during CREATE MODEL and keeps the model that scores best on an objective.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/hp-tuning-overview",
-    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|external-production-service:VIZIER_DEFAULT, the default tuning algorithm, trains only when a Vizier-compatible optimizer endpoint is configured; without one CREATE MODEL fails."
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); external-production-service:VIZIER_DEFAULT, the default tuning algorithm, trains only when a Vizier-compatible optimizer endpoint is configured; without one CREATE MODEL fails."
   },
   {
     "id": "metadata.advanced.incremental-refresh",
@@ -337,7 +337,7 @@
     "other": "unavailable",
     "description": "Applies the preprocessing defined in a model's TRANSFORM clause to input data and returns the resulting feature columns.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-transform",
-    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
   },
   {
     "id": "metadata.advanced.object-tables-for-unstructured-data",
@@ -567,7 +567,7 @@
     "other": "unavailable",
     "description": "Creates and trains a BigQuery ML model in a dataset from SQL, using a chosen model type, a set of options and a training query.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create",
-    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
   },
   {
     "id": "metadata.enterprise.data-clean-rooms",
@@ -627,7 +627,7 @@
     "other": "unavailable",
     "description": "Computes evaluation metrics, such as precision, recall or mean error, for a trained model against supplied data.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-evaluate",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "metadata.enterprise.ml-generate-embedding",
@@ -637,7 +637,7 @@
     "other": "unavailable",
     "description": "Generates embeddings, which are numeric vector representations of the input, from text or other data using a remote model.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-generate-embedding",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "metadata.enterprise.ml-generate-text",
@@ -647,7 +647,7 @@
     "other": "unavailable",
     "description": "Sends a prompt built from each table row to a remote generative AI model and returns the generated text for that row.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-generate-text",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "metadata.enterprise.ml-predict",
@@ -657,7 +657,7 @@
     "other": "unavailable",
     "description": "Runs a trained model over input rows and returns a prediction for each row.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-predict",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "metadata.enterprise.ml-weights",
@@ -667,7 +667,7 @@
     "other": "unavailable",
     "description": "Returns the learned weights of a trained model, such as the feature coefficients of a regression model.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-weights",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "metadata.enterprise.multi-statement-transactions",
@@ -1280,6 +1280,16 @@
     "notes": "isCaseInsensitive and defaultRoundingMode are ignored; If-Match etag preconditions are not checked."
   },
   {
+    "id": "rest_v2.datasets.datasets-undelete",
+    "name": "datasets.undelete",
+    "area": "REST API / Datasets",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Restores the most recently deleted dataset with its tables, views and routines, within its time travel window.",
+    "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/datasets/undelete",
+    "notes": "A dataset undeleted within the last seven days can still be deleted (Google refuses it; the error is not documented)."
+  },
+  {
     "id": "rest_v2.datasets.datasets-update",
     "name": "datasets.update",
     "area": "REST API / Datasets",
@@ -1397,7 +1407,7 @@
     "other": "available",
     "description": "Returns the email address of the service account that BigQuery uses for a project when it works with Cloud KMS keys.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/projects/getServiceAccount",
-    "notes": "The email is bq-emulator@{projectId}.iam.gserviceaccount.com instead of the production encryption service account bq-{projectNumber}@bigquery-encryption.iam.gserviceaccount.com|managed-identity:no Google-managed service account stands behind the address, so it cannot be granted access to a Cloud KMS key."
+    "notes": "The email is bq-emulator@{projectId}.iam.gserviceaccount.com instead of the production encryption service account bq-{projectNumber}@bigquery-encryption.iam.gserviceaccount.com; managed-identity:no Google-managed service account stands behind the address, so it cannot be granted access to a Cloud KMS key."
   },
   {
     "id": "rest_v2.projects.projects-list",
@@ -1407,7 +1417,7 @@
     "other": "available",
     "description": "Lists the projects the caller has been granted access to, with their IDs and friendly names.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/projects/list",
-    "notes": "maxResults and pageToken are ignored and no nextPageToken is returned; numericId is published as a JSON number rather than a uint64 string|managed-authorization:every known project is listed whatever roles the caller holds on it."
+    "notes": "maxResults and pageToken are ignored and no nextPageToken is returned; numericId is published as a JSON number rather than a uint64 string; managed-authorization:every known project is listed whatever roles the caller holds on it."
   },
   {
     "id": "rest_v2.routines.routines-delete",
@@ -1437,7 +1447,7 @@
     "other": "available",
     "description": "Creates a new routine, either a function or a stored procedure, in a dataset.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/routines/insert",
-    "notes": "edition:JavaScript routines: full edition only (the lite edition answers 400 invalidQuery); SQL routines, procedures and table functions work in both editions.|languages other than SQL and JavaScript (for example PYTHON) are refused; JavaScript routines with importedLibraries are refused|managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
+    "notes": "JavaScript routines: full edition only (the lite edition answers 400 invalidQuery); SQL routines, procedures and table functions work in both editions; languages other than SQL and JavaScript (for example PYTHON) are refused; JavaScript routines with importedLibraries are refused; managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
   },
   {
     "id": "rest_v2.routines.routines-list",
@@ -1447,7 +1457,7 @@
     "other": "unavailable",
     "description": "Lists the routines, which are functions and stored procedures, in a dataset that the caller has read access to.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/routines/list",
-    "notes": "readMask accepts only routineReference, routineType, language, creationTime, lastModifiedTime, etag, arguments, returnType, returnTableType, definitionBody, description and *; other masks are refused|managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
+    "notes": "readMask accepts only routineReference, routineType, language, creationTime, lastModifiedTime, etag, arguments, returnType, returnTableType, definitionBody, description and *; other masks are refused; managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
   },
   {
     "id": "rest_v2.routines.routines-update",
@@ -1457,7 +1467,7 @@
     "other": "unavailable",
     "description": "Replaces the entire routine resource with the definition supplied in the request.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/rest/v2/routines/update",
-    "notes": "edition:JavaScript routines: full edition only (the lite edition answers 400 invalidQuery); SQL routines, procedures and table functions work in both editions.|languages other than SQL and JavaScript (for example PYTHON) are refused; JavaScript routines with importedLibraries are refused|managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
+    "notes": "JavaScript routines: full edition only (the lite edition answers 400 invalidQuery); SQL routines, procedures and table functions work in both editions; languages other than SQL and JavaScript (for example PYTHON) are refused; JavaScript routines with importedLibraries are refused; managed-authorization:routines calls check no bigquery.routines.* permission, and the routines API answers notImplemented when IAM is delegated to an external policy endpoint."
   },
   {
     "id": "rest_v2.row-access-policies.bigquery-rowaccesspolicies-delete",
@@ -1660,6 +1670,556 @@
     "notes": "A load configuration without sourceFormat is read as NEWLINE_DELIMITED_JSON, where production defaults to CSV; upload sessions are held in memory and are lost when the emulator restarts."
   },
   {
+    "id": "sql.function.ml-advanced-weights",
+    "name": "ML.ADVANCED_WEIGHTS",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns model coefficients with standard errors, t statistics and p-values for linear and logistic regression.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-advanced-weights",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for LINEAR_REG; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-annotate-image",
+    "name": "ML.ANNOTATE_IMAGE",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Annotates images from an object table using a remote model connected to the Cloud Vision API.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-annotate-image",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Requires a configured external provider."
+  },
+  {
+    "id": "sql.function.ml-arima-coefficients",
+    "name": "ML.ARIMA_COEFFICIENTS",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns the autoregressive and moving-average coefficients and intercept of an ARIMA time-series model.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-arima-coefficients",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for ARIMA_PLUS; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-arima-evaluate",
+    "name": "ML.ARIMA_EVALUATE",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns evaluation statistics for the candidate ARIMA models considered during time-series training.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-arima-evaluate",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for ARIMA_PLUS, ARIMA_PLUS_XREG; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-bag-of-words",
+    "name": "ML.BAG_OF_WORDS",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Builds a vocabulary from token arrays and represents each input as token occurrence counts.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-bag-of-words",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-bucketize",
+    "name": "ML.BUCKETIZE",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Assigns a numerical value to a named bucket using an ordered array of split points.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-bucketize",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-centroids",
+    "name": "ML.CENTROIDS",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns the feature values of the cluster centroids learned by a k-means model.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-centroids",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for KMEANS; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-confusion-matrix",
+    "name": "ML.CONFUSION_MATRIX",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns a classification confusion matrix comparing predicted labels with the actual labels.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-confusion",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for BOOSTED_TREE_CLASSIFIER, DNN_CLASSIFIER, LOGISTIC_REG, RANDOM_FOREST_CLASSIFIER; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-detect-anomalies",
+    "name": "ML.DETECT_ANOMALIES",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Identifies anomalous input rows using a trained model and the specified anomaly threshold.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-detect-anomalies",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for AUTOENCODER; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-distance",
+    "name": "ML.DISTANCE",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Computes a numerical distance between two dense or sparse vectors using a selected distance metric.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-distance",
+    "notes": "Dense FLOAT64 and keyed sparse vectors support EUCLIDEAN and MANHATTAN distances; Other input and metric forms are refused."
+  },
+  {
+    "id": "sql.function.ml-explain-forecast",
+    "name": "ML.EXPLAIN_FORECAST",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns forecasts with time-series components such as trend, seasonal effects and holiday effects.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-explain-forecast",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for ARIMA_PLUS; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-feature-cross",
+    "name": "ML.FEATURE_CROSS",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Creates categorical cross features by combining values from fields in an input STRUCT.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-feature-cross",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-feature-info",
+    "name": "ML.FEATURE_INFO",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns statistics about the input features used to train a model, including numerical and categorical summaries.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-feature",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for AUTOENCODER, BOOSTED_TREE_CLASSIFIER, BOOSTED_TREE_REGRESSOR, DNN_CLASSIFIER, DNN_REGRESSOR, KMEANS, LINEAR_REG, LOGISTIC_REG, PCA, RANDOM_FOREST_CLASSIFIER, RANDOM_FOREST_REGRESSOR, TRANSFORM_ONLY; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-forecast",
+    "name": "ML.FORECAST",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns future time-series values and prediction intervals from a trained forecasting model.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-forecast",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for ARIMA_PLUS, ARIMA_PLUS_XREG; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-get-insights",
+    "name": "ML.GET_INSIGHTS",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns the segments and metrics identified by a contribution analysis model to explain changes between data sets.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-get-insights",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for CONTRIBUTION_ANALYSIS; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-global-explain",
+    "name": "ML.GLOBAL_EXPLAIN",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns aggregate feature attributions showing how each input feature contributes to model predictions.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-global-explain",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for BOOSTED_TREE_REGRESSOR, DNN_REGRESSOR, LINEAR_REG, RANDOM_FOREST_REGRESSOR; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-hash-bucketize",
+    "name": "ML.HASH_BUCKETIZE",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Maps a string to a numerical bucket using a hash and the requested number of buckets.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-hash-bucketize",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-imputer",
+    "name": "ML.IMPUTER",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Replaces missing numerical or categorical values using statistics computed from the training data.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-imputer",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-label-encoder",
+    "name": "ML.LABEL_ENCODER",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Encodes categorical values as integer labels using the learned vocabulary and configured frequency limits.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-label-encoder",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-lp-norm",
+    "name": "ML.LP_NORM",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns the Lp norm of an input numerical vector for the specified degree.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-lp-norm",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-max-abs-scaler",
+    "name": "ML.MAX_ABS_SCALER",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Scales a numerical feature by its maximum absolute training value.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-max-abs-scaler",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-min-max-scaler",
+    "name": "ML.MIN_MAX_SCALER",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Scales a numerical feature to the range from zero to one using training minimum and maximum values.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-min-max-scaler",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-multi-hot-encoder",
+    "name": "ML.MULTI_HOT_ENCODER",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Encodes an array of categorical values as a sparse vector using a learned vocabulary.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-multi-hot-encoder",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-ngrams",
+    "name": "ML.NGRAMS",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns contiguous sequences of tokens of the requested lengths, joined with a specified separator.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ngrams",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-normalizer",
+    "name": "ML.NORMALIZER",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Normalizes a numerical vector to unit length using its specified Lp norm.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-normalizer",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-one-hot-encoder",
+    "name": "ML.ONE_HOT_ENCODER",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Encodes a categorical value as a sparse vector with one active category position.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-one-hot-encoder",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-polynomial-expand",
+    "name": "ML.POLYNOMIAL_EXPAND",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Creates polynomial feature combinations from the numerical fields of an input STRUCT.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-polynomial-expand",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-principal-component-info",
+    "name": "ML.PRINCIPAL_COMPONENT_INFO",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns the eigenvalue and explained variance statistics for each component of a PCA model.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-principal-component-info",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for PCA; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-principal-components",
+    "name": "ML.PRINCIPAL_COMPONENTS",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns the feature weights of each principal component in a trained PCA model.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-principal-components",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for PCA; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-process-document",
+    "name": "ML.PROCESS_DOCUMENT",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Extracts structured information from documents in an object table using a remote Document AI model.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-process-document",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Requires a configured external provider."
+  },
+  {
+    "id": "sql.function.ml-quantile-bucketize",
+    "name": "ML.QUANTILE_BUCKETIZE",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Assigns numerical values to quantile buckets using boundaries fitted from the training data.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-quantile-bucketize",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-recommend",
+    "name": "ML.RECOMMEND",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns predicted ratings or recommendations from a matrix factorization model for user and item inputs.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-recommend",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for MATRIX_FACTORIZATION; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-reconstruction-loss",
+    "name": "ML.RECONSTRUCTION_LOSS",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns per-row reconstruction error metrics from a trained autoencoder model.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-reconstruction-loss",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for AUTOENCODER; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.function.ml-robust-scaler",
+    "name": "ML.ROBUST_SCALER",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Scales numerical features using their median and interquartile range to reduce the influence of outliers.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-robust-scaler",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-standard-scaler",
+    "name": "ML.STANDARD_SCALER",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Standardizes numerical features using the mean and standard deviation of the training data.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-standard-scaler",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-tf-idf",
+    "name": "ML.TF_IDF",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Computes term frequency and inverse document frequency weights for tokens using the fitted document vocabulary.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-tf-idf",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+  },
+  {
+    "id": "sql.function.ml-transcribe",
+    "name": "ML.TRANSCRIBE",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Transcribes audio from an object table using a remote model connected to the Speech-to-Text API.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-transcribe",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Requires a configured external provider."
+  },
+  {
+    "id": "sql.function.ml-trial-info",
+    "name": "ML.TRIAL_INFO",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Returns hyperparameter trial settings, evaluation results and training status for a tuned model.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-trial-info",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local kernels for LINEAR_REG; bounded options and approximate model values."
+  },
+  {
+    "id": "sql.ml-model.arima-plus",
+    "name": "CREATE MODEL (ARIMA_PLUS)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains an ARIMA time-series model with preprocessing and seasonality handling for forecasting.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.arima-plus-xreg",
+    "name": "CREATE MODEL (ARIMA_PLUS_XREG)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains an ARIMA forecasting model with external regressor features for multivariate time-series prediction.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-multivariate-time-series",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.autoencoder",
+    "name": "CREATE MODEL (AUTOENCODER)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains an autoencoder that learns a compressed representation by reconstructing its input features.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-autoencoder",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.boosted-tree-classifier",
+    "name": "CREATE MODEL (BOOSTED_TREE_CLASSIFIER)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a boosted decision tree classification model to predict categorical labels.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.boosted-tree-regressor",
+    "name": "CREATE MODEL (BOOSTED_TREE_REGRESSOR)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a boosted decision tree regression model to predict a numerical label.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.contribution-analysis",
+    "name": "CREATE MODEL (CONTRIBUTION_ANALYSIS)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Creates a contribution analysis model that identifies segments contributing to changes in a metric.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-contribution-analysis",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.dnn-classifier",
+    "name": "CREATE MODEL (DNN_CLASSIFIER)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a deep neural network classification model to predict categorical labels.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-dnn-models",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.dnn-regressor",
+    "name": "CREATE MODEL (DNN_REGRESSOR)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a deep neural network regression model to predict a numerical label.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-dnn-models",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.kmeans",
+    "name": "CREATE MODEL (KMEANS)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a k-means clustering model that groups input rows around learned cluster centroids.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-kmeans",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.linear-reg",
+    "name": "CREATE MODEL (LINEAR_REG)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a linear regression model to predict a numerical label from input features.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.logistic-reg",
+    "name": "CREATE MODEL (LOGISTIC_REG)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a logistic regression model to predict a categorical label from input features.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.matrix-factorization",
+    "name": "CREATE MODEL (MATRIX_FACTORIZATION)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a matrix factorization model to learn user and item factors for recommendation.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-matrix-factorization",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.onnx",
+    "name": "CREATE MODEL (ONNX)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Imports a model in ONNX format from Cloud Storage for prediction in SQL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-onnx",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); other forms are refused."
+  },
+  {
+    "id": "sql.ml-model.random-forest-classifier",
+    "name": "CREATE MODEL (RANDOM_FOREST_CLASSIFIER)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a random forest classification model combining predictions from multiple decision trees.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-random-forest",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.random-forest-regressor",
+    "name": "CREATE MODEL (RANDOM_FOREST_REGRESSOR)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Trains a random forest regression model combining predictions from multiple decision trees.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-random-forest",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.transform-only",
+    "name": "CREATE MODEL (TRANSFORM_ONLY)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Creates a model that stores fitted feature transformations for reuse without training a prediction model.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-transform",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); Local training and supported options; numerical values differ from hosted BigQuery."
+  },
+  {
+    "id": "sql.ml-model.xgboost",
+    "name": "CREATE MODEL (XGBOOST)",
+    "area": "SQL / BigQuery ML",
+    "local": "limited",
+    "other": "unknown",
+    "description": "Imports a model in XGBoost format from Cloud Storage for prediction in SQL.",
+    "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-xgboost",
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); other forms are refused."
+  },
+  {
     "id": "sql.ctes-common-table-expressions.non-recursive-ctes",
     "name": "Non-recursive CTEs",
     "area": "SQL / CTEs (Common Table Expressions)",
@@ -1847,7 +2407,7 @@
     "other": "unknown",
     "description": "Chooses the activation function used by the layers of a neural network model, for example RELU, SIGMOID or TANH.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-dnn-models#activation_fn",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.add-replica-options-list",
@@ -1867,7 +2427,7 @@
     "other": "unknown",
     "description": "Turns on or off automatic detection and adjustment of step changes in the data while an ARIMA_PLUS time series model is trained.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#adjust_step_changes",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.alter-bi-capacity-set-options",
@@ -1997,7 +2557,7 @@
     "other": "unknown",
     "description": "Updates settings of an existing BigQuery ML model, such as its description, labels, expiration time and encryption key.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-alter-model#alter_model_syntax",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.alter-option-list",
@@ -2247,7 +2807,7 @@
     "other": "unknown",
     "description": "Turns on a fast approximation of feature contributions for boosted tree models; it works together with global explanations.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#approx_global_feature_contrib",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.as",
@@ -2257,7 +2817,7 @@
     "other": "unknown",
     "description": "Introduces the query that supplies the content of the object being created, such as the training data of a model or the rows of a view or table.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#as",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.assignment-option-list",
@@ -2277,7 +2837,7 @@
     "other": "unknown",
     "description": "Controls whether ARIMA_PLUS training automatically searches for the best non-seasonal order; when off, NON_SEASONAL_ORDER must be given.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#auto_arima",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.auto-arima-max-order",
@@ -2287,7 +2847,7 @@
     "other": "unknown",
     "description": "Sets the largest allowed sum of the non-seasonal p and q terms, which bounds the parameter search space of the auto.ARIMA algorithm.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#auto_arima_max_order",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.auto-arima-min-order",
@@ -2297,7 +2857,7 @@
     "other": "unknown",
     "description": "Sets the smallest allowed sum of the non-seasonal p and q terms in the auto.ARIMA search; a value of 1 or more can rule out flat forecasts.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#auto_arima_min_order",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.auto-class-weights",
@@ -2307,7 +2867,7 @@
     "other": "unknown",
     "description": "Balances class labels in logistic regression training by weighting each class in inverse proportion to how often it occurs.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#auto_class_weights",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.auto-refresh-capability",
@@ -2327,7 +2887,7 @@
     "other": "unknown",
     "description": "Sets the mini-batch size, the number of samples fed to the neural network at a time, when training a DNN model.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-dnn-models#batch_size",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.bi-capacity-options-list",
@@ -2347,7 +2907,7 @@
     "other": "unknown",
     "description": "Tables over data in object storage such as Cloud Storage, read through a connection so that users need no direct access to the underlying objects.",
     "docs": "https://cloud.google.com/bigquery/docs/biglake-intro",
-    "notes": "Metadata caching options (max_staleness, metadata_cache_mode) are refused; ICEBERG and DELTA_LAKE formats and s3:// / azure:// URIs are refused|managed-identity:the connection's service account is not used to authorize object reads."
+    "notes": "Metadata caching options (max_staleness, metadata_cache_mode) are refused; ICEBERG and DELTA_LAKE formats and s3:// / azure:// URIs are refused; managed-identity:the connection's service account is not used to authorize object reads."
   },
   {
     "id": "sql.ddl.booster-type",
@@ -2357,7 +2917,7 @@
     "other": "unknown",
     "description": "Chooses the XGBoost booster type for boosted tree models, either GBTREE (the default) or DART.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#booster_type",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.budget-hours",
@@ -2377,7 +2937,7 @@
     "other": "unknown",
     "description": "Controls whether p-values and standard errors are computed while a linear or logistic regression model is trained.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#calculate_p_values",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.capacity-commitment-option-list",
@@ -2397,7 +2957,7 @@
     "other": "unknown",
     "description": "Chooses how non-numeric features are encoded before training, for example one-hot encoding or dummy encoding.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#category_encoding_method",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.class-weights",
@@ -2407,7 +2967,7 @@
     "other": "unknown",
     "description": "Gives an explicit weight for each class label as an array of label and weight pairs; it cannot be used when AUTO_CLASS_WEIGHTS is TRUE.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#class_weights",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.clean-spikes-and-dips",
@@ -2417,7 +2977,7 @@
     "other": "unknown",
     "description": "Turns on or off automatic detection and cleanup of spikes and dips during ARIMA_PLUS training; detected points are replaced by interpolated values.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#clean_spikes_and_dips",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.cluster-by",
@@ -2447,7 +3007,7 @@
     "other": "unknown",
     "description": "Sets the fraction of columns sampled for each new depth level of a tree in boosted tree models, drawn from the columns chosen for that tree.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#colsample_bylevel",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.colsample-bynode",
@@ -2457,7 +3017,7 @@
     "other": "unknown",
     "description": "Sets the fraction of columns sampled each time a split is evaluated in boosted tree models, drawn from the columns chosen for the level.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#colsample_bynode",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.colsample-bytree",
@@ -2467,7 +3027,7 @@
     "other": "unknown",
     "description": "Sets the fraction of columns sampled once for each tree that is built in boosted tree models.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#colsample_bytree",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.column",
@@ -2517,7 +3077,7 @@
     "other": "unknown",
     "description": "Names a connection resource, written as project.location.connection_id or DEFAULT, that holds the credentials BigQuery uses to reach an external service.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#connection_name",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.connection-option-list",
@@ -2537,7 +3097,7 @@
     "other": "unknown",
     "description": "Gives the expression that defines the metric to analyze in a contribution analysis model, such as a SUM or a ratio of two SUM values.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-contribution-analysis#contribution_metric",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.create-a-table-with-a-value-table",
@@ -2557,7 +3117,7 @@
     "other": "unknown",
     "description": "Creates a user-defined aggregate function written in JavaScript, with functions that initialize, aggregate, merge and finalize the result.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#javascript-create-udaf-function",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.create-aggregate-function-statement-sql",
@@ -2637,7 +3197,7 @@
     "other": "unknown",
     "description": "Creates a user-defined function written in SQL, JavaScript or Python, or a remote function backed by an external endpoint.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#create_function_statement",
-    "notes": ""
+    "notes": "JavaScript functions (LANGUAGE js): full edition only (the lite edition answers 400 invalidQuery); SQL and remote functions work in both editions."
   },
   {
     "id": "sql.ddl.create-function-if-not-exists",
@@ -2647,7 +3207,7 @@
     "other": "unknown",
     "description": "Creates a user-defined function only if no function with that name exists, and otherwise leaves the existing one in place without an error.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
-    "notes": ""
+    "notes": "JavaScript functions (LANGUAGE js): full edition only (the lite edition answers 400 invalidQuery); SQL and remote functions work in both editions."
   },
   {
     "id": "sql.ddl.create-function-js-udf",
@@ -2657,7 +3217,7 @@
     "other": "available",
     "description": "Creates a user-defined function whose body is JavaScript code given as a string, with a required return type and an optional determinism hint.",
     "docs": "https://cloud.google.com/bigquery/docs/user-defined-functions",
-    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|OPTIONS(library=...) and importedLibraries from Cloud Storage are refused (library_unavailable); NUMERIC and BIGNUMERIC inside ARRAY or STRUCT argument/return types are refused; only the description option is accepted."
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); OPTIONS(library=...) and importedLibraries from Cloud Storage are refused (library_unavailable); NUMERIC and BIGNUMERIC inside ARRAY or STRUCT argument/return types are refused; only the description option is accepted."
   },
   {
     "id": "sql.ddl.create-function-sql-udf",
@@ -2697,7 +3257,7 @@
     "other": "unavailable",
     "description": "Creates and trains a BigQuery ML model in a dataset from SQL, using a chosen model type, a set of options and a training query.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.create-model-bqml",
@@ -2707,7 +3267,7 @@
     "other": "unavailable",
     "description": "Creates and trains a BigQuery ML model from a SQL query, choosing among regression, classification, clustering, forecasting, imported and remote model types.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create",
-    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); STRUCT and non-numeric ARRAY features, TRANSFORM for PCA/DNN/autoencoder/time-series/matrix-factorization/contribution models, DNN_LINEAR_COMBINED_*, and TensorFlow/AutoML model types are refused locally."
   },
   {
     "id": "sql.ddl.create-model-if-not-exists",
@@ -2717,7 +3277,7 @@
     "other": "unavailable",
     "description": "Creates and trains a model only if no model with that name exists in the dataset, and otherwise does nothing.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#create_model_if_not_exists",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.create-model-statement-for-pca",
@@ -2727,7 +3287,7 @@
     "other": "unavailable",
     "description": "Trains a principal component analysis model that reduces the dimensionality of the input data to a chosen number of components or explained variance.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-pca#create_model_statement_for_pca",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.create-or-replace-function",
@@ -2737,7 +3297,7 @@
     "other": "unknown",
     "description": "Creates a user-defined function, replacing any function with the same name that already exists.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
-    "notes": ""
+    "notes": "JavaScript functions (LANGUAGE js): full edition only (the lite edition answers 400 invalidQuery); SQL and remote functions work in both editions."
   },
   {
     "id": "sql.ddl.create-or-replace-materialized-view",
@@ -2757,7 +3317,7 @@
     "other": "unknown",
     "description": "Creates and trains a model, replacing an existing model with the same name in the dataset.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#create_or_replace_model",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.create-or-replace-procedure",
@@ -3007,7 +3567,7 @@
     "other": "unknown",
     "description": "Chooses the normalization algorithm used with the DART booster, either TREE or FOREST, which sets how new trees are weighted against the dropped trees.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#dart_normalize_type",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.data-frequency",
@@ -3017,7 +3577,7 @@
     "other": "unknown",
     "description": "Sets the time interval of the input time series, such as hourly, daily or monthly, or lets training infer it automatically.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#data_frequency",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.data-split-col",
@@ -3027,7 +3587,7 @@
     "other": "unknown",
     "description": "Names the column used to assign rows to the training, evaluation or held-out sets when DATA_SPLIT_METHOD is CUSTOM or SEQ.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#data_split_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.data-split-eval-fraction",
@@ -3037,7 +3597,7 @@
     "other": "unknown",
     "description": "Sets the fraction of the input data used as evaluation data when DATA_SPLIT_METHOD is RANDOM or SEQ.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#data_split_eval_fraction",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.data-split-method",
@@ -3047,7 +3607,7 @@
     "other": "unknown",
     "description": "Chooses how input data is divided into training, evaluation and, with hyperparameter tuning, held-out sets: AUTO_SPLIT, RANDOM, CUSTOM, SEQ or NO_SPLIT.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#data_split_method",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.data-split-test-fraction",
@@ -3057,7 +3617,7 @@
     "other": "unknown",
     "description": "Sets the fraction of the input data held out for scoring hyperparameter tuning trials; it applies to RANDOM or SEQ splits and goes with an evaluation fraction.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#data_split_test_fraction",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.decompose-time-series",
@@ -3067,7 +3627,7 @@
     "other": "unknown",
     "description": "Controls whether the separate components of the history and forecast, such as holiday effect and seasonal components, are saved in an ARIMA_PLUS model.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#decompose_time_series",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.dimension-id-cols",
@@ -3077,7 +3637,7 @@
     "other": "unknown",
     "description": "Lists the columns, of type INT64, BOOL or STRING, that serve as dimensions when a contribution analysis model summarizes the metric.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-contribution-analysis#dimension_id_cols",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.distance-type",
@@ -3087,7 +3647,7 @@
     "other": "unknown",
     "description": "Chooses the metric used to compute the distance between two points in a k-means model, either EUCLIDEAN or COSINE.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-kmeans#distance_type",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.document-processor",
@@ -3097,7 +3657,7 @@
     "other": "unknown",
     "description": "Identifies the Document AI processor to use when a remote model is created over the Document AI API.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model-service#document_processor",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.drop-assignment",
@@ -3327,7 +3887,7 @@
     "other": "unknown",
     "description": "Sets the dropout rate of units in a neural network model, so that some units are randomly left out during training.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-dnn-models#dropout",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.early-stop",
@@ -3337,7 +3897,7 @@
     "other": "unknown",
     "description": "Controls whether training stops after the first iteration whose relative loss improvement falls below MIN_REL_PROGRESS.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#early_stop",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.enable-disable-refresh",
@@ -3357,7 +3917,7 @@
     "other": "unknown",
     "description": "Controls whether global explanations of feature importance are computed when the model is created, as ML.GLOBAL_EXPLAIN needs.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#enable_global_explain",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.endpoint",
@@ -3367,7 +3927,7 @@
     "other": "unknown",
     "description": "Names the remote endpoint that a remote model sends requests to, given as a model name or a full endpoint address.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model#endpoint",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.endpoint-idle-ttl",
@@ -3417,7 +3977,7 @@
     "other": "unknown",
     "description": "Chooses whether a matrix factorization model learns from EXPLICIT ratings or IMPLICIT feedback such as clicks, which determines the training algorithm.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-matrix-factorization#feedback_type",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.field-name",
@@ -3447,7 +4007,7 @@
     "other": "unknown",
     "description": "Controls whether an intercept term is fitted to the model during training.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#fit_intercept",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.forecast-limit-lower-bound",
@@ -3457,7 +4017,7 @@
     "other": "unknown",
     "description": "Sets a lower bound that all forecast values of a time series model must stay above; values at or below it are also excluded from modeling.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#forecast_limit_lower_bound",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.forecast-limit-upper-bound",
@@ -3467,7 +4027,7 @@
     "other": "unknown",
     "description": "Sets an upper bound that all forecast values of a time series model must stay below; values at or above it are also excluded from modeling.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#forecast_limit_upper_bound",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.function-body",
@@ -3477,7 +4037,7 @@
     "other": "unknown",
     "description": "The definition of a user-defined aggregate function, given as a SQL expression or as a quoted JavaScript string with initialState, aggregate, merge and finalize functions.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#javascript-udaf-function-body",
-    "notes": ""
+    "notes": "JavaScript bodies: full edition only (the lite edition answers 400 invalidQuery); SQL bodies work in both editions."
   },
   {
     "id": "sql.ddl.function-option-list",
@@ -3507,7 +4067,7 @@
     "other": "unknown",
     "description": "Sets the hidden layers of a neural network as an array of unit counts, one entry per layer.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-dnn-models#hidden_units",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.hierarchical-time-series-cols",
@@ -3517,7 +4077,7 @@
     "other": "unknown",
     "description": "Lists the columns that define a hierarchy, with the left-most column as the parent, so forecasts are also rolled up across the hierarchy levels.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#hierarchical_time_series_cols",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.hive-partitioning-options",
@@ -3547,7 +4107,7 @@
     "other": "unknown",
     "description": "Query that supplies custom holiday information for a time series model, with columns such as region, holiday name, primary date and the holiday effect window.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#holiday_statement",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.horizon",
@@ -3557,7 +4117,7 @@
     "other": "unknown",
     "description": "Sets the number of time points to forecast; when several series are forecast at once it applies to each series.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#horizon",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.hparam-tuning-algorithm",
@@ -3567,7 +4127,7 @@
     "other": "unknown",
     "description": "Chooses the search algorithm used for hyperparameter tuning: VIZIER_DEFAULT, RANDOM_SEARCH or GRID_SEARCH.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#hparam_tuning_algorithm",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.hparam-tuning-objectives",
@@ -3577,7 +4137,7 @@
     "other": "unknown",
     "description": "Names the single evaluation metric that hyperparameter tuning tries to optimize, chosen from the metrics valid for the model type.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#hparam_tuning_objectives",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.hugging-face-model-id",
@@ -3617,7 +4177,7 @@
     "other": "unknown",
     "description": "Controls whether an ARIMA_PLUS model includes a linear drift term; it can only be set when AUTO_ARIMA is off and the non-seasonal d is 1.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#include_drift",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.index-column-option-list",
@@ -3647,7 +4207,7 @@
     "other": "unknown",
     "description": "Names the label column in the training data that holds the expected result for each row, given as a one-element array.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#input_label_cols",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.instance-weight-col",
@@ -3657,7 +4217,7 @@
     "other": "unknown",
     "description": "Names a numeric column that gives each training row a weight; it is left out of the features and cannot be combined with class weights.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#instance_weight_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.integrated-gradients-num-steps",
@@ -3667,7 +4227,7 @@
     "other": "unknown",
     "description": "Sets how many steps are sampled between an explained example and its baseline when approximating the integral for integrated gradients explanations.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-dnn-models#integrated_gradients_num_steps",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.is-test-col",
@@ -3677,7 +4237,7 @@
     "other": "unknown",
     "description": "Names the BOOL column that marks each input row as belonging to the group being analyzed or to the control group in a contribution analysis.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-contribution-analysis#is_test_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.item-col",
@@ -3687,7 +4247,7 @@
     "other": "unknown",
     "description": "Names the column that holds the item in the training data of a matrix factorization model.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-matrix-factorization#item_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.kmeans-init-col",
@@ -3697,7 +4257,7 @@
     "other": "unknown",
     "description": "Names the BOOL column whose TRUE rows serve as the initial centroids; it requires KMEANS_INIT_METHOD to be CUSTOM.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-kmeans#kmeans_init_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.kmeans-init-method",
@@ -3707,7 +4267,7 @@
     "other": "unknown",
     "description": "Chooses how k-means centroids are initialized: RANDOM, KMEANS++ or CUSTOM from a BOOL column.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-kmeans#kmeans_init_method",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.kms-key-name",
@@ -3717,7 +4277,7 @@
     "other": "unknown",
     "description": "Names the Cloud KMS customer-managed encryption key used to encrypt the model.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#kms_key_name",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.l1-reg",
@@ -3727,7 +4287,7 @@
     "other": "unknown",
     "description": "Sets the amount of L1 regularization applied, and can take a tuning range or a list of candidates during hyperparameter tuning.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#l1_reg",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.l1-reg-activation",
@@ -3737,7 +4297,7 @@
     "other": "unknown",
     "description": "Sets an L1 penalty on the activations at the latent space of an autoencoder, which encourages sparse data representations.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-autoencoder#l1_reg_activation",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.l2-reg",
@@ -3747,7 +4307,7 @@
     "other": "unknown",
     "description": "Sets the amount of L2 regularization applied, and can take a tuning range or a list of candidates during hyperparameter tuning.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#l2_reg",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.language-js",
@@ -3757,7 +4317,7 @@
     "other": "unknown",
     "description": "Declares that the body of a user-defined function or aggregate function is written in JavaScript.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
-    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|OPTIONS(library=...) and importedLibraries from Cloud Storage are refused (library_unavailable); NUMERIC and BIGNUMERIC inside ARRAY or STRUCT argument/return types are refused; only the description option is accepted."
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); OPTIONS(library=...) and importedLibraries from Cloud Storage are refused (library_unavailable); NUMERIC and BIGNUMERIC inside ARRAY or STRUCT argument/return types are refused; only the description option is accepted."
   },
   {
     "id": "sql.ddl.language-python",
@@ -3777,7 +4337,7 @@
     "other": "unknown",
     "description": "Sets the learning rate for gradient descent when LEARN_RATE_STRATEGY is CONSTANT.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#learn_rate",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.learn-rate-strategy",
@@ -3787,7 +4347,7 @@
     "other": "unknown",
     "description": "Chooses how the learning rate is determined during training: LINE_SEARCH, or a CONSTANT value taken from LEARN_RATE.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#learn_rate_strategy",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.learning-rate-multiplier",
@@ -3807,7 +4367,7 @@
     "other": "unknown",
     "description": "Sets the initial learning rate used by line search when LEARN_RATE_STRATEGY is LINE_SEARCH.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#ls_init_learn_rate",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.machine-type",
@@ -3857,7 +4417,7 @@
     "other": "unknown",
     "description": "Sets the maximum number of training iterations, where one iteration is a single pass over the entire training data.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#max_iterations",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.max-parallel-trials",
@@ -3867,7 +4427,7 @@
     "other": "unknown",
     "description": "Sets how many hyperparameter tuning trials may run at the same time; NUM_TRIALS must also be set.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#max_parallel_trials",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.max-replica-count",
@@ -3887,7 +4447,7 @@
     "other": "unknown",
     "description": "Caps the number of most recent time points of each series used to model the trend component; it cannot be combined with the length fraction option.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#max_time_series_length",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.max-tree-depth",
@@ -3897,7 +4457,7 @@
     "other": "unknown",
     "description": "Sets the maximum depth that any single tree may reach in boosted tree models; it can also take a tuning range or candidates.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#max_tree_depth",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.min-apriori-support",
@@ -3907,7 +4467,7 @@
     "other": "unknown",
     "description": "Sets the minimum apriori_support value a segment needs to appear in contribution analysis output; it cannot be used with TOP_K_INSIGHTS_BY_APRIORI_SUPPORT.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-contribution-analysis#min_apriori_support",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.min-rel-progress",
@@ -3917,7 +4477,7 @@
     "other": "unknown",
     "description": "Sets the minimum relative loss improvement needed to keep training when EARLY_STOP is TRUE; for example 0.01 means each iteration must cut the loss by 1 percent.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#min_rel_progress",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.min-replica-count",
@@ -3937,7 +4497,7 @@
     "other": "unknown",
     "description": "Sets the minimum loss reduction needed to split a leaf node further in boosted tree models; larger values make training more conservative.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#min_split_loss",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.min-time-series-length",
@@ -3947,7 +4507,7 @@
     "other": "unknown",
     "description": "Sets a floor on the number of time points of each series used to model the trend component; it goes with TIME_SERIES_LENGTH_FRACTION.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#min_time_series_length",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.min-tree-child-weight",
@@ -3957,7 +4517,7 @@
     "other": "unknown",
     "description": "Sets the minimum sum of instance weight a child node needs for further partitioning in boosted tree models; larger values are more conservative.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#min_tree_child_weight",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.model-garden-model-name",
@@ -3977,7 +4537,7 @@
     "other": "unknown",
     "description": "Name of the model being created or replaced; it must be unique in the dataset, is case-sensitive and follows the naming rules of a BigQuery table.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#model_name",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.model-option-list",
@@ -3987,7 +4547,7 @@
     "other": "unknown",
     "description": "List of options that configure a model, starting with MODEL_TYPE and followed by training, data split, tuning, remote model and registry settings.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#model_option_list",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.model-path",
@@ -3997,7 +4557,7 @@
     "other": "unknown",
     "description": "Gives the Cloud Storage location of the model to import, which BigQuery reads using the credentials of the user who runs the statement.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-onnx#model_path",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.model-registry",
@@ -4017,7 +4577,7 @@
     "other": "unknown",
     "description": "Required option that selects the kind of model to build, for example LINEAR_REG, KMEANS, BOOSTED_TREE_CLASSIFIER or ARIMA_PLUS.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#model_type",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.non-seasonal-order",
@@ -4027,7 +4587,7 @@
     "other": "unknown",
     "description": "Gives the non-seasonal p, d and q tuple of an ARIMA_PLUS model; it needs AUTO_ARIMA to be FALSE and cannot be used when forecasting multiple series.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#non_seasonal_order",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.num-clusters",
@@ -4037,7 +4597,7 @@
     "other": "unknown",
     "description": "Sets the number of clusters a k-means model identifies in the input data; it can also take a tuning range or candidates.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-kmeans#num_clusters",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.num-factors",
@@ -4047,7 +4607,7 @@
     "other": "unknown",
     "description": "Sets the number of latent factors a matrix factorization model uses; it can also take a tuning range or candidates.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-matrix-factorization#num_factors",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.num-parallel-tree",
@@ -4057,7 +4617,7 @@
     "other": "unknown",
     "description": "Sets how many trees are built in parallel in each boosting iteration; a value above 1 trains a boosted random forest.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#num_parallel_tree",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.num-principal-components",
@@ -4067,7 +4627,7 @@
     "other": "unknown",
     "description": "Sets how many principal components a PCA model keeps; it is given instead of PCA_EXPLAINED_VARIANCE_RATIO.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-pca#num_principal_components",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.num-trials",
@@ -4077,7 +4637,7 @@
     "other": "unknown",
     "description": "Sets the maximum number of submodels trained during hyperparameter tuning, and must be given to turn tuning on.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#num_trials",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.object-tables",
@@ -4127,7 +4687,7 @@
     "other": "unknown",
     "description": "Chooses the training strategy for linear regression: AUTO_STRATEGY, BATCH_GRADIENT_DESCENT or NORMAL_EQUATION.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#optimize_strategy",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.optimizer",
@@ -4137,7 +4697,7 @@
     "other": "unknown",
     "description": "Chooses the optimizer used to train a neural network model, such as ADAM, ADAGRAD, FTRL, RMSPROP or SGD.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-dnn-models#optimizer",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.options",
@@ -4217,7 +4777,7 @@
     "other": "unknown",
     "description": "Sets the share of variance, between 0 and 1, that the kept principal components must explain; it is given instead of NUM_PRINCIPAL_COMPONENTS.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-pca#pca_explained_variance_ratio",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.pca-solver",
@@ -4227,7 +4787,7 @@
     "other": "unknown",
     "description": "Chooses the algorithm that computes the principal components in a PCA model: FULL eigendecomposition, RANDOMIZED PCA or AUTO.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-pca#pca_solver",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.primary-key-foreign-key-constraints-informational-not-enforced",
@@ -4287,7 +4847,7 @@
     "other": "unknown",
     "description": "Chooses whether redundant insights are removed from a contribution analysis model: NO_PRUNING or PRUNE_REDUNDANT_INSIGHTS.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-contribution-analysis#pruning_method",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.query-statement",
@@ -4297,7 +4857,7 @@
     "other": "unknown",
     "description": "The GoogleSQL query whose result provides the training data of a model; its columns become input features, except the label and data split columns.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#query_statement",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.rating-col",
@@ -4307,7 +4867,7 @@
     "other": "unknown",
     "description": "Names the column that holds the rating in the training data of a matrix factorization model.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-matrix-factorization#rating_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.refresh-materialized-view",
@@ -4327,7 +4887,7 @@
     "other": "unknown",
     "description": "Clause that creates a function or model whose logic runs in an external service reached through a connection, not in code written in the statement.",
     "docs": "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language",
-    "notes": ""
+    "notes": "Remote models (CREATE MODEL ... REMOTE WITH CONNECTION): full edition only (the lite edition answers 400 invalidQuery); Remote functions work in both editions."
   },
   {
     "id": "sql.ddl.remote-service-type",
@@ -4337,7 +4897,7 @@
     "other": "unknown",
     "description": "Picks the Google Cloud AI service a remote model calls, such as Cloud Natural Language, Translation, Vision, Document AI or Speech-to-Text.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model-service#remote_service_type",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.reservation-affinity-key",
@@ -4397,7 +4957,7 @@
     "other": "unknown",
     "description": "Controls whether numeric features are scaled to unit variance in a PCA model; they are always centered to a zero mean.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-pca#scale_features",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.schema-option-list",
@@ -4427,7 +4987,7 @@
     "other": "unknown",
     "description": "Lists the seasonal patterns, such as daily, weekly or monthly, to model in a time series; the default AUTO infers them from the data.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#seasonalities",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.select-list",
@@ -4457,7 +5017,7 @@
     "other": "unknown",
     "description": "Names the Speech-to-Text recognizer that a speech remote model uses, in projects/number/locations/location/recognizers/id form; a default recognizer is used if omitted.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model-service#speech_recognizer",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.standardize-features",
@@ -4467,7 +5027,7 @@
     "other": "unknown",
     "description": "Controls whether numerical features are standardized before a k-means model is trained.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-kmeans#standardize_features",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.subsample",
@@ -4477,7 +5037,7 @@
     "other": "unknown",
     "description": "Sets the fraction of training rows randomly sampled before growing trees in each boosting iteration, which helps prevent overfitting.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#subsample",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.table-definition-files-for-external-tables",
@@ -4547,7 +5107,7 @@
     "other": "unknown",
     "description": "Names the column that holds the values to forecast in a time series model, of type INT64, NUMERIC, BIGNUMERIC or FLOAT64.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#time_series_data_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.time-series-id-col",
@@ -4557,7 +5117,7 @@
     "other": "unknown",
     "description": "Names one or more ID columns so that a single query can fit and forecast several time series, each ID identifying one series.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#time_series_id_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.time-series-length-fraction",
@@ -4567,7 +5127,7 @@
     "other": "unknown",
     "description": "Sets the fraction of the most recent time points used to model the trend component; all points still model the non-trend part.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#time_series_length_fraction",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.time-series-timestamp-col",
@@ -4577,7 +5137,7 @@
     "other": "unknown",
     "description": "Names the column that holds the time points of the training data in a time series model, of type TIMESTAMP, DATE or DATETIME.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#time_series_timestamp_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.top-k-insights-by-apriori-support",
@@ -4587,7 +5147,7 @@
     "other": "unknown",
     "description": "Sets the maximum number of insights, ranked by their apriori_support value, that a contribution analysis model returns; it cannot be used with MIN_APRIORI_SUPPORT.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-contribution-analysis#top_k_insights_by_apriori_support",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.transform",
@@ -4597,7 +5157,7 @@
     "other": "unknown",
     "description": "Clause that lists the feature preprocessing done during model creation and applies it again automatically at prediction and evaluation.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create#transform",
-    "notes": "edition:Full edition only (the lite edition answers 400 invalidQuery).|TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery); TRANSFORM works for linear/logistic regression, KMEANS, boosted trees, random forests and TRANSFORM_ONLY; * REPLACE, expression.*, named preprocessing arguments and WARM_START are refused."
   },
   {
     "id": "sql.ddl.tree-method",
@@ -4607,7 +5167,7 @@
     "other": "unknown",
     "description": "Chooses the tree construction algorithm for boosted tree models: AUTO, EXACT, APPROX or HIST.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#tree_method",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.trend-smoothing-window-size",
@@ -4617,7 +5177,7 @@
     "other": "unknown",
     "description": "Sets a center moving-average window that smooths the historical trend component of a time series model, without changing forecasts.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series#trend_smoothing_window_size",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.truncate-table",
@@ -4637,7 +5197,7 @@
     "other": "unknown",
     "description": "Names the column that holds the user in the training data of a matrix factorization model.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-matrix-factorization#user_col",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.vertex-ai-model-id",
@@ -4717,7 +5277,7 @@
     "other": "unknown",
     "description": "Adjusts how strongly user feedback affects recommendation confidence in the loss function of IMPLICIT matrix factorization models.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-matrix-factorization#wals_alpha",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.warm-start",
@@ -4727,7 +5287,7 @@
     "other": "unknown",
     "description": "Retrains an existing model with new data, new options or both, keeping the earlier options unless overridden; iteration numbering restarts at zero.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm#warm_start",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.ddl.xgboost-version",
@@ -4737,7 +5297,7 @@
     "other": "unknown",
     "description": "Chooses the XGBoost library version used to train a boosted tree model.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree#xgboost_version",
-    "notes": ""
+    "notes": "Full edition only (the lite edition answers 400 invalidQuery)."
   },
   {
     "id": "sql.dml.delete",
@@ -6647,7 +7207,7 @@
     "other": "unavailable",
     "description": "Runs a query written in the SQL dialect of an external database over a connection and returns the result as a temporary table.",
     "docs": "https://cloud.google.com/bigquery/docs/reference/standard-sql/federated_query_functions#external_query",
-    "notes": ""
+    "notes": "On Cloud SQL, AlloyDB, PostgreSQL and MySQL connections: full edition only (the lite edition answers 400 invalidQuery); On Spanner and local SQLite connections it works in both editions."
   },
   {
     "id": "sql.function.extract",

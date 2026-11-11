@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-11-10",
+  "reviewedAt": "2026-11-11",
   "provenance": {
     "runtimeRevision": "8650afc0b1a7279244d573e16d26dc4cb5c3083e",
     "cliRevision": "faf30b87b434759d9cf9c4878cc1a99175458e92",
@@ -53,7 +53,7 @@
       }
     ],
     "sourceDigests": {
-      "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:9537ce7131c7f2bbd62848c0abac67bc8dc936d244f52d6d6d0c5dec985bcacb",
+      "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:e738686463c950599ec9e91d5688198b203d8542a9a480473f81539b1040d4c9",
       "../localcloud-go/pkg/config/localcloud.defaults.yaml": "sha256:ea4b8f04d46492dc314ecda37c5e4e20bc92f4189adfccb0520f050c7140d9a3",
       "../localcloud-go/docs/public-contract/documentation.yaml": "sha256:fd5f125d17a19c44191e30fff80cc808bb9dae9386c931ac9a3a693077e125a7",
       "../localcloud-go/docs/public-contract/runtime-facts.yaml": "sha256:59209d24114f7772e35a3a431e7470110a718a4d6f3ac20093b63af96cc51f75",
@@ -1292,6 +1292,7 @@
         "rest_v2.datasets.datasets-insert: semantic-compatibility:isCaseInsensitive, defaultRoundingMode, externalDatasetReference and linkedDatasetSource are ignored rather than stored",
         "rest_v2.datasets.datasets-patch: semantic-compatibility:isCaseInsensitive and defaultRoundingMode are ignored; If-Match etag preconditions are not checked",
         "rest_v2.datasets.datasets-update: semantic-compatibility:PUT has patch semantics: fields omitted from the body keep their stored values instead of being cleared; isCaseInsensitive and defaultRoundingMode are ignored; If-Match etag preconditions are not checked",
+        "rest_v2.datasets.datasets-undelete: semantic-compatibility:a dataset undeleted within the last seven days can still be deleted (Google refuses it; the error is not documented)",
         "rest_v2.tables.tables-list: semantic-compatibility:list entries omit timePartitioning, rangePartitioning, clustering and expirationTime, which production tables.list returns for each table",
         "rest_v2.tables.tables-get: semantic-compatibility:the selectedFields and view (TableMetadataView) parameters are ignored, so the full resource is always returned",
         "rest_v2.tables.tables-insert: semantic-compatibility:tableConstraints (primary and foreign keys) and biglakeConfiguration in the request body are ignored; keys can be declared only through DDL",
@@ -1395,6 +1396,61 @@
         "sql.function.s2-coveringcellids: semantic-compatibility:Multi-point, multi-linestring and mixed collections, and buffers on non-point values, are refused",
         "sql.function.st-union-agg: semantic-compatibility:Linestring inputs (BigQuery merges them into one LINESTRING) and mixed point/polygon results are refused",
         "sql.type.collatable-data-types: semantic-compatibility:Only 'und:ci' and '' collations exist; refused by name: collated STRUCT comparisons and casts beyond identity, GROUPING SETS/ROLLUP/CUBE, INTERSECT/EXCEPT DISTINCT, window MIN/MAX/COUNT(DISTINCT), STRING_AGG/ARRAY_AGG DISTINCT and ORDER BY ... COLLATE syntax over collated values; ICU root secondary-strength semantics and local error texts are not live-BigQuery qualified",
+        "sql.function.ml-advanced-weights: semantic-compatibility:Local kernels for LINEAR_REG; bounded options and approximate model values.",
+        "sql.function.ml-annotate-image: semantic-compatibility:Requires a configured external provider; no managed credentials or hosted inference parity.",
+        "sql.function.ml-arima-coefficients: semantic-compatibility:Local kernels for ARIMA_PLUS; bounded options and approximate model values.",
+        "sql.function.ml-arima-evaluate: semantic-compatibility:Local kernels for ARIMA_PLUS, ARIMA_PLUS_XREG; bounded options and approximate model values.",
+        "sql.function.ml-bag-of-words: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-bucketize: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-centroids: semantic-compatibility:Local kernels for KMEANS; bounded options and approximate model values.",
+        "sql.function.ml-confusion-matrix: semantic-compatibility:Local kernels for BOOSTED_TREE_CLASSIFIER, DNN_CLASSIFIER, LOGISTIC_REG, RANDOM_FOREST_CLASSIFIER; bounded options and approximate model values.",
+        "sql.function.ml-detect-anomalies: semantic-compatibility:Local kernels for AUTOENCODER; bounded options and approximate model values.",
+        "sql.function.ml-distance: semantic-compatibility:Dense FLOAT64 and keyed sparse vectors support EUCLIDEAN and MANHATTAN distances. Other input and metric forms are refused.",
+        "sql.function.ml-explain-forecast: semantic-compatibility:Local kernels for ARIMA_PLUS; bounded options and approximate model values.",
+        "sql.function.ml-feature-cross: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-feature-info: semantic-compatibility:Local kernels for AUTOENCODER, BOOSTED_TREE_CLASSIFIER, BOOSTED_TREE_REGRESSOR, DNN_CLASSIFIER, DNN_REGRESSOR, KMEANS, LINEAR_REG, LOGISTIC_REG, PCA, RANDOM_FOREST_CLASSIFIER, RANDOM_FOREST_REGRESSOR, TRANSFORM_ONLY; bounded options and approximate model values.",
+        "sql.function.ml-forecast: semantic-compatibility:Local kernels for ARIMA_PLUS, ARIMA_PLUS_XREG; bounded options and approximate model values.",
+        "sql.function.ml-get-insights: semantic-compatibility:Local kernels for CONTRIBUTION_ANALYSIS; bounded options and approximate model values.",
+        "sql.function.ml-global-explain: semantic-compatibility:Local kernels for BOOSTED_TREE_REGRESSOR, DNN_REGRESSOR, LINEAR_REG, RANDOM_FOREST_REGRESSOR; bounded options and approximate model values.",
+        "sql.function.ml-hash-bucketize: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-imputer: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-label-encoder: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-lp-norm: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-max-abs-scaler: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-min-max-scaler: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-multi-hot-encoder: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-ngrams: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-normalizer: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-one-hot-encoder: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-polynomial-expand: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-principal-components: semantic-compatibility:Local kernels for PCA; bounded options and approximate model values.",
+        "sql.function.ml-principal-component-info: semantic-compatibility:Local kernels for PCA; bounded options and approximate model values.",
+        "sql.function.ml-process-document: semantic-compatibility:Requires a configured external provider; no managed credentials or hosted inference parity.",
+        "sql.function.ml-quantile-bucketize: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-recommend: semantic-compatibility:Local kernels for MATRIX_FACTORIZATION; bounded options and approximate model values.",
+        "sql.function.ml-reconstruction-loss: semantic-compatibility:Local kernels for AUTOENCODER; bounded options and approximate model values.",
+        "sql.function.ml-robust-scaler: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-standard-scaler: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-tf-idf: semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "sql.function.ml-transcribe: semantic-compatibility:Requires a configured external provider; no managed credentials or hosted inference parity.",
+        "sql.function.ml-trial-info: semantic-compatibility:Local kernels for LINEAR_REG; bounded options and approximate model values.",
+        "sql.ml-model.linear-reg: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.logistic-reg: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.kmeans: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.matrix-factorization: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.contribution-analysis: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.dnn-regressor: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.boosted-tree-regressor: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.autoencoder: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.arima-plus: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.boosted-tree-classifier: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.random-forest-regressor: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.random-forest-classifier: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.dnn-classifier: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.arima-plus-xreg: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.transform-only: semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "sql.ml-model.onnx: semantic-compatibility:Pinned model runtime with bounded operators and input/output types; other forms are refused.",
+        "sql.ml-model.xgboost: semantic-compatibility:Pinned model runtime with bounded operators and input/output types; other forms are refused.",
         "Google-managed reservations, fleet scale, replication, and IAM integrations require production validation."
       ],
       "evidence": [
@@ -3450,16 +3506,16 @@
     }
   ],
   "bigqueryCoverage": {
-    "total": 1537,
+    "total": 1593,
     "development": {
       "implemented": 1221,
-      "partial": 168,
+      "partial": 224,
       "unknown": 86,
       "unsupported": 62
     },
     "production": {
       "implemented": 1221,
-      "partial": 168,
+      "partial": 224,
       "unknown": 86,
       "unsupported": 62
     },
@@ -3853,6 +3909,12 @@
         "name": "datasets.update",
         "boundary": "semantic-compatibility:PUT has patch semantics: fields omitted from the body keep their stored values instead of being cleared; isCaseInsensitive and defaultRoundingMode are ignored; If-Match etag preconditions are not checked",
         "notes": "2026-11-03 evidence backfill: update_dataset delegates to patch_dataset, so PUT merges like PATCH. Legacy alias `rest_v2.datasets.bigquery-datasets-update`."
+      },
+      {
+        "id": "rest_v2.datasets.datasets-undelete",
+        "name": "datasets.undelete",
+        "boundary": "semantic-compatibility:a dataset undeleted within the last seven days can still be deleted (Google refuses it; the error is not documented)",
+        "notes": "2026-11-10: partial only for the missing seven-day re-delete lock. Unverified against live BigQuery: the 400 for deletionTime (the discovery text says only that it is not supported), and whether authorizations held by other datasets on the restored dataset's views keep working (they do here)."
       },
       {
         "id": "rest_v2.tables.tables-list",
@@ -4471,8 +4533,338 @@
         "name": "Collatable data types",
         "boundary": "semantic-compatibility:Only 'und:ci' and '' collations exist; refused by name: collated STRUCT comparisons and casts beyond identity, GROUPING SETS/ROLLUP/CUBE, INTERSECT/EXCEPT DISTINCT, window MIN/MAX/COUNT(DISTINCT), STRING_AGG/ARRAY_AGG DISTINCT and ORDER BY ... COLLATE syntax over collated values; ICU root secondary-strength semantics and local error texts are not live-BigQuery qualified",
         "notes": "2026-10-23 backlog: partial: the documented collation-aware operations listed in the scope are implemented and tested; the refused shapes in the limitations stay explicit."
+      },
+      {
+        "id": "sql.function.ml-advanced-weights",
+        "name": "ML.ADVANCED_WEIGHTS",
+        "boundary": "semantic-compatibility:Local kernels for LINEAR_REG; bounded options and approximate model values.",
+        "notes": "Local kernels for LINEAR_REG; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-annotate-image",
+        "name": "ML.ANNOTATE_IMAGE",
+        "boundary": "semantic-compatibility:Requires a configured external provider; no managed credentials or hosted inference parity.",
+        "notes": "Requires a configured external provider; no managed credentials or hosted inference parity."
+      },
+      {
+        "id": "sql.function.ml-arima-coefficients",
+        "name": "ML.ARIMA_COEFFICIENTS",
+        "boundary": "semantic-compatibility:Local kernels for ARIMA_PLUS; bounded options and approximate model values.",
+        "notes": "Local kernels for ARIMA_PLUS; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-arima-evaluate",
+        "name": "ML.ARIMA_EVALUATE",
+        "boundary": "semantic-compatibility:Local kernels for ARIMA_PLUS, ARIMA_PLUS_XREG; bounded options and approximate model values.",
+        "notes": "Local kernels for ARIMA_PLUS, ARIMA_PLUS_XREG; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-bag-of-words",
+        "name": "ML.BAG_OF_WORDS",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-bucketize",
+        "name": "ML.BUCKETIZE",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-centroids",
+        "name": "ML.CENTROIDS",
+        "boundary": "semantic-compatibility:Local kernels for KMEANS; bounded options and approximate model values.",
+        "notes": "Local kernels for KMEANS; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-confusion-matrix",
+        "name": "ML.CONFUSION_MATRIX",
+        "boundary": "semantic-compatibility:Local kernels for BOOSTED_TREE_CLASSIFIER, DNN_CLASSIFIER, LOGISTIC_REG, RANDOM_FOREST_CLASSIFIER; bounded options and approximate model values.",
+        "notes": "Local kernels for BOOSTED_TREE_CLASSIFIER, DNN_CLASSIFIER, LOGISTIC_REG, RANDOM_FOREST_CLASSIFIER; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-detect-anomalies",
+        "name": "ML.DETECT_ANOMALIES",
+        "boundary": "semantic-compatibility:Local kernels for AUTOENCODER; bounded options and approximate model values.",
+        "notes": "Local kernels for AUTOENCODER; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-distance",
+        "name": "ML.DISTANCE",
+        "boundary": "semantic-compatibility:Dense FLOAT64 and keyed sparse vectors support EUCLIDEAN and MANHATTAN distances. Other input and metric forms are refused.",
+        "notes": "Dense FLOAT64 and keyed sparse vectors support EUCLIDEAN and MANHATTAN distances. Other input and metric forms are refused."
+      },
+      {
+        "id": "sql.function.ml-explain-forecast",
+        "name": "ML.EXPLAIN_FORECAST",
+        "boundary": "semantic-compatibility:Local kernels for ARIMA_PLUS; bounded options and approximate model values.",
+        "notes": "Local kernels for ARIMA_PLUS; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-feature-cross",
+        "name": "ML.FEATURE_CROSS",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-feature-info",
+        "name": "ML.FEATURE_INFO",
+        "boundary": "semantic-compatibility:Local kernels for AUTOENCODER, BOOSTED_TREE_CLASSIFIER, BOOSTED_TREE_REGRESSOR, DNN_CLASSIFIER, DNN_REGRESSOR, KMEANS, LINEAR_REG, LOGISTIC_REG, PCA, RANDOM_FOREST_CLASSIFIER, RANDOM_FOREST_REGRESSOR, TRANSFORM_ONLY; bounded options and approximate model values.",
+        "notes": "Local kernels for AUTOENCODER, BOOSTED_TREE_CLASSIFIER, BOOSTED_TREE_REGRESSOR, DNN_CLASSIFIER, DNN_REGRESSOR, KMEANS, LINEAR_REG, LOGISTIC_REG, PCA, RANDOM_FOREST_CLASSIFIER, RANDOM_FOREST_REGRESSOR, TRANSFORM_ONLY; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-forecast",
+        "name": "ML.FORECAST",
+        "boundary": "semantic-compatibility:Local kernels for ARIMA_PLUS, ARIMA_PLUS_XREG; bounded options and approximate model values.",
+        "notes": "Local kernels for ARIMA_PLUS, ARIMA_PLUS_XREG; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-get-insights",
+        "name": "ML.GET_INSIGHTS",
+        "boundary": "semantic-compatibility:Local kernels for CONTRIBUTION_ANALYSIS; bounded options and approximate model values.",
+        "notes": "Local kernels for CONTRIBUTION_ANALYSIS; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-global-explain",
+        "name": "ML.GLOBAL_EXPLAIN",
+        "boundary": "semantic-compatibility:Local kernels for BOOSTED_TREE_REGRESSOR, DNN_REGRESSOR, LINEAR_REG, RANDOM_FOREST_REGRESSOR; bounded options and approximate model values.",
+        "notes": "Local kernels for BOOSTED_TREE_REGRESSOR, DNN_REGRESSOR, LINEAR_REG, RANDOM_FOREST_REGRESSOR; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-hash-bucketize",
+        "name": "ML.HASH_BUCKETIZE",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-imputer",
+        "name": "ML.IMPUTER",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-label-encoder",
+        "name": "ML.LABEL_ENCODER",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-lp-norm",
+        "name": "ML.LP_NORM",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-max-abs-scaler",
+        "name": "ML.MAX_ABS_SCALER",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-min-max-scaler",
+        "name": "ML.MIN_MAX_SCALER",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-multi-hot-encoder",
+        "name": "ML.MULTI_HOT_ENCODER",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-ngrams",
+        "name": "ML.NGRAMS",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-normalizer",
+        "name": "ML.NORMALIZER",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-one-hot-encoder",
+        "name": "ML.ONE_HOT_ENCODER",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-polynomial-expand",
+        "name": "ML.POLYNOMIAL_EXPAND",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-principal-components",
+        "name": "ML.PRINCIPAL_COMPONENTS",
+        "boundary": "semantic-compatibility:Local kernels for PCA; bounded options and approximate model values.",
+        "notes": "Local kernels for PCA; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-principal-component-info",
+        "name": "ML.PRINCIPAL_COMPONENT_INFO",
+        "boundary": "semantic-compatibility:Local kernels for PCA; bounded options and approximate model values.",
+        "notes": "Local kernels for PCA; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-process-document",
+        "name": "ML.PROCESS_DOCUMENT",
+        "boundary": "semantic-compatibility:Requires a configured external provider; no managed credentials or hosted inference parity.",
+        "notes": "Requires a configured external provider; no managed credentials or hosted inference parity."
+      },
+      {
+        "id": "sql.function.ml-quantile-bucketize",
+        "name": "ML.QUANTILE_BUCKETIZE",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-recommend",
+        "name": "ML.RECOMMEND",
+        "boundary": "semantic-compatibility:Local kernels for MATRIX_FACTORIZATION; bounded options and approximate model values.",
+        "notes": "Local kernels for MATRIX_FACTORIZATION; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-reconstruction-loss",
+        "name": "ML.RECONSTRUCTION_LOSS",
+        "boundary": "semantic-compatibility:Local kernels for AUTOENCODER; bounded options and approximate model values.",
+        "notes": "Local kernels for AUTOENCODER; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.function.ml-robust-scaler",
+        "name": "ML.ROBUST_SCALER",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-standard-scaler",
+        "name": "ML.STANDARD_SCALER",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-tf-idf",
+        "name": "ML.TF_IDF",
+        "boundary": "semantic-compatibility:Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments.",
+        "notes": "Inside CREATE MODEL TRANSFORM only; supports documented local types and arguments."
+      },
+      {
+        "id": "sql.function.ml-transcribe",
+        "name": "ML.TRANSCRIBE",
+        "boundary": "semantic-compatibility:Requires a configured external provider; no managed credentials or hosted inference parity.",
+        "notes": "Requires a configured external provider; no managed credentials or hosted inference parity."
+      },
+      {
+        "id": "sql.function.ml-trial-info",
+        "name": "ML.TRIAL_INFO",
+        "boundary": "semantic-compatibility:Local kernels for LINEAR_REG; bounded options and approximate model values.",
+        "notes": "Local kernels for LINEAR_REG; bounded options and approximate model values."
+      },
+      {
+        "id": "sql.ml-model.linear-reg",
+        "name": "CREATE MODEL (LINEAR_REG)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.logistic-reg",
+        "name": "CREATE MODEL (LOGISTIC_REG)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.kmeans",
+        "name": "CREATE MODEL (KMEANS)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.matrix-factorization",
+        "name": "CREATE MODEL (MATRIX_FACTORIZATION)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.contribution-analysis",
+        "name": "CREATE MODEL (CONTRIBUTION_ANALYSIS)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.dnn-regressor",
+        "name": "CREATE MODEL (DNN_REGRESSOR)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.boosted-tree-regressor",
+        "name": "CREATE MODEL (BOOSTED_TREE_REGRESSOR)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.autoencoder",
+        "name": "CREATE MODEL (AUTOENCODER)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.arima-plus",
+        "name": "CREATE MODEL (ARIMA_PLUS)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.boosted-tree-classifier",
+        "name": "CREATE MODEL (BOOSTED_TREE_CLASSIFIER)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.random-forest-regressor",
+        "name": "CREATE MODEL (RANDOM_FOREST_REGRESSOR)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.random-forest-classifier",
+        "name": "CREATE MODEL (RANDOM_FOREST_CLASSIFIER)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.dnn-classifier",
+        "name": "CREATE MODEL (DNN_CLASSIFIER)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.arima-plus-xreg",
+        "name": "CREATE MODEL (ARIMA_PLUS_XREG)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.transform-only",
+        "name": "CREATE MODEL (TRANSFORM_ONLY)",
+        "boundary": "semantic-compatibility:Local training and supported options; numerical values differ from hosted BigQuery.",
+        "notes": "Local training and supported options; numerical values differ from hosted BigQuery."
+      },
+      {
+        "id": "sql.ml-model.onnx",
+        "name": "CREATE MODEL (ONNX)",
+        "boundary": "semantic-compatibility:Pinned model runtime with bounded operators and input/output types; other forms are refused.",
+        "notes": "Pinned model runtime with bounded operators and input/output types; other forms are refused."
+      },
+      {
+        "id": "sql.ml-model.xgboost",
+        "name": "CREATE MODEL (XGBOOST)",
+        "boundary": "semantic-compatibility:Pinned model runtime with bounded operators and input/output types; other forms are refused.",
+        "notes": "Pinned model runtime with bounded operators and input/output types; other forms are refused."
       }
     ],
-    "revision": "bcfec319858dda12fda2d07a8b0424baf0b20a2f"
+    "revision": "a39c8a09c2d5f7d458ba4f10644677b564fc28f8"
   }
 }

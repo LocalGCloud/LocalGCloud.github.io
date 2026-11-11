@@ -31,7 +31,7 @@ const definitions: ComparisonDefinition[] = [
     competitor: 'Google Firestore emulator', baseline: 'Google Firestore emulator · Java 1.22.0',
     baselineUrl: 'https://docs.cloud.google.com/firestore/native/docs/emulator',
     summary: 'Covers missing-index failures, query Explain and optimistic transaction conflicts.',
-    scope: 'Extended-profile features need their documented configuration. Persistence and Admin APIs require a configured engine, not just a CLI profile switch.',
+    scope: 'Counts describe current production behavior. Persistence and Admin APIs require a configured engine.',
   },
   {
     id: 'bigtable', slug: 'bigtable', name: 'Bigtable', engine: 'LocalCloud Bigtable',
@@ -52,7 +52,7 @@ const definitions: ComparisonDefinition[] = [
     competitor: 'goccy BigQuery emulator', baseline: 'goccy BigQuery emulator',
     baselineUrl: 'https://github.com/goccy/bigquery-emulator/tree/cb8555bee739c794343337e8c3242b59d5d7470a',
     summary: 'Covers ML, external tables, federation, policies, snapshots and clones alongside SQL.',
-    scope: 'Generative ML requires a configured provider. Results for the other emulator come from its published documentation and source. Behavior we couldn\'t assess isn\'t counted as missing.',
+    scope: 'Full edition counts. ML.DISTANCE also works in Lite. Generative ML needs a provider. Unknown competitor results are not gaps.',
   },
 ];
 

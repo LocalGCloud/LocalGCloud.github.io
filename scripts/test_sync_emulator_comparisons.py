@@ -143,6 +143,19 @@ class Tables(unittest.TestCase):
             rows = sync.firestore_rows(text)
             self.assertEqual((rows[0]['local'], rows[0]['default'], rows[0]['other']), ('available', 'available', 'available'))
 
+    def test_firestore_historical_default_is_reconciled_but_not_published(self):
+        text = ('The "Go default" columns below are historical.\n\n### Queries\n\n'
+                '| Individual production feature | Production | Google emulator | Go default | Go production | Emulator evidence and limitation |\n'
+                '| --- | --- | --- | --- | --- | --- |\n'
+                '| Index checks | √ | X | X | √ | Requires an index. |\n'
+                '| Former behavior | √ | X | √ | X | Former compatibility behavior. |\n')
+        raw = sync.firestore_rows(text)
+        self.assertEqual(sync.count(raw, 'default')['available'], 1)
+        rows, hidden = sync.assemble('firestore', raw)
+        self.assertEqual([row['name'] for row in rows], ['Index checks'])
+        self.assertNotIn('default', rows[0])
+        self.assertEqual(hidden['unavailable'], 1)
+
     def test_bigquery_csv_needs_its_columns(self):
         with self.assertRaisesRegex(sync.SyncError, 'lacks columns'):
             sync.bigquery_rows('capability_id,feature_name\nx,y\n')
@@ -253,10 +266,36 @@ class Descriptions(unittest.TestCase):
 
     def test_bigquery_descriptions_come_from_the_csv_column(self):
         header = ','.join(sync.BIGQUERY_COLUMNS)
-        row = 'sql.function.abs,ABS,Returns the absolute value of a number.,sql,Function,implemented,implemented,,https://cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#abs'
+        row = 'sql.function.abs,ABS,Returns the absolute value of a number.,sql,Function,implemented,implemented,,https://cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#abs,lite'
         rows = sync.bigquery_rows(header + '\n' + row + '\n')
         self.assertEqual(rows[0]['description'], 'Returns the absolute value of a number.')
         self.assertEqual(rows[0]['docs'], 'https://cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions#abs')
+
+    def test_bigquery_full_and_mixed_edition_boundaries_survive_for_implemented_rows(self):
+        import csv
+        import io
+        for edition, note in [('full', 'Full edition only.'), ('mixed', 'JavaScript requires the full edition; SQL works in both editions.')]:
+            entry = dict.fromkeys(sync.BIGQUERY_COLUMNS, '')
+            entry.update(capability_id='sql.function.ml-forecast', feature_name='ML.FORECAST',
+                         description='Returns future values from a trained time series model.', surface='sql', category='ML',
+                         local_development='implemented', goccy_status='unknown', local_edition=edition,
+                         local_limitations='edition:' + note,
+                         google_documentation='https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-forecast')
+            def document():
+                stream = io.StringIO()
+                writer = csv.DictWriter(stream, fieldnames=sync.BIGQUERY_COLUMNS)
+                writer.writeheader()
+                writer.writerow(entry)
+                return stream.getvalue()
+            rows, _ = sync.assemble('bigquery', sync.bigquery_rows(document()))
+            self.assertIn('full edition', rows[0]['notes'].lower())
+            self.assertNotIn('edition:', rows[0]['notes'])
+            entry['local_limitations'] = ''
+            with self.assertRaisesRegex(sync.SyncError, 'edition boundary'):
+                sync.bigquery_rows(document())
+            entry['local_edition'] = 'future'
+            with self.assertRaisesRegex(sync.SyncError, 'unknown edition'):
+                sync.bigquery_rows(document())
 
     def test_spanner_scorecards_carry_the_column(self):
         text = """### Data API and sessions

@@ -306,7 +306,9 @@ def firestore_rows(text):
         where = f'firestore line {row["line"]}'
         out.append(dict(name=plain(cell(row, 'name')), area=' / '.join(heading_path(row)),
                         local=state(cell(row, 'local'), where), other=state(cell(row, 'competitor'), where),
-                        default=state(cell(row, 'default'), where), note=cell(row, 'notes'),
+                        default=state(cell(row, 'default'), where),
+                        historical_default=bool(re.search(r'"Go default" columns[^.]*\bhistorical\b', text)),
+                        note=cell(row, 'notes'),
                         description=describe(cell(row, 'description')), docs=docs_url(cell(row, 'docs'), links)))
     return out
 
@@ -368,7 +370,7 @@ BIGQUERY_CATEGORIES = {'Expression': 'Expressions', 'Scripting & Procedural': 'S
                        'Operator': 'Operators', 'Clauses': 'Clauses', 'Tables': 'Tables'}
 BIGQUERY_STATES = {'implemented': 'available', 'partial': 'limited', 'unsupported': 'unavailable', 'unknown': 'unknown'}
 BIGQUERY_COLUMNS = ['capability_id', 'feature_name', 'description', 'surface', 'category', 'local_development', 'goccy_status',
-                    'local_limitations', 'google_documentation']
+                    'local_limitations', 'google_documentation', 'local_edition']
 
 
 def bigquery_rows(text):
@@ -382,11 +384,17 @@ def bigquery_rows(text):
             local, other = BIGQUERY_STATES[entry['local_development']], BIGQUERY_STATES[entry['goccy_status']]
         except KeyError as error:
             raise SyncError(f'bigquery: row {number} has unknown status {error}')
+        edition = entry['local_edition']
+        if edition not in ('', 'lite', 'full', 'mixed'):
+            raise SyncError(f'bigquery: row {number} has unknown edition {edition!r}')
+        if edition in ('full', 'mixed') and 'edition:' not in entry['local_limitations']:
+            raise SyncError(f'bigquery: row {number} lacks its edition boundary')
         surface = BIGQUERY_SURFACES.get(entry['surface'], entry['surface'])
         category = BIGQUERY_CATEGORIES.get(entry['category'].replace('&amp;', '&'), entry['category'])
         area = surface if entry['surface'].startswith('storage_') else f'{surface} / {category}'
         out.append(dict(id=entry['capability_id'], name=entry['feature_name'], area=area, local=local, other=other,
-                        note=entry['local_limitations'], description=describe(entry['description']),
+                        note=entry['local_limitations'].replace('edition:', '').replace('|', '; '),
+                        keep_note=edition in ('full', 'mixed'), description=describe(entry['description']),
                         docs=docs_url(entry['google_documentation'], {})))
     return out
 
@@ -513,7 +521,7 @@ def assemble(service, raw_rows):
         row = {'id': row_id, 'name': raw['name'], 'area': raw['area'], 'local': raw['local']}
         if raw['other'] is not None:
             row['other'] = raw['other']
-        if 'default' in raw:
+        if 'default' in raw and not raw.get('historical_default'):
             row['default'] = raw['default']
         row['description'] = raw.get('description', '')
         row['docs'] = raw.get('docs', '')

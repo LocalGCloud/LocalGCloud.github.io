@@ -148,10 +148,10 @@ test('source documents and their locations are no longer published', () => {
   assert.ok(!readFileSync(new URL('../src/components/EmulatorComparisonTable.astro', import.meta.url), 'utf8').includes('Source reference'));
 });
 
-test('Firestore retains both engine profiles and unknown Google TTL behavior', () => {
+test('Firestore publishes current production behavior and retains unknown Google TTL behavior', () => {
   const rows = inventory('firestore');
   const indexes = rows.find(row => row.name === 'Required composite-index rejection for queries');
-  assert.equal(indexes.default, 'unavailable');
+  assert.ok(rows.every(row => !('default' in row)), 'the retired compatibility profile is not a current result');
   assert.equal(indexes.local, 'available');
   assert.equal(indexes.other, 'unavailable');
   const ttl = rows.find(row => row.name === 'Automatic expired-document deletion');
@@ -178,6 +178,19 @@ test('BigQuery hides unassessed LocalCloud rows and repeated features, and keeps
     assert.ok(!seen.has(signature), `${row.id} repeats another row's name and result`);
     seen.add(signature);
   }
+});
+
+test('BigQuery includes Full ML functions and model families with edition boundaries', () => {
+  const rows = inventory('bigquery');
+  for (const name of ['ML.FORECAST', 'ML.STANDARD_SCALER', 'ML.ANNOTATE_IMAGE', 'CREATE MODEL (ARIMA_PLUS)', 'CREATE MODEL (ONNX)']) {
+    const row = rows.find(row => row.name === name);
+    assert.ok(row, name);
+    assert.match(row.notes, /Full edition only/i, name);
+    assert.equal(row.other, 'unknown', 'new local evidence does not establish a competitor gap');
+  }
+  const distance = rows.find(row => row.name === 'ML.DISTANCE');
+  assert.ok(distance);
+  assert.doesNotMatch(distance.notes, /Full edition only/i);
 });
 
 test('imported names retain generic types and stream placeholders', () => {

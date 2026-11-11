@@ -57,9 +57,9 @@ To weigh LocalCloud against standalone emulators and real BigQuery, see [BigQuer
 
 ## Features with limits
 
-These features work locally within the boundaries listed for each one. Test the exact feature, input shape and client your application uses.
+Test each feature, input shape and client against its documented local limits.
 
-<p>{coverage.partialCapabilities.length} features work locally with limits. The <a href="/compare/emulators/bigquery/">BigQuery comparison inventory</a> lists the boundary for each one.</p>
+<p>{coverage.partialCapabilities.length} features have local limits; see each boundary in the <a href="/compare/emulators/bigquery/">BigQuery comparison inventory</a>.</p>
 
 <ul className="docs-feature-list" aria-label="BigQuery features with limits">
   {coverage.partialCapabilities.map((capability) => (
@@ -69,7 +69,7 @@ These features work locally within the boundaries listed for each one. Test the 
 
 ### Anything not listed
 
-Anything not listed on this page is untested. Run your own queries first. A successful dry run, stored configuration or metadata call does not prove that a query will execute, and syntax, model variants, external sources, collation and individual API methods can all have gaps.
+Unlisted capabilities are untested. Validate your queries, including syntax, model variants, external sources, collation and API methods. A dry run, stored configuration or metadata call does not prove query execution.
 
 ### How to check a feature
 
