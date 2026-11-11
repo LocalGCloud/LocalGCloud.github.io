@@ -3,7 +3,7 @@ layout: ../../layouts/DocsLayout.astro
 title: MCP for AI coding agents
 description: Give AI coding agents a free local cloud environment to build, test, and debug Google Cloud applications through MCP.
 author: LocalCloud
-updated: 2026-10-09
+updated: 2026-11-10
 reviewed: 2026-10-09
 ---
 
@@ -11,7 +11,7 @@ reviewed: 2026-10-09
 
 LocalCloud gives your coding agent a free local cloud environment for building, testing, and debugging Google Cloud applications. Through MCP, the agent can discover local services, obtain SDK configuration, inspect resources, query data, and diagnose application failures. Your application uses standard Google Cloud SDKs pointed at the local runtime.
 
-The MCP bridge is included in **LocalCloud CLI 0.1.9 and newer**. Docker runs the cloud environment on your machine; a live Google Cloud project is not required for these local workflows. The bridge connects over stdio directly to the local gateway, executing tool calls in approximately **1 ms** (&lt; 1 ms, over 1,500 calls/second) with minimal overhead for agent loops ([performance benchmarks](/docs/performance/#tier-2-gateway-front-door-and-mcp-bridge)).
+The MCP bridge is included in **LocalCloud CLI 0.1.9 and newer**. Docker runs the cloud environment on your machine; a live Google Cloud project is not required for these local workflows. The stdio bridge adds about **1 ms** per tool call ([benchmarks](/docs/performance/#tier-2-gateway-front-door-and-mcp-bridge)).
 
 Clients launch `localcloud mcp` over **stdio**. This page is setup documentation; do not enter `https://local.cloud/docs/mcp/` as an MCP server URL.
 
@@ -62,8 +62,6 @@ lc restart --image agentcloud/localcloud:latest --pull
 
 Use the same `--data-volume` and configuration file if you normally target a custom environment. The restart briefly interrupts clients; reconnect afterward.
 
-Clients supporting desktop extensions can also install the [LocalCloud MCP 0.1.9 bundle](https://github.com/LocalGCloud/localcloud-cli/releases/download/v0.1.9/localcloud-mcp-0.1.9.mcpb). The bundle includes the supported-platform CLI; Docker and runtime 0.1.5+ are still required.
-
 ## Choose your coding client
 
 Choose a direct registration below or the [GitHub plugin](#optional-github-plugin-setup). Enable only one LocalCloud MCP integration in each client to avoid duplicate tools.
@@ -77,12 +75,12 @@ Choose a direct registration below or the [GitHub plugin](#optional-github-plugi
 | Antigravity | `lc mcp install --client antigravity` |
 | Codex | `codex mcp add localcloud -- "$(command -v localcloud)" mcp` |
 | VS Code / GitHub Copilot | Add the stdio server to `.vscode/mcp.json`, as shown below |
-| Cline | Add the server through Cline's MCP settings editor |
-| Gemini CLI | `gemini mcp add --scope user localcloud "$(command -v localcloud)" mcp` |
+| Cline | `lc mcp install --client cline` |
+| Gemini CLI | `lc mcp install --client gemini` |
 
-Use the client names in the table. `--client all` writes configuration for every listed app, including apps you haven't installed, so prefer a single client name. `--client claude` configures **Claude Desktop**; use `--client claude-code` for Claude Code. `--client gemini` targets Antigravity, so use the Gemini CLI command in the table for Gemini CLI.
+`--client all` configures every supported client installed on this machine. `--client gemini` configures Gemini CLI (CLI 0.1.9 configured Antigravity under that name); use `--client antigravity` for Antigravity.
 
-For desktop applications, use the absolute executable path from `command -v localcloud`. The LocalCloud installer resolves it automatically for user-scoped installations. Project-scoped installations use a bare command unless you pass `--command-path`. `/opt/homebrew/bin/localcloud` below is an Apple Silicon Homebrew example. Merge manual entries into your client's existing configuration so other MCP servers are preserved.
+Desktop applications need the absolute path from `command -v localcloud`; user-scoped installs resolve it, and project-scoped installs use a bare command unless you pass `--command-path`. `/opt/homebrew/bin/localcloud` below is an Apple Silicon Homebrew example. Merge manual entries so other MCP servers are preserved.
 
 ### Claude Code
 
@@ -122,7 +120,7 @@ codex mcp get localcloud --json
 codex mcp list
 ```
 
-These commands inspect configuration. Confirm the connection in a new local Codex chat or CLI session using the [connection check](#verify-the-connection) below. In the CLI, `/mcp` shows active servers. Restart the desktop app if it has not loaded the new configuration.
+These commands inspect configuration; confirm the connection in a new local Codex session with the [connection check](#verify-the-connection). In the CLI, `/mcp` shows active servers; restart the desktop app if it has not loaded the configuration.
 
 For manual configuration or a longer startup timeout, merge this table into `~/.codex/config.toml` instead of adding another server:
 
@@ -158,7 +156,7 @@ lc mcp install --client cursor --project --command-path "$(command -v localcloud
 
 After `lc mcp install --client claude-desktop`, fully quit and reopen Claude Desktop, then start a new conversation. On macOS, its configuration is `~/Library/Application Support/Claude/claude_desktop_config.json`. Check the local MCP server settings for `localcloud` and run the [connection check](#verify-the-connection).
 
-Use Cline's configuration editor rather than assuming an extension settings-file location. After installing Windsurf or Antigravity, restart the application and check its MCP settings.
+`lc mcp install --client cline` writes Cline's shared settings file; to configure it by hand, merge the entry above through Cline's MCP settings editor. After installing Windsurf, Antigravity or Gemini CLI, restart the application and check its MCP settings.
 
 ### VS Code
 
@@ -217,7 +215,7 @@ Start a new conversation and ask:
 
 > Use the LocalCloud MCP tools to list local services, check readiness, and obtain SDK settings. Show the selected project and the local endpoints returned by the tools. Report unavailable services. Use only LocalCloud; do not use live Google Cloud or guess ports.
 
-Expect actual tool results showing services, readiness, and SDK settings for the selected project. A configuration entry or `mcp list` output alone does not establish a working connection. Resolve missing tools or connection errors before asking the agent to build an application.
+Expect tool results for the selected project; a configuration entry or `mcp list` output alone does not prove a working connection.
 
 The first calls are `localcloud_list_services` with `{}`, followed by readiness and `localcloud_get_env` with `{"format":"json"}`. Generated endpoint values account for the running runtime's port mappings.
 
@@ -234,7 +232,7 @@ The agent uses MCP to discover the environment, then writes and runs the SDK tes
 | Task | Agent workflow |
 | --- | --- |
 | Build a storage and messaging feature | Discover Cloud Storage and Pub/Sub, configure the SDKs, upload a test object, publish a message, and verify the result |
-| Explore local data | Browse datasets and tables, inspect database connection profiles, and run a supported query |
+| Explore local data | Inspect database connection profiles and query datasets and tables |
 | Write an integration test | Read compatibility, create only test-owned resources, assert results, and clean up through the SDK |
 | Debug a failure | Inspect readiness, logs, recent requests, endpoint configuration, and API schemas, then rerun the failing test |
 
@@ -242,13 +240,13 @@ Run the [MCP walkthrough and three cloud workflows](/blog/localcloud-mcp-agent-c
 
 ## Services, tools, resources, and prompts
 
-The runtime provides service and project inspection, a catalog of local management API operations, resource browsing, supported data queries, SDK/gcloud/Terraform configuration, compatibility checks, diagnostics, recipes, and test prompts.
+The connected runtime's `tools/list`, `resources/list` and `prompts/list` are authoritative; while it starts, the bridge lists only `localcloud_runtime_status`. Runtime `agentcloud/localcloud:0.1.17` lists 25 read tools by default: services, readiness, compatibility, projects, SDK and Terraform settings, recipes, scenarios, seed schemas, checkpoints, state export, the management API (`localcloud_get_api_catalog` before `localcloud_call_api`), data queries, diagnostics, logs and identity checks. The [MCP reference](https://github.com/LocalGCloud/localcloud-cli/blob/main/docs/mcp.md#5-authoritative-mcp-catalog) lists every tool.
 
-Read the connected runtime's `tools/list`, `resources/list`, `resources/templates/list`, and `prompts/list` results for its actual catalog. CLI versions and runtime versions are independent. Use `localcloud_get_api_catalog` before `localcloud_call_api` rather than guessing management routes.
+`localcloud_query_data` runs `sql` against `alloydb` (read-only; `cluster` and `database`), `bigquery`, `bigtable`, `cloudsql` or `spanner` (`instance` and `database`), `gcs` (`table_definitions`: BigQuery external table definitions keyed by table name), or `memorystore` (`SELECT * FROM dbN`). Large results are truncated at `server.query_max_rows` and `server.query_max_bytes`.
 
-The default data volume is shared across clients and repositories. `--project-id` selects a logical project; choose a separate `--data-volume` when you need an independent runtime. SDK operations can change local data, so tests should use their own resources and explicit cleanup.
+The runtime settings `mcp.write` and `mcp.destructive` (or `LOCALCLOUD_MCP_WRITE` and `LOCALCLOUD_MCP_DESTRUCTIVE`) are off by default. They add project, seed, scenario, checkpoint, identity, reset, restore and delete tools, and allow write SQL; with both on, `tools/list` holds 37 tools. Installing a client configuration enables neither. Resources cover the SDK environment (`localcloud://env/json`), database profiles, readiness, diagnostics, the API catalog, the seed schema, and recipes; the one prompt is `terraform-with-localcloud`.
 
-Write and destructive MCP management operations depend on the runtime settings `LOCALCLOUD_MCP_WRITE` and `LOCALCLOUD_MCP_DESTRUCTIVE`, both disabled by default. Installing a client configuration does not enable those privileges. Local compatibility is service- and operation-specific; validate application release behavior against Google Cloud separately.
+The default data volume is shared across clients and repositories: `--project-id` selects a logical project, and a separate `--data-volume` gives an independent runtime. Tests should create and clean up their own resources.
 
 ## Troubleshooting
 
@@ -260,12 +258,10 @@ Write and destructive MCP management operations depend on the runtime settings `
 | Client cannot find the command | Check `command -v localcloud`, then restart the client. Direct registration supports an absolute path; Claude's plugin requires the CLI on its PATH |
 | Claude Code has no tools after `--client claude` | Use `--client claude-code`; the shorter alias configures Claude Desktop |
 | `lc mcp install --client codex` fails | Use `codex mcp add localcloud -- "$(command -v localcloud)" mcp` |
-| Server is listed but tools are unavailable | Open a new session, check the client's active MCP servers, and run the connection-check prompt |
-| Tools appear twice | Keep either the plugin or direct registration enabled; remove the redundant LocalCloud entry |
 | First connection times out | Run `lc start --local-only`, wait for completion, then reconnect; Codex can use `startup_timeout_sec = 120` |
 | Runtime connection fails | Inspect `lc status` and `lc logs --tail 100`; try bridge argument `--connect-timeout 60` |
 | Write operation is rejected | Check its safety classification and runtime permissions; do not assume installation enabled writes |
-| A tool or service is missing | Check the runtime image/version, discovered catalog, readiness, and compatibility |
+| A tool or service is missing | Open a new session and run the connection check; then check the runtime version, catalog, readiness, and compatibility |
 
 To remove a direct user-scoped registration, run `claude mcp remove --scope user localcloud` or `codex mcp remove localcloud`. For a project-scoped Claude Code entry, use `--scope project`. For Cursor or Claude Desktop, remove only the `localcloud` entry from MCP settings and restart. Removing a client integration preserves Docker data.
 

@@ -144,9 +144,9 @@ Run the project's build and service tests against the SDK endpoints that the set
     timeout: '180'
 ```
 
-Always set it explicitly; the default is `gcs,pubsub,bigquery`. The quick start selects `gcs,pubsub,bigquery` for its query test. Firestore is supported; select `firestore` when your tests need it and allow memory for its runtime.
+Always set it explicitly; the default is `gcs,pubsub,bigquery`. Firestore is supported; select `firestore` when your tests need it and allow memory for its runtime.
 
-The table lists each service ID. Follow each service guide for SDK setup, supported operations and runtime requirements. Listing a service does not mean its workflows have been tested through this action.
+Follow each service guide for SDK setup, supported operations and runtime requirements.
 
 <table>
   <thead><tr><th>Service guide</th><th>ID for services</th><th>Workflow notes</th></tr></thead>
@@ -170,7 +170,7 @@ See the [compatibility matrix](/compatibility/) for service operations and the [
 
 ### Docker-backed execution
 
-The automatic setup action currently sets `LOCALCLOUD_DOCKER_ACCESS=false` and does not mount a Docker socket. Selecting `cloudrun`, `dataproc`, or `gke` alone does not configure their execution dependencies. Provision an appropriate runtime using the relevant service guide, then connect with `runtime-url` if it exposes canonical ports.
+By default the action sets `LOCALCLOUD_DOCKER_ACCESS=false` and mounts no Docker socket, so selecting `cloudrun`, `dataproc`, or `gke` alone does not configure their execution. Set [`docker-access`](#image-reuse-container-applications-and-mcp) for native execution on the runner, or connect to a provisioned runtime with `runtime-url`.
 
 ## Pin the action and runtime independently
 

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 4,
-  "reviewedAt": "2026-11-04",
+  "reviewedAt": "2026-11-10",
   "provenance": {
-    "runtimeRevision": "076e13ced7a77b9ff1cab14a7a94f1ad1724d0ae",
-    "cliRevision": "f7489a59100042bcdc08e487d1cb15e4ccfd7e8d",
+    "runtimeRevision": "8650afc0b1a7279244d573e16d26dc4cb5c3083e",
+    "cliRevision": "faf30b87b434759d9cf9c4878cc1a99175458e92",
     "assembledImageDigest": null,
     "qualification": "release-unverified",
     "sources": [
@@ -26,7 +26,7 @@
     "dependencyRevalidations": [
       {
         "id": "bigquery-emulator-on-duckdb",
-        "revision": "60db8063262be8386d6be417904b1b11405ca14c",
+        "revision": "bcfec319858dda12fda2d07a8b0424baf0b20a2f",
         "qualification": "release-unverified",
         "evidence": [
           "../local_cloud_dependencies/bigquery-emulator-on-duckdb",
@@ -35,7 +35,7 @@
       },
       {
         "id": "little_bigtable",
-        "revision": "74e43b993629111f2d8bf1b8988b175b309a47c7",
+        "revision": "6d7b2b83b351e16ce9e8d231711c7070ea4681a1",
         "qualification": "release-unverified",
         "evidence": [
           "../local_cloud_dependencies/little_bigtable",
@@ -54,14 +54,14 @@
     ],
     "sourceDigests": {
       "../local_cloud_dependencies/bigquery-emulator-on-duckdb/docs/coverage-matrix.csv": "sha256:9537ce7131c7f2bbd62848c0abac67bc8dc936d244f52d6d6d0c5dec985bcacb",
-      "../localcloud-go/pkg/config/localcloud.defaults.yaml": "sha256:152bb2783c22fb3f9c54f3ccdcd13a3a755505b8929ae7de1586411edee70f5d",
-      "../localcloud-go/docs/public-contract/documentation.yaml": "sha256:e22eb212db93ce222cee29e8f2131bdb3921ee60cd1d207f537eb8d993bc15d5",
-      "../localcloud-go/docs/public-contract/runtime-facts.yaml": "sha256:7f35da377f290bd389223f3e119db346d4118dc901b54dbdd639438238330fd0",
+      "../localcloud-go/pkg/config/localcloud.defaults.yaml": "sha256:ea4b8f04d46492dc314ecda37c5e4e20bc92f4189adfccb0520f050c7140d9a3",
+      "../localcloud-go/docs/public-contract/documentation.yaml": "sha256:fd5f125d17a19c44191e30fff80cc808bb9dae9386c931ac9a3a693077e125a7",
+      "../localcloud-go/docs/public-contract/runtime-facts.yaml": "sha256:59209d24114f7772e35a3a431e7470110a718a4d6f3ac20093b63af96cc51f75",
       "../localcloud-go/docs/public-contract/service-status.md": "sha256:dba332f47866b963e60fa00d6624c985785fead33c897f4a2c0ba5aa09accb5c",
-      "../localcloud-go/docs/public-contract/networking-and-tls.md": "sha256:13a5d12bc91151872d618604e4f9016a21a2a28b835b7142211c59518a49c9b4",
-      "../localcloud-go/docs/public-contract/mcp-integration.md": "sha256:8940a090888db4880b0c99c5fbc44bddae14c78ddb31467b922cb8677dc78fff",
+      "../localcloud-go/docs/public-contract/networking-and-tls.md": "sha256:946bfc557af6d4d922bd0e70434db3fa6da17672fc70f93bd85b66621be9e3ab",
+      "../localcloud-go/docs/public-contract/mcp-integration.md": "sha256:16058b22577751fbec2fbf09d7a4f423045975019419a4f5ddedb717d0218528",
       "../localcloud-go/LICENSE": "sha256:007c741ba18ddbea4cbd92b4f4b93135381b39e5a4af01ae5128f14b1d19c041",
-      "../localcloud-cli/README.md": "sha256:6a530bd932eec6f8881ec672b906eb2495ffa313cce8f40933a72a2c76739890",
+      "../localcloud-cli/README.md": "sha256:72d1ce9ed637502fcdfc4cc55d2907118bb0dcc2a4d0286a4c74c1dde4ed9a28",
       "../localcloud-cli/src/localcloud_cli/config.py": "sha256:c708e606bac974960e7f6e58e38ae3d6276fe5923c75cdbad4ed8e643e08ca95",
       "../localcloud-cli/src/localcloud_cli/__init__.py": "sha256:35abed49ecd98198c32f224a27370bfbc89b461716ca1fa1f86b67674001a7af",
       "../localcloud-cli/src/localcloud_cli/constants.py": "sha256:5822b0cfb386972f9a8d733f389513c3d9ebdb756afa5803e63e76cab1e38f78",
@@ -166,7 +166,7 @@
       "docker-compose"
     ],
     "integrity": "The installer verifies SHA-256 checksums, exact archive members, and the executable semantic version. Release automation separately publishes Sigstore bundles; install.sh does not verify them.",
-    "releaseBoundary": "CLI behavior is documented for version 0.1.14 from revision f7489a59100042bcdc08e487d1cb15e4ccfd7e8d. Use localcloud --version to confirm the installed release."
+    "releaseBoundary": "CLI behavior is documented for version 0.1.14 from revision faf30b87b434759d9cf9c4878cc1a99175458e92. Use localcloud --version to confirm the installed release."
   },
   "seed": {
     "status": "partial",
@@ -452,13 +452,13 @@
         "Bucket IAM policies that LocalCloud's IAM checks read are managed through the /storage/v1/b/{bucket}/iam routes on 5380 (TLS 5381). The same calls sent to 5382 are answered by the Storage engine's own policy store, which strict mode does not read.",
         "IAM modes: open allows every Storage request, and permissive evaluates without refusing. Strict decides each bucket and object request on project and bucket policies for the verified caller: a LocalCloud-signed token, or the X-LocalCloud-User header when the request carries no credential. Unsigned bearer strings and forged tokens are refused with 403. gcp-live refuses Storage requests (401 without a bearer token, 403 with one), because this build never contacts Google.",
         "Managed-folder IAM policies are stored and returned, but strict-mode decisions use project and bucket policies. Organization and folder inheritance, deny policies, custom role definitions and conditions on project bindings are not modeled.",
-        "Lifecycle rules (Delete, SetStorageClass, AbortIncompleteMultipartUpload) are stored and returned, but LocalCloud does not run them on a schedule, so objects are not deleted or reclassified by age.",
+        "Lifecycle rules (Delete, SetStorageClass, AbortIncompleteMultipartUpload) run only when asked: set lifecycle_interval_seconds in the gcs service config (0, the default, is off; Cloud Storage runs them about once a day) or call POST /mutate/gcs/lifecycle/run to run them once.",
         "New buckets have soft delete turned off unless a policy is set, where Cloud Storage defaults to 7 days. objects.bulkRestore is not served; restore soft-deleted objects one at a time.",
         "Bucket locations are validated against Google's location list and checked against Cloud KMS key locations, but data is not placed geographically. ipFilter is stored and reported but requests are not filtered. Global bucket-name uniqueness and domain-ownership verification are not checked.",
         "Customer-managed encryption uses LocalCloud's Cloud KMS keys: object data is encrypted with a data key that the Cloud KMS key wraps, and a disabled or unknown key is refused. In strict mode, grant roles/cloudkms.cryptoKeyEncrypterDecrypter on the key to service-storage@<project>.localcloud.internal. A denied key permission answers 403 forbidden. Customer-supplied keys sent over plain HTTP are not refused.",
-        "Notifications publish to local Pub/Sub topics at least once, so a message can arrive twice, and ordering is not guaranteed. The topic must exist when the notification is created; with gcloud, create the topic first and pass --skip-topic-setup. Failed publications retry with a capped backoff, and a configuration that keeps failing for 7 days is deleted.",
-        "RSA V4 signed URLs are accepted without signature verification, because LocalCloud configures no signer keys; V2 RSA signed URLs are refused. HMAC-signed V2 and V4 requests, URLs and form policies are verified on the XML routes.",
-        "HMAC keys are created for a service-account email in the project; whether that account exists in LocalCloud IAM is not checked. Path-style XML requests work on localhost and loopback addresses, and virtual-hosted requests use the host name localhost on any port. A signed Host header must not be rewritten after signing.",
+        "Notifications publish to local Pub/Sub topics at least once, so a message can arrive twice, and ordering is not guaranteed. The topic must exist when the notification is created; with gcloud, create the topic first and pass --skip-topic-setup. Failed publications retry with a capped backoff, and a configuration that keeps failing for 7 days is deleted. Delivery and the topic check act as the bucket project's Cloud Storage service agent, service-<projectNumber>@gs-project-accounts.iam.gserviceaccount.com, which strict mode admits without a policy binding; no publisher grant on the topic is needed.",
+        "RSA V4 signed URLs are verified against the signer's keys in LocalCloud IAM, the certificates /service_accounts/v1/metadata/x509/<email> publishes, cached for up to a minute. A URL whose signer has no key in LocalCloud IAM (a real Google key file, for one) is served unverified as an anonymous request in open and permissive mode and refused with 403 in strict mode; a URL from a signer with LocalCloud keys whose signature does not verify is refused with 403 in every mode, so sign with a LocalCloud key file or signBlob. V2 RSA signed URLs are refused. HMAC-signed V2 and V4 requests, URLs and form policies are verified on the XML routes.",
+        "HMAC keys are created only for service accounts that exist in LocalCloud IAM; a missing account is answered 400. Keys stop working while their account is disabled and are deleted with it, after a cache window of up to 10 seconds. Path-style XML requests work on localhost and loopback addresses, and virtual-hosted requests use the host name localhost on any port. A signed Host header must not be rewritten after signing.",
         "The Storage v2 gRPC API is not served on LocalCloud's Storage ports; use the JSON or XML API.",
         "Filesystem storage refuses object names that end in .metadata and names whose last segment is .fake-gcs-folder.",
         "Project exports and checkpoints carry each bucket's name, location and versioning setting and each live object's bytes and content type. Other bucket and object metadata, bucket IAM policies and noncurrent generations are not restored from them. A project reset deletes every generation before it deletes the bucket, removes the bucket's IAM policy, and reports a bucket it cannot clear as partial_failure.",
@@ -517,7 +517,7 @@
           "label": "mode-aware object data-plane authorization",
           "status": "verified",
           "limitations": [
-            "Every bucket and object request on 5382, 5392 and the gateway's /storage routes is authorized by LocalCloud's IAM mode. Open allows it, permissive evaluates without refusing, and strict checks the Storage permission (including multipart upload, folder and managed-folder permissions) against project and bucket policies for the verified caller, refusing with 403. HMAC-signed requests act as the key's service account. gcp-live refuses Storage requests. Managed-folder policies are not used in these decisions."
+            "Every bucket and object request on 5382, 5392 and the gateway's /storage routes is authorized by LocalCloud's IAM mode. Open allows it, permissive evaluates without refusing, and strict checks the Storage permission (including multipart upload, folder and managed-folder permissions) against project and bucket policies for the verified caller, refusing with 403. HMAC-signed requests act as the key's service account and verified RSA signed URLs as their signer. gcp-live refuses Storage requests. Managed-folder policies are not used in these decisions."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -550,7 +550,7 @@
           "label": "Object Lifecycle Management and retention enforcement",
           "status": "partial",
           "limitations": [
-            "Bucket retention policies (and their lock), object retention, temporary holds, event-based holds and default event-based holds are enforced: they block delete, overwrite and move until they expire or are released. Lifecycle rules are stored and returned but LocalCloud does not run them on a schedule, so they never delete or reclassify objects by age."
+            "Bucket retention policies (and their lock), object retention, temporary holds, event-based holds and default event-based holds are enforced: they block delete, overwrite and move until they expire or are released. Lifecycle rules delete, reclassify and abort by their conditions on the lifecycle_interval_seconds timer of the gcs service config (off by default) and on POST /mutate/gcs/lifecycle/run; a rule's action waits for the next run, as Cloud Storage applies rules asynchronously."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -632,13 +632,13 @@
       },
       "status": "partial",
       "limitations": [
-        "enableExactlyOnceDelivery is refused with UNIMPLEMENTED (HTTP 501). Export subscriptions (bigqueryConfig, cloudStorageConfig), message transforms, topic ingestionDataSourceSettings and topic messageStoragePolicy are not applied: a request that sets them succeeds, the field is dropped and reads do not return it. Topic kmsKeyName is stored and returned but encrypts nothing. DetachSubscription answers UNIMPLEMENTED.",
-        "enableMessageOrdering is stored and returned, and orderingKey travels with each message through pull, StreamingPull and push, but delivery does not hold back later messages of a key while an earlier one is outstanding or being redelivered. Do not rely on per-key ordering locally.",
+        "Export subscriptions (bigqueryConfig, cloudStorageConfig), message transforms, topic ingestionDataSourceSettings and topic messageStoragePolicy are not applied: a request that sets them succeeds, the field is dropped and reads do not return it. Topic kmsKeyName is stored and returned but encrypts nothing.",
+        "With enableMessageOrdering, pull, StreamingPull and push deliver each ordering key's messages in publish order: a leased or backing-off message holds back the later messages of its key, and a redelivered message brings the later leased messages of its key again after it. Later messages of the key that were already acknowledged are not redelivered, where Google redelivers them too.",
         "By default no message expires by age (pubsub setting enforce_subscription_retention: false). Unacknowledged messages, and acknowledged ones a subscription retains, stay until they are acknowledged, purged or their subscription is deleted, whatever messageRetentionDuration the subscription names; the resource still reports the value it was given. With enforce_subscription_retention: true a message expires after its subscription's messageRetentionDuration, or after subscription_retention_days (default 7, at most 31) when the subscription names none. Changes apply at the next start.",
         "Retained messages are held in memory and reloaded from PostgreSQL at start, so a backlog that is never consumed grows memory and startup time. Purge test subscriptions or turn retention enforcement on.",
         "Subscription expirationPolicy is stored and returned without validation and is never enforced, so no subscription expires locally. A subscription created without one returns none, where Google returns a 31-day default.",
         "Deleting a topic keeps its subscriptions, shown with topic _deleted-topic_, and their backlog, also across a restart. The topic name can be reused at once and a recreated topic starts empty; new publishes reach only subscriptions created on the new topic.",
-        "A push succeeds on HTTP 102, 200, 201, 202 or 204. Any other answer, a connection failure or a 10-second timeout is a NACK that follows the subscription's retry and dead-letter policies. Pushes to cloud metadata-server addresses (metadata.google.internal, 169.254.169.254, fd00:ec2::254 and names that resolve to them) are refused and NACKed with no token minted; loopback, LAN and other link-local targets work. Push ignores proxy environment variables.",
+        "A push succeeds on HTTP 102, 200, 201, 202 or 204. Any other answer, a connection failure or no answer within the subscription's ackDeadlineSeconds (the push timeout) is a NACK that follows the subscription's retry and dead-letter policies. Each push subscription is served on its own, with up to 8 requests in flight and one at a time per ordering key on an ordered subscription, so a slow endpoint holds back only its own subscription. Pushes to cloud metadata-server addresses (metadata.google.internal, 169.254.169.254, fd00:ec2::254 and names that resolve to them), to unspecified or multicast addresses, and to the ports LocalCloud's engines and process supervisor listen on inside the container are refused and NACKed; no token is minted when the endpoint URL itself is refused (the metadata name or address, or an internal port on localhost or a loopback address). Loopback, LAN and other link-local targets work, and so do the gateway's port and the service ports. Push uses proxy environment variables, and a proxied push has its URL checked first.",
         "Authenticated push ID tokens are signed by the LocalCloud issuer (/identity/status, keys at /oauth2/v3/certs), not https://accounts.google.com, so receivers must trust the local JWKS. Setting oidcToken checks no iam.serviceAccounts.actAs permission in any IAM mode, and the Pub/Sub service agent's token-creator role is not modeled.",
         "Topic and subscription IAM policies (getIamPolicy, setIamPolicy, testIamPermissions) are stored by the local IAM service, but no Pub/Sub call evaluates them. In strict mode the gateway checks the caller's verified LocalCloud credential against its access-policy rules for REST and gRPC calls on the gateway and on the dedicated port 5383 (PUBSUB_EMULATOR_HOST); open and permissive modes admit every call.",
         "Schemas must be self-contained: an Avro definition, or one top-level proto2 or proto3 message without imports or services. Protobuf definitions are checked with protoc in the image; when it cannot run, schema checks and publishes to schema topics answer UNAVAILABLE (HTTP 503).",
@@ -677,7 +677,7 @@
           "label": "subscriptions.create/get/list/update/delete/modifyPushConfig",
           "status": "verified",
           "limitations": [
-            "ackDeadlineSeconds is 10 to 600, deadLetterPolicy.maxDeliveryAttempts 5 to 100, and filters cannot be changed after create. Updates are all or nothing. A deleted subscription ends its StreamingPull streams with NOT_FOUND. DetachSubscription is not implemented; enableExactlyOnceDelivery is refused and export or transform settings are dropped."
+            "Topic, subscription, snapshot and schema IDs are 3 to 255 characters, start with a letter, use letters, digits and - _ . ~ + %, and do not start with goog. ackDeadlineSeconds is 10 to 600, deadLetterPolicy.maxDeliveryAttempts 5 to 100, and filters cannot be changed after create. Updates are all or nothing. Topics report state ACTIVE, and subscriptions report their topic's retention as topicMessageRetentionDuration. A deleted subscription ends its StreamingPull streams with NOT_FOUND. DetachSubscription (gRPC, and REST POST :detach) drops the subscription's messages, stops delivery to it and takes it off its topic's subscription list; it stays readable with detached true, and pulls and seeks on it answer FAILED_PRECONDITION. enableExactlyOnceDelivery is stored and can be changed by an update; export or transform settings are dropped."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -688,7 +688,7 @@
           "label": "publish/pull/ack/modifyAckDeadline",
           "status": "verified",
           "limitations": [
-            "Publish (up to 1000 messages per request), Pull, StreamingPull, Acknowledge and ModifyAckDeadline (0 to 600 seconds; 0 returns the message at once). StreamingPull honours maxOutstandingMessages (default 1000) and wakes on publish. Messages without attributes carry an empty attributes map. Message IDs only increase, and publishTime keeps nanoseconds across a restart."
+            "Publish (up to 1000 messages per request), Pull, StreamingPull, Acknowledge and ModifyAckDeadline (0 to 600 seconds; 0 returns the message at once). Publish refuses an empty batch, a message with neither data nor attributes, more than 100 attributes, attribute keys over 256 bytes or starting with goog, values over 1024 bytes and ordering keys over 1024 bytes. Pull needs a positive maxMessages. StreamingPull honours maxOutstandingMessages (default 1000) and maxOutstandingBytes, aborts with INVALID_ARGUMENT when a later request sets either of them or protocolVersion, applies acknowledgements in every request including the first, refuses deadline lists that do not pair up with their ack IDs, sends subscriptionProperties with each response and wakes on publish. deliveryAttempt is 0 unless the subscription has a dead-letter policy. Messages without attributes carry an empty attributes map. Message IDs only increase, and publishTime keeps nanoseconds across a restart."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -699,7 +699,7 @@
           "label": "subscription filters, dead-letter forwarding, retry policies",
           "status": "verified",
           "limitations": [
-            "Attribute filters, dead-letter forwarding after maxDeliveryAttempts with delivery-attempt counts, and retry policies shared by pull, StreamingPull and push: after a NACK or failed push the wait starts at minimumBackoff and doubles per attempt up to maximumBackoff (default 600 seconds). A message whose dead-letter topic was deleted is delivered normally and dead-lettered once the topic exists again."
+            "Attribute filters, dead-letter forwarding after maxDeliveryAttempts with delivery-attempt counts (forwarded messages carry CloudPubSubDeadLetterSourceDeliveryCount, CloudPubSubDeadLetterSourceSubscription, CloudPubSubDeadLetterSourceSubscriptionProject and CloudPubSubDeadLetterSourceTopicPublishTime; CloudPubSubDeadLetterSourceDeliveryErrorMessage is set only for export subscriptions, which LocalCloud does not run), and retry policies shared by pull, StreamingPull and push: after a NACK, a failed push or an expired ack deadline the wait starts at minimumBackoff and doubles per attempt up to maximumBackoff. Create and update fill in the defaults (10 and 600 seconds) and refuse backoffs outside 0 to 600 seconds. A message whose dead-letter topic was deleted is delivered normally and dead-lettered once the topic exists again."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -721,7 +721,7 @@
           "label": "schema and revision lifecycle, validation, publish enforcement",
           "status": "verified",
           "limitations": [
-            "Schema create, get, list, delete, revision commit, rollback, list and delete, validateSchema and validateMessage. Avro and proto2/proto3 with JSON or binary encoding. A topic enforces its schema and revision range on publish, and an invalid message fails the whole batch. Publishing to a topic whose schema was deleted is NOT_FOUND (REST 404)."
+            "Schema create, get, list, delete, revision commit, rollback, list and delete, validateSchema and validateMessage. Avro and proto2/proto3 with JSON or binary encoding. A topic enforces its schema and revision range on publish, and an invalid message fails the whole batch. The only live revision of a schema cannot be deleted (FAILED_PRECONDITION); validateMessage uses the named revision, or the newest live one. Publishing to a topic whose schema was deleted is NOT_FOUND (REST 404)."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -743,7 +743,7 @@
           "label": "push payload unwrapping (noWrapper), pubsubWrapper and the x-goog-version push attribute",
           "status": "verified",
           "limitations": [
-            "The default wrapped push is a JSON envelope with subscription and message (base64 data, messageId, publishTime, attributes, orderingKey), plus deliveryAttempt when a dead-letter policy is set. noWrapper sends the message data as the body; with writeMetadata it adds the x-goog-pubsub-subscription-name, message-id, publish-time and ordering-key headers and one header per message attribute, so attribute names must be valid HTTP header names or the push fails and is retried. pushConfig.attributes defaults x-goog-version to v1, which does not change the payload; other non-x-goog entries are also sent as request headers. The settings round-trip on gRPC and REST and across a restart."
+            "The default wrapped push is a JSON envelope with subscription and message (base64 data, messageId, publishTime, attributes, orderingKey), plus deliveryAttempt when a dead-letter policy is set. noWrapper sends the message data as the body; with writeMetadata it adds the x-goog-pubsub-subscription-name, message-id, publish-time and ordering-key headers and one header per message attribute, so attribute names must be valid HTTP header names or the push fails and is retried. pushConfig.attributes defaults x-goog-version to v1, which does not change the payload, and modifyPushConfig without it keeps the subscription's value; v1 and v1beta2 select the same v1 format, and v1beta1, which asks Google for the older v1beta1 format, is refused with UNIMPLEMENTED (HTTP 501) on create, update and modifyPushConfig. Other non-x-goog entries are also sent as request headers. The settings round-trip on gRPC and REST and across a restart."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -763,9 +763,9 @@
         {
           "id": "pubsub.other-advanced-fields",
           "label": "exactly-once delivery, message ordering, export subscriptions and transforms",
-          "status": "unsupported",
+          "status": "partial",
           "limitations": [
-            "enableExactlyOnceDelivery is refused with UNIMPLEMENTED (HTTP 501). enableMessageOrdering is stored and ordering keys are carried, but per-key ordered delivery is not enforced. bigqueryConfig, cloudStorageConfig and messageTransforms are dropped without an error and have no effect."
+            "enableExactlyOnceDelivery is served on pull and StreamingPull: an acknowledged message is not delivered again, a leased one is not delivered before its lease ends, and acknowledge and modifyAckDeadline refuse ack IDs that name no outstanding delivery (unknown, replaced by a later delivery, already acknowledged or returned, or with an expired lease) with INVALID_ARGUMENT and an ErrorInfo (reason EXACTLY_ONCE_ACKID_FAILURE) whose metadata maps each such ID to PERMANENT_FAILURE_INVALID_ACK_ID; the other IDs of the request are applied. StreamingPull reports exactlyOnceDeliveryEnabled and answers in-stream acks and deadline changes with acknowledgeConfirmation and modifyAckDeadlineConfirmation. No TRANSIENT_FAILURE_* or unordered-ack failure is ever reported. enableMessageOrdering delivers each key in order (see the limitations for the one difference). bigqueryConfig, cloudStorageConfig and messageTransforms are dropped without an error and have no effect."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -910,7 +910,6 @@
         "Legacy table snapshot RPCs (SnapshotTable, GetSnapshot, ListSnapshots, DeleteSnapshot, CreateTableFromSnapshot), hot tablets and memory layers return Unimplemented. Use backups for data protection.",
         "ST_REGIONSTATS is not available, and some GoogleSQL geography functions have local limits. Cluster nodes and autoscaling settings are stored without capacity effects; replication, failover and Data Boost isolation are not emulated.",
         "In open and permissive IAM modes, project and instance IDs are accepted without creating the instance first; in strict and gcp-live modes a request that names a missing instance answers NOT_FOUND.",
-        "The REST backup listing ignores filter, orderBy and pagination and returns name, sourceTable and expireTime; the native API honors them.",
         "Project exports and checkpoints do not capture Bigtable data; they name it under not_captured_services. Use backups to keep data."
       ],
       "evidence": [
@@ -1021,7 +1020,7 @@
           "label": "snapshots and backups",
           "status": "verified",
           "limitations": [
-            "Backups are immutable schema and row snapshots with create, get, list, update, copy, delete and restore to an independent table, including expire-time and backup-type rules. Tables with an automated backup policy get one backup per cluster every 24 hours while the emulator runs. UndeleteTable restores a deleted table within 7 days. Legacy table snapshot RPCs return Unimplemented. The REST backup listing ignores filter, order and pagination."
+            "Backups are immutable schema and row snapshots with create, get, list, update, copy, delete and restore to an independent table, including expire-time and backup-type rules. Tables with an automated backup policy get one backup per cluster every 24 hours while the emulator runs. UndeleteTable restores a deleted table within 7 days. Legacy table snapshot RPCs return Unimplemented. The REST backup listing passes filter, orderBy and pagination to the emulator and returns full Backup resources."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -1417,7 +1416,9 @@
           "id": "bigquery.datasets.lifecycle",
           "label": "datasets.create/list/update/delete",
           "status": "verified",
-          "limitations": [],
+          "limitations": [
+            "Deleting a dataset that still holds tables, models or routines needs deleteContents=true and is refused with 400 otherwise, as in BigQuery. datasets.undelete answers 501 UNIMPLEMENTED because deleted datasets are not retained."
+          ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
           ]
@@ -1427,7 +1428,7 @@
           "label": "tables.create/list/update/delete",
           "status": "verified",
           "limitations": [
-            "Table creation, metadata updates and deletion, copies, snapshots and restore, clones, time travel (FOR SYSTEM_TIME AS OF), temp and wildcard tables, row access policies, data masking and policy tags on top-level columns and leaf fields of RECORD columns. insertAll has no streaming buffer, ignores templateSuffix and refuses partition decorators."
+            "Table creation, metadata updates and deletion, copies, snapshots and restore, clones, time travel (FOR SYSTEM_TIME AS OF), temp and wildcard tables, row access policies (REST and DDL, enforced by the engine), data masking and policy tags on top-level columns and leaf fields of RECORD columns. Streaming inserts are described under limitations."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -1438,7 +1439,7 @@
           "label": "jobs.query/cancel/delete/serviceAccount/projects",
           "status": "verified",
           "limitations": [
-            "Query, load, extract and copy jobs, cancellation, deletion, serviceAccount lookup, dry runs, project listing, sessions, scheduled-query configuration and reservation metadata. BigQuery ML model training, evaluation and prediction run in the full image only."
+            "Query, load, extract and copy jobs, cancellation, deletion, serviceAccount lookup (bq-{project number}@bigquery-encryption.iam.gserviceaccount.com), dry runs, project listing, sessions, scheduled-query configuration and reservation metadata. BigQuery ML model training, evaluation and prediction run in the full image only."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -1493,7 +1494,7 @@
           "label": "gRPC Storage Read/Write API (AVRO + Arrow)",
           "status": "verified",
           "limitations": [
-            "The Storage Read and Write APIs are served over gRPC with TLS on port 5389, with Arrow and Avro read formats and AppendRows writes; clients need to trust LocalCloud's CA."
+            "The Storage Read and Write APIs are served over gRPC on port 5389, with Arrow and Avro read formats and AppendRows writes. The port takes TLS (clients trust LocalCloud's CA) and plaintext HTTP/2, so an insecure gRPC channel to localhost:5389 works too."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -1541,7 +1542,7 @@
       "status": "partial",
       "limitations": [
         "Google Sheets is provided as an auxiliary integration API for data lookups and BigQuery external-table fixtures, not as a Google Cloud service LocalCloud reproduces in full.",
-        "Served: spreadsheets.values.get, values.batchGet and values.update (PUT) under /v4/spreadsheets/{id}/values. Spreadsheet metadata (spreadsheets.get, create, batchUpdate), values.append, values.clear, values.batchUpdate and formula evaluation are not served.",
+        "Served: spreadsheets.values.get, values.batchGet, values.update (PUT), values.append and values.clear under /v4/spreadsheets/{id}/values. Spreadsheet metadata (spreadsheets.get, create, batchUpdate), values.batchUpdate, values.batchClear and formula evaluation are not served.",
         "Values are stored and returned as written (strings, numbers, booleans). valueInputOption and valueRenderOption are ignored, so a formula is kept as text and numbers are not returned as formatted strings.",
         "Ranges accept sheet names, cells, cell ranges, whole columns or rows and whole sheets; a range with no sheet name addresses Sheet1. Reads honour majorDimension and return rows trimmed to their last populated cell. An empty range of a known spreadsheet answers 200 without values, and a spreadsheet the project does not hold answers 404. A read past the per-request limits (for example 100,000 rows) answers 400.",
         "A spreadsheet exists once a write or seed stores one of its sheets. Its project comes from the X-Goog-User-Project header or the project query parameter, else the gateway's default project. Calls are not authorized per spreadsheet; Google OAuth scopes and Drive sharing are not modeled.",
@@ -1595,6 +1596,28 @@
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
           ]
+        },
+        {
+          "id": "sheets.values.append",
+          "label": "spreadsheets.values.append",
+          "status": "partial",
+          "limitations": [
+            "POST /v4/spreadsheets/{id}/values/{range}:append finds the table as the bounding box of the cells in the range (for a single cell, everything below and to its right) and writes after its last row, in its first column; an empty range takes the values at its top-left cell. insertDataOption INSERT_ROWS moves the rows below down. valueInputOption is required (RAW or USER_ENTERED) and values are stored as sent. The answer reports tableRange and updates."
+          ],
+          "evidence": [
+            "../localcloud-go/docs/public-contract/documentation.yaml"
+          ]
+        },
+        {
+          "id": "sheets.values.clear",
+          "label": "spreadsheets.values.clear",
+          "status": "verified",
+          "limitations": [
+            "POST /v4/spreadsheets/{id}/values/{range}:clear empties every cell of the range and answers clearedRange; an unknown spreadsheet is 404."
+          ],
+          "evidence": [
+            "../localcloud-go/docs/public-contract/documentation.yaml"
+          ]
         }
       ],
       "published": true,
@@ -1628,8 +1651,8 @@
       "status": "partial",
       "limitations": [
         "Per-secret IAM policies are stored and returned, and strict mode decides the policy methods themselves, but secret and version reads and writes are not checked against those per-secret bindings; in strict mode they follow the gateway's policy file like other data-plane calls.",
-        "Rotation is metadata only: rotation.rotationPeriod is stored and returned, while nextRotationTime and topics are accepted and not kept, and no SECRET_ROTATE or version events are published.",
-        "Version aliases, annotations, tags and versionDestroyTtl sent through the API are not kept, so delayed version destruction is not available.",
+        "Topics and rotation are kept: a secret takes up to 10 Pub/Sub topics, and every write to the secret or its versions publishes SECRET_CREATE, SECRET_UPDATE, SECRET_DELETE (deleteType REQUESTED) or SECRET_VERSION_ADD, ENABLE, DISABLE or DESTROY to each, with the resource as JSON_API_V1 data and the eventType, dataFormat, secretId, timestamp and versionId attributes; setting topics also publishes TOPIC_CONFIGURED. When rotation.nextRotationTime passes, SECRET_ROTATE is published and the time advances by rotationPeriod (checked every second while Secret Manager is on). Messages are published as the project's Secret Manager service agent, which strict IAM mode admits; a publish that fails (for example to a missing topic) is logged and does not fail the write. An expiring secret publishes no SECRET_DELETE with deleteType EXPIRATION, and no DESTROY_SCHEDULED events are published.",
+        "Annotations, tags and versionDestroyTtl sent through the API are not kept, so delayed version destruction is not available.",
         "Regional endpoints (projects/{project}/locations/{location}/secrets) are accepted but address the same project-level secrets, and returned names have no location. Replication settings are stored; storage is local, so geographic replication and Google key custody are not provided.",
         "Payloads are stored unencrypted in the data volume unless the secret uses a customer-managed key from local Cloud KMS."
       ],
@@ -1653,7 +1676,7 @@
           "label": "secrets.create/list/get/delete",
           "status": "verified",
           "limitations": [
-            "Create, get, list, update and delete over gRPC and REST through one field mapping: labels, replication (automatic or user-managed, one customer-managed key per secret), expireTime or ttl, and rotation are stored. Updates apply only the fields their update mask names. List filters accept labels.KEY and name terms with =, : and !=; any other expression is 400. Secrets carry an etag and a delete with a stale etag is refused (409 over REST, ABORTED over gRPC). An expired secret is NOT_FOUND on every method and its ID can be reused. Secret IDs containing a slash are refused."
+            "Create, get, list, update and delete over gRPC and REST through one field mapping: labels, replication (automatic or user-managed, one customer-managed key per secret), expireTime or ttl, rotation (rotationPeriod of at least 1 hour, which needs nextRotationTime; nextRotationTime at least 5 minutes ahead; a rotation needs topics) and topics are stored. Updates apply only the fields their update mask names. List filters accept labels.KEY and name terms with =, : and !=; any other expression is 400. Version aliases are set through update (not at create), must name existing versions, and are accepted wherever a version number is. Secrets carry an etag; a delete or update with a stale etag is refused (409 ABORTED over REST, ABORTED over gRPC). An unfiltered list reports totalSize. An expired secret is NOT_FOUND on every method and its ID can be reused. Secret IDs containing a slash are refused."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -1664,7 +1687,7 @@
           "label": "versions.add/access/list",
           "status": "verified",
           "limitations": [
-            "addVersion, get, list (pageSize, pageToken and nextPageToken), access (including latest), enable, disable and destroy over gRPC and REST. Payloads are capped at 64 KiB (400 INVALID_ARGUMENT beyond) and a supplied dataCrc32c must match; access returns the payload's CRC32C. Disabled and destroyed versions refuse access with FAILED_PRECONDITION and only a missing version is NOT_FOUND."
+            "addVersion, get, list (pageSize, pageToken and nextPageToken), access (including latest), enable, disable and destroy over gRPC and REST. Payloads are capped at 64 KiB (400 INVALID_ARGUMENT beyond) and a supplied dataCrc32c must match; access returns the payload's CRC32C. Disabled and destroyed versions refuse access with FAILED_PRECONDITION and only a missing version is NOT_FOUND. latest is the highest version number whatever its state. Versions report their number in the name, an etag that enable, disable and destroy check, destroyTime once destroyed, clientSpecifiedPayloadChecksum and a replication status. List takes state and name filters, reports totalSize, and is NOT_FOUND for a missing secret. REST errors use the Google error body with canonical status names."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -1675,7 +1698,7 @@
           "label": "rotation, CMEK, per-secret IAM",
           "status": "partial",
           "limitations": [
-            "Customer-managed encryption uses a SOFTWARE key from local Cloud KMS; in strict mode the Secret Manager service agent needs the key's encrypter/decrypter grant. Per-secret setIamPolicy, getIamPolicy and testIamPermissions use the shared IAM policy store; a policy can be set only on an existing secret and is removed when the secret is deleted. Secret data calls are not checked against per-secret bindings. Rotation periods are stored, but no rotation notifications are delivered."
+            "Customer-managed encryption uses a SOFTWARE key from local Cloud KMS; in strict mode the Secret Manager service agent needs the key's encrypter/decrypter grant. Per-secret setIamPolicy, getIamPolicy and testIamPermissions use the shared IAM policy store; a policy can be set only on an existing secret and is removed when the secret is deleted. getIamPolicy and setIamPolicy on a missing secret answer NOT_FOUND, and testIamPermissions answers an empty permission set, as google.iam.v1 documents. Secret data calls are not checked against per-secret bindings. Rotation publishes SECRET_ROTATE to the secret's topics when nextRotationTime passes."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -1711,12 +1734,13 @@
       },
       "status": "partial",
       "limitations": [
+        "The HTTP target of a task is checked on every connection, after name resolution and on redirects: cloud metadata servers, unspecified and multicast addresses, and the ports LocalCloud's engines and process supervisor listen on inside the container (on loopback or the container's own addresses) are refused. The gateway's port and the service ports, LAN addresses, host.docker.internal, sibling containers and other link-local addresses stay reachable. Proxy environment variables are used, and a proxied request has its URL checked first. See networking-and-tls.md, Outbound calls to user-named targets. A refused target fails the attempt with \"HTTP connection failed: outbound connection to <address> refused: <reason>\" and follows the queue's retry settings.",
         "Task and queue OAuth/OIDC credentials are minted by the LocalCloud issuer, not Google, and verify only against LocalCloud's JWKS. A queue httpTarget credential overrides task credentials and every task Authorization header; at queue level both the service account and the audience (OIDC) or scope (OAuth) are required. The OIDC audience defaults to the URL the request is sent to, after queue overrides, and the OAuth scope to cloud-platform. When no token can be minted (account missing or disabled, identity not ready) the request is not sent and the attempt records IDENTITY_UNAVAILABLE:<reason> with normal retry. In strict mode, configuring a credential on a task or queue needs iam.serviceAccounts.actAs on the account.",
         "Redirect responses are followed (up to 10 hops) and the final answer decides the attempt.",
         "App Engine tasks, appEngineRoutingOverride, stackdriverLoggingConfig (logging sampling) and cmekConfig are refused with UNIMPLEMENTED rather than stored.",
-        "/v2beta3 is served over REST only. Pull queues (Task.pullMessage), readMask and Queue.stats, the queues.list filter, tasks.batchCreate and tasks.batchDelete answer 501 there, and v2beta3 queues report type PUSH. Locations and operations are served on neither version.",
+        "/v2beta3 is served over REST only. Pull queues (Task.pullMessage), readMask and Queue.stats, tasks.batchCreate and tasks.batchDelete answer 501 there, and v2beta3 queues report type PUSH. Locations and operations are served on neither version.",
         "BufferTask is served on /v2 and /v2beta3 (POST tasks:buffer and tasks/{id}:buffer) and answers FAILED_PRECONDITION when the queue's httpTarget has no uriOverride host. The X-CloudTasks-TaskRetryReason header is not sent.",
-        "Queue IDs allow letters, digits and hyphens (up to 100 characters); an ID with an underscore is refused with INVALID_ARGUMENT. Task IDs may contain underscores. A task ID stays reserved for one hour after its task is deleted, completes or exhausts its retries, and a create with it answers ALREADY_EXISTS; a purge reserves no IDs. The task_name_reuse_window_seconds setting is accepted but has no effect.",
+        "Queue IDs allow letters, digits and hyphens (up to 100 characters); an ID with an underscore is refused with INVALID_ARGUMENT. Task IDs may contain underscores. Google reserves a task ID for about an hour after its task is deleted, completes, exhausts its retries or is purged. LocalCloud reserves none by default; the cloudtasks setting task_name_reuse_window_seconds (default 0, up to 777600) turns the reservation on, and a create with a reserved ID then answers ALREADY_EXISTS. Google may refuse a deleted queue's name for up to 3 days; LocalCloud reserves none by default, and the cloudtasks setting queue_name_reuse_window_seconds (default 0, up to 777600) turns that on: creating the queue again, also through a create-or-update queues.patch, then answers FAILED_PRECONDITION. A project or global reset releases the names.",
         "No FIFO, exactly-once, dead-letter queue, transactional cancellation, adaptive Google throttling or production throughput guarantees. A schedule time must be within 30 days. Unlimited retry settings have no automatic task expiry.",
         "HTTP dispatch deadlines are 15 to 1800 seconds (default 600). Failed attempts use the configured fractional backoff; when both an attempt limit and a duration limit are set, both must be exhausted. A zero duration leaves only the attempt limit, and maxAttempts -1 is unlimited.",
         "Completed attempt metadata stays in the local activity view until cleared by default; the cloudtasks setting activity_retention_days (default 0) limits it. The view holds no request URL, headers, payload or response body. Successful and exhausted tasks leave the queue, so absence alone is not success.",
@@ -1745,7 +1769,7 @@
           "label": "queues.create/get/list/update/pause/resume/purge/delete",
           "status": "verified",
           "limitations": [
-            "REST (/v2 and /v2beta3) and gRPC (v2) share project- and location-scoped queue lifecycle, rate limits, retry config and the queue IAM verbs (getIamPolicy, setIamPolicy, testIamPermissions). Queue httpTarget uriOverride (scheme, host, port, path, query, ALWAYS and IF_NOT_EXISTS), httpMethod, headerOverrides and oauthToken or oidcToken are stored, returned, survive a restart and apply at delivery, with update masks such as http_target, http_target.oauth_token and http_target.oidc_token. Queue state is output-only. App Engine routing, logging sampling and cmekConfig are refused."
+            "REST (/v2 and /v2beta3) and gRPC (v2) share project- and location-scoped queue lifecycle, rate limits, retry config and the queue IAM verbs (getIamPolicy, setIamPolicy, testIamPermissions). Queue httpTarget uriOverride (scheme, host, port, path, query, ALWAYS and IF_NOT_EXISTS), httpMethod, headerOverrides and oauthToken or oidcToken are stored, returned, survive a restart and apply at delivery, with update masks such as http_target, http_target.oauth_token and http_target.oidc_token. Queue state is output-only. An update of a missing queue creates it (queues.create on the location is needed in strict mode). The queues.list filter compares state and name with =, : or !=, joined by AND; other filters answer INVALID_ARGUMENT. App Engine routing, logging sampling and cmekConfig are refused."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -1756,7 +1780,7 @@
           "label": "tasks.create/get/list/delete/run",
           "status": "verified",
           "limitations": [
-            "Durable HTTP task creation, BASIC/FULL views, pagination and immediate run. Automatic dispatch honours queue rate, concurrency and fractional retry settings, and the activity view records each observed HTTP outcome. Task httpRequest.oidcToken and oauthToken deliver local-issuer tokens minted per attempt. BufferTask turns a raw request body into a task on a queue whose httpTarget has a host. Deliveries carry X-CloudTasks-QueueName, TaskName, TaskRetryCount, TaskExecutionCount, TaskETA and, after a response, TaskPreviousResponse, with User-Agent Google-Cloud-Tasks. App Engine tasks are refused with UNIMPLEMENTED."
+            "Durable HTTP task creation, BASIC/FULL views, pagination and immediate run. Automatic dispatch honours queue rate, concurrency and fractional retry settings, and the activity view records each observed HTTP outcome. Task httpRequest.oidcToken and oauthToken deliver local-issuer tokens minted per attempt. BufferTask turns a raw request body into a task on a queue whose httpTarget has a host. Deliveries carry X-CloudTasks-QueueName, TaskName, TaskRetryCount, TaskExecutionCount, TaskETA and, after a response, TaskPreviousResponse, with User-Agent Google-Cloud-Tasks and, for a body without one, Content-Type application/octet-stream. App Engine tasks are refused with UNIMPLEMENTED."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -1792,15 +1816,16 @@
       },
       "status": "partial",
       "limitations": [
-        "Schedules use five-field UNIX cron and IANA time zones from the image's time-zone data; preview and dispatch share one parser. The forms every N minutes (1 to 59), every N hours (1 to 23), every day HH:MM and every DAY[,DAY...] HH:MM are converted to cron in the job's time zone; other English-like schedules are refused with a message listing these forms.",
+        "A job's HTTP target is checked on every connection, after name resolution and on redirects: cloud metadata servers, unspecified and multicast addresses, and the ports LocalCloud's engines and process supervisor listen on inside the container (on loopback or the container's own addresses) are refused. The gateway's port and the service ports, LAN addresses, host.docker.internal, sibling containers and other link-local addresses stay reachable. Proxy environment variables are used, and a proxied request has its URL checked first. See networking-and-tls.md, Outbound calls to user-named targets. A refused target records an ERROR execution with \"HTTP connection failed: outbound connection to <address> refused: <reason>\" and follows the job's retry settings.",
+        "Schedules use five-field UNIX cron and IANA time zones from the image's time-zone data; preview and dispatch share one parser. The forms every N minutes (1 to 59), every N hours (1 to 23), every day HH:MM and every DAY[,DAY...] HH:MM are converted to cron in the job's time zone, except that an N which does not divide the hour or the day runs at a fixed N-minute or N-hour interval from the previous run; other English-like schedules are refused with a message listing these forms.",
         "HTTP and Pub/Sub targets deliver for real. App Engine targets are refused before saving.",
         "httpTarget oidcToken and oauthToken are stored with the job and minted at each attempt by the LocalCloud issuer, not Google, so receivers must trust the local issuer and JWKS. The OIDC audience defaults to the target URI and the OAuth scope to cloud-platform; the generated header is the only Authorization header, and a user Authorization header is refused. Create and update refuse a token for an account that does not exist or is disabled (PERMISSION_DENIED) in every IAM mode; no iam.serviceAccounts.actAs permission is evaluated. At delivery a missing or disabled account, or unavailable identity, fails the attempt with IDENTITY_UNAVAILABLE:<reason> through normal retry and history, and nothing is sent.",
         "Queued runs and retries survive a restart. An attempt interrupted while running is recorded as UNKNOWN and not replayed, because the target may already have received it. A scheduled time that arrives while an earlier scheduled run of the job is still running or retrying waits as one queued run, and later times fold into it; manual runs can overlap. A job whose time passed while LocalCloud was stopped runs once after the start; the other missed times are not backfilled.",
         "Retry count is 0 to 5, max doublings 0 to 16 and backoff 0 to 86400 seconds; fractional and explicit zero durations are kept. Retry duration starts with the first actual attempt, and when both count and duration are set both limits must be exhausted. HTTP attempt deadlines are 15 to 1800 seconds (default 180); Pub/Sub targets ignore attemptDeadline. Up to 16 deliveries run in parallel.",
         "Full project/location/job names scope jobs and history; location names are namespaces, not residency guarantees. There is no per-job IAM: in strict mode the gateway checks the caller's verified LocalCloud credential against its access-policy rules.",
-        "HTTP deliveries carry X-CloudScheduler-JobName and X-CloudScheduler-RunId headers. The local history view returns at most the newest 100 attempts of a job. Every execution is kept by default; the cloudscheduler setting executions_keep_per_job (default 0) limits it.",
+        "HTTP deliveries carry X-CloudScheduler: true, X-CloudScheduler-JobName, X-CloudScheduler-RunId, X-CloudScheduler-ScheduleTime on scheduled runs, User-Agent Google-Cloud-Scheduler and, for a body without one, Content-Type application/octet-stream. Pub/Sub targets publish as the project's Cloud Scheduler service agent, which strict mode admits without a policy binding. Each attempt writes AttemptStarted and AttemptFinished entries (ERROR with the status on failure) to the project's cloudscheduler.googleapis.com/executions log on the cloud_scheduler_job resource, and Job.status carries the canonical code of the last attempt (empty on success). The local history view returns at most the newest 100 attempts of a job. Every execution is kept by default; the cloudscheduler setting executions_keep_per_job (default 0) limits it.",
         "A seed creates the jobs it declares and reports an invalid job by name. Jobs are not included in GET /export or project checkpoints.",
-        "Request bodies over 4 MiB, including jobs:preview, answer 413."
+        "Request bodies over 4 MiB, including jobs:preview, answer 413. A storage failure answers UNAVAILABLE (HTTP 503) so clients retry; the driver's message is logged, not returned. PauseJob needs an ENABLED job and ResumeJob a PAUSED one (FAILED_PRECONDITION otherwise); ResumeJob also re-enables a job LocalCloud disabled because it could not be scheduled."
       ],
       "evidence": [
         "../localcloud-go/pkg/config/localcloud.defaults.yaml",
@@ -1861,11 +1886,12 @@
         "LocalCloud stores function metadata and forwards invocations to a target you run; it never builds source or starts, stops or supervises a function process. serviceConfig.uri names the target (default: the LOCALCLOUD_FUNCTION_<ID>_ENDPOINT environment value of the gateway, else http://localhost:8081), and serviceConfig.service naming a LocalCloud Cloud Run service forwards to that service. GenerateUploadUrl and GenerateDownloadUrl return placeholder URLs; nothing is uploaded or built.",
         "Triggers: HTTP; Pub/Sub google.cloud.pubsub.topic.v1.messagePublished on a topic of the function's project; and Firestore google.cloud.firestore.document.v1.created, updated, deleted and written with database, namespace ((default) only) and document filters, including match-path-pattern. Firestore events come from the LocalCloud Firestore service, which is opt-in. Storage, Audit Log and other Eventarc event types are refused with INVALID_ARGUMENT (400) and create no function or subscription.",
         "Firestore events are sent as binary-mode CloudEvents (ce-* headers) with JSON data holding value, oldValue and updateMask, not the application/protobuf payload Google sends, so a handler that decodes protobuf event data needs a JSON path locally. They reach only a loopback target or a registered Cloud Run service. With retryPolicy RETRY_POLICY_RETRY a failed delivery retries with backoff from 10 to 600 seconds for 24 hours; otherwise, and after that window, it stays listed at GET /functions/firestore/deliveries for a manual POST /functions/firestore/deliveries/retry. Handlers must tolerate duplicate event IDs.",
-        "Functions are invoked with POST on their url, http://localhost:{gateway port}/functions/trigger/{project}/{location}/{function}, and the call is forwarded to the target as a POST with the body. The caller's Authorization header reaches the target unchanged and X-Serverless-Authorization without its signature; cookies and LocalCloud caller headers are not forwarded. Open and permissive modes forward every call. Strict mode requires a LocalCloud ID token (X-Serverless-Authorization, else Authorization) whose audience is the function URL, serviceConfig.uri or the Cloud Run service URL (401 otherwise) and cloudfunctions.functions.invoke on the function (403; roles/cloudfunctions.invoker grants it). gcp-live answers 503.",
-        "A Pub/Sub trigger creates a managed push subscription that pushes an ID token for eventTrigger.serviceAccountEmail with the function URL as audience. With no serviceAccountEmail it pushes without a token, which strict mode refuses, and no iam.serviceAccounts.actAs check is made for the trigger account. Deleting and recreating the topic re-attaches the trigger.",
-        "serviceConfig.uri must be an http or https URL without credentials. A target on the gateway's port or the LocalCloud listener range 5380 to 5410, or on an unspecified, multicast or link-local address (metadata servers included), is refused with INVALID_ARGUMENT at create and update and again at connection time, redirects included. Relayed responses are capped at 32 MiB.",
+        "Functions are invoked on their url, http://localhost:{gateway port}/functions/trigger/{project}/{location}/{function}, with any HTTP method; the call is forwarded to the target with its method, body, query string and any path after the function name, and runs for serviceConfig.timeoutSeconds (60 seconds by default; 504 after it). The caller's Authorization header reaches the target unchanged and X-Serverless-Authorization without its signature; cookies and LocalCloud caller headers are not forwarded. Open and permissive modes forward every call. Strict mode requires a LocalCloud ID token (X-Serverless-Authorization, else Authorization) whose audience is the function URL, serviceConfig.uri or the Cloud Run service URL (401 otherwise) and cloudfunctions.functions.invoke on the function (403; roles/cloudfunctions.invoker grants it). gcp-live answers 503.",
+        "A Pub/Sub trigger creates a managed push subscription that pushes an ID token for eventTrigger.serviceAccountEmail with the function URL as audience. Each push reaches the function as Eventarc's binary-mode CloudEvent: ce-specversion 1.0, ce-id (the message ID), ce-source //pubsub.googleapis.com/{topic}, ce-type google.cloud.pubsub.topic.v1.messagePublished and ce-time, with {message, subscription} as the JSON data. A delivery the function fails is acknowledged unless retryPolicy is RETRY_POLICY_RETRY; then Pub/Sub redelivers it with the subscription's retry policy, which is exponential backoff from 10 to 600 seconds as on Eventarc's subscription, for as long as the subscription keeps the message. With no serviceAccountEmail it pushes without a token, which strict mode refuses, and no iam.serviceAccounts.actAs check is made for the trigger account. Deleting and recreating the topic re-attaches the trigger.",
+        "serviceConfig.uri must be an http or https URL without credentials. A target on the gateway's port or the LocalCloud listener range 5380 to 5410, or on an unspecified, multicast or metadata-server address, or on a port LocalCloud's engines and process supervisor listen on inside the container, is refused with INVALID_ARGUMENT at create and update and again at connection time, redirects included. Invocations use proxy environment variables, and a proxied invocation has its URL checked first. Relayed responses are capped at 32 MiB.",
         "serviceConfig.serviceAccountEmail gives the external process no credentials by itself. Register an identity session with POST /identity/sessions and a function field to serve Application Default Credentials for the function's runtime account; readback reports this state in stateMessages (type LocalCloudExternalRuntime).",
         "Create and delete span the function catalog and the managed Pub/Sub subscription and roll back on failure. A delete that fails part-way leaves the function DELETING and answers UNAVAILABLE; retrying completes it, and messages queued for the trigger are kept meanwhile.",
+        "buildConfig.runtime follows Google's runtime support schedule (cloud.google.com/functions/docs/runtime-support), judged on the current date: a runtime is GA until its deprecation date, DEPRECATED until its decommission date and then refused for a new deployment or a runtime change (400 INVALID_ARGUMENT); a preview runtime is BETA. ListRuntimes reports each runtime's stage, deprecationDate and decommissionDate and leaves decommissioned runtimes out. A function stored with a runtime that was later decommissioned still loads and can be updated. The schedule is built in, so a release reflects the schedule of its build date.",
         "Seeds create functions. Functions are not included in GET /export or project checkpoints."
       ],
       "evidence": [
@@ -1937,11 +1963,13 @@
       "status": "partial",
       "limitations": [
         "Each cluster is a PostgreSQL database on the bundled PostgreSQL server on port 5391, the same server that Cloud SQL PostgreSQL instances use. Its database name and the users' login role names are scoped by project, location and cluster and are not reported by the API.",
-        "Instances are records: they report READY and ipAddress 127.0.0.1 and start no separate server. getConnectionInfo returns only the IP address and there is no client certificate service, so AlloyDB connectors and the Auth Proxy cannot connect; connect directly to the PostgreSQL port.",
+        "Instances are records: they report READY, ipAddress 127.0.0.1 and their requested instanceType (PRIMARY, READ_POOL or SECONDARY), and start no separate server; every instance serves the cluster's database. A cluster has one PRIMARY instance: creating a second answers 400 FAILED_PRECONDITION. getConnectionInfo (REST and gRPC) returns only the IP address and there is no client certificate service, so AlloyDB connectors and the Auth Proxy cannot connect; connect directly to the PostgreSQL port.",
+        "Instances, users, databases and backups need a recorded cluster (404 NOT_FOUND otherwise; a backup without clusterName answers 400). clusters.create also creates initialUser (postgres when it names none) with its password, and users keep their userType (ALLOYDB_BUILT_IN or ALLOYDB_IAM_USER); IAM users log in with the role's password, as no IAM database authentication is emulated. clusters.delete refuses a cluster that has instances with 400 FAILED_PRECONDITION unless force is set. A metadata row that cannot be saved fails the request (500) and leaves no change behind.",
         "Cluster, instance and backup IDs must match ^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$ (400 otherwise). A body that is not JSON answers 400 and one over 8 MiB answers 413. Creating an existing cluster, instance, user, database or backup answers 409 ALREADY_EXISTS.",
         "clusters.patch and instances.patch change displayName and labels only. supportedDatabaseFlags.list returns a fixed list (max_connections, shared_buffers), and database flags are not applied.",
-        "clusters.restore and clusters.restoreFromCloudSQL create a new, empty cluster with the requested ID: the backup or Cloud SQL source is not read and no instances or data are restored. Backups store records only. Cluster export and import and instance restart return a done operation without doing work; other cluster collection verbs answer 404.",
-        "Each user gets a scoped PostgreSQL login role carrying its password. databaseRoles are recorded but not granted, so a user has PostgreSQL's default privileges on the cluster database.",
+        "clusters.restore and clusters.restoreFromCloudSQL create a new, empty cluster with the requested ID: the backup or Cloud SQL source is not read and no instances or data are restored. Backups store records only. Cluster export and import and instance restart return a done operation without doing work; other cluster collection, cluster and instance verbs answer 404 NOT_FOUND.",
+        "Each user gets a scoped PostgreSQL login role carrying its password. databaseRoles are recorded but not granted, so a user has PostgreSQL's default privileges on the cluster database. A cluster's databases accept connections only from the cluster's users and its owner role.",
+        "The Console's AlloyDB browser, SQL Editor, table and row forms and seeds, and the MCP query tool, run as the cluster's owner role, which owns the cluster's tables and has no superuser privilege, so server file functions such as pg_read_file are denied.",
         "Every operation is returned done. Operations are kept in memory, the newest 1000 (alloydb.operation_retention_hours adds an age limit), and are gone after a restart.",
         "Project exports and checkpoints do not include AlloyDB; a seed can create clusters.",
         "Secondary clusters, switchover, failover, fault injection, upgrades, read pools, replication and AlloyDB engine features such as the columnar engine are not emulated."
@@ -2103,8 +2131,8 @@
       "status": "partial",
       "limitations": [
         "The IAM mode is the cloudiam.mode setting: open (the default) allows every call, permissive allows every call and logs the decision, strict enforces local policy, and gcp-live fails closed. A mode change applies when Cloud IAM restarts; an unknown mode stops the gateway at startup.",
-        "Strict mode is a development mode, not a security boundary. A LocalCloud-signed token decides the caller on its own; a request with no credential is named by the X-LocalCloud-User header, which any client can set. An unsigned bearer string or a forged token-shaped value names no caller and is refused (401 or 403), and it never falls back to the header. A request with no token and no header is anonymous and refused.",
-        "In strict mode the stored allow policies decide Cloud IAM's own resources (service accounts, keys, credentials, roles, workload identity), Cloud KMS with Autokey and EKM, Cloud Storage buckets and objects, Cloud Tasks, Workflows actAs, long-running operations, and the policy methods of Secret Manager and Resource Manager. Other services' data calls are decided by the cloudiam.policy_file document, which maps identities to path prefixes: with no file, or a file without bindings, every identified caller is admitted; a file that cannot be read or parsed refuses identified callers until it loads. The admin and Console plane is exempt.",
+        "Strict mode is a development mode, not a security boundary. A LocalCloud-signed token decides the caller on its own, and so does a self-signed JWT made from a LocalCloud key file (RS256 with an active key of the account, iss and sub the account, at most an hour long, with a https://SERVICE.googleapis.com/ audience or a scope claim), which Go and Python client libraries send by default; a request with no credential is named by the X-LocalCloud-User header, which any client can set. An unsigned bearer string or a forged token-shaped value names no caller and is refused (401 or 403), and it never falls back to the header. A request with no token and no header is anonymous and refused.",
+        "In strict mode the stored allow policies decide Cloud IAM's own resources (service accounts, keys, credentials, roles, workload identity), Cloud KMS with Autokey and EKM, Cloud Storage buckets and objects, Cloud Tasks, Workflows actAs, long-running operations, and the policy methods of Secret Manager and Resource Manager. On Cloud IAM's service account, key, credential, role and workload identity routes a request that identifies no caller is refused with 401 UNAUTHENTICATED (CREDENTIALS_MISSING), as Google does, and an identified caller without the permission with 403. Other services' data calls are decided by the cloudiam.policy_file document, which maps identities to path prefixes: with no file, or a file without bindings, every identified caller is admitted; a file that cannot be read or parsed refuses identified callers until it loads. The admin and Console plane is exempt.",
         "gcp-live never contacts Google. It refuses bearer tokens on routed paths, and the IAM policy, token minting and session routes fail closed, so it cannot be used for real Google delegation.",
         "Conditions support request.time, resource.name, resource.type and resource.service with logical and comparison operators, startsWith, endsWith, timestamp and the exists and all macros; other CEL functions are refused when the policy is set. Policies inherit from a resource to its project. Organization and folder ancestry, deny policies, policy history, Policy Troubleshooter and recommendations are not served.",
         "A project created in strict mode has no binding for its creator, unlike Google Cloud. Grant a project role such as roles/resourcemanager.projectIamAdmin or roles/owner before reading or changing its policy.",
@@ -2131,7 +2159,7 @@
           "label": "getIamPolicy/setIamPolicy/testIamPermissions",
           "status": "partial",
           "limitations": [
-            "Allow policies are stored per resource with etags and version 3 conditions, through REST and gRPC, and are inherited from a resource to its project. A policy with an unknown field (for example a misspelled condition key) is 400 INVALID_ARGUMENT, and an expired conditional binding no longer grants. In strict and gcp-live, setIamPolicy and getIamPolicy need the resource's IAM permission for the verified caller. testIamPermissions in open and permissive returns the requested permissions unchanged; in strict it returns those the caller holds through the stored policies. iamPolicies:lintPolicy and iamPolicies:queryAuditableServices are served. Organization and folder policies, deny policies and policy history are not."
+            "Allow policies are stored per resource with etags and version 3 conditions, through REST and gRPC, and are inherited from a resource to its project. A policy with an unknown field (for example a misspelled condition key) or a binding to a custom role that does not exist is 400 INVALID_ARGUMENT, and an expired conditional binding no longer grants. A role name that is not roles/{id} with dot-separated segments, projects/{project}/roles/{id} or organizations/{org}/roles/{id} is 400. A well-formed predefined role name is not checked against a catalogue, because the local one holds only part of Google's, so a misspelled predefined role is accepted. In strict and gcp-live, setIamPolicy and getIamPolicy need the resource's IAM permission for the verified caller. testIamPermissions in open and permissive returns the requested permissions unchanged; in strict it returns those the caller holds through the stored policies. iamPolicies:lintPolicy and iamPolicies:queryAuditableServices are served over REST and gRPC. Organization and folder policies, deny policies and policy history are not."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2142,7 +2170,7 @@
           "label": "roles.create/patch/delete/queryGrantableRoles",
           "status": "partial",
           "limitations": [
-            "Project custom roles support create, get, list, patch, delete and undelete over REST and gRPC, persist across restarts and are cleared by a project reset; predefined roles are read-only (400 on change), and POST /v1/roles without a project is 404. queryGrantableRoles returns every predefined role plus the project's custom roles, not only the roles grantable on the named resource."
+            "Project custom roles support create, get, list, patch, delete and undelete over REST and gRPC, persist across restarts and are cleared by a project reset; predefined roles are read-only (400 on change), and POST /v1/roles without a project is 404. Role IDs (3 to 64 letters, digits, underscores or periods), titles (100 characters) and descriptions (256 bytes) are checked; a role keeps its stage (ALPHA by default) and carries an etag that patch, delete and undelete check when sent (409 ABORTED on a mismatch); patch applies its updateMask; list honours showDeleted and the BASIC view (no permissions) unless view=FULL. Included permissions are not checked against a catalogue. queryGrantableRoles (REST and gRPC, BASIC or FULL view) returns every predefined role plus the project's custom roles, not only the roles grantable on the named resource."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2153,7 +2181,7 @@
           "label": "serviceAccounts.patch/keys.enable/keys.disable/queryTestablePermissions",
           "status": "verified",
           "limitations": [
-            "Service accounts support create, get, list, patch, delete, undelete, enable and disable over REST and gRPC; account IDs follow Google's rule (6 to 30 characters, lowercase letters, digits and hyphens, starting with a letter). Keys support create (a key file whose token_uri names the gateway port), upload, get, list (with the keyTypes filter), delete, enable and disable; undeleting an account restores only the keys its deletion removed. Lookups stay inside the named project, so a cross-project request is 404. In strict mode each method needs the iam.serviceAccounts.* or iam.serviceAccountKeys.* permission Google names for it, on the account or its project; a caller without it gets 403 PERMISSION_DENIED, also for a missing account. queryTestablePermissions lists every permission the local catalogue knows, not only those that apply to the named resource."
+            "Service accounts support create, get, list, patch (the serviceAccount and updateMask body), delete, undelete, enable and disable over REST and gRPC, and getIamPolicy, setIamPolicy and testIamPermissions over gRPC as over REST; account IDs follow Google's rule (6 to 30 characters, lowercase letters, digits and hyphens, starting with a letter). Keys support create (a key file whose token_uri names the gateway port), upload (an RSA public key in a PEM X.509 certificate, base64-encoded on REST; anything else is 400 INVALID_ARGUMENT, and the key is valid for the certificate's validity period), get (publicKeyType TYPE_X509_PEM_FILE returns the certificate; TYPE_RAW_PUBLIC_KEY returns no key data, because Google does not document that format), list (with the keyTypes filter), delete, enable and disable over REST and gRPC; an uploaded key reports keyOrigin USER_PROVIDED and every other key GOOGLE_PROVIDED. Undeleting an account restores only the keys its deletion removed, never a key of an earlier account with the same ID. Lookups stay inside the named project, so a cross-project request is 404. In strict mode each method needs the iam.serviceAccounts.* or iam.serviceAccountKeys.* permission Google names for it, on the account or its project; a caller without it gets 403 PERMISSION_DENIED, also for a missing account. queryTestablePermissions (REST and gRPC) lists every permission the local catalogue knows, not only those that apply to the named resource."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2164,7 +2192,7 @@
           "label": "iamcredentials projects.serviceAccounts.generateAccessToken/generateIdToken/signBlob/signJwt (REST and gRPC)",
           "status": "partial",
           "limitations": [
-            "Mints locally signed access and ID tokens and signs blobs and JWTs for a service account over REST (projects/-/serviceAccounts/{account}) and gRPC; IAM v1 signBlob (bytesToSign) and signJwt on a named project are served on the same paths. Token lifetimes come from server.identity.access_token_lifetime_seconds and id_token_lifetime_seconds (3600 s by default); requested lifetime, scope, delegates and includeEmail are not applied. generateIdToken needs an audience (400 INVALID_ARGUMENT otherwise), a disabled account is 400 FAILED_PRECONDITION and a missing one is 404. Signing uses one SYSTEM_MANAGED key per account, created on first use and published at /service_accounts/v1/metadata/x509/{email} and /service_accounts/v1/metadata/jwk/{email}. In strict mode each method needs iam.serviceAccounts.getAccessToken, getOpenIdToken, signBlob or signJwt on the account; gcp-live refuses minting. The OAuth JWT-bearer grant at /oauth2/token accepts assertions signed with a registered account key."
+            "Mints locally signed access and ID tokens and signs blobs and JWTs for a service account over REST (projects/-/serviceAccounts/{account}) and gRPC; IAM v1 signBlob (bytesToSign) and signJwt on a named project are served on the same paths, and the deprecated IAM admin gRPC SignBlob and SignJwt sign the same way. Token lifetimes come from server.identity.access_token_lifetime_seconds and id_token_lifetime_seconds (3600 s by default); requested lifetime, scope, delegates and includeEmail are not applied. generateIdToken needs an audience (400 INVALID_ARGUMENT otherwise); signJwt adds an exp an hour ahead when the claims have none and refuses an exp in the past or more than 12 hours ahead; a disabled account is 400 FAILED_PRECONDITION and a missing one is 404. Signing uses one SYSTEM_MANAGED key per account, created on first use and published at /service_accounts/v1/metadata/x509/{email} and /service_accounts/v1/metadata/jwk/{email}. In strict mode each method needs iam.serviceAccounts.getAccessToken, getOpenIdToken, signBlob or signJwt on the account; gcp-live refuses minting. The OAuth JWT-bearer grant at /oauth2/token accepts assertions signed with a registered account key."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2212,10 +2240,11 @@
       },
       "status": "partial",
       "limitations": [
-        "Projects only: organizations, folders, moves, liens, tag bindings and full ancestry are not modelled. Every project reports an organization parent with ID 0, and list and search return every project without filtering.",
+        "Projects only: organizations, folders, moves, liens, tag bindings and full ancestry are not modelled. Every project reports an organization parent with ID 0. v3 search (REST and gRPC) and the v1 list filter apply terms on id, displayName (name), state, number, parent and labels.KEY, with a trailing * for a prefix; other fields are refused with 400, and v3 list returns every project.",
         "Creating a project whose ID exists returns the existing project in a completed operation instead of ALREADY_EXISTS. Project IDs are not checked against Google's project ID rule by this API; the admin routes refuse IDs outside the local pattern.",
         "Deleting a project is immediate: it resets every service's data for that project and removes the record, with no DELETE_REQUESTED state and no undelete. The configured default project cannot be deleted (403), and an unknown project is 404.",
-        "Requests the gateway serves register an unrecorded, well-formed project ID on first use when server.auto_provision_projects is true (the default), in every IAM mode once the request is authorized; only a project marker at the start of the path or after an API version counts."
+        "server.unknown_project decides a request, once authorized, that names a well-formed project ID with no record: provision (the default) registers the project on first use, allow serves the request without registering it, and reject answers as Google answers a project that does not exist or that the caller cannot see, 403 PERMISSION_DENIED \"Permission denied on resource project ID.\" with ErrorInfo reason CONSUMER_INVALID (gRPC PERMISSION_DENIED with the same details). server.auto_provision_projects: false is the older spelling of allow. Only a project marker at the start of the path or after an API version counts, beside the project query parameter and project headers. Resource Manager's own routes, calls from inside the gateway and Firestore REST requests are never refused; projects created through Resource Manager, the Console, the admin API or MCP are recorded, and in reject mode a seed records the projects it writes to.",
+        "A known project number in a resource name (projects/123456789012/...) is read as that project's ID: in the project marker of a REST path, and in the name, parent, resource, topic, subscription and project fields of gRPC requests the gateway serves itself, before IAM, provisioning and the service see the request. Firestore requests and gRPC calls to the Spanner, Bigtable and BigQuery Storage engines carry a number through unchanged. An all-digit project ID is never registered, since Google refuses one."
       ],
       "evidence": [
         "../localcloud-go/pkg/config/localcloud.defaults.yaml",
@@ -2275,7 +2304,7 @@
       "limitations": [
         "Each served API maps to one gateway service switch shared by every project: disabling pubsub.googleapis.com in one project turns Pub/Sub off for all projects until it is enabled again, and the change persists across restarts.",
         "Disabling iam.googleapis.com, cloudresourcemanager.googleapis.com, serviceusage.googleapis.com or another always-on API completes as a no-op and the API stays ENABLED. A Google-shaped API name the gateway does not serve reports ENABLED and enable or disable succeeds without effect, so a misspelled name of that shape also reports ENABLED; a name that is not shaped like a Google API is NOT_FOUND.",
-        "services.list returns every API name the gateway serves or always reports, with its state; filter and paging parameters are not applied.",
+        "REST services.list returns every API name the gateway serves or always reports, with its state, in one page (gRPC ListServices pages it: 50 by default, at most 200); filter=state:ENABLED and state:DISABLED are applied and any other filter is 400 INVALID_ARGUMENT.",
         "Consumer quota metrics return an empty list; quotas, quota overrides, billing and project entitlements are not modelled."
       ],
       "evidence": [
@@ -2298,7 +2327,7 @@
           "label": "services.enable/disable/list",
           "status": "partial",
           "limitations": [
-            "services.get, list, batchGet, enable, disable and batchEnable report and change the gateway's own service state; a disabled service refuses its API calls until it is enabled again. Cloud SQL resolves as sqladmin (sql is accepted too). Enable, disable and batchEnable return completed operations, readable at /v1/operations/su-*; a batch that fails part way names the services it enabled. The switch is gateway-wide, not per project."
+            "services.get, list, batchGet, enable, disable and batchEnable report and change the gateway's own service state; a disabled service refuses its API calls until it is enabled again. Cloud SQL resolves as sqladmin (sql is accepted too). Enable, disable and batchEnable return completed operations, readable at /v1/operations/su-*; a batch that fails part way names the services it enabled. The switch is gateway-wide, not per project. The same methods are served over gRPC (google.api.serviceusage.v1.ServiceUsage) on the gateway port from the same implementation; their operations come back done with typed responses."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2335,7 +2364,7 @@
       "status": "partial",
       "limitations": [
         "Billing is metadata only: there are no prices, charges or cost accumulation, budget thresholds never fire, no notifications or Pub/Sub messages are sent, and billing export is not simulated.",
-        "There is one local billing account. billingAccounts.list and get return it, any other account is 404, and billingAccounts.projects.list returns an empty list.",
+        "There is one local billing account. billingAccounts.list and get return it, any other account is 404, and billingAccounts.projects.list lists the projects linked to the local account, including known projects that were never linked. Creating, updating or moving billing accounts and billing-account IAM policies are not served (UNIMPLEMENTED on gRPC).",
         "Budgets keep displayName, amount, thresholdRules and an owning project taken from the first budgetFilter project; other budget fields such as notificationsRule and the rest of budgetFilter are not stored."
       ],
       "evidence": [
@@ -2369,7 +2398,7 @@
           "label": "projects.getBillingInfo/updateBillingInfo",
           "status": "verified",
           "limitations": [
-            "PUT /v1/projects/{project}/billingInfo stores the project's billing account and GET reads it back. An empty billingAccountName unlinks the project and reports billingEnabled false; a name that is not billingAccounts/{id} or a body that is not JSON is 400. The named account need not exist locally."
+            "PUT /v1/projects/{project}/billingInfo stores the project's billing account and GET reads it back. An empty billingAccountName unlinks the project and reports billingEnabled false; a name that is not billingAccounts/{id} or a body that is not JSON is 400. The named account need not exist locally. The same reads and links are served over gRPC (google.cloud.billing.v1.CloudBilling: GetBillingAccount, ListBillingAccounts, GetProjectBillingInfo, UpdateProjectBillingInfo, ListProjectBillingInfo) on the gateway port from the same implementation."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2405,10 +2434,11 @@
       },
       "status": "partial",
       "limitations": [
-        "Served over gRPC: WriteLogEntries, ListLogEntries, ListLogs, DeleteLog, sinks (create, get, list, update, delete) and logs-based metrics (create, get, list, update, delete). Served over REST: entries:write, entries:list and projects/{project}/sinks create, get, list and delete. REST sink updates, REST logs-based metrics and REST logs routes are not served (404), so clients that manage sinks or metrics over REST, such as gcloud and Terraform, need the gRPC client libraries instead.",
+        "Served over gRPC and REST v2: WriteLogEntries, ListLogEntries, ListLogs, DeleteLog, sinks (create, get, list, update, patch, delete) and logs-based metrics (create, get, list, update, delete), for projects/{project} parents. REST errors carry the canonical status name (INVALID_ARGUMENT, NOT_FOUND, ...).",
         "Exclusions, log buckets and views, TailLogEntries and the other ConfigServiceV2 RPCs answer UNIMPLEMENTED.",
-        "entries:list and ListLogEntries need resourceNames naming at least one project (INVALID_ARGUMENT / 400 otherwise). The filter supports AND, OR, NOT, a leading minus and parentheses over logName, severity, resource.type, resource.labels.KEY, labels.KEY, textPayload, insertId, trace, spanId, timestamp, jsonPayload.PATH and protoPayload.PATH, plus free-text terms. Ordering comparisons on strings, httpRequest and operation fields, regular expressions and functions are refused with INVALID_ARGUMENT (400); a filter is never applied in part. Filters are limited to 16 KiB and 100 nesting levels.",
-        "Sinks store every LogSink field and reads return them, but no entry is delivered to any destination; disabled and exclusions change nothing. Sink IDs are 1 to 100 letters, digits, underscores, hyphens or periods. A logs-based metric is a stored definition: no metric values or Cloud Monitoring time series are derived from log entries.",
+        "entries:list and ListLogEntries need resourceNames naming at least one project (INVALID_ARGUMENT / 400 otherwise). The filter supports AND, OR, NOT, a leading minus and parentheses over logName, severity, resource.type, resource.labels.KEY, labels.KEY, textPayload, insertId, trace, spanId, timestamp, jsonPayload.PATH and protoPayload.PATH (a path segment may be quoted, as in labels.\"k8s-pod/app\"), log_id(\"LOG_ID\"), plus global terms that match any field ignoring case. Ordering comparisons on strings, httpRequest and operation fields, regular expressions and other functions are refused with INVALID_ARGUMENT (400); a filter is never applied in part. Filters are limited to 16 KiB and 100 nesting levels.",
+        "Sinks store every LogSink field and reads return them. A sink whose destination is a Pub/Sub topic publishes each entry written afterwards that its filter matches and its enabled exclusions do not, as LogEntry JSON with the logging.googleapis.com/timestamp attribute, unless the sink is disabled; a delivery failure is recorded as a LocalCloud runtime diagnostic. Cloud Storage, BigQuery and log bucket sinks deliver nothing. Sink IDs are 1 to 100 letters, digits, underscores, hyphens or periods, and a destination must be a Cloud Storage bucket, BigQuery dataset, Pub/Sub topic or log bucket (INVALID_ARGUMENT otherwise). An enabled counter logs-based metric counts the entries written afterwards that match its filter into the Cloud Monitoring DELTA INT64 series logging.googleapis.com/user/NAME, labelled by its EXTRACT and REGEXP_EXTRACT label extractors, on the entry's monitored resource. Distribution metrics (a value extractor) and bucket-scoped metrics are stored definitions that produce no series.",
+        "Admin Activity audit logs: successful and failed administrative writes made through the gateway, over gRPC and REST, to Pub/Sub, Secret Manager, Cloud KMS, Cloud Tasks, Cloud Scheduler, Workflows, Cloud Logging configuration, Cloud Monitoring configuration and IAM service accounts, write an AuditLog entry to projects/PROJECT/logs/cloudaudit.googleapis.com%2Factivity, on the audited_resource monitored resource, with the caller as principalEmail. Which methods count as Admin Activity follows Google's per-service audit documentation. Data Access audit logs are not written, and Cloud Storage, Resource Manager and the other services write no audit entries.",
         "Retention defaults to forever (application_retention_days and runtime_retention_days 0). Size budgets default to 512 MiB for application logs and 128 MiB for LocalCloud runtime logs; past a budget the oldest entries are removed from memory and from PostgreSQL, and 0 sets no budget. Set application_retention_days to 30 to match the _Default bucket.",
         "REST bodies are limited to 1 MiB (10 MiB for entries:write) and answer 413 beyond that. LocalCloud runtime diagnostics are kept under their own scope and do not appear in project listings."
       ],
@@ -2432,7 +2462,7 @@
           "label": "write log entries and list/filter entries",
           "status": "partial",
           "limitations": [
-            "Entries keep their text, JSON or proto payload (a protoPayload of an unknown type is kept as its type URL and bytes), resource, labels, operation, httpRequest, sourceLocation, split, trace, spanId, traceSampled and nanosecond timestamp, and read back over gRPC and REST. An entry needs a log name. Listings apply the parsed filter, orderBy timestamp asc or desc, pageSize (100 by default) and page tokens; an unknown page token is INVALID_ARGUMENT."
+            "Entries keep their text, JSON or proto payload (a protoPayload of an unknown type is kept as its type URL and bytes), resource, labels, operation, httpRequest, sourceLocation, split, trace, spanId, traceSampled and nanosecond timestamp, and read back over gRPC and REST with a receiveTimestamp. An entry needs a valid log name (projects/P/logs/LOG_ID, URL-encoded). An entry written without an insertId gets one; an entry with the project, timestamp and insertId of a stored entry is a duplicate and is not stored again. dryRun stores nothing; without partialSuccess one invalid entry refuses the write, with it the valid entries are written, and both answer INVALID_ARGUMENT with WriteLogEntriesPartialErrors. Listings apply the parsed filter, orderBy timestamp asc or desc, pageSize (100 by default) and page tokens; an unknown page token is INVALID_ARGUMENT."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2443,7 +2473,7 @@
           "label": "logs-based metric create/get/list/update/delete (MetricsServiceV2 gRPC and REST)",
           "status": "partial",
           "limitations": [
-            "Served over gRPC only; the REST metrics routes are not served. Definitions are stored per project with every field and returned as written; an update replaces the definition and needs a filter. No metric values are derived from log entries."
+            "Served over gRPC and REST. Definitions are stored per project with every field and returned as written, named by their metric ID (which may hold slashes, URL-encoded in the resource name); create and update need a filter. An enabled counter metric adds the entries written afterwards that match its filter to the DELTA INT64 series logging.googleapis.com/user/NAME in Cloud Monitoring, one point per series per written batch; entries written before the metric existed are not counted. Distribution and bucket-scoped metrics produce no series."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2451,10 +2481,10 @@
         },
         {
           "id": "logging.sinks.config",
-          "label": "sink create/get/list/update/delete (ConfigServiceV2 gRPC; REST create/get/list/delete)",
+          "label": "sink create/get/list/update/delete (ConfigServiceV2 gRPC and REST)",
           "status": "partial",
           "limitations": [
-            "Sinks are stored with every LogSink field plus createTime and updateTime and read back as written. A duplicate ID is ALREADY_EXISTS. gRPC UpdateSink applies the update mask (an empty mask sets destination, filter and includeChildren; an unknown path is INVALID_ARGUMENT). No entries are exported to the destination."
+            "Sinks are stored with every LogSink field plus createTime and updateTime and read back as written, named by their sink ID. A duplicate ID is ALREADY_EXISTS. UpdateSink (gRPC, REST PUT and PATCH) applies the update mask (an empty mask sets destination, filter and includeChildren; an unknown path is INVALID_ARGUMENT). Pub/Sub sinks deliver the entries they take; other destinations receive nothing."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2491,8 +2521,9 @@
       "status": "partial",
       "limitations": [
         "Served over gRPC and REST v3: time series create and list, metric descriptors create, get, list and delete, alert policies and notification channels create, get, list, update and delete. Groups, uptime checks, services and SLOs, snoozes and channel verification are not served.",
-        "ListTimeSeries filters support =, != and : on metric.type, resource.type, metric.labels.KEY and resource.labels.KEY, joined by AND, OR and NOT with parentheses. Other fields and functions such as starts_with and one_of are refused with INVALID_ARGUMENT (400). An aligner or reducer other than NONE, groupByFields or orderBy is refused with UNIMPLEMENTED (501); points are returned raw.",
-        "Alert policies are not evaluated and notification channels send nothing. Alert policy and channel list filters and orderBy are ignored. REST PATCH on an alert policy merges the body fields and ignores updateMask; gRPC updates apply the mask.",
+        "ListTimeSeries filters support =, != and : on metric.type, resource.type, metric.labels.KEY and resource.labels.KEY, joined by AND, OR and NOT with parentheses. Other fields and functions such as starts_with and one_of are refused with INVALID_ARGUMENT (400). Aggregation takes the aligners ALIGN_NONE, DELTA, RATE, MEAN, SUM, MAX, MIN and COUNT with an alignmentPeriod of at least 60s, and the reducers REDUCE_NONE, SUM, MEAN, MAX, MIN and COUNT with groupByFields over metric.labels.KEY, resource.labels.KEY, metric.type and resource.type. A reducer needs an aligner, groupByFields need a reducer, ALIGN_DELTA and ALIGN_RATE need a DELTA or CUMULATIVE metric, and ALIGN_SUM refuses a CUMULATIVE metric (INVALID_ARGUMENT / 400). Other aligners and reducers and orderBy are INVALID_ARGUMENT (400), and a secondary aggregation is UNIMPLEMENTED (501).",
+        "System metrics: pubsub.googleapis.com/subscription/num_undelivered_messages and oldest_unacked_message_age are answered for every subscription, on the pubsub_subscription resource, as one GAUGE point sampled when ListTimeSeries runs; no history is kept. Other Google system metrics have no series.",
+        "Alert policies are not evaluated and notification channels send nothing. Alert policy list filters and orderBy, and channel list orderBy, are ignored. A channel list filter is applied: name, type, display_name, description, labels.KEY and user_labels.KEY compared with =, != or : (AND, OR, NOT, parentheses, single or double quotes); Google's other filter forms (functions, ordering comparisons, .size, .empty) are refused with INVALID_ARGUMENT / 400. REST PATCH on an alert policy merges the body fields and ignores updateMask; gRPC updates apply the mask.",
         "A metric descriptor get returns the created descriptor, else one derived from the type's written series, else NOT_FOUND, including for built-in metric types with no series.",
         "The Console and /browse/monitoring return the newest 200 points of each of the first 200 matching series by default (limit and seriesLimit, up to 1000 each).",
         "Dashboards, uptime execution and Google's distributed probes run only in Google Cloud."
@@ -2517,7 +2548,7 @@
           "label": "create/list time series and descriptors",
           "status": "partial",
           "limitations": [
-            "Every TypedValue case (bool, int64, double, string, distribution), metricKind, valueType and unit are stored and returned as written, with nanosecond point times; a nanos value outside 0 to 999999999 refuses the whole write. A series is identified by project, metric type and labels, resource type and labels. ListTimeSeries applies the filter, interval, FULL and HEADERS views and page tokens. Descriptors can be created, read, listed and deleted, and a descriptor is derived for each written metric type that has none."
+            "Every TypedValue case (bool, int64, double, string, distribution), metricKind, valueType and unit are stored and returned, with nanosecond point times; a nanos value outside 0 to 999999999 refuses the whole write. CreateTimeSeries checks each series as the API does: at most 200 per request, no repeated series, a metric and resource type, exactly one point with an end time and a value, a valueType that matches the point, a metricKind and valueType that match the metric's descriptor, a GAUGE point whose start time equals its end time, a CUMULATIVE or DELTA point that starts before it ends, a user-defined metric that is not DELTA, and a point newer than the series' latest. Series that pass are written; any failure answers INVALID_ARGUMENT with a CreateTimeSeriesSummary. A series written without metricKind or valueType is a GAUGE of its point's type. A series is identified by project, metric type and labels, resource type and labels. ListTimeSeries applies the filter, interval, FULL and HEADERS views and page tokens. Descriptors can be created, read, listed and deleted, and a descriptor is derived for each written metric type that has none."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2528,7 +2559,7 @@
           "label": "alert policy create/get/list/update/delete (AlertPolicyService gRPC and REST)",
           "status": "partial",
           "limitations": [
-            "Display name (required), conditions, combiner, notification channels, documentation, enabled, user labels, severity and alert strategy are stored and shared by gRPC and REST. Every named notification channel must exist in the project (INVALID_ARGUMENT / 400). Policies are not evaluated."
+            "Display name (required), conditions, combiner, notification channels, documentation, enabled, user labels, severity and alert strategy are stored and shared by gRPC and REST. Every named notification channel must exist in the project (INVALID_ARGUMENT / 400). creationRecord and mutationRecord report when and by whom the policy was created and last changed. Policies are not evaluated."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2539,7 +2570,7 @@
           "label": "notification channel create/get/list/update/delete (NotificationChannelService gRPC and REST)",
           "status": "partial",
           "limitations": [
-            "Channels of any type are stored and read back with their labels and enabled flag. Deleting a channel that a policy names is FAILED_PRECONDITION unless force is set, which also removes it from those policies. No notification is ever sent and verification RPCs are not served."
+            "Channels of any type are stored and read back with their labels and enabled flag. Deleting a channel that a policy names is FAILED_PRECONDITION unless force is set, which also removes it from those policies. List applies the filter (the fields name, type, display_name, description, labels.KEY and user_labels.KEY with =, != and :; other filter forms are INVALID_ARGUMENT) and ignores orderBy. No notification is ever sent and verification RPCs are not served."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2578,13 +2609,14 @@
       },
       "status": "partial",
       "limitations": [
-        "GKE is opt-in. Real clusters need Docker access and the k3d CLI, which the full LocalCloud image includes. Provisioning runs after CreateCluster answers; a k3d failure ends the operation DONE with the k3d output in its statusMessage and leaves the cluster in ERROR until it is deleted.",
+        "GKE is opt-in. Real clusters need Docker access and the k3d CLI, which the full LocalCloud image includes. Provisioning runs after CreateCluster answers. The operation finishes and the cluster turns RUNNING only once the k3s API server is ready and has created the default service account of the default namespace, so a pod can be created as soon as the operation is DONE. A k3d failure, or a cluster that is not ready within 90 seconds, ends the operation DONE with the failure in its statusMessage and leaves the cluster in ERROR until it is deleted.",
         "Without k3d (the lite image) a create still succeeds: the cluster becomes RUNNING with a status message saying it is a simulated cluster with metadata only and no Kubernetes API. Seeded sample clusters are also metadata-only records.",
         "Every cluster is one k3d server node running the pinned k3s image rancher/k3s:v1.32.5-k3s1. initialNodeCount is stored and reported as initialNodeCount and currentNodeCount but is not applied.",
         "The reported Kubernetes version is not the running one: reads return the requested initialClusterVersion (1.28 when none is given) as the master and node version, and GetServerConfig lists 1.28, 1.27 and 1.26, while every cluster serves Kubernetes v1.32.5.",
         "Each cluster's Kubernetes API listens on a loopback port of the Docker host from 5443 to 5465 (the k3d port range); Cluster.endpoint names it. Clients reach it with the kubeconfig k3d writes for the cluster, whose k3d name /browse/gke reports; GKE credentials minted by gcloud are not accepted by k3s.",
         "GKE and AlloyDB share the REST path /v1/projects/{project}/locations/{location}/clusters, which the gateway gives to AlloyDB. Regional GKE REST is served under /container/v1 (GOOGLE_CONTAINER_CUSTOM_ENDPOINT, or CLOUDSDK_API_ENDPOINT_OVERRIDES_CONTAINER=<gateway>/container/); zonal /projects/{project}/zones/{zone}/clusters routes are served under both /v1 and /container/v1. GKE gRPC is unaffected.",
-        "Implemented: CreateCluster, GetCluster, ListClusters, DeleteCluster, GetOperation, ListOperations, CancelOperation and GetServerConfig. UpdateCluster, every node-pool RPC and the other ClusterManager RPCs answer UNIMPLEMENTED over gRPC, and their REST paths are not served (404). GetJSONWebKeys returns a placeholder key.",
+        "Implemented: CreateCluster, GetCluster, ListClusters, DeleteCluster, CreateNodePool, GetNodePool, ListNodePools, DeleteNodePool, UpdateNodePool, SetNodePoolSize, GetOperation, ListOperations, CancelOperation and GetServerConfig. UpdateCluster, the other node-pool RPCs (autoscaling, management, rollback, upgrade completion) and the other ClusterManager RPCs answer UNIMPLEMENTED over gRPC, and their REST paths are not served (404). GetJSONWebKeys returns a placeholder key.",
+        "Node pools are metadata only: they are stored with the cluster and reported in Cluster.nodePools, but adding, deleting, updating or resizing a pool changes no k3d node. UpdateNodePool (PUT nodePools/{pool}, or POST .../update on zonal paths) needs nodeVersion and stores the settings it names on the pool and its config, such as imageType, machineType, labels, tags, taints and locations; the pool keeps reporting the cluster's version, and a setting LocalCloud cannot store answers UNIMPLEMENTED. SetNodePoolSize (:setSize, or /setSize on zonal paths) answers a finished SET_NODE_POOL_SIZE operation and records no size; initialNodeCount keeps its creation value. A cluster created without nodePools reports a default-pool sized by initialNodeCount and configured by nodeConfig. Node pool operations finish DONE at once, and a change is refused (FAILED_PRECONDITION) while the cluster is provisioning or stopping.",
         "Pod workload identity is not implemented: workloadIdentityConfig.workloadPool is validated ({project}.svc.id.goog) and stored, but no admission webhook, metadata relay or token exchange runs inside clusters, so pods get no Application Default Credentials from LocalCloud.",
         "Operations are held in memory: after a restart their names answer NOT_FOUND. A cluster whose provisioning a restart interrupted stays PROVISIONING and can be deleted."
       ],
@@ -2628,9 +2660,9 @@
         {
           "id": "gke.nodepools.runtime",
           "label": "node pools, autoscaling, upgrades",
-          "status": "unsupported",
+          "status": "partial",
           "limitations": [
-            "No node-pool RPC is implemented: every node-pool RPC answers UNIMPLEMENTED over gRPC and the REST nodePools paths are not served. Each cluster has one k3d node."
+            "Node pools are metadata: create, get, list, delete, update and resize change the stored pools only. Autoscaling, management, rollback and upgrade RPCs answer UNIMPLEMENTED. Each cluster has one k3d node."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2740,17 +2772,19 @@
       },
       "status": "partial",
       "limitations": [
-        "Cloud Run is opt-in and needs Docker access. Each revision runs as one always-on Docker container; template scaling, maxInstanceRequestConcurrency, executionEnvironment, serviceAccount, labels, annotations, VPC access and the other Service and template fields LocalCloud does not apply are stored and returned without effect. template.timeout sets the /run/invoke deadline only.",
-        "Applied to the container: image, a single container port (8080 by default), literal env values, command, args, workingDir, resources.limits cpu and memory, startupProbe (tcpSocket or httpGet on the container port) and healthCheckDisabled. The container also gets PORT, K_SERVICE and K_REVISION. A cpu limit below 10m, a memory limit below 6Mi, a malformed quantity or another limits key is INVALID_ARGUMENT.",
+        "The invocation proxy checks the service endpoint on every connection: cloud metadata servers, unspecified and multicast addresses, and the ports LocalCloud's engines and process supervisor listen on inside the container (on loopback or the container's own addresses) are refused. The gateway's port and the service ports, LAN addresses, host.docker.internal, sibling containers and other link-local addresses stay reachable. Proxy environment variables are used, and a proxied request has its URL checked first. See networking-and-tls.md, Outbound calls to user-named targets. A refused endpoint answers 502. The proxy does not follow redirects: the service's 3xx response is returned to the caller.",
+        "Cloud Run is opt-in and needs Docker access. Each revision runs as one always-on Docker container; template scaling, maxInstanceRequestConcurrency, executionEnvironment, labels, annotations, VPC access and the other Service and template fields LocalCloud does not apply are stored and returned without effect. template.timeout sets the /run/invoke deadline only.",
+        "Applied to the container: image, a single container port (8080 by default), literal env values, command, args, workingDir, resources.limits cpu and memory, startupProbe (tcpSocket or httpGet on the container port) and healthCheckDisabled. The container also gets PORT, K_SERVICE, K_REVISION and K_CONFIGURATION, and, unless the template sets them, GOOGLE_CLOUD_PROJECT and CLOUDSDK_CORE_PROJECT, the emulator hosts of Cloud Storage, Pub/Sub, Firestore, Bigtable, Spanner and BigQuery at the gateway's address on the runtime network (host.docker.internal when the gateway runs on the host), and GCE_METADATA_HOST. With server.identity enabled (the default) each revision container gets an identity relay sidecar in its network namespace that serves the metadata server at 127.0.0.1:8081 with tokens for template.serviceAccount (default@{project}.iam.gserviceaccount.com when unset); a revision whose account does not exist or whose relay cannot reach the gateway fails its deployment with FAILED_PRECONDITION. Without identity, GCE_METADATA_HOST names the gateway's own metadata server, which answers in the open and permissive IAM modes only. After a gateway restart the containers it adopts get a new relay. A cpu limit below 10m, a memory limit below 6Mi, a malformed quantity or another limits key is INVALID_ARGUMENT.",
         "Refused with UNIMPLEMENTED (HTTP 501 on REST): volumes and volumeMounts, a second container, dependsOn, livenessProbe, readinessProbe, a probe of another port, a GPU limit, port name h2c, an ingress other than INGRESS_TRAFFIC_ALL, MANUAL scaling or manualInstanceCount, more than one traffic target or one that is not 100 percent to the latest revision, and Secret Manager env references (v2 env[].valueSource). On the Knative v1 API, env[].valueFrom and a non-all ingress annotation are 501 and an unknown spec field or traffic split is 400. A request carrying an etag is ABORTED because LocalCloud issues none.",
         "CreateService needs a serviceId of 1 to 63 lowercase letters, digits or hyphens (INVALID_ARGUMENT otherwise); the name is built from the parent and serviceId and a name in the body is ignored. Revisions are named {service}-{generation}; a template revision name is ignored.",
-        "Implemented: Services create, get, list, update (with update masks) and delete, and Revisions get and list over gRPC. Jobs (CreateJob, RunJob, GetJob, ListJobs, UpdateJob, DeleteJob) answer UNIMPLEMENTED; Executions, Tasks and worker pools are not served. DeleteRevision answers a finished operation and removes nothing. GetIamPolicy, SetIamPolicy and TestIamPermissions on services are stubs that store no policy.",
-        "Over REST, revisions are not served at /v2/projects/{project}/locations/{location}/services/{service}/revisions; use the gRPC Revisions API. The Knative v1 API serves service create, get, list and delete; replace (PUT) and Knative revision routes are not served.",
+        "Implemented: Services create, get, list, update (with update masks) and delete, and Revisions get and list over gRPC. Jobs (CreateJob, RunJob, GetJob, ListJobs, UpdateJob, DeleteJob) answer UNIMPLEMENTED; Executions, Tasks and worker pools are not served. DeleteService answers a finished operation that carries the deleted Service with its deleteTime. DeleteRevision removes nothing: it answers a finished operation that carries the revision, or NOT_FOUND for an unknown one. Service GetIamPolicy and SetIamPolicy, over gRPC and REST, use the shared IAM policy store, and the /run/invoke check reads a service's policy before its project's; TestIamPermissions on services and the IAM methods on jobs are stubs.",
+        "Over REST, revisions are not served at /v2/projects/{project}/locations/{location}/services/{service}/revisions; use the gRPC Revisions API. The Knative v1 API serves service create, replace (PUT, which must name an existing service), get, list and delete, keeping the container's command, args, workingDir, ports, env, resources.limits and startupProbe, and the template's serviceAccountName, timeoutSeconds, containerConcurrency, labels and annotations (autoscaling.knative.dev/minScale and maxScale become template scaling); reads report the Ready condition as True, False (with reason and message) or Unknown from the service's state. Knative revision routes are not served.",
         "Service.uri is http://localhost:{port}, a Docker-assigned port on the host loopback that belongs to the serving revision's container. It changes with every new revision and is empty while no container serves. Calls to the uri reach the container directly, without the gateway's IAM checks.",
-        "The gateway proxy /run/invoke/{location}/{project}/{service} (target path in ?path= or X-Target-Path) relays to the serving container. Request bodies are capped at 32 MiB (413 beyond), management request bodies at 4 MiB. It answers 504 past the revision's timeout (300 s by default, at most 3600 s), 502 when the container does not answer, 503 when no container serves and 404 for an unknown service. The control token and Console cookie are never forwarded.",
+        "The gateway proxy /run/invoke/{location}/{project}/{service}[/{path}] relays to the serving container with the path after the service (or, without one, ?path= or X-Target-Path) and the caller's query string. It adds X-Forwarded-For, X-Forwarded-Proto, Forwarded and the trace context in both X-Cloud-Trace-Context and traceparent, deriving one from the other or starting a new trace. Open and permissive IAM modes forward every call; strict mode needs a LocalCloud ID token (X-Serverless-Authorization, else Authorization) whose audience is the service uri, a custom audience or the /run/invoke URL (401 otherwise) and run.routes.invoke on the service (403; roles/run.invoker grants it, and a call without a token passes only when allUsers holds it); gcp-live answers 503. Request bodies are capped at 32 MiB (413 beyond), management request bodies at 4 MiB. It answers 504 past the revision's timeout (300 s by default, at most 3600 s), 502 when the container does not answer, 503 when no container serves and 404 for an unknown service. The control token and Console cookie are never forwarded.",
         "A revision is READY once its startup probe passes: without a startupProbe a TCP connection to the container port, retried for up to 240 seconds; healthCheckDisabled skips it. A container that exits first fails the revision. A failed first deployment fails its operation and releases the name; a failed update records a FAILED revision, sets the Ready condition to CONDITION_FAILED with reason REVISION_FAILED, and the previous revision keeps serving.",
-        "After a gateway restart a service whose container still runs keeps serving at its uri. Containers are not relaunched: a service whose container is gone or stopped reports STOPPED and must be redeployed, and one whose container Docker cannot report on is UNAVAILABLE and checked again in the background. /browse/cloudrun reports runtimeState.",
+        "After a gateway restart a service whose container still runs keeps serving at its uri. Containers are not relaunched: a service whose container is gone or stopped reports STOPPED and must be redeployed, and one whose container Docker cannot report on is UNAVAILABLE and checked again in the background; when that check finds it running, it serves again with its identity relay and log stream as an adopted container does. /browse/cloudrun reports runtimeState.",
         "Containers carry the runtime's data-volume label; reset, delete and the startup sweep remove only containers of this LocalCloud volume. A delete or reset that cannot reach Docker answers UNAVAILABLE and keeps the service. Containers from builds before the label are never swept and must be removed with docker rm -fv.",
+        "A revision container's stdout and stderr are written to Cloud Logging while the Logging service is on, as logs run.googleapis.com/stdout and run.googleapis.com/stderr of resource cloud_run_revision (labels project_id, location, service_name, revision_name, configuration_name). A line holding a JSON object is a structured log: severity, message, time, logging.googleapis.com/trace, spanId, trace_sampled, labels and insertId are read as Cloud Logging reads them, and an object left with only message is stored as textPayload. Other lines are textPayload with severity DEFAULT. After a gateway restart an adopted container's output is written from the restart on; lines written while no gateway ran are not.",
         "Local domain mappings and revision traffic splitting are not implemented; Google Front End routing, managed TLS and autoscaling run only in Google Cloud."
       ],
       "evidence": [
@@ -2773,7 +2807,7 @@
           "label": "services/revisions",
           "status": "partial",
           "limitations": [
-            "CreateService and UpdateService (gRPC, REST v2 and Knative v1) validate the request, return a long-running operation and deploy one Docker container per revision; poll through google.longrunning.Operations or REST GET /v2/projects/{project}/locations/{location}/operations/{operation}. A duplicate create is ALREADY_EXISTS. An update with an update mask changes only the named fields of the latest accepted spec; without a mask it replaces the service. Service reads report generation, observedGeneration, latestReadyRevision, uri and the Ready terminalCondition; GetRevision and ListRevisions (gRPC) return each revision's containers, scaling and generation. Delete removes the containers before the records and fences a deployment still running. Revision traffic splitting, Revision conditions and reconciling are not reported."
+            "CreateService and UpdateService (gRPC, REST v2 and Knative v1) validate the request, return a long-running operation and deploy one Docker container per revision; poll through google.longrunning.Operations or REST GET /v2/projects/{project}/locations/{location}/operations/{operation}. A duplicate create is ALREADY_EXISTS. An update with an update mask changes only the named fields of the latest accepted spec; without a mask it replaces the service. Service reads report uid, createTime, updateTime, generation, observedGeneration, latestReadyRevision, uri, urls, traffic, trafficStatuses and the Ready terminalCondition; GetRevision and ListRevisions (gRPC) return each revision's uid, createTime, updateTime, containers, scaling, generation, observedGeneration, the template's serviceAccount, timeout, maxInstanceRequestConcurrency, executionEnvironment, labels and annotations, and its Ready condition. Delete removes the containers before the records and fences a deployment still running. Revision traffic splitting, etag and reconciling are not reported."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2836,7 +2870,7 @@
         "Valkey has no password or ACL configured: AUTH strings, ACL policies and token users are stored and returned by the API but not enforced, and the ports accept clients without credentials wherever they are published. Logical database numbers isolate neither Pub/Sub channels nor SELECT, so any client can reach every instance's keys.",
         "CONFIG, DEBUG, MODULE, SHUTDOWN, REPLICAOF and SLAVEOF are disabled on the engine. redisConfigs, tier, memorySizeGb and persistenceMode in instance requests are stored only; engine limits come from the memorystore settings max_memory, max_memory_policy, databases and append_fsync.",
         "At most 16 logical databases can be allocated per LocalCloud data volume, across every project, and a create beyond that fails (409 or 500). A deleted instance's database is retired and never reused, even after a reset, so about 16 create and delete cycles exhaust the pool; a fresh data volume reclaims it.",
-        "The admin API (/v1 and /redis/v1 paths) serves instance create, get, list, patch and delete, upgrade, authString and operations; locations/- lists every location. PATCH changes displayName, labels and redisConfigs, and the maps named by updateMask replace the stored maps; upgrade changes only the recorded redisVersion. Other instance verbs, such as export, import and failover, answer 501 UNIMPLEMENTED. Operations are returned done.",
+        "The admin API (/v1 and /redis/v1 paths) serves instance create, get, list, patch and delete, upgrade, authString and operations; locations/- lists every location. replicaCount and readReplicasMode are checked as the API documents them (BASIC: 0 and no read replicas; STANDARD_HA: 1 without read replicas, 1 to 5 and 2 by default with them; 400 otherwise), stored, and kept across restarts; with read replicas enabled, readEndpoint and readEndpointPort are the instance's own host and port, and no replica nodes run. PATCH changes displayName, labels, redisConfigs, memorySizeGb, replicaCount, authEnabled (turning AUTH on gives the instance its own secret) and persistenceConfig, and the maps named by updateMask replace the stored maps; a change to redisVersion, tier, locationId or transitEncryptionMode answers 400. upgrade changes only the recorded redisVersion. The AUTH secret is read with getAuthString, not from the instance resource, and versions use the API's names (REDIS_7_0 by default). Other instance verbs, such as export, import and failover, answer 501 UNIMPLEMENTED. Operations are returned done.",
         "Cluster resources, backup collections and backups are not emulated. The shared regional and cluster certificate authority endpoints return a placeholder certificate that clients cannot use.",
         "Checkpoints refuse Memorystore (GLOBAL_SERVICE_NOT_CHECKPOINTABLE) and exports have no Memorystore section; a seed can create instances and keys. Deleting an instance flushes its database, and a global reset runs FLUSHALL and fails when Valkey refuses it or does not accept connections within 30 seconds."
       ],
@@ -2871,7 +2905,7 @@
           "label": "Cloud Redis admin API",
           "status": "partial",
           "limitations": [
-            "Instance create, get, list, patch, delete, upgrade, authString and operation reads under /v1 and /redis/v1. PATCH applies displayName, labels and redisConfigs as records; capacity, tier and version changes do not reach the engine, and other instance verbs answer 501. Cluster resources are not implemented."
+            "Instance create, get, list, patch, delete, upgrade, authString and operation reads under /v1 and /redis/v1. PATCH applies displayName, labels, redisConfigs, memorySizeGb, replicaCount, authEnabled and persistenceConfig as records; replicaCount and readReplicasMode are validated and stored; capacity, tier and version changes do not reach the engine, and other instance verbs answer 501. Cluster resources are not implemented."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2907,13 +2941,14 @@
       },
       "status": "partial",
       "limitations": [
+        "The URL of an http.* step or a remote workflow source is checked on every connection, after name resolution and on redirects: cloud metadata servers, unspecified and multicast addresses, and the ports LocalCloud's engines and process supervisor listen on inside the container (on loopback or the container's own addresses) are refused. The gateway's port and the service ports, LAN addresses, host.docker.internal, sibling containers and other link-local addresses stay reachable. Proxy environment variables are used, and a proxied request has its URL checked first. See networking-and-tls.md, Outbound calls to user-named targets. A refused http.* call raises ConnectionFailedError, which http.default_retry retries and a try/except can catch.",
         "Workflow definitions, revisions, executions and step history persist. An execution that was ACTIVE when LocalCloud stopped is not resumed; it fails with InstanceRestart. A QUEUED execution has run no step and runs after the restart from its first step, with the workflow's current source and service account (not necessarily the revision it was created for), once the gateway accepts requests; it fails with InstanceRestart only when its workflow no longer exists.",
-        "A local interpreter implements Workflows syntax and a subset of the standard library and connectors. Workflows are validated at deploy, and a malformed one is refused at create or update (400) with the step named. Conditions in switch, if, and, or, not and retry predicates must be booleans: a number, string or missing field raises TypeError. Equality needs operands of one type, so 1 == \"1\" is false; integer overflow raises ValueError.",
-        "http.* calls raise HttpError for a 400 to 599 answer, with code, headers and body, and ConnectionFailedError, ConnectionError or TimeoutError for transport failures; connector failures carry the same tags, so handlers read e.code and e.body. http.* never follows redirects. Connectors apply none of Google's built-in retry policies, and local long-running operations finish at once, so polling options have no effect.",
+        "A local interpreter implements Workflows syntax and a subset of the standard library and connectors. Workflows are validated at deploy, and a malformed one is refused at create or update (400) with the step named, including a next that names no step of its subworkflow and a call that names neither a subworkflow nor a standard-library or connector module; a function of a known module that LocalCloud does not implement fails when its step runs. Conditions in switch, if, and, or, not and retry predicates must be booleans: a number, string or missing field raises TypeError. Equality needs operands of one type, so 1 == \"1\" is false; + joins two strings or adds two numbers, and arithmetic on a string, boolean or null raises TypeError (convert with string(), int() or double()); integer overflow raises ValueError.",
+        "http.* calls raise HttpError for a 400 to 599 answer, with code, headers and body, and ConnectionFailedError, ConnectionError or TimeoutError for transport failures; connector failures carry the same tags, so handlers read e.code and e.body. http.* never follows redirects, its timeout defaults to 300 seconds and is held to 1800, and a response body is decoded only when its Content-Type is JSON (otherwise it is text). Connectors apply none of Google's built-in retry policies, and local long-running operations finish at once, so polling options have no effect.",
         "Connectors call LocalCloud's own services for these API families: Pub/Sub, Cloud Storage, Firestore, BigQuery, Secret Manager, Cloud Tasks, Cloud Scheduler, Cloud Functions, Cloud Run, Workflows and Workflow Executions, Spanner, Cloud SQL Admin, AlloyDB, Bigtable Admin, Compute Engine, GKE, Dataproc, Logging, Cloud KMS and Vertex AI, each with a limited set of methods.",
         "Limits: 100,000 steps per execution, shared by parallel branches and child workflows; call depth 20, then RecursionError; 2 to 10 branches per parallel step and nesting depth 2; 100 unhandled errors in parallel steps, then an uncatchable ResourceLimitError; values up to 8 MiB and lists or maps up to 10,000 entries (ResourceLimitError); source up to 128 KiB, execution argument up to 32 KiB, HTTP responses up to 2 MiB; sys.sleep up to 31,536,000 seconds.",
         "At most 256 executions run at once and the rest wait QUEUED. Creating an execution beyond 4,096 queued or running answers RESOURCE_EXHAUSTED (HTTP 429).",
-        "sys.get_env reads the workflow's environment variables and GOOGLE_CLOUD_PROJECT_ID, GOOGLE_CLOUD_LOCATION and GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID; any other name returns null, and it takes no default argument. sys.log writes to the local Logging service, up to 1000 entries per execution.",
+        "sys.get_env(name, default) reads the workflow's userEnvVars, then the project's active environment-variable preset, then the built-in GOOGLE_CLOUD_PROJECT_ID, GOOGLE_CLOUD_PROJECT_NUMBER, GOOGLE_CLOUD_LOCATION, GOOGLE_CLOUD_WORKFLOW_ID, GOOGLE_CLOUD_WORKFLOW_REVISION_ID and GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID; any other name returns default, or null. LocalCloud also binds the active preset's values as workflow variables, so a workflow can read or override them locally; the execution argument is bound only to main's parameter and wins over a preset of the same name. sys.log writes to the local Logging service, up to 1000 entries per execution.",
         "events.await_callback returns a map with http_request (body, headers, method, query and url), received_time and type. An endpoint accepts the one http_callback_method (POST by default) and answers 405 to any other; it keeps one request that arrives before the await and answers 429 to another until that one is taken, and after its execution ends it answers 404. The default timeout is 43200 seconds and a timeout raises TimeoutError. Callback requests are not authorized in any IAM mode, and the callback URL names the gateway (http://localhost:5380 by default).",
         "An execution runs as the workflow's serviceAccount, fixed when the execution is created; child executions use the child workflow's account. When serviceAccount is unset, LocalCloud uses default@<project>.iam.gserviceaccount.com, which exists only for the gateway's configured project unless you create it.",
         "http.* auth OIDC and OAuth2 tokens are signed by the LocalCloud issuer as the execution account, for HTTP as well as HTTPS targets. A token that cannot be minted raises AuthError with IDENTITY_UNAVAILABLE and sends nothing; an unknown auth.type raises ValueError. Cloud Storage and Cloud KMS connector calls are authorized as the execution account, Firestore connector calls need its access token (AuthError otherwise), and other connector calls carry its access token when one can be minted.",
@@ -2941,7 +2976,7 @@
           "label": "workflow deploy/list/get/delete",
           "status": "verified",
           "limitations": [
-            "Workflow create, get, list, update (new revision), delete and revision listing over REST and gRPC, returning long-running operations that are answerable after a restart. Definitions are validated at deploy and refused with 400 naming the step. REST bodies over 1 MiB answer 413 and non-JSON writes 415. In strict mode writes need the workflow permission and, for a serviceAccount, iam.serviceAccounts.actAs."
+            "Workflow create, get (including an older revision by revisionId), list, update (updateMask honoured; a new revision only when the source or service account changes, with IDs shaped like 000001-a4d), delete and revision listing over REST and gRPC, returning long-running operations that are answerable after a restart. Definitions are validated at deploy and refused with 400 naming the step. REST bodies over 1 MiB answer 413 and non-JSON writes 415. In strict mode writes need the workflow permission and, for a serviceAccount, iam.serviceAccounts.actAs."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -2989,8 +3024,8 @@
       "status": "unsupported",
       "limitations": [
         "Vertex AI is not a supported LocalCloud service. A default-disabled local facade returns deterministic stub responses for SDK wiring tests.",
-        "The facade serves only POST /v1/projects/{project}/locations/{location}/publishers/google/models/{model}:{verb} with generateContent, streamGenerateContent, embedContent, countTokens and computeTokens; another verb is 404 and a batchPredictionJobs create is 501. There is no gRPC service, no /v1beta1 path and no endpoint, tuned-model, predict or rawPredict route.",
-        "Responses are fixed: generated text repeats the model name and prompt with a short hash, an embedding is 16 values derived from a SHA-256 of the input, and token counts are whitespace-separated word counts. No model backend can be configured. streamGenerateContent returns one JSON array, not server-sent events.",
+        "The facade serves only POST /v1/projects/{project}/locations/{location}/publishers/google/models/{model}:{verb}, and the same path under /v1beta1, with generateContent, streamGenerateContent, embedContent, countTokens and computeTokens; another verb is 404 and a batchPredictionJobs create is 501. There is no gRPC service and no endpoint, tuned-model, predict or rawPredict route.",
+        "Responses are fixed: generated text repeats the model name and prompt with a short hash, an embedding is 16 values derived from a SHA-256 of the input, and token counts are whitespace-separated word counts. No model backend can be configured. streamGenerateContent with alt=sse answers server-sent events, one data line per chunk; without it, one JSON array.",
         "Only text parts of contents (or content) are read; tools, systemInstruction, generationConfig and safetySettings are ignored. A body that is not valid JSON is answered as an empty prompt; bodies over 32 MiB answer 413.",
         "Each call is recorded per project in a request log with bodies cut to 16 KiB. The database keeps every record unless vertexai.request_log_keep_per_project is set; reads return each project's newest 1000."
       ],
@@ -3064,10 +3099,9 @@
       },
       "status": "partial",
       "limitations": [
-        "Only SOFTWARE protection is local. Keys, import jobs and random bytes that ask for HSM, EXTERNAL, EXTERNAL_VPC or single-tenant HSM protection are refused with UNAVAILABLE (503), and LocationMetadata reports no HSM or EKM. Locations list global and us-central1; key rings are accepted under any location ID.",
-        "Automatic rotation and the end of a scheduled destruction do not run locally. rotationPeriod and nextRotationTime are stored and returned, but no new version is created when rotation is due; a destroyed version stays DESTROY_SCHEDULED (unusable and restorable) after its destroyTime passes. Only an import-only key with a zero destroy duration destroys at once.",
+        "Only SOFTWARE protection is local. Keys and import jobs that ask for HSM, EXTERNAL, EXTERNAL_VPC or single-tenant HSM protection are refused with UNAVAILABLE (503), and LocationMetadata reports no HSM or EKM. Locations list global and us-central1; key rings are accepted under any location ID.",
         "Unreadable KMS, EKM or Autokey state is refused, not replaced: every KMS call answers FAILED_PRECONDITION and readiness reports KMS unhealthy with failure_code state_not_loaded until the gateway restarts with state this build reads. There is no in-product reset of a refused state. State written by an earlier preview build is not converted.",
-        "Key material, including imported keys, is stored unencrypted in the data volume and the database. The kms.root_key_file and kms.lifecycle_poll_interval_ms settings are accepted but not read, and root-key rotation changes no stored material.",
+        "Key material, including imported keys, is stored unencrypted in the data volume and the database. The kms.root_key_file setting is accepted but not read, and root-key rotation changes no stored material.",
         "Ciphertext uses a LocalCloud envelope format, so ciphertext produced by Google Cloud KMS does not decrypt locally and local ciphertext does not decrypt in Google Cloud. decrypt accepts only that envelope (INVALID_ARGUMENT otherwise).",
         "Inventory, Autokey and protected-resource search cover project-scoped Secret Manager resources only; organization and folder scopes answer UNAVAILABLE.",
         "Page tokens are signed per process and answer INVALID_ARGUMENT after a restart. Only the newest 1024 key-delete operations stay readable."
@@ -3092,7 +3126,7 @@
           "label": "locations.get/list and generateRandomBytes",
           "status": "verified",
           "limitations": [
-            "locations.list returns global and us-central1 as software namespaces with paging. generateRandomBytes returns 8 to 1024 bytes with a CRC32C field; REST refuses an HSM or EXTERNAL protection level with UNAVAILABLE."
+            "locations.list returns global and us-central1 as software namespaces with paging. generateRandomBytes takes the HSM protection level, the only one Cloud KMS accepts, and returns 8 to 1024 bytes from the host's random source with a CRC32C field; any other level is INVALID_ARGUMENT."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -3103,7 +3137,7 @@
           "label": "key rings, CryptoKeys, CryptoKeyVersions, rotation, and primary-version lifecycle",
           "status": "partial",
           "limitations": [
-            "Key rings, keys and versions support create, get, list (pageSize and pageToken, filters including create_time comparisons, totalSize) and update with update masks over gRPC and REST, with the same validation on both. Purpose and algorithm pairs, IDs, version numbers (32-bit) and destroy durations (24 hours to 120 days; 0 to 120 days for import-only keys) are checked. updatePrimaryVersion and manual rotation by creating a version work. Automatic rotation does not run: rotationPeriod and nextRotationTime are stored only."
+            "Key rings, keys and versions support create, get, list (pageSize and pageToken, filters including create_time comparisons, totalSize) and update with update masks over gRPC and REST, with the same validation on both. Purpose and algorithm pairs, IDs, version numbers (32-bit) and destroy durations (24 hours to 120 days; 0 to 120 days for import-only keys) are checked. REST lists take filter, orderBy and the version view as gRPC does, and REST keys and versions are the gRPC resources in JSON form. Only ENCRYPT_DECRYPT keys have a primary version; updatePrimaryVersion and manual rotation by creating a version work. Automatic rotation runs: when nextRotationTime passes, a new version becomes primary and nextRotationTime advances by rotationPeriod, checked every kms.lifecycle_poll_interval_ms (default 1000). An update mask that names rotationPeriod or nextRotationTime without a value removes the schedule; destroyScheduledDuration is immutable after creation."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -3158,7 +3192,7 @@
           "label": "version create/update, scheduled destruction, restoration, and due-destruction reconciliation",
           "status": "partial",
           "limitations": [
-            "Versions can be created, enabled and disabled, scheduled for destruction and restored while DESTROY_SCHEDULED. A scheduled destruction does not complete on its own: the version stays DESTROY_SCHEDULED and unusable until it is restored. Only an import-only key with a zero destroy duration destroys a version at once."
+            "Versions can be created, enabled and disabled, scheduled for destruction and restored while DESTROY_SCHEDULED. A scheduled destruction completes when destroyTime passes (checked every kms.lifecycle_poll_interval_ms): the key material is removed, the version becomes DESTROYED and reports destroyEventTime. An import-only key with a zero destroy duration destroys a version at once."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -3180,7 +3214,7 @@
           "label": "eligible key/version deletion, retired keys, and operations.get",
           "status": "partial",
           "limitations": [
-            "A version can be deleted once DESTROYED, IMPORT_FAILED or GENERATION_FAILED (imported versions cannot), and a key once it has no versions; key deletion returns a completed operation and a retired resource readable through retiredResources.get and list. Because scheduled destructions do not complete locally, keys with generated versions normally cannot reach a deletable state. A REST DELETE of an empty key ring is a local extension that needs cloudkms.keyRings.delete, which only roles/localcloud.kmsSuperuser grants."
+            "A version can be deleted once DESTROYED, IMPORT_FAILED or GENERATION_FAILED (imported versions cannot), and a key once it has no versions; key deletion returns a completed operation and a retired resource readable through retiredResources.get and list. A REST DELETE of an empty key ring is a local extension that needs cloudkms.keyRings.delete, which only roles/localcloud.kmsSuperuser grants."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -3304,15 +3338,18 @@
         "Instance reads report ipAddresses from settings.ipConfiguration as Cloud SQL assigns them (PRIMARY unless ipv4Enabled is false, PRIVATE when privateNetwork is set), every address 127.0.0.1. IP settings never change where the engines listen, and an instance with activationPolicy NEVER stays RUNNABLE.",
         "New databases are created with the requested charset and collation; a MySQL charset or collation that is not a plain name, or one PostgreSQL refuses, answers 400. PostgreSQL encoding and collation cannot change in place (400); a MySQL database update changes the database defaults, not existing column encodings.",
         "Creating an existing instance, database, user or client certificate common name answers 409, and a clone onto an existing name 409. Names containing '/' or control characters answer 400, and request bodies over 8 MiB answer 413. A failed engine step fails the request and leaves no record. If the stored Cloud SQL state cannot be read at startup, creates answer 503 until a restart.",
-        "When LocalCloud generates its own TLS material, serverCaCert on instances, connectSettings, listServerCas, listServerCertificates and sslCerts.insert describe the CA that signs the certificate PostgreSQL and MySQL present, so a driver can verify the server. With operator-provided certificates they describe the configured certificate, and with no TLS material they carry no certificate. Client certificates from sslCerts.insert and generateEphemeralCert are self-signed development material that the engines neither request nor check; the private key is returned once and never stored.",
+        "When LocalCloud generates its own TLS material, serverCaCert on instances, connectSettings, listServerCas, listServerCertificates and sslCerts.insert describe the CA that signs the certificate PostgreSQL and MySQL present, so a driver can verify the server. With operator-provided certificates they describe the configured certificate, and with no TLS material they carry no certificate. Client certificates from sslCerts.insert are self-signed development material that the engines neither request nor check; the private key is returned once and never stored. generateEphemeralCert and sslCerts.createEphemeral sign the client's public_key (400 without a usable one) with a LocalCloud client CA for one hour and return no key. Nothing listens on Cloud SQL's connector port 3307, so the Cloud SQL language connectors and the Auth Proxy cannot connect; connect drivers directly to the PostgreSQL or MySQL port.",
         "requireSsl and sslMode are stored but not enforced. sslCerts.delete removes the record without revocation, and resetSslConfig, addServerCa, rotateServerCa, addServerCertificate and rotateServerCertificate return a DONE operation without changing any certificate.",
-        "Every Cloud SQL operation is returned already DONE, because the work finishes before the request answers; a failure is the HTTP error of the request itself. The operations list keeps the newest 1000 (cloudsql.operation_retention_hours adds an age limit; 0, the default, sets none), and an operation dropped from the list can still be read by its ID.",
+        "Every Cloud SQL operation is returned already DONE, because the work finishes before the request answers; a failure is the HTTP error of the request itself. The operations list keeps the newest 1000 (cloudsql.operation_retention_hours adds an age limit; 0, the default, sets none), and an operation dropped from the list can still be read by its ID. operations.list lists newest first, takes instance to list one instance's operations, and pages with maxResults and pageToken.",
         "instances.export, instances.import, instances.restoreBackup, promoteReplica, startReplica and stopReplica check that the instance exists and return a DONE operation without moving data. instances.restart restarts the shared MySQL server for a MySQL instance, which affects every MySQL instance, and does nothing for a PostgreSQL instance. Point-in-time restore returns a DONE operation without checking the source or creating a target. preCheckMajorVersionUpgrade returns no messages and getLatestRecoveryTime reports synthetic times.",
         "backupRuns and the Backups API (projects/{project}/backups) store records in PostgreSQL and capture no database contents.",
         "Project exports and checkpoints do not include Cloud SQL, so a checkpoint restore leaves Cloud SQL as it is. A seed can create instances, databases and users and run SQL; each seed statement runs once, as the instance's owner role.",
         "MYSQL_* instances need Docker access: LocalCloud starts the companion (image agentcloud/mysql:8.4) on first use, or at boot with mysql_autostart. Its host ports bind to 127.0.0.1, plus the gateway's LAN address when the gateway is published there; its root password is generated per install and an empty one is refused. A containerised gateway started without the /var/lib/localcloud volume refuses to create MySQL instances. Cloud SQL declares no Docker dependency, so readiness does not report a missing Docker socket.",
         "With mysql_enabled false, MySQL instances cannot be created, and deleting a MySQL-backed instance, database or user, or a reset that must drop MySQL data, answers 500 and keeps every record until MySQL is enabled again.",
-        "Cloud SQL user passwords are kept in plain text in the local metadata database.",
+        "Cloud SQL user passwords are kept in plain text in the local metadata database. Every instance is created with the default user (postgres, or root@% for MYSQL_*): instances.insert sets rootPassword as its password, and an instance created by a seed or the Console gets it with no password until a seed or users.update sets one; a clone copies the source's users instead. users.update changes the password only when the body carries one, and a user's type (BUILT_IN, CLOUD_IAM_USER, ...) is stored and reported; IAM users log in with their recorded password, as no IAM database authentication is emulated.",
+        "An instance with settings.deletionProtectionEnabled true is not deleted (400 protectedInstance) until an update sets it false. Errors carry the canonical status and Cloud SQL's errors[] list with domain and reason (instanceAlreadyExists, instanceDoesNotExist, protectedInstance, ...).",
+        "instances.executeSql takes an optional database, a database of the instance (404 for any other name). Without one, a PostgreSQL statement runs in the instance's own default database, as Cloud SQL runs it in the postgres database, and a MySQL statement runs with no default schema. It runs as the request's user, a user of the instance (404 for any other), or, with no user or with autoIamAuthn, as the instance's owner: a PostgreSQL role or MySQL account with every privilege on the instance's databases and no superuser or global privilege. A PostgreSQL user created without a password runs as the owner role.",
+        "The Console's Cloud SQL Data Explorer and SQL Editor, and the MCP query tool, run as the instance's owner role (PostgreSQL) or owner account (MySQL), not a superuser or root. On MySQL the SQL Editor works within the instance's databases: CREATE DATABASE and reads of the mysql system schema are denied; create databases in the Data Explorer or with the Admin API.",
         "Read replicas, high availability and failover, Private Service Connect, Microsoft Entra ID, SSRS leases, external server sync, blue-green deployments and managed maintenance are not emulated."
       ],
       "evidence": [
@@ -3335,7 +3372,7 @@
           "label": "instances/databases/users",
           "status": "partial",
           "limitations": [
-            "Instance, database and user create, get, list, update and delete through the Cloud SQL Admin REST API (v1 and v1beta4 paths), backed by real databases and login roles on the shared PostgreSQL and MySQL engines. Duplicates answer 409. Instance settings other than the database-flag check are descriptive."
+            "Instance, database and user create, get, list, update and delete through the Cloud SQL Admin REST API (v1 under /sql/v1 or /sqladmin/v1, and /v1 itself on host sqladmin.googleapis.com in transparent mode; v1beta4 under /sql/v1beta4), backed by real databases and login roles on the shared PostgreSQL and MySQL engines. Duplicates answer 409. Instance settings other than the database-flag check and deletionProtectionEnabled are descriptive; settings.settingsVersion grows with each update, and a patch or update that carries an older settingsVersion than the instance's is 412 staleData (Condition does not match.) and changes nothing."
           ],
           "evidence": [
             "../localcloud-go/docs/public-contract/documentation.yaml"
@@ -4436,6 +4473,6 @@
         "notes": "2026-10-23 backlog: partial: the documented collation-aware operations listed in the scope are implemented and tested; the refused shapes in the limitations stay explicit."
       }
     ],
-    "revision": "60db8063262be8386d6be417904b1b11405ca14c"
+    "revision": "bcfec319858dda12fda2d07a8b0424baf0b20a2f"
   }
 }

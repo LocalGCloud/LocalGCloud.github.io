@@ -81,9 +81,10 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
       { operations: ["pubsub.push-payload-wrappers"], summary: "Wrapped and unwrapped push payloads with optional metadata headers", workflow: "Configure noWrapper to deliver raw message bytes and enable writeMetadata when the receiver needs message headers. Test the default wrapped JSON path separately from unwrapped delivery." },
       { operations: ["pubsub.subscription-expiration-and-storage-policy"], summary: "Subscription expiration policy settings", workflow: "Set a subscription expirationPolicy and read it back over the API and after a restart. This supports configuration tests only: no subscription expires locally, and a topic messageStoragePolicy is accepted but not stored." },
       { operations: ["pubsub.authenticated-push"], summary: "Authenticated push with locally signed OIDC tokens", workflow: "Configure an OIDC service account and audience on a push subscription. Have the receiver validate the locally signed bearer token against the LocalCloud issuer and JWKS before accepting the message." },
+      { operations: ["pubsub.other-advanced-fields"], summary: "Exactly-once delivery and ordering keys", workflow: "Enable exactly-once delivery and check that an acknowledged message is not redelivered and a stale ack ID is refused; publish with ordering keys and check per-key order." },
     ],
     boundaries: [
-      "Design consumers for at-least-once redelivery. Exactly-once delivery, per-key ordered delivery, export subscriptions, and message transforms: validate in Google Cloud",
+      "Export subscriptions and message transforms are accepted but have no effect: validate them in Google Cloud",
       "Messages don't expire by age unless enforce_subscription_retention is on, and a retained backlog is held in memory; purge test subscriptions or turn retention on",
       "Authenticated push receivers verify the local issuer and JWKS. Stored Pub/Sub IAM policies aren't enforced, and retry timing is approximate; validate access control and timing in Google Cloud",
     ],
@@ -156,11 +157,11 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
   sheets: {
     capabilities: [
       { operations: ["sheets.values.get", "sheets.values.batch-get"], summary: "A1-range reads: values.get and values.batchGet", workflow: "Seed or write a spreadsheet, then read any A1 range with values.get or several with values.batchGet. Compare the returned rows with the lookup data expected by the consuming application." },
-      { operations: ["sheets.values.update"], summary: "Cell writes with values.update", workflow: "Write a grid of values into a range with values.update, then read back the range or a sub-range to check which cells changed and which kept their values." },
+      { operations: ["sheets.values.update", "sheets.values.append", "sheets.values.clear"], summary: "Cell writes: values.update, append and clear", workflow: "Write a grid of values with values.update, append rows after a table with values.append, or empty a range with values.clear, then read back the range to check which cells changed and which kept their values." },
     ],
     boundaries: [
       "Values come back as written: formulas aren't evaluated and render options are ignored",
-      "Spreadsheet metadata, append, clear, and batch updates: use Google Cloud",
+      "Spreadsheet metadata and batch updates: use Google Cloud",
       "Google OAuth scopes and Drive sharing: validate in Google Cloud",
     ],
   },
@@ -252,7 +253,7 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
   cloudresourcemanager: {
     capabilities: [
       { operations: ["cloudresourcemanager.projects.lifecycle"], summary: "Project CRUD, labels, project IAM policies, and completed-operation polling", workflow: "Create a test project, update its labels, read it back, and poll its completed operation. Delete it last: deletion clears the project's local data at once." },
-      { operations: ["cloudresourcemanager.projects.lifecycle"], summary: "Automatic project registration on first use", workflow: "Address a new project ID through any gateway endpoint and verify that it appears in the project list. Turn off server.auto_provision_projects to test code that requires explicit project setup." },
+      { operations: ["cloudresourcemanager.projects.lifecycle"], summary: "Automatic project registration on first use", workflow: "Address a new project ID through any gateway endpoint and verify that it appears in the project list. Set server.unknown_project to reject to test code that requires explicit project setup." },
     ],
     boundaries: [
       "Organization and folder lifecycle, moves, search, and full ancestry: use Google Cloud",
@@ -304,12 +305,12 @@ export const serviceCompatibilityEditorial: Readonly<Record<string, ServiceCompa
   },
   gke: {
     capabilities: [
-      { operations: ["gke.clusters.lifecycle"], summary: "Cluster lifecycle through the GKE API", workflow: "Create a cluster and poll its operation until k3d provisioning finishes. Check that the cluster is RUNNING, not ERROR, before using it." },
+      { operations: ["gke.clusters.lifecycle", "gke.nodepools.runtime"], summary: "Cluster lifecycle and node pool records through the GKE API", workflow: "Create a cluster and poll its operation until k3d provisioning finishes. Check that the cluster is RUNNING, not ERROR, before using it. Node pool create, update and resize change stored pools only." },
       { operations: ["gke.clusters.lifecycle"], summary: "Real local Kubernetes clusters through k3d", workflow: "Run the full image with Docker access, create a cluster, then deploy a small workload with kubectl using the cluster's k3d kubeconfig. Check pod status and application output through Kubernetes." },
     ],
     boundaries: [
       "Opt-in: run localcloud start --services gke. Runs one k3d server node with Docker; the lite image creates metadata-only clusters",
-      "Node pools, autoscaling, resizing, upgrades and cluster updates: use Google Cloud",
+      "Node pool autoscaling and upgrades, extra nodes, and cluster updates: use Google Cloud",
       "Use the exported /container/v1 REST endpoint; the shared /v1 cluster routes belong to AlloyDB",
       "Pod workload identity: validate in Google Cloud",
     ],
