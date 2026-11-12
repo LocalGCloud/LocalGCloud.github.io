@@ -8,22 +8,34 @@ import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
 const metadata = authoredBlogMetadata['localcloud-mcp-agent-cloud'];
 const pageUrl = new URL('blog/localcloud-mcp-agent-cloud/', productFacts.siteUrl).toString();
 const contents = [
+  { id: 'why-local', label: 'Why agents need cloud feedback' },
   { id: 'connect', label: 'Install and connect' },
   { id: 'agent-task', label: 'Give the agent a task' },
   { id: 'workflows', label: 'Three cloud workflows' },
   { id: 'run-example', label: 'Run the example' },
   { id: 'debug', label: 'Diagnose a failure' },
+  { id: 'failure-to-fix', label: 'From failing test to verified fix' },
   { id: 'boundaries', label: 'Local data and production' },
 ];
 const connect = `brew install LocalGCloud/tap/localcloud
 lc --version
 lc doctor
 lc mcp install --client cursor`;
-const prompt = `Use LocalCloud MCP to list local services, check readiness, and obtain SDK settings.
-Check compatibility before writing a small Cloud Storage, Pub/Sub, and BigQuery integration test.
+const prompt = `Read https://local.cloud/ai/agents.md and inspect this repository's Google Cloud SDK clients and tests.
+Use LocalCloud MCP to list local services, check readiness and compatibility, and obtain SDK settings.
+Write a small Pub/Sub integration test: create a topic and subscription, publish a known payload,
+run the application's consumer, assert its output, and acknowledge the message after successful processing.
 Use only the returned local endpoints and uniquely named test resources.
-Assert the actual results and clean up only resources created by the test.
+Run the test, inspect any failure, fix the cause, and rerun without weakening the expected result.
+Report the test command, failing assertion if any, code change, and final result.
+Clean up only resources created by the test. Do not request or use real GCP credentials.
 Stop if a required operation is unavailable; do not fall back to real Google Cloud.`;
+const brokenAssertion = `assert message.message.data == "LocalCloud agent message", "expected text, received bytes"`;
+const fixedAssertion = `assert message.message.data.decode("utf-8") == "LocalCloud agent message"`;
+const failureResult = `AssertionError: expected text, received bytes`;
+const fixedResult = `PASS Pub/Sub: publish, pull, verify, and acknowledge
+PASS BigQuery: SELECT 1 returns the expected row
+Cleanup complete: only uniquely named example resources were removed`;
 const startExample = String.raw`lc start --image agentcloud/localcloud:0.1.5 \
   --data-volume localcloud-mcp-demo \
   --services gcs,pubsub,bigquery --local-only --accept-dynamic-ports`;
@@ -58,8 +70,8 @@ const structuredData = [createBreadcrumbSchema([
       <div class="container container--narrow">
         <span class="site-eyebrow">MCP guide and walkthrough</span>
         <h1 class="mt-4">A local cloud environment for coding agents</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">Give your coding agent a free local cloud environment to build, test, and debug Google Cloud applications. MCP supplies the services, SDK settings, and diagnostics; your application runs its integration tests against the local runtime.</p>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span>{metadata.updatedAt && <span>Updated <time datetime={metadata.updatedAt}>{formatBlogDate(metadata.updatedAt)}</time></span>}<span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Coding agents need to run the integrations they write. LocalCloud gives Google Cloud applications local service APIs for that feedback loop: write code, run tests, inspect failures, and verify fixes. MCP supplies service discovery, SDK settings, and diagnostics; application tests exercise the local runtime.</p>
         <div class="blog-actions">
           <a class="site-button site-button--primary" href="/docs/mcp/">Connect your agent</a>
           <a href="https://github.com/LocalGCloud/localcloud-cli/blob/main/examples/mcp_workflows.py">Get the runnable example</a>
@@ -67,6 +79,13 @@ const structuredData = [createBreadcrumbSchema([
       </div>
     </section>
   </Fragment>
+  <section class="site-section">
+    <h2 id="why-local">Why agents need cloud feedback</h2>
+    <p>A coding agent can generate a Pub/Sub consumer and a test that mocks its SDK calls. Running that code against a service adds another check: can it create resources, publish and receive the expected payload, and produce the application's expected output? Compilation and mocked tests answer different questions.</p>
+    <p>On November 11, 2026, AWS released AWS Emulator. <a href="https://www.geekwire.com/2026/aws-gives-developers-a-free-local-stand-in-for-its-cloud-built-from-scratch-by-ai-agents/">GeekWire covered the launch</a>, and <a href="https://www.allthingsdistributed.com/2026/11/aws-emulator-and-the-engineers-job-when-agents-write-the-code.html">AWS's engineering explanation</a> describes putting infrastructure inside the agent's write, run, and inspect loop. <a href="https://www.aboutamazon.com/news/aws/how-autonomous-ai-agents-built-aws-emulator">Its construction workflow</a> also uses tests checked against real AWS to evaluate the emulator.</p>
+    <p>For Google Cloud applications, LocalCloud gives agents local dependencies to exercise through standard SDKs. The agent can create test resources, inspect an actual response, and rerun an assertion while changing the application. Local endpoints also let that iteration happen without granting access to a real cloud project or incurring cloud-resource charges.</p>
+    <p>Give the agent both an environment and an acceptance condition. The useful result is a test command and an observed outcome that you can review. Keep repeatable test data and test-owned cleanup in the loop; use real Google Cloud separately for release validation.</p>
+  </section>
   <section class="site-section">
     <h2 id="connect">Install and connect</h2>
     <p>Install <strong>LocalCloud CLI 0.1.9 or newer</strong> and have Docker running. Use runtime <strong>0.1.5 or newer</strong>, which strict MCP clients require. On macOS, or Linux with Homebrew:</p>
@@ -79,7 +98,7 @@ const structuredData = [createBreadcrumbSchema([
   </section>
   <section class="site-section">
     <h2 id="agent-task">Give the agent a task</h2>
-    <p>Ask for a small test with observable results:</p>
+    <p>Ask for a small test with observable results, including the application's behavior after the SDK call. For a Pub/Sub producer and consumer:</p>
     <div class="site-panel mt-4">
       <CopyButton text={prompt} analyticsLabel="mcp-blog-copy-agent-prompt" />
       <pre class="blog-prompt"><code>{prompt}</code></pre>
@@ -121,8 +140,27 @@ const structuredData = [createBreadcrumbSchema([
     <p>If an existing runtime predates 0.1.5, follow the <a href="/docs/mcp/">runtime upgrade and troubleshooting instructions</a>. Updating the CLI or installing another client configuration does not replace an existing container.</p>
   </section>
   <section class="site-section">
+    <h2 id="failure-to-fix">From failing test to verified fix</h2>
+    <p>Try a controlled failure in a disposable checkout of the runnable example above. In <code>examples/mcp_workflows.py</code>, replace the assertion comparing <code>message.message.data</code> with <code>b"LocalCloud agent message"</code> with this deliberately incorrect text comparison:</p>
+    <div class="site-panel mt-4">
+      <CopyButton text={brokenAssertion} analyticsLabel="mcp-blog-copy-broken-assertion" />
+      <pre><code>{brokenAssertion}</code></pre>
+    </div>
+    <p>Run the same example command. The publisher sends the known message, the subscriber pulls it, and the assertion fails. This is the relevant line from the captured traceback:</p>
+    <pre><code>{failureResult}</code></pre>
+    <p>The Python SDK returns the payload as bytes. A mock returning text could hide that mismatch. An agent can inspect the received value and decode it at the consumer boundary while keeping the expected text unchanged:</p>
+    <div class="site-panel mt-4">
+      <CopyButton text={fixedAssertion} analyticsLabel="mcp-blog-copy-fixed-assertion" />
+      <pre><code>{fixedAssertion}</code></pre>
+    </div>
+    <p>Rerun the example. The corrected assertion verifies the received content, then the subscriber acknowledges the message. The captured run continues through BigQuery and cleanup:</p>
+    <pre><code>{fixedResult}</code></pre>
+    <p>This controlled exercise was rerun on November 11, 2026 with CLI 0.1.14, Python <code>google-cloud-pubsub</code> 2.39.1, and a local Linux ARM64 runtime image whose ID begins <code>sha256:86574e8557a0</code>. It demonstrates one SDK payload boundary. Apply the same process to a real application failure: preserve the acceptance condition, fix the producer or consumer, and rerun the integration test.</p>
+  </section>
+  <section class="site-section">
     <h2 id="boundaries">Local data and production</h2>
-    <p>The workflows above were run with the published CLI on macOS (Apple Silicon) and the standard Linux ARM64 runtime image. Passing locally doesn't guarantee identical production behavior, so validate releases against Google Cloud.</p>
+    <p>The workflows above were run with the published CLI on macOS (Apple Silicon) and the standard Linux ARM64 runtime image. Use local tests throughout development, then validate releases against Google Cloud for production IAM, quotas, managed-service behavior, and scale.</p>
+    <p>LocalCloud supplies cloud service APIs. Use an appropriate code execution sandbox for the agent's shell and filesystem access; local API endpoints do not provide that isolation.</p>
     <p>Use test-owned resources and explicit cleanup. The default data volume is shared; a logical project is not a security boundary between agents. Choose a separate named volume when you need an independent runtime. MCP management writes and destructive actions require explicit runtime permission settings.</p>
     <p><a href="/docs/mcp/">MCP setup guide</a> · <a href="/docs/sdk-examples/">More SDK examples</a> · <a href="https://github.com/LocalGCloud/localcloud-cli">CLI source and releases</a></p>
   </section>
