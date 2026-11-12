@@ -18,7 +18,7 @@ const Heading = embedded ? 'h3' : 'h2';
 ---
 
 <section class:list={['comparison-features', !embedded && 'site-section']} aria-labelledby={titleId}>
-  <div class:list={[!embedded && 'container']} data-emulator-comparison data-inventory={comparison.dataUrl} data-default-mode={defaultMode}>
+  <div class:list={[!embedded && 'container']} data-emulator-comparison data-inventory={comparison.dataUrl}>
     <Heading id={titleId} class="sr-only">Explore the feature comparison</Heading>
     <div class="comparison-controls" data-comparison-controls hidden data-pagefind-ignore>
       {hasCompetitor ? <fieldset>
@@ -43,11 +43,11 @@ const Heading = embedded ? 'h3' : 'h2';
         <caption class="sr-only">{hasCompetitor ? `${comparison.engine} compared with ${comparison.competitor}, by category` : `${comparison.engine} features, by category`}</caption>
         <thead><tr><th scope="col">Feature</th><th scope="col">{comparison.engine}</th>{hasCompetitor && <th scope="col">{comparison.competitor}</th>}<th scope="col">Details</th></tr></thead>
         <tbody>
-          {groups.map(group => <tr class="comparison-category" data-comparison-category hidden={!listed.includes(group)} data-markdown-skip={listed.includes(group) ? undefined : ''} data-area={group.area} data-total={group.total} data-exclusive={group.exclusive}>
+          {groups.map(group => <tr data-comparison-category hidden={!listed.includes(group)} data-markdown-skip={listed.includes(group) ? undefined : ''} data-total={group.total} data-exclusive={group.exclusive}>
             <th scope="row"><button type="button" class="comparison-category-toggle" data-markdown-keep aria-expanded="false"><span class="comparison-chevron" aria-hidden="true"></span><span class="comparison-category-name">{group.area}</span> <small>{plural(group.total, 'feature')}</small></button></th>
             <td><EmulatorComparisonCount value={group.supported} kind="supported" /></td>
             {hasCompetitor && <td><EmulatorComparisonCount value={group.missing} kind="missing" assumed={group.unassessed > 0} /></td>}
-            <td class="comparison-category-description">{categorySummaries[comparison.id][group.area]}</td>
+            <td>{categorySummaries[comparison.id][group.area]}</td>
           </tr>)}
         </tbody>
       </table>
@@ -92,7 +92,7 @@ const Heading = embedded ? 'h3' : 'h2';
   .comparison-state[data-state="unavailable"] > .comparison-mark::before { content:'✕'; color:color-mix(in srgb,var(--brand-red) 70%,var(--text)); }
   .comparison-state[data-state="unknown"] > .comparison-mark::before { content:'✕*'; color:color-mix(in srgb,var(--brand-red) 70%,var(--text)); }
   .comparison-assessment-note { margin:.5rem 0; font-size:.75rem; color:var(--text-2); line-height:1.5; }
-  .comparison-category-description { font-size:.8125rem; font-weight:400; color:var(--text-2); }
+  [data-total] td:last-child { font-size:.8125rem; font-weight:400; color:var(--text-2); }
   .comparison-mark::before { font-size:1.125rem; font-weight:700; line-height:1; }
   .comparison-state:is([data-state="available"],[data-state="unavailable"],[data-state="unknown"]) > .comparison-label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
   .comparison-table td p { margin:0; line-height:1.55; }
@@ -108,15 +108,15 @@ const Heading = embedded ? 'h3' : 'h2';
     .comparison-table:not(.comparison-table--solo) th:first-child { width:32%; }
     .comparison-table:not(.comparison-table--solo) th:nth-child(2),.comparison-table:not(.comparison-table--solo) th:nth-child(3) { width:20%; }
   }
-  .comparison-category > * { background:var(--surface-2); vertical-align:middle; }
-  .comparison-category th { font-weight:600; }
+  [data-total] > * { background:var(--surface-2); vertical-align:middle; }
+  [data-total] th { font-weight:600; }
   .comparison-category-toggle { display:grid; grid-template-columns:1rem minmax(0,1fr); column-gap:.4rem; align-items:baseline; width:100%; padding:0; border:0; background:none; color:inherit; font:inherit; text-align:left; }
   .comparison-category-toggle small { grid-column:2; margin-top:.15rem; font-size:.75rem; font-weight:400; }
   .comparison-chevron::before { content:'▸'; display:inline-block; color:var(--text-2); font-size:.8rem; transition:transform .15s; }
   .comparison-category-toggle[aria-expanded="true"] .comparison-chevron::before { transform:rotate(90deg); }
   [data-emulator-comparison]:not([data-bound]) .comparison-chevron { visibility:hidden; }
-  [data-emulator-comparison][data-bound] .comparison-category { cursor:pointer; }
-  [data-emulator-comparison][data-bound] .comparison-category:hover > * { filter:brightness(.97); }
+  [data-emulator-comparison][data-bound] [data-total] { cursor:pointer; }
+  [data-emulator-comparison][data-bound] [data-total]:hover > * { filter:brightness(.97); }
   .comparison-count { position:relative; display:inline-block; font-weight:700; font-size:1rem; font-variant-numeric:tabular-nums; }
   .comparison-count--supported { color:var(--success-ink); }
   .comparison-count--missing { color:color-mix(in srgb,var(--brand-red) 70%,var(--text)); }
