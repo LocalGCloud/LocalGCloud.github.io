@@ -56,11 +56,20 @@ for (const route of expectedSearchRoutes) {
   }
 }
 
-// Served-behavior checks. Each request is made once: a wrong status here is a defect, not lag.
+// Served-behavior checks retry connection failures; the first returned HTTP status is checked.
 // This script stays dependency-free because the custom-domain CI job runs without pnpm install.
 const canonicalHost = new URL(baseUrl).hostname === new URL(siteOrigin).hostname;
 const repoFile = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
-const fetchOnce = (path, init = {}) => fetch(new URL(path, `${baseUrl}/`), { redirect: 'manual', ...init });
+const fetchOnce = async (path, init = {}) => {
+  for (let attempt = 1; ; attempt++) {
+    try { return await fetch(new URL(path, `${baseUrl}/`), { redirect: 'manual', ...init }); }
+    catch (error) {
+      if (attempt >= attempts) throw error;
+      console.warn(`${path}: retrying connection failure (${attempt}/${attempts}): ${error.cause?.code ?? error.message}`);
+      await sleep(delayMs);
+    }
+  }
+};
 const check = async (label, run) => {
   try {
     await run();

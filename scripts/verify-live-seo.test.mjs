@@ -19,7 +19,7 @@ const redirects = new Map([
 ]);
 
 // A well-behaved deployment on a non-canonical host; `custom` can break one behavior per test.
-async function verifyFixture(t, overrides = {}, custom = () => false) {
+async function verifyFixture(t, overrides = {}, custom = () => false, env = {}) {
   const server = createServer((request, response) => {
     const path = new URL(request.url, 'http://localhost').pathname;
     if (custom(path, request, response)) return;
@@ -69,6 +69,8 @@ async function verifyFixture(t, overrides = {}, custom = () => false) {
         ...process.env,
         SEO_VERIFY_BASE_URL: `http://127.0.0.1:${server.address().port}`,
         SEO_VERIFY_ATTEMPTS: '1',
+        SEO_VERIFY_DELAY_MS: '0',
+        ...env,
       },
     });
     return { code: 0, ...output };
@@ -81,6 +83,31 @@ test('accepts HTML canonical URLs and raw Markdown/text without HTML tags', asyn
   const result = await verifyFixture(t);
   assert.equal(result.code, 0, result.stderr);
   assert.match(result.stdout, /verification passed/);
+});
+
+test('retries an interrupted connection during served-behavior checks', async (t) => {
+  let interrupted = false;
+  const result = await verifyFixture(t, {}, (path, request) => {
+    if (path !== '/docs' || interrupted) return false;
+    interrupted = true;
+    request.socket.destroy();
+    return true;
+  }, { SEO_VERIFY_ATTEMPTS: '2' });
+  assert.equal(interrupted, true);
+  assert.equal(result.code, 0, result.stderr);
+  assert.match(result.stderr, /\/docs: retrying connection failure/);
+});
+
+test('checks the first returned redirect status even when connection retries are enabled', async (t) => {
+  let requests = 0;
+  const result = await verifyFixture(t, {}, (path, request, response) => {
+    if (path !== '/docs') return false;
+    response.writeHead(++requests === 1 ? 307 : 301, { Location: '/docs/' }).end();
+    return true;
+  }, { SEO_VERIFY_ATTEMPTS: '3' });
+  assert.equal(result.code, 1);
+  assert.equal(requests, 1);
+  assert.match(result.stderr, /\/docs: expected 301 to \/docs\/, got 307/);
 });
 
 test('rejects an HTML fallback returned with HTTP 200 for a raw document', async (t) => {

@@ -53,6 +53,7 @@ On HTML, `Cache-Control: public, max-age=0, must-revalidate, no-transform` preve
 These settings live in the Cloudflare dashboard, not in this repository. Confirm them after any zone change:
 
 - Brotli compression is on.
+- Speed Brain is off. HTML routes invoke the Worker, so Cloudflare refuses its speculative prefetches with HTTP 503 and `CF-Speculation-Refused: prefetch refused: disabled for worker requests`. The site retains its own Desktop content prefetching. See [Speed Brain requirements](https://developers.cloudflare.com/speed/optimization/content/speed-brain/).
 - Rocket Loader and Email Address Obfuscation are off; both rewrite HTML and break hash-based CSP.
 - Browser Integrity Check is off. It returned error 1010 (HTTP 403) to Python's standard-library `urllib` on every page, which blocks AI agents that fetch docs with it. `scripts/verify-live-seo.mjs` fails the deploy check if `/llms.txt` or `/docs/` return anything but 200 to that client.
 - AI Crawl Control and managed robots.txt are off, or match `public/robots.txt`.
