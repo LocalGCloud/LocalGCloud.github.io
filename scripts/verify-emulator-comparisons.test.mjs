@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
+import { categorySummaries } from '../src/data/emulatorComparisonCategories.mjs';
 import { comparisonMarkState, comparisonStates, docsLabel, groupComparisonRows, presentComparisonNotes, selectComparisonRows } from '../src/utils/emulator-comparisons.mjs';
 
 const json = path => JSON.parse(readFileSync(new URL('../' + path, import.meta.url), 'utf8'));
@@ -26,7 +27,7 @@ test('rendered vocabulary preserves SQL meaning', () => {
     'partial index; source-name resolution; verification open; validation: limited; Behavior boundary: limit');
 });
 
-test('only in LocalCloud needs an explicit baseline absence; a limited LocalCloud result still counts and unknowns never do', () => {
+test('provisional advantages include unknown competitors without changing raw assessment states', () => {
   const rows = [
     { id: 'gap', local: 'available', other: 'unavailable' },
     { id: 'no-effect', local: 'available', other: 'no-effect' },
@@ -37,7 +38,7 @@ test('only in LocalCloud needs an explicit baseline absence; a limited LocalClou
     { id: 'na', local: 'available', other: 'na' },
     { id: 'missing-here', local: 'unavailable', other: 'unavailable' },
   ];
-  assert.deepEqual(selectComparisonRows(rows).map(row => row.id), ['gap', 'no-effect', 'scoped']);
+  assert.deepEqual(selectComparisonRows(rows).map(row => row.id), ['gap', 'no-effect', 'unassessed', 'scoped']);
   assert.equal(selectComparisonRows(rows, { mode: 'all' }).length, rows.length);
   assert.deepEqual(selectComparisonRows(rows, { mode: 'all', query: 'LIMITED-ELSE' }).map(row => row.id), ['limited-elsewhere']);
 });
@@ -59,9 +60,9 @@ test('rows group by category in document order with the two numbers a category r
     { id: 'f', area: 'Objects', local: 'available', other: 'unknown' },
   ];
   const groups = groupComparisonRows(rows);
-  // supported = LocalCloud ✓ or limited; missing = the competitor lacks it; exclusive = both at once.
+  // Supported local rows pair with confirmed or provisional competitor gaps.
   assert.deepEqual(groups.map(({ area, total, supported, missing, exclusive }) => [area, total, supported, missing, exclusive]),
-    [['Buckets', 4, 3, 2, 2], ['Objects', 2, 2, 0, 0]]);
+    [['Buckets', 4, 3, 2, 2], ['Objects', 2, 2, 1, 1]]);
   assert.deepEqual(groups[0].rows.map(row => row.id), ['a', 'c', 'd', 'e']);
 });
 
@@ -156,7 +157,7 @@ test('Firestore publishes current production behavior and retains unknown Google
   assert.equal(indexes.other, 'unavailable');
   const ttl = rows.find(row => row.name === 'Automatic expired-document deletion');
   assert.equal(ttl.other, 'unknown');
-  assert.ok(!selectComparisonRows([ttl]).length);
+  assert.equal(selectComparisonRows([ttl]).length, 1);
 });
 
 test('Bigtable compares LocalCloud with the Google Cloud Bigtable emulator', () => {
@@ -167,11 +168,11 @@ test('Bigtable compares LocalCloud with the Google Cloud Bigtable emulator', () 
   assert.ok(selectComparisonRows(rows).length > 0);
 });
 
-test('BigQuery hides unassessed LocalCloud rows and repeated features, and keeps unassessed competitor rows out of advantages', () => {
+test('BigQuery hides unassessed LocalCloud rows and repeated features, and includes unassessed competitor rows as provisional advantages', () => {
   const rows = inventory('bigquery');
   assert.ok(rows.every(row => row.local !== 'unknown'));
   assert.ok(rows.some(row => row.other === 'unknown'));
-  assert.ok(selectComparisonRows(rows).every(row => row.other === 'unavailable' || row.other === 'no-effect'));
+  assert.ok(selectComparisonRows(rows).every(row => ['unavailable', 'no-effect', 'unknown'].includes(row.other)));
   const seen = new Set();
   for (const row of rows) {
     const signature = [row.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(), row.local, row.other].join('|');
@@ -197,4 +198,21 @@ test('imported names retain generic types and stream placeholders', () => {
   assert.ok(inventory('bigtable').some(row => row.name === 'Min<Int64>'));
   assert.ok(inventory('spanner').some(row => row.name === 'ARRAY<STRUCT> query values'));
   assert.ok(inventory('spanner').some(row => row.name === 'GoogleSQL READ_<stream>()'));
+});
+
+test('each published category has an editorial explanation', () => {
+  for (const service of services) {
+    const areas = [...new Set(inventory(service).map(row => row.area))];
+    assert.deepEqual(Object.keys(categorySummaries[service]).sort(), areas.sort());
+    for (const area of areas) assert.ok(categorySummaries[service][area].length >= 40, `${service}: ${area}`);
+  }
+});
+
+test('BigQuery SELECT and ML provisional counts retain their raw assessment distinction', () => {
+  const groups = groupComparisonRows(inventory('bigquery'));
+  const select = groups.find(group => group.area === 'SQL / SELECT');
+  assert.deepEqual([select.supported, select.exclusive, select.unassessed], [132, 127, 126]);
+  const ml = groups.find(group => group.area === 'SQL / BigQuery ML');
+  assert.deepEqual([ml.supported, ml.exclusive, ml.unassessed], [55, 55, 55]);
+  assert.ok(ml.rows.every(row => row.other === 'unknown'));
 });

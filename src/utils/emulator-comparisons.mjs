@@ -1,12 +1,12 @@
 // A documented limit reads as supported: the mark says the feature works and the note says how far.
 export const comparisonStates = {
   available: 'Available', limited: 'Available', unavailable: 'Not available',
-  unknown: 'Not assessed', na: 'Not applicable', 'no-effect': 'Accepted, no effect',
+  unknown: 'Not available (not assessed)', na: 'Not applicable', 'no-effect': 'Accepted, no effect',
 };
 export const comparisonMarkState = state => state === 'limited' ? 'available' : state;
 
-// Only in LocalCloud: it works here, with or without a documented limit, and the compared emulator lacks it.
-export const isOnlyInLocalCloud = row => ['available', 'limited'].includes(row.local) && ['unavailable', 'no-effect'].includes(row.other);
+// Presentation policy: unassessed competitor results provisionally qualify; raw states stay unchanged.
+export const isOnlyInLocalCloud = row => ['available', 'limited'].includes(row.local) && ['unavailable', 'no-effect', 'unknown'].includes(row.other);
 
 // Preserve the evidence wording in downloads; use the site's vocabulary in the UI.
 export function presentComparisonNotes(text) {
@@ -25,15 +25,16 @@ export function selectComparisonRows(rows, { mode = 'advantages', query = '' } =
 }
 
 // Categories in document order. A category row states how many of its features LocalCloud supports (`supported`)
-// and how many the compared emulator lacks (`missing`); `exclusive` is the subset that only LocalCloud has.
+// and how many are treated as unavailable in the competitor (`missing`); `exclusive` is the supported local subset.
 export function groupComparisonRows(rows) {
   const groups = new Map();
   for (const row of rows) {
-    const group = groups.get(row.area) ?? groups.set(row.area, { area: row.area, rows: [], total: 0, supported: 0, missing: 0, exclusive: 0 }).get(row.area);
+    const group = groups.get(row.area) ?? groups.set(row.area, { area: row.area, rows: [], total: 0, supported: 0, missing: 0, exclusive: 0, unassessed: 0 }).get(row.area);
     group.rows.push(row);
     group.total++;
     if (['available', 'limited'].includes(row.local)) group.supported++;
-    if (['unavailable', 'no-effect'].includes(row.other)) group.missing++;
+    if (['unavailable', 'no-effect', 'unknown'].includes(row.other)) group.missing++;
+    if (row.other === 'unknown') group.unassessed++;
     if (isOnlyInLocalCloud(row)) group.exclusive++;
   }
   return [...groups.values()];

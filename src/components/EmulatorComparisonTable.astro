@@ -1,12 +1,13 @@
 ---
 import { groupComparisonRows, plural, resultsText } from '../utils/emulator-comparisons.mjs';
+import { categorySummaries } from '../data/emulatorComparisonCategories.mjs';
 import EmulatorComparisonCount from './EmulatorComparisonCount.astro';
 import EmulatorComparisonStatus from './EmulatorComparisonStatus.astro';
 import type { emulatorComparisons } from '../data/emulatorComparisons';
 interface Props { comparison: (typeof emulatorComparisons)[number]; embedded?: boolean; }
 const { comparison, embedded = false } = Astro.props;
 const hasCompetitor = comparison.hasCompetitor;
-const defaultMode = hasCompetitor ? 'advantages' : 'all';
+const defaultMode = 'all';
 // Categories come from the document's own sections and are rows of the table; each opens to its features on demand.
 // One with nothing only LocalCloud has stays in the page, hidden, so "All features" can list it.
 const groups = groupComparisonRows(comparison.rows);
@@ -23,8 +24,8 @@ const Heading = embedded ? 'h3' : 'h2';
       {hasCompetitor ? <fieldset>
         <legend class="sr-only">Show features</legend>
         <div class="comparison-modes">
-          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="advantages" checked />Only in LocalCloud</label>
-          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="all" />All features</label>
+          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="advantages" />Only in LocalCloud</label>
+          <label><input type="radio" name={`comparison-mode-${comparison.id}`} value="all" checked />All features</label>
         </div>
       </fieldset> : <input type="radio" name={`comparison-mode-${comparison.id}`} value="all" checked hidden />}
       <div class="comparison-search">
@@ -33,10 +34,11 @@ const Heading = embedded ? 'h3' : 'h2';
     </div>
     <div class="comparison-table-meta">
       <p class="comparison-result" role="status" aria-live="polite" data-comparison-status>{resultsText(shown, listed.length, defaultMode)}</p>
-      <p>{hasCompetitor ? `Green counts what LocalCloud supports; red counts what ${comparison.competitor} lacks. Limits appear under Details.` : 'Green counts what LocalCloud supports. Limits appear under Details.'}</p>
+      <p>{hasCompetitor ? `Green counts what LocalCloud supports; red counts features treated as unavailable in ${comparison.competitor}. Limits appear under Details.` : 'Green counts what LocalCloud supports. Limits appear under Details.'}</p>
     </div>
+    {comparison.rows.some(row => row.other === 'unknown') && <p class="comparison-assessment-note" data-comparison-caveat><strong>* Provisional comparison.</strong> Unassessed competitor features count as unavailable for now. Assessments may be incomplete or outdated; some of these features may be supported.</p>}
     <template data-comparison-row><tr class="comparison-feature"><th scope="row"><span></span></th><td><span data-comparison-profile hidden>Extended: </span><EmulatorComparisonStatus state="unknown" /><small data-comparison-profile hidden>Compatibility: <EmulatorComparisonStatus state="unknown" /></small></td>{hasCompetitor && <td><EmulatorComparisonStatus state="unknown" /></td>}<td><p></p><p class="comparison-doc" hidden><a target="_blank" rel="noopener noreferrer"><span></span> <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a></p><p class="comparison-limit" hidden></p></td></tr></template>
-    <div class="comparison-scroll" tabindex="0" role="region" aria-label={`${comparison.name} feature comparison table`}>
+    <div class="comparison-scroll" data-markdown-skip={embedded ? true : undefined} tabindex="0" role="region" aria-label={`${comparison.name} feature comparison table`}>
       <table class:list={['comparison-table', !hasCompetitor && 'comparison-table--solo']}>
         <caption class="sr-only">{hasCompetitor ? `${comparison.engine} compared with ${comparison.competitor}, by category` : `${comparison.engine} features, by category`}</caption>
         <thead><tr><th scope="col">Feature</th><th scope="col">{comparison.engine}</th>{hasCompetitor && <th scope="col">{comparison.competitor}</th>}<th scope="col">Details</th></tr></thead>
@@ -44,8 +46,8 @@ const Heading = embedded ? 'h3' : 'h2';
           {groups.map(group => <tr class="comparison-category" data-comparison-category hidden={!listed.includes(group)} data-markdown-skip={listed.includes(group) ? undefined : ''} data-area={group.area} data-total={group.total} data-exclusive={group.exclusive}>
             <th scope="row"><button type="button" class="comparison-category-toggle" data-markdown-keep aria-expanded="false"><span class="comparison-chevron" aria-hidden="true"></span><span class="comparison-category-name">{group.area}</span> <small>{plural(group.total, 'feature')}</small></button></th>
             <td><EmulatorComparisonCount value={group.supported} kind="supported" /></td>
-            {hasCompetitor && <td><EmulatorComparisonCount value={group.missing} kind="missing" /></td>}
-            <td></td>
+            {hasCompetitor && <td><EmulatorComparisonCount value={group.missing} kind="missing" assumed={group.unassessed > 0} /></td>}
+            <td class="comparison-category-description">{categorySummaries[comparison.id][group.area]}</td>
           </tr>)}
         </tbody>
       </table>
@@ -53,6 +55,7 @@ const Heading = embedded ? 'h3' : 'h2';
     <noscript><p class="mt-4">Enable JavaScript to list the features in each category, or download the comparison as JSON.</p></noscript>
     <aside class="mt-5 text-sm leading-6" data-comparison-agent>
       <h3 class="font-medium">Data</h3>
+      {embedded && <p><a href={comparison.path}>Full category reference and explanations</a></p>}
       <p><a href={comparison.dataUrl}>Download the comparison as JSON</a></p>
     </aside>
   </div>
@@ -87,8 +90,11 @@ const Heading = embedded ? 'h3' : 'h2';
   .comparison-state { display:inline-block; position:relative; }
   .comparison-state[data-state="available"] > .comparison-mark::before { content:'✓'; color:var(--success-ink); }
   .comparison-state[data-state="unavailable"] > .comparison-mark::before { content:'✕'; color:color-mix(in srgb,var(--brand-red) 70%,var(--text)); }
+  .comparison-state[data-state="unknown"] > .comparison-mark::before { content:'✕*'; color:color-mix(in srgb,var(--brand-red) 70%,var(--text)); }
+  .comparison-assessment-note { margin:.5rem 0; font-size:.75rem; color:var(--text-2); line-height:1.5; }
+  .comparison-category-description { font-size:.8125rem; font-weight:400; color:var(--text-2); }
   .comparison-mark::before { font-size:1.125rem; font-weight:700; line-height:1; }
-  .comparison-state:is([data-state="available"],[data-state="unavailable"]) > .comparison-label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+  .comparison-state:is([data-state="available"],[data-state="unavailable"],[data-state="unknown"]) > .comparison-label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
   .comparison-table td p { margin:0; line-height:1.55; }
   .comparison-table td p + p { margin-top:.4rem; }
   .comparison-table td .comparison-limit { font-size:.8125rem; color:var(--text-2); }

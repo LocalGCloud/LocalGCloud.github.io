@@ -381,12 +381,12 @@ class Assembly(unittest.TestCase):
         self.assertEqual(len(rows), 2)
         self.assertEqual(hidden['repeated'], 0)
 
-    def test_summary_counts_only_explicit_baseline_gaps(self):
+    def test_summary_counts_provisional_unassessed_competitors(self):
         rows, _ = sync.assemble('spanner', [
             self.raw('gap'), self.raw('no effect', other='no-effect'), self.raw('unassessed', other='unknown'),
             self.raw('scoped', local='limited'), self.raw('limited elsewhere', other='limited'), self.raw('shared', other='available')])
-        # A limited LocalCloud result still works and the baseline lacks it, so it is only in LocalCloud.
-        self.assertEqual(sync.summarize(rows), {'total': 6, 'exclusive': 3, 'hasCompetitor': True})
+        # Limited local support and unassessed competitor results qualify under the provisional presentation policy.
+        self.assertEqual(sync.summarize(rows), {'total': 6, 'exclusive': 4, 'hasCompetitor': True})
 
     def test_bigtable_shows_contracts_only_where_they_limit_and_always_the_materialized_view_gap(self):
         text = """### Documented production RPCs

@@ -34,7 +34,7 @@ const moreComparisons = [...comparisonPages, {
       <span class="site-micro">Services</span>
       <div class="comparison-service-tabs" data-comparison-tabs role="tablist" aria-label="Services" hidden>
         {emulatorComparisons.map(comparison => <button type="button" role="tab" aria-controls={`comparison-pane-${comparison.id}`} id={`comparison-tab-${comparison.id}`} data-service-tab={comparison.slug}>
-          <span>{comparison.name}</span> <small>{comparison.hasCompetitor ? `${comparison.total.toLocaleString('en-US')} features · ${comparison.exclusive.toLocaleString('en-US')} only in LocalCloud` : `${comparison.total.toLocaleString('en-US')} features`}</small>
+          <span>{comparison.name}</span> <small>{comparison.hasCompetitor ? `${comparison.total.toLocaleString('en-US')} features · ${comparison.exclusive.toLocaleString('en-US')} only in LocalCloud${comparison.provisional ? '*' : ''}` : `${comparison.total.toLocaleString('en-US')} features`}</small>
         </button>)}
       </div>
       <noscript><ul>{emulatorComparisons.map(comparison => <li><a href={`${base}${comparison.path.slice(1)}`}>{comparison.name}</a></li>)}</ul></noscript>

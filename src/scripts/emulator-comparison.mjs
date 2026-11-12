@@ -63,7 +63,8 @@ export function initEmulatorComparisons(scope = document) {
     const paint = (category, rows, term, current, autoOpen) => {
       const visible = term ? rows.length > 0 : current === 'all' || Number(category.dataset.exclusive) > 0;
       category.hidden = !visible;
-      find(category, 'small').textContent = term ? plural(rows.length, 'matching feature') : plural(Number(category.dataset.total), 'feature');
+      find(category, 'small').textContent = term ? plural(rows.length, 'matching feature')
+        : `${current === 'advantages' ? `${category.dataset.exclusive} of ` : ''}${plural(Number(category.dataset.total), 'feature')}`;
       if (!visible) clear(category);
       else if (term && autoOpen && !isOpen(category)) { searchOpened.add(category); toggle(category).ariaExpanded = 'true'; }
       else if (!term && searchOpened.has(category)) { searchOpened.delete(category); toggle(category).ariaExpanded = 'false'; clear(category); }

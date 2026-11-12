@@ -52,7 +52,7 @@ const definitions: ComparisonDefinition[] = [
     competitor: 'goccy BigQuery emulator', baseline: 'goccy BigQuery emulator',
     baselineUrl: 'https://github.com/goccy/bigquery-emulator/tree/cb8555bee739c794343337e8c3242b59d5d7470a',
     summary: 'Covers ML, external tables, federation, policies, snapshots and clones alongside SQL.',
-    scope: 'Full edition counts. ML.DISTANCE also works in Lite. Generative ML needs a provider. Unknown competitor results are not gaps.',
+    scope: 'Full edition counts. ML.DISTANCE also works in Lite. Generative ML needs a provider. Unassessed competitor results provisionally count as unavailable.',
   },
 ];
 
@@ -62,6 +62,7 @@ export const emulatorComparisons = definitions.map(definition => {
   return { ...definition, ...metrics[definition.id], rows, dataUrl: assets[key] as string,
     path: `/compare/emulators/${definition.slug}/`,
     workspacePath: `/compare/emulators/?service=${definition.slug}`,
+    provisional: rows.some(row => ['available', 'limited'].includes(row.local) && row.other === 'unknown'),
     areas: [...new Set(rows.map(row => row.area))],
   };
 });

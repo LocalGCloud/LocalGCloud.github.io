@@ -561,8 +561,8 @@ def unavailable_everywhere(row):
 
 def summarize(rows):
     has_competitor = any('other' in row for row in rows)
-    # Only in LocalCloud: it works here (with or without a documented limit) and the compared emulator lacks it.
-    advantages = [r for r in rows if r['local'] in ('available', 'limited') and r.get('other') in ('unavailable', 'no-effect')]
+    # Unassessed competitor results provisionally qualify; preserve the underlying assessment states.
+    advantages = [r for r in rows if r['local'] in ('available', 'limited') and r.get('other') in ('unavailable', 'no-effect', 'unknown')]
     return {'total': len(rows), 'exclusive': len(advantages), 'hasCompetitor': has_competitor}
 
 

@@ -6,7 +6,7 @@
   },
   "firestore": {
     "total": 203,
-    "exclusive": 38,
+    "exclusive": 124,
     "hasCompetitor": true
   },
   "bigtable": {
@@ -21,7 +21,7 @@
   },
   "bigquery": {
     "total": 1419,
-    "exclusive": 65,
+    "exclusive": 919,
     "hasCompetitor": true
   }
 }

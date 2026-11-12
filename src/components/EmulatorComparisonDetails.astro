@@ -14,7 +14,7 @@ const Heading = embedded ? 'h2' : 'h1';
       <a class="comparison-guide" href={`${base}services/${comparison.slug}/`}>Service guide <span aria-hidden="true">↗</span></a>
     </div>
     <div class="comparison-meta">
-      <p><strong>{comparison.total.toLocaleString('en-US')}</strong> features in total{comparison.hasCompetitor && <> · <strong>{comparison.exclusive.toLocaleString('en-US')}</strong> only available in LocalCloud (not in {comparison.competitor})</>}</p>
+      <p><strong>{comparison.total.toLocaleString('en-US')}</strong> features in total{comparison.hasCompetitor && <> · <strong>{comparison.exclusive.toLocaleString('en-US')}</strong> only in LocalCloud{comparison.provisional && <span aria-label="includes unassessed competitor results">*</span>}</>}</p>
     </div>
     {comparison.id === 'firestore' && <p class="comparison-profile-note">Compatibility mode matches the Google Firestore emulator; Extended mode is opt-in.</p>}
   </div>

@@ -11,17 +11,15 @@ and configuration notes concise.
 Each service lists its **categories**, the document's own sections, as rows of the one
 comparison table, collapsed by default. Under LocalCloud's column a category row shows how
 many of its features LocalCloud supports (green ✓ and a number); under the competitor's
-column it shows how many the competitor lacks (red ✕ and a number); its Details cell stays
-empty and "N features" sits under its name. Opening it lists its features beneath, each
+column it shows how many are treated as unavailable in the competitor (red ✕ and a number); Details summarizes the category and "N features" sits under its name. Opening it lists its features beneath, each
 with a green ✓ or red ✕ in both columns. The initial HTML and Markdown twin hold only the
 category rows; the browser loads the selected service's build-hashed inventory and draws a
 category's features when it opens. A search covers the complete
 inventory and opens every category that has a match. The two filters are "Only in
-LocalCloud" (the default) and "All features". The JSON comparison view appears in the
+LocalCloud" and "All features" (the default). The JSON comparison view appears in the
 For agents audience only.
 
-The header says "N features in total · M only available in LocalCloud (not in <the
-emulator compared>)"; N counts the features listed, so it leaves out the ones neither side supports. Available and unavailable states use green checks and red crosses
+The header says "N features in total · M only in LocalCloud", with an asterisk when the count includes unassessed competitor results; N counts the features listed, so it leaves out the ones neither side supports. Available and unavailable states use green checks and red crosses
 with readable screen-reader and Markdown labels. **A limited result (◐) shows the same
 green check as a supported one**: the mark says the feature works and the "Note:" line
 says how far, so the site never labels a result "Partial" or "Scoped". Every row shows
@@ -37,12 +35,24 @@ competitor column, the next sync turns those on by itself. The competitor name a
 baseline are in `src/data/emulatorComparisons.ts`; confirm them against the document's
 baseline section.
 
-**Only in LocalCloud** means the feature works locally (✓, or ◐ with a documented limit) and
-the competitor explicitly lacks it (✗, or accepted with no effect). A competitor that
-supports it only in part, an unknown result and a not-applicable one never imply a gap, so
-none of them count. Firestore retains compatibility and
-extended-profile values; the latter requires its documented configuration and is not a
-production-deployment claim.
+**Only in LocalCloud** is a provisional presentation filter: the feature works locally
+(available or available with documented limits), and the competitor is unavailable,
+accepted without effect, or unassessed. Unassessed results are provisionally treated as
+unavailable for this comparison, not newly verified absences. A nearby warning explains
+that assessments can be incomplete or outdated and those features may be supported.
+Asterisked counts and per-row crosses identify this assumption; accessible labels retain
+"not assessed". Raw JSON and provenance keep the original unknown states. Supported,
+limited, not-applicable and absent competitor values do not qualify as provisional gaps.
+
+All features is selected in initial HTML and on an unfiltered entry. Explicit
+`features=advantages` links remain supported. In that mode a category says "M of N features"
+so a filtered detail list cannot be mistaken for the whole category.
+The workspace Markdown is a compact discovery overview: it retains counts, caveats and
+links to each service reference. Standalone service Markdown retains all category tables
+and explanations, so the combined agent corpus does not duplicate the full tables.
+
+Category explanations live in `src/data/emulatorComparisonCategories.mjs`; adding a new
+area requires its editorial sentence, and the data verifier checks complete coverage.
 
 ## Where the data comes from
 

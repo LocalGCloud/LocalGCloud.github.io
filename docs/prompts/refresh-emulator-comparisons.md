@@ -42,7 +42,9 @@ against the comparison catalog. Include Full-edition ML, imports, forecasting, e
 anomaly detection and configured providers; never use Lite's missing libraries to mark Full
 unsupported. Preserve exact scopes, official feature references, implementation symbols and
 owning test IDs. ML.DISTANCE remains available in both editions. Keep unsupported/unknown
-competitor evidence separate; unknown is never a competitor gap. Regenerate comparison docs
+competitor evidence separate. Preserve raw unknown states; the site provisionally includes
+them in Only in LocalCloud with its caveat and per-row assessment marker. Do not describe
+this presentation assumption as a newly verified competitor absence. Regenerate comparison docs
 from the catalog after authorized upstream corrections and commit them before site ingestion.
 If upstream edits are outside this run's authority, report the missing rows instead of silently
 publishing a stale comparison. Do not stop at a clean site drift check when upstream coverage
@@ -94,6 +96,7 @@ write a short summary per service:
 - `hidden.unassessed`, `hidden.unavailable` and `hidden.repeated`: each hidden unassessed LocalCloud row is a gap in
   the document, so list the biggest groups for the upstream owners;
 - retired profiles: retain historical counts only in provenance; do not publish a retired compatibility default as a current capability;
+- category summaries: add a plain editorial explanation for each new area in `src/data/emulatorComparisonCategories.mjs`; verify All features remains the default and the provisional caveat remains visible;
 - any service whose `hasCompetitor` flipped (a document that gains or loses its competitor column).
   The site then shows or hides the competitor column and advantage counts by itself; confirm that
   service's `competitor`, `baseline` and `baselineUrl` in `src/data/emulatorComparisons.ts` against
