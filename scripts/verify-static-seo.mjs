@@ -36,6 +36,7 @@ const requiredSchemaTypes = new Map([
   ['/security/', ['Organization', 'WebPage', 'BreadcrumbList']],
   ['/about/', ['Organization', 'AboutPage', 'BreadcrumbList']],
   ['/changelog/', ['Organization', 'WebPage', 'BreadcrumbList']],
+  ['/videos/localcloud-mcp-demo/', ['Organization', 'WebPage', 'VideoObject', 'BreadcrumbList']],
 ]);
 
 // Required types by page family, on top of the route list above.
@@ -142,6 +143,18 @@ const jsonLdTypes = (html, route) => {
           if (!isoDate.test(value.dateModified ?? '')) errors.push(`${route}: ${schemaTypes.join('/')} JSON-LD must include dateModified`);
         }
         if (schemaTypes.includes('BlogPosting') && !isoDate.test(value.datePublished ?? '')) errors.push(`${route}: BlogPosting JSON-LD must include datePublished`);
+        if (schemaTypes.includes('VideoObject')) {
+          for (const field of ['name', 'description', 'thumbnailUrl', 'uploadDate', 'contentUrl', 'duration']) {
+            if (!value[field]) errors.push(`${route}: VideoObject omits ${field}`);
+          }
+          if (!isoDate.test(value.uploadDate ?? '')) errors.push(`${route}: video uploadDate must be an ISO date`);
+          const source = html.match(/<source\b[^>]*src="([^"]+)"[^>]*type="video\/mp4"/i)?.[1];
+          const poster = html.match(/<video\b[^>]*poster="([^"]+)"/i)?.[1];
+          if (!source || new URL(source, siteOrigin).href !== value.contentUrl) errors.push(`${route}: video schema and player must reference the same recording`);
+          if (!poster || new URL(poster, siteOrigin).href !== value.thumbnailUrl) errors.push(`${route}: video schema and player must reference the same thumbnail`);
+          const main = html.match(/<main\b[^>]*id="main-content"[^>]*>([\s\S]*?)<\/main>/i)?.[1] ?? '';
+          if (!main.includes('<video') || main.indexOf('<video') > main.indexOf('<h2')) errors.push(`${route}: the watch page must show its player before supporting sections`);
+        }
       }
     }
   }

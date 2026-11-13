@@ -3,6 +3,10 @@ export const siteOrigin = 'https://local.cloud';
 export const expectedSearchRoutes = [
   { path: '/', intent: 'Local Google Cloud runtime' },
   { path: '/docs/', intent: 'LocalCloud quick start' },
+  { path: '/docs/mcp/', intent: 'LocalCloud MCP setup' },
+  { path: '/docs/terraform/', intent: 'LocalCloud Terraform integration' },
+  { path: '/blog/run-dataproc-locally-docker/', intent: 'Local Dataproc with Docker' },
+  { path: '/videos/localcloud-mcp-demo/', intent: 'Watch LocalCloud MCP and SDK tests' },
   { path: '/services/', intent: 'Local GCP service catalog' },
   { path: '/ai/', intent: 'AI agent guide and LocalCloud AGENTS.md template' },
   { path: '/pricing/', intent: 'LocalCloud free public preview and permitted use' },

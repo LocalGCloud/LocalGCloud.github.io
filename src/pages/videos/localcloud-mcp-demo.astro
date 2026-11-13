@@ -1,0 +1,70 @@
+---
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import poster from '../../assets/localcloud-mcp-demo-poster.webp?url';
+import { authoredBlogMetadata } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, createWebPageSchema, productFacts } from '../../data/productFacts';
+
+const title = 'Watch LocalCloud MCP and Google Cloud SDK Tests';
+const description = 'Watch an 18-second recorded LocalCloud demo: discover services through MCP, test Cloud Storage, Pub/Sub, and BigQuery, then clean up test resources.';
+const pageUrl = new URL('videos/localcloud-mcp-demo/', productFacts.siteUrl).toString();
+const videoUrl = new URL('brand/localcloud-mcp-demo.mp4', productFacts.siteUrl).toString();
+const videoId = `${pageUrl}#video`;
+const structuredData = [
+  { ...createWebPageSchema({ url: pageUrl, name: title, description }), mainEntity: { '@id': videoId } },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    '@id': videoId,
+    name: title,
+    description,
+    thumbnailUrl: new URL(poster, productFacts.siteUrl).toString(),
+    uploadDate: authoredBlogMetadata['localcloud-mcp-agent-cloud'].publishedAt,
+    duration: 'PT18S',
+    contentUrl: videoUrl,
+    mainEntityOfPage: pageUrl,
+    publisher: { '@id': new URL('#org', productFacts.siteUrl).toString() },
+  },
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'LocalCloud MCP demo', url: pageUrl },
+  ]),
+];
+---
+
+<LandingLayout {title} {description} {structuredData}>
+  <section class="site-section site-section--hero" data-content-update>
+    <div class="container container--narrow">
+      <span class="site-eyebrow">Recorded demo · 18 seconds</span>
+      <h1 class="mt-4">Watch LocalCloud MCP and SDK tests</h1>
+      <p class="mt-5">Service discovery, three Google Cloud SDK workflows, and test-owned cleanup in one local run.</p>
+      <video class="mt-6" controls preload="metadata" width="1280" height="800" poster={poster} aria-label="LocalCloud MCP and SDK test run; text description and output follow">
+        <source src="/brand/localcloud-mcp-demo.mp4" type="video/mp4" />
+        <p><a href="/brand/localcloud-mcp-demo.mp4">Download the recorded demo</a>.</p>
+      </video>
+      <p class="mt-4"><a href="/blog/localcloud-mcp-agent-cloud/#run-example">Reproduce the recording with the setup guide</a>.</p>
+    </div>
+  </section>
+  <section class="site-section site-section--tight">
+    <div class="container container--narrow prose-site">
+      <h2>What the recording shows</h2>
+      <p>This terminal recording uses LocalCloud CLI 0.1.9 and runtime 0.1.5. The example checks MCP service discovery, readiness, compatibility, diagnostics, and SDK settings. It then uploads and reads an object, publishes and receives a message, and verifies a SQL query before removing its test resources.</p>
+      <h2>Recorded output</h2>
+      <pre tabindex="0" aria-label="Text output of the recorded test run"><code>{`PASS MCP: localcloud_list_services
+PASS MCP: localcloud_check_readiness
+PASS MCP: localcloud_check_compatibility
+PASS MCP: localcloud_get_diagnostics
+PASS MCP: SDK configuration validates against its output schema
+PASS MCP: BigQuery query returns the expected row
+PASS Cloud Storage: upload and read back the exact content
+PASS Pub/Sub: publish, pull, verify, and acknowledge
+PASS BigQuery: SELECT 1 returns the expected row
+Cleanup complete: only uniquely named example resources were removed`}</code></pre>
+      <p>The recording demonstrates these local workflows; validate application releases against real Google Cloud separately. See the <a href="/docs/mcp/">MCP setup guide</a> for current client instructions.</p>
+    </div>
+  </section>
+</LandingLayout>
+
+<style>
+  video { display: block; width: 100%; height: auto; border-radius: var(--radius-panel); }
+  pre { max-width: 100%; overflow-x: auto; }
+</style>
