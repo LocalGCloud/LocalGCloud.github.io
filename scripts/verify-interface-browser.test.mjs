@@ -36,8 +36,14 @@ async function verifyRollingHeadline(page) {
   assert.equal(await page.evaluate(() => [...document.querySelectorAll('h1 .headline-drum')].filter(element => element.getClientRects().length).every(element => element.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused'))), true);
   await page.click('[data-headline-pause]');
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
-  assert.equal(await page.$eval('h1', heading => heading.getAnimations({ subtree: true }).length), 0, 'reduced motion removes animation');
-  assert.equal(await page.$eval('.headline-motion', label => label.getClientRects().length), 0);
+  assert.equal((await frame(0)).count, 3, 'the headline showcases the drum even with reduced motion enabled');
+  assert.deepEqual((await frame(3100)).words, ['developers.']);
+  assert.deepEqual((await frame(6200)).words, ['CI pipeline.']);
+  assert.ok(await page.$eval('.headline-motion', label => label.getClientRects().length), 'Pause stays available with reduced motion');
+  await page.focus('[data-headline-pause]');
+  await page.keyboard.press('Space');
+  assert.equal(await page.evaluate(() => [...document.querySelectorAll('h1 .headline-drum')].filter(element => element.getClientRects().length).every(element => element.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused'))), true);
+  await page.keyboard.press('Space');
   const accessibility = await (await page.createCDPSession()).send('Accessibility.getFullAXTree');
   assert.ok(accessibility.nodes.some(node => node.role?.value === 'heading' && node.name?.value === 'localcloud is cloud for agents.'), 'accessible heading stays stable');
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);

@@ -547,21 +547,19 @@ for (const column of atlasColumns) {
   }
 
   .headline-motion { display: none; }
-  @media (prefers-reduced-motion: no-preference) {
-    :global(html:not([data-audience="agents"])) .headline-motion {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: .5rem;
-      width: fit-content;
-      min-height: 2.75rem;
-      margin: .5rem auto 0;
-      font-size: .75rem;
-      color: var(--text-2);
-      cursor: pointer;
-    }
-    .headline-motion input { accent-color: var(--accent); }
+  :global(html:not([data-audience="agents"])) .headline-motion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    width: fit-content;
+    min-height: 2.75rem;
+    margin: .5rem auto 0;
+    font-size: .75rem;
+    color: var(--text-2);
+    cursor: pointer;
   }
+  .headline-motion input { accent-color: var(--accent); }
 
   .field-hero__headline-main {
     line-height: 1.05;

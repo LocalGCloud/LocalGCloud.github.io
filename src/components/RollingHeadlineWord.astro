@@ -9,36 +9,35 @@
   .headline-drum { display: inline-grid; line-height: 1.25; }
   .headline-drum__face { display: none; }
 
-  @media (prefers-reduced-motion: no-preference) {
-    :global(html:not([data-audience="agents"])) .headline-drum {
-      position: relative;
-      overflow: hidden;
-      perspective: 700px;
-      padding-inline: .12em;
-    }
-    :global(html:not([data-audience="agents"])) .headline-drum__label {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-    :global(html:not([data-audience="agents"])) .headline-drum__face {
-      display: block;
-      grid-area: 1 / 1;
-      white-space: pre;
-      text-align: start;
-      backface-visibility: hidden;
-      animation: headline-roll 9.3s cubic-bezier(.22,.8,.24,1) infinite both;
-      animation-delay: var(--drum-delay, -.7s);
-    }
-    /* Decorative faces leave the source heading and Markdown text unchanged. */
-    .headline-drum__face::before { content: attr(data-word); }
-    .headline-drum__face:nth-child(3) { --drum-delay: 2.4s; }
-    .headline-drum__face:nth-child(4) { --drum-delay: 5.5s; }
-    :global(.field-hero:has([data-headline-pause]:checked)) .headline-drum__face { animation-play-state: paused; }
+  /* This small headline plays for human visitors; the adjacent checkbox pauses it. */
+  :global(html:not([data-audience="agents"])) .headline-drum {
+    position: relative;
+    overflow: hidden;
+    perspective: 700px;
+    padding-inline: .12em;
   }
+  :global(html:not([data-audience="agents"])) .headline-drum__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  :global(html:not([data-audience="agents"])) .headline-drum__face {
+    display: block;
+    grid-area: 1 / 1;
+    white-space: pre;
+    text-align: start;
+    backface-visibility: hidden;
+    animation: headline-roll 9.3s cubic-bezier(.22,.8,.24,1) infinite both;
+    animation-delay: var(--drum-delay, -.7s);
+  }
+  /* Decorative faces leave the source heading and Markdown text unchanged. */
+  .headline-drum__face::before { content: attr(data-word); }
+  .headline-drum__face:nth-child(3) { --drum-delay: 2.4s; }
+  .headline-drum__face:nth-child(4) { --drum-delay: 5.5s; }
+  :global(.field-hero:has([data-headline-pause]:checked)) .headline-drum__face { animation-play-state: paused; }
 
   /* Each face holds for 2.4s and rolls for .7s; all three reserve their full width. */
   @keyframes headline-roll {
