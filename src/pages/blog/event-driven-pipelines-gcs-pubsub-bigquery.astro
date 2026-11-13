@@ -1,0 +1,121 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const title = 'Local Event Pipelines: GCS, Pub/Sub, and BigQuery';
+const description = 'Test multi-service ingestion pipelines end to end on your laptop by wiring Cloud Storage, Pub/Sub notifications, and BigQuery in one LocalCloud container.';
+const pageUrl = new URL('blog/event-driven-pipelines-gcs-pubsub-bigquery/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['event-driven-pipelines-gcs-pubsub-bigquery'];
+const contents = [
+  { id: 'problem', label: 'Why multi-service pipelines fail integration' },
+  { id: 'solution', label: 'One container, three connected services' },
+  { id: 'pipeline', label: 'Walk through the event flow locally' },
+  { id: 'try-it', label: 'Seed and run the pipeline' },
+  { id: 'limits', label: 'Local delivery vs cloud production' },
+];
+const startServices = `localcloud start --local-only --services gcs,pubsub,bigquery
+eval "$(localcloud env)"`;
+const pipelineSeed = `services:
+  gcs:
+    buckets:
+      - name: raw-events-landing
+  pubsub:
+    topics:
+      - name: gcs-object-events
+        subscriptions:
+          - name: ingest-worker-sub
+  bigquery:
+    datasets:
+      - name: warehouse
+    tables:
+      - dataset: warehouse
+        name: raw_uploads
+        schema:
+          fields:
+            - name: bucket
+              type: STRING
+              mode: REQUIRED
+            - name: object_name
+              type: STRING
+              mode: REQUIRED`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+];
+---
+
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">Data Engineering</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Cloud pipelines rarely live inside a single service. Wire Cloud Storage uploads, Pub/Sub event delivery, and BigQuery warehouse ingestion inside one local container before deploying.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/docs/sdk-examples/">SDK examples</a>
+          <a href="/services/pubsub/">Pub/Sub service guide</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="problem">Why multi-service pipelines fail integration</h2>
+        <p class="mt-4">Testing each microservice in isolation misses the seams where pipelines actually break: bucket notification formats, Pub/Sub message attributes, acknowledgement timeouts, and BigQuery destination schemas.</p>
+        <p class="mt-4">Normally, running that end-to-end chain requires gluing separate standalone tools together—and still leaves you without a local Cloud Storage notification source or BigQuery sink.</p>
+      </section>
+
+      <section>
+        <h2 id="solution">One container, three connected services</h2>
+        <p class="mt-4">LocalCloud connects <a href="/services/cloud-storage/">Cloud Storage</a>, <a href="/services/pubsub/">Pub/Sub</a>, and <a href="/services/bigquery/">BigQuery</a> inside a single runtime and exports all three SDK endpoints in one shell command.</p>
+        <ul class="site-list mt-5">
+          <li><strong>Storage notifications:</strong> LocalCloud’s Cloud Storage service delivers object events directly to pre-created local Pub/Sub topics.</li>
+          <li><strong>Pub/Sub delivery:</strong> Consumers pull, filter, retry, or forward dead-letter messages with standard StreamingPull and ack APIs.</li>
+          <li><strong>BigQuery ingestion:</strong> Your worker inserts parsed payloads into local DuckDB-backed BigQuery tables for immediate SQL assertions.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 id="pipeline">Walk through the event flow locally</h2>
+        <ol class="site-list mt-5">
+          <li>Start LocalCloud with <code>gcs,pubsub,bigquery</code> enabled and export environment variables.</li>
+          <li>Seed your landing bucket, topic, subscription, and target BigQuery table via <code>POST /seed</code>.</li>
+          <li>Configure bucket notification delivery to <code>gcs-object-events</code>, upload a sample file, pull from <code>ingest-worker-sub</code>, insert into <code>warehouse.raw_uploads</code>, and assert the row count via BigQuery SQL.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2 id="try-it">Seed and run the pipeline</h2>
+        <p class="mt-4">Start the three services and seed the resources below (check <a href="/docs/">Getting Started</a> for installation and <a href="/docs/seed-data/">Seed Data</a> for loading <code>seed.yaml</code>).</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Start pipeline services</span>
+            <CopyButton text={startServices} analyticsLabel="copy-blog-pipeline-start" />
+          </div>
+          <pre><code>{startServices}</code></pre>
+        </div>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">pipeline-seed.yaml</span>
+            <CopyButton text={pipelineSeed} analyticsLabel="copy-blog-pipeline-seed" />
+          </div>
+          <pre><code>{pipelineSeed}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="limits">Local delivery vs cloud production</h2>
+        <p class="mt-4">LocalCloud verifies payload parsing, schema compatibility, and worker logic quickly. Note that local GCS notifications require pre-created Pub/Sub topics and do not guarantee atomic object/event ordering—verify high-volume delivery SLAs in staging Google Cloud.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

@@ -1,0 +1,85 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const title = 'Kill the IAM Ticket: Prototype GCP Before Approval';
+const description = 'Stop waiting days for GCP project permissions or billing setup. Prototype Cloud Tasks, Pub/Sub, and Secret Manager locally in 60 seconds.';
+const pageUrl = new URL('blog/zero-ticket-cloud-prototyping/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['zero-ticket-cloud-prototyping'];
+const contents = [
+  { id: 'problem', label: 'How permission tickets kill momentum' },
+  { id: 'solution', label: 'A working cloud project in 60 seconds' },
+  { id: 'prototype', label: 'Prototype new service patterns immediately' },
+  { id: 'try-it', label: 'Install and start prototyping' },
+  { id: 'handoff', label: 'Bring proven designs to platform review' },
+];
+const installPrototype = `curl -fsSL https://local.cloud/install.sh | sh
+localcloud doctor
+localcloud start --local-only --services cloudtasks,secretmanager,pubsub,gcs
+eval "$(localcloud env)"`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+];
+---
+
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">Developer Productivity</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Filing Jira tickets for sandbox projects, service accounts, and billing approvals drains a sprint before you test one idea. Prototype locally with zero cloud permissions, then request only what works.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/docs/">Get started in 60s</a>
+          <a href="/services/">Browse services</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="problem">How permission tickets kill momentum</h2>
+        <p class="mt-4">Every engineer knows the drag of wanting to test a clean architectural idea—say, replacing an in-memory retry loop with Cloud Tasks and Secret Manager—only to hit a wall of provisioning friction. You need a GCP project, IAM bindings, a billing link, and security sign-off.</p>
+        <p class="mt-4">New hires face the worst version of this: spending their first three days waiting on cloud access instead of running the application and shipping a small first PR.</p>
+      </section>
+
+      <section>
+        <h2 id="solution">A working cloud project in 60 seconds</h2>
+        <p class="mt-4">LocalCloud creates a ready-to-use local project (<code>local-gcp-project</code>) with a local caller identity (<code>local-developer</code>) out of the box. There are no cloud accounts to create, no billing cards to link, and no IAM tickets to file.</p>
+        <p class="mt-4">Teams can onboard a new engineer straight from <code>README.md</code>: clone the repo, start LocalCloud, export the shell variables, and run the entire backend stack immediately.</p>
+      </section>
+
+      <section>
+        <h2 id="prototype">Prototype new service patterns immediately</h2>
+        <p class="mt-4">Want to compare <a href="/services/cloud-tasks/">Cloud Tasks</a> rate-limited queues against <a href="/services/pubsub/">Pub/Sub</a> push subscriptions? Or test <a href="/services/cloud-workflows/">Cloud Workflows</a> and <a href="/services/cloud-scheduler/">Cloud Scheduler</a> triggers? Enable the services locally, wire up the standard Google Cloud SDKs, and validate the design with real working code before asking platform engineering to provision cloud infrastructure.</p>
+      </section>
+
+      <section>
+        <h2 id="try-it">Install and start prototyping</h2>
+        <p class="mt-4">Install the CLI on macOS or Linux (or use Homebrew on macOS) and start the exact services your prototype needs. Browse the full <a href="/docs/configuration/">configuration guide</a> and <a href="/services/">service catalog</a> for service IDs and opt-in flags like <code>firestore</code>.</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">60-second setup</span>
+            <CopyButton text={installPrototype} analyticsLabel="copy-blog-zero-ticket-setup" />
+          </div>
+          <pre><code>{installPrototype}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="handoff">Bring proven designs to platform review</h2>
+        <p class="mt-4">Once your local prototype proves the architecture, your platform ticket changes from a speculative request into a concrete Terraform module and passing integration suite—ready to validate in a real Google Cloud project.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

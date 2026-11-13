@@ -1,5 +1,20 @@
 {
-  "localcloud-mcp-agent-cloud": { "publishedAt": "2026-10-09", "updatedAt": "2026-11-11", "minutes": 8, "topic": "AI coding agents" },
+  "the-2ms-inner-loop": { "publishedAt": "2026-11-12", "minutes": 3, "topic": "Developer productivity" },
+  "step-through-breakpoints-gcp": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Developer productivity" },
+  "reproduce-gcp-incidents-locally": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Developer productivity" },
+  "tdd-google-cloud-watch-mode": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Developer productivity" },
+  "zero-ticket-cloud-prototyping": { "publishedAt": "2026-11-12", "minutes": 3, "topic": "Developer productivity" },
+  "parallel-git-worktrees-localcloud": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Developer productivity" },
+  "one-second-cloud-state-resets": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Developer productivity" },
+  "why-ai-agents-need-local-cloud": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "AI coding agents" },
+  "missing-bigquery-emulator-local-sql": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Data engineering" },
+  "event-driven-pipelines-gcs-pubsub-bigquery": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Data engineering" },
+  "zero-secret-gcp-ci-github-actions": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "CI/CD & DevOps" },
+  "single-container-gcp-beyond-three-emulators": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Local development" },
+  "validate-gcp-terraform-locally": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Infrastructure as Code" },
+  "local-secrets-kms-without-iam-friction": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Security workflows" },
+  "inside-localcloud-multiplexing-20-services": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Architecture" },
+  "localcloud-mcp-agent-cloud": { "publishedAt": "2026-10-09", "minutes": 6, "topic": "AI coding agents" },
   "localcloud-for-open-source": { "publishedAt": "2026-10-04", "minutes": 7, "topic": "Open source" },
-  "run-dataproc-locally-docker": { "publishedAt": "2026-10-01", "updatedAt": "2026-10-23", "minutes": 7, "topic": "Data engineering" }
+  "run-dataproc-locally-docker": { "publishedAt": "2026-10-01", "updatedAt": "2026-10-08", "minutes": 6, "topic": "Data engineering" }
 }

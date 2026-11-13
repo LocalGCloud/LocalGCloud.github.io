@@ -1,0 +1,91 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+import { availableServiceCount } from '../../data/services';
+
+const title = 'Single-Container GCP: Beyond 3 Official Emulators';
+const description = 'Google only ships standalone emulators for Pub/Sub, Firestore, and Spanner. Run 25 GCP services locally in one Docker container with unified env exports.';
+const pageUrl = new URL('blog/single-container-gcp-beyond-three-emulators/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['single-container-gcp-beyond-three-emulators'];
+const contents = [
+  { id: 'problem', label: 'The fragmentation of standalone GCP emulators' },
+  { id: 'solution', label: 'One container, one CLI, unified discovery' },
+  { id: 'opt-in', label: 'Opt-in heavyweight runtimes without bloat' },
+  { id: 'try-it', label: 'Start the unified runtime locally' },
+  { id: 'scope', label: 'Honest support vs cloud-only services' },
+];
+const unifiedCmd = `brew install LocalGCloud/tap/localcloud
+# Start default services or add opt-in Firestore when needed
+localcloud start --local-only --services firestore,gcs,pubsub,bigquery
+eval "$(localcloud env)"
+localcloud status`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+];
+---
+
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">Local Development</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Developers coming from AWS expect a single-container local cloud. On Google Cloud, official standalone emulators cover only a few services and force teams to wire disparate binaries, ports, and scripts.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/localstack-for-google-cloud/">LocalStack for Google Cloud</a>
+          <a href="/services/">Browse all {availableServiceCount} services</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="problem">The fragmentation of standalone GCP emulators</h2>
+        <p class="mt-4">If you try to run Google Cloud locally using official standalone emulators, you quickly hit gaps: Pub/Sub, Firestore, and Spanner exist as separate downloads with separate startup flags, while BigQuery, Cloud Storage, Bigtable, Secret Manager, Cloud SQL, and Cloud Tasks have no unified local story.</p>
+        <p class="mt-4">Every engineer ends up maintaining brittle shell scripts to launch multiple Java/Go processes, track health checks manually, and export half a dozen unrelated environment variables.</p>
+      </section>
+
+      <section>
+        <h2 id="solution">One container, one CLI, unified discovery</h2>
+        <p class="mt-4">LocalCloud brings {availableServiceCount} supported Google Cloud services into a single Docker runtime managed by one CLI:</p>
+        <ul class="site-list mt-5">
+          <li><strong>One command to boot:</strong> <code>localcloud start --local-only</code> provisions the gateway, data stores, and readiness gate together.</li>
+          <li><strong>One command to configure SDKs:</strong> <code>eval "$(localcloud env)"</code> emits every active localhost endpoint and project variable in one pass.</li>
+          <li><strong>Built-in Web Console:</strong> Inspect buckets, queues, secrets, and SQL queries in your browser via <code>localcloud console</code>.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 id="opt-in">Opt-in heavyweight runtimes without bloat</h2>
+        <p class="mt-4">Not every project needs every engine running at once. Supported services like <strong>Firestore</strong>, <strong>GKE</strong> (k3d), and <strong>Cloud Run</strong> stay off by default to conserve laptop memory and boot in ~5 seconds—and turn on cleanly via <code>--services</code> or <code>localcloud.yaml</code> whenever your tests need them.</p>
+      </section>
+
+      <section>
+        <h2 id="try-it">Start the unified runtime locally</h2>
+        <p class="mt-4">Install the CLI, start your target services, and check service readiness with <code>localcloud status</code>. Explore the full <a href="/docs/">Getting Started guide</a> and <a href="/compare/emulators/">emulator comparisons</a>.</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Unified local stack</span>
+            <CopyButton text={unifiedCmd} analyticsLabel="copy-blog-single-container-cmd" />
+          </div>
+          <pre><code>{unifiedCmd}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="scope">Honest support vs cloud-only services</h2>
+        <p class="mt-4">Compute Engine VMs and Vertex AI foundation models are unsupported locally and require real Google Cloud. Check the <a href="/compatibility/">compatibility guide</a> before relying on specific cloud-only operations.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

@@ -1,0 +1,97 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const title = 'Why AI Coding Agents Need Local Cloud, Not Mocks';
+const description = 'Unit mocks hide SDK hallucinations and real GCP keys risk secret leaks. Give coding agents an honest localhost cloud sandbox via LocalCloud MCP.';
+const pageUrl = new URL('blog/why-ai-agents-need-local-cloud/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['why-ai-agents-need-local-cloud'];
+const contents = [
+  { id: 'problem', label: 'Two bad choices: fake mocks or live secrets' },
+  { id: 'solution', label: 'A self-correcting sandbox via MCP' },
+  { id: 'safety', label: 'Zero cloud credentials in the agent loop' },
+  { id: 'try-it', label: 'Connect your coding agent in one command' },
+  { id: 'guardrails', label: 'Agent guardrails for real deployments' },
+];
+const agentConnect = `brew install LocalGCloud/tap/localcloud
+localcloud doctor
+localcloud mcp install --client claude-code`;
+const agentRule = `Fetch https://local.cloud/ai/agents.md and start or reuse LocalCloud.
+Use only returned localhost endpoints and AnonymousCredentials().
+Stop if an operation is unavailable locally; never request real GCP credentials.`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+];
+---
+
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">AI Coding Agents</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">When coding agents write cloud integrations against synthetic mocks, they pass tests by hallucinating both code and mock responses. Give them a real local GCP runtime instead—with zero live secrets.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/docs/mcp/">MCP setup guide</a>
+          <a href="/local-cloud-for-ai-agents/">Local cloud for AI agents</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="problem">Two bad choices: fake mocks or live secrets</h2>
+        <p class="mt-4">Ask an AI coding agent to build a Cloud Storage uploader or a BigQuery loader and it hits an immediate verification gap:</p>
+        <ul class="site-list mt-5">
+          <li><strong>Mocks lie:</strong> An agent writes both the client call and the unit test stub, so invalid query syntax, missing resource creation, or wrong endpoint options pass silently.</li>
+          <li><strong>Live cloud leaks risk:</strong> Handing an autonomous agent real GCP service account JSON keys or letting it loop retries against billed APIs risks credential exposure and runaway spend.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 id="solution">A self-correcting sandbox via MCP</h2>
+        <p class="mt-4">LocalCloud solves the sandbox gap by pairing real wire-protocol service endpoints with a native stdio MCP bridge (1 ms tool-call latency). Your agent inspects compatibility, queries readiness, fetches exact localhost SDK environment variables, and runs your application’s real integration tests.</p>
+        <p class="mt-4">When the agent makes a schema mistake or forgets to create a Pub/Sub topic first, the local emulator returns a genuine SDK exception—allowing the agent to read diagnostics and fix its own bug before asking you to review.</p>
+      </section>
+
+      <section>
+        <h2 id="safety">Zero cloud credentials in the agent loop</h2>
+        <p class="mt-4">Every client library talks to <code>127.0.0.1</code> using <code>AnonymousCredentials()</code> or synthetic local tokens. No production project IDs or service account private keys ever enter your prompt context or agent shell.</p>
+      </section>
+
+      <section>
+        <h2 id="try-it">Connect your coding agent in one command</h2>
+        <p class="mt-4">LocalCloud supports Cursor, Claude Code, Claude Desktop, Windsurf, Codex, Cline, Gemini CLI, VS Code, and Antigravity. See the <a href="/docs/mcp/#choose-your-coding-client">MCP client table</a> or drop the agent rule below into your repository’s <code>AGENTS.md</code> (see <a href="/ai/">Agent resources</a> and <a href="/docs/">Getting Started</a>).</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Install &amp; register MCP</span>
+            <CopyButton text={agentConnect} analyticsLabel="copy-blog-ai-mocks-install" />
+          </div>
+          <pre><code>{agentConnect}</code></pre>
+        </div>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Agent prompt / AGENTS.md rule</span>
+            <CopyButton text={agentRule} analyticsLabel="copy-blog-ai-mocks-prompt" />
+          </div>
+          <pre class="blog-prompt"><code>{agentRule}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="guardrails">Agent guardrails for real deployments</h2>
+        <p class="mt-4">Instruct agents to verify compatibility up front via <code>localcloud_check_compatibility</code> and stop rather than falling back to Google Cloud. Once the agent’s PR passes locally, run final validation against your staging GCP project.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

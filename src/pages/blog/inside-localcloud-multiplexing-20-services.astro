@@ -1,0 +1,87 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const title = 'Inside LocalCloud: 20+ GCP Protocols in One Container';
+const description = 'How LocalCloud multiplexes HTTP, gRPC, PostgreSQL, MySQL, and RESP across 20+ GCP services in one ~5s cold-boot container on Apple Silicon and Linux.';
+const pageUrl = new URL('blog/inside-localcloud-multiplexing-20-services/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['inside-localcloud-multiplexing-20-services'];
+const contents = [
+  { id: 'challenge', label: 'The multi-protocol emulation problem' },
+  { id: 'gateway', label: 'Shared Go gateway + purpose-built engines' },
+  { id: 'ports', label: 'Clean port layout and dynamic remapping' },
+  { id: 'try-it', label: 'Inspect the running architecture yourself' },
+  { id: 'footprint', label: 'Apple Silicon native CLI and ~5s boot' },
+];
+const inspectCmd = `localcloud start --local-only
+localcloud status --verbose
+curl -fsS http://localhost:5380/services`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+];
+---
+
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">Architecture</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Google Cloud services do not speak one uniform protocol. Under the hood, LocalCloud combines a Go gateway, PostgreSQL-backed control planes, and specialized data engines inside a single lightweight container.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/docs/architecture/">Architecture docs</a>
+          <a href="/docs/performance/">Performance benchmarks</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="challenge">The multi-protocol emulation problem</h2>
+        <p class="mt-4">Emulating Google Cloud means serving HTTP/1.1 REST APIs, HTTP/2 h2c gRPC endpoints, BigQuery Storage TLS gRPC, Redis/Valkey RESP commands, PostgreSQL 17 wire connections, and MySQL 8.4 sockets—without forcing developers to manage twenty separate containers or hit port conflicts.</p>
+      </section>
+
+      <section>
+        <h2 id="gateway">Shared Go gateway + purpose-built engines</h2>
+        <p class="mt-4">LocalCloud organizes services cleanly by protocol and data plane inside one container:</p>
+        <ul class="site-list mt-5">
+          <li><strong>Shared gateway (port <code>5380</code> / TLS <code>5381</code>):</strong> Handles the Web Console, MCP endpoint, operator routes (<code>/health</code>, <code>/readiness</code>, <code>/env</code>, <code>/seed</code>, <code>/reset</code>), and in-process facades for Secret Manager, KMS, Cloud Tasks, Scheduler, Workflows, Logging, Monitoring, and IAM backed by internal PostgreSQL.</li>
+          <li><strong>Native BigQuery engine:</strong> Pairs GoogleSQL AST analysis with columnar DuckDB execution on ports <code>5388</code> (REST) and <code>5389</code> (Storage Read/Write TLS gRPC), supervised inside the container with zero Docker socket dependency.</li>
+          <li><strong>Dedicated protocol listeners:</strong> Cloud Storage (<code>5382</code>), Pub/Sub (<code>5383</code>), Bigtable (<code>5385</code>), Spanner gRPC/REST (<code>5386</code>/<code>5387</code>), Memorystore Valkey (<code>5390</code>), and PostgreSQL 17 for Cloud SQL/AlloyDB (<code>5391</code>).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 id="ports">Clean port layout and dynamic remapping</h2>
+        <p class="mt-4">Canonical container ports live in the <code>5380–5405</code> block, while external companions (such as MySQL 8.4 on <code>5406</code> or opt-in GKE k3d on <code>5443–5465</code>) are only spun up when selected. If a host port is already taken, the CLI remaps ports safely and updates <code>localcloud env</code> automatically.</p>
+      </section>
+
+      <section>
+        <h2 id="try-it">Inspect the running architecture yourself</h2>
+        <p class="mt-4">Start LocalCloud and inspect the live container status, mapped ports, and active service catalog JSON. See the full port table in <a href="/docs/architecture/">Architecture docs</a> and <a href="/docs/">Getting Started</a>.</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Inspect container runtime</span>
+            <CopyButton text={inspectCmd} analyticsLabel="copy-blog-arch-inspect" />
+          </div>
+          <pre><code>{inspectCmd}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="footprint">Apple Silicon native CLI and ~5s boot</h2>
+        <p class="mt-4">The native standalone CLI ships for Apple Silicon macOS and Linux ARM64/x86_64 without requiring Python on your host. Cold-booting 22 active emulators alongside PostgreSQL migrations completes in roughly 5 seconds, keeping local laptop impact small.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

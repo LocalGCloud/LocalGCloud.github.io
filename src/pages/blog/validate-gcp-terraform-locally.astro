@@ -1,0 +1,103 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const title = 'Validate Google Cloud Terraform Locally Before Apply';
+const description = 'Test hashicorp/google Terraform resources locally before touching live GCP. Configure endpoint overrides, fake local credentials, and readiness gates.';
+const pageUrl = new URL('blog/validate-gcp-terraform-locally/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['validate-gcp-terraform-locally'];
+const contents = [
+  { id: 'problem', label: 'Why terraform plan misses apply failures' },
+  { id: 'solution', label: 'Endpoint-only vs transparent routing' },
+  { id: 'credentials', label: 'Use a valid fake local service account' },
+  { id: 'try-it', label: 'Run terraform plan and apply locally' },
+  { id: 'limits', label: 'What still requires cloud validation' },
+];
+const tfConfig = `# localcloud.yaml
+version: 1
+host:
+  environment:
+    LOCALCLOUD_TERRAFORM_MODE: "true"`;
+const tfCommands = `localcloud start --local-only
+eval "$(localcloud env --format terraform)"
+export GOOGLE_APPLICATION_CREDENTIALS="$PWD/.localcloud/fake-service-account.json"
+curl -fsS http://localhost:5380/terraform/readiness?mode=endpoint
+terraform init
+terraform plan
+terraform apply -auto-approve`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+];
+---
+
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">Infrastructure as Code</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Terraform syntax checks cannot catch missing dependencies, invalid resource attributes, or broken module wiring until apply time. Exercise supported Google provider resources on localhost first.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/docs/terraform/">Terraform setup guide</a>
+          <a href="/docs/">Quick start</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="problem">Why terraform plan misses apply failures</h2>
+        <p class="mt-4">Running <code>terraform validate</code> or <code>terraform plan</code> checks HCL syntax, yet broken dependency graphs, malformed topic bindings, or incompatible module outputs often only surface mid-<code>apply</code> inside a shared staging project—leaving incomplete cloud state behind to clean up manually.</p>
+      </section>
+
+      <section>
+        <h2 id="solution">Endpoint-only vs transparent routing</h2>
+        <p class="mt-4">LocalCloud supports two Terraform routing modes tested with <code>hashicorp/google ~&gt; 7.0</code>:</p>
+        <ul class="site-list mt-5">
+          <li><strong>Endpoint-only mode:</strong> Ideal for resources whose provider clients honor generated custom endpoints (<code>eval "$(localcloud env --format terraform)"</code>).</li>
+          <li><strong>Transparent networking:</strong> Opt-in DNS and local TLS routing for provider calls such as BigQuery that ignore custom endpoint overrides (details in <a href="/docs/terraform/#transparent-network">Terraform transparent networking</a>).</li>
+        </ul>
+        <p class="mt-4">Setting <code>LOCALCLOUD_TERRAFORM_MODE=true</code> ensures startup seed calls are skipped so Terraform-managed resources never collide with sample fixtures.</p>
+      </section>
+
+      <section>
+        <h2 id="credentials">Use a valid fake local service account</h2>
+        <p class="mt-4">Google provider v7 parses the credentials JSON structurally, so <code>/dev/null</code> will fail. Generate a local RSA key and fake service-account file pointing to localhost OAuth URLs as shown in <a href="/docs/terraform/#create-valid-fake-credentials">create valid fake credentials</a>—and keep that file out of version control and never reuse it for real GCP.</p>
+      </section>
+
+      <section>
+        <h2 id="try-it">Run terraform plan and apply locally</h2>
+        <p class="mt-4">Save the <code>localcloud.yaml</code> setting before starting the runtime, verify the Terraform readiness gate, and run your plan and apply against a local non-production state backend. See the complete <a href="/docs/terraform/">Terraform integration guide</a> and <a href="/docs/">Getting Started</a>.</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">localcloud.yaml</span>
+            <CopyButton text={tfConfig} analyticsLabel="copy-blog-tf-yaml" />
+          </div>
+          <pre><code>{tfConfig}</code></pre>
+        </div>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Run Terraform against localhost</span>
+            <CopyButton text={tfCommands} analyticsLabel="copy-blog-tf-cmd" />
+          </div>
+          <pre><code>{tfCommands}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="limits">What still requires cloud validation</h2>
+        <p class="mt-4">A clean local <code>terraform apply</code> verifies module structure, provider wiring, and supported resource creation—always run your final <code>terraform plan</code> and staging apply against real Google Cloud before production rollout.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

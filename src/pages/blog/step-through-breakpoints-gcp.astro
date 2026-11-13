@@ -1,0 +1,110 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const title = 'Good Riddance, console.log: Debug GCP With Breakpoints';
+const description = 'Stop deploying print statements and waiting on Cloud Logging. Attach IDE breakpoints to Google Cloud handlers and inspect local state in the web console.';
+const pageUrl = new URL('blog/step-through-breakpoints-gcp/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['step-through-breakpoints-gcp'];
+const contents = [
+  { id: 'problem', label: 'The remote print-debugging tax' },
+  { id: 'solution', label: 'Attach your IDE debugger directly' },
+  { id: 'console', label: 'Inspect live data and logs in one console' },
+  { id: 'try-it', label: 'Inspect your next handler locally' },
+  { id: 'limits', label: 'What still belongs in the cloud' },
+];
+const debugCmd = `localcloud start --local-only
+eval "$(localcloud env)"
+# Open the built-in Data Browser and request logs
+localcloud console
+# Tail runtime service logs in your terminal
+localcloud logs --tail 50`;
+const vscodeEnv = `{
+  "name": "Debug Pub/Sub Worker (LocalCloud)",
+  "type": "debugpy",
+  "request": "launch",
+  "program": "\${workspaceFolder}/worker.py",
+  "env": {
+    "GOOGLE_CLOUD_PROJECT": "local-gcp-project",
+    "PUBSUB_EMULATOR_HOST": "localhost:5383",
+    "STORAGE_EMULATOR_HOST": "http://localhost:5382"
+  }
+}`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+];
+---
+
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">Developer Productivity</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Debugging cloud workers remotely forces you into slow cycles of print statements, container rebuilds, and log ingestion waits. Run services locally so you can pause on breakpoints and inspect stored state immediately.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/docs/console/">Web console guide</a>
+          <a href="/docs/">Quick start</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="problem">The remote print-debugging tax</h2>
+        <p class="mt-4">When a message consumer drops an attribute or a BigQuery insert rejects a nested struct in a cloud dev environment, standard step-through debuggers rarely reach it. You add log lines, push a build, trigger the event, and wait for Cloud Logging to index the output.</p>
+        <p class="mt-4">A five-minute variable check stretches into forty minutes of context switching across terminal tabs and cloud console filters.</p>
+      </section>
+
+      <section>
+        <h2 id="solution">Attach your IDE debugger directly</h2>
+        <p class="mt-4">Because LocalCloud exposes standard gRPC and HTTP endpoints on localhost, your Python, Node.js, or Go process runs natively inside VS Code, PyCharm, or GoLand while communicating with real Google Cloud client libraries.</p>
+        <p class="mt-4">Run <code>localcloud env</code> to grab the exact host and port values for your container, pass them into your IDE launch configuration, and set breakpoints right inside message callbacks or storage handlers. You can pause mid-flight, inspect decoded payloads, and step into retry logic without timeouts killing your session.</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">VS Code launch snippet (verify ports with localcloud env)</span>
+            <CopyButton text={vscodeEnv} analyticsLabel="copy-blog-breakpoints-vscode" />
+          </div>
+          <pre><code>{vscodeEnv}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="console">Inspect live data and logs in one console</h2>
+        <p class="mt-4">Breakpointing your code tells half the story; seeing what actually landed in cloud state completes it. LocalCloud ships a built-in <a href="/docs/console/">Web Console</a> alongside the emulator runtime:</p>
+        <ul class="site-list mt-5">
+          <li><strong>Data Browser:</strong> Create buckets, inspect uploaded objects, publish test Pub/Sub messages, and browse Firestore or Secret Manager records without extra CLI flags.</li>
+          <li><strong>SQL &amp; service explorers:</strong> Run ad-hoc BigQuery and Spanner queries directly in the browser to verify row mutations while your debugger is paused.</li>
+          <li><strong>Request logs:</strong> Watch API calls hit the gateway immediately, eliminating remote log-ingestion lag.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 id="try-it">Inspect your next handler locally</h2>
+        <p class="mt-4">Start LocalCloud, launch the console (trust the URL printed by the CLI if a port was remapped), and watch logs stream as your code executes. Need help wiring your SDK? Check <a href="/docs/sdk-examples/">SDK examples</a> or the <a href="/docs/">Getting Started guide</a>.</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Console &amp; log inspection</span>
+            <CopyButton text={debugCmd} analyticsLabel="copy-blog-breakpoints-cmd" />
+          </div>
+          <pre><code>{debugCmd}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="limits">What still belongs in the cloud</h2>
+        <p class="mt-4">Keep local debugging focused on application logic, schemas, and SDK requests. Cloud-side IAM enforcement, VPC routing, and production service latency still need final verification in Google Cloud before release.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

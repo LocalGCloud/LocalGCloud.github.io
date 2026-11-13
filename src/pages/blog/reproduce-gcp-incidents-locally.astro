@@ -1,0 +1,119 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const title = 'Reproduce Production GCP Incidents Locally in Minutes';
+const description = 'Stop guessing at production edge cases. Seed matching schemas and replay failing Pub/Sub or BigQuery payloads safely inside an isolated local container.';
+const pageUrl = new URL('blog/reproduce-gcp-incidents-locally/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['reproduce-gcp-incidents-locally'];
+const contents = [
+  { id: 'problem', label: 'Why production bugs are hard to reproduce' },
+  { id: 'solution', label: 'Isolate the failing schema and payload' },
+  { id: 'walkthrough', label: 'Replay the incident safely on localhost' },
+  { id: 'try-it', label: 'Example incident seed fixture' },
+  { id: 'verify', label: 'Verify the fix before deploying' },
+];
+const incidentSeed = `services:
+  pubsub:
+    topics:
+      - name: orders-inbound
+        subscriptions:
+          - name: orders-worker-sub
+  bigquery:
+    datasets:
+      - name: billing
+    tables:
+      - dataset: billing
+        name: invoices
+        schema:
+          fields:
+            - name: invoice_id
+              type: STRING
+              mode: REQUIRED
+            - name: amount_cents
+              type: INTEGER`;
+const replayCmd = `# 1. Start an isolated volume for incident reproduction
+localcloud start --local-only --data-volume rca-incident-412
+eval "$(localcloud env --data-volume rca-incident-412)"
+
+# 2. Load the matching topic and BigQuery table schema
+curl -fsS -X POST http://localhost:5380/seed \
+  -H 'Content-Type: application/yaml' \
+  --data-binary @incident-seed.yaml`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+];
+---
+
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">Developer Productivity</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Replicating an edge-case failure in shared staging risks breaking other developers, while guessing with unit mocks misses real SDK serialization bugs. Spin up a dedicated local sandbox to replay failing payloads safely.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/docs/seed-data/">Seed data guide</a>
+          <a href="/docs/">Quick start</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="problem">Why production bugs are hard to reproduce</h2>
+        <p class="mt-4">Suppose an ingestion worker crashes on a malformed Pub/Sub message attribute or rejects a nullable BigQuery column during streaming inserts. You cannot replay destructive payloads in production, and pushing half-baked reproductions into shared staging breaks tests for the rest of the team.</p>
+        <p class="mt-4">Mocking the SDK client in a unit test rarely helps when the crash stems from how the real client serializes types, raises transport exceptions, or handles schema enforcement.</p>
+      </section>
+
+      <section>
+        <h2 id="solution">Isolate the failing schema and payload</h2>
+        <p class="mt-4">LocalCloud lets you carve out a dedicated Docker volume just for that incident (<code>--data-volume rca-incident-412</code>), leaving your normal dev environment untouched. Using a synthetic YAML fixture, you recreate the exact table schema, bucket path, or topic-subscription wiring in seconds.</p>
+      </section>
+
+      <section>
+        <h2 id="walkthrough">Replay the incident safely on localhost</h2>
+        <ol class="site-list mt-5">
+          <li><strong>Capture synthetic repro data:</strong> Replace any customer PII with synthetic values matching the failing structure and types.</li>
+          <li><strong>Seed the sandbox:</strong> Post the schema fixture to the local gateway’s <code>/seed</code> endpoint.</li>
+          <li><strong>Publish and break:</strong> Publish the offending message into the local Pub/Sub topic (via SDK or the <a href="/docs/console/#data-browser">Web Console Data Browser</a>) while your worker runs under a debugger.</li>
+          <li><strong>Write the regression test:</strong> Once you observe the exact failure and patch your code, turn that fixture and payload into an automated test.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2 id="try-it">Example incident seed fixture</h2>
+        <p class="mt-4">Save this synthetic schema as <code>incident-seed.yaml</code>, start an isolated volume, and seed it. If your CLI remapped port <code>5380</code>, inspect the gateway URL printed by <code>localcloud status</code>. Full schema options are in the <a href="/docs/seed-data/">Seed Data reference</a> and <a href="/docs/">Getting Started guide</a>.</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">incident-seed.yaml</span>
+            <CopyButton text={incidentSeed} analyticsLabel="copy-blog-rca-seed" />
+          </div>
+          <pre><code>{incidentSeed}</code></pre>
+        </div>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Start &amp; seed isolated runtime</span>
+            <CopyButton text={replayCmd} analyticsLabel="copy-blog-rca-cmd" />
+          </div>
+          <pre><code>{replayCmd}</code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2 id="verify">Verify the fix before deploying</h2>
+        <p class="mt-4">Because LocalCloud uses synthetic data on localhost, keep production credentials and real customer payloads out of your local fixtures. Once your regression test passes locally, deploy and validate against real Google Cloud staging before closing the incident.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

@@ -1,0 +1,95 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+
+const title = 'The 2ms Inner Loop: Protect Focus on Cloud Code';
+const description = 'Cloud API latency fractures developer flow state. Run Google Cloud storage, queues, and SQL locally at 2ms p50 latency so your inner loop stays instant.';
+const pageUrl = new URL('blog/the-2ms-inner-loop/', productFacts.siteUrl).toString();
+const metadata = authoredBlogMetadata['the-2ms-inner-loop'];
+const contents = [
+  { id: 'problem', label: 'Why remote tests break flow state' },
+  { id: 'solution', label: 'Sub-millisecond feedback on localhost' },
+  { id: 'benchmarks', label: 'Measured local service latency' },
+  { id: 'try-it', label: 'Start an instant local loop' },
+  { id: 'validate', label: 'Keep cloud checks for pre-release' },
+];
+const startCmd = `brew install LocalGCloud/tap/localcloud
+localcloud start --local-only
+eval "$(localcloud env)"`;
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: title, url: pageUrl },
+  ]),
+];
+---
+
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">Developer Productivity</span>
+        <h1 class="mt-5">{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <p class="blog-deck">Every remote cloud round-trip adds seconds of network, TLS, and auth delay to your test cycle. Run Google Cloud services on localhost to keep integration feedback in single-digit milliseconds—even offline.</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href="/docs/">Quick start</a>
+          <a href="/docs/performance/">See benchmarks</a>
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10">
+      <section>
+        <h2 id="problem">Why remote tests break flow state</h2>
+        <p class="mt-4">A single integration test against remote Google Cloud rarely waits on one request. It creates a temporary bucket or topic, exchanges OAuth tokens over HTTPS, writes test rows, polls for delivery, and cleans up.</p>
+        <p class="mt-4">Two or three seconds per step turns a ten-test suite into a half-minute pause. That gap is long enough to check Slack or switch tabs. Multiply fifty runs across an afternoon and you lose both wall-clock time and deep focus—or get blocked completely on flights, trains, or flaky VPNs.</p>
+      </section>
+
+      <section>
+        <h2 id="solution">Sub-millisecond feedback on localhost</h2>
+        <p class="mt-4">LocalCloud moves those service endpoints into one local Docker container bound to <code>127.0.0.1</code>. Your application keeps using standard Google Cloud SDKs, pointed at localhost via <code>eval "$(localcloud env)"</code>.</p>
+        <ul class="site-list mt-5">
+          <li><strong>No network hop or OAuth handshake:</strong> Requests hit local ports directly without leaving your machine.</li>
+          <li><strong>Offline-ready by default:</strong> Build and run full Cloud Storage, Pub/Sub, and SQL test suites without internet access.</li>
+          <li><strong>Fast container lifecycle:</strong> A cold boot of 22 services completes in about 5 seconds, and warm starts reconcile in ~333 ms.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 id="benchmarks">Measured local service latency</h2>
+        <p class="mt-4">Our published <a href="/docs/performance/">performance benchmarks</a> measure the local runtime using the native CLI and <code>agentcloud/localcloud:lite</code>:</p>
+        <ul class="site-list mt-5">
+          <li><strong>Memorystore (Redis/Valkey):</strong> <code>1 ms</code> p50 GET/SET (~1,950 ops/sec).</li>
+          <li><strong>Cloud Storage:</strong> <code>2 ms</code> p50 object GET and <code>5 ms</code> p50 object PUT (1 KB).</li>
+          <li><strong>Cloud SQL (PostgreSQL) &amp; Secret Manager:</strong> <code>2 ms</code> p50 point reads and writes.</li>
+          <li><strong>Cloud Pub/Sub:</strong> <code>3 ms</code> p50 publish; over 10,000 msgs/sec in 100-message batches.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 id="try-it">Start an instant local loop</h2>
+        <p class="mt-4">Install the CLI, start the runtime bound to localhost, and export emulator variables into your shell. See the <a href="/docs/#install-the-cli">Quick Start install guide</a> for Linux binary and manual Docker options.</p>
+        <div class="site-panel mt-5">
+          <div class="flex items-center justify-between gap-4">
+            <span class="site-kicker">Shell commands</span>
+            <CopyButton text={startCmd} analyticsLabel="copy-blog-2ms-start" />
+          </div>
+          <pre><code>{startCmd}</code></pre>
+        </div>
+        <p class="mt-4">Run your existing test suite in that shell. Every SDK call stays on your workstation at local memory and disk speed.</p>
+      </section>
+
+      <section>
+        <h2 id="validate">Keep cloud checks for pre-release</h2>
+        <p class="mt-4">Local latency speeds up the 95% of edits where you are verifying business logic, serialization, and error handling. Before shipping to production, unset LocalCloud variables and run pre-release validation against real Google Cloud to confirm production quotas, latency, and IAM rules.</p>
+      </section>
+    </div>
+  </section>
+</BlogLayout>
