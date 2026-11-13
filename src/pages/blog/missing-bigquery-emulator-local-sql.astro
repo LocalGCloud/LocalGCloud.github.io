@@ -1,19 +1,12 @@
 ---
-import BlogLayout from '../../layouts/BlogLayout.astro';
-import CopyButton from '../../components/CopyButton.astro';
-import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
-import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+import BlogArticle from '../../components/BlogArticle.astro';
+import BlogCode from '../../components/BlogCode.astro';
 
-const title = 'Test Google BigQuery Locally Without a Cloud Project';
-const description = 'Google provides no official BigQuery emulator. Run GoogleSQL queries, table DDL, and streaming inserts on localhost with standard BigQuery SDKs.';
-const pageUrl = new URL('blog/missing-bigquery-emulator-local-sql/', productFacts.siteUrl).toString();
-const metadata = authoredBlogMetadata['missing-bigquery-emulator-local-sql'];
 const contents = [
-  { id: 'problem', label: 'The missing BigQuery emulator problem' },
-  { id: 'solution', label: 'GoogleSQL analysis backed by DuckDB' },
-  { id: 'capabilities', label: 'What you can test locally' },
-  { id: 'try-it', label: 'Run a BigQuery SDK test on localhost' },
-  { id: 'validation', label: 'Verify production SQL semantics separately' },
+  { id: 'gap', label: 'The service everyone skips testing' },
+  { id: 'start', label: 'Start BigQuery on localhost' },
+  { id: 'query', label: 'Create, load and query' },
+  { id: 'coverage', label: 'What you can cover locally' },
 ];
 const startBq = `localcloud start --local-only --services bigquery
 eval "$(localcloud env)"`;
@@ -27,81 +20,73 @@ client = bigquery.Client(
     client_options={"api_endpoint": os.environ["BIGQUERY_EMULATOR_HOST"]},
 )
 
-dataset_ref = client.dataset("analytics_local")
-client.create_dataset(dataset_ref, exists_ok=True)
-rows = list(client.query("SELECT 42 AS answer, UPPER('localcloud') AS source").result())
-print(rows[0].answer, rows[0].source)`;
-const structuredData = [
-  createBreadcrumbSchema([
-    { name: 'Home', url: productFacts.siteUrl },
-    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
-    { name: title, url: pageUrl },
-  ]),
-];
+client.query("CREATE SCHEMA IF NOT EXISTS analytics_local").result()
+client.query(
+    "CREATE OR REPLACE TABLE analytics_local.orders (customer STRING, total NUMERIC)"
+).result()
+errors = client.insert_rows_json(
+    f"{client.project}.analytics_local.orders",
+    [
+        {"customer": "ada", "total": "120.50"},
+        {"customer": "grace", "total": "310.00"},
+        {"customer": "ada", "total": "45.25"},
+    ],
+)
+assert not errors, errors
+
+sql = """
+SELECT customer,
+       SUM(total) AS spend,
+       RANK() OVER (ORDER BY SUM(total) DESC) AS position
+FROM analytics_local.orders
+GROUP BY customer
+ORDER BY position
+"""
+for row in client.query(sql).result():
+    print(row.position, row.customer, row.spend)`;
+const output = `1 grace 310
+2 ada 165.75`;
 ---
 
-<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
-  <Fragment slot="hero">
-    <article class="site-section site-section--hero">
-      <div class="container container--narrow">
-        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
-        <span class="site-eyebrow">Data Engineering</span>
-        <h1 class="mt-5">{title}</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">Google ships emulators for Pub/Sub, Firestore, and Spanner—but not BigQuery. LocalCloud includes an in-container BigQuery engine so data pipelines, SQL transforms, and SDK integrations run locally at $0 cost.</p>
-        <div class="blog-actions">
-          <a class="site-button site-button--primary" href="/services/bigquery/">BigQuery service guide</a>
-          <a href="/docs/bigquery-emulator-features/">BigQuery feature reference</a>
-        </div>
-      </div>
-    </article>
-  </Fragment>
-
-  <section class="site-section">
-    <div class="container container--narrow space-y-10">
-      <section>
-        <h2 id="problem">The missing BigQuery emulator problem</h2>
-        <p class="mt-4">Data teams building on Google Cloud hit the same snag: you can emulate Pub/Sub on a laptop, yet BigQuery requires live cloud access, IAM permissions, and query billing. As a result, many teams skip integration tests for SQL queries, schema migrations, and ingestion scripts altogether—discovering broken casts or column mismatches only in staging.</p>
-      </section>
-
-      <section>
-        <h2 id="solution">GoogleSQL analysis backed by DuckDB</h2>
-        <p class="mt-4">LocalCloud builds a native BigQuery process directly into the runtime container (port <code>5388</code> for REST/JSON and TLS port <code>5389</code> for the Storage Read/Write gRPC API). It pairs GoogleSQL parsing and AST analysis with columnar DuckDB execution under <code>/var/lib/localcloud/bigquery-data</code>—with no Docker socket dependency required for BigQuery queries.</p>
-      </section>
-
-      <section>
-        <h2 id="capabilities">What you can test locally</h2>
-        <ul class="site-list mt-5">
-          <li><strong>Datasets, tables &amp; views:</strong> Full DDL lifecycle, partitioned/clustered definitions, and <code>INFORMATION_SCHEMA</code> inspection.</li>
-          <li><strong>Standard SQL &amp; scripting:</strong> CTEs, <code>UNNEST</code>, window functions, JSON helpers, and analytical aggregates.</li>
-          <li><strong>Streaming &amp; batch loads:</strong> <code>insertAll</code> streaming (~68 ms p50 for 10-row batches) and load jobs alongside Cloud Storage fixtures.</li>
-          <li><strong>Browser SQL editor:</strong> Test queries visually in the built-in <a href="/docs/console/#sql-and-service-explorers">Web Console</a>.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2 id="try-it">Run a BigQuery SDK test on localhost</h2>
-        <p class="mt-4">Start LocalCloud with BigQuery enabled, export the generated environment variables, and pass <code>BIGQUERY_EMULATOR_HOST</code> into the Python client’s <code>client_options</code>. See <a href="/docs/">Getting Started</a> for CLI installation and <a href="/docs/sdk-examples/">SDK examples</a> for Node.js and Go setups.</p>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">Start BigQuery locally</span>
-            <CopyButton text={startBq} analyticsLabel="copy-blog-bq-start" />
-          </div>
-          <pre><code>{startBq}</code></pre>
-        </div>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">test_bigquery_local.py</span>
-            <CopyButton text={pyBq} analyticsLabel="copy-blog-bq-python" />
-          </div>
-          <pre><code>{pyBq}</code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2 id="validation">Verify production SQL semantics separately</h2>
-        <p class="mt-4">Review the <a href="/docs/bigquery-emulator-features/">BigQuery emulator feature reference</a> for exact function coverage and Storage API transport notes, and run final validation against a real BigQuery dataset for cloud-only features like BQML or petabyte-scale query plans.</p>
-      </section>
-    </div>
+<BlogArticle
+  slug="missing-bigquery-emulator-local-sql"
+  kind="Walkthrough"
+  deck="Google publishes local emulators for several of its databases and for Pub/Sub. BigQuery isn't one of them, so the SQL that feeds your dashboards is often the least tested code you ship. LocalCloud includes a BigQuery engine that the standard client talks to."
+  primary={{ href: '/services/bigquery/', label: 'BigQuery service guide' }}
+  secondary={{ href: '/docs/bigquery-emulator-features/', label: 'BigQuery feature reference' }}
+  {contents}
+  outcome="A table created with DDL, rows loaded through the streaming API, and a window-function query answered on localhost by the standard Python client."
+  needs="Python with google-cloud-bigquery"
+  next={{ posts: ['event-driven-pipelines-gcs-pubsub-bigquery', 'run-dataproc-locally-docker'], doc: { href: '/docs/bigquery-emulator-features/', label: 'BigQuery feature reference: functions, DDL and the Storage API' } }}
+>
+  <section>
+    <h2 id="gap">The service everyone skips testing</h2>
+    <p class="mt-4">You can run Pub/Sub or Spanner on a laptop with a tool from Google. For BigQuery the choice has been a real project, with credentials and a bill for every query, or no test at all.</p>
+    <p class="mt-4">Most teams pick no test. Transforms get checked by eye in the console, schema migrations are run once and trusted, and the first sign of a wrong cast or a renamed column is a broken report.</p>
   </section>
-</BlogLayout>
+
+  <section>
+    <h2 id="start">Start BigQuery on localhost</h2>
+    <BlogCode label="Start BigQuery" code={startBq} copy="copy-blog-bq-start" />
+    <p class="mt-4">The engine runs inside the LocalCloud container. It parses GoogleSQL and executes it on DuckDB, a columnar engine that suits analytical queries. <code>localcloud env</code> exports <code>BIGQUERY_EMULATOR_HOST</code>; the Python client takes that value through <code>client_options</code>.</p>
+  </section>
+
+  <section>
+    <h2 id="query">Create, load and query</h2>
+    <p class="mt-4">This script does what a real pipeline test does: build a table, load rows through <code>insertAll</code>, and assert on the result of a query that uses an aggregate and a window function.</p>
+    <BlogCode label="test_bigquery_local.py" code={pyBq} copy="copy-blog-bq-python" />
+    <BlogCode label="Output" code={output} />
+    <p class="mt-4">No project, no credentials, no query charge. Swap the SQL for one of your own transforms and you have its first integration test.</p>
+  </section>
+
+  <section>
+    <h2 id="coverage">What you can cover locally</h2>
+    <ul class="site-list mt-5">
+      <li><strong>Schemas and migrations.</strong> Datasets, tables and views, partitioned and clustered definitions, and <code>INFORMATION_SCHEMA</code> queries to check them.</li>
+      <li><strong>Query logic.</strong> CTEs, <code>UNNEST</code>, window functions, JSON functions and scripting.</li>
+      <li><strong>Loading.</strong> Streaming inserts for rows as they arrive, and load jobs for batches.</li>
+      <li><strong>Exploration.</strong> A SQL editor in the <a href="/docs/console/#sql-and-service-explorers">web console</a> for trying a query before it goes into code.</li>
+    </ul>
+    <p class="mt-4">The <a href="/docs/bigquery-emulator-features/">feature reference</a> lists function coverage in detail. Query cost and performance at warehouse scale are things only BigQuery itself can tell you, so measure those there.</p>
+  </section>
+</BlogArticle>

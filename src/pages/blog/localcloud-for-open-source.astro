@@ -4,9 +4,7 @@ import CopyButton from '../../components/CopyButton.astro';
 import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
 import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
 
-const title = 'Bring No-Cost Cloud Integration Testing Into Your Repository: Low Setup, Easy Contributions';
-// The search title drops the subtitle so it fits the results page.
-const searchTitle = 'Bring No-Cost Cloud Integration Testing Into Your Repository';
+const title = 'Bring No-Cost Cloud Integration Testing Into Your Repository';
 const description = 'Run Google Cloud integration tests locally at zero cloud-resource cost and make contributing easier. LocalCloud is free for open-source development and CI.';
 const pageUrl = new URL('blog/localcloud-for-open-source/', productFacts.siteUrl).toString();
 const metadata = authoredBlogMetadata['localcloud-for-open-source'];
@@ -14,10 +12,10 @@ const contents = [
   { id: 'first-contribution', label: 'Make cloud testing accessible to every contributor' },
   { id: 'maintainers', label: 'Simplify testing and reviews for maintainers' },
   { id: 'real-workflows', label: 'Run meaningful cloud integration tests locally' },
-  { id: 'integration', label: 'A small integration that pays off' },
-  { id: 'integration-brief', label: 'Copy the integration brief' },
-  { id: 'free-for-open-source', label: 'Zero cloud cost, free for open source' },
-  { id: 'start-small', label: 'Start with one test' },
+  { id: 'integration', label: 'Make the integration small enough to review' },
+  { id: 'integration-brief', label: 'A ready-to-copy brief' },
+  { id: 'free-for-open-source', label: 'Zero cloud-resource cost, free for open source' },
+  { id: 'start-small', label: 'Start with the test contributors struggle to run' },
 ];
 const integrationBrief = `Add an opt-in LocalCloud integration for this repository's Google Cloud tests.
 
@@ -36,15 +34,15 @@ const structuredData = [
 ];
 ---
 
-<BlogLayout title={searchTitle} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
+<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
   <Fragment slot="hero">
     <article class="site-section site-section--hero">
       <div class="container container--narrow">
         <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
-        <span class="site-eyebrow">LocalCloud Blog</span>
-        <h1 class="mt-5">{title}</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">Bring supported Google Cloud workflows to your contributors’ laptops. With a LocalCloud launcher in your repository, contributors can run its local tests without setting up a Google Cloud project, sharing cloud credentials, or paying for cloud resources. LocalCloud is free for open-source development and CI under the Free for open-source projects policy.</p>
+        <span class="site-eyebrow">{metadata.topic}</span>
+        <h1 class="mt-5" data-content-update>{title}</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>Perspective</span></p>
+        <p class="blog-deck">Bring supported Google Cloud workflows to your contributors’ laptops. With a LocalCloud launcher in your repository, contributors can run its local tests without setting up a Google Cloud project, sharing cloud credentials, or paying for cloud resources. LocalCloud is free for open-source development and CI.</p>
         <div class="blog-actions">
           <a class="site-button site-button--primary" href="#integration-brief">Copy the integration brief</a>
           <a href="/docs/">Get started</a>

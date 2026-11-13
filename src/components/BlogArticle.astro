@@ -1,0 +1,86 @@
+---
+import BlogLayout from '../layouts/BlogLayout.astro';
+import { blogPosts } from '../data/blogPosts';
+import { authoredBlogMetadata, formatBlogDate } from '../data/blogPresentation';
+import { createBreadcrumbSchema, productFacts } from '../data/productFacts';
+
+// Shared frame for authored posts: header, contents list and the closing "Keep going" block.
+// The title and summary come from src/data/blogPosts.ts so the index, RSS and page agree.
+type Slug = keyof typeof authoredBlogMetadata;
+interface Link { href: string; label: string }
+interface Props {
+  slug: Slug;
+  /** Walkthrough: numbered steps with output. Perspective: an argument. Deep dive: how it works. */
+  kind: 'Walkthrough' | 'Perspective' | 'Deep dive';
+  deck: string;
+  primary: Link;
+  secondary?: Link;
+  contents: { id: string; label: string }[];
+  /** Walkthroughs state the result up front. */
+  outcome?: string;
+  /** Anything needed beyond Docker and the CLI. */
+  needs?: string;
+  next: { posts: Slug[]; doc: Link };
+}
+
+const { slug, kind, deck, primary, secondary, contents, outcome, needs, next } = Astro.props;
+const find = (target: Slug) => {
+  const post = blogPosts.find((entry) => entry.slug === target);
+  if (!post) throw new Error(`BlogArticle: ${target} is missing from src/data/blogPosts.ts`);
+  return post;
+};
+const post = find(slug);
+const metadata = authoredBlogMetadata[slug];
+const related = next.posts.map(find);
+const pageUrl = new URL(`blog/${slug}/`, productFacts.siteUrl).toString();
+const structuredData = [
+  createBreadcrumbSchema([
+    { name: 'Home', url: productFacts.siteUrl },
+    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
+    { name: post.title, url: pageUrl },
+  ]),
+];
+const allContents = [...contents, { id: 'next', label: 'Keep going' }];
+---
+
+<BlogLayout title={post.title} description={post.description} {structuredData} contents={allContents} article={{ publishedAt: metadata.publishedAt, headline: post.title }}>
+  <Fragment slot="hero">
+    <article class="site-section site-section--hero">
+      <div class="container container--narrow">
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">{metadata.topic}</span>
+        <h1 class="mt-5" data-content-update>{post.title}</h1>
+        <p class="blog-meta">
+          <span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span>
+          {metadata.updatedAt && <span>Updated <time datetime={metadata.updatedAt}>{formatBlogDate(metadata.updatedAt)}</time></span>}
+          <span>{metadata.minutes} min read</span>
+          <span>{kind}</span>
+        </p>
+        <p class="blog-deck" data-content-update>{deck}</p>
+        <div class="blog-actions">
+          <a class="site-button site-button--primary" href={primary.href}>{primary.label}</a>
+          {secondary && <a href={secondary.href}>{secondary.label}</a>}
+        </div>
+      </div>
+    </article>
+  </Fragment>
+
+  <section class="site-section">
+    <div class="container container--narrow space-y-10" data-content-update>
+      {outcome && (
+        <dl class="blog-outcome site-panel site-panel--soft">
+          <div><dt>You'll end up with</dt><dd>{outcome}</dd></div>
+          <div><dt>You need</dt><dd>Docker and the LocalCloud CLI (<a href="/docs/#install-the-cli">install it from the quick start</a>){needs && `, plus ${needs}`}.</dd></div>
+        </dl>
+      )}
+      <slot />
+      <section class="blog-next">
+        <h2 id="next">Keep going</h2>
+        <ul class="site-list mt-5">
+          {related.map((entry) => <li><span><a href={entry.path}>{entry.title}</a></span></li>)}
+          <li><span><a href={next.doc.href}>{next.doc.label}</a></span></li>
+        </ul>
+      </section>
+    </div>
+  </section>
+</BlogLayout>

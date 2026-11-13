@@ -7,8 +7,52 @@ import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const localHref = (path: string) => `${base}${path.replace(/^\//, '')}`;
-const featured = posts.find((post) => post.slug === 'localcloud-mcp-agent-cloud') ?? posts[0];
-const remaining = posts.filter((post) => post.slug !== featured.slug);
+
+// The featured post and the reading order inside each track are editorial choices.
+// A post that is in no track still appears, under "More from the blog".
+const featuredSlug = 'reproduce-gcp-incidents-locally';
+const tracks = [
+  {
+    id: 'developer-loop',
+    title: 'The developer loop',
+    intro: 'Faster feedback while you write cloud code: tests on save, clean state, breakpoints and parallel branches.',
+    slugs: ['the-2ms-inner-loop', 'tdd-google-cloud-watch-mode', 'one-second-cloud-state-resets', 'step-through-breakpoints-gcp', 'parallel-git-worktrees-localcloud', 'zero-ticket-cloud-prototyping'],
+  },
+  {
+    id: 'data',
+    title: 'Data pipelines',
+    intro: 'BigQuery, event-driven ingestion and Spark, tested end to end on a laptop.',
+    slugs: ['event-driven-pipelines-gcs-pubsub-bigquery', 'missing-bigquery-emulator-local-sql', 'run-dataproc-locally-docker'],
+  },
+  {
+    id: 'agents',
+    title: 'Coding agents',
+    intro: 'Give an agent a cloud it can test against without giving it your credentials.',
+    slugs: ['localcloud-mcp-agent-cloud', 'why-ai-agents-need-local-cloud'],
+  },
+  {
+    id: 'teams',
+    title: 'CI, infrastructure and security',
+    intro: 'Pull-request checks without secrets, Terraform applied locally, and secret handling you can test.',
+    slugs: ['zero-secret-gcp-ci-github-actions', 'validate-gcp-terraform-locally', 'local-secrets-kms-without-iam-friction', 'localcloud-for-open-source'],
+  },
+  {
+    id: 'how-it-works',
+    title: 'How LocalCloud works',
+    intro: 'Why one container, and what is inside it.',
+    slugs: ['single-container-gcp-beyond-three-emulators', 'inside-localcloud-multiplexing-20-services'],
+  },
+];
+const featured = posts.find((post) => post.slug === featuredSlug) ?? posts[0];
+const bySlug = new Map(posts.map((post) => [post.slug, post]));
+const grouped = tracks
+  .map((track) => ({ ...track, posts: track.slugs.filter((slug) => slug !== featured.slug).map((slug) => bySlug.get(slug)).filter((post) => post !== undefined) }))
+  .filter((track) => track.posts.length > 0);
+const placed = new Set([featured.slug, ...tracks.flatMap((track) => track.slugs)]);
+const rest = posts.filter((post) => !placed.has(post.slug));
+const sections = rest.length > 0
+  ? [...grouped, { id: 'more', title: 'More from the blog', intro: '', posts: rest }]
+  : grouped;
 const structuredData = [createBreadcrumbSchema([
   { name: 'Home', url: productFacts.siteUrl },
   { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
@@ -17,7 +61,7 @@ const structuredData = [createBreadcrumbSchema([
 
 <BlogLayout
   title="LocalCloud Blog: Guides and Demos"
-  description="Practical guides for local Google Cloud development: Dataproc and Spark in Docker, no-cost integration testing for open-source projects, and more."
+  description="Walkthroughs and essays on local Google Cloud development: faster test loops, data pipelines, coding agents, CI without secrets, and how LocalCloud works."
   {structuredData}
   index
 >
@@ -26,36 +70,41 @@ const structuredData = [createBreadcrumbSchema([
       <div class="container">
         <span class="site-eyebrow">LocalCloud Blog</span>
         <h1 class="mt-4">LocalCloud blog and demos</h1>
-        <p class="blog-deck">Practical guides for building and testing Google Cloud workflows locally, from data pipelines to open-source CI.</p>
+        <p class="blog-deck" data-content-update>Walkthroughs you can run and arguments worth having about building and testing Google Cloud applications on your own machine.</p>
         <p><a href={localHref('/rss.xml')}>Subscribe via RSS</a></p>
       </div>
     </section>
   </Fragment>
 
-  <section class="site-section" aria-label="Featured article">
+  <section class="site-section" aria-label="Articles">
     <a class="blog-card blog-feature" href={localHref(featured.path)}>
-      <span class="site-kicker">Featured guide · {featured.topic}</span>
+      <span class="site-kicker" data-content-update>Start here · {featured.topic}</span>
       <h2>{featured.title}</h2>
       <p>{featured.description}</p>
       <div class="blog-meta">
         {featured.date && <span>{featured.dateLabel} <time datetime={featured.date}>{formatBlogDate(featured.date)}</time></span>}
         <span>{featured.minutes} min read</span>
       </div>
-      <span class="blog-read">Read the guide <span aria-hidden="true">→</span></span>
+      <span class="blog-read">Read the walkthrough <span aria-hidden="true">→</span></span>
     </a>
-    <h2 class="mb-6" id="articles">More from the blog</h2>
-    <div class="blog-posts">
-      {remaining.map((post) => <article>
-        <a class="blog-card" href={localHref(post.path)}>
-          <span class="site-kicker">{post.topic}</span>
-          <h3>{post.title}</h3>
-          <p>{post.description}</p>
-          <div class="blog-meta">
-            {post.date && <span>{post.dateLabel} <time datetime={post.date}>{formatBlogDate(post.date)}</time></span>}
-            <span>{post.minutes} min read</span>
-          </div>
-        </a>
-      </article>)}
-    </div>
+    {sections.map((section) => (
+      <section class="blog-track" aria-labelledby={section.id}>
+        <h2 id={section.id} data-content-update>{section.title}</h2>
+        {section.intro && <p data-content-update>{section.intro}</p>}
+        <div class="blog-posts">
+          {section.posts.map((post) => <article>
+            <a class="blog-card" href={localHref(post.path)}>
+              <span class="site-kicker">{post.topic}</span>
+              <h3>{post.title}</h3>
+              <p>{post.description}</p>
+              <div class="blog-meta">
+                {post.date && <span>{post.dateLabel} <time datetime={post.date}>{formatBlogDate(post.date)}</time></span>}
+                <span>{post.minutes} min read</span>
+              </div>
+            </a>
+          </article>)}
+        </div>
+      </section>
+    ))}
   </section>
 </BlogLayout>

@@ -1,22 +1,19 @@
 ---
-import BlogLayout from '../../layouts/BlogLayout.astro';
-import CopyButton from '../../components/CopyButton.astro';
-import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
-import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+import BlogArticle from '../../components/BlogArticle.astro';
+import BlogCode from '../../components/BlogCode.astro';
 
-const title = 'Local Event Pipelines: GCS, Pub/Sub, and BigQuery';
-const description = 'Test multi-service ingestion pipelines end to end on your laptop by wiring Cloud Storage, Pub/Sub notifications, and BigQuery in one LocalCloud container.';
-const pageUrl = new URL('blog/event-driven-pipelines-gcs-pubsub-bigquery/', productFacts.siteUrl).toString();
-const metadata = authoredBlogMetadata['event-driven-pipelines-gcs-pubsub-bigquery'];
 const contents = [
-  { id: 'problem', label: 'Why multi-service pipelines fail integration' },
-  { id: 'solution', label: 'One container, three connected services' },
-  { id: 'pipeline', label: 'Walk through the event flow locally' },
-  { id: 'try-it', label: 'Seed and run the pipeline' },
-  { id: 'limits', label: 'Local delivery vs cloud production' },
+  { id: 'seams', label: 'Pipelines break at the seams' },
+  { id: 'start', label: 'Start four services and seed them' },
+  { id: 'flow', label: 'Run the whole flow' },
+  { id: 'assert', label: 'What the run proves' },
 ];
-const startServices = `localcloud start --local-only --services gcs,pubsub,bigquery
-eval "$(localcloud env)"`;
+const startServices = String.raw`localcloud start --local-only --services gcs,pubsub,bigquery,cloudiam
+eval "$(localcloud env)"
+
+curl -fsS -X POST "$LOCALCLOUD_GATEWAY/seed" \
+  -H 'Content-Type: application/yaml' \
+  --data-binary @pipeline-seed.yaml`;
 const pipelineSeed = `services:
   gcs:
     buckets:
@@ -40,82 +37,81 @@ const pipelineSeed = `services:
             - name: object_name
               type: STRING
               mode: REQUIRED`;
-const structuredData = [
-  createBreadcrumbSchema([
-    { name: 'Home', url: productFacts.siteUrl },
-    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
-    { name: title, url: pageUrl },
-  ]),
-];
+const pipelinePy = String.raw`import json
+import os
+from google.auth.credentials import AnonymousCredentials
+from google.cloud import bigquery, pubsub_v1, storage
+
+project = os.environ["GOOGLE_CLOUD_PROJECT"]
+gcs = storage.Client(project=project, credentials=AnonymousCredentials())
+subscriber = pubsub_v1.SubscriberClient()
+bq = bigquery.Client(
+    project=project,
+    credentials=AnonymousCredentials(),
+    client_options={"api_endpoint": os.environ["BIGQUERY_EMULATOR_HOST"]},
+)
+
+# 1. Send object events from the landing bucket to the topic.
+bucket = gcs.bucket("raw-events-landing")
+bucket.notification(topic_name="gcs-object-events", payload_format="JSON_API_V1").create()
+
+# 2. Upload a file. The bucket publishes the event.
+bucket.blob("2026/11/orders.csv").upload_from_string("id,total\n1,42\n")
+
+# 3. The worker pulls the event and writes one warehouse row.
+subscription = subscriber.subscription_path(project, "ingest-worker-sub")
+response = subscriber.pull(request={"subscription": subscription, "max_messages": 1}, timeout=30)
+for received in response.received_messages:
+    event = json.loads(received.message.data)
+    print(received.message.attributes["eventType"], event["name"])
+    errors = bq.insert_rows_json(
+        f"{project}.warehouse.raw_uploads",
+        [{"bucket": event["bucket"], "object_name": event["name"]}],
+    )
+    assert not errors, errors
+    subscriber.acknowledge(request={"subscription": subscription, "ack_ids": [received.ack_id]})
+
+# 4. Assert on what landed.
+rows = bq.query("SELECT bucket, object_name FROM warehouse.raw_uploads").result()
+print([tuple(row) for row in rows])`;
+const output = `OBJECT_FINALIZE 2026/11/orders.csv
+[('raw-events-landing', '2026/11/orders.csv')]`;
 ---
 
-<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
-  <Fragment slot="hero">
-    <article class="site-section site-section--hero">
-      <div class="container container--narrow">
-        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
-        <span class="site-eyebrow">Data Engineering</span>
-        <h1 class="mt-5">{title}</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">Cloud pipelines rarely live inside a single service. Wire Cloud Storage uploads, Pub/Sub event delivery, and BigQuery warehouse ingestion inside one local container before deploying.</p>
-        <div class="blog-actions">
-          <a class="site-button site-button--primary" href="/docs/sdk-examples/">SDK examples</a>
-          <a href="/services/pubsub/">Pub/Sub service guide</a>
-        </div>
-      </div>
-    </article>
-  </Fragment>
-
-  <section class="site-section">
-    <div class="container container--narrow space-y-10">
-      <section>
-        <h2 id="problem">Why multi-service pipelines fail integration</h2>
-        <p class="mt-4">Testing each microservice in isolation misses the seams where pipelines actually break: bucket notification formats, Pub/Sub message attributes, acknowledgement timeouts, and BigQuery destination schemas.</p>
-        <p class="mt-4">Normally, running that end-to-end chain requires gluing separate standalone tools together—and still leaves you without a local Cloud Storage notification source or BigQuery sink.</p>
-      </section>
-
-      <section>
-        <h2 id="solution">One container, three connected services</h2>
-        <p class="mt-4">LocalCloud connects <a href="/services/cloud-storage/">Cloud Storage</a>, <a href="/services/pubsub/">Pub/Sub</a>, and <a href="/services/bigquery/">BigQuery</a> inside a single runtime and exports all three SDK endpoints in one shell command.</p>
-        <ul class="site-list mt-5">
-          <li><strong>Storage notifications:</strong> LocalCloud’s Cloud Storage service delivers object events directly to pre-created local Pub/Sub topics.</li>
-          <li><strong>Pub/Sub delivery:</strong> Consumers pull, filter, retry, or forward dead-letter messages with standard StreamingPull and ack APIs.</li>
-          <li><strong>BigQuery ingestion:</strong> Your worker inserts parsed payloads into local DuckDB-backed BigQuery tables for immediate SQL assertions.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2 id="pipeline">Walk through the event flow locally</h2>
-        <ol class="site-list mt-5">
-          <li>Start LocalCloud with <code>gcs,pubsub,bigquery</code> enabled and export environment variables.</li>
-          <li>Seed your landing bucket, topic, subscription, and target BigQuery table via <code>POST /seed</code>.</li>
-          <li>Configure bucket notification delivery to <code>gcs-object-events</code>, upload a sample file, pull from <code>ingest-worker-sub</code>, insert into <code>warehouse.raw_uploads</code>, and assert the row count via BigQuery SQL.</li>
-        </ol>
-      </section>
-
-      <section>
-        <h2 id="try-it">Seed and run the pipeline</h2>
-        <p class="mt-4">Start the three services and seed the resources below (check <a href="/docs/">Getting Started</a> for installation and <a href="/docs/seed-data/">Seed Data</a> for loading <code>seed.yaml</code>).</p>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">Start pipeline services</span>
-            <CopyButton text={startServices} analyticsLabel="copy-blog-pipeline-start" />
-          </div>
-          <pre><code>{startServices}</code></pre>
-        </div>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">pipeline-seed.yaml</span>
-            <CopyButton text={pipelineSeed} analyticsLabel="copy-blog-pipeline-seed" />
-          </div>
-          <pre><code>{pipelineSeed}</code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2 id="limits">Local delivery vs cloud production</h2>
-        <p class="mt-4">LocalCloud verifies payload parsing, schema compatibility, and worker logic quickly. Note that local GCS notifications require pre-created Pub/Sub topics and do not guarantee atomic object/event ordering—verify high-volume delivery SLAs in staging Google Cloud.</p>
-      </section>
-    </div>
+<BlogArticle
+  slug="event-driven-pipelines-gcs-pubsub-bigquery"
+  kind="Walkthrough"
+  deck="A file lands in a bucket, the bucket tells Pub/Sub, a worker reads the event and writes a row to BigQuery. Run that whole chain on your laptop, in one container, with the same SDK calls you deploy."
+  primary={{ href: '/docs/sdk-examples/', label: 'SDK examples' }}
+  secondary={{ href: '/services/pubsub/', label: 'Pub/Sub service guide' }}
+  {contents}
+  outcome="An upload to Cloud Storage that triggers a Pub/Sub event, a worker that consumes it, and a BigQuery query that confirms the row arrived."
+  needs="Python with google-cloud-storage, google-cloud-pubsub and google-cloud-bigquery"
+  next={{ posts: ['missing-bigquery-emulator-local-sql', 'reproduce-gcp-incidents-locally'], doc: { href: '/services/cloud-storage/', label: 'Cloud Storage service guide: notifications and event types' } }}
+>
+  <section>
+    <h2 id="seams">Pipelines break at the seams</h2>
+    <p class="mt-4">Each service in an ingestion pipeline usually has decent tests of its own. The failures come from the joins: the shape of the bucket notification, an attribute the worker assumed was there, a destination column that doesn't match what the worker sends.</p>
+    <p class="mt-4">Those joins are hard to test with separate tools, because the thing under test is the handoff. LocalCloud runs <a href="/services/cloud-storage/">Cloud Storage</a>, <a href="/services/pubsub/">Pub/Sub</a> and <a href="/services/bigquery/">BigQuery</a> in one runtime, and the bucket delivers its object events to the local topic, so the handoffs are real.</p>
   </section>
-</BlogLayout>
+
+  <section>
+    <h2 id="start">Start four services and seed them</h2>
+    <p class="mt-4">The pipeline uses three services. The fourth, <code>cloudiam</code>, is there because Cloud Storage checks that it may publish to the topic before it accepts a notification, the same check Google Cloud makes.</p>
+    <BlogCode label="pipeline-seed.yaml" code={pipelineSeed} copy="copy-blog-pipeline-seed" />
+    <BlogCode label="Start and seed" code={startServices} copy="copy-blog-pipeline-start" />
+  </section>
+
+  <section>
+    <h2 id="flow">Run the whole flow</h2>
+    <p class="mt-4">One script plays every part so you can read the pipeline top to bottom. In your project the upload, the worker and the assertion live in different places; the SDK calls are the same.</p>
+    <BlogCode label="pipeline.py" code={pipelinePy} copy="copy-blog-pipeline-run" />
+    <BlogCode label="Output" code={output} />
+  </section>
+
+  <section>
+    <h2 id="assert">What the run proves</h2>
+    <p class="mt-4">The first line is the event Cloud Storage published: an <code>OBJECT_FINALIZE</code> for the uploaded object, in the JSON format your production worker parses. The second is the row read back through BigQuery SQL. Between them, the notification config, the message attributes, the acknowledgement and the table schema all had to agree.</p>
+    <p class="mt-4">From here, change one side and watch the other. Rename a column in the seed file, or add a field to the row, and the insert reports the mismatch on the spot. Delivery is at least once, as it is in Google Cloud, so a worker that copes with a repeated event here is ready for one there. Keep ordering and volume tests for staging.</p>
+  </section>
+</BlogArticle>

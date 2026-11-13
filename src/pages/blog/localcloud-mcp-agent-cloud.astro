@@ -57,20 +57,21 @@ Cleanup complete: only uniquely named example resources were removed`;
 const structuredData = [createBreadcrumbSchema([
   { name: 'Home', url: productFacts.siteUrl },
   { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
-  { name: 'A local cloud environment for coding agents', url: pageUrl },
+  { name: 'A Local Cloud Environment for Coding Agents', url: pageUrl },
 ])];
 ---
 
 <BlogLayout title="A Local Cloud Environment for Coding Agents"
   description="Connect LocalCloud MCP to your coding agent, then test Cloud Storage, Pub/Sub, and BigQuery locally with standard Google Cloud SDKs."
   {structuredData} {contents}
-  article={{ publishedAt: metadata.publishedAt, headline: 'A local cloud environment for coding agents' }}>
+  article={{ publishedAt: metadata.publishedAt, headline: 'A Local Cloud Environment for Coding Agents' }}>
   <Fragment slot="hero">
     <section class="site-section site-section--hero">
       <div class="container container--narrow">
-        <span class="site-eyebrow">MCP guide and walkthrough</span>
-        <h1 class="mt-4">A local cloud environment for coding agents</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span>{metadata.updatedAt && <span>Updated <time datetime={metadata.updatedAt}>{formatBlogDate(metadata.updatedAt)}</time></span>}<span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
+        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
+        <span class="site-eyebrow">{metadata.topic}</span>
+        <h1 class="mt-5" data-content-update>A Local Cloud Environment for Coding Agents</h1>
+        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span>{metadata.updatedAt && <span>Updated <time datetime={metadata.updatedAt}>{formatBlogDate(metadata.updatedAt)}</time></span>}<span>{metadata.minutes} min read</span><span>Walkthrough</span></p>
         <p class="blog-deck">Coding agents need to run the integrations they write. LocalCloud gives Google Cloud applications local service APIs for that feedback loop: write code, run tests, inspect failures, and verify fixes. MCP supplies service discovery, SDK settings, and diagnostics; application tests exercise the local runtime.</p>
         <div class="blog-actions">
           <a class="site-button site-button--primary" href="/docs/mcp/">Connect your agent</a>
@@ -126,7 +127,7 @@ const structuredData = [createBreadcrumbSchema([
       <CopyButton text={runExample} analyticsLabel="mcp-blog-copy-example-run" />
       <pre><code>{runExample}</code></pre>
     </div>
-    <p>A successful run looks like this (recorded with CLI 0.1.9 and runtime 0.1.5). <a href="/videos/localcloud-mcp-demo/" data-content-update>Watch the recorded demo on its dedicated video page</a>.</p>
+    <p>A successful run looks like this (recorded with CLI 0.1.9 and runtime 0.1.5). <a href="/videos/localcloud-mcp-demo/">Watch the recorded demo on its dedicated video page</a>.</p>
     <video controls preload="metadata" width="1280" height="800" poster={mcpDemoPoster} aria-label="Recorded run of the LocalCloud MCP and SDK example">
       <source src="/brand/localcloud-mcp-demo.mp4" type="video/mp4" />
       <p><a href="/brand/localcloud-mcp-demo.mp4">Download the recorded run</a>. The text output follows.</p>

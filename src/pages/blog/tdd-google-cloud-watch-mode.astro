@@ -1,108 +1,100 @@
 ---
-import BlogLayout from '../../layouts/BlogLayout.astro';
-import CopyButton from '../../components/CopyButton.astro';
-import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
-import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+import BlogArticle from '../../components/BlogArticle.astro';
+import BlogCode from '../../components/BlogCode.astro';
 
-const title = 'True TDD for Google Cloud With Watch Mode';
-const description = 'Run pytest or jest --watch against real Google Cloud SDKs without slow network calls or cloud bills by resetting local project state between test saves.';
-const pageUrl = new URL('blog/tdd-google-cloud-watch-mode/', productFacts.siteUrl).toString();
-const metadata = authoredBlogMetadata['tdd-google-cloud-watch-mode'];
 const contents = [
-  { id: 'problem', label: 'Why cloud code skips test-driven development' },
-  { id: 'solution', label: 'Fast red-green-refactor with local resets' },
-  { id: 'fixture', label: 'Wire a pytest fixture to /reset' },
-  { id: 'try-it', label: 'Run the watch-mode loop' },
-  { id: 'scope', label: 'Keep tests deterministic and scoped' },
+  { id: 'gap', label: 'Where watch mode stops working' },
+  { id: 'fixture', label: 'Reset the project once per run' },
+  { id: 'test', label: 'Write a test against the real client' },
+  { id: 'watch', label: 'Start the watcher' },
+  { id: 'habits', label: 'Habits that keep the loop fast' },
 ];
-const pytestHook = `import os
+const conftest = `import os
 import urllib.request
+
 import pytest
 
-@pytest.fixture(autouse=True)
-def reset_localcloud_state():
-    # Uses the gateway URL or default port 5380 to clear project state (~380 ms)
-    gateway = os.environ.get("LOCALCLOUD_GATEWAY_URL", "http://localhost:5380")
-    req = urllib.request.Request(
-        f"{gateway}/reset?project=local-gcp-project",
+
+@pytest.fixture(scope="session", autouse=True)
+def clean_localcloud_project():
+    """Start every watch-mode run from the seeded baseline."""
+    gateway = os.environ["LOCALCLOUD_GATEWAY"]
+    project = os.environ["GOOGLE_CLOUD_PROJECT"]
+    request = urllib.request.Request(
+        f"{gateway}/reset?project={project}",
         data=b'{"restore_seed":true}',
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=5) as resp:
-        assert resp.status == 200`;
+    with urllib.request.urlopen(request, timeout=10) as response:
+        assert response.status == 200`;
+const testFile = String.raw`import os
+
+from google.auth.credentials import AnonymousCredentials
+from google.cloud import storage
+
+
+def test_export_lands_in_bucket():
+    client = storage.Client(
+        project=os.environ["GOOGLE_CLOUD_PROJECT"],
+        credentials=AnonymousCredentials(),
+    )
+    bucket = client.create_bucket("exports")
+    bucket.blob("daily.csv").upload_from_string("id,total\n1,42\n")
+    assert bucket.blob("daily.csv").download_as_text().startswith("id,total")`;
 const watchCmd = `localcloud start --local-only
 eval "$(localcloud env)"
-# Re-run integration tests automatically on every file save
-pytest-watch tests/integration/`;
-const structuredData = [
-  createBreadcrumbSchema([
-    { name: 'Home', url: productFacts.siteUrl },
-    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
-    { name: title, url: pageUrl },
-  ]),
-];
+
+pip install pytest pytest-watcher google-cloud-storage
+ptw tests/`;
+const output = `.                                                                        [100%]
+1 passed in 1.66s`;
 ---
 
-<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
-  <Fragment slot="hero">
-    <article class="site-section site-section--hero">
-      <div class="container container--narrow">
-        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
-        <span class="site-eyebrow">Developer Productivity</span>
-        <h1 class="mt-5">{title}</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">File-watching test runners fail against live cloud projects due to API latency, rate limits, and leftover state. LocalCloud makes watch-mode TDD practical against real Google Cloud client libraries.</p>
-        <div class="blog-actions">
-          <a class="site-button site-button--primary" href="/docs/sdk-examples/">SDK examples</a>
-          <a href="/docs/">Quick start</a>
-        </div>
-      </div>
-    </article>
-  </Fragment>
-
-  <section class="site-section">
-    <div class="container container--narrow space-y-10">
-      <section>
-        <h2 id="problem">Why cloud code skips test-driven development</h2>
-        <p class="mt-4">Developers rely on <code>jest --watch</code> or <code>pytest-watch</code> for pure unit logic because feedback takes milliseconds. The moment code touches Cloud Storage, Pub/Sub, or Spanner, watch mode breaks down.</p>
-        <p class="mt-4">Hitting live GCP on every file save triggers rate limits, accumulates orphan buckets and topics, and costs money per request. Teams either mock away the SDK—hiding real wire-format bugs—or push cloud integration tests to slow CI pipelines.</p>
-      </section>
-
-      <section>
-        <h2 id="solution">Fast red-green-refactor with local resets</h2>
-        <p class="mt-4">With LocalCloud running on localhost, each API call completes in 2–7 ms and costs $0. Crucially, LocalCloud exposes a project-scoped reset endpoint (<code>POST /reset?project=local-gcp-project</code>) that clears project data in roughly 380 ms while keeping the container warm.</p>
-        <p class="mt-4">Put that call in a test setup hook and your watch runner gets a fresh, empty—or freshly seeded—Google Cloud environment on every save.</p>
-      </section>
-
-      <section>
-        <h2 id="fixture">Wire a pytest fixture to /reset</h2>
-        <p class="mt-4">Add an <code>autouse</code> fixture in <code>conftest.py</code> (or a <code>beforeEach</code> hook in Jest/Vitest) so tests never inherit stale buckets or unread messages from the previous save:</p>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">conftest.py</span>
-            <CopyButton text={pytestHook} analyticsLabel="copy-blog-tdd-fixture" />
-          </div>
-          <pre><code>{pytestHook}</code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2 id="try-it">Run the watch-mode loop</h2>
-        <p class="mt-4">Start LocalCloud, export your local environment, and launch your watcher. Check <a href="/docs/">Getting Started</a> for CLI installation and <a href="/docs/seed-data/">Seed Data</a> to understand <code>restore_seed</code> options.</p>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">Watch-mode commands</span>
-            <CopyButton text={watchCmd} analyticsLabel="copy-blog-tdd-watch" />
-          </div>
-          <pre><code>{watchCmd}</code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2 id="scope">Keep tests deterministic and scoped</h2>
-        <p class="mt-4">Use local watch mode to drive out application logic, schema queries, and error paths quickly. Pair it with a <a href="/docs/github-actions/">GitHub Actions CI check</a> and final staging validation on Google Cloud before release.</p>
-      </section>
-    </div>
+<BlogArticle
+  slug="tdd-google-cloud-watch-mode"
+  kind="Walkthrough"
+  deck="Watch mode is how most of us write unit tests: save, see green or red, keep going. It usually stops at the first line that touches a bucket or a queue. With the cloud on localhost and a reset before each run, it doesn't have to."
+  primary={{ href: '/docs/sdk-examples/', label: 'SDK examples' }}
+  secondary={{ href: '/docs/', label: 'Quick start' }}
+  {contents}
+  outcome="A pytest watcher that reruns your cloud integration tests on every save, each run starting from a clean project."
+  needs="Python with pytest, pytest-watcher and the Google Cloud client your code uses"
+  next={{ posts: ['one-second-cloud-state-resets', 'zero-secret-gcp-ci-github-actions'], doc: { href: '/docs/sdk-examples/', label: 'SDK examples for Storage, Pub/Sub, BigQuery, Bigtable, Spanner and Firestore' } }}
+>
+  <section>
+    <h2 id="gap">Where watch mode stops working</h2>
+    <p class="mt-4">Red, green, refactor depends on the test run being quicker than your attention span. Against a live project it isn't: each save pays for network round trips, leaves buckets and topics behind for the next run to trip over, and puts a small charge on someone's bill.</p>
+    <p class="mt-4">So cloud code gets one of two substitutes. Either the client is mocked, and the test checks that you called the mock the way you told the mock to expect. Or the integration tests move to CI, and the feedback arrives ten minutes after you have moved on.</p>
   </section>
-</BlogLayout>
+
+  <section>
+    <h2 id="fixture">Reset the project once per run</h2>
+    <p class="mt-4">LocalCloud answers SDK calls in a few milliseconds, which solves speed. Leftover state is solved by the reset endpoint: one request clears the project and reapplies your seed data while the container stays up. Put it in a session fixture so every run of the watcher starts clean.</p>
+    <BlogCode label="tests/conftest.py" code={conftest} copy="copy-blog-tdd-fixture" />
+    <p class="mt-4">Once per run is the right grain. The reset takes a few hundred milliseconds, which is nothing once and noticeable fifty times. Jest and Vitest users can make the same request from <code>globalSetup</code>.</p>
+  </section>
+
+  <section>
+    <h2 id="test">Write a test against the real client</h2>
+    <p class="mt-4">No mocks and no special test client. This is the same <code>google-cloud-storage</code> code path your application uses, pointed at localhost by the exported environment.</p>
+    <BlogCode label="tests/test_exports.py" code={testFile} copy="copy-blog-tdd-test" />
+    <p class="mt-4">Notice that the test creates a bucket with a fixed name. Against a shared project that fails on the second run. Here the fixture has already cleared it.</p>
+  </section>
+
+  <section>
+    <h2 id="watch">Start the watcher</h2>
+    <BlogCode label="Watch-mode commands" code={watchCmd} copy="copy-blog-tdd-watch" />
+    <BlogCode label="Output after each save" code={output} />
+    <p class="mt-4">Save a file and the suite reruns. A second and a half for a reset, a bucket, an upload and a download is quick enough to stay in the loop, and the run after it starts from the same clean project.</p>
+  </section>
+
+  <section>
+    <h2 id="habits">Habits that keep the loop fast</h2>
+    <ul class="site-list mt-5">
+      <li><strong>Watch a narrow path.</strong> Point the watcher at the tests for the module you are changing, and run the full suite before you push.</li>
+      <li><strong>Seed what every test needs.</strong> Shared topics and tables belong in the <a href="/docs/seed-data/">seed file</a>, so tests only create what is specific to them.</li>
+      <li><strong>Run the same tests in CI.</strong> The suite that runs on save runs unchanged in <a href="/docs/github-actions/">GitHub Actions</a>, so green locally means green on the pull request.</li>
+    </ul>
+  </section>
+</BlogArticle>

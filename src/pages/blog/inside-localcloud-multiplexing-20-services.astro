@@ -1,87 +1,122 @@
 ---
-import BlogLayout from '../../layouts/BlogLayout.astro';
-import CopyButton from '../../components/CopyButton.astro';
-import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
-import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+import BlogArticle from '../../components/BlogArticle.astro';
+import BlogCode from '../../components/BlogCode.astro';
 
-const title = 'Inside LocalCloud: 20+ GCP Protocols in One Container';
-const description = 'How LocalCloud multiplexes HTTP, gRPC, PostgreSQL, MySQL, and RESP across 20+ GCP services in one ~5s cold-boot container on Apple Silicon and Linux.';
-const pageUrl = new URL('blog/inside-localcloud-multiplexing-20-services/', productFacts.siteUrl).toString();
-const metadata = authoredBlogMetadata['inside-localcloud-multiplexing-20-services'];
 const contents = [
-  { id: 'challenge', label: 'The multi-protocol emulation problem' },
-  { id: 'gateway', label: 'Shared Go gateway + purpose-built engines' },
-  { id: 'ports', label: 'Clean port layout and dynamic remapping' },
-  { id: 'try-it', label: 'Inspect the running architecture yourself' },
-  { id: 'footprint', label: 'Apple Silicon native CLI and ~5s boot' },
+  { id: 'problem', label: 'Google Cloud doesn\'t speak one protocol' },
+  { id: 'map', label: 'The map' },
+  { id: 'protocols', label: 'Six protocols' },
+  { id: 'gateway', label: 'One gateway for the API-shaped services' },
+  { id: 'engines', label: 'Real engines for the data-shaped ones' },
+  { id: 'ports', label: 'Ports that move when they have to' },
+  { id: 'look', label: 'Look for yourself' },
 ];
 const inspectCmd = `localcloud start --local-only
-localcloud status --verbose
-curl -fsS http://localhost:5380/services`;
-const structuredData = [
-  createBreadcrumbSchema([
-    { name: 'Home', url: productFacts.siteUrl },
-    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
-    { name: title, url: pageUrl },
-  ]),
-];
+eval "$(localcloud env)"
+localcloud status
+curl -fsS "$LOCALCLOUD_GATEWAY/services"`;
 ---
 
-<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
-  <Fragment slot="hero">
-    <article class="site-section site-section--hero">
-      <div class="container container--narrow">
-        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
-        <span class="site-eyebrow">Architecture</span>
-        <h1 class="mt-5">{title}</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">Google Cloud services do not speak one uniform protocol. Under the hood, LocalCloud combines a Go gateway, PostgreSQL-backed control planes, and specialized data engines inside a single lightweight container.</p>
-        <div class="blog-actions">
-          <a class="site-button site-button--primary" href="/docs/architecture/">Architecture docs</a>
-          <a href="/docs/performance/">Performance benchmarks</a>
+<BlogArticle
+  slug="inside-localcloud-multiplexing-20-services"
+  kind="Deep dive"
+  deck="A Redis client, a Postgres driver and a BigQuery SDK have nothing in common on the wire. LocalCloud serves all of them, and twenty-odd services more, from one container. This is how the inside is laid out."
+  primary={{ href: '/docs/architecture/', label: 'Architecture docs' }}
+  secondary={{ href: '/docs/performance/', label: 'Performance benchmarks' }}
+  {contents}
+  next={{ posts: ['single-container-gcp-beyond-three-emulators', 'the-2ms-inner-loop'], doc: { href: '/docs/architecture/', label: 'Architecture reference: full port table and storage layout' } }}
+>
+  <section>
+    <h2 id="problem">Google Cloud doesn't speak one protocol</h2>
+    <p class="mt-4">It is tempting to picture a cloud emulator as one HTTP server with a lot of routes. That works for some services and fails for the ones applications lean on hardest. Your Cloud SQL code opens a PostgreSQL connection. Memorystore clients send Redis commands. Pub/Sub and Spanner clients hold gRPC streams open. The BigQuery Storage API insists on TLS.</p>
+    <p class="mt-4">To run unmodified application code, each of those has to be answered in its own language. The design question is how to do that without handing the developer twenty containers to manage.</p>
+  </section>
+
+  <section>
+    <h2 id="map">The map</h2>
+    <figure class="arch mt-5" role="group" aria-label="LocalCloud architecture: clients connect to a gateway and to dedicated engines inside one container">
+      <div class="arch__clients">
+        <span class="site-kicker">Your side</span>
+        <ul><li>Google Cloud SDKs</li><li>Database drivers</li><li>Terraform</li><li>Coding agents (MCP)</li><li>Browser (console)</li></ul>
+      </div>
+      <div class="arch__container">
+        <span class="site-kicker">One container</span>
+        <div class="arch__box">
+          <strong>Gateway · 5380</strong>
+          <p>Console, MCP, health, seed and reset. Serves Secret Manager, KMS, IAM, Cloud Tasks, Scheduler, Workflows, Logging, Monitoring and other API-shaped services.</p>
+        </div>
+        <div class="arch__engines">
+          <div class="arch__box"><strong>Cloud Storage</strong><p>5382 · REST</p></div>
+          <div class="arch__box"><strong>Pub/Sub</strong><p>5383 · gRPC</p></div>
+          <div class="arch__box"><strong>Bigtable</strong><p>5385 · gRPC</p></div>
+          <div class="arch__box"><strong>Spanner</strong><p>5386 · gRPC, 5387 · REST</p></div>
+          <div class="arch__box"><strong>BigQuery</strong><p>5388 · REST, 5389 · gRPC with TLS</p></div>
+          <div class="arch__box"><strong>Memorystore</strong><p>5390 · RESP</p></div>
+          <div class="arch__box"><strong>PostgreSQL 17</strong><p>5391 · Cloud SQL and AlloyDB</p></div>
         </div>
       </div>
-    </article>
-  </Fragment>
-
-  <section class="site-section">
-    <div class="container container--narrow space-y-10">
-      <section>
-        <h2 id="challenge">The multi-protocol emulation problem</h2>
-        <p class="mt-4">Emulating Google Cloud means serving HTTP/1.1 REST APIs, HTTP/2 h2c gRPC endpoints, BigQuery Storage TLS gRPC, Redis/Valkey RESP commands, PostgreSQL 17 wire connections, and MySQL 8.4 sockets—without forcing developers to manage twenty separate containers or hit port conflicts.</p>
-      </section>
-
-      <section>
-        <h2 id="gateway">Shared Go gateway + purpose-built engines</h2>
-        <p class="mt-4">LocalCloud organizes services cleanly by protocol and data plane inside one container:</p>
-        <ul class="site-list mt-5">
-          <li><strong>Shared gateway (port <code>5380</code> / TLS <code>5381</code>):</strong> Handles the Web Console, MCP endpoint, operator routes (<code>/health</code>, <code>/readiness</code>, <code>/env</code>, <code>/seed</code>, <code>/reset</code>), and in-process facades for Secret Manager, KMS, Cloud Tasks, Scheduler, Workflows, Logging, Monitoring, and IAM backed by internal PostgreSQL.</li>
-          <li><strong>Native BigQuery engine:</strong> Pairs GoogleSQL AST analysis with columnar DuckDB execution on ports <code>5388</code> (REST) and <code>5389</code> (Storage Read/Write TLS gRPC), supervised inside the container with zero Docker socket dependency.</li>
-          <li><strong>Dedicated protocol listeners:</strong> Cloud Storage (<code>5382</code>), Pub/Sub (<code>5383</code>), Bigtable (<code>5385</code>), Spanner gRPC/REST (<code>5386</code>/<code>5387</code>), Memorystore Valkey (<code>5390</code>), and PostgreSQL 17 for Cloud SQL/AlloyDB (<code>5391</code>).</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2 id="ports">Clean port layout and dynamic remapping</h2>
-        <p class="mt-4">Canonical container ports live in the <code>5380–5405</code> block, while external companions (such as MySQL 8.4 on <code>5406</code> or opt-in GKE k3d on <code>5443–5465</code>) are only spun up when selected. If a host port is already taken, the CLI remaps ports safely and updates <code>localcloud env</code> automatically.</p>
-      </section>
-
-      <section>
-        <h2 id="try-it">Inspect the running architecture yourself</h2>
-        <p class="mt-4">Start LocalCloud and inspect the live container status, mapped ports, and active service catalog JSON. See the full port table in <a href="/docs/architecture/">Architecture docs</a> and <a href="/docs/">Getting Started</a>.</p>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">Inspect container runtime</span>
-            <CopyButton text={inspectCmd} analyticsLabel="copy-blog-arch-inspect" />
-          </div>
-          <pre><code>{inspectCmd}</code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2 id="footprint">Apple Silicon native CLI and ~5s boot</h2>
-        <p class="mt-4">The native standalone CLI ships for Apple Silicon macOS and Linux ARM64/x86_64 without requiring Python on your host. Cold-booting 22 active emulators alongside PostgreSQL migrations completes in roughly 5 seconds, keeping local laptop impact small.</p>
-      </section>
-    </div>
+      <div class="arch__companion">
+        <span class="site-kicker">Started on demand</span>
+        <div class="arch__box"><strong>MySQL 8.4</strong><p>5406 · Cloud SQL for MySQL</p></div>
+        <div class="arch__box"><strong>GKE clusters</strong><p>5443 and up</p></div>
+      </div>
+    </figure>
   </section>
-</BlogLayout>
+
+  <section>
+    <h2 id="protocols">Six protocols</h2>
+    <table class="blog-compare mt-5">
+      <thead><tr><th scope="col">On the wire</th><th scope="col">Who speaks it</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">HTTP and JSON</th><td>The gateway services, Cloud Storage, BigQuery queries, Spanner REST</td></tr>
+        <tr><th scope="row">gRPC</th><td>Pub/Sub, Bigtable, Spanner, Firestore</td></tr>
+        <tr><th scope="row">gRPC over TLS</th><td>BigQuery Storage Read and Write</td></tr>
+        <tr><th scope="row">RESP</th><td>Memorystore, for any Redis or Valkey client</td></tr>
+        <tr><th scope="row">PostgreSQL wire</th><td>Cloud SQL for PostgreSQL and AlloyDB</td></tr>
+        <tr><th scope="row">MySQL wire</th><td>Cloud SQL for MySQL</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2 id="gateway">One gateway for the API-shaped services</h2>
+    <p class="mt-4">Many Google Cloud services are, from the client's side, a resource API: create a secret, enqueue a task, write a log entry. These don't need an engine each. A single Go gateway serves them in process and keeps their records in an internal PostgreSQL database.</p>
+    <p class="mt-4">Sharing a process has a useful side effect. The same gateway serves the web console, the MCP endpoint and the operator routes for health, seeding and reset, so one request can clear every service's state at once. That is what makes a project-wide reset take a fraction of a second.</p>
+  </section>
+
+  <section>
+    <h2 id="engines">Real engines for the data-shaped ones</h2>
+    <p class="mt-4">Databases and analytics are different. Their behaviour is the product, and reimplementing a query planner inside a gateway would produce something that looks right until the first non-trivial query. So those services get an engine suited to the job:</p>
+    <ul class="site-list mt-5">
+      <li><strong>BigQuery</strong> parses and analyses GoogleSQL, then executes on DuckDB, a columnar engine built for analytical queries.</li>
+      <li><strong>Cloud SQL and AlloyDB</strong> are PostgreSQL 17 itself, so your driver and your migrations behave as they should.</li>
+      <li><strong>Memorystore</strong> is a Valkey-compatible server, reached with the Redis client you already use.</li>
+      <li><strong>Spanner, Bigtable and Cloud Storage</strong> each run as their own process on their own port.</li>
+    </ul>
+    <p class="mt-4">Everything is supervised inside the container. From the outside there is still one thing to start and one thing to stop.</p>
+  </section>
+
+  <section>
+    <h2 id="ports">Ports that move when they have to</h2>
+    <p class="mt-4">The container publishes one block, <code>5380</code> to <code>5405</code>, with room reserved for services to come. Companions that run beside it, MySQL and GKE clusters, sit just above and start only when selected.</p>
+    <p class="mt-4">Fixed ports are convenient until a second runtime wants the same ones. When a port is taken, the CLI can map the runtime to free ports instead, and <code>localcloud env</code> reports wherever things ended up. That is why the docs keep telling you to read endpoints from the environment: it is what lets two runtimes share a laptop.</p>
+  </section>
+
+  <section>
+    <h2 id="look">Look for yourself</h2>
+    <BlogCode label="Inspect a running runtime" code={inspectCmd} copy="copy-blog-arch-inspect" />
+    <p class="mt-4"><code>localcloud status</code> shows the port mappings and enabled services; the <code>/services</code> route returns the catalog as JSON. A cold start brings up the default set, 22 services with their database migrations, in about five seconds. The CLI is a native binary for Apple Silicon macOS and for Linux on ARM64 and x86-64.</p>
+  </section>
+</BlogArticle>
+
+<style>
+  .arch { display: grid; gap: 1rem; margin-inline: 0; font-size: var(--fs-small); }
+  .arch > div { display: grid; gap: 0.75rem; align-content: start; padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius-panel); }
+  .arch__container { background: var(--surface-2); }
+  .arch ul { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; color: var(--text-2); }
+  .arch__engines { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 0.75rem; }
+  .arch__box { padding: 0.75rem; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface); }
+  .arch__box strong { display: block; color: var(--text); }
+  .arch__box p { margin: 0.25rem 0 0; line-height: 1.5; color: var(--text-2); }
+  @media (min-width: 60rem) { .arch { grid-template-columns: 11rem minmax(0, 1fr) 11rem; } }
+</style>

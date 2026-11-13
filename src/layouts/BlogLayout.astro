@@ -91,6 +91,19 @@ const articleProps = article
   .blog-page :is(.site-panel, article[data-analytics-label]):has(> pre, > .code-block) > :not(pre, .code-block) { margin: 0; padding: 1rem; }
   .blog-page :is(.site-panel, article[data-analytics-label]):has(> pre, > .code-block) > :is(pre, .code-block) { margin: 0; padding: 0; border: 0; border-radius: 0; background: var(--surface-2); }
   .blog-page :is(.site-panel, article[data-analytics-label]) > pre { padding: 1rem; }
+  .blog-page .blog-outcome { display: grid; gap: 1rem; padding: 1.25rem 1.5rem; font-size: var(--fs-small); }
+  .blog-page .blog-outcome dt { font-weight: 600; color: var(--text); }
+  .blog-page .blog-outcome dd { margin: 0.25rem 0 0; line-height: 1.6; color: var(--text-2); }
+  .blog-page .blog-outcome a, .blog-page .blog-next a { text-decoration: underline; text-underline-offset: 0.2em; }
+  .blog-page .blog-compare { width: 100%; border-collapse: collapse; font-size: var(--fs-small); text-align: left; }
+  .blog-page .blog-compare :is(th, td) { padding: 0.75rem 1rem; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.55; }
+  .blog-page .blog-compare thead th { color: var(--text); }
+  .blog-page .blog-compare tbody th { font-weight: 600; color: var(--text); }
+  .blog-page .blog-compare td { color: var(--text-2); }
+  .blog-page .blog-compare tr:last-child :is(th, td) { border-bottom: 0; }
+  .blog-page .blog-track { margin-top: 3rem; }
+  .blog-page .blog-track > p { max-width: 62ch; margin-top: 0.5rem; font-size: var(--fs-small); color: var(--text-2); }
+  @media (min-width: 40rem) { .blog-page .blog-outcome { grid-template-columns: 1fr 1fr; gap: 2rem; } }
   .blog-page .blog-sections { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
   .blog-page .blog-snippets { grid-template-columns: 1fr; }
   .blog-page .blog-sections > .site-panel { padding: 0; border: 0; background: transparent; box-shadow: none; }

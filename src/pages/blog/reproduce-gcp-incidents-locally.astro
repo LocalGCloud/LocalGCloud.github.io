@@ -1,19 +1,13 @@
 ---
-import BlogLayout from '../../layouts/BlogLayout.astro';
-import CopyButton from '../../components/CopyButton.astro';
-import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
-import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+import BlogArticle from '../../components/BlogArticle.astro';
+import BlogCode from '../../components/BlogCode.astro';
 
-const title = 'Reproduce Production GCP Incidents Locally in Minutes';
-const description = 'Stop guessing at production edge cases. Seed matching schemas and replay failing Pub/Sub or BigQuery payloads safely inside an isolated local container.';
-const pageUrl = new URL('blog/reproduce-gcp-incidents-locally/', productFacts.siteUrl).toString();
-const metadata = authoredBlogMetadata['reproduce-gcp-incidents-locally'];
 const contents = [
-  { id: 'problem', label: 'Why production bugs are hard to reproduce' },
-  { id: 'solution', label: 'Isolate the failing schema and payload' },
-  { id: 'walkthrough', label: 'Replay the incident safely on localhost' },
-  { id: 'try-it', label: 'Example incident seed fixture' },
-  { id: 'verify', label: 'Verify the fix before deploying' },
+  { id: 'scene', label: 'The message that keeps coming back' },
+  { id: 'sandbox', label: 'Give the incident its own runtime' },
+  { id: 'replay', label: 'Replay the payload' },
+  { id: 'fix', label: 'Fix it and prove it' },
+  { id: 'regression', label: 'Keep the replay as a test' },
 ];
 const incidentSeed = `services:
   pubsub:
@@ -34,86 +28,92 @@ const incidentSeed = `services:
               mode: REQUIRED
             - name: amount_cents
               type: INTEGER`;
-const replayCmd = `# 1. Start an isolated volume for incident reproduction
-localcloud start --local-only --data-volume rca-incident-412
+const startCmd = String.raw`localcloud start --local-only --data-volume rca-incident-412 --accept-dynamic-ports
 eval "$(localcloud env --data-volume rca-incident-412)"
 
-# 2. Load the matching topic and BigQuery table schema
-curl -fsS -X POST http://localhost:5380/seed \
+curl -fsS -X POST "$LOCALCLOUD_GATEWAY/seed" \
   -H 'Content-Type: application/yaml' \
   --data-binary @incident-seed.yaml`;
-const structuredData = [
-  createBreadcrumbSchema([
-    { name: 'Home', url: productFacts.siteUrl },
-    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
-    { name: title, url: pageUrl },
-  ]),
-];
+const replayPy = `import os
+from google.auth.credentials import AnonymousCredentials
+from google.cloud import bigquery, pubsub_v1
+
+project = os.environ["GOOGLE_CLOUD_PROJECT"]
+publisher = pubsub_v1.PublisherClient()
+subscriber = pubsub_v1.SubscriberClient()
+bq = bigquery.Client(
+    project=project,
+    credentials=AnonymousCredentials(),
+    client_options={"api_endpoint": os.environ["BIGQUERY_EMULATOR_HOST"]},
+)
+
+# The payload shape from the incident, with synthetic values.
+topic = publisher.topic_path(project, "orders-inbound")
+publisher.publish(topic, b"{}", invoice_id="inv-412", amount="12.50").result(timeout=30)
+
+subscription = subscriber.subscription_path(project, "orders-worker-sub")
+response = subscriber.pull(request={"subscription": subscription, "max_messages": 1}, timeout=30)
+for received in response.received_messages:
+    attrs = received.message.attributes
+    row = {"invoice_id": attrs["invoice_id"], "amount_cents": int(attrs["amount"])}
+    errors = bq.insert_rows_json(f"{project}.billing.invoices", [row])
+    assert not errors, errors
+    subscriber.acknowledge(request={"subscription": subscription, "ack_ids": [received.ack_id]})
+    print("inserted", row)`;
+const failure = `Traceback (most recent call last):
+  File "replay.py", line 22, in <module>
+    row = {"invoice_id": attrs["invoice_id"], "amount_cents": int(attrs["amount"])}
+                                                              ~~~^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '12.50'`;
+const fixPy = `from decimal import Decimal
+
+row = {"invoice_id": attrs["invoice_id"], "amount_cents": round(Decimal(attrs["amount"]) * 100)}`;
+const fixed = `inserted {'invoice_id': 'inv-412', 'amount_cents': 1250}`;
 ---
 
-<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
-  <Fragment slot="hero">
-    <article class="site-section site-section--hero">
-      <div class="container container--narrow">
-        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
-        <span class="site-eyebrow">Developer Productivity</span>
-        <h1 class="mt-5">{title}</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">Replicating an edge-case failure in shared staging risks breaking other developers, while guessing with unit mocks misses real SDK serialization bugs. Spin up a dedicated local sandbox to replay failing payloads safely.</p>
-        <div class="blog-actions">
-          <a class="site-button site-button--primary" href="/docs/seed-data/">Seed data guide</a>
-          <a href="/docs/">Quick start</a>
-        </div>
-      </div>
-    </article>
-  </Fragment>
-
-  <section class="site-section">
-    <div class="container container--narrow space-y-10">
-      <section>
-        <h2 id="problem">Why production bugs are hard to reproduce</h2>
-        <p class="mt-4">Suppose an ingestion worker crashes on a malformed Pub/Sub message attribute or rejects a nullable BigQuery column during streaming inserts. You cannot replay destructive payloads in production, and pushing half-baked reproductions into shared staging breaks tests for the rest of the team.</p>
-        <p class="mt-4">Mocking the SDK client in a unit test rarely helps when the crash stems from how the real client serializes types, raises transport exceptions, or handles schema enforcement.</p>
-      </section>
-
-      <section>
-        <h2 id="solution">Isolate the failing schema and payload</h2>
-        <p class="mt-4">LocalCloud lets you carve out a dedicated Docker volume just for that incident (<code>--data-volume rca-incident-412</code>), leaving your normal dev environment untouched. Using a synthetic YAML fixture, you recreate the exact table schema, bucket path, or topic-subscription wiring in seconds.</p>
-      </section>
-
-      <section>
-        <h2 id="walkthrough">Replay the incident safely on localhost</h2>
-        <ol class="site-list mt-5">
-          <li><strong>Capture synthetic repro data:</strong> Replace any customer PII with synthetic values matching the failing structure and types.</li>
-          <li><strong>Seed the sandbox:</strong> Post the schema fixture to the local gateway’s <code>/seed</code> endpoint.</li>
-          <li><strong>Publish and break:</strong> Publish the offending message into the local Pub/Sub topic (via SDK or the <a href="/docs/console/#data-browser">Web Console Data Browser</a>) while your worker runs under a debugger.</li>
-          <li><strong>Write the regression test:</strong> Once you observe the exact failure and patch your code, turn that fixture and payload into an automated test.</li>
-        </ol>
-      </section>
-
-      <section>
-        <h2 id="try-it">Example incident seed fixture</h2>
-        <p class="mt-4">Save this synthetic schema as <code>incident-seed.yaml</code>, start an isolated volume, and seed it. If your CLI remapped port <code>5380</code>, inspect the gateway URL printed by <code>localcloud status</code>. Full schema options are in the <a href="/docs/seed-data/">Seed Data reference</a> and <a href="/docs/">Getting Started guide</a>.</p>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">incident-seed.yaml</span>
-            <CopyButton text={incidentSeed} analyticsLabel="copy-blog-rca-seed" />
-          </div>
-          <pre><code>{incidentSeed}</code></pre>
-        </div>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">Start &amp; seed isolated runtime</span>
-            <CopyButton text={replayCmd} analyticsLabel="copy-blog-rca-cmd" />
-          </div>
-          <pre><code>{replayCmd}</code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2 id="verify">Verify the fix before deploying</h2>
-        <p class="mt-4">Because LocalCloud uses synthetic data on localhost, keep production credentials and real customer payloads out of your local fixtures. Once your regression test passes locally, deploy and validate against real Google Cloud staging before closing the incident.</p>
-      </section>
-    </div>
+<BlogArticle
+  slug="reproduce-gcp-incidents-locally"
+  kind="Walkthrough"
+  deck="A worker in production is choking on one message, and staging is the wrong place to poke at it. Rebuild the topic, the table and the payload on your laptop, watch it fail, and fix it with the failure in front of you."
+  primary={{ href: '/docs/seed-data/', label: 'Seed data guide' }}
+  secondary={{ href: '/docs/', label: 'Quick start' }}
+  {contents}
+  outcome="The production failure reproduced on localhost with a real traceback, a fix you watched pass, and a script you can keep as a regression test."
+  needs="Python with google-cloud-pubsub and google-cloud-bigquery"
+  next={{ posts: ['step-through-breakpoints-gcp', 'parallel-git-worktrees-localcloud'], doc: { href: '/docs/seed-data/', label: 'Seed data reference: every service that accepts fixtures' } }}
+>
+  <section>
+    <h2 id="scene">The message that keeps coming back</h2>
+    <p class="mt-4">The alert says the invoice worker is restarting. The logs show the same message ID again and again: the worker pulls it, crashes before acknowledging it, and Pub/Sub hands it straight back. Every other invoice is queueing behind it.</p>
+    <p class="mt-4">You can't replay that payload in production, and reproducing it in shared staging means breaking the queue for everyone else. A mocked client won't help either, because the bug lives in what the real client hands your code: attributes arrive as strings, and one of them isn't the string the worker expected.</p>
   </section>
-</BlogLayout>
+
+  <section>
+    <h2 id="sandbox">Give the incident its own runtime</h2>
+    <p class="mt-4">Start a LocalCloud runtime on its own data volume so nothing you do here touches your everyday environment. Then describe the two resources the worker depends on, the topic with its subscription and the destination table, in a seed file.</p>
+    <BlogCode label="incident-seed.yaml" code={incidentSeed} copy="copy-blog-rca-seed" />
+    <BlogCode label="Start and seed" code={startCmd} copy="copy-blog-rca-cmd" />
+    <p class="mt-4"><code>localcloud env</code> exports the SDK endpoints for that runtime, including <code>LOCALCLOUD_GATEWAY</code>, so the commands work whichever ports it was given.</p>
+  </section>
+
+  <section>
+    <h2 id="replay">Replay the payload</h2>
+    <p class="mt-4">Copy the shape of the failing message and replace customer values with synthetic ones. Here the upstream service started sending the amount as a decimal string. The script publishes that message and then runs the worker's handling code against it.</p>
+    <BlogCode label="replay.py" code={replayPy} copy="copy-blog-rca-replay" />
+    <BlogCode label="Output" code={failure} />
+    <p class="mt-4">That is the production crash, on your machine, in a second. Run the script again and the same message comes back, because it was never acknowledged. You are now looking at the redelivery loop itself, and you can attach a debugger to it.</p>
+  </section>
+
+  <section>
+    <h2 id="fix">Fix it and prove it</h2>
+    <p class="mt-4">Parse the amount as a decimal and convert to cents:</p>
+    <BlogCode label="The fix" code={fixPy} copy="copy-blog-rca-fix" />
+    <BlogCode label="Output" code={fixed} />
+    <p class="mt-4">The stuck message is processed, the row lands in <code>billing.invoices</code>, and the acknowledgement clears the queue. The local table enforces its schema too: insert a row without <code>invoice_id</code> and the client returns <q>Required destination field invoice_id cannot be NULL</q>, so the next class of bad payload is just as easy to try.</p>
+  </section>
+
+  <section>
+    <h2 id="regression">Keep the replay as a test</h2>
+    <p class="mt-4">The seed file and the script are now the incident's regression test. Move them into your integration suite, assert on the inserted row, and run them in CI so this payload can never take the worker down again. Stop the runtime with <code>localcloud stop --data-volume rca-incident-412</code> when you are done. Ship the fix through staging as usual; the difference is that you already know it works.</p>
+  </section>
+</BlogArticle>

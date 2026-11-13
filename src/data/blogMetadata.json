@@ -13,8 +13,8 @@
   "single-container-gcp-beyond-three-emulators": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Local development" },
   "validate-gcp-terraform-locally": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Infrastructure as Code" },
   "local-secrets-kms-without-iam-friction": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Security workflows" },
-  "inside-localcloud-multiplexing-20-services": { "publishedAt": "2026-11-12", "minutes": 4, "topic": "Architecture" },
-  "localcloud-mcp-agent-cloud": { "publishedAt": "2026-10-09", "minutes": 6, "topic": "AI coding agents" },
+  "inside-localcloud-multiplexing-20-services": { "publishedAt": "2026-11-12", "minutes": 5, "topic": "Architecture" },
+  "localcloud-mcp-agent-cloud": { "publishedAt": "2026-10-09", "minutes": 6, "topic": "AI coding agents", "updatedAt": "2026-11-11" },
   "localcloud-for-open-source": { "publishedAt": "2026-10-04", "minutes": 7, "topic": "Open source" },
-  "run-dataproc-locally-docker": { "publishedAt": "2026-10-01", "updatedAt": "2026-10-08", "minutes": 6, "topic": "Data engineering" }
+  "run-dataproc-locally-docker": { "publishedAt": "2026-10-01", "updatedAt": "2026-11-13", "minutes": 6, "topic": "Data engineering" }
 }

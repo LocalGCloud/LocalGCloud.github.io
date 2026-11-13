@@ -1,96 +1,75 @@
 ---
-import BlogLayout from '../../layouts/BlogLayout.astro';
-import CopyButton from '../../components/CopyButton.astro';
-import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
-import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+import BlogArticle from '../../components/BlogArticle.astro';
+import BlogCode from '../../components/BlogCode.astro';
 
-const title = 'Parallel Git Worktrees With Zero Cloud Collisions';
-const description = 'Work on a feature branch, PR review, and urgent hotfix simultaneously by isolating each Git worktree with its own LocalCloud Docker data volume.';
-const pageUrl = new URL('blog/parallel-git-worktrees-localcloud/', productFacts.siteUrl).toString();
-const metadata = authoredBlogMetadata['parallel-git-worktrees-localcloud'];
 const contents = [
-  { id: 'problem', label: 'Why shared cloud state breaks multitasking' },
-  { id: 'solution', label: 'Pair Git worktrees with named data volumes' },
-  { id: 'workflow', label: 'Run two isolated cloud stacks side by side' },
-  { id: 'try-it', label: 'Try a branch-scoped runtime' },
-  { id: 'cleanup', label: 'Tear down finished branch volumes cleanly' },
+  { id: 'collision', label: 'Two branches, one cloud' },
+  { id: 'pair', label: 'One volume per worktree' },
+  { id: 'side-by-side', label: 'See both runtimes side by side' },
+  { id: 'agents', label: 'The same trick for coding agents' },
+  { id: 'cleanup', label: 'Clean up after the merge' },
 ];
-const worktreeCmd = `# Terminal 1: feature branch worktree
+const worktreeCmd = `# Terminal 1: the feature branch
 git worktree add ../repo-feature-search feat/search-index
 cd ../repo-feature-search
 localcloud start --local-only --data-volume feat-search
 eval "$(localcloud env --data-volume feat-search)"
 
-# Terminal 2: urgent hotfix worktree on its own volume and ports
+# Terminal 2: the hotfix, on its own volume and ports
 git worktree add ../repo-hotfix fix/billing-export
 cd ../repo-hotfix
 localcloud start --local-only --data-volume hotfix-billing --accept-dynamic-ports
 eval "$(localcloud env --data-volume hotfix-billing)"`;
-const structuredData = [
-  createBreadcrumbSchema([
-    { name: 'Home', url: productFacts.siteUrl },
-    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
-    { name: title, url: pageUrl },
-  ]),
-];
+const statusCmd = `localcloud status --data-volume hotfix-billing`;
+const statusOut = `[OK] LocalCloud container is running
+Data volume      hotfix-billing
+Origin           managed
+Ports            5406, 5508-5514 -> 5380, 5382-5383, 5388-5389, 5392-5393, 5406
+URL              http://127.0.0.1:5508`;
+const cleanupCmd = `localcloud stop --data-volume hotfix-billing
+git worktree remove ../repo-hotfix`;
 ---
 
-<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
-  <Fragment slot="hero">
-    <article class="site-section site-section--hero">
-      <div class="container container--narrow">
-        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
-        <span class="site-eyebrow">Developer Productivity</span>
-        <h1 class="mt-5">{title}</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">Switching Git branches mid-feature—or running an AI agent on a second task—breaks when both checkouts mutate the same shared staging project. Give each worktree its own isolated LocalCloud volume.</p>
-        <div class="blog-actions">
-          <a class="site-button site-button--primary" href="/docs/configuration/#runtime-selection">Runtime selection guide</a>
-          <a href="/docs/">Quick start</a>
-        </div>
-      </div>
-    </article>
-  </Fragment>
-
-  <section class="site-section">
-    <div class="container container--narrow space-y-10">
-      <section>
-        <h2 id="problem">Why shared cloud state breaks multitasking</h2>
-        <p class="mt-4">Suppose you are halfway through testing a new BigQuery table schema on a feature branch when an urgent production hotfix lands—or you launch a coding agent in a second worktree to review a pull request.</p>
-        <p class="mt-4">If both checkouts share one remote GCP dev environment or one database container, one branch’s migrations, Pub/Sub messages, and bucket deletions corrupt the other’s tests.</p>
-      </section>
-
-      <section>
-        <h2 id="solution">Pair Git worktrees with named data volumes</h2>
-        <p class="mt-4">LocalCloud identifies each runtime by its Docker data volume via <code>--data-volume NAME</code> (defaulting to <code>localcloud-data</code>). Passing a branch-specific volume name starts a dedicated container with isolated storage, databases, and queues.</p>
-        <ul class="site-list mt-5">
-          <li><strong>Dynamic port allocation:</strong> When the default port range is already claimed by another branch’s runtime, pass <code>--accept-dynamic-ports</code> so the second instance binds free localhost ports automatically.</li>
-          <li><strong>Shell-scoped routing:</strong> Running <code>eval "$(localcloud env --data-volume ...)"</code> injects that exact runtime’s ports into that terminal session alone.</li>
-          <li><strong>Safe coexistence:</strong> LocalCloud tracks only containers it owns and never removes or relabels Docker resources belonging to another volume.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2 id="workflow">Run two isolated cloud stacks side by side</h2>
-        <p class="mt-4">Each terminal window runs its own Git worktree, its own test watcher, and its own local Google Cloud stack—with zero crosstalk between feature schemas and hotfix tests.</p>
-      </section>
-
-      <section>
-        <h2 id="try-it">Try a branch-scoped runtime</h2>
-        <p class="mt-4">Spin up two parallel checkouts with independent LocalCloud volumes and environment exports. See <a href="/docs/configuration/#runtime-selection">Runtime selection</a> and <a href="/docs/">Getting Started</a> for installation and precedence rules.</p>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">Parallel worktree setup</span>
-            <CopyButton text={worktreeCmd} analyticsLabel="copy-blog-worktree-cmd" />
-          </div>
-          <pre><code>{worktreeCmd}</code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2 id="cleanup">Tear down finished branch volumes cleanly</h2>
-        <p class="mt-4">When you merge a branch and remove its Git worktree, stop its container with <code>localcloud stop --data-volume hotfix-billing</code> and inspect <a href="/docs/configuration/#stop-reset-and-uninstall">stop and reset lifecycle docs</a> to remove unused Docker volumes cleanly.</p>
-      </section>
-    </div>
+<BlogArticle
+  slug="parallel-git-worktrees-localcloud"
+  kind="Walkthrough"
+  deck="Git worktrees let you keep a feature, a review and a hotfix checked out at once. That only helps if each one has somewhere separate to run. Give every worktree its own local cloud and they stop stepping on each other."
+  primary={{ href: '/docs/configuration/#runtime-selection', label: 'Runtime selection guide' }}
+  secondary={{ href: '/docs/', label: 'Quick start' }}
+  {contents}
+  outcome="Two worktrees, each with its own LocalCloud runtime, data and ports, running at the same time without sharing any state."
+  needs="a Git repository"
+  next={{ posts: ['reproduce-gcp-incidents-locally', 'why-ai-agents-need-local-cloud'], doc: { href: '/docs/configuration/#runtime-selection', label: 'Configuration: how a command picks its runtime' } }}
+>
+  <section>
+    <h2 id="collision">Two branches, one cloud</h2>
+    <p class="mt-4">You are halfway through a schema change on a feature branch when a billing bug needs fixing now. Worktrees make the code side easy: a second checkout, a second terminal, no stashing.</p>
+    <p class="mt-4">The cloud side is where it goes wrong. Both checkouts point at the same dev project or the same container, so the hotfix runs its tests against tables your feature branch has half migrated. One branch's cleanup deletes the other's fixtures, and both sets of results become suspect.</p>
   </section>
-</BlogLayout>
+
+  <section>
+    <h2 id="pair">One volume per worktree</h2>
+    <p class="mt-4">LocalCloud identifies a runtime by its data volume. Start with a different <code>--data-volume</code> name and you get a separate container with its own storage, databases and queues. The second runtime adds <code>--accept-dynamic-ports</code> so it takes free ports instead of fighting over the defaults.</p>
+    <BlogCode label="Two worktrees, two runtimes" code={worktreeCmd} copy="copy-blog-worktree-cmd" />
+    <p class="mt-4">The <code>eval</code> line matters most. It exports that runtime's endpoints into that terminal only, so tests in each worktree reach their own cloud without any change to the code.</p>
+  </section>
+
+  <section>
+    <h2 id="side-by-side">See both runtimes side by side</h2>
+    <p class="mt-4">Ask for the status of either one by name. The hotfix runtime shows the ports it was given in place of the defaults:</p>
+    <BlogCode label="Check the hotfix runtime" code={statusCmd} copy="copy-blog-worktree-status" />
+    <BlogCode label="Output (trimmed)" code={statusOut} />
+    <p class="mt-4">Run the feature branch's migrations, then the hotfix's test suite. Neither sees the other. Each runtime also has its own web console at the URL shown, which is a quick way to confirm which data you are looking at.</p>
+  </section>
+
+  <section>
+    <h2 id="agents">The same trick for coding agents</h2>
+    <p class="mt-4">This matters more when the second worktree belongs to an agent. An agent fixing a bug in parallel will create, delete and reset resources freely, which is what you want as long as they aren't yours. Start its runtime with its own volume name, hand it that worktree, and review the result when it is done.</p>
+  </section>
+
+  <section>
+    <h2 id="cleanup">Clean up after the merge</h2>
+    <BlogCode label="Stop the runtime and remove the worktree" code={cleanupCmd} copy="copy-blog-worktree-cleanup" />
+    <p class="mt-4">Stopping keeps the volume, so a branch you come back to next week still has its data. When the branch is gone for good, remove the stopped container and its volume with Docker; the <a href="/docs/configuration/#stop-reset-and-uninstall">lifecycle section</a> lists what each command keeps.</p>
+  </section>
+</BlogArticle>

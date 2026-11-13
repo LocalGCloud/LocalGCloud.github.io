@@ -36,8 +36,8 @@ const authoredEntry = (
 export const blogPosts: BlogPostEntry[] = [
   authoredEntry(
     'the-2ms-inner-loop',
-    'The 2ms Inner Loop: Protect Focus on Cloud Code',
-    'Cloud API latency fractures developer flow state. Run Google Cloud storage, queues, and SQL locally at 2ms p50 latency so your inner loop stays instant.',
+    'The Millisecond Inner Loop: Cloud Code at Thinking Speed',
+    'Remote cloud calls break your concentration. Run Google Cloud storage, queues and SQL on localhost and integration tests answer in milliseconds.',
   ),
   authoredEntry(
     'step-through-breakpoints-gcp',
@@ -47,17 +47,17 @@ export const blogPosts: BlogPostEntry[] = [
   authoredEntry(
     'reproduce-gcp-incidents-locally',
     'Reproduce Production GCP Incidents Locally in Minutes',
-    'Stop guessing at production edge cases. Seed matching schemas and replay failing Pub/Sub or BigQuery payloads safely inside an isolated local container.',
+    'Rebuild the topic, table and failing payload from a production incident on localhost, watch the real traceback, and fix it without touching staging.',
   ),
   authoredEntry(
     'tdd-google-cloud-watch-mode',
     'True TDD for Google Cloud With Watch Mode',
-    'Run pytest or jest --watch against real Google Cloud SDKs without slow network calls or cloud bills by resetting local project state between test saves.',
+    'Rerun cloud integration tests on every save. A pytest watcher, the real Google Cloud SDKs on localhost, and a project reset before each run.',
   ),
   authoredEntry(
     'zero-ticket-cloud-prototyping',
     'Kill the IAM Ticket: Prototype GCP Before Approval',
-    'Stop waiting days for GCP project permissions or billing setup. Prototype Cloud Tasks, Pub/Sub, and Secret Manager locally in 60 seconds.',
+    'Try the design before you request the project. Prototype Cloud Tasks, Pub/Sub and Secret Manager locally, then ask for only what works.',
   ),
   authoredEntry(
     'parallel-git-worktrees-localcloud',
@@ -72,12 +72,12 @@ export const blogPosts: BlogPostEntry[] = [
   authoredEntry(
     'why-ai-agents-need-local-cloud',
     'Why AI Coding Agents Need Local Cloud, Not Mocks',
-    'Unit mocks hide SDK hallucinations and real GCP keys risk secret leaks. Give coding agents an honest localhost cloud sandbox via LocalCloud MCP.',
+    'An agent that writes its own mocks is marking its own homework, and a real GCP key is too risky. Give it a local cloud that pushes back.',
   ),
   authoredEntry(
     'missing-bigquery-emulator-local-sql',
     'Test Google BigQuery Locally Without a Cloud Project',
-    'Google provides no official BigQuery emulator. Run GoogleSQL queries, table DDL, and streaming inserts on localhost with standard BigQuery SDKs.',
+    'Google publishes no BigQuery emulator. Run GoogleSQL queries, table DDL and streaming inserts on localhost with the standard BigQuery client.',
   ),
   authoredEntry(
     'event-driven-pipelines-gcs-pubsub-bigquery',
@@ -87,37 +87,37 @@ export const blogPosts: BlogPostEntry[] = [
   authoredEntry(
     'zero-secret-gcp-ci-github-actions',
     'Zero-Secret GCP Integration Tests in GitHub Actions',
-    'Eliminate cloud billing and service-account secrets from PR checks. Spin up an ephemeral LocalCloud environment inside GitHub Actions in seconds.',
+    'Run integration tests on every pull request with no service-account key and no shared staging project. One step starts LocalCloud inside the job.',
   ),
   authoredEntry(
     'single-container-gcp-beyond-three-emulators',
-    'Single-Container GCP: Beyond 3 Official Emulators',
-    'Google only ships standalone emulators for Pub/Sub, Firestore, and Spanner. Run 25 GCP services locally in one Docker container with unified env exports.',
+    "One Container for GCP: Past Google's Handful of Emulators",
+    "Google's emulators cover five services, one process each. Run 25 Google Cloud services locally in one Docker container with one command to configure SDKs.",
   ),
   authoredEntry(
     'validate-gcp-terraform-locally',
     'Validate Google Cloud Terraform Locally Before Apply',
-    'Test hashicorp/google Terraform resources locally before touching live GCP. Configure endpoint overrides, fake local credentials, and readiness gates.',
+    "terraform plan can't tell you what the API will reject. Apply your Google provider resources against localhost first, with local state and fake credentials.",
   ),
   authoredEntry(
     'local-secrets-kms-without-iam-friction',
     'Test Secret Manager and Cloud KMS Locally Without IAM',
-    'Eliminate plaintext .env workarounds in development. Exercise Secret Manager versions and Cloud KMS cryptographic workflows locally using standard GCP SDKs.',
+    'Delete the .env shortcut. Rotate a Secret Manager secret and encrypt with a Cloud KMS key on localhost, using the standard Google Cloud clients.',
   ),
   authoredEntry(
     'inside-localcloud-multiplexing-20-services',
-    'Inside LocalCloud: 20+ GCP Protocols in One Container',
-    'How LocalCloud multiplexes HTTP, gRPC, PostgreSQL, MySQL, and RESP across 20+ GCP services in one ~5s cold-boot container on Apple Silicon and Linux.',
+    'Inside LocalCloud: 6 Protocols, 20+ Services, One Container',
+    'How one container answers HTTP, gRPC, PostgreSQL, MySQL and Redis clients for 20+ Google Cloud services: a shared gateway plus purpose-built engines.',
   ),
   authoredEntry(
     'localcloud-mcp-agent-cloud',
-    'A local cloud environment for coding agents',
+    'A Local Cloud Environment for Coding Agents',
     'Connect LocalCloud MCP to your coding agent, then test Cloud Storage, Pub/Sub, and BigQuery locally with standard Google Cloud SDKs.',
   ),
   authoredEntry(
     'localcloud-for-open-source',
-    'Bring No-Cost Cloud Integration Testing Into Your Repository: Low Setup, Easy Contributions',
-    'Run Google Cloud tests locally with zero cloud-resource costs and an easier contribution workflow. Free for open-source development and CI under the Free for open-source projects policy.',
+    'Bring No-Cost Cloud Integration Testing Into Your Repository',
+    'Run Google Cloud integration tests locally at zero cloud-resource cost and make contributing easier. LocalCloud is free for open-source development and CI.',
   ),
   ...blogDemoPages.map((page) => ({
     slug: page.slug,

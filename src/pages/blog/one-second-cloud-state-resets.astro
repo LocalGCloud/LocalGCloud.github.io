@@ -1,109 +1,78 @@
 ---
-import BlogLayout from '../../layouts/BlogLayout.astro';
-import CopyButton from '../../components/CopyButton.astro';
-import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
-import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+import BlogArticle from '../../components/BlogArticle.astro';
+import BlogCode from '../../components/BlogCode.astro';
 
-const title = 'Stop Paranoid Debugging: 1-Second Cloud State Resets';
-const description = 'Stop wasting hours debugging phantom errors from dirty staging data. Reset local GCP state and restore deterministic YAML fixtures in under a second.';
-const pageUrl = new URL('blog/one-second-cloud-state-resets/', productFacts.siteUrl).toString();
-const metadata = authoredBlogMetadata['one-second-cloud-state-resets'];
 const contents = [
-  { id: 'problem', label: 'The hidden cost of dirty test state' },
-  { id: 'solution', label: 'Deterministic baselines with seed.yaml' },
-  { id: 'reset-routes', label: 'Reset and reseed in under a second' },
-  { id: 'try-it', label: 'Test a fast reset cycle' },
-  { id: 'checklist', label: 'Keep fixture resets honest' },
+  { id: 'doubt', label: 'Is it my code or yesterday\'s data?' },
+  { id: 'baseline', label: 'Write the baseline down once' },
+  { id: 'reset', label: 'Snap back to it' },
+  { id: 'uses', label: 'Where a fast reset pays off' },
 ];
-const seedYaml = `services:
+const seedYaml = String.raw`services:
   gcs:
     buckets:
       - name: exports-baseline
         objects:
           - key: fixtures/sample.csv
-            content: "id,status\\n1,active\\n"
+            content: "id,status\n1,active\n"
   pubsub:
     topics:
       - name: orders-topic
         subscriptions:
           - name: orders-sub`;
-const resetCmd = `# Load your baseline fixtures
-curl -fsS -X POST http://localhost:5380/seed \\
-  -H 'Content-Type: application/yaml' \\
-  --data-binary @seed.yaml
+const seedCmd = String.raw`localcloud start --local-only
+eval "$(localcloud env)"
 
-# Later: clear project state and restore the most recent seed (~380 ms)
-curl -fsS -X POST 'http://localhost:5380/reset?project=local-gcp-project' \\
-  -H 'Content-Type: application/json' \\
+curl -fsS -X POST "$LOCALCLOUD_GATEWAY/seed" \
+  -H 'Content-Type: application/yaml' \
+  --data-binary @seed.yaml`;
+const resetCmd = String.raw`curl -fsS -X POST "$LOCALCLOUD_GATEWAY/reset?project=local-gcp-project" \
+  -H 'Content-Type: application/json' \
   -d '{"restore_seed":true}'`;
-const structuredData = [
-  createBreadcrumbSchema([
-    { name: 'Home', url: productFacts.siteUrl },
-    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
-    { name: title, url: pageUrl },
-  ]),
-];
+const resetBody = '{"restore_seed":true}';
+const output = `{"message":"Successfully reset state","project":"local-gcp-project","reset":true,
+ "seed_restored":true,"status":"success", ...}`;
 ---
 
-<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
-  <Fragment slot="hero">
-    <article class="site-section site-section--hero">
-      <div class="container container--narrow">
-        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
-        <span class="site-eyebrow">Developer Productivity</span>
-        <h1 class="mt-5">{title}</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">Half of integration debugging goes to figuring out whether your code broke or yesterday’s leftover rows corrupted the environment. Snap back to a clean fixture baseline in ~380 ms.</p>
-        <div class="blog-actions">
-          <a class="site-button site-button--primary" href="/docs/seed-data/">Seed data reference</a>
-          <a href="/docs/">Quick start</a>
-        </div>
-      </div>
-    </article>
-  </Fragment>
-
-  <section class="site-section">
-    <div class="container container--narrow space-y-10">
-      <section>
-        <h2 id="problem">The hidden cost of dirty test state</h2>
-        <p class="mt-4">“Did my refactor fail, or did an earlier test leave a duplicate primary key in Spanner and an unacknowledged message in Pub/Sub?” That uncertainty triggers slow manual cleanup scripts, ad-hoc bucket deletes, and paranoid re-runs.</p>
-      </section>
-
-      <section>
-        <h2 id="solution">Deterministic baselines with seed.yaml</h2>
-        <p class="mt-4">LocalCloud provides declarative YAML seeding across 18 supported services—including <code>gcs</code>, <code>pubsub</code>, <code>bigquery</code>, <code>spanner</code>, <code>secretmanager</code>, <code>cloudsql</code>, <code>bigtable</code>, and opt-in <code>firestore</code>.</p>
-        <p class="mt-4">Instead of imperatively scripting setup and teardown inside every test file, describe your exact buckets, topics, secrets, and initial table rows once in <code>seed.yaml</code>.</p>
-      </section>
-
-      <section>
-        <h2 id="reset-routes">Reset and reseed in under a second</h2>
-        <p class="mt-4">When you need a clean slate, <code>localcloud reset --local-only</code> or <code>POST /reset?project=local-gcp-project</code> wipes project-scoped data inside the running container in ~380 ms—without waiting for a container recreation.</p>
-        <p class="mt-4">Pass <code>{`{"restore_seed":true}`}</code> in the reset body and LocalCloud immediately reapplies your project’s last loaded seed fixture so the next run starts from the exact same byte-for-byte baseline.</p>
-      </section>
-
-      <section>
-        <h2 id="try-it">Test a fast reset cycle</h2>
-        <p class="mt-4">Start LocalCloud with <a href="/docs/">Getting Started</a>, save this <code>seed.yaml</code>, seed it, and run the reset command. Check <a href="/docs/seed-data/">Seed Data docs</a> for multi-project mappings and startup volume mounting.</p>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">seed.yaml</span>
-            <CopyButton text={seedYaml} analyticsLabel="copy-blog-reset-seed" />
-          </div>
-          <pre><code>{seedYaml}</code></pre>
-        </div>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">Seed &amp; 1-second restore</span>
-            <CopyButton text={resetCmd} analyticsLabel="copy-blog-reset-cmd" />
-          </div>
-          <pre><code>{resetCmd}</code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2 id="checklist">Keep fixture resets honest</h2>
-        <p class="mt-4">Keep <code>LOCALCLOUD_TERRAFORM_MODE=true</code> separate from seed tests, because Terraform mode intentionally skips seed calls to prevent duplicate resources. Use seed fixtures for fast test state; validate production migrations against real Google Cloud.</p>
-      </section>
-    </div>
+<BlogArticle
+  slug="one-second-cloud-state-resets"
+  kind="Walkthrough"
+  deck="A test fails. Before you can debug your change, you have to rule out the row someone left behind last week. Describe a known-good state in one file and get back to it in under a second, as often as you like."
+  primary={{ href: '/docs/seed-data/', label: 'Seed data reference' }}
+  secondary={{ href: '/docs/', label: 'Quick start' }}
+  {contents}
+  outcome="A seed file that defines your baseline buckets and topics, and a one-line reset that restores it while the runtime stays up."
+  next={{ posts: ['tdd-google-cloud-watch-mode', 'reproduce-gcp-incidents-locally'], doc: { href: '/docs/seed-data/', label: 'Seed data reference: file formats, projects and supported services' } }}
+>
+  <section>
+    <h2 id="doubt">Is it my code or yesterday's data?</h2>
+    <p class="mt-4">Shared environments accumulate. A duplicate key from an aborted run, a message nobody acknowledged, a bucket with last sprint's fixtures in it. Each one is harmless until a test fails and you can't tell whether your change did it.</p>
+    <p class="mt-4">The usual answers are a cleanup script that is always slightly out of date, or running the test twice and hoping. Both are ways of working around not knowing what state you started from.</p>
   </section>
-</BlogLayout>
+
+  <section>
+    <h2 id="baseline">Write the baseline down once</h2>
+    <p class="mt-4">A seed file describes the resources and data a clean environment should contain. LocalCloud accepts seed data for 18 services, including Cloud Storage, Pub/Sub, BigQuery, Spanner, Cloud SQL, Bigtable, Secret Manager and Firestore.</p>
+    <BlogCode label="seed.yaml" code={seedYaml} copy="copy-blog-reset-seed" />
+    <BlogCode label="Start and load the baseline" code={seedCmd} copy="copy-blog-reset-load" />
+    <p class="mt-4">Check the file into the repository. It replaces the setup code scattered through your test files, and it documents what the tests assume.</p>
+  </section>
+
+  <section>
+    <h2 id="reset">Snap back to it</h2>
+    <p class="mt-4">Make whatever mess you need to: delete the bucket, publish a hundred messages, load bad rows. Then reset the project with <code>{resetBody}</code> and LocalCloud clears it and reapplies the last seed you loaded.</p>
+    <BlogCode label="Reset to the baseline" code={resetCmd} copy="copy-blog-reset-cmd" />
+    <BlogCode label="Output (trimmed)" code={output} />
+    <p class="mt-4">The container never restarts, so this takes a few hundred milliseconds. <code>localcloud reset --local-only</code> does the same clear from the CLI.</p>
+  </section>
+
+  <section>
+    <h2 id="uses">Where a fast reset pays off</h2>
+    <ul class="site-list mt-5">
+      <li><strong>Before a test run.</strong> Call it from a session fixture and every run starts identical. The <a href="/blog/tdd-google-cloud-watch-mode/">watch-mode walkthrough</a> has the fixture.</li>
+      <li><strong>While debugging.</strong> When you suspect the data, reset and rerun. If the failure survives, it is your code, and you have just saved yourself the argument.</li>
+      <li><strong>Before a demo.</strong> One command returns the environment to the state your script expects.</li>
+    </ul>
+    <p class="mt-4">One thing to know: when Terraform mode is on, seed requests are skipped so Terraform stays the owner of its resources. Keep Terraform tests and seeded tests in separate runtimes.</p>
+  </section>
+</BlogArticle>

@@ -1,85 +1,59 @@
 ---
-import BlogLayout from '../../layouts/BlogLayout.astro';
-import CopyButton from '../../components/CopyButton.astro';
-import { authoredBlogMetadata, formatBlogDate } from '../../data/blogPresentation';
-import { createBreadcrumbSchema, productFacts } from '../../data/productFacts';
+import BlogArticle from '../../components/BlogArticle.astro';
+import BlogCode from '../../components/BlogCode.astro';
 
-const title = 'Kill the IAM Ticket: Prototype GCP Before Approval';
-const description = 'Stop waiting days for GCP project permissions or billing setup. Prototype Cloud Tasks, Pub/Sub, and Secret Manager locally in 60 seconds.';
-const pageUrl = new URL('blog/zero-ticket-cloud-prototyping/', productFacts.siteUrl).toString();
-const metadata = authoredBlogMetadata['zero-ticket-cloud-prototyping'];
 const contents = [
-  { id: 'problem', label: 'How permission tickets kill momentum' },
-  { id: 'solution', label: 'A working cloud project in 60 seconds' },
-  { id: 'prototype', label: 'Prototype new service patterns immediately' },
-  { id: 'try-it', label: 'Install and start prototyping' },
-  { id: 'handoff', label: 'Bring proven designs to platform review' },
+  { id: 'tuesday', label: 'An idea on Tuesday, access on Friday' },
+  { id: 'order', label: 'Reverse the order' },
+  { id: 'try-it', label: 'A working project in a minute' },
+  { id: 'handoff', label: 'What you bring to the platform team' },
 ];
-const installPrototype = `curl -fsSL https://local.cloud/install.sh | sh
-localcloud doctor
+const installPrototype = `localcloud doctor
 localcloud start --local-only --services cloudtasks,secretmanager,pubsub,gcs
 eval "$(localcloud env)"`;
-const structuredData = [
-  createBreadcrumbSchema([
-    { name: 'Home', url: productFacts.siteUrl },
-    { name: 'Blog', url: new URL('blog/', productFacts.siteUrl).toString() },
-    { name: title, url: pageUrl },
-  ]),
-];
 ---
 
-<BlogLayout {title} {description} {structuredData} {contents} article={{ publishedAt: metadata.publishedAt, headline: title }}>
-  <Fragment slot="hero">
-    <article class="site-section site-section--hero">
-      <div class="container container--narrow">
-        <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
-        <span class="site-eyebrow">Developer Productivity</span>
-        <h1 class="mt-5">{title}</h1>
-        <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>{metadata.topic}</span></p>
-        <p class="blog-deck">Filing Jira tickets for sandbox projects, service accounts, and billing approvals drains a sprint before you test one idea. Prototype locally with zero cloud permissions, then request only what works.</p>
-        <div class="blog-actions">
-          <a class="site-button site-button--primary" href="/docs/">Get started in 60s</a>
-          <a href="/services/">Browse services</a>
-        </div>
-      </div>
-    </article>
-  </Fragment>
-
-  <section class="site-section">
-    <div class="container container--narrow space-y-10">
-      <section>
-        <h2 id="problem">How permission tickets kill momentum</h2>
-        <p class="mt-4">Every engineer knows the drag of wanting to test a clean architectural idea—say, replacing an in-memory retry loop with Cloud Tasks and Secret Manager—only to hit a wall of provisioning friction. You need a GCP project, IAM bindings, a billing link, and security sign-off.</p>
-        <p class="mt-4">New hires face the worst version of this: spending their first three days waiting on cloud access instead of running the application and shipping a small first PR.</p>
-      </section>
-
-      <section>
-        <h2 id="solution">A working cloud project in 60 seconds</h2>
-        <p class="mt-4">LocalCloud creates a ready-to-use local project (<code>local-gcp-project</code>) with a local caller identity (<code>local-developer</code>) out of the box. There are no cloud accounts to create, no billing cards to link, and no IAM tickets to file.</p>
-        <p class="mt-4">Teams can onboard a new engineer straight from <code>README.md</code>: clone the repo, start LocalCloud, export the shell variables, and run the entire backend stack immediately.</p>
-      </section>
-
-      <section>
-        <h2 id="prototype">Prototype new service patterns immediately</h2>
-        <p class="mt-4">Want to compare <a href="/services/cloud-tasks/">Cloud Tasks</a> rate-limited queues against <a href="/services/pubsub/">Pub/Sub</a> push subscriptions? Or test <a href="/services/cloud-workflows/">Cloud Workflows</a> and <a href="/services/cloud-scheduler/">Cloud Scheduler</a> triggers? Enable the services locally, wire up the standard Google Cloud SDKs, and validate the design with real working code before asking platform engineering to provision cloud infrastructure.</p>
-      </section>
-
-      <section>
-        <h2 id="try-it">Install and start prototyping</h2>
-        <p class="mt-4">Install the CLI on macOS or Linux (or use Homebrew on macOS) and start the exact services your prototype needs. Browse the full <a href="/docs/configuration/">configuration guide</a> and <a href="/services/">service catalog</a> for service IDs and opt-in flags like <code>firestore</code>.</p>
-        <div class="site-panel mt-5">
-          <div class="flex items-center justify-between gap-4">
-            <span class="site-kicker">60-second setup</span>
-            <CopyButton text={installPrototype} analyticsLabel="copy-blog-zero-ticket-setup" />
-          </div>
-          <pre><code>{installPrototype}</code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2 id="handoff">Bring proven designs to platform review</h2>
-        <p class="mt-4">Once your local prototype proves the architecture, your platform ticket changes from a speculative request into a concrete Terraform module and passing integration suite—ready to validate in a real Google Cloud project.</p>
-      </section>
-    </div>
+<BlogArticle
+  slug="zero-ticket-cloud-prototyping"
+  kind="Perspective"
+  deck="You have an idea for how a service should work. Before you can try it you need a project, a billing link, IAM bindings and a sign-off. Try the idea first, on your own machine, and ask for infrastructure once you know what to ask for."
+  primary={{ href: '/docs/', label: 'Get started' }}
+  secondary={{ href: '/services/', label: 'Browse services' }}
+  {contents}
+  next={{ posts: ['single-container-gcp-beyond-three-emulators', 'validate-gcp-terraform-locally'], doc: { href: '/services/', label: 'Service catalog: every service and its ID' } }}
+>
+  <section>
+    <h2 id="tuesday">An idea on Tuesday, access on Friday</h2>
+    <p class="mt-4">On Tuesday you realise the retry loop in your worker should be a Cloud Tasks queue. It is an afternoon's experiment. You open a ticket for a sandbox project, and the experiment starts on Friday, if the approver isn't on holiday.</p>
+    <p class="mt-4">Nobody in that chain is doing anything wrong. Platform teams gate projects because projects cost money and widen the attack surface. The trouble is the ordering: the request has to be made before anyone knows whether the idea is any good, so most small ideas never get tried.</p>
+    <p class="mt-4">New starters meet the same wall on day one. The repository is cloned, the laptop works, and the application can't run because the cloud access hasn't come through.</p>
   </section>
-</BlogLayout>
+
+  <section>
+    <h2 id="order">Reverse the order</h2>
+    <table class="blog-compare mt-5">
+      <thead><tr><th scope="col"></th><th scope="col">Ticket first</th><th scope="col">Prototype first</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Day one</th><td>File the request and wait</td><td>Run the idea against local services</td></tr>
+        <tr><th scope="row">What the request says</th><td>"We might need Cloud Tasks"</td><td>"Here is the queue config and the tests that pass"</td></tr>
+        <tr><th scope="row">What gets provisioned</th><td>A broad sandbox, just in case</td><td>The resources the design uses</td></tr>
+        <tr><th scope="row">If the idea was wrong</th><td>A project to clean up</td><td>Nothing to undo</td></tr>
+      </tbody>
+    </table>
+    <p class="mt-4">LocalCloud starts with a project and a caller identity already in place, so there is nothing to request. The services answer the standard Google Cloud SDKs, which means the prototype is real code, the same code you would deploy.</p>
+  </section>
+
+  <section>
+    <h2 id="try-it">A working project in a minute</h2>
+    <p class="mt-4">With the CLI installed from the <a href="/docs/#install-the-cli">quick start</a>, name the services the idea needs:</p>
+    <BlogCode label="Start the services for the prototype" code={installPrototype} copy="copy-blog-zero-ticket-setup" />
+    <p class="mt-4">Now compare the options with running code. Put a rate limit on a <a href="/services/cloud-tasks/">Cloud Tasks</a> queue and see how it behaves next to a <a href="/services/pubsub/">Pub/Sub</a> push subscription. Trigger the job from <a href="/services/cloud-scheduler/">Cloud Scheduler</a> or chain it in <a href="/services/cloud-workflows/">Cloud Workflows</a>. An afternoon gets you an answer.</p>
+    <p class="mt-4">The same three commands belong in your README. A new engineer who can run them has the whole backend on their laptop before their access request is approved.</p>
+  </section>
+
+  <section>
+    <h2 id="handoff">What you bring to the platform team</h2>
+    <p class="mt-4">The ticket still gets filed. It just reads differently. You attach the Terraform for exactly the resources the design needs and an integration suite that already passes against them. The reviewer is looking at a specific, tested change, which is an easier thing to approve than a guess.</p>
+    <p class="mt-4">Platform teams tend to like this arrangement once they see it. Fewer speculative sandboxes to track, fewer permissions granted for experiments, and requests that arrive with their own evidence.</p>
+  </section>
+</BlogArticle>

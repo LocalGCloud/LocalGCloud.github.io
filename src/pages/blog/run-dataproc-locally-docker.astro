@@ -60,7 +60,7 @@ const installPackagesCommand = String.raw`docker run -it --rm \
   -c 'python3 -m pip install --target /localcloud/tmp/python google-cloud-dataproc==5.31.0 && exec localcloud-runtime pyspark'`;
 
 const clusterCommands = `# 1. Start cluster in background
-docker-compose up -d
+docker compose up -d
 
 # 2. Check NameNode and YARN nodes
 docker exec dataproc-master hdfs dfsadmin -report
@@ -73,7 +73,7 @@ docker exec dataproc-master spark-submit --master yarn /opt/localcloud/self-test
 beeline -u "jdbc:hive2://localhost:20000" -e "SHOW DATABASES;"
 
 # 5. Stop and tear down cluster (removes containers & volumes)
-docker-compose down --volumes`;
+docker compose down --volumes`;
 
 const pysparkSample = `from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, avg, count
@@ -102,7 +102,7 @@ jobs:
   test-spark-pipelines:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
       - name: Run PySpark Test in Dataproc 3.0 Container
         run: |
           docker run --rm \\
@@ -331,7 +331,7 @@ const structuredData = [
         <span class="site-kicker">Step-by-step guide</span>
         <h2 class="mt-3" id="single-container">Mode 1: Single-container ad-hoc execution</h2>
         <p class="mt-4 leading-8 text-[var(--text-2)]">
-          You don't need to spin up a cluster or run any background services. The container's entrypoint acts as an intelligent capability dispatcher. You pass the tool name as the first argument, and it executes immediately:
+          You don't need to spin up a cluster or run any background services. Pass the tool name as the first argument and the container runs it:
         </p>
 
         <div class="mt-6 space-y-6">
@@ -522,7 +522,8 @@ const structuredData = [
               If running alongside LocalCloud, provide emulator endpoint environment variables. The entrypoint automatically configures the GCS and BigQuery connectors:
             </p>
             <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl bg-[var(--surface-2)] p-3 text-xs font-mono text-[var(--text-2)]"><code>docker run --rm \
-  -e LOCALCLOUD_GCS_ENDPOINT=http://host.docker.internal:4443 \
+  -v $(pwd)/workloads:/workload:ro \
+  -e LOCALCLOUD_GCS_ENDPOINT=http://host.docker.internal:5382 \
   -e LOCALCLOUD_BIGQUERY_ENDPOINT=http://host.docker.internal:5388 \
   agentcloud/dataproc:3.0.0-debian13 \
   spark /workload/read_gcs_to_bq.py</code></pre>
@@ -551,7 +552,7 @@ const structuredData = [
         <span class="site-kicker">Automation</span>
         <h2 class="mt-3" id="ci">CI/CD automation: Running Spark tests in GitHub Actions</h2>
         <p class="mt-4 leading-8 text-[var(--text-2)]">
-          Because these images are 100% self-contained and run on public Docker runners, you can execute complete PySpark unit and integration tests directly in GitHub Actions without granting cloud permissions or creating GCP service accounts:
+          Because the image is self-contained and runs on standard GitHub runners, you can execute complete PySpark unit and integration tests directly in GitHub Actions without granting cloud permissions or creating GCP service accounts:
         </p>
 
         <div class="site-panel mt-6 p-5">
@@ -571,7 +572,7 @@ const structuredData = [
           <div class="site-panel p-5">
             <h3 class="font-semibold text-[var(--text)]">Apple Silicon Native</h3>
             <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">
-              Multi-arch <code>linux/arm64</code> images run on M1/M2/M3/M4 Macs with zero emulation overhead, achieving near bare-metal execution speed.
+              Multi-arch <code>linux/arm64</code> images run on M1/M2/M3/M4 Macs natively, with no emulation layer.
             </p>
           </div>
           <div class="site-panel p-5">
@@ -583,7 +584,7 @@ const structuredData = [
           <div class="site-panel p-5">
             <h3 class="font-semibold text-[var(--text)]">Volume Persistence</h3>
             <p class="mt-2 text-sm leading-6 text-[var(--text-2)]">
-              Use <code>docker-compose stop</code> to pause the cluster and keep HDFS data intact, or pass <code>--volumes</code> on teardown for clean ephemeral resets.
+              Use <code>docker compose stop</code> to pause the cluster and keep HDFS data intact, or pass <code>--volumes</code> on teardown for clean ephemeral resets.
             </p>
           </div>
         </div>
@@ -667,7 +668,7 @@ const structuredData = [
         <h2 class="mt-3" id="validation">Production validation boundaries</h2>
         <div class="site-panel site-panel--soft p-6">
           <ul class="site-list text-sm leading-7 text-[var(--text-2)]">
-            <li><strong>Component compatibility:</strong> These containers reproduce Apache Spark, Hadoop, and Hive runtime semantics. They do not simulate the Google Cloud Dataproc REST control plane (such as cluster provisioning RPCs, auto-scaling policies, or Compute Engine VM lifecycle).</li>
+            <li><strong>Component compatibility:</strong> This standalone image is the Dataproc runtime: Apache Spark, Hadoop, and Hive. To create clusters and submit jobs through the Dataproc API, use the <a href="/services/dataproc/">Dataproc service in LocalCloud</a>, which runs them in local Docker containers.</li>
             <li><strong>Permitted use:</strong> The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud for non-production internal development, testing, CI, evaluation, and internal pilots.</li>
             <li><strong>Production verification:</strong> Always validate production jobs and infrastructure definitions against real Google Cloud Dataproc before deploying to production.</li>
           </ul>

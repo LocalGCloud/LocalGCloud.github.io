@@ -1,0 +1,22 @@
+---
+import CopyButton from './CopyButton.astro';
+
+// A labeled code block for blog posts. Pass `copy` (an analytics label) for something the reader
+// runs or saves; leave it out for program output, which has no copy control.
+interface Props {
+  label: string;
+  code: string;
+  copy?: string;
+  /** Wrap long lines: use for prompts, not for commands. */
+  wrap?: boolean;
+}
+const { label, code, copy, wrap = false } = Astro.props;
+---
+
+<div class="site-panel mt-5">
+  <div class="flex items-center justify-between gap-4">
+    <span class="site-kicker">{label}</span>
+    {copy && <CopyButton text={code} analyticsLabel={copy} />}
+  </div>
+  <pre class:list={[wrap && 'blog-prompt']}><code>{code}</code></pre>
+</div>
