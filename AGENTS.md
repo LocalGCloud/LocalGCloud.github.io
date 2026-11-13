@@ -104,6 +104,14 @@ When syncing or reading technical documentation from upstream repositories (e.g.
 
 ---
 
+### Local content review
+
+For future content edits, mark the smallest changed copy blocks with
+`data-content-update` so the user can review them in pale yellow with
+`LOCAL_CONTENT_REVIEW=1 pnpm run dev`. Move markers to the current edits and remove
+them from previously reviewed copy. Preserve the shared layout's development-only
+gate; review styles must never appear in production builds. See `BUILD.md` for use.
+
 ### 3. Mandatory Build & Verification Protocol
 
 Before completing any task or proposing changes, agents **MUST** execute and pass the automated verification pipeline:

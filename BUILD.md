@@ -28,6 +28,17 @@ graft build
 
 ---
 
+### Local content review highlights
+
+Start `LOCAL_CONTENT_REVIEW=1 pnpm run dev` to show changed content in very pale
+yellow. Mark edited copy with `data-content-update` on the smallest relevant HTML
+element; keep its normal text/link colors and layout. For later content changes,
+move the markers to the new edits and remove markers from reviewed copy.
+
+Restart with `LOCAL_CONTENT_REVIEW=0 pnpm run dev` to hide the highlights. The
+shared layout requires development mode as well as the opt-in flag, so production
+builds omit the highlight styles even when `LOCAL_CONTENT_REVIEW=1` is set.
+
 ### Local visual feedback for coding agents
 
 Run `pnpm run dev:agentation` and open the printed URL (normally
