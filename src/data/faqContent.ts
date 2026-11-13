@@ -25,7 +25,7 @@ export const faqSections: FaqSection[] = [
       {
         question: 'Is LocalCloud free?',
         answer:
-          'Yes. During public preview, individuals and organizations, including for-profit companies, may use LocalCloud free of charge for local and internal development, testing, CI, evaluation, and internal pilots. No payment method or license key is required. Read the Licensing page and governing license for the exact terms.',
+          'Yes. LocalCloud is free for open-source projects and individual developers beyond the public preview. Preview releases also permit organizational development, testing, and CI with no payment method or license key. See /docs/licensing/ for eligibility and the governing release terms.',
       },
       {
         question: 'What is the recommended setup?',

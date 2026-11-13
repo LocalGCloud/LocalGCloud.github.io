@@ -143,6 +143,20 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     <link rel="modulepreload" href={pageInteractions} />
 
     <title>{title}</title>
+    {import.meta.env.DEV && import.meta.env.LOCAL_CONTENT_REVIEW === '1' && (
+      <style is:inline>
+        /* Temporary local review color; excluded from production builds. */
+        [data-content-update] {
+          background: #fff0b3 !important;
+          color: #332600 !important;
+          outline: 2px solid #b77900;
+          outline-offset: 4px;
+          border-radius: 6px;
+        }
+        [data-content-update] :is(p, h1, h2, h3, span, strong, li) { color: #332600 !important; }
+        [data-content-update] a:not(.site-button) { color: #593500 !important; text-decoration: underline; }
+      </style>
+    )}
 
     <script is:inline data-critical-bootstrap define:vars={{ desktopScript, viewPreloads, desktopPageStyles, homeImages, monoFont }}>
       (function () {

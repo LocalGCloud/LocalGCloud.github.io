@@ -194,7 +194,10 @@ for (const path of ["public/llms.txt"]) {
 			value.includes("internal development, testing, CI, evaluation, and internal pilots"),
 		`${path} lacks public-preview license boundaries`,
 	);
-	assert(value.includes("Free for open-source projects policy"), `${path} lacks the open-source free-use policy`);
+	assert(
+		value.includes("ongoing free-use policy for open-source projects and individual developers continues after the preview ends"),
+		`${path} lacks the ongoing OSS and individual-developer free-use policy`,
+	);
 	// Pro-tier services carry the same label as the site, and preview releases keep their terms.
 	const proNames = contract.services.filter((service) => service.published && isLocal(service) && service.minTier === "pro").map((service) => service.name);
 	const proList = proNames.length < 3 ? proNames.join(" and ") : `${proNames.slice(0, -1).join(", ")}, and ${proNames.at(-1)}`;

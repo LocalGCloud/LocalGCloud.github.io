@@ -126,7 +126,7 @@ const llms = `# LocalCloud
 - Standard Google Cloud SDKs and Terraform connect through generated emulator environment variables.
 - Stores local state in a named Docker volume and includes a web console for service health and local data.
 - Installs as a CLI on macOS and Linux; any Docker host can run the container directly.
-- Free during the public preview for non-production use, and free for open-source projects.
+- [Free-use eligibility](https://local.cloud/docs/licensing/): individual development, open-source project CI, and release terms.
 
 Use LocalCloud for development, testing, and CI, and validate application behavior against real Google Cloud before production deployment.
 
@@ -195,7 +195,7 @@ ${unsupportedServices.map((service) => `- [${service.name}](${service.guideUrl})
 
 ## License
 
-${contract.licensing.summary} Excluded uses: ${excludedUseList}. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends. Each preview release keeps its terms if the preview ends or a later release uses different terms.
+${contract.licensing.summary} Excluded uses: ${excludedUseList}. The ongoing free-use policy for open-source projects and individual developers continues after the preview ends; see the licensing page for eligibility. Each preview release keeps its terms if the preview ends or a later release uses different terms.
 
 - [Licensing](${site}docs/licensing/): the terms in plain language
 - [License text](${site}license/): the full Public Preview License Agreement, also as [plain text](${site}license.txt)

@@ -36,7 +36,7 @@ export const homepageFaq: HomepageFaqEntry[] = [
 		id: "cost",
 		question: "Is LocalCloud free, and do I need an account?",
 		answer:
-			"LocalCloud is free during the public preview for individuals and organizations, including for-profit companies, for development, testing, CI, evaluation and internal pilots. You don't need an account, a payment method or a license key. Open-source projects stay free after the preview ends, and preview releases keep their terms.",
+			"LocalCloud is free for open-source projects and individual developers beyond the preview. Current preview releases also cover organizations and require no account, payment method, or license key. See Pricing for eligibility and release terms.",
 		links: [
 			{ label: "Pricing", href: productFacts.pricingPath },
 			{ label: "License", href: productFacts.licensePath },

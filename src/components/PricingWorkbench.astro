@@ -1,5 +1,5 @@
 ---
-import { publicPreviewPriceLabel } from '../data/productFacts';
+import { freeUsePolicy, publicPreviewPriceLabel } from '../data/productFacts';
 import { pricingFaq } from '../data/pricingFaq';
 
 const rawBase = import.meta.env.BASE_URL;
@@ -34,16 +34,15 @@ const workflows = [
 
 <section class="preview-workbench" aria-labelledby="preview-workbench-title">
   <div class="preview-workbench__shell">
-    <header class="preview-workbench__hero">
+    <header class="preview-workbench__hero" data-content-update>
       <div>
-        <span class="preview-workbench__kicker">Public preview</span>
+        <span class="preview-workbench__kicker">Development, testing, and CI</span>
         <h1 id="preview-workbench-title">
-          Free to use<br /><span>during public preview.</span>
+          Free to use<br /><span>for open-source projects and individual developers.</span>
         </h1>
       </div>
       <p>
-        Individuals, teams, nonprofits, and companies can use LocalCloud for local development,
-        testing, CI, evaluation, and internal pilots.
+        Free access for these uses continues beyond the public preview. No account, payment method, or license key is required for current preview releases.
       </p>
     </header>
 
@@ -57,10 +56,11 @@ const workflows = [
       </div>
 
       <div class="preview-workbench__offer">
-        <article class="preview-workbench__summary" aria-labelledby="preview-plan-title">
-          <span class="preview-workbench__label">One plan</span>
+        <article class="preview-workbench__summary" aria-labelledby="preview-plan-title" data-content-update>
+          <span class="preview-workbench__label">Public preview</span>
           <h2 id="preview-plan-title">Free</h2>
           <p><strong>{publicPreviewPriceLabel}</strong> during public preview. No payment method or license key required.</p>
+          <p>Individuals, teams, nonprofits, and companies can use preview releases for non-production work. For ongoing free-use eligibility, see the <a href={siteHref('/docs/licensing/')}>licensing policy</a>.</p>
 
           <div class="preview-workbench__actions">
             <a class="site-button site-button--primary preview-workbench__button" href={docsHref}>
@@ -89,10 +89,10 @@ const workflows = [
 
     <section id="faq" class="preview-faq" aria-labelledby="preview-faq-title">
       <span class="preview-workbench__label">Questions</span>
-      <h2 id="preview-faq-title">Pro tier and the end of the preview</h2>
+      <h2 id="preview-faq-title">Free-use eligibility and release terms</h2>
       <div class="preview-faq__list">
         {pricingFaq.map((entry) => (
-          <article id={entry.id} class="preview-faq__item" aria-labelledby={`${entry.id}-question`}>
+          <article id={entry.id} class="preview-faq__item" aria-labelledby={`${entry.id}-question`} data-content-update={['open-source', 'individual-developers', 'preview-end', 'pro-tier'].includes(entry.id) ? '' : undefined}>
             <h3 id={`${entry.id}-question`}>{entry.question}</h3>
             <p>{entry.answer}</p>
             <a class="preview-faq__source" href={siteHref(entry.source.href)}>{entry.source.label}</a>

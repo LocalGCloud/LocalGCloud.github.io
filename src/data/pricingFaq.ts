@@ -1,4 +1,4 @@
-import { productFacts } from "./productFacts.ts";
+import { freeUsePolicy, productFacts } from "./productFacts.ts";
 import { proTierLabel, services } from "./services.ts";
 
 // Pro-tier services that run locally, in catalog order, from the documentation contract.
@@ -22,13 +22,13 @@ export const pricingFaq: PricingFaqEntry[] = [
 	{
 		id: "pro-tier",
 		question: "Are Pro-tier services free?",
-		answer: `Yes. ${listNames(proTierServiceNames)} are Pro-tier services, and they are free during the public preview: preview releases run them with no payment method or license key. Service pages and docs mark them "${proTierLabel}".`,
+		answer: `Yes. ${listNames(proTierServiceNames)} are Pro-tier services, and they are free during the public preview: preview releases run them with no payment method or license key. Service pages and docs mark them "${proTierLabel}". A tier label does not mean payment is required for these preview releases; consult each future release's terms for included services.`,
 		source: { label: "Service catalog", href: "/services/" },
 	},
 	{
 		id: "preview-end",
 		question: "What happens when the public preview ends?",
-		answer: "LocalCloud Inc. may end or extend the public preview, and may offer later releases under different terms. Those terms apply only when you accept them or obtain a release under them. Releases you already have keep their preview terms.",
+		answer: `${freeUsePolicy.continuity} Other organizational use may be offered under different terms. The license supplied with each release governs that release; releases you already have keep their preview terms.`,
 		source: { label: "License, Sections 2.3 and 8.4", href: `${productFacts.licensePath}#8-term-and-termination` },
 	},
 	{
@@ -38,9 +38,15 @@ export const pricingFaq: PricingFaqEntry[] = [
 		source: { label: "License, Section 2.3", href: `${productFacts.licensePath}#2-grant-of-license` },
 	},
 	{
+		id: "individual-developers",
+		question: "Can individual developers use LocalCloud for private or work projects?",
+		answer: freeUsePolicy.eligibility,
+		source: { label: "Free-use eligibility", href: `${productFacts.licensingPath}#free-for-open-source-projects` },
+	},
+	{
 		id: "open-source",
 		question: "Do open-source projects stay free?",
-		answer: "Yes. Under the Free for open-source projects policy, contributors and maintainers can use LocalCloud free of charge for development, testing, and their project's ongoing internal CI. The policy is ongoing and continues after the public preview ends.",
+		answer: "Yes. Contributors and maintainers can use LocalCloud for project development, testing, and ongoing CI without LocalCloud fees. Company-sponsored open-source projects are included. CI runner and local compute costs still apply.",
 		source: { label: "Licensing summary", href: `${productFacts.licensingPath}#free-for-open-source-projects` },
 	},
 ];

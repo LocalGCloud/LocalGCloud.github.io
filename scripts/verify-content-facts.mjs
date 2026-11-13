@@ -252,7 +252,7 @@ for (const prohibited of [/\benterprise\b/i, /sales@/i, /\bcommercial license\b/
 
 try {
   const pricing = await readFile(new URL('../dist/pricing/index.html', import.meta.url), 'utf8');
-  for (const required of ['Public preview', 'Free to use', 'Available to everyone', 'No payment method or license key required']) {
+  for (const required of ['Public preview', 'Free to use', 'Available to everyone', 'No payment method or license key required', 'for open-source projects and individual developers.', 'continues after the public preview ends.']) {
     if (!pricing.includes(required)) errors.push(`rendered pricing page must contain ${required}`);
   }
   for (const prohibited of ['Contact us', 'Commercial license']) {
@@ -260,6 +260,10 @@ try {
   }
 } catch {
   errors.push('dist/pricing/index.html must be published');
+}
+
+for (const file of ['pricing/index.html', 'docs/licensing/index.html', 'license/index.html']) {
+  if ((htmlPages.get(file) ?? '').includes('Temporary local review color')) errors.push(`${file} includes development-only review highlighting`);
 }
 
 // "Pro" is explained once, on the pricing page, and every page that shows a service's tier uses
@@ -629,7 +633,7 @@ if (![homepageTitle, homepageDescription].every((text) => /cloud for agents/i.te
 const homepageDefinition = visibleText(homepageMain.match(/<\/h1>\s*<p\b[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '');
 if (!homepageDefinition.startsWith('localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines.') ||
     !homepageDefinition.includes(`${availableServiceCount} Google Cloud services on localhost in one Docker container`) ||
-    !homepageDefinition.includes('Free during the public preview.')) {
+    !homepageDefinition.includes('Free for open-source projects and individual developers.')) {
   errors.push(`the paragraph under the homepage H1 must define cloud for agents, its audience, local service count and preview pricing: "${homepageDefinition.slice(0, 160)}"`);
 }
 const quickStartLink = [...homepageMain.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(([, , text]) => /Quick Start/.test(visibleText(text)));

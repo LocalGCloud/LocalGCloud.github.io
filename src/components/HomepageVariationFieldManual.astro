@@ -18,7 +18,7 @@ import AgentRibbonSpecs from './AgentRibbonSpecs.astro';
 import { availableServiceCount, serviceCatalogGroups } from '../data/services';
 import InstallationMethods from './InstallationMethods.astro';
 import { docsContract } from '../data/docs-contract';
-import { productFacts } from '../data/productFacts';
+import { freeUsePolicy, productFacts } from '../data/productFacts';
 import { agentOverview } from '../data/agentModeExamples';
 import { homepageFaq } from '../data/homepageFaq';
 import {
@@ -73,7 +73,7 @@ const trustClaims = [
   },
   {
     title: 'Preview and open-source terms',
-    body: 'Preview releases keep their terms, and open-source projects stay free after the preview ends.',
+    body: 'Preview releases keep their terms. The ongoing free-use policy covers open-source projects and individual developers.',
     links: [
       { label: 'License', href: `${base}license/` },
       { label: 'Licensing summary', href: `${base}docs/licensing/` },
@@ -180,9 +180,9 @@ for (const column of atlasColumns) {
           </div>
         </div>
 
-        <p class="desktop-hero-proof" data-desktop-copy data-pagefind-ignore>Free for OSS developers. No account or license key required. <a href={`${base}docs/licensing/#free-for-open-source-projects`}>OSS terms</a></p>
-        <p class="field-proof" data-classic-copy>
-          No account or license key. Free during the public preview, and free for open-source projects after it. CLI releases are <a href={`${base}security/#signed-releases`}>Sigstore-signed with SHA-256 checksums</a>.
+        <p class="desktop-hero-proof" data-desktop-copy data-pagefind-ignore data-content-update>{freeUsePolicy.headline}. <a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free-use terms</a></p>
+        <p class="field-proof" data-classic-copy data-content-update>
+          {freeUsePolicy.headline}. <a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free-use terms</a>. CLI releases are <a href={`${base}security/#signed-releases`}>Sigstore-signed with SHA-256 checksums</a>.
         </p>
 
       </div>

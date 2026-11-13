@@ -13,6 +13,13 @@ export interface Evidence {
 	reviewer: string;
 }
 
+// Website policy; each downloaded runtime release retains its own governing license.
+export const freeUsePolicy = {
+	headline: "Free for open-source projects and individual developers",
+	continuity: "Free use for open-source projects and individual developers continues after the public preview ends.",
+	eligibility: "Individual developers can use LocalCloud for non-production development and testing, including personal, private, freelance, and work projects, plus CI for their own projects.",
+} as const;
+
 export const productFacts = {
 	name: "LocalCloud",
 	siteUrl: "https://local.cloud/",
@@ -51,7 +58,7 @@ export const productFacts = {
 	pricingPath: "/pricing/",
 	category: "Cloud for agents",
 	description:
-		`localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines. Build and test with ${availableServiceCount} Google Cloud services on localhost in one Docker container, with no GCP account, credentials or billing. Free during the public preview.`,
+		`localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines. Build and test with ${availableServiceCount} Google Cloud services on localhost in one Docker container, with no GCP account, credentials or billing. ${freeUsePolicy.headline}.`,
 	productionBoundary: docsContract.product.productionBoundary,
 	evidence: {
 		source: `Versioned documentation contract from runtime ${docsContract.provenance.runtimeRevision} and CLI ${docsContract.provenance.cliRevision}`,

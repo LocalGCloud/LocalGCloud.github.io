@@ -1,12 +1,12 @@
 # LocalCloud
 
-> localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines. Build and test with 25 Google Cloud services on localhost in one Docker container, with no GCP account, credentials or billing. Free during the public preview.
+> localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines. Build and test with 25 Google Cloud services on localhost in one Docker container, with no GCP account, credentials or billing. Free for open-source projects and individual developers.
 
 - Runs BigQuery, Cloud Storage, Pub/Sub, Spanner, Bigtable, Firestore, Cloud SQL, Memorystore (Redis/Valkey), Dataproc, Cloud Run, and more in one container.
 - Standard Google Cloud SDKs and Terraform connect through generated emulator environment variables.
 - Stores local state in a named Docker volume and includes a web console for service health and local data.
 - Installs as a CLI on macOS and Linux; any Docker host can run the container directly.
-- Free during the public preview for non-production use, and free for open-source projects.
+- [Free-use eligibility](https://local.cloud/docs/licensing.md): individual development, open-source project CI, and release terms.
 
 Use LocalCloud for development, testing, and CI, and validate application behavior against real Google Cloud before production deployment.
 
@@ -105,7 +105,7 @@ Unsupported locally; use Google Cloud:
 
 ## License
 
-The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and internal pilots. Excluded uses: customer-facing or other production use; reselling LocalCloud or providing it as a hosted or managed service; redistribution or sublicensing; and modification except where applicable law requires permission. Open-source projects can use LocalCloud free of charge for development, testing, and ongoing internal CI under the Free for open-source projects policy, which continues after the public preview ends. Each preview release keeps its terms if the preview ends or a later release uses different terms.
+The proprietary Public Preview License permits individuals and organizations, including for-profit companies, to use LocalCloud free of charge for internal development, testing, CI, evaluation, and internal pilots. Excluded uses: customer-facing or other production use; reselling LocalCloud or providing it as a hosted or managed service; redistribution or sublicensing; and modification except where applicable law requires permission. The ongoing free-use policy for open-source projects and individual developers continues after the preview ends; see the licensing page for eligibility. Each preview release keeps its terms if the preview ends or a later release uses different terms.
 
 - [Licensing](https://local.cloud/docs/licensing.md): the terms in plain language
 - [License text](https://local.cloud/license.md): the full Public Preview License Agreement, also as [plain text](https://local.cloud/license.txt)
