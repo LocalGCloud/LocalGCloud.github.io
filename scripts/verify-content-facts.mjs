@@ -160,7 +160,9 @@ const metaText = (html) => [
 // Markdown link targets and bare URLs are skipped the same way.
 const withoutUrls = (text) => text.replace(/\]\([^)\s]*\)/g, ']').replace(/https?:\/\/[^\s)<>\]"'`|]+/g, '');
 const checkVocabulary = (source, text) => {
-  const scanned = text.replace(allowedPartialPhrases, '');
+  // A public Action pin is executable configuration, not internal QA provenance.
+  const scanned = text.replace(allowedPartialPhrases, '')
+    .replace(/\bagent-local-cloud\/setup-localcloud@[0-9a-f]{40}\b/g, 'agent-local-cloud/setup-localcloud@[pinned-commit]');
   for (const [pattern, label] of bannedVocabulary) {
     for (const match of scanned.matchAll(pattern)) {
       const context = scanned.slice(Math.max(0, match.index - 50), match.index + match[0].length + 50).replace(/\s+/g, ' ').trim();
