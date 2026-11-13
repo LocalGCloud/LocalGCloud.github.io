@@ -111,7 +111,7 @@ const articleProps = article
   .blog-feature .blog-read { display: inline-block; margin-top: 1.5rem; font-size: var(--fs-small); font-weight: 600; color: var(--accent); }
   @media (min-width: 40rem) { .blog-posts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 68.75rem) {
-    .blog-body:has(.blog-contents) { display: grid; grid-template-columns: minmax(0, 70ch) minmax(11rem, 16rem); justify-content: space-between; gap: 3rem; align-items: start; }
+    .blog-body:has(.blog-contents) { display: grid; grid-template-columns: minmax(0, 70ch) minmax(11rem, 16rem); justify-content: start; gap: 2rem; align-items: start; }
     .blog-page--wide .blog-body:has(.blog-contents) { grid-template-columns: minmax(0, 1fr) 13rem; gap: 2rem; }
     .blog-contents { grid-column: 2; grid-row: 1; position: sticky; top: 6.5rem; max-height: calc(100vh - 8rem); overflow-y: auto; }
     .blog-prose { grid-column: 1; grid-row: 1; }
