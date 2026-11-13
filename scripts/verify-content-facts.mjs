@@ -526,21 +526,25 @@ for (const [file, html] of htmlPages) {
   }
 }
 
-// The governing license: /license.txt is the committed copy byte for byte and /license/
-// renders every word of it in order; both match the digest the documentation contract records.
+// Published HTML and plain text omit only internal version metadata.
+// The internal source still matches the recorded governing-license digest.
 const recordedLicenseDigest = docsContract.provenance.sourceDigests[docsContract.licensing.governingLicense];
 try {
   const licenseFile = await readFile(new URL('license.txt', distDirectory));
-  const digest = `sha256:${createHash('sha256').update(licenseFile).digest('hex')}`;
-  if (digest !== recordedLicenseDigest) errors.push(`dist/license.txt (${digest}) differs from the governing license digest ${recordedLicenseDigest}`);
+  const sourceLicense = await readFile(new URL('../src/data/legal/public-preview-license.txt', import.meta.url), 'utf8');
+  const digest = `sha256:${createHash('sha256').update(sourceLicense).digest('hex')}`;
+  if (digest !== recordedLicenseDigest) errors.push(`the source license (${digest}) differs from the governing license digest ${recordedLicenseDigest}`);
+  const expectedPublicLicense = sourceLicense.split('\n').filter((line) => !line.startsWith('Version ')).join('\n');
+  if (licenseFile.toString('utf8') !== expectedPublicLicense) errors.push('dist/license.txt must retain every term and omit only internal version metadata');
   const licensePage = htmlPages.get('license/index.html') ?? '';
   const article = licensePage.match(/<article\b[^>]*class="[^"]*license-document[^"]*"[^>]*>([\s\S]*?)<\/article>/)?.[1] ?? '';
   const renderedWords = visibleText(article.replace(/<nav\b[\s\S]*?<\/nav>/g, '').replace(/<\/(?:p|li|h\d)>|<br\b[^>]*>/g, ' ')).split(/\s+/).filter(Boolean);
-  const expectedWords = licenseWords(licenseFile.toString('utf8'));
+  const expectedWords = licenseWords(expectedPublicLicense);
+  if (/Version 2\.0|Effective September 3, 2026/.test(visibleText(licensePage))) errors.push('license/index.html exposes internal version metadata');
   const firstDifference = expectedWords.findIndex((word, index) => renderedWords[index] !== word);
   if (firstDifference !== -1 || renderedWords.length !== expectedWords.length) {
     const at = firstDifference === -1 ? Math.min(renderedWords.length, expectedWords.length) : firstDifference;
-    errors.push(`license/index.html does not render the license text verbatim; first difference at word ${at}: "${expectedWords.slice(at, at + 6).join(' ')}" vs "${renderedWords.slice(at, at + 6).join(' ')}"`);
+    errors.push(`license/index.html does not render the license terms verbatim; first difference at word ${at}: "${expectedWords.slice(at, at + 6).join(' ')}" vs "${renderedWords.slice(at, at + 6).join(' ')}"`);
   }
 } catch (error) {
   errors.push(`dist/license.txt must be published: ${error.message}`);

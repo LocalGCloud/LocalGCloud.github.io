@@ -105,3 +105,8 @@ export function licenseWords(text) {
 		.split(/\s+/)
 		.filter(Boolean);
 }
+
+/** Keep internal release metadata out of the published license copy. */
+export function licenseWithoutVersion(text) {
+	return text.replace(/^Version [^\n]+\n/m, "");
+}
