@@ -3,7 +3,7 @@
 # robots.txt governs crawler access. This declaration does not grant software rights.
 Site-Name: LocalCloud
 Site-URL: https://local.cloud/
-Description: localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines. Build and test with 25 Google Cloud services on localhost in one Docker container, with no GCP account, credentials or billing. Free for open-source projects and individual developers.
+Description: localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines. Run 25 Google Cloud services on localhost in one Docker container. No GCP account, credentials or billing. Free for open-source projects and individual developers.
 Contact: agent@local.cloud
 Training: allow
 Scraping: allow

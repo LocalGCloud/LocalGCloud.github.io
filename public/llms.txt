@@ -1,6 +1,6 @@
 # LocalCloud
 
-> localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines. Build and test with 25 Google Cloud services on localhost in one Docker container, with no GCP account, credentials or billing. Free for open-source projects and individual developers.
+> localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines. Run 25 Google Cloud services on localhost in one Docker container. No GCP account, credentials or billing. Free for open-source projects and individual developers.
 
 - Runs BigQuery, Cloud Storage, Pub/Sub, Spanner, Bigtable, Firestore, Cloud SQL, Memorystore (Redis/Valkey), Dataproc, Cloud Run, and more in one container.
 - Standard Google Cloud SDKs and Terraform connect through generated emulator environment variables.
