@@ -1,5 +1,6 @@
 import { comparisonSummary } from "./alternatives.ts";
 import { docsContract } from "./docs-contract.ts";
+import { freeUseAnswer } from "./faqContent.ts";
 import { productFacts } from "./productFacts.ts";
 import { latestCliRelease } from "./trust.ts";
 
@@ -34,9 +35,8 @@ export const homepageFaq: HomepageFaqEntry[] = [
 	},
 	{
 		id: "cost",
-		question: "Is LocalCloud free, and do I need an account?",
-		answer:
-			"LocalCloud is free for open-source projects and individual developers beyond the preview. Current preview releases also cover organizations and require no account, payment method, or license key. See Pricing for eligibility and release terms.",
+		question: "Is LocalCloud free?",
+		answer: freeUseAnswer,
 		links: [
 			{ label: "Pricing", href: productFacts.pricingPath },
 			{ label: "License", href: productFacts.licensePath },
@@ -60,7 +60,7 @@ export const homepageFaq: HomepageFaqEntry[] = [
 	{
 		id: "agents",
 		question: "Can AI coding agents use LocalCloud?",
-		answer: `Yes. Agents get a Google Cloud target on localhost with no credentials or billing project by default, so agent-written code can't create real cloud resources by mistake. Point an agent at the agent guide, or copy the AGENTS.md template into your repository. Agent builders can write to ${productFacts.agentContactEmail}.`,
+		answer: 'Yes. Give your coding agent local endpoints for BigQuery, Pub/Sub, Cloud Storage, and more. Calls to those endpoints need no Google Cloud credentials or billing project. Use our agent guide or add the AGENTS.md template to your repository.',
 		links: [
 			{ label: "Agent guide", href: "/ai/" },
 			{ label: "AGENTS.md template", href: "/ai/agent-template.md" },

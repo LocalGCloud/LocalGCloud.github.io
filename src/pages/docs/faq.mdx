@@ -3,7 +3,7 @@ layout: ../../layouts/DocsLayout.astro
 title: FAQ
 description: Answers about LocalCloud setup, compatibility, persistence, licensing, and troubleshooting.
 author: LocalCloud
-updated: 2026-08-13
+updated: 2026-11-18
 reviewed: 2026-08-13
 ---
 
@@ -19,13 +19,13 @@ import { faqSections } from '../../data/faqContent';
     <h2>{section.title}</h2>
     {section.entries.map((entry) => (
       <article>
-        <h3>{entry.question}</h3>
-        <p>{entry.answer}</p>
+        <h3 data-content-update={entry.contentUpdated && !entry.afterCode ? '' : undefined}>{entry.question}</h3>
+        <p data-content-update={entry.contentUpdated && !entry.afterCode ? '' : undefined}>{entry.answer}</p>
         {entry.code && <pre><code>{entry.code}</code></pre>}
-        {entry.afterCode && <p>{entry.afterCode}</p>}
+        {entry.afterCode && <p data-content-update={entry.contentUpdated ? '' : undefined}>{entry.afterCode}</p>}
       </article>
     ))}
   </section>
 ))}
 
-Related policy and implementation details are documented in [Licensing](/docs/licensing/), [Privacy](/docs/privacy/), [Architecture](/docs/architecture/), and the [service catalog](/services/).
+For setup and examples, see [Getting Started](/docs/). See [Licensing](/docs/licensing/) for eligibility and release terms. For runtime details, see [Privacy](/docs/privacy/), [Architecture](/docs/architecture/), and the [service catalog](/services/).

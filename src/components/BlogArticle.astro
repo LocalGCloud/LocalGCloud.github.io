@@ -49,14 +49,14 @@ const allContents = [...contents, { id: 'next', label: 'Keep going' }];
       <div class="container container--narrow">
         <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
         <span class="site-eyebrow">{metadata.topic}</span>
-        <h1 class="mt-5" data-content-update>{post.title}</h1>
+        <h1 class="mt-5">{post.title}</h1>
         <p class="blog-meta">
           <span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span>
           {metadata.updatedAt && <span>Updated <time datetime={metadata.updatedAt}>{formatBlogDate(metadata.updatedAt)}</time></span>}
           <span>{metadata.minutes} min read</span>
           <span>{kind}</span>
         </p>
-        <p class="blog-deck" data-content-update>{deck}</p>
+        <p class="blog-deck">{deck}</p>
         <div class="blog-actions">
           <a class="site-button site-button--primary" href={primary.href}>{primary.label}</a>
           {secondary && <a href={secondary.href}>{secondary.label}</a>}
@@ -66,7 +66,7 @@ const allContents = [...contents, { id: 'next', label: 'Keep going' }];
   </Fragment>
 
   <section class="site-section">
-    <div class="container container--narrow space-y-10" data-content-update>
+    <div class="container container--narrow space-y-10">
       {outcome && (
         <dl class="blog-outcome site-panel site-panel--soft">
           <div><dt>You'll end up with</dt><dd>{outcome}</dd></div>

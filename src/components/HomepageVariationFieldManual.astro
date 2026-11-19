@@ -180,8 +180,8 @@ for (const column of atlasColumns) {
           </div>
         </div>
 
-        <p class="desktop-hero-proof" data-desktop-copy data-pagefind-ignore data-content-update>{freeUsePolicy.headline}. <a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free-use terms</a></p>
-        <p class="field-proof" data-classic-copy data-content-update>
+        <p class="desktop-hero-proof" data-desktop-copy data-pagefind-ignore>{freeUsePolicy.headline}. <a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free-use terms</a></p>
+        <p class="field-proof" data-classic-copy>
           {freeUsePolicy.headline}. <a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free-use terms</a>. CLI releases are <a href={`${base}security/#signed-releases`}>Sigstore-signed with SHA-256 checksums</a>.
         </p>
 
@@ -381,9 +381,9 @@ for (const column of atlasColumns) {
       <div class="field-faq__list">
         {homepageFaq.map((entry, index) => (
           <details class="field-faq__item" id={`faq-${entry.id}`} open={index === 0}>
-            <summary>{entry.question}</summary>
+            <summary data-content-update={entry.id === 'cost' ? '' : undefined}>{entry.question}</summary>
             <div class="field-faq__answer">
-              <p>{entry.answer}</p>
+              <p data-content-update={['cost', 'agents'].includes(entry.id) ? '' : undefined}>{entry.answer}</p>
               {entry.showsComparison && <AlternativesTable />}
               <p class="field-faq__links">
                 {entry.links.map((link, linkIndex) => <>{linkIndex > 0 && ' · '}<a href={link.href}>{link.label}</a></>)}

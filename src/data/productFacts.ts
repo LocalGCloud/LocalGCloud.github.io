@@ -1,5 +1,5 @@
 import { docsContract } from "./docs-contract.ts";
-import { availableServiceCount, isServiceSupported, services } from "./services.ts";
+import { availableServiceCount } from "./services.ts";
 
 export type CompatibilityStatus =
 	| "supported"
@@ -185,13 +185,6 @@ export const publicPreviewPriceLabel = `${new Intl.NumberFormat("en-US", {
 	maximumFractionDigits: 2,
 }).format(Number(publicPreviewPricing.price))} ${publicPreviewPricing.priceCurrency}`;
 
-// Services above the community tier. Public-preview release images disable tier
-// enforcement and the preview grant covers all of LocalCloud, so they are free as well.
-const proTierServiceNames = services
-	.filter((service) => service.minTier === "pro" && isServiceSupported(service))
-	.map((service) => service.name);
-const proTierServiceList = new Intl.ListFormat("en-US", { style: "long", type: "conjunction" }).format(proTierServiceNames);
-
 // The one full product entity, published on the homepage and pricing page only.
 export const localCloudProductSchema: JsonLd = {
 	"@context": "https://schema.org",
@@ -225,7 +218,7 @@ export const localCloudProductSchema: JsonLd = {
 		price: publicPreviewPricing.price,
 		priceCurrency: publicPreviewPricing.priceCurrency,
 		availability: "https://schema.org/InStock",
-		description: `Free to use during public preview for local development, testing, CI, evaluation, and internal pilots, including the Pro-tier services (${proTierServiceList}). No payment method or license key required. Customer-facing production use, resale, hosting as a service, redistribution, and sublicensing are excluded.`,
+		description: "Free to use during public preview for local development, testing, CI, evaluation, and internal pilots. All supported services are included. No payment method or license key required. Customer-facing production use, resale, hosting as a service, redistribution, and sublicensing are excluded.",
 	},
 };
 

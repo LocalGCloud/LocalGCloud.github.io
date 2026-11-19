@@ -70,7 +70,7 @@ const structuredData = [createBreadcrumbSchema([
       <div class="container container--narrow">
         <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
         <span class="site-eyebrow">{metadata.topic}</span>
-        <h1 class="mt-5" data-content-update>A Local Cloud Environment for Coding Agents</h1>
+        <h1 class="mt-5">A Local Cloud Environment for Coding Agents</h1>
         <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span>{metadata.updatedAt && <span>Updated <time datetime={metadata.updatedAt}>{formatBlogDate(metadata.updatedAt)}</time></span>}<span>{metadata.minutes} min read</span><span>Walkthrough</span></p>
         <p class="blog-deck">Coding agents need to run the integrations they write. LocalCloud gives Google Cloud applications local service APIs for that feedback loop: write code, run tests, inspect failures, and verify fixes. MCP supplies service discovery, SDK settings, and diagnostics; application tests exercise the local runtime.</p>
         <div class="blog-actions">

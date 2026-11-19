@@ -14,27 +14,7 @@ import { publishedServiceCount } from '../../data/services';
 
 # Get started with LocalCloud
 
-## Choose an integration task
-
-Already have LocalCloud running? Go directly to the guide for your task. Export the selected runtime's environment in the process that launches your application before making a client call.
-
-| Task | Read next |
-| --- | --- |
-| Choose a service and inspect its local behavior | [Service catalog](/services/) and [compatibility](/compatibility/) |
-| Point application client libraries at localhost | [SDK examples](/docs/sdk-examples/) |
-| Connect a coding agent to local tools | [MCP setup](/docs/mcp/) |
-| Select services, projects, ports, and persistence | [Configuration](/docs/configuration/) |
-| Provision test resources declaratively | [Terraform](/docs/terraform/) |
-| Run integration tests in CI | [GitHub Actions](/docs/github-actions/) |
-| Prepare repeatable test fixtures | [Seed data](/docs/seed-data/) |
-| Inspect latency, throughput, and cold boot times | [Performance benchmarks](/docs/performance/) |
-| Diagnose a failed local integration | [FAQ](/docs/faq/) and [runtime diagnostics](#verify-and-manage-the-runtime) |
-
-For raw Markdown, begin with the [agent instructions](/ai/agents.md), [connection reference](/ai/services.md), or [documentation index](/llms.txt). The tutorial below is the first-time setup path.
-
-For pull-request tests, [staging validation](/docs/github-actions/#validate-a-staging-build), and AI-agent jobs, use the [GitHub Actions guide](/docs/github-actions/). It covers the setup action, Docker workflows, and project integrations such as Feast. The [integration directory](#integrations) also links SDK, Terraform, and MCP setup.
-
-This tutorial installs the LocalCloud CLI, starts a persistent local runtime, configures this shell, and verifies a Cloud Storage request. LocalCloud runs local versions of Google Cloud services for development and testing. Before you deploy to production, run final validation against real Google Cloud.
+<p data-content-update>Install LocalCloud and make your first Cloud Storage request. Already running LocalCloud? <a href="#choose-an-integration-task">Choose an integration guide</a>.</p>
 
 ## Prerequisites
 
@@ -152,6 +132,28 @@ Hello, LocalCloud!
 ```
 
 If the SDK tries to contact Google Cloud, stop instead of adding real credentials. Re-run `eval "$(localcloud env)"` in the shell or process that launches the application.
+
+Before you ship, validate your application against real Google Cloud.
+
+## Choose an integration task
+
+Export the selected runtime’s environment in the process that runs your application before making an SDK call.
+
+| Task | Read next |
+| --- | --- |
+| Choose a service and inspect its local behavior | [Service catalog](/services/) and [compatibility](/compatibility/) |
+| Point application client libraries at localhost | [SDK examples](/docs/sdk-examples/) |
+| Connect a coding agent to local tools | [MCP setup](/docs/mcp/) |
+| Select services, projects, ports, and persistence | [Configuration](/docs/configuration/) |
+| Provision test resources declaratively | [Terraform](/docs/terraform/) |
+| Run integration tests in CI | [GitHub Actions](/docs/github-actions/) |
+| Prepare repeatable test fixtures | [Seed data](/docs/seed-data/) |
+| Inspect latency, throughput, and cold boot times | [Performance benchmarks](/docs/performance/) |
+| Diagnose a failed local integration | [FAQ](/docs/faq/) and [runtime diagnostics](#verify-and-manage-the-runtime) |
+
+For Markdown, see the [agent instructions](/ai/agents.md), [connection reference](/ai/services.md), or [documentation index](/llms.txt).
+
+For pull-request tests, [staging validation](/docs/github-actions/#validate-a-staging-build), and AI-agent jobs, see the [GitHub Actions guide](/docs/github-actions/). It covers the setup action, Docker workflows, and project integrations such as Feast. The [integration directory](#integrations) also links SDK, Terraform, and MCP setup.
 
 ## Verify and manage the runtime
 

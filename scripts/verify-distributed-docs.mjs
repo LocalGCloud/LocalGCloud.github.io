@@ -198,14 +198,11 @@ for (const path of ["public/llms.txt"]) {
 		value.includes("ongoing free-use policy for open-source projects and individual developers continues after the preview ends"),
 		`${path} lacks the ongoing OSS and individual-developer free-use policy`,
 	);
-	// Pro-tier services carry the same label as the site, and preview releases keep their terms.
-	const proNames = contract.services.filter((service) => service.published && isLocal(service) && service.minTier === "pro").map((service) => service.name);
-	const proList = proNames.length < 3 ? proNames.join(" and ") : `${proNames.slice(0, -1).join(", ")}, and ${proNames.at(-1)}`;
 	assert(
-		proNames.length > 0 &&
-			value.includes(`${proList} are Pro-tier services, marked "Pro tier, free during preview": they are free during the public preview`) &&
-			value.includes("https://local.cloud/pricing/#pro-tier"),
-		`${path} must name every Pro-tier service as "Pro tier, free during preview" and link the pricing answer`,
+		value.includes("all supported services are included") &&
+			value.includes("https://local.cloud/pricing/#pro-tier") &&
+			!/\bpro[ -]tier\b/i.test(value.replaceAll("pricing/#pro-tier", "pricing/")),
+		`${path} must explain that all supported services are included and link the pricing answer`,
 	);
 	assert(
 		value.includes("Each preview release keeps its terms if the preview ends or a later release uses different terms."),

@@ -1,8 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { alternativesReviewedAt, comparisonSummary } from "../src/data/alternatives.ts";
-import { proTierServiceNames } from "../src/data/pricingFaq.ts";
 import { productFacts } from "../src/data/productFacts.ts";
-import { inCatalogOrder, proTierLabel } from "../src/data/services.ts";
+import { inCatalogOrder } from "../src/data/services.ts";
 import { presentContract } from "../src/utils/contract-presentation.mjs";
 import { cliQuickStart } from "../src/utils/quickstart.mjs";
 import { markdownTwinPath } from "../src/utils/markdown-twins.mjs";
@@ -183,7 +182,7 @@ Every docs page, service guide and comparison also has a Markdown version: repla
 
 ## Services
 
-Every service in the table runs locally. ${listNames(optInServices.map((service) => service.name))} are opt-in: \`--services\` sets the exact list of service IDs to run, for example \`localcloud start --local-only --services ${servicesExample}\`. Google Sheets serves read-only spreadsheet values as fixtures for other services. ${listNames(proTierServiceNames)} are Pro-tier services, marked "${proTierLabel}": they are free during the public preview and need no license key ([pricing](${site}pricing/#pro-tier)).
+Every service in the table runs locally. ${listNames(optInServices.map((service) => service.name))} are opt-in: \`--services\` sets the exact list of service IDs to run, for example \`localcloud start --local-only --services ${servicesExample}\`. Google Sheets serves read-only spreadsheet values as fixtures for other services. [Pricing](${site}pricing/#pro-tier) confirms that all supported services are included.
 
 | Service | ID | Starts by default | Endpoints | Environment variable | Guide |
 | --- | --- | --- | --- | --- | --- |

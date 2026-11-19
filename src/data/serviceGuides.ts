@@ -23,7 +23,7 @@ export interface ServiceGuide {
 export const serviceGuides: Readonly<Record<string, ServiceGuide>> = {
   gcs: {
     whenToUse: 'Use when your application stores unstructured files and addresses each object by bucket and name, with uploads, downloads, and object metadata handled through an API.',
-    intro: 'Cloud Storage stores files as objects inside buckets. Use it for application uploads, datasets, and artifacts that need an object-storage API.',
+    intro: 'Test uploads and downloads against a local bucket using your Cloud Storage SDK.',
     typicalUses: ['User uploads and downloads', 'Data pipeline inputs and outputs'],
     example: { title: 'Round-trip an uploaded file', steps: ['Create a bucket for test uploads.', 'Upload a text object through the Storage SDK.', 'Download it and assert that the content matches.'] },
     reference: 'https://docs.cloud.google.com/storage/docs/introduction',

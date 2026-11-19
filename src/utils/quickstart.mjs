@@ -16,14 +16,14 @@ export const readinessCheck = (contract) =>
 	`curl -fsS ${gateway(contract)}${contract.operator.endpoints.readiness}`;
 
 /**
- * Install the CLI, then run the contract's quick start with a readiness check
- * right after `localcloud start`.
+ * Install the CLI, then check the selected runtime with `localcloud status`.
+ * The start command waits for readiness and status reports the mapped endpoints.
  * @param {QuickStartContract} contract
  */
 export function cliQuickStart(contract) {
 	const install = contract.cli.installCommand;
 	const homebrew = contract.cli.homebrewCommand;
-	const readiness = readinessCheck(contract);
+	const readiness = "localcloud status";
 	const startIndex = contract.cli.quickStart.findIndex((line) => line.startsWith("localcloud start"));
 	if (startIndex === -1) throw new Error("cli.quickStart has no `localcloud start` step for the readiness check");
 	// Every step after the install line, in the order a person or agent runs them.

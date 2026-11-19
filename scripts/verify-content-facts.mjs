@@ -7,8 +7,8 @@ import { docsContract } from '../src/data/docs-contract.ts';
 import { productFacts } from '../src/data/productFacts.ts';
 import { cliQuickStart } from '../src/utils/quickstart.mjs';
 import { headingsWithinClass, walkElements } from './html-structure.mjs';
-import { availableServiceCount, services, servicesInCatalogOrder, isServiceDisabledByDefault, proTierLabel } from '../src/data/services.ts';
-import { pricingFaq, proTierServiceNames } from '../src/data/pricingFaq.ts';
+import { availableServiceCount, services, servicesInCatalogOrder, isServiceDisabledByDefault } from '../src/data/services.ts';
+import { pricingFaq } from '../src/data/pricingFaq.ts';
 import { serviceCompatibilityEditorial } from '../src/data/serviceEditorial.ts';
 import { relatedAnchor, relatedPagePairs } from '../src/data/relatedPages.ts';
 import { emulatorSearchPages, getServiceCodeExamples, serviceGuides, officialSampleLinks, terraformExampleServiceIds } from '../src/data/serviceGuides.ts';
@@ -268,8 +268,7 @@ for (const file of ['pricing/index.html', 'docs/licensing/index.html', 'license/
   if ((htmlPages.get(file) ?? '').includes('Temporary local review color')) errors.push(`${file} includes development-only review highlighting`);
 }
 
-// "Pro" is explained once, on the pricing page, and every page that shows a service's tier uses
-// the same label and links there. Raw tier values (pro, community) never render.
+// Pricing questions stay in sync with the FAQ copy and its public fragment links.
 const pricingHtml = htmlPages.get('pricing/index.html') ?? '';
 const pricingText = visibleText(pricingHtml).replace(/\s+/g, ' ');
 for (const entry of pricingFaq) {
@@ -278,16 +277,10 @@ for (const entry of pricingFaq) {
     if (!pricingText.includes(text)) errors.push(`pricing page FAQ omits: ${text}`);
   }
 }
-if (!proTierServiceNames.length || !proTierServiceNames.every((name) => (pricingFaq.find((entry) => entry.id === 'pro-tier')?.answer ?? '').includes(name))) errors.push('the pricing Pro-tier answer must name every supported Pro-tier service');
-const proTierLink = /<a\b[^>]*href="\/pricing\/#pro-tier"[^>]*data-service-tier="pro"[^>]*>([^<]*)<\/a>/;
-for (const service of services.filter((item) => item.minTier === 'pro' && item.marketingStatus === 'supported')) {
-  const html = htmlPages.get(`services/${service.slug}/index.html`) ?? '';
-  if (html.match(proTierLink)?.[1] !== proTierLabel) errors.push(`services/${service.slug}/ must show the tier as "${proTierLabel}" linked to /pricing/#pro-tier`);
-  if (!service.description.endsWith(`${proTierLabel}.`)) errors.push(`${service.id} catalog description must end with "${proTierLabel}."`);
-}
 for (const [file, html] of htmlPages) {
-  const raw = html.match(/<(?:dd|td)\b[^>]*>\s*(?:pro|community)\s*<\/(?:dd|td)>/);
-  if (raw) errors.push(`${file} renders a raw service tier (${raw[0]}); use the ServiceTier component`);
+  const tier = visibleText(html).match(/\b(?:minimum tier|pro[ -]tier)\b/i);
+  const raw = html.match(/<(?:dd|td)\b[^>]*>\s*(?:pro|community)\s*<\/(?:dd|td)>/i);
+  if (tier || raw) errors.push(`${file} displays a separate service tier; all supported services are included`);
 }
 
 // The cost page leads with installing LocalCloud and works from labeled assumptions; licensing

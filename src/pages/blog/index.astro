@@ -70,7 +70,7 @@ const structuredData = [createBreadcrumbSchema([
       <div class="container">
         <span class="site-eyebrow">LocalCloud Blog</span>
         <h1 class="mt-4">LocalCloud blog and demos</h1>
-        <p class="blog-deck" data-content-update>Walkthroughs you can run and arguments worth having about building and testing Google Cloud applications on your own machine.</p>
+        <p class="blog-deck">Walkthroughs you can run and arguments worth having about building and testing Google Cloud applications on your own machine.</p>
         <p><a href={localHref('/rss.xml')}>Subscribe via RSS</a></p>
       </div>
     </section>
@@ -78,7 +78,7 @@ const structuredData = [createBreadcrumbSchema([
 
   <section class="site-section" aria-label="Articles">
     <a class="blog-card blog-feature" href={localHref(featured.path)}>
-      <span class="site-kicker" data-content-update>Start here · {featured.topic}</span>
+      <span class="site-kicker">Start here · {featured.topic}</span>
       <h2>{featured.title}</h2>
       <p>{featured.description}</p>
       <div class="blog-meta">
@@ -89,8 +89,8 @@ const structuredData = [createBreadcrumbSchema([
     </a>
     {sections.map((section) => (
       <section class="blog-track" aria-labelledby={section.id}>
-        <h2 id={section.id} data-content-update>{section.title}</h2>
-        {section.intro && <p data-content-update>{section.intro}</p>}
+        <h2 id={section.id}>{section.title}</h2>
+        {section.intro && <p>{section.intro}</p>}
         <div class="blog-posts">
           {section.posts.map((post) => <article>
             <a class="blog-card" href={localHref(post.path)}>

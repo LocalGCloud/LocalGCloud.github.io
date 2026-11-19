@@ -16,7 +16,7 @@ Use LocalCloud for development, testing, and CI, and validate application behavi
 curl -fsSL https://local.cloud/install.sh | sh
 localcloud doctor
 localcloud start --local-only
-curl -fsS http://localhost:5380/readiness
+localcloud status
 eval "$(localcloud env)"
 localcloud console
 ```
@@ -68,7 +68,7 @@ Every docs page, service guide and comparison also has a Markdown version: repla
 
 ## Services
 
-Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-in: `--services` sets the exact list of service IDs to run, for example `localcloud start --local-only --services firestore,bigtable,spanner`. Google Sheets serves read-only spreadsheet values as fixtures for other services. Bigtable, Spanner, GKE, Cloud Run, and Cloud KMS are Pro-tier services, marked "Pro tier, free during preview": they are free during the public preview and need no license key ([pricing](https://local.cloud/pricing/#pro-tier)).
+Every service in the table runs locally. Firestore, GKE, and Cloud Run are opt-in: `--services` sets the exact list of service IDs to run, for example `localcloud start --local-only --services firestore,bigtable,spanner`. Google Sheets serves read-only spreadsheet values as fixtures for other services. [Pricing](https://local.cloud/pricing/#pro-tier) confirms that all supported services are included.
 
 | Service | ID | Starts by default | Endpoints | Environment variable | Guide |
 | --- | --- | --- | --- | --- | --- |

@@ -19,18 +19,14 @@ const quickStart = agenticFacts.cliQuickStart.script;
 
 const boundaries = [
   {
-    label: 'Execution boundary',
-    title: 'Where the generated code runs',
-    body:
-      'Owned by a code sandbox. Containers, microVMs, or a hosted runtime keep an agent from touching your workstation, your repository, or your production hosts.',
-    owners: 'E2B, Docker Sandboxes',
+    label: 'Code sandbox',
+    title: 'Where your agent runs code',
+    body: 'Run your agent in a code sandbox when you need to limit which files, commands, and hosts it can access.',
   },
   {
-    label: 'Dependency boundary',
-    title: 'What the generated code calls',
-    body:
-      'Owned by a local cloud runtime. Google Cloud SDK calls resolve to localhost instead of googleapis.com, so an agent cannot create real cloud resources or real charges.',
-    owners: 'LocalCloud',
+    label: 'LocalCloud',
+    title: 'Where your agent sends Google Cloud requests',
+    body: 'Point your agent’s Google Cloud clients at LocalCloud. We handle those requests locally without using a Google Cloud project.',
   },
 ];
 
@@ -41,13 +37,13 @@ const comparisonRows = [
     localcloud: 'Not the isolation layer for arbitrary shell risk.',
   },
   {
-    need: 'Stop an agent from creating billable Google Cloud resources',
-    sandbox: 'Not addressed. A sandbox holding real credentials still reaches the real cloud.',
-    localcloud: 'Primary purpose. No default credentials or billing project.',
+    need: 'Test Google Cloud calls without a billing project',
+    sandbox: 'Configure which endpoints and credentials the agent can access.',
+    localcloud: 'Calls to LocalCloud endpoints run locally and incur no Google Cloud service charges.',
   },
   {
     need: 'Exercise BigQuery, Pub/Sub, Spanner, or Bigtable behavior',
-    sandbox: 'Requires real Google Cloud access from inside the sandbox.',
+    sandbox: 'Connect to a local emulator or a Google Cloud project.',
     localcloud: `Local endpoints for ${availableServiceCount} local services.`,
   },
   {
@@ -65,11 +61,11 @@ const comparisonRows = [
 const faqItems = [
   {
     q: 'What is an agent environment?',
-    a: 'An agent environment is everything an AI coding agent can reach while working: where its code executes and what that code is allowed to call. A code sandbox owns the execution half. A local cloud runtime such as LocalCloud owns the dependency half by answering cloud SDK calls on localhost.',
+    a: 'It’s where your coding agent runs and what it can access. Use a code sandbox to limit access, and point your Google Cloud SDKs at LocalCloud for local tests.',
   },
   {
     q: 'Is a code sandbox enough to keep an AI agent from touching my cloud account?',
-    a: 'No. A sandbox isolates where code runs, not what it calls. If the sandbox holds Google Cloud credentials, agent-written code can still create real resources and real charges from inside it. Removing credentials and pointing the SDKs at a local runtime closes that gap.',
+    a: 'A sandbox with credentials and network access can still call Google Cloud. For local tests, point your clients at LocalCloud and keep Google Cloud credentials out of the test environment.',
   },
   {
     q: 'How do I give an AI agent a cloud to test against without credentials?',
@@ -90,7 +86,7 @@ const faqItems = [
 ];
 
 const title = 'Local Cloud for AI Agents — Credentialless GCP Sandbox';
-const description = 'Code sandboxes isolate where an AI agent runs. LocalCloud gives that code local Google Cloud APIs on localhost, with no credentials or billing by default.';
+const description = 'Give your coding agent local endpoints for BigQuery, Pub/Sub, Cloud Storage, and more. Test Google Cloud calls without a cloud account or credentials.';
 const structuredData = [
   createWebPageSchema({ url: pageUrl, name: title, description }),
   createBreadcrumbSchema([
@@ -127,11 +123,11 @@ const agentPages = [
       <div class="max-w-[48rem]">
         <span class="site-eyebrow">
           <span class="site-eyebrow__pulse"></span>
-          Agent environment · dependency boundary
+          Local testing for coding agents
         </span>
         <h1 class="mt-4">A local cloud for AI coding agents</h1>
-        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-          A code sandbox isolates <em>where</em> an AI agent runs. It does not change <em>what</em> the agent's code calls. LocalCloud supplies that missing half: Google Cloud APIs answered on localhost, so agent-written cloud code executes with no credentials, no billing project, and no real cloud side effects.
+        <p class="mt-6 text-lg leading-8 text-[var(--text-2)] sm:text-xl" data-content-update>
+          Give your coding agent local endpoints for BigQuery, Pub/Sub, Cloud Storage, and more. Run a query, publish a message, or upload a file. Calls to those endpoints need no Google Cloud credentials or billing project.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={`${base}docs/`} class="site-button site-button--primary">Start in the docs</a>
@@ -164,29 +160,22 @@ const agentPages = [
   <section class="site-section site-section--tight">
     <div class="container">
       <div class="site-section-heading reveal">
-        <span class="site-kicker">The distinction that matters</span>
-        <h2>An agent environment has two boundaries</h2>
-        <p>
-          Most agent tooling addresses only the first one. Cloud cost and cloud blast radius live in the second.
-        </p>
+        <h2 data-content-update>Where your agent runs and what it calls</h2>
       </div>
 
       <div class="mt-8 grid gap-4 md:grid-cols-2">
         {boundaries.map((boundary) => (
           <article class="site-panel p-6 reveal">
             <span class="site-kicker">{boundary.label}</span>
-            <h3 class="mt-3 text-xl">{boundary.title}</h3>
-            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]">{boundary.body}</p>
-            <p class="mt-4 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-2)]">
-              Typically owned by: {boundary.owners}
-            </p>
+            <h3 class="mt-3 text-xl" data-content-update>{boundary.title}</h3>
+            <p class="mt-3 text-sm leading-7 text-[var(--text-2)]" data-content-update>{boundary.body}</p>
           </article>
         ))}
       </div>
 
       <div class="mt-6">
         <Callout type="warning" title="A sandbox with real credentials is still a real cloud client">
-          Isolating execution does not stop an API call. If a code sandbox holds a service-account key, agent-written code can create datasets, buckets, and instances in your project from inside that sandbox, and the charges are real. Closing the dependency boundary is a separate control.
+          <p data-content-update>Code in a sandbox can still reach Google Cloud if it has credentials and network access. Keep real credentials out of your local test environment.</p>
         </Callout>
       </div>
     </div>
@@ -198,9 +187,7 @@ const agentPages = [
       <div class="site-section-heading reveal">
         <span class="site-kicker">Comparison</span>
         <h2>Where each tool is the right answer</h2>
-        <p>
-          LocalCloud is not a replacement for a code sandbox, and a code sandbox is not a replacement for a local cloud. Pick by which boundary you are trying to close.
-        </p>
+        <p data-content-update>Use a code sandbox to isolate execution and LocalCloud to handle Google Cloud requests during local tests.</p>
       </div>
 
       <div class="mt-8 overflow-x-auto reveal" tabindex="0" role="region" aria-label="Code sandbox and LocalCloud comparison">

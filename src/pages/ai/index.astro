@@ -29,8 +29,8 @@ const workflowCards = [
   },
   {
     step: '02',
-    title: 'Confirm readiness',
-    body: 'Wait for the runtime readiness endpoint before any SDK, CLI, Terraform, or test command.',
+    title: 'Check the runtime',
+    body: 'Start waits for readiness. Check which runtime is running and which ports it uses.',
     command: quickStart.readiness,
   },
   {
@@ -77,11 +77,11 @@ const structuredData = [
         <div>
           <span class="site-eyebrow">
             <span class="site-eyebrow__pulse"></span>
-            Agent-safe local GCP
+            Agent resources
           </span>
           <h1 class="mt-5">Give coding agents a local Google Cloud target</h1>
-          <p class="mt-5 max-w-[48rem] text-lg leading-8 text-[var(--text-2)] sm:text-xl">
-            {agenticFacts.positioning} Agents can run SDKs, Terraform, seed data, and integration checks against localhost instead of reaching for production Google Cloud.
+          <p class="mt-5 max-w-[48rem] text-lg leading-8 text-[var(--text-2)] sm:text-xl" data-content-update>
+            Give your agent local endpoints for BigQuery, Pub/Sub, Cloud Storage, and more. Use our setup guide, prompts, or AGENTS.md template to run local SDK calls and integration tests without a Google Cloud account or credentials.
           </p>
           <div class="mt-8 flex flex-wrap gap-3">
             <a class="site-button site-button--primary" href={`${base}ai/agents.md`}>Open raw agent guide</a>
@@ -125,9 +125,9 @@ const structuredData = [
       <div class="container">
         <div class="site-section-heading reveal">
           <span class="site-kicker">Why it matters</span>
-          <h2>Why agents need this page</h2>
-          <p>
-            AI agents often discover code paths that expect Google Cloud. A repository that uses BigQuery, Pub/Sub, Cloud Storage, Spanner, Bigtable, or Terraform usually expects a real project, so an agent that follows that path blindly turns a local test into a credential request, a billing event, or a change to shared infrastructure. This page gives agents a safe default: start LocalCloud, route SDKs to localhost, prove behavior locally, and stop rather than silently using real cloud credentials.
+          <h2 data-content-update>Run your agent’s tests locally</h2>
+          <p data-content-update>
+            Start LocalCloud and export its endpoints in your agent’s shell. Ask the agent to run one SDK call or integration test against localhost. Keep real Google Cloud credentials out of the test environment.
           </p>
           <RelatedPages path="/ai/" />
         </div>
@@ -156,7 +156,7 @@ const structuredData = [
         <div class="site-section-heading reveal">
           <span class="site-kicker">Copy prompts</span>
           <h2>Prompt an agent with a safe LocalCloud task</h2>
-          <p>Each prompt keeps the agent on localhost with no credentials.</p>
+          <p data-content-update>Each prompt asks your agent to use LocalCloud endpoints without Google Cloud credentials.</p>
         </div>
         <div class="grid gap-4 lg:grid-cols-2 stagger">
           {agentPromptLibrary.map((item) => (

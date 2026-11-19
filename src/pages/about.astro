@@ -30,8 +30,8 @@ const structuredData = [
     <div class="container container--narrow">
       <span class="site-eyebrow"><span class="site-eyebrow__pulse"></span>About</span>
       <h1 class="mt-4">About LocalCloud Inc.</h1>
-      <p class="mt-5 text-lg leading-8 text-[var(--text-2)]">
-        LocalCloud Inc. builds LocalCloud, a local Google Cloud emulator. One Docker container serves {availableServiceCount} Google Cloud services on localhost, so you can develop and test Google Cloud code without a GCP account, credentials, or a cloud bill.
+      <p class="mt-5 text-lg leading-8 text-[var(--text-2)]" data-content-update>
+        We built LocalCloud so you can test Google Cloud code without setting up a shared test project. Run {availableServiceCount} local services in one Docker container, from BigQuery and Pub/Sub to Cloud Storage.
       </p>
     </div>
   </section>
@@ -41,7 +41,7 @@ const structuredData = [
       <h2 id="who-its-for">Who it's for</h2>
       <ul>
         <li><strong>Developers</strong> who want BigQuery, Pub/Sub, Spanner, Cloud Storage and the rest of their stack on their own machine.</li>
-        <li><strong>CI pipelines</strong> that run integration tests against real Google Cloud SDK calls without a shared test project.</li>
+        <li data-content-update><strong>CI pipelines</strong> that run integration tests with Google Cloud SDKs pointed at local endpoints.</li>
         <li><strong>AI coding agents</strong> that need a local Google Cloud target with no credentials or billing project. See the <a href="/ai/">agent guide</a>.</li>
       </ul>
 

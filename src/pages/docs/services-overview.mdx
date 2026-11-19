@@ -4,22 +4,14 @@ title: Services Overview
 description: Compare available LocalCloud services, startup defaults, connections, and known limitations.
 ---
 
-import { availableServiceCount, comingSoonServiceCount, pricingProTierPath, proTierLabel, publishedServiceCount, serviceCatalogGroups, serviceRegistryCount, servicesInCatalogOrder } from '../../data/services';
-import ServiceTier from '../../components/ServiceTier.astro';
+import { availableServiceCount, publishedServiceCount, serviceCatalogGroups, serviceRegistryCount, servicesInCatalogOrder } from '../../data/services';
 import { cloudOnlyServiceNames, persistenceLabel } from '../../data/docs-contract';
 
 # Services overview
 
 {serviceRegistryCount} services are listed: {availableServiceCount} run locally; {new Intl.ListFormat('en', { type: 'conjunction' }).format(cloudOnlyServiceNames)} are cloud-only. Google Sheets is an auxiliary fixture API, not a separate Google Cloud service.
 
-A service guide separates the facts that affect normal use:
-
-1. **Starts by default** — whether `services.enabled: default` starts the service.
-2. **Minimum tier** — Community, or <a href={pricingProTierPath}>{proTierLabel}</a>.
-3. **Status** — Supported (ready for local use) or Unsupported (cloud-only).
-4. **Persistence** — whether the service keeps its data across restarts.
-5. **Connection** — the canonical container port and protocol. Use `localcloud env` for the actual host endpoint.
-6. **Known limits** — operations or Google Cloud behavior that LocalCloud does not provide.
+<p data-content-update>All supported services are included. Check which services start by default, which keep data across restarts, and how to connect. Use <code>localcloud env</code> for the actual host endpoints.</p>
 
 <div className="docs-table-scroll" role="region" tabIndex={0} aria-label="Service status, defaults, and connections">
   <table className="w-full min-w-[72rem] text-left text-sm">
@@ -27,7 +19,6 @@ A service guide separates the facts that affect normal use:
       <tr>
         <th>Service</th>
         <th>Starts by default</th>
-        <th>Tier</th>
         <th>Status</th>
         <th>Persistence</th>
         <th>Connection</th>
@@ -38,11 +29,10 @@ A service guide separates the facts that affect normal use:
         <tr>
           <td><a href={`/services/${service.slug}/`}>{service.name}</a>{service.category === 'auxiliary' && <span className="ml-1 text-xs text-[var(--text-2)]"> (Auxiliary API)</span>}</td>
           {service.catalogState === 'coming-soon' ? (
-            <td colSpan={5}><strong>Unsupported.</strong> LocalCloud does not run this service locally; use real Google Cloud.</td>
+            <td colSpan={4}><strong>Unsupported.</strong> LocalCloud does not run this service locally; use real Google Cloud.</td>
           ) : (
             <>
               <td>{service.registryDefaultEnabled ? 'yes' : 'no'}</td>
-              <td><ServiceTier service={service} /></td>
               <td>{service.status === 'unsupported' || service.status === 'unknown' ? 'Unsupported' : 'Supported'}</td>
               <td>{persistenceLabel(service.persistence.scope)}</td>
               <td>{service.endpointLabel}</td>

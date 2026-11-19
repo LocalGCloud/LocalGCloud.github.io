@@ -40,7 +40,7 @@ const structuredData = [
       <div class="container container--narrow">
         <nav class="mb-5 text-sm text-[var(--text-2)]" aria-label="Breadcrumb"><a href="/blog/">Blog</a></nav>
         <span class="site-eyebrow">{metadata.topic}</span>
-        <h1 class="mt-5" data-content-update>{title}</h1>
+        <h1 class="mt-5">{title}</h1>
         <p class="blog-meta"><span>Published <time datetime={metadata.publishedAt}>{formatBlogDate(metadata.publishedAt)}</time></span><span>{metadata.minutes} min read</span><span>Perspective</span></p>
         <p class="blog-deck">Bring supported Google Cloud workflows to your contributors’ laptops. With a LocalCloud launcher in your repository, contributors can run its local tests without setting up a Google Cloud project, sharing cloud credentials, or paying for cloud resources. LocalCloud is free for open-source development and CI.</p>
         <div class="blog-actions">

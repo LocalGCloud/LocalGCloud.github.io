@@ -1,11 +1,13 @@
-import { cliQuickStart } from '../utils/quickstart.mjs';
-import { docsContract } from './docs-contract';
+export const freeUseAnswer = 'Yes. LocalCloud is free forever for open-source projects and individual developers.';
+export const includedServicesQuestion = 'Are there separate paid services?';
+export const includedServicesAnswer = 'No. All supported services are included.';
 
 export interface FaqEntry {
   question: string;
   answer: string;
   code?: string;
   afterCode?: string;
+  contentUpdated?: true;
 }
 
 export interface FaqSection {
@@ -19,20 +21,23 @@ export const faqSections: FaqSection[] = [
     entries: [
       {
         question: 'What is LocalCloud?',
-        answer:
-          'LocalCloud is a local Google Cloud development sandbox. One Docker container runs local versions of Google Cloud services, a web console, and management APIs. Each service documents which operations it supports.',
+        answer: 'We run local versions of Google Cloud services such as BigQuery, Pub/Sub, and Cloud Storage in Docker so you can develop and test on your laptop or in CI.',
+        contentUpdated: true,
       },
       {
         question: 'Is LocalCloud free?',
-        answer:
-          'Yes. LocalCloud is free for open-source projects and individual developers beyond the public preview. Preview releases also permit organizational development, testing, and CI with no payment method or license key. See /docs/licensing/ for eligibility and the governing release terms.',
+        answer: freeUseAnswer,
+        contentUpdated: true,
       },
       {
-        question: 'What is the recommended setup?',
-        answer: 'Install the host CLI, verify Docker, start a persistent runtime, load its generated environment values, and open the returned console URL.',
-        code: cliQuickStart(docsContract).script,
-        afterCode:
-          'Start with --local-only so the runtime listens only on localhost. The CLI keeps data between restarts by default. If a default port is already in use, the CLI picks another one; use the URLs and environment values it returns.',
+        question: includedServicesQuestion,
+        answer: includedServicesAnswer,
+        contentUpdated: true,
+      },
+      {
+        question: 'How do I get started?',
+        answer: 'Run brew install LocalGCloud/tap/localcloud, then localcloud start to launch a ready-to-use container.',
+        contentUpdated: true,
       },
     ],
   },
@@ -40,9 +45,9 @@ export const faqSections: FaqSection[] = [
     title: 'Compatibility',
     entries: [
       {
-        question: 'Do I need to change application code?',
-        answer:
-          'Some SDKs honor emulator variables without code changes; others require explicit endpoint or client configuration. Load localcloud env into the application process, check the operation matrix, and stop if a client falls back to real Google Cloud.',
+        question: 'Will my existing code work?',
+        answer: 'Yes, for supported workflows. Keep your application logic and point your gcloud commands, API calls, and SDKs at LocalCloud using environment variables or your client’s endpoint settings.',
+        contentUpdated: true,
       },
       {
         question: 'Which SDK languages are supported?',
@@ -104,7 +109,8 @@ export const faqSections: FaqSection[] = [
         question: 'What if a service is not responding?',
         answer: 'Inspect the runtime and its logs. If you run the container manually on the default ports, /services shows service state.',
         code: 'localcloud status\nlocalcloud logs --tail 50\ncurl -fsS http://localhost:5380/services',
-        afterCode: 'Confirm the service is enabled, its required tier is available, and its documented support level is suitable for the workflow.',
+        afterCode: 'Confirm the service is enabled and check its guide for the operation you’re testing.',
+        contentUpdated: true,
       },
       {
         question: 'Why do GKE, Cloud Run, and Dataproc need Docker access?',

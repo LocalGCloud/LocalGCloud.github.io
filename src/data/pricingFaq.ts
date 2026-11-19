@@ -1,13 +1,5 @@
 import { freeUsePolicy, productFacts } from "./productFacts.ts";
-import { proTierLabel, services } from "./services.ts";
-
-// Pro-tier services that run locally, in catalog order, from the documentation contract.
-export const proTierServiceNames = services
-	.filter((service) => service.minTier === "pro" && service.marketingStatus === "supported" && service.catalogState === "available")
-	.map((service) => service.name);
-
-const listNames = (names: string[]) =>
-	names.length < 3 ? names.join(" and ") : `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
+import { includedServicesAnswer, includedServicesQuestion } from "./faqContent.ts";
 
 export interface PricingFaqEntry {
 	id: string;
@@ -20,9 +12,10 @@ export interface PricingFaqEntry {
 // licensing summary (src/pages/docs/licensing.mdx) say.
 export const pricingFaq: PricingFaqEntry[] = [
 	{
+		// Keep the old fragment working for links to this answer.
 		id: "pro-tier",
-		question: "Are Pro-tier services free?",
-		answer: `Yes. ${listNames(proTierServiceNames)} are Pro-tier services, and they are free during the public preview: preview releases run them with no payment method or license key. Service pages and docs mark them "${proTierLabel}". A tier label does not mean payment is required for these preview releases; consult each future release's terms for included services.`,
+		question: includedServicesQuestion,
+		answer: includedServicesAnswer,
 		source: { label: "Service catalog", href: "/services/" },
 	},
 	{
