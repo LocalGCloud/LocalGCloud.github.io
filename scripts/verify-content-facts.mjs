@@ -627,13 +627,11 @@ const homepageDescription = decodeEntities(homepage.match(/<meta\b[^>]*name="des
 if (!homepageTitle || homepageTitle.length > 60) errors.push(`homepage title must be 1-60 characters (${homepageTitle.length}): ${homepageTitle}`);
 if (!homepageDescription || homepageDescription.length > 155) errors.push(`homepage description must be 1-155 characters (${homepageDescription.length}): ${homepageDescription}`);
 const homepageH1 = visibleText(homepageMain.match(/<h1\b[\s\S]*?<\/h1>/)?.[0] ?? '').replace(/\s+/g, ' ').trim();
-if (homepageH1 !== 'localcloud is cloud for agents.') errors.push(`homepage H1 reads "${homepageH1}"`);
-if (![homepageTitle, homepageDescription].every((text) => /cloud for agents/i.test(text))) errors.push('homepage title and description must name cloud for agents');
-const homepageDefinition = visibleText(homepageMain.match(/<\/h1>\s*<p\b[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '');
-if (!homepageDefinition.startsWith('localcloud is cloud for agents: a local Google Cloud runtime for AI coding agents, developers and CI pipelines.') ||
-    !homepageDefinition.includes(`${availableServiceCount} Google Cloud services on localhost in one Docker container`) ||
-    !homepageDefinition.includes('Free for open-source projects and individual developers.')) {
-  errors.push(`the paragraph under the homepage H1 must define cloud for agents, its audience, local service count and preview pricing: "${homepageDefinition.slice(0, 160)}"`);
+if (homepageH1 !== 'A local cloud for AI agents.') errors.push(`homepage H1 reads "${homepageH1}"`);
+if (![homepageTitle, homepageDescription].every((text) => /local cloud for AI agents/i.test(text))) errors.push('homepage title and description must name a local cloud for AI agents');
+const homepageIntro = visibleText(homepageMain.match(/<\/h1>\s*<p\b[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '');
+if (homepageIntro !== 'Run Google Cloud Services locally on your machine so your agents can build, test, and debug cloud apps locally.') {
+  errors.push(`the paragraph under the homepage H1 must explain what agents can do with local Google Cloud services: "${homepageIntro}"`);
 }
 const quickStartLink = [...homepageMain.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(([, , text]) => /Quick Start/.test(visibleText(text)));
 if (!quickStartLink) errors.push('homepage needs an <a> whose text contains "Quick Start"');
@@ -645,6 +643,10 @@ else {
   else if (target.hash !== '#install-the-cli' || !htmlPages.get(targetFile).includes('id="install-the-cli"')) errors.push(`homepage "Quick Start" link ${href} must open the docs section with id="install-the-cli"`);
 }
 const homepageHero = homepageMain.match(/<section\b[^>]*class="field-hero"[\s\S]*?<\/section>/)?.[0] ?? '';
+const homepageFacts = visibleText(homepageHero);
+for (const fact of [`${availableServiceCount} services in one Docker container.`, 'No GCP account, credentials, or billing.', 'Free for open-source projects and individual developers.']) {
+  if (!homepageFacts.includes(fact)) errors.push(`the homepage hero must include "${fact}"`);
+}
 const installCode = new RegExp(`<code\\b[^>]*>${productFacts.homebrewInstallCommand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</code>`);
 if (!installCode.test(homepageHero) || !homepageHero.includes(`data-copy="${productFacts.homebrewInstallCommand}"`) || !homepageHero.includes('aria-label="Copy install command"')) errors.push('the homepage hero must show and copy the Homebrew install command by default');
 if (!homepageHero.includes(`data-install-curl="${productFacts.installScriptCommand}"`) || !homepageHero.includes('data-install-toggle')) errors.push('the homepage hero must offer a toggle to the curl install command');

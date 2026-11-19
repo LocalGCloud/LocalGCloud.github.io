@@ -46,17 +46,14 @@
  & .field-home{padding:1rem 0 2rem}
  & .field-home .field-home__shell{overflow:visible;padding:0}
  & .field-home .field-hero{display:block;padding:1.25rem 1.25rem 0;border:1px solid var(--line);border-radius:var(--radius-panel);overflow:hidden;background:var(--surface);box-shadow:0 3px 12px #253d630d}
- & .field-home .field-hero [data-classic-copy],& .field-home .field-actions,& .field-home .field-install,& .field-home .field-signal-strip{display:none!important}
+ & .field-home .field-hero [data-classic-copy],& .field-home .field-actions,& .field-home .field-install{display:none!important}
  & .field-home .field-hero h1{display:block;margin:.75rem 0 0;font-size:clamp(1.9rem,8.5vw,3.5rem)!important;line-height:1.06!important;letter-spacing:-.05em;font-weight:750}
  & .field-home .field-hero h1 [data-classic-copy]{display:block!important;white-space:normal}
  & .field-home .field-hero h1 .field-hero__headline-tag{color:var(--accent)}
- & .mobile-eyebrow{font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.13em;color:var(--accent-strong);text-transform:uppercase;font-weight:700}
  & .field-home .field-hero .mobile-intro{margin:1rem 0;font-size:1rem;line-height:1.5;max-width:34rem}
  & .field-home .mobile-hero-art{position:relative;width:calc(100% + 2.5rem);max-width:none;aspect-ratio:2/1;margin:1rem -1.25rem 0;overflow:hidden;background:linear-gradient(145deg,#f3f8fe,#dce9f7)}
  & .mobile-hero-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:center bottom}
  & [data-desktop-content][aria-busy=true]::before{content:'';position:fixed;inset:0 0 auto;z-index:1000;height:3px;background:var(--accent);pointer-events:none}
- & .mobile-hero-art .hero-benefits{position:absolute;inset:auto 0 .2rem;gap:.3rem;margin:0;font-size:.6875rem}
- & .field-home .mobile-hero-art .hero-benefits span{padding:.1rem .3rem}
  & .mobile-personas{margin:.25rem 0 1.5rem;padding:1.25rem;background:var(--surface);border-radius:var(--radius-panel)}
  & .mobile-personas a{display:flex;align-items:flex-start;gap:.75rem;padding:.875rem 0;color:var(--text)}
  & .mobile-personas a+a{border-top:1px solid var(--line)}

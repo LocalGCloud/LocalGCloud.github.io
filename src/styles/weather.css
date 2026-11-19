@@ -11,7 +11,7 @@
       html.desktop-view[data-audience=humans][data-desktop-weather=autumn]{--desktop-bg:radial-gradient(ellipse at 90% 0,#ffe5ae 0,transparent 50%),linear-gradient(145deg,#93b5be,#c9bca4 55%,#b68762);--surface:#fffaf2;--bg:#fffaf2;--chrome:#f4ebdc;--line:#ddd0bb;--line-strong:#cdbd9e;--weather-shortcut:#39454a}
       html.desktop-view[data-audience=humans][data-desktop-weather] .desktop-shortcut{color:var(--weather-shortcut)}
       html.desktop-view[data-audience=humans][data-desktop-weather] .desktop-shortcut.is-active{background:#e4effd;color:#234773;border-color:#a0c2f1}
-      html.desktop-view[data-audience=humans][data-desktop-weather] :is(.field-hero .field-intro,.desktop-hero-proof,.desktop-hero-summary p){color:var(--text-2)!important}
+      html.desktop-view[data-audience=humans][data-desktop-weather] :is(.field-hero .field-intro,.desktop-hero-summary p){color:var(--text-2)!important}
       html.desktop-view[data-audience=humans][data-desktop-weather] :is(.desktop-menu nav,.desktop-taskbar button,.field-install,.field-install pre,.field-install__copy,.lc-audience-dock>*){background:var(--surface-2);color:var(--text);border-color:var(--line)}
       html.desktop-view[data-audience=humans][data-desktop-weather] .field-install code{color:var(--code-text)}
       html.desktop-view[data-audience=humans][data-desktop-weather] .desktop-start{color:var(--bg)}

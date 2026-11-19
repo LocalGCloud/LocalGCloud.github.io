@@ -31,16 +31,9 @@ import {
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
-const definition = productFacts.description;
+const heroIntro = 'Run Google Cloud Services locally on your machine so your agents can build, test, and debug cloud apps locally.';
 
 const classicStartCommand = 'lc doctor\nlc start --local-only';
-const heroBenefits = ['$0 cost', 'No setup', 'Fast development'];
-
-const heroSignals = [
-  { value: String(availableServiceCount), label: 'Google Cloud services', note: 'each with its workflows and limits listed' },
-  { value: '1', label: 'Docker container', note: 'persistent data on localhost ports the CLI picks' },
-];
-
 const telemetryVariable = `${docsContract.privacy.runtimeTelemetry.disableVariable}=false`;
 
 // Six short claims, each linked to the evidence a skeptical reader can check.
@@ -126,31 +119,31 @@ for (const column of atlasColumns) {
   <div class="field-home__shell">
     <section class="field-hero">
       <div class="field-hero__copy">
-        <p class="mobile-eyebrow" data-mobile-only data-pagefind-ignore>Cloud for agents</p>
-        <p class="desktop-hero-eyebrow" data-desktop-copy data-pagefind-ignore>Cloud for agents</p>
         <div class="field-hero__headline-wrapper">
-          <h1 class="field-hero__headline">
-            <span class="field-hero__headline-main" data-classic-copy>localcloud is</span>{' '}
-            <span class="field-hero__headline-tag" data-classic-copy>cloud for{' '}<RollingHeadlineWord /></span>
+          <h1 class="field-hero__headline" data-content-update>
+            <span class="field-hero__headline-main" data-classic-copy>A local cloud for</span>{' '}
+            <span class="field-hero__headline-tag" data-classic-copy><RollingHeadlineWord /></span>
           </h1>
-          <p class="field-intro" data-classic-copy>{definition}</p>
+          <p class="field-intro" data-classic-copy data-content-update>{heroIntro}</p>
           <p class="field-intro--agent" data-agent-only>
             {agentOverview.description}
           </p>
           <dl class="agent-readme__facts" data-agent-only aria-label="Local development environment">
             {agentOverview.facts.map(item => <div><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
           </dl>
-          <label class="headline-motion" data-pagefind-ignore data-markdown-skip>
-            <input type="checkbox" data-headline-pause />
-            Pause heading animation
-          </label>
         </div>
-        <p class="mobile-intro" data-mobile-only data-pagefind-ignore>{definition}</p>
-        <figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="lazy" fetchpriority="high" decoding="async" /><figcaption class="hero-benefits">{heroBenefits.map((benefit) => <span>{benefit}</span>)}</figcaption></figure>
+        <p class="mobile-intro" data-mobile-only data-pagefind-ignore data-content-update>{heroIntro}</p>
         <template data-desktop-headline data-desktop-copy data-pagefind-ignore>
-          <span data-desktop-copy data-pagefind-ignore>localcloud is <span class="field-hero__desktop-accent">cloud for{' '}<RollingHeadlineWord /></span></span>
+          <span data-desktop-copy data-pagefind-ignore>A local cloud for <span class="field-hero__desktop-accent"><RollingHeadlineWord /></span></span>
         </template>
-        <p class="field-intro" data-desktop-copy data-pagefind-ignore>{definition}</p>
+        <p class="field-intro" data-desktop-copy data-pagefind-ignore data-content-update>{heroIntro}</p>
+        <p class="hero-facts" data-content-update>{availableServiceCount} services in one Docker container. No GCP account, credentials, or billing.</p>
+        <p class="hero-facts" data-content-update><a href={`${base}docs/licensing/#free-for-open-source-projects`}>{freeUsePolicy.headline}.</a></p>
+        <label class="headline-motion" data-pagefind-ignore data-markdown-skip>
+          <input type="checkbox" data-headline-pause />
+          Pause heading animation
+        </label>
+        <figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="lazy" fetchpriority="high" decoding="async" /></figure>
 
         <div class="field-actions">
           <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-classic-copy data-analytics-label="hero-start-free"><span data-classic-copy>Quick Start</span></a>
@@ -180,9 +173,8 @@ for (const column of atlasColumns) {
           </div>
         </div>
 
-        <p class="desktop-hero-proof" data-desktop-copy data-pagefind-ignore>{freeUsePolicy.headline}. <a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free-use terms</a></p>
         <p class="field-proof" data-classic-copy>
-          {freeUsePolicy.headline}. <a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free-use terms</a>. CLI releases are <a href={`${base}security/#signed-releases`}>Sigstore-signed with SHA-256 checksums</a>.
+          CLI releases are <a href={`${base}security/#signed-releases`}>Sigstore-signed with SHA-256 checksums</a>.
         </p>
 
       </div>
@@ -200,19 +192,7 @@ for (const column of atlasColumns) {
                 fetchpriority="high"
                 decoding="async"
             />
-            <figcaption class="hero-benefits">{['No cloud account', 'No GCP billing', 'Build and test locally'].map((benefit) => <span>{benefit}</span>)}</figcaption>
           </figure>
-          <ul class="field-signal-strip">
-            {heroSignals.map((signal) => (
-              <li class="field-signal">
-                <div class="field-signal__value">{signal.value}</div>
-                <div class="field-signal__meta">
-                  <div class="field-signal__label">{signal.label}</div>
-                  <div class="field-signal__note">{signal.note}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
 
         <div class="field-hero__visual field-hero__visual--agent" data-agent-visual>
@@ -225,7 +205,6 @@ for (const column of atlasColumns) {
       <template data-desktop-hero data-desktop-copy data-pagefind-ignore>
         <figure class="desktop-hero-art" data-desktop-copy data-pagefind-ignore>
           <img src={desktopHero.src} srcset={desktopHero.srcSet.attribute} sizes={desktopHeroOptions.sizes} width="1800" height="600" alt="A LocalCloud laptop on a desk, connected to local Google Cloud service icons, with notebooks, a mug, books and a plant." loading="eager" fetchpriority="high" decoding="async" />
-          <figcaption class="hero-benefits">{heroBenefits.map((benefit) => <span>{benefit}</span>)}</figcaption>
         </figure>
       </template>
       <div class="desktop-hero-summary" data-desktop-copy data-pagefind-ignore>
@@ -465,7 +444,6 @@ for (const column of atlasColumns) {
   }
 
   .field-actions,
-  .field-signal-strip,
   .field-board__title,
   .field-ribbon__grid,
   .field-atlas__grid,
@@ -477,8 +455,7 @@ for (const column of atlasColumns) {
   .field-stamp,
   .field-ledger,
   .field-kicker,
-  .field-overline,
-  .field-signal__label {
+  .field-overline {
     font-family: var(--font-mono);
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -509,7 +486,6 @@ for (const column of atlasColumns) {
 
   .field-ledger,
   .field-kicker,
-  .field-signal__label,
   .field-overline {
     color: var(--text-2);
     font-size: var(--fs-label);
@@ -583,7 +559,7 @@ for (const column of atlasColumns) {
   }
 
   :global(html[data-site-view="classic"]) .field-hero__headline-main {
-    white-space: nowrap;
+    text-wrap: balance;
   }
 
   :global(html[data-site-view="classic"]) .field-hero__headline-tag {
@@ -603,27 +579,15 @@ for (const column of atlasColumns) {
     overflow-wrap: normal;
   }
 
-  .hero-benefits {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 0.4rem 0;
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1.3;
-    color: var(--accent-strong);
-  }
-
-  .hero-benefits span {
-    padding: 0.2rem 0.65rem;
-    border: 1px solid var(--accent);
-    border-radius: var(--radius-pill);
-    background: var(--surface);
-    white-space: nowrap;
+  .hero-facts {
+    margin-top: .5rem;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    text-wrap: pretty;
   }
 
   .field-hero .field-intro {
+    text-wrap: balance;
     margin-top: 1.1rem;
     color: var(--text);
     font-size: var(--fs-lead);
@@ -732,6 +696,7 @@ for (const column of atlasColumns) {
     line-height: 1.6;
   }
 
+  .hero-facts a,
   .field-proof a,
   .field-faq__answer a,
   .field-trust__links a,
@@ -869,67 +834,6 @@ for (const column of atlasColumns) {
     display: flex;
     flex-wrap: wrap;
     margin-top: 1.2rem;
-  }
-
-  .field-signal-strip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0;
-    margin-top: 1.2rem;
-    padding: 0;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    list-style: none;
-  }
-
-  .field-signal {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: clamp(0.4rem, 1.5vw, 0.75rem);
-    align-items: baseline;
-    padding: 0.85rem 0.75rem;
-  }
-
-  .field-signal:first-child {
-    padding-left: 0;
-  }
-
-  .field-signal + .field-signal {
-    padding-right: 0;
-    border-left: 1px solid var(--line);
-  }
-
-  .field-signal__label {
-    font-size: var(--fs-label);
-    letter-spacing: 0.04em;
-  }
-
-  .field-signal__value {
-    /* Headline floor: a figure, not a heading. */
-    font-size: 2rem;
-    font-weight: 650;
-    line-height: 1;
-    color: var(--text);
-  }
-
-  .field-signal__note {
-    margin-top: 0.15rem;
-    color: var(--text-2);
-    font-size: var(--fs-small);
-  }
-
-  /* Two side-by-side stats only fit their labels on one line from 40rem up.
-     Below that, stack each figure above its label so nothing collides. */
-  @media (max-width: 39.99rem) {
-    .field-signal {
-      grid-template-columns: 1fr;
-      gap: 0.4rem;
-    }
-  }
-
-  @media (min-width: 40rem) {
-    .field-signal__label {
-      white-space: nowrap;
-    }
   }
 
   .field-hero__audience-row {
@@ -1367,7 +1271,7 @@ for (const column of atlasColumns) {
 <style is:global>
 .field-intro--agent,.agent-readme__facts,.field-hero__visual--agent,.field-ribbon__agent,.field-atlas__agent-bar{display:none}
 html:root[data-audience="agents"] .field-home{
- & :is(.field-hero__visual--human,.field-ribbon__human,.desktop-hero-art,.desktop-hero-summary,.mobile-hero-art,.mobile-intro,.mobile-eyebrow,.desktop-hero-eyebrow,.desktop-install-heading,.desktop-hero-proof,.field-install,.field-actions,.field-proof,.field-intro){display:none!important}
+ & :is(.field-hero__visual--human,.field-ribbon__human,.desktop-hero-art,.desktop-hero-summary,.mobile-hero-art,.mobile-intro,.hero-facts,.desktop-install-heading,.field-install,.field-actions,.field-proof,.field-intro){display:none!important}
  & .field-hero{display:block!important;background:var(--bg);color:var(--text);text-align:left;padding:0!important}
  & .field-hero__headline [data-classic-copy]{display:inline!important;white-space:normal;line-height:inherit;font-size:inherit;color:inherit}
  & .field-hero__headline [data-desktop-copy]{display:none!important}

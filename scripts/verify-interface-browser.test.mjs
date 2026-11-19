@@ -11,6 +11,12 @@ const types = { '.html': 'text/html', '.mjs': 'application/javascript', '.js': '
 
 async function verifyRollingHeadline(page) {
   await page.waitForFunction(() => [...document.querySelectorAll('h1 .headline-drum')].some(element => element.getClientRects().length));
+  const visibleCopy = await page.$$eval('.field-hero :is(.field-intro, .mobile-intro, .hero-facts)', elements => elements.filter(element => element.getClientRects().length).map(element => element.textContent.trim()));
+  assert.equal(visibleCopy.length, 3, 'show one introduction, one facts line, and the free-use terms');
+  assert.match(visibleCopy[0], /Run Google Cloud Services locally/);
+  assert.match(visibleCopy[1], /services in one Docker container\. No GCP account, credentials, or billing\./);
+  assert.equal(visibleCopy[2], 'Free for open-source projects and individual developers.');
+  assert.equal(await page.$eval('.hero-facts a', link => link.hash), '#free-for-open-source-projects');
   const frame = time => page.evaluate(time => {
     const drum = [...document.querySelectorAll('h1 .headline-drum')].find(element => element.getClientRects().length);
     const animations = drum.getAnimations({ subtree: true });
@@ -25,8 +31,8 @@ async function verifyRollingHeadline(page) {
   }, time);
   const first = await frame(0);
   assert.equal(first.count, 3, 'native CSS animates three drum faces');
-  assert.deepEqual(first.words, ['agents.']);
-  for (const [time, word] of [[3100, 'developers.'], [6200, 'CI pipeline.'], [9300, 'agents.']]) {
+  assert.deepEqual(first.words, ['AI agents.']);
+  for (const [time, word] of [[3100, 'developers.'], [6200, 'CI pipelines.'], [9300, 'AI agents.']]) {
     const next = await frame(time);
     assert.deepEqual(next.words, [word]);
     assert.equal(next.width, first.width, 'word changes reserve the longest width');
@@ -38,14 +44,14 @@ async function verifyRollingHeadline(page) {
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
   assert.equal((await frame(0)).count, 3, 'the headline showcases the drum even with reduced motion enabled');
   assert.deepEqual((await frame(3100)).words, ['developers.']);
-  assert.deepEqual((await frame(6200)).words, ['CI pipeline.']);
+  assert.deepEqual((await frame(6200)).words, ['CI pipelines.']);
   assert.ok(await page.$eval('.headline-motion', label => label.getClientRects().length), 'Pause stays available with reduced motion');
   await page.focus('[data-headline-pause]');
   await page.keyboard.press('Space');
   assert.equal(await page.evaluate(() => [...document.querySelectorAll('h1 .headline-drum')].filter(element => element.getClientRects().length).every(element => element.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused'))), true);
   await page.keyboard.press('Space');
   const accessibility = await (await page.createCDPSession()).send('Accessibility.getFullAXTree');
-  assert.ok(accessibility.nodes.some(node => node.role?.value === 'heading' && node.name?.value === 'localcloud is cloud for agents.'), 'accessible heading stays stable');
+  assert.ok(accessibility.nodes.some(node => node.role?.value === 'heading' && node.name?.value === 'A local cloud for AI agents.'), 'accessible heading stays stable');
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
 }
 
