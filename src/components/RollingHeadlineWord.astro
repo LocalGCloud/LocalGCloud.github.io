@@ -6,6 +6,13 @@
 </span>
 
 <script>
+  function syncHeadlineMotion() {
+    const roll = new URLSearchParams(location.search).get('headline') === 'roll';
+    document.documentElement.toggleAttribute('data-headline-roll', roll);
+  }
+
+  syncHeadlineMotion();
+  document.addEventListener('lc:page-synchronized', syncHeadlineMotion);
   window.addEventListener('pageshow', event => {
     if (!event.persisted) return;
     for (const drum of document.querySelectorAll('.headline-drum')) {
@@ -18,35 +25,38 @@
   .headline-drum { display: inline-grid; line-height: 1.25; }
   .headline-drum__face { display: none; }
 
-  @media (prefers-reduced-motion: no-preference) {
-    :global(html:not([data-audience="agents"])) .headline-drum {
-      position: relative;
-      overflow: hidden;
-      perspective: 700px;
-      padding-inline: .12em;
-      --roll-easing: cubic-bezier(.22,.8,.24,1);
-    }
-    :global(html:not([data-audience="agents"])) .headline-drum__label {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-    :global(html:not([data-audience="agents"])) .headline-drum__face {
-      display: block;
-      grid-area: 1 / 1;
-      white-space: pre;
-      text-align: start;
-      backface-visibility: hidden;
-      animation-duration: 10s, 15s;
-      animation-timing-function: var(--roll-easing);
-      animation-delay: 0s, var(--roll-delay);
-      animation-fill-mode: forwards, none;
-      animation-iteration-count: 1, infinite;
-    }
-    .headline-drum__face::before { content: attr(data-word); }
+  :global(html:not([data-audience="agents"])) .headline-drum {
+    position: relative;
+    overflow: hidden;
+    perspective: 700px;
+    padding-inline: .12em;
+    --roll-easing: cubic-bezier(.22,.8,.24,1);
+  }
+  :global(html:not([data-audience="agents"])) .headline-drum__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  :global(html:not([data-audience="agents"])) .headline-drum__face {
+    display: block;
+    grid-area: 1 / 1;
+    white-space: pre;
+    text-align: start;
+    backface-visibility: hidden;
+    animation-duration: 10s, 15s;
+    animation-timing-function: var(--roll-easing);
+    animation-delay: 0s, var(--roll-delay);
+    animation-fill-mode: forwards, none;
+    animation-iteration-count: 1, infinite;
+  }
+  .headline-drum__face::before { content: attr(data-word); }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html:not([data-headline-roll])) .headline-drum__label { all: unset; }
+    :global(html:not([data-headline-roll])) .headline-drum__face { display: none; }
   }
 
   .headline-drum__face:nth-child(2) { animation-name: headline-agents-intro, headline-roll; --roll-delay: 9s; }

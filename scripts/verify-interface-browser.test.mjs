@@ -177,6 +177,12 @@ test('shared dialogs, rolling headline, narrow search and automatic weather work
   await verifyRollingHeadline(page);
   await page.goto(base + '/?audience=agents', { waitUntil: 'load' });
   assert.equal(await page.$eval('h1', heading => heading.getAnimations({ subtree: true }).length), 0, 'agent document stays static');
+  await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  await page.goto(base + '/?view=classic&audience=humans&headline=roll', { waitUntil: 'load' });
+  await page.waitForFunction(() => [...document.querySelectorAll('h1 [data-word="developers."]')].some(face => face.getClientRects().length && Number(getComputedStyle(face).opacity) > .99));
+  await page.goto(base + '/?view=classic', { waitUntil: 'load' });
+  assert.equal(await page.$eval('h1', heading => heading.getAnimations({ subtree: true }).length), 0, 'the animation override stays with its URL');
+  await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
   await page.setJavaScriptEnabled(false);
   await page.goto(base + '/?view=classic', { waitUntil: 'load' });
   await verifyRollingHeadline(page);
