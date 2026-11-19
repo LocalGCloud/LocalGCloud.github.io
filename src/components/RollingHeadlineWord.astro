@@ -5,44 +5,72 @@
   <span class="headline-drum__face" aria-hidden="true" data-word="CI pipelines."></span>
 </span>
 
+<script>
+  window.addEventListener('pageshow', event => {
+    if (!event.persisted) return;
+    for (const drum of document.querySelectorAll('.headline-drum')) {
+      for (const animation of drum.getAnimations({ subtree: true })) animation.currentTime = 0;
+    }
+  });
+</script>
+
 <style>
   .headline-drum { display: inline-grid; line-height: 1.25; }
   .headline-drum__face { display: none; }
 
-  /* This small headline plays for human visitors; the adjacent checkbox pauses it. */
-  :global(html:not([data-audience="agents"])) .headline-drum {
-    position: relative;
-    overflow: hidden;
-    perspective: 700px;
-    padding-inline: .12em;
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html:not([data-audience="agents"])) .headline-drum {
+      position: relative;
+      overflow: hidden;
+      perspective: 700px;
+      padding-inline: .12em;
+      --roll-easing: cubic-bezier(.22,.8,.24,1);
+    }
+    :global(html:not([data-audience="agents"])) .headline-drum__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    :global(html:not([data-audience="agents"])) .headline-drum__face {
+      display: block;
+      grid-area: 1 / 1;
+      white-space: pre;
+      text-align: start;
+      backface-visibility: hidden;
+      animation-duration: 10s, 15s;
+      animation-timing-function: var(--roll-easing);
+      animation-delay: 0s, var(--roll-delay);
+      animation-fill-mode: forwards, none;
+      animation-iteration-count: 1, infinite;
+    }
+    .headline-drum__face::before { content: attr(data-word); }
   }
-  :global(html:not([data-audience="agents"])) .headline-drum__label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-  :global(html:not([data-audience="agents"])) .headline-drum__face {
-    display: block;
-    grid-area: 1 / 1;
-    white-space: pre;
-    text-align: start;
-    backface-visibility: hidden;
-    animation: headline-roll 9.3s cubic-bezier(.22,.8,.24,1) infinite both;
-    animation-delay: var(--drum-delay, -.7s);
-  }
-  /* Decorative faces leave the source heading and Markdown text unchanged. */
-  .headline-drum__face::before { content: attr(data-word); }
-  .headline-drum__face:nth-child(3) { --drum-delay: 2.4s; }
-  .headline-drum__face:nth-child(4) { --drum-delay: 5.5s; }
-  :global(.field-hero:has([data-headline-pause]:checked)) .headline-drum__face { animation-play-state: paused; }
 
-  /* Each face holds for 2.4s and rolls for .7s; all three reserve their full width. */
+  .headline-drum__face:nth-child(2) { animation-name: headline-agents-intro, headline-roll; --roll-delay: 9s; }
+  .headline-drum__face:nth-child(3) { animation-name: headline-developers-intro, headline-roll; --roll-delay: 14s; }
+  .headline-drum__face:nth-child(4) { animation-name: headline-ci-intro, headline-roll; --roll-delay: 19s; }
+
+  /* Rolls start at 2s, 5s, and 9s. Then each face enters every 5s in turn. */
+  @keyframes headline-agents-intro {
+    0%, 20% { transform: rotateX(0deg) translateZ(0); opacity: 1; }
+    27%, 100% { transform: rotateX(90deg) translateZ(.55em); opacity: 0; }
+  }
+  @keyframes headline-developers-intro {
+    0%, 20% { transform: rotateX(-90deg) translateZ(.55em); opacity: 0; }
+    27%, 50% { transform: rotateX(0deg) translateZ(0); opacity: 1; }
+    57%, 100% { transform: rotateX(90deg) translateZ(.55em); opacity: 0; }
+  }
+  @keyframes headline-ci-intro {
+    0%, 50% { transform: rotateX(-90deg) translateZ(.55em); opacity: 0; }
+    57%, 90% { transform: rotateX(0deg) translateZ(0); opacity: 1; }
+    97%, 100% { transform: rotateX(90deg) translateZ(.55em); opacity: 0; }
+  }
   @keyframes headline-roll {
     0% { transform: rotateX(-90deg) translateZ(.55em); opacity: 0; }
-    7.5269%, 33.3333% { transform: rotateX(0deg) translateZ(0); opacity: 1; }
-    40.8602%, 100% { transform: rotateX(90deg) translateZ(.55em); opacity: 0; }
+    4.6667%, 33.3333% { transform: rotateX(0deg) translateZ(0); opacity: 1; }
+    38%, 100% { transform: rotateX(90deg) translateZ(.55em); opacity: 0; }
   }
 </style>

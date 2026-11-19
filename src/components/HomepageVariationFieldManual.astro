@@ -18,7 +18,7 @@ import AgentRibbonSpecs from './AgentRibbonSpecs.astro';
 import { availableServiceCount, serviceCatalogGroups } from '../data/services';
 import InstallationMethods from './InstallationMethods.astro';
 import { docsContract } from '../data/docs-contract';
-import { freeUsePolicy, productFacts } from '../data/productFacts';
+import { productFacts } from '../data/productFacts';
 import { agentOverview } from '../data/agentModeExamples';
 import { homepageFaq } from '../data/homepageFaq';
 import {
@@ -33,6 +33,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
 const heroIntro = 'Run Google Cloud Services locally on your machine so your agents can build, test, and debug cloud apps locally.';
 
+const heroBenefits = ['$0 cost', 'No setup', 'Fast development'];
 const classicStartCommand = 'lc doctor\nlc start --local-only';
 const telemetryVariable = `${docsContract.privacy.runtimeTelemetry.disableVariable}=false`;
 
@@ -120,11 +121,11 @@ for (const column of atlasColumns) {
     <section class="field-hero">
       <div class="field-hero__copy">
         <div class="field-hero__headline-wrapper">
-          <h1 class="field-hero__headline" data-content-update>
+          <h1 class="field-hero__headline">
             <span class="field-hero__headline-main" data-classic-copy>A local cloud for</span>{' '}
             <span class="field-hero__headline-tag" data-classic-copy><RollingHeadlineWord /></span>
           </h1>
-          <p class="field-intro" data-classic-copy data-content-update>{heroIntro}</p>
+          <p class="field-intro" data-classic-copy>{heroIntro}</p>
           <p class="field-intro--agent" data-agent-only>
             {agentOverview.description}
           </p>
@@ -132,18 +133,17 @@ for (const column of atlasColumns) {
             {agentOverview.facts.map(item => <div><dt>{item.label}</dt><dd>{item.value}</dd></div>)}
           </dl>
         </div>
-        <p class="mobile-intro" data-mobile-only data-pagefind-ignore data-content-update>{heroIntro}</p>
+        <p class="mobile-intro" data-mobile-only data-pagefind-ignore>{heroIntro}</p>
         <template data-desktop-headline data-desktop-copy data-pagefind-ignore>
           <span data-desktop-copy data-pagefind-ignore>A local cloud for <span class="field-hero__desktop-accent"><RollingHeadlineWord /></span></span>
         </template>
-        <p class="field-intro" data-desktop-copy data-pagefind-ignore data-content-update>{heroIntro}</p>
-        <p class="hero-facts" data-content-update>{availableServiceCount} services in one Docker container. No GCP account, credentials, or billing.</p>
-        <p class="hero-facts" data-content-update><a href={`${base}docs/licensing/#free-for-open-source-projects`}>{freeUsePolicy.headline}.</a></p>
-        <label class="headline-motion" data-pagefind-ignore data-markdown-skip>
-          <input type="checkbox" data-headline-pause />
-          Pause heading animation
-        </label>
-        <figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore><img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="lazy" fetchpriority="high" decoding="async" /></figure>
+        <p class="field-intro" data-desktop-copy data-pagefind-ignore>{heroIntro}</p>
+        <p class="hero-facts" data-content-update>No GCP account, credentials, or billing.</p>
+        <p class="hero-facts" data-content-update><a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free to use</a></p>
+        <figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore>
+          <img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="lazy" fetchpriority="high" decoding="async" />
+          <figcaption class="hero-benefits" data-content-update>{heroBenefits.map(benefit => <span>{benefit}</span>)}</figcaption>
+        </figure>
 
         <div class="field-actions">
           <a href={`${base}docs/#install-the-cli`} class="site-button site-button--primary" data-classic-copy data-analytics-label="hero-start-free"><span data-classic-copy>Quick Start</span></a>
@@ -192,6 +192,7 @@ for (const column of atlasColumns) {
                 fetchpriority="high"
                 decoding="async"
             />
+            <figcaption class="hero-benefits" data-content-update>{heroBenefits.map(benefit => <span>{benefit}</span>)}</figcaption>
           </figure>
         </div>
 
@@ -205,6 +206,7 @@ for (const column of atlasColumns) {
       <template data-desktop-hero data-desktop-copy data-pagefind-ignore>
         <figure class="desktop-hero-art" data-desktop-copy data-pagefind-ignore>
           <img src={desktopHero.src} srcset={desktopHero.srcSet.attribute} sizes={desktopHeroOptions.sizes} width="1800" height="600" alt="A LocalCloud laptop on a desk, connected to local Google Cloud service icons, with notebooks, a mug, books and a plant." loading="eager" fetchpriority="high" decoding="async" />
+          <figcaption class="hero-benefits" data-content-update>{heroBenefits.map(benefit => <span>{benefit}</span>)}</figcaption>
         </figure>
       </template>
       <div class="desktop-hero-summary" data-desktop-copy data-pagefind-ignore>
@@ -522,21 +524,6 @@ for (const column of atlasColumns) {
     display: block;
   }
 
-  .headline-motion { display: none; }
-  :global(html:not([data-audience="agents"])) .headline-motion {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .5rem;
-    width: fit-content;
-    min-height: 2.75rem;
-    margin: .5rem auto 0;
-    font-size: .75rem;
-    color: var(--text-2);
-    cursor: pointer;
-  }
-  .headline-motion input { accent-color: var(--accent); }
-
   .field-hero__headline-main {
     line-height: 1.05;
   }
@@ -584,6 +571,31 @@ for (const column of atlasColumns) {
     color: var(--text-2);
     font-size: var(--fs-small);
     text-wrap: pretty;
+  }
+
+  .hero-facts + .hero-facts {
+    margin-bottom: .85rem;
+  }
+
+  .hero-benefits {
+    position: absolute;
+    inset: auto .5rem .5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .25rem .5rem;
+    margin: 0;
+    font-size: .75rem;
+    font-weight: 600;
+  }
+
+  .hero-benefits span {
+    padding: .15rem .55rem;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--accent-strong);
+    white-space: nowrap;
   }
 
   .field-hero .field-intro {

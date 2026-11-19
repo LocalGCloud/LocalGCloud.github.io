@@ -644,7 +644,7 @@ else {
 }
 const homepageHero = homepageMain.match(/<section\b[^>]*class="field-hero"[\s\S]*?<\/section>/)?.[0] ?? '';
 const homepageFacts = visibleText(homepageHero);
-for (const fact of [`${availableServiceCount} services in one Docker container.`, 'No GCP account, credentials, or billing.', 'Free for open-source projects and individual developers.']) {
+for (const fact of ['No GCP account, credentials, or billing.', 'Free to use']) {
   if (!homepageFacts.includes(fact)) errors.push(`the homepage hero must include "${fact}"`);
 }
 const installCode = new RegExp(`<code\\b[^>]*>${productFacts.homebrewInstallCommand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</code>`);

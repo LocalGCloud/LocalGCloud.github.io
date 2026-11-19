@@ -14,9 +14,20 @@ async function verifyRollingHeadline(page) {
   const visibleCopy = await page.$$eval('.field-hero :is(.field-intro, .mobile-intro, .hero-facts)', elements => elements.filter(element => element.getClientRects().length).map(element => element.textContent.trim()));
   assert.equal(visibleCopy.length, 3, 'show one introduction, one facts line, and the free-use terms');
   assert.match(visibleCopy[0], /Run Google Cloud Services locally/);
-  assert.match(visibleCopy[1], /services in one Docker container\. No GCP account, credentials, or billing\./);
-  assert.equal(visibleCopy[2], 'Free for open-source projects and individual developers.');
-  assert.equal(await page.$eval('.hero-facts a', link => link.hash), '#free-for-open-source-projects');
+  assert.equal(visibleCopy[1], 'No GCP account, credentials, or billing.');
+  assert.equal(visibleCopy[2], 'Free to use');
+  assert.equal(await page.$eval('.hero-facts a', link => link.pathname + link.hash), '/docs/licensing/#free-for-open-source-projects');
+  assert.equal(await page.$('[data-headline-pause]'), null);
+  const overlay = await page.$$eval('.hero-benefits', captions => {
+    const caption = captions.find(element => element.getClientRects().length);
+    const bounds = caption.getBoundingClientRect();
+    const image = caption.previousElementSibling.getBoundingClientRect();
+    return {
+      labels: [...caption.children].map(badge => badge.textContent),
+      overImage: bounds.left >= image.left && bounds.right <= image.right && bounds.top >= image.top && bounds.bottom <= image.bottom && image.bottom - bounds.bottom < 16,
+    };
+  });
+  assert.deepEqual(overlay, { labels: ['$0 cost', 'No setup', 'Fast development'], overImage: true });
   const frame = time => page.evaluate(time => {
     const drum = [...document.querySelectorAll('h1 .headline-drum')].find(element => element.getClientRects().length);
     const animations = drum.getAnimations({ subtree: true });
@@ -30,26 +41,17 @@ async function verifyRollingHeadline(page) {
     };
   }, time);
   const first = await frame(0);
-  assert.equal(first.count, 3, 'native CSS animates three drum faces');
+  assert.equal(first.count, 6, 'each face has an intro and a steady loop');
   assert.deepEqual(first.words, ['AI agents.']);
-  for (const [time, word] of [[3100, 'developers.'], [6200, 'CI pipelines.'], [9300, 'AI agents.']]) {
+  for (const [time, word] of [[1950, 'AI agents.'], [2750, 'developers.'], [4950, 'developers.'], [5750, 'CI pipelines.'], [8950, 'CI pipelines.'], [9750, 'AI agents.'], [13950, 'AI agents.'], [14750, 'developers.'], [18950, 'developers.'], [19750, 'CI pipelines.'], [23950, 'CI pipelines.'], [24750, 'AI agents.']]) {
     const next = await frame(time);
-    assert.deepEqual(next.words, [word]);
+    assert.deepEqual(next.words, [word], `heading face at ${time}ms`);
     assert.equal(next.width, first.width, 'word changes reserve the longest width');
   }
-  assert.notEqual((await frame(2750)).transform, first.transform, 'the transition rotates in 3D');
-  await page.click('[data-headline-pause]');
-  assert.equal(await page.evaluate(() => [...document.querySelectorAll('h1 .headline-drum')].filter(element => element.getClientRects().length).every(element => element.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused'))), true);
-  await page.click('[data-headline-pause]');
+  assert.notEqual((await frame(2100)).transform, first.transform, 'the transition rotates in 3D');
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
-  assert.equal((await frame(0)).count, 3, 'the headline showcases the drum even with reduced motion enabled');
-  assert.deepEqual((await frame(3100)).words, ['developers.']);
-  assert.deepEqual((await frame(6200)).words, ['CI pipelines.']);
-  assert.ok(await page.$eval('.headline-motion', label => label.getClientRects().length), 'Pause stays available with reduced motion');
-  await page.focus('[data-headline-pause]');
-  await page.keyboard.press('Space');
-  assert.equal(await page.evaluate(() => [...document.querySelectorAll('h1 .headline-drum')].filter(element => element.getClientRects().length).every(element => element.getAnimations({ subtree: true }).every(animation => animation.playState === 'paused'))), true);
-  await page.keyboard.press('Space');
+  assert.equal((await frame(3100)).count, 0, 'reduced motion keeps the heading static');
+  assert.equal(await page.$eval('h1', heading => heading.innerText.trim().replace(/\s+/g, ' ')), 'A local cloud for AI agents.');
   const accessibility = await (await page.createCDPSession()).send('Accessibility.getFullAXTree');
   assert.ok(accessibility.nodes.some(node => node.role?.value === 'heading' && node.name?.value === 'A local cloud for AI agents.'), 'accessible heading stays stable');
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
@@ -88,6 +90,12 @@ test('shared dialogs, rolling headline, narrow search and automatic weather work
   await page.goto(base + '/', { waitUntil: 'load' });
   await verifyRollingHeadline(page);
   await page.waitForSelector('.desktop-view.desktop-ready');
+  assert.equal(await page.evaluate(() => {
+    const animations = document.querySelector('h1').getAnimations({ subtree: true });
+    animations.forEach(animation => { animation.currentTime = 14_750; });
+    window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }));
+    return animations.length > 0 && animations.every(animation => animation.currentTime === 0);
+  }), true, 'a restored visit restarts the intro cadence');
   // Chromium can expose browser-chrome traversal as body focus. Native inertness
   // must prevent every actual page control outside the modal from taking focus.
   const inside = selector => page.$eval(selector, element => element.contains(document.activeElement) || element.matches(':modal') && document.activeElement === document.body);
