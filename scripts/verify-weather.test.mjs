@@ -30,7 +30,7 @@ test('missing/invalid edge location never triggers an upstream request or accept
   let calls = 0;
   for (const cf of [undefined, {}, { latitude: '', longitude: '' }, { latitude: 'NaN', longitude: 2 }, { latitude: 100, longitude: 0 }]) {
     const received = await handleWeather(request(cf), () => { calls++; }, memoryCache(), now);
-    assert.equal((await received.json()).theme, 'off');
+    assert.deepEqual(await received.json(), { theme: 'off', expiresAt: now + 1800000, unavailable: true });
     assert.match(received.headers.get('Cache-Control'), /no-store/);
   }
   assert.equal(calls, 0);
@@ -65,7 +65,9 @@ test('weather failures are cached and concurrent requests share one lookup', asy
   const send = async () => { calls++; await gate; throw Error('offline'); };
   const pending = [handleWeather(request(cf), send, cache, now), handleWeather(request(cf), send, cache, now)];
   await new Promise(setImmediate); release();
-  for (const result of await Promise.all(pending)) assert.equal((await result.json()).theme, 'off');
+  for (const result of await Promise.all(pending)) {
+    assert.deepEqual(await result.json(), { theme: 'off', expiresAt: now + 300000, unavailable: true });
+  }
   assert.equal(calls, 1);
   await handleWeather(request(cf), send, cache, now + 1000);
   assert.equal(calls, 1);
@@ -95,7 +97,7 @@ function desktop({ theme = 'auto', reduced = false, transport = async () => Resp
     localStorage: { getItem: key => { if (blocked) throw Error('blocked'); return stored.get(key); }, setItem: (key, value) => { if (blocked) throw Error('blocked'); stored.set(key, value); } },
     MutationObserver: class { observe() {} disconnect() {} }, AbortController, Date, Math, fetch: transport, innerWidth: 1280, innerHeight: 720, devicePixelRatio: 1,
     requestAnimationFrame(fn) { const id = ++sequence;frames.set(id, fn);return id; }, cancelAnimationFrame: id => frames.delete(id),
-    setTimeout(fn) { const id = ++sequence;timers.set(id, fn);return id; }, clearTimeout: id => timers.delete(id),
+    setTimeout(fn, delay) { const id = ++sequence;timers.set(id, { fn, delay });return id; }, clearTimeout: id => timers.delete(id),
   };
   const source = readFileSync(new URL('../src/scripts/weather.mjs', import.meta.url), 'utf8').replace(/^export /gm, '');
   runInNewContext(source, context);context.initDesktopWeather(menu);initDesktopPopups(document);
@@ -126,6 +128,15 @@ test('stop cancels pending automatic weather and a late reply cannot reactivate 
   assert.equal(page.root.dataset.desktopWeather, undefined);
   assert.equal(page.canvases().length, 0);
   assert.equal(page.frames.size, 0);
+});
+
+test('automatic mode reports an unavailable forecast and retries at the Worker expiry', async () => {
+  const page = desktop({ transport: async () => Response.json({ theme: 'off', unavailable: true, expiresAt: Date.now() + 300000 }) });
+  await new Promise(setImmediate);
+  assert.match(page.fields['[data-weather-status]'].textContent, /Local weather unavailable/);
+  assert.equal(page.root.dataset.desktopWeather, undefined);
+  const [{ delay }] = page.timers.values();
+  assert.ok(delay > 295000 && delay <= 300000, 'five-minute Worker retry is honored');
 });
 
 test('manual themes respect reduced motion, stop completely, and detach from agent view', async () => {
@@ -216,7 +227,7 @@ test('cold-start weather waits for page load, the delay and idle time, and skips
     const windowEvents = new Map(), timers = [], idle = [], imports = [];
     const context = {
       document: { readyState: loaded ? 'complete' : 'loading', documentElement: { dataset: { audience, siteView: 'desktop' } }, addEventListener() {}, querySelector: () => audience === 'humans' ? { dataset: { weather: '/_astro/weather.mjs /_astro/weather.css' } } : null },
-      window: { addEventListener: (name, fn) => windowEvents.set(name, fn), requestIdleCallback: fn => { idle.push(fn); return 1; } },
+      window: { addEventListener: (name, fn) => windowEvents.set(name, fn), requestIdleCallback: (fn, options) => { idle.push({ fn, timeout: options.timeout }); return 1; } },
       setTimeout: (fn, delay) => { timers.push({ fn, delay }); }, console,
       loadModule: async path => { imports.push(path); return { initDesktopWeather() {} }; },
     };
@@ -227,7 +238,10 @@ test('cold-start weather waits for page load, the delay and idle time, and skips
     assert.equal(timers[0].delay, 1500);
     assert.equal(imports.length, 0);
     timers[0].fn();assert.equal(imports.length, 0);
-    idle[0]();await new Promise(setImmediate);
+    assert.equal(idle.length, 1);
+    assert.equal(idle[0].timeout, 2000);
+    idle[0].fn();
+    await new Promise(setImmediate);
     assert.equal(imports.length, audience === 'humans' ? 1 : 0);
   }
 });

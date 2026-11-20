@@ -71,6 +71,17 @@ const routes = [
 
   <section class="site-section site-section--tight">
     <div class="container container--narrow">
+      <section class="contact-compose site-panel" id="contact-form" aria-labelledby="contact-form-title">
+        <h2 id="contact-form-title" data-content-update>Talk to a human</h2>
+        <p data-content-update>Ask about LocalCloud, licensing, or working together. Write a message below and send it from your email app.</p>
+        <form class="contact-compose__form ph-no-capture" method="post" data-contact-form hidden>
+          <label>Subject <input name="subject" required maxlength="120" /></label>
+          <label>Message <textarea name="message" required maxlength="2000" rows="5"></textarea></label>
+          <button type="submit" class="site-button site-button--primary" data-content-update>Open email draft</button>
+          <p role="status" data-contact-status></p>
+        </form>
+        <p>Or email <a href={mailto(productFacts.contactEmail)} data-contact-email>{productFacts.contactEmail}</a>.</p>
+      </section>
       <dl class="contact-routes">
         {routes.map((route) => (
           <div class="contact-routes__item site-panel">
@@ -90,7 +101,39 @@ const routes = [
   </section>
 </LandingLayout>
 
+<script>
+  import { initContactForm } from '../scripts/contact-form.mjs';
+  initContactForm();
+  document.addEventListener('lc:page-mounted', initContactForm);
+</script>
+
 <style>
+  .contact-compose {
+    display: grid;
+    gap: .85rem;
+    margin-bottom: 1.5rem;
+    padding: clamp(1.1rem, 4vw, 1.75rem);
+    scroll-margin-block-start: calc(4.5rem + env(safe-area-inset-top, 0px));
+  }
+
+  :global(.desktop-view) .contact-compose { scroll-margin-block-start: 1rem; }
+  .contact-compose h2 { margin: 0; }
+  .contact-compose a { color: var(--accent-strong); text-decoration: underline; }
+  .contact-compose__form { display: grid; gap: .85rem; justify-items: start; }
+  .contact-compose__form[hidden], [data-contact-status]:empty { display: none; }
+  .contact-compose__form label { display: grid; gap: .35rem; width: 100%; font-weight: 600; }
+  .contact-compose__form :is(input, textarea) {
+    width: 100%;
+    padding: .6rem .75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: .5rem;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-weight: 400;
+  }
+  .contact-compose__form textarea { resize: vertical; }
+
   .contact-routes {
     display: grid;
     gap: 0.85rem;

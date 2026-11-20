@@ -181,11 +181,12 @@ test('the copy loader accepts the exact local dev module only in development', (
   const source = [...read('../src/layouts/BaseLayout.astro').matchAll(/<script\b[^>]*data-critical-bootstrap[^>]*>([\s\S]*?)<\/script>/g)].map(match => match[1]).find(code => code.includes('.copy-btn[data-copy-script]'));
   for (const [copyDevelopment, asset, expected] of [[true, '/src/scripts/copy-buttons.mjs', 1], [false, '/src/scripts/copy-buttons.mjs', 0], [true, 'https://example.com/copy-buttons.mjs', 0], [true, '/src/scripts/unrelated.mjs', 0], [false, '/_astro/copy-buttons.js', 1]]) {
     const appended = [];
-    runInNewContext(source, { copyDevelopment, URL, window: { addEventListener() {} }, location: new URL('http://localhost:4321/'), document: {
+    runInNewContext(source, { copyDevelopment, pageInteractions: '/_astro/site-interactions.js', URL, window: { addEventListener() {} }, location: new URL('http://localhost:4321/'), document: {
       documentElement: { dataset: { audience: 'humans' } },
       querySelector: selector => selector === '[data-desktop-shell]' ? { dataset: { base: '/' } } : { dataset: { copyScript: asset } },
       createElement: () => ({}), head: { append: script => appended.push(script) }, addEventListener() {},
     } });
+    assert.equal(appended.shift().src, '/_astro/site-interactions.js');
     assert.equal(appended.length, expected, `${copyDevelopment}: ${asset}`);
   }
 });
@@ -250,7 +251,8 @@ test('agent controller loads once through the trusted module loader and retries 
   const events = new Map(), windowEvents = new Map(), loaded = [];
   const document = {documentElement:{dataset:{audience:'humans'}},querySelector:()=>null,
     createElement:()=>({remove(){}}),head:{append(script){loaded.push(script);}},addEventListener:(name,fn)=>events.set(name,fn)};
-  runInNewContext(source,{document,URL,agentDocumentScript:'/_astro/agent-document.test.mjs',location:{href:'https://local.cloud/'},window:{addEventListener:(name,fn)=>windowEvents.set(name,fn)}});
+  runInNewContext(source,{document,URL,agentDocumentScript:'/_astro/agent-document.test.mjs',pageInteractions:'/_astro/site-interactions.js',location:{href:'https://local.cloud/'},window:{addEventListener:(name,fn)=>windowEvents.set(name,fn)}});
+  assert.equal(loaded.shift().src, '/_astro/site-interactions.js');
   assert.equal(loaded.length,0,'human visits fetch no agent controller');
   document.documentElement.dataset.audience='agents';windowEvents.get('lc:audience-change')();
   assert.equal(loaded.length,1);assert.equal(loaded[0].type,'module');assert.equal(loaded[0].src,'https://local.cloud/_astro/agent-document.test.mjs');

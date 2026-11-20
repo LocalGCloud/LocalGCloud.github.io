@@ -474,7 +474,8 @@ test('copy controls also initialize after desktop navigation and retry a failed 
     createElement() { return { remove() {} }; }, head: { append(script) { loaded.push(script); } },
     addEventListener(event, handler) { listeners.set(event, handler); },
   };
-  runInNewContext(source, { document, window: {addEventListener(){}}, URL, location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325' } });
+  runInNewContext(source, { document, pageInteractions: '/_astro/site-interactions.js', window: {addEventListener(){}}, URL, location: { href: 'http://127.0.0.1:4325/', origin: 'http://127.0.0.1:4325' } });
+  assert.equal(loaded.shift().src, '/_astro/site-interactions.js');
   assert.equal(loaded.length, 0);
   mounted = true; listeners.get('astro:page-load')();
   assert.equal(loaded.length, 1);

@@ -412,9 +412,18 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
     </script>
 
     <template data-code-copy-template data-copy-script={copyScript}><CopyButton text="" label="Copy code" /></template>
-    <script is:inline data-critical-bootstrap define:vars={{ copyDevelopment: import.meta.env.DEV, agentDocumentScript }}>
+    <script is:inline data-critical-bootstrap data-interactions-bootstrap define:vars={{ copyDevelopment: import.meta.env.DEV, agentDocumentScript, pageInteractions }}>
       (() => {
         let loading = false;
+        // Match the trusted bootstrap used by the view modules under strict-dynamic.
+        const appendModule = (source, onError) => {
+          const script = document.createElement('script');
+          script.type = 'module';
+          script.src = source;
+          script.onerror = () => { onError?.(); script.remove(); };
+          document.head.append(script);
+        };
+        appendModule(pageInteractions);
         const loadCopyButtons = () => {
           if (document.documentElement.dataset.audience === 'agents' || !document.querySelector('pre > code, .copy-btn')) return;
           const source = document.querySelector('.copy-btn[data-copy-script], [data-code-copy-template]')?.dataset.copyScript;
@@ -424,10 +433,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
           const devSource = typeof copyDevelopment !== 'undefined' && copyDevelopment && url.pathname === base + 'src/scripts/copy-buttons.mjs';
           if (url.origin !== location.origin || !(url.pathname.startsWith(base + '_astro/') || devSource)) return;
           loading = true;
-          const script = document.createElement('script');
-          script.type = 'module'; script.src = url.href;
-          script.onerror = () => { loading = false; script.remove(); };
-          document.head.append(script);
+          appendModule(url.href, () => { loading = false; });
         };
         loadCopyButtons();
 
@@ -436,10 +442,7 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
         const loadAgentDocument = () => {
           if (document.documentElement.dataset.audience !== 'agents' || agentLoading) return;
           agentLoading = true;
-          const script = document.createElement('script');
-          script.type = 'module'; script.src = new URL(agentDocumentScript, location.href).href;
-          script.onerror = () => { agentLoading = false; script.remove(); };
-          document.head.append(script);
+          appendModule(new URL(agentDocumentScript, location.href).href, () => { agentLoading = false; });
         };
         loadAgentDocument();
         document.addEventListener('astro:page-load', () => { loadCopyButtons(); loadAgentDocument(); });
@@ -447,7 +450,5 @@ Astro.csp?.insertDirective("style-src-attr 'unsafe-inline'");
       })();
     </script>
 
-    {/* PostHog custom event tracking */}
-    <script is:inline type="module" src={pageInteractions}></script>
   </body>
 </html>

@@ -89,7 +89,7 @@ export function initDesktopWeather(menu) {
     }
     if(current!==revision||!human()||document.hidden)return;
     weather=forecast.theme;status.textContent=forecast.unavailable?'Local weather unavailable. Using the main theme.':'Local weather: '+names[weather]+'.';paint();
-    refresh=setTimeout(update,Math.max(1800000,forecast.expiresAt-Date.now()));
+    refresh=setTimeout(update,Math.max(1000,forecast.expiresAt-Date.now()));
   }
   const save = () => {
     try {localStorage.setItem('lc-desktop-weather',choice);localStorage.setItem('lc-weather-motion',paused?'pause':'play');localStorage.setItem('lc-weather-visitor',String(visitor));} catch {}

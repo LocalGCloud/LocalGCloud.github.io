@@ -1,0 +1,15 @@
+---
+import { demoVideoUrl, demoWatchUrl } from '../data/visitorShortcuts';
+import styles from '../styles/demo-player.css?url';
+---
+
+<dialog class="demo-player" data-demo-player data-styles={styles} data-video-src={demoVideoUrl} aria-labelledby="demo-title" data-pagefind-ignore>
+  <header>
+    <h2 id="demo-title">LocalCloud demo</h2>
+    <form method="dialog">
+      <button type="submit" autofocus aria-label="Close demo">×</button>
+    </form>
+  </header>
+  <video controls playsinline preload="none" width="1280" height="720" aria-labelledby="demo-title"></video>
+  <p><a href={demoWatchUrl} target="_blank" rel="noopener noreferrer">Watch on Featurette ↗</a></p>
+</dialog>

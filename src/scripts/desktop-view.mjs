@@ -164,7 +164,7 @@ if (typeof document !== 'undefined') {
   };
   document.addEventListener('toggle', event => { if (event.target.hasAttribute('data-weather')) weather(); }, true);
   window.addEventListener('lc:audience-change', weather);
-  const weatherLater = () => setTimeout(() => window.requestIdleCallback?.(weather) ?? weather(), 1500);
+  const weatherLater = () => setTimeout(() => window.requestIdleCallback?.(weather, { timeout: 2000 }) ?? weather(), 1500);
   if (document.readyState === 'complete') { if (documentRoot.dataset.siteView === 'desktop') weatherLater(); }
   else window.addEventListener('load', weatherLater);
   document.addEventListener('click', switchView);

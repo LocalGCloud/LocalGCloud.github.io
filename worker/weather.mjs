@@ -3,12 +3,16 @@ const inflight = new Map();
 const response = body => Response.json(body, { headers: { 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff' } });
 
 export function forecastTheme(data, latitude, now = Date.now()) {
+  return selectTheme(data, latitude, now) ?? 'off';
+}
+
+function selectTheme(data, latitude, now) {
   const rows = data?.properties?.timeseries;
-  if (!Array.isArray(rows)) return 'off';
+  if (!Array.isArray(rows)) return null;
   const row = rows.reduce((nearest, item) => Number.isFinite(Date.parse(item?.time)) && (!nearest || Math.abs(Date.parse(item.time) - now) < Math.abs(Date.parse(nearest.time) - now)) ? item : nearest, null);
-  if (!row || Math.abs(Date.parse(row.time) - now) > 7200000) return 'off';
+  if (!row || Math.abs(Date.parse(row.time) - now) > 7200000) return null;
   const symbol = row.data?.next_1_hours?.summary?.symbol_code ?? row.data?.next_6_hours?.summary?.symbol_code;
-  if (typeof symbol !== 'string') return 'off';
+  if (typeof symbol !== 'string' || !symbol) return null;
   if (/snow|sleet/.test(symbol)) return 'snow';
   if (/rain/.test(symbol)) return 'rain';
   // Leaves are seasonal decoration; precipitation always takes precedence.
@@ -22,13 +26,20 @@ export async function handleWeather(request, transport = fetch, cache = globalTh
   if (request.method !== 'GET') return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET', 'Cache-Control': 'no-store' } });
   const rawLat = request.cf?.latitude, rawLon = request.cf?.longitude;
   const lat = Number(rawLat), lon = Number(rawLon);
-  if (rawLat == null || rawLat === '' || rawLon == null || rawLon === '' || !Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return response({ theme: 'off', expiresAt: now + 1800000 });
+  if (rawLat == null || rawLat === '' || rawLon == null || rawLon === '' || !Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return response({ theme: 'off', expiresAt: now + 1800000, unavailable: true });
   // Share forecasts for a coarse area; never forward the visitor IP or exact coordinates.
   const latitude = Math.round(lat * 4) / 4, longitude = Math.round(lon * 4) / 4;
   const key = new Request(new URL(`/__weather-cache/${latitude}/${longitude}`, request.url));
   let cached;
   try { cached = await (await cache?.match(key))?.json(); } catch {}
-  const present = record => response({ theme: forecastTheme(record?.data, latitude, now), expiresAt: record?.expiresAt ?? now + 300000 });
+  const present = record => {
+    const theme = selectTheme(record?.data, latitude, now);
+    return response({
+      theme: theme ?? 'off',
+      expiresAt: record?.expiresAt ?? now + 300000,
+      ...(theme === null ? { unavailable: true } : {}),
+    });
+  };
   if (cached?.expiresAt > now) return present(cached);
   const area = `${latitude},${longitude}`;
   if (!inflight.has(area)) inflight.set(area, (async () => {

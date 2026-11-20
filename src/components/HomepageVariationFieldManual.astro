@@ -7,6 +7,8 @@ import agentIcon from '../../public/icons/personas/robot.svg?url';
 const desktopHero = await getImage(desktopHeroOptions);
 const mobileHero = await getImage(mobileHeroOptions);
 import MobileServiceLauncher from './MobileServiceLauncher.astro';
+import DemoPlayer from './DemoPlayer.astro';
+import { visitorShortcuts } from '../data/visitorShortcuts';
 import RollingHeadlineWord from './RollingHeadlineWord.astro';
 import ServiceIcon from './ServiceIcon.astro';
 import ServiceFilterBootstrap from './ServiceFilterBootstrap.astro';
@@ -31,6 +33,7 @@ import {
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
+const heroShortcuts = Object.values(visitorShortcuts(base));
 const heroIntro = 'Run Google Cloud Services locally on your machine so your agents can build, test, and debug cloud apps locally.';
 
 const heroBenefits = ['$0 cost', 'No setup', 'Fast development'];
@@ -138,11 +141,19 @@ for (const column of atlasColumns) {
           <span data-desktop-copy data-pagefind-ignore>A local cloud for <span class="field-hero__desktop-accent"><RollingHeadlineWord /></span></span>
         </template>
         <p class="field-intro" data-desktop-copy data-pagefind-ignore>{heroIntro}</p>
-        <p class="hero-facts" data-content-update>No GCP account, credentials, or billing.</p>
-        <p class="hero-facts" data-content-update><a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free to use</a></p>
+        <p class="hero-facts">No GCP account, credentials, or billing.</p>
+        <p class="hero-facts"><a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free to use</a></p>
+        <nav class="hero-shortcuts" aria-label="LocalCloud shortcuts" data-home-shortcuts data-human-only>
+          {heroShortcuts.map(({ label, href, icon, demo }) => (
+            <a href={href} data-open-demo={demo || undefined} aria-haspopup={demo ? 'dialog' : undefined}>
+              <img src={`${base}icons/desktop/${icon}`} width="24" height="24" alt="" />
+              <span data-content-update>{label}</span>
+            </a>
+          ))}
+        </nav>
         <figure class="mobile-hero-art" data-mobile-only data-pagefind-ignore>
           <img src={mobileHero.src} srcset={mobileHero.srcSet.attribute} sizes={mobileHeroOptions.sizes} width="800" height="267" alt="A laptop running LocalCloud on a desk, connected to local Google Cloud services." loading="lazy" fetchpriority="high" decoding="async" />
-          <figcaption class="hero-benefits" data-content-update>{heroBenefits.map(benefit => <span>{benefit}</span>)}</figcaption>
+          <figcaption class="hero-benefits">{heroBenefits.map(benefit => <span>{benefit}</span>)}</figcaption>
         </figure>
 
         <div class="field-actions">
@@ -192,7 +203,7 @@ for (const column of atlasColumns) {
                 fetchpriority="high"
                 decoding="async"
             />
-            <figcaption class="hero-benefits" data-content-update>{heroBenefits.map(benefit => <span>{benefit}</span>)}</figcaption>
+            <figcaption class="hero-benefits">{heroBenefits.map(benefit => <span>{benefit}</span>)}</figcaption>
           </figure>
         </div>
 
@@ -206,7 +217,7 @@ for (const column of atlasColumns) {
       <template data-desktop-hero data-desktop-copy data-pagefind-ignore>
         <figure class="desktop-hero-art" data-desktop-copy data-pagefind-ignore>
           <img src={desktopHero.src} srcset={desktopHero.srcSet.attribute} sizes={desktopHeroOptions.sizes} width="1800" height="600" alt="A LocalCloud laptop on a desk, connected to local Google Cloud service icons, with notebooks, a mug, books and a plant." loading="eager" fetchpriority="high" decoding="async" />
-          <figcaption class="hero-benefits" data-content-update>{heroBenefits.map(benefit => <span>{benefit}</span>)}</figcaption>
+          <figcaption class="hero-benefits">{heroBenefits.map(benefit => <span>{benefit}</span>)}</figcaption>
         </figure>
       </template>
       <div class="desktop-hero-summary" data-desktop-copy data-pagefind-ignore>
@@ -408,9 +419,39 @@ for (const column of atlasColumns) {
       </details>
     </section>
   </div>
+  <DemoPlayer />
 </main>
 
+<script>
+  import { mountVisitorShortcuts } from '../scripts/visitor-actions.mjs';
+  mountVisitorShortcuts();
+  document.addEventListener('lc:page-mounted', mountVisitorShortcuts);
+</script>
+
 <style>
+  .hero-shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-block: .75rem;
+  }
+
+  .hero-shortcuts a {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    min-height: 2.75rem;
+    padding: .25rem .5rem;
+    border: 1px solid var(--line);
+    border-radius: .65rem;
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 600;
+    font-size: .875rem;
+  }
+
+  .hero-shortcuts a:hover { border-color: var(--accent); background: var(--accent-soft); }
+  :global(.desktop-view) .hero-shortcuts[data-shortcuts-ready] { display: none; }
   .field-home {
     padding: 1.5rem 0 3rem;
     color: var(--text);

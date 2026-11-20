@@ -735,13 +735,16 @@ test('reveal setup uses observer snapshots and never hides initial viewport cont
   assert.deepEqual(unobserved, nodes, 'offscreen content reveals and stops observing when scrolled into view');
 });
 
-test('every page has no parser-blocking external scripts and loads interactions directly', () => {
+test('every page has no parser-blocking external scripts and loads interactions from a hashed bootstrap', () => {
   for (const path of walkHtml(distRoot)) {
     const html = readFileSync(path, 'utf8');
     for (const [, attrs] of html.matchAll(/<script\b([^>]*\bsrc="[^"]+"[^>]*)>/g)) {
       assert.ok(/\btype="module"|\b(?:async|defer)\b/.test(attrs), path + ': ' + attrs);
     }
-    assert.match(html, /<script\b[^>]*type="module"[^>]*src="\/_astro\/site-interactions\.[^"]+\.js"/, path);
+    const bootstrap = html.match(/<script\b[^>]*data-interactions-bootstrap[^>]*>([\s\S]*?)<\/script>/)?.[1];
+    assert.match(bootstrap ?? '', /\/_astro\/site-interactions\.[^"']+\.js/, path);
+    const hash = createHash('sha256').update(bootstrap).digest('base64');
+    assert.ok(html.includes(`'sha256-${hash}'`), `${path} allows its interactions bootstrap`);
   }
 });
 

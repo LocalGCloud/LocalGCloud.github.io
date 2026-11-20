@@ -57,6 +57,84 @@ async function verifyRollingHeadline(page) {
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
 }
 
+async function verifyVisitorShortcuts(browser, base) {
+  const page = await browser.newPage();
+  const errors = [];
+  let videoRequests = 0;
+  await page.setRequestInterception(true);
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('request', request => {
+    if (request.url() !== 'https://featurette.watch/raw/116012973972254589') return request.continue();
+    videoRequests++;
+    return request.respond({ contentType: 'video/mp4', body: readFileSync(new URL('brand/localcloud-mcp-demo.mp4', dist)) });
+  });
+  await page.evaluateOnNewDocument(() => {
+    Object.defineProperty(navigator, 'doNotTrack', { get: () => '1' });
+    localStorage.setItem('lc-desktop-weather', 'off');
+    document.addEventListener('click', event => {
+      if (event.target.matches('[data-contact-form] a[href^="mailto:"]')) {
+        window.testEmailDraft = event.target.href;
+        event.preventDefault();
+      }
+    }, true);
+  });
+
+  await page.setViewport({ width: 1280, height: 720 });
+  await page.goto(base + '/', { waitUntil: 'load' });
+  await page.waitForSelector('.desktop-ready');
+  const desktopDemo = '.desktop-shortcuts [data-open-demo]';
+  const demo = '[data-demo-player]';
+  await page.waitForSelector(desktopDemo, { visible: true });
+  assert.equal(videoRequests, 0, 'the player loads no video before activation');
+  assert.equal(await page.$eval('.desktop-shortcuts a[href="/docs/mcp/"]', link => link.innerText), 'MCP');
+  await page.focus(desktopDemo);
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.querySelector('[data-demo-player] video').currentTime > 0);
+  assert.equal(await page.$eval(demo, dialog => dialog.matches(':modal')), true);
+  assert.equal(await page.evaluate(() => document.activeElement.getAttribute('aria-label')), 'Close demo');
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(() => !document.querySelector('[data-demo-player] video').hasAttribute('src'));
+  assert.equal(await page.$eval(desktopDemo, link => link === document.activeElement), true, 'closing restores keyboard focus');
+  assert.equal(await page.$eval(demo + ' video', video => video.paused), true);
+  assert.ok(videoRequests > 0);
+
+  await page.click('.desktop-shortcuts a[href="/contact/#contact-form"]');
+  await page.waitForSelector('[data-contact-form]', { visible: true });
+  assert.equal(new URL(page.url()).hash, '#contact-form');
+  await page.click('[data-contact-form] button');
+  assert.equal(await page.evaluate(() => window.testEmailDraft), undefined, 'an incomplete form does not launch email');
+  await page.type('[name="subject"]', 'Licensing & MCP');
+  await page.type('[name="message"]', 'First line\nSecond line + #');
+  await page.click('[data-contact-form] button');
+  const url = new URL(await page.evaluate(() => window.testEmailDraft));
+  assert.equal(url.pathname, 'info@local.cloud');
+  assert.equal(url.searchParams.get('subject'), 'Licensing & MCP');
+  assert.equal(url.searchParams.get('body'), 'First line\r\nSecond line + #');
+
+  await page.setViewport({ width: 320, height: 812 });
+  await page.goBack();
+  const responsiveDemo = '.hero-shortcuts [data-open-demo]';
+  await page.waitForSelector(responsiveDemo, { visible: true });
+  await page.click(responsiveDemo);
+  await page.waitForFunction(() => {
+    const dialog = document.querySelector('[data-demo-player]');
+    const { left, right } = dialog.getBoundingClientRect();
+    return dialog.matches(':modal') && left >= 0 && right <= innerWidth;
+  });
+  await page.click(demo + ' button');
+  await page.waitForFunction(() => !document.querySelector('[data-demo-player]').open);
+  await page.click('.hero-shortcuts a[href="/contact/#contact-form"]');
+  await page.waitForSelector('#contact-form-title', { visible: true });
+  await page.waitForFunction(() => document.querySelector('#contact-form-title').getBoundingClientRect().top
+    >= document.querySelector('.site-header').getBoundingClientRect().bottom);
+
+  await page.setJavaScriptEnabled(false);
+  await page.goto(base + '/?view=classic', { waitUntil: 'load' });
+  assert.equal(await page.$eval(responsiveDemo, link => link.href), 'https://featurette.watch/v/116012973972254589');
+  assert.deepEqual(errors, []);
+  await page.close();
+}
+
 test('shared dialogs, rolling headline, narrow search and automatic weather work in a real browser', { timeout: 90_000 }, async t => {
   assert.ok(executablePath, 'Chrome is required for interface regression checks');
   const server = createServer((request, response) => {
@@ -187,6 +265,8 @@ test('shared dialogs, rolling headline, narrow search and automatic weather work
   await page.goto(base + '/?view=classic', { waitUntil: 'load' });
   await verifyRollingHeadline(page);
   assert.deepEqual(errors, []);
+
+  await verifyVisitorShortcuts(browser, base);
 
   const automatic = await browser.newPage();
   await automatic.setViewport({ width: 1280, height: 800 });

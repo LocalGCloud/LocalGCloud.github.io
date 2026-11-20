@@ -39,7 +39,7 @@ html.desktop-view[data-audience=humans] [data-weather] button[data-weather-choic
 [data-weather-tools]{display:flex;justify-content:space-between;align-items:center}
 [data-weather-tools] button,[data-weather-tools] a{display:grid!important;place-items:center;width:2rem;height:2rem;padding:0!important;border:1px solid var(--line);border-radius:.35rem;background:var(--surface);color:var(--text);font:inherit;cursor:pointer}
 [data-weather-visitor][aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent)}
-[data-weather-status]{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+[data-weather-status]{color:var(--text-2);font-size:.8rem;line-height:1.4}
 html.desktop-view [data-weather] button[data-weather-pause]{display:grid;place-items:center;width:3.5rem;height:3.5rem;margin:.2rem auto .4rem;padding:0;border:1px solid var(--line-strong);border-radius:50%;background:var(--surface);color:var(--text);font-size:2rem;line-height:1;cursor:pointer}
 .desktop-weather-backdrop,.desktop-weather-edges{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none}
 .desktop-weather-backdrop{z-index:0}.desktop-weather-edges{z-index:70}
