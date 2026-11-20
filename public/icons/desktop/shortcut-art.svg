@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="plug" viewBox="3 3 42 42">
+    <path d="M18 16V9m12 7V9m-6 22v8h7" fill="none" stroke="#24675f" stroke-width="3.2" stroke-linecap="round" />
+    <path d="M13 17h22v6c0 6-5 10-11 10s-11-4-11-10z" fill="#e4f8f6" stroke="#24675f" stroke-width="1.8" stroke-linejoin="round" />
+    <path d="M13 18h22" stroke="#24675f" stroke-width="2.6" stroke-linecap="round" />
+    <path d="M20 24h8" stroke="#24675f" opacity=".55" stroke-width="1.5" stroke-linecap="round" />
+  </symbol>
+  <symbol id="monitor-play" viewBox="3 3 42 42">
+    <path d="M24 33v6m-8 0h16" fill="none" stroke="#26598a" stroke-width="2.8" stroke-linecap="round" />
+    <rect x="5.5" y="9.5" width="37" height="24" rx="4.5" fill="#e3f1ff" stroke="#26598a" stroke-width="1.8" />
+    <path d="M21 16.5v10l9-5z" fill="#26598a" stroke="#26598a" stroke-width="1.2" stroke-linejoin="round" />
+  </symbol>
+  <symbol id="headset" viewBox="3 3 42 42">
+    <path d="M9 25v-4a15 15 0 0 1 30 0v7c0 7-5 11-11 11h-4" fill="none" stroke="#554383" stroke-width="3" stroke-linecap="round" />
+    <rect x="6.5" y="22" width="10.5" height="13" rx="4.5" fill="#f1ecfc" stroke="#554383" stroke-width="1.8" />
+    <rect x="31" y="22" width="10.5" height="13" rx="4.5" fill="#f1ecfc" stroke="#554383" stroke-width="1.8" />
+    <rect x="21" y="36.5" width="8" height="5" rx="2.5" fill="#554383" />
+  </symbol>
+  <symbol id="quick-guide" viewBox="3 3 42 42">
+    <path d="M24 13c-4-3.3-10-5-18-4v26c8-1 14 .7 18 4 4-3.3 10-5 18-4V9c-8-1-14 .7-18 4z" fill="#fff3d4" stroke="#835b28" stroke-width="1.8" stroke-linejoin="round" />
+    <path d="M24 13v26" stroke="#835b28" stroke-width="1.6" />
+    <path d="M31 18h6m-6 6h6m-6 6h4" fill="none" stroke="#835b28" stroke-width="1.7" stroke-linecap="round" opacity=".75" />
+    <path d="M15 16l-4.5 7h4l-1 5 6-8H15z" fill="#835b28" stroke="#835b28" stroke-width=".6" stroke-linejoin="round" />
+  </symbol>
+  <symbol id="history" viewBox="3 3 42 42">
+    <circle cx="25" cy="24" r="15.5" fill="#e8efff" />
+    <path d="M9.7 20.5A15.8 15.8 0 1 1 10 29m-.4-14V21H16m9-6v10l6 3" fill="none" stroke="#455c86" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="25" cy="25" r="1.9" fill="#455c86" />
+  </symbol>
+</svg>

@@ -97,7 +97,7 @@ async function verifyVisitorShortcuts(browser, base) {
   assert.equal(await page.$eval(demo + ' video', video => video.paused), true);
   assert.ok(videoRequests > 0);
 
-  const codes = { mcp: 'plug', demo: 'monitor-play', contact: 'headset', quickstart: 'book-open-check', changelog: 'history' };
+  const codes = { mcp: 'plug', demo: 'monitor-play', contact: 'headset', quickstart: 'quick-guide', changelog: 'history' };
   assert.equal((await page.$$('.desktop-shortcuts a.desktop-shortcut')).length, 13);
   const glyphs = await page.$$eval('.desktop-shortcuts a > svg', icons => Object.fromEntries(icons.map(icon => [
     icon.parentElement.dataset.desktopShortcut,
