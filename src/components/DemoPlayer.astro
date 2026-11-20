@@ -1,9 +1,11 @@
 ---
-import { demoVideoUrl, demoWatchUrl } from '../data/visitorShortcuts';
+import { demoVideoPath } from '../data/visitorShortcuts';
 import styles from '../styles/demo-player.css?url';
+
+const videoUrl = import.meta.env.BASE_URL.replace(/\/?$/, '/') + demoVideoPath;
 ---
 
-<dialog class="demo-player" data-demo-player data-styles={styles} data-video-src={demoVideoUrl} aria-labelledby="demo-title" data-pagefind-ignore>
+<dialog class="demo-player" data-demo-player data-styles={styles} data-video-src={videoUrl} aria-labelledby="demo-title" data-pagefind-ignore>
   <header>
     <h2 id="demo-title">LocalCloud demo</h2>
     <form method="dialog">
@@ -11,5 +13,5 @@ import styles from '../styles/demo-player.css?url';
     </form>
   </header>
   <video controls playsinline preload="none" width="1280" height="720" aria-labelledby="demo-title"></video>
-  <p><a href={demoWatchUrl} target="_blank" rel="noopener noreferrer">Watch on Featurette ↗</a></p>
+  <p><a href={videoUrl} target="_blank" rel="noopener noreferrer">Open video ↗</a></p>
 </dialog>

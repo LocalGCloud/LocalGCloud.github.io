@@ -187,6 +187,27 @@ test('missing pages, the error page URL and sidecars return 404', async () => {
 
 // wrangler dev rewrites every request to the configured route host, so host-scoped
 // indexing is covered by verify-static-response.test.mjs and the live verifier instead.
+test('the launch MP4 supports browser byte ranges', async () => {
+  const path = '/brand/localcloud-launch.mp4';
+  const video = distFile(path.slice(1));
+  const probe = await raw(path, { Range: 'bytes=0-1' });
+  assert.equal(probe.status, 206);
+  assert.equal(probe.headers['content-type'], 'video/mp4');
+  assert.equal(probe.headers['accept-ranges'], 'bytes');
+  assert.equal(probe.headers['content-range'], `bytes 0-1/${video.length}`);
+  assert.equal(probe.headers['content-length'], '2');
+  assert.deepEqual(probe.body, video.subarray(0, 2));
+
+  const tail = await raw(path, { Range: 'bytes=-16' });
+  assert.equal(tail.status, 206);
+  assert.equal(tail.headers['content-range'], `bytes ${video.length - 16}-${video.length - 1}/${video.length}`);
+  assert.deepEqual(tail.body, video.subarray(-16));
+
+  const outside = await raw(path, { Range: `bytes=${video.length}-` });
+  assert.equal(outside.status, 416);
+  assert.equal(outside.headers['content-range'], `bytes */${video.length}`);
+});
+
 test('the canonical host is indexable', async () => {
   assert.equal((await get('/docs/')).headers.get('X-Robots-Tag'), null);
 });

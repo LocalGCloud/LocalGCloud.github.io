@@ -72,7 +72,7 @@ export default defineConfig({
         ["connect-src 'self'", ...posthog.origins, ...cloudflareAnalytics.connectOrigins, 'http://localhost:5380'].join(' '),
         "img-src 'self' data:",
         "font-src 'self'",
-        "media-src 'self' https://featurette.watch/raw/116012973972254589",
+        "media-src 'self'",
       ],
     },
   },

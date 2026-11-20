@@ -7,7 +7,7 @@ import puppeteer from 'puppeteer-core';
 
 const executablePath = ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '/usr/bin/google-chrome', '/usr/bin/chromium'].find(existsSync);
 const dist = new URL('../dist/', import.meta.url);
-const types = { '.html': 'text/html', '.mjs': 'application/javascript', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.woff2': 'font/woff2', '.wasm': 'application/wasm' };
+const types = { '.mp4': 'video/mp4', '.html': 'text/html', '.mjs': 'application/javascript', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.woff2': 'font/woff2', '.wasm': 'application/wasm' };
 
 async function verifyRollingHeadline(page) {
   await page.waitForFunction(() => [...document.querySelectorAll('h1 .headline-drum')].some(element => element.getClientRects().length));
@@ -61,12 +61,10 @@ async function verifyVisitorShortcuts(browser, base) {
   const page = await browser.newPage();
   const errors = [];
   let videoRequests = 0;
-  await page.setRequestInterception(true);
+  const videoUrl = base + '/brand/localcloud-launch.mp4';
   page.on('pageerror', error => errors.push(error.message));
   page.on('request', request => {
-    if (request.url() !== 'https://featurette.watch/raw/116012973972254589') return request.continue();
-    videoRequests++;
-    return request.respond({ contentType: 'video/mp4', body: readFileSync(new URL('brand/localcloud-mcp-demo.mp4', dist)) });
+    if (request.url() === videoUrl) videoRequests++;
   });
   await page.evaluateOnNewDocument(() => {
     Object.defineProperty(navigator, 'doNotTrack', { get: () => '1' });
@@ -91,6 +89,7 @@ async function verifyVisitorShortcuts(browser, base) {
   await page.keyboard.press('Enter');
   await page.waitForFunction(() => document.querySelector('[data-demo-player] video').currentTime > 0);
   assert.equal(await page.$eval(demo, dialog => dialog.matches(':modal')), true);
+  assert.ok(Math.abs(await page.$eval(demo + ' video', video => video.duration) - 50.7) < 0.1);
   assert.equal(await page.evaluate(() => document.activeElement.getAttribute('aria-label')), 'Close demo');
   await page.keyboard.press('Escape');
   await page.waitForFunction(() => !document.querySelector('[data-demo-player] video').hasAttribute('src'));
@@ -130,7 +129,7 @@ async function verifyVisitorShortcuts(browser, base) {
 
   await page.setJavaScriptEnabled(false);
   await page.goto(base + '/?view=classic', { waitUntil: 'load' });
-  assert.equal(await page.$eval(responsiveDemo, link => link.href), 'https://featurette.watch/v/116012973972254589');
+  assert.equal(await page.$eval(responsiveDemo, link => link.href), videoUrl);
   assert.deepEqual(errors, []);
   await page.close();
 }

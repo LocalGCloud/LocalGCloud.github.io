@@ -131,6 +131,32 @@ async function markdownTwin(request, env, path) {
   return null;
 }
 
+// Workers Static Assets sends the entire file for Range requests. The launch video
+// needs single byte ranges for native playback and seeking, including in Safari.
+async function launchVideoResponse(request, response) {
+  const headers = new Headers(response.headers);
+  headers.set('Accept-Ranges', 'bytes');
+  const range = /^bytes=(\d*)-(\d*)$/i.exec(request.headers.get('Range') || '');
+  const ifRange = request.headers.get('If-Range');
+  if (request.method !== 'GET' || !range || (!range[1] && !range[2]) || (ifRange && ifRange !== headers.get('ETag'))) {
+    return new Response(response.body, { status: response.status, headers });
+  }
+
+  const [, first, last] = range;
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  const size = bytes.length;
+  const start = first ? Number(first) : Math.max(0, size - Number(last));
+  const end = first && last ? Math.min(Number(last), size - 1) : size - 1;
+  headers.delete('Content-Length');
+  if (start >= size || start > end) {
+    headers.set('Content-Range', `bytes */${size}`);
+    return new Response(null, { status: 416, headers });
+  }
+  headers.set('Content-Range', `bytes ${start}-${end}/${size}`);
+  headers.set('Content-Length', String(end - start + 1));
+  return new Response(bytes.subarray(start, end + 1), { status: 206, headers });
+}
+
 // Static site responses: permanent redirects, real 404s, host-scoped indexing, compressed HTML
 // and Markdown twins for clients that prefer text/markdown.
 export async function serveSite(request, env) {
@@ -185,6 +211,9 @@ export async function serveSite(request, env) {
     appendVary(headers, 'Accept-Encoding');
     weakenEtag(headers);
     return new Response(null, { status: 304, headers });
+  }
+  if (url.pathname === '/brand/localcloud-launch.mp4' && response.status === 200) {
+    return launchVideoResponse(request, response);
   }
   return compressHtml(request, response, env);
 }
