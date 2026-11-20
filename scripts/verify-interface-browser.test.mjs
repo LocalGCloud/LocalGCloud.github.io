@@ -123,7 +123,7 @@ async function verifyVisitorShortcuts(browser, base) {
   });
   await page.click(demo + ' button');
   await page.waitForFunction(() => !document.querySelector('[data-demo-player]').open);
-  await page.click('.hero-shortcuts a[href="/contact/#contact-form"]');
+  await page.click('.hero-shortcuts a[href*="/contact/"][href$="#contact-form"]');
   await page.waitForSelector('#contact-form-title', { visible: true });
   await page.waitForFunction(() => document.querySelector('#contact-form-title').getBoundingClientRect().top
     >= document.querySelector('.site-header').getBoundingClientRect().bottom);
