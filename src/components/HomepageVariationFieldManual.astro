@@ -7,7 +7,8 @@ import agentIcon from '../../public/icons/personas/robot.svg?url';
 const desktopHero = await getImage(desktopHeroOptions);
 const mobileHero = await getImage(mobileHeroOptions);
 import MobileServiceLauncher from './MobileServiceLauncher.astro';
-import DemoPlayer from './DemoPlayer.astro';
+import outlineIcons from '../../public/icons/desktop/outline.svg?url';
+import demoStyles from '../styles/demo-player.css?url';
 import { visitorShortcuts } from '../data/visitorShortcuts';
 import RollingHeadlineWord from './RollingHeadlineWord.astro';
 import ServiceIcon from './ServiceIcon.astro';
@@ -33,7 +34,8 @@ import {
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
-const heroShortcuts = Object.values(visitorShortcuts(base));
+const visitor = visitorShortcuts(base);
+const heroShortcuts = [visitor.mcp, visitor.demo, visitor.contact];
 const heroIntro = 'Run Google Cloud Services locally on your machine so your agents can build, test, and debug cloud apps locally.';
 
 const heroBenefits = ['$0 cost', 'No setup', 'Fast development'];
@@ -143,10 +145,10 @@ for (const column of atlasColumns) {
         <p class="field-intro" data-desktop-copy data-pagefind-ignore>{heroIntro}</p>
         <p class="hero-facts">No GCP account, credentials, or billing.</p>
         <p class="hero-facts"><a href={`${base}docs/licensing/#free-for-open-source-projects`}>Free to use</a></p>
-        <nav class="hero-shortcuts" aria-label="LocalCloud shortcuts" data-home-shortcuts data-human-only>
-          {heroShortcuts.map(({ label, href, icon, demo }) => (
-            <a href={href} data-open-demo={demo || undefined} aria-haspopup={demo ? 'dialog' : undefined}>
-              <img src={`${base}icons/desktop/${icon}`} width="24" height="24" alt="" />
+        <nav class="hero-shortcuts" aria-label="LocalCloud shortcuts" data-human-only>
+          {heroShortcuts.map(({ id, label, href, glyph }) => (
+            <a href={href} data-open-demo={id === 'demo' ? demoStyles : undefined} aria-haspopup={id === 'demo' ? 'dialog' : undefined}>
+              <svg width="24" height="24" aria-hidden="true"><use href={`${outlineIcons}#${glyph}`} /></svg>
               <span data-content-update>{label}</span>
             </a>
           ))}
@@ -419,14 +421,7 @@ for (const column of atlasColumns) {
       </details>
     </section>
   </div>
-  <DemoPlayer />
 </main>
-
-<script>
-  import { mountVisitorShortcuts } from '../scripts/visitor-actions.mjs';
-  mountVisitorShortcuts();
-  document.addEventListener('lc:page-mounted', mountVisitorShortcuts);
-</script>
 
 <style>
   .hero-shortcuts {
@@ -451,7 +446,7 @@ for (const column of atlasColumns) {
   }
 
   .hero-shortcuts a:hover { border-color: var(--accent); background: var(--accent-soft); }
-  :global(.desktop-view) .hero-shortcuts[data-shortcuts-ready] { display: none; }
+  :global(.desktop-view) .hero-shortcuts { display: none; }
   .field-home {
     padding: 1.5rem 0 3rem;
     color: var(--text);

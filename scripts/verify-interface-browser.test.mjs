@@ -78,7 +78,7 @@ async function verifyVisitorShortcuts(browser, base) {
   });
 
   await page.setViewport({ width: 1280, height: 720 });
-  await page.goto(base + '/', { waitUntil: 'load' });
+  await page.goto(base + '/docs/', { waitUntil: 'load' });
   await page.waitForSelector('.desktop-ready');
   const desktopDemo = '.desktop-shortcuts [data-open-demo]';
   const demo = '[data-demo-player]';
@@ -87,7 +87,7 @@ async function verifyVisitorShortcuts(browser, base) {
   assert.equal(await page.$eval('.desktop-shortcuts a[href="/docs/mcp/"]', link => link.innerText), 'MCP');
   await page.focus(desktopDemo);
   await page.keyboard.press('Enter');
-  await page.waitForFunction(() => document.querySelector('[data-demo-player] video').currentTime > 0);
+  await page.waitForFunction(() => document.querySelector('[data-demo-player] video')?.currentTime > 0);
   assert.equal(await page.$eval(demo, dialog => dialog.matches(':modal')), true);
   assert.ok(Math.abs(await page.$eval(demo + ' video', video => video.duration) - 50.7) < 0.1);
   assert.equal(await page.evaluate(() => document.activeElement.getAttribute('aria-label')), 'Close demo');
@@ -96,6 +96,45 @@ async function verifyVisitorShortcuts(browser, base) {
   assert.equal(await page.$eval(desktopDemo, link => link === document.activeElement), true, 'closing restores keyboard focus');
   assert.equal(await page.$eval(demo + ' video', video => video.paused), true);
   assert.ok(videoRequests > 0);
+
+  const codes = { mcp: 'plug', demo: 'monitor-play', contact: 'headset', quickstart: 'book-open-check', changelog: 'history' };
+  assert.equal((await page.$$('.desktop-shortcuts a.desktop-shortcut')).length, 13);
+  const glyphs = await page.$$eval('.desktop-shortcuts a > svg', icons => Object.fromEntries(icons.map(icon => [
+    icon.parentElement.dataset.desktopShortcut,
+    [icon.querySelector('use').getAttribute('href').split('#')[1], icon.getBoundingClientRect().width],
+  ])));
+  assert.deepEqual(glyphs, Object.fromEntries(Object.entries(codes).map(([id, glyph]) => [id, [glyph, 44]])));
+  assert.equal((await page.$$('.desktop-shortcuts a > img')).length, 8);
+  await page.evaluate(() => { window.testShortcut = document.querySelector('[data-desktop-shortcut="demo"]'); });
+  await page.click('[data-arrange-icons]');
+  await page.waitForSelector('[data-desktop-arranging] .desktop-arrange-controls', { visible: true });
+  const from = await (await page.$(desktopDemo)).boundingBox();
+  const to = await (await page.$('[data-desktop-shortcut="home"]')).boundingBox();
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 10 });
+  await page.mouse.up();
+  await page.waitForSelector('.desktop-shortcuts-left [data-open-demo]');
+  await page.focus('[data-my-cloud]');
+  await page.keyboard.press('ArrowLeft');
+  await page.waitForSelector('.desktop-shortcuts-left [data-my-cloud]');
+  assert.equal(new URL(page.url()).pathname, '/docs/');
+  await page.keyboard.press('Escape');
+  assert.equal(await page.$eval('[data-arrange-icons]', button => button.getAttribute('aria-pressed')), 'false');
+  await page.click('.desktop-navigation > a[href="/"]');
+  await page.waitForFunction(() => location.pathname === '/' && document.querySelector('h1').classList.contains('field-hero__headline'));
+  assert.equal(await page.$eval('.desktop-shortcuts-left [data-open-demo]', link => window.testShortcut === link), true);
+  assert.equal((await page.$$('.desktop-shortcuts a.desktop-shortcut')).length, 13);
+  await page.reload({ waitUntil: 'load' });
+  await page.waitForSelector('.desktop-shortcuts-left [data-my-cloud]');
+  await page.waitForSelector('.desktop-shortcuts-left [data-open-demo]');
+  await page.click('[data-arrange-icons]');
+  await page.waitForSelector('[data-reset-layout]', { visible: true });
+  await page.click('[data-reset-layout]');
+  await page.waitForSelector('.desktop-shortcuts-right [data-my-cloud]');
+  await page.waitForSelector('.desktop-shortcuts-right [data-open-demo]');
+  assert.equal(await page.evaluate(() => localStorage.getItem('lc-desktop-layout')), null);
+  await page.click('[data-arrange-icons]');
 
   await page.click('.desktop-shortcuts a[href="/contact/#contact-form"]');
   await page.waitForSelector('[data-contact-form]', { visible: true });
@@ -111,12 +150,13 @@ async function verifyVisitorShortcuts(browser, base) {
   assert.equal(url.searchParams.get('body'), 'First line\r\nSecond line + #');
 
   await page.setViewport({ width: 320, height: 812 });
-  await page.goBack();
+  await page.goto(base + '/', { waitUntil: 'load' });
   const responsiveDemo = '.hero-shortcuts [data-open-demo]';
   await page.waitForSelector(responsiveDemo, { visible: true });
   await page.click(responsiveDemo);
   await page.waitForFunction(() => {
     const dialog = document.querySelector('[data-demo-player]');
+    if (!dialog) return false;
     const { left, right } = dialog.getBoundingClientRect();
     return dialog.matches(':modal') && left >= 0 && right <= innerWidth;
   });

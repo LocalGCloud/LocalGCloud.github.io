@@ -6,55 +6,13 @@ import { myCloudURL } from '../scripts/my-cloud.mjs';
 import dialogStyles from '../styles/my-cloud.css?url';
 import dialogScript from '../scripts/my-cloud.mjs?url';
 import copyScript from '../scripts/copy-buttons.mjs?url';
+import launcher from '../scripts/my-cloud-launcher.mjs?url';
 const setupCommand = consoleQuickStart(docsContract);
 ---
 
-<a href={myCloudURL} target="_blank" rel="noopener noreferrer" class="desktop-shortcut desktop-my-cloud" data-my-cloud data-my-cloud-assets={import.meta.env.DEV ? 'src/scripts/' : undefined} data-my-cloud-script={dialogScript} data-copy-script={copyScript} data-my-cloud-styles={dialogStyles} data-setup-command={setupCommand} data-setup-guide={import.meta.env.BASE_URL + 'docs/#install-the-cli'} aria-haspopup="dialog" aria-controls="my-cloud-dialog" aria-label="My cloud localhost:5380 — check and open your local LocalCloud console">
+<a href={myCloudURL} target="_blank" rel="noopener noreferrer" class="desktop-shortcut desktop-my-cloud" data-my-cloud={launcher} data-my-cloud-assets={import.meta.env.DEV ? 'src/scripts/' : undefined} data-my-cloud-script={dialogScript} data-copy-script={copyScript} data-my-cloud-styles={dialogStyles} data-setup-command={setupCommand} data-setup-guide={import.meta.env.BASE_URL + 'docs/#install-the-cli'} aria-haspopup="dialog" aria-controls="my-cloud-dialog" aria-label="My cloud localhost:5380 — check and open your local LocalCloud console">
   <img src={appIcon} width="64" height="64" alt="" loading="lazy" decoding="async" />
   <span>My cloud</span>
   <small>localhost:5380 ↗</small>
 </a>
 <dialog id="my-cloud-dialog" class="my-cloud-dialog" aria-labelledby="my-cloud-title" aria-describedby="my-cloud-status" data-my-cloud-dialog data-pagefind-ignore></dialog>
-
-<script is:inline data-critical-bootstrap>
-  (() => {
-    const link = document.querySelector('[data-my-cloud]');
-    const dialog = document.querySelector('[data-my-cloud-dialog]');
-    let loaded, launching;
-    const load = (source) => new Promise((resolve, reject) => {
-      const url = new URL(source, location.href);
-      const base = document.querySelector('[data-desktop-shell]')?.dataset.base || '/';
-      if (url.origin !== location.origin || !url.pathname.startsWith(base + (link.dataset.myCloudAssets || '_astro/'))) return reject();
-      const script = document.createElement('script');
-      script.type = 'module'; script.src = url.href;
-      const finish = (ok) => { clearTimeout(timer); script.remove(); ok ? resolve() : reject(); };
-      const timer = setTimeout(finish, 8000);
-      script.onload = () => finish(true);
-      script.onerror = () => finish();
-      document.head.append(script);
-    });
-    const warm = () => {
-      loaded ||= Promise.all([load(link.dataset.myCloudScript), load(link.dataset.copyScript).catch(() => {})]);
-      loaded.catch(() => { loaded = undefined; });
-      return loaded;
-    };
-    // Load ahead of the click so it answers at once and the popup keeps its click activation.
-    for (const type of ['pointerenter', 'focus', 'touchstart']) link?.addEventListener(type, () => warm().catch(() => {}), { once: true, passive: true });
-    link?.addEventListener('click', async (event) => {
-      if (!dialog?.showModal || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      if (launching) return;
-      launching = true;
-      try {
-        await warm();
-        dialog.dispatchEvent(new CustomEvent('lc:my-cloud-open'));
-      } catch {
-        loaded = undefined;
-        dialog.innerHTML = '<form method="dialog"><h2 id="my-cloud-title">Start LocalCloud</h2><p>We couldn’t check localhost:5380. Already running? <a target="_blank" rel="noopener noreferrer">Open the console</a>. Otherwise run:</p><pre id="my-cloud-status"></pre><button>Close</button></form>';
-        dialog.querySelector('a').href = link.href;
-        dialog.querySelector('pre').textContent = link.dataset.setupCommand;
-        if (!dialog.open) dialog.showModal();
-      } finally { launching = false; }
-    });
-  })();
-</script>

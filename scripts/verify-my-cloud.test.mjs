@@ -366,7 +366,7 @@ test('unsupported dialog browsers retain the direct console link without probing
   assert.equal(h.listeners.has('link:click'), false);
 });
 
-const launcherSource = () => readFileSync(new URL('../src/components/MyCloudLauncher.astro', import.meta.url), 'utf8').match(/<script is:inline data-critical-bootstrap>([\s\S]*?)<\/script>/)[1];
+const launcherSource = () => readFileSync(new URL('../src/scripts/my-cloud-launcher.mjs', import.meta.url), 'utf8').replace('export function', 'function') + '\nbindCloudLauncher();';
 const launcherContext = (h, overrides) => ({ document, URL, setTimeout, clearTimeout,
   CustomEvent: class { constructor(type, options) { this.type = type; this.detail = options?.detail; } },
   window: { open() { assert.fail('the launcher never opens a tab before the console has answered'); } },
