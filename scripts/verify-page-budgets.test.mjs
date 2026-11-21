@@ -52,9 +52,6 @@ const consoleDialogBytes = { rawBytes: 6_000, gzipBytes: 1_200, styleBytes: 1_50
 // Desktop startup also fetches the controller, router, interactions and page filter modules.
 // Count each fetched file once, including files loaded by inline bootstraps rather than script tags.
 const startupScriptBytes = 45_000;
-// 2026-10-15: load/idle warming for three desktop destinations adds 358 minified
-// bytes to the shared router and removes their network wait from the first click.
-const desktopPrefetchBytes = 400;
 // 2026-10-21: the comparison pages load one script that groups features into collapsible categories,
 // searches across them, and draws each row's description, documentation link and note (~1.9KB over the
 // plain row renderer). The workspace page also carries one category row per document section for five
@@ -112,7 +109,6 @@ test('every built page stays within static byte budgets and the aggregate Deskto
     };
     const isHome = file === join(dist, 'index.html');
     const limits = {...htmlBudget, styleBytes:htmlBudget.styleBytes+mobileStyleBytes, startupScriptBytes};
-    if (html.includes('data-desktop-manifest=')) limits.startupScriptBytes += desktopPrefetchBytes;
     if (html.includes('data-emulator-comparison')) for (const [metric, extra] of Object.entries(emulatorComparisonBytes)) limits[metric] += extra;
     if (html.includes('data-agent-markdown')) for (const [metric, extra] of Object.entries(agentDocumentBytes)) limits[metric] += extra;
     if (html.includes('data-code-copy-template')) limits.rawBytes += codeCopyTemplateBytes;

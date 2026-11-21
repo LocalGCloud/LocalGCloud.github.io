@@ -38,39 +38,23 @@ async function harness(delayB=false,pageScripts={}, options={}){
   return {pane,attrs,listeners,writes,context,navigate,setURL,events,focused,replacements,timers,documentListeners,windowListeners,requests,root,entries,async back(){const previous=entries[--entryIndex];history.state=previous.state;setURL(previous.href);return navigate(location.href,true);},get release(){return release;}};
 }
 
-test('desktop shortcuts warm only after load and idle, then the first click reuses content',async()=>{
-  const shortcuts=['a','b','c','d','e'].map(path=>({href:'/'+path+'/',hasAttribute:()=>false,closest(){return this;}}));
-  const h=await harness(false,{}, {shortcuts}),idle=[];
-  h.context.window.requestIdleCallback=callback=>idle.push(callback);
-  assert.deepEqual(h.requests,[],'initial rendering must not compete with speculative requests');
-  h.context.document.readyState='complete';h.windowListeners.get('load')();
-  assert.deepEqual(h.requests,[],'load alone does not start requests');
-  idle.shift()();await new Promise(resolve=>setImmediate(resolve));
-  assert.equal(h.requests.filter(url=>url.includes('/desktop-manifest.')).length,1);
-  assert.deepEqual(h.requests.filter(url=>url.includes('/_desktop/')).map(url=>new URL(url).pathname),['/_desktop/b.json','/_desktop/c.json','/_desktop/d.json']);
-  assert.deepEqual(h.writes,[],'warming must preserve the current document');
-  await h.navigate('/b/');
-  assert.deepEqual(h.writes,['/b/']);
-  assert.equal(h.requests.filter(url=>url.endsWith('/b.json')).length,1,'the click must reuse the warmed request');
-});
+test('desktop shortcut prefetch waits for intent and navigation reuses it', async () => {
+  const shortcut = { href: '/b/', hasAttribute: () => false, closest() { return this; } };
+  const h = await harness(false, {}, { shortcuts: [shortcut] });
+  const idle = [];
+  h.context.window.requestIdleCallback = callback => idle.push(callback);
+  h.context.document.readyState = 'complete';
+  h.windowListeners.get('load')?.();
+  for (const callback of idle) callback();
+  assert.deepEqual(h.requests, []);
 
-test('idle desktop warming skips data-saving connections and inactive or mobile presentations',async()=>{
-  const shortcut={href:'/b/',hasAttribute:()=>false,closest(){return this;}};
-  for(const options of [
-    {context:{navigator:{connection:{saveData:true}}}},
-    {context:{navigator:{connection:{effectiveType:'2g'}}}},
-    {context:{navigator:{connection:{effectiveType:'slow-2g'}}}},
-    {wide:false},
-    {siteView:'classic'},
-  ]){
-    const h=await harness(false,{}, {...options,shortcuts:[shortcut]}),idle=[];
-    h.context.window.requestIdleCallback=callback=>idle.push(callback);
-    h.context.document.readyState='complete';h.windowListeners.get('load')();
-    idle.shift()();await new Promise(resolve=>setImmediate(resolve));
-    assert.deepEqual(h.requests,[]);
-  }
-  const mobile=await harness(false,{}, {siteView:'mobile',views:['desktop','mobile'],shortcuts:[shortcut]});
-  assert.equal(mobile.windowListeners.has('load'),false,'mobile keeps its existing intent-based warming');
+  h.documentListeners.get('focusin')({ target: shortcut });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(h.requests.filter(url => url.endsWith('/b.json')).length, 1);
+  assert.deepEqual(h.writes, [], 'prefetch leaves the current page mounted');
+  await h.navigate('/b/');
+  assert.deepEqual(h.writes, ['/b/']);
+  assert.equal(h.requests.filter(url => url.endsWith('/b.json')).length, 1, 'navigation reuses the prefetched content');
 });
 
 test('Mobile and Desktop synchronize the persistent skip link on page changes and Back',async()=>{
